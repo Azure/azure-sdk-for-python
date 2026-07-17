@@ -88,7 +88,9 @@ class TestSearchIndexClientSynonymMapAsync(AzureRecordedTestCase):
             synonym_map = await client.create_synonym_map(_build_synonym_map(synonym_map_name))
             original_e_tag = synonym_map.e_tag
 
-            await client.create_or_update_synonym_map(_build_synonym_map(synonym_map_name, synonyms=REPLACEMENT_SYNONYMS))
+            await client.create_or_update_synonym_map(
+                _build_synonym_map(synonym_map_name, synonyms=REPLACEMENT_SYNONYMS)
+            )
 
             synonym_map.e_tag = original_e_tag
             synonym_map.synonyms = SYNONYMS
@@ -106,7 +108,9 @@ class TestSearchIndexClientSynonymMapAsync(AzureRecordedTestCase):
             synonym_map = await client.create_synonym_map(_build_synonym_map(synonym_map_name))
             original_e_tag = synonym_map.e_tag
 
-            await client.create_or_update_synonym_map(_build_synonym_map(synonym_map_name, synonyms=REPLACEMENT_SYNONYMS))
+            await client.create_or_update_synonym_map(
+                _build_synonym_map(synonym_map_name, synonyms=REPLACEMENT_SYNONYMS)
+            )
 
             synonym_map.e_tag = original_e_tag
             with pytest.raises(HttpResponseError):

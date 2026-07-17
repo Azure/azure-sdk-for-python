@@ -198,3 +198,50 @@ class TestServiceFabricManagedClustersManagementManagedClustersOperations(AzureM
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_clusters_get_fault_simulation(self, resource_group):
+        response = self.client.managed_clusters.get_fault_simulation(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            parameters={"simulationId": "str"},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_clusters_list_fault_simulation(self, resource_group):
+        response = self.client.managed_clusters.list_fault_simulation(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_clusters_begin_start_fault_simulation(self, resource_group):
+        response = self.client.managed_clusters.begin_start_fault_simulation(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            parameters={"parameters": "fault_simulation_content"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_managed_clusters_begin_stop_fault_simulation(self, resource_group):
+        response = self.client.managed_clusters.begin_stop_fault_simulation(
+            resource_group_name=resource_group.name,
+            cluster_name="str",
+            parameters={"simulationId": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...

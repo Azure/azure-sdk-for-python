@@ -20,7 +20,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_subscription(self, resource_group):
+    def test_global_schedules_list_by_subscription(self, resource_group):
         response = self.client.global_schedules.list_by_subscription(
             api_version="2018-09-15",
         )
@@ -30,7 +30,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list_by_resource_group(self, resource_group):
+    def test_global_schedules_list_by_resource_group(self, resource_group):
         response = self.client.global_schedules.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2018-09-15",
@@ -41,7 +41,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_global_schedules_get(self, resource_group):
         response = self.client.global_schedules.get(
             resource_group_name=resource_group.name,
             name="str",
@@ -53,7 +53,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_create_or_update(self, resource_group):
+    def test_global_schedules_create_or_update(self, resource_group):
         response = self.client.global_schedules.create_or_update(
             resource_group_name=resource_group.name,
             name="str",
@@ -89,7 +89,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_delete(self, resource_group):
+    def test_global_schedules_delete(self, resource_group):
         response = self.client.global_schedules.delete(
             resource_group_name=resource_group.name,
             name="str",
@@ -101,7 +101,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_update(self, resource_group):
+    def test_global_schedules_update(self, resource_group):
         response = self.client.global_schedules.update(
             resource_group_name=resource_group.name,
             name="str",
@@ -113,7 +113,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_execute(self, resource_group):
+    def test_global_schedules_begin_execute(self, resource_group):
         response = self.client.global_schedules.begin_execute(
             resource_group_name=resource_group.name,
             name="str",
@@ -125,7 +125,7 @@ class TestDevTestLabsGlobalSchedulesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_begin_retarget(self, resource_group):
+    def test_global_schedules_begin_retarget(self, resource_group):
         response = self.client.global_schedules.begin_retarget(
             resource_group_name=resource_group.name,
             name="str",

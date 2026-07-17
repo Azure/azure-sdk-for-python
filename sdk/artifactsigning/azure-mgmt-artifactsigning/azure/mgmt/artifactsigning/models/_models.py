@@ -246,6 +246,7 @@ class CertificateProfile(ProxyResource):
         "include_country",
         "include_postal_code",
         "identity_validation_id",
+        "program_type",
         "provisioning_state",
         "status",
         "certificates",
@@ -309,6 +310,8 @@ class CertificateProfileProperties(_Model):
     :ivar identity_validation_id: Identity validation id used for the certificate subject name.
      Required.
     :vartype identity_validation_id: str
+    :ivar program_type: Indicates whether the resource is intended for a specific usage scenario.
+    :vartype program_type: str
     :ivar provisioning_state: Status of the current operation on certificate profile. Known values
      are: "Succeeded", "Failed", "Canceled", "Updating", "Deleting", and "Accepted".
     :vartype provisioning_state: str or ~azure.mgmt.artifactsigning.models.ProvisioningState
@@ -351,6 +354,10 @@ class CertificateProfileProperties(_Model):
         name="identityValidationId", visibility=["read", "create", "update", "delete", "query"]
     )
     """Identity validation id used for the certificate subject name. Required."""
+    program_type: Optional[str] = rest_field(
+        name="programType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether the resource is intended for a specific usage scenario."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -373,6 +380,7 @@ class CertificateProfileProperties(_Model):
         include_state: Optional[bool] = None,
         include_country: Optional[bool] = None,
         include_postal_code: Optional[bool] = None,
+        program_type: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -938,6 +946,37 @@ class RevokeCertificate(_Model):
         effective_at: datetime.datetime,
         reason: str,
         remarks: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RevokeCertificateList(_Model):
+    """Defines the list of certificates for revocation in certificate profile.
+
+    :ivar revoke_certificates: List of certificates to be revoked in a certificate profile.
+     Required.
+    :vartype revoke_certificates: list[~azure.mgmt.artifactsigning.models.RevokeCertificate]
+    """
+
+    revoke_certificates: list["_models.RevokeCertificate"] = rest_field(
+        name="revokeCertificates", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of certificates to be revoked in a certificate profile. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        revoke_certificates: list["_models.RevokeCertificate"],
     ) -> None: ...
 
     @overload

@@ -44,6 +44,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/NetworkManagerSecurityAdminConfigurationPut_ManualAggregation.json
+# x-ms-original-file: 2025-07-01/NetworkManagerSecurityAdminConfigurationPut_ManualAggregation.json
 if __name__ == "__main__":
     main()

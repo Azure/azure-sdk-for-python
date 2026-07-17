@@ -9,5 +9,3 @@ extends:
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
-      MatrixFilters:
-        - '"PythonVersion=^(?!pypy3).*"'

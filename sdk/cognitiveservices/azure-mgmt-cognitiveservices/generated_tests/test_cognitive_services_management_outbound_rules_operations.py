@@ -49,6 +49,6 @@ class TestCognitiveServicesManagementOutboundRulesOperations(AzureMgmtRecordedTe
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

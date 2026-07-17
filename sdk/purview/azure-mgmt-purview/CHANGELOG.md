@@ -1,5 +1,21 @@
 # Release History
 
+## 1.1.0b3 (2026-07-07)
+
+### Features Added
+
+  - Enum `ManagedIdentityType` added member `SYSTEM_ASSIGNED_USER_ASSIGNED`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `ManagedIdentityType.USER_ASSIGNED`
+
+## 1.0.1 (2026-05-19)
+
+### Other Changes
+
+  - Regenerated with latest code generator tool
+
 ## 1.1.0b2 (2026-04-01)
 
 ### Features Added

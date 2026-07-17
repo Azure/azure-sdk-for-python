@@ -49,12 +49,14 @@ def add_sanitizers(test_proxy):
         "AZURE_KEYVAULT_ATTESTATION_URL", "https://fakeattestation.azurewebsites.net"
     )
     azure_attestation_uri = azure_attestation_uri.rstrip("/")
+    ekm_external_id = os.environ.get("EKM_EXTERNAL_ID", "fake-external-key")
 
     add_general_string_sanitizer(target=azure_keyvault_url, value="https://vaultname.vault.azure.net")
     add_general_string_sanitizer(target=keyvault_tenant_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=keyvault_subscription_id, value="00000000-0000-0000-0000-000000000000")
     add_general_string_sanitizer(target=azure_managedhsm_url, value="https://managedhsmvaultname.managedhsm.azure.net")
     add_general_string_sanitizer(target=azure_attestation_uri, value="https://fakeattestation.azurewebsites.net")
+    add_general_string_sanitizer(target=ekm_external_id, value="fake-external-key")
     add_oauth_response_sanitizer()
     set_custom_default_matcher(compare_bodies=False, ignore_query_ordering=True, ignored_headers="Accept")
 

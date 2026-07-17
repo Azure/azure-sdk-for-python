@@ -523,7 +523,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
 
     def _set_span_attribute_safe(self, span: "AbstractSpan", key: str, value: Any) -> None:
         """Safely set a span attribute only if the value is meaningful."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Only set attribute if value exists and is meaningful
@@ -846,7 +846,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Add workflow action events to the span for workflow agents."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Check if response has output items
@@ -1149,7 +1149,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         conversation_id: Optional[str] = None,
     ) -> None:
         """Add tool call events to the span from response output."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Extract function calls and tool calls from response output
@@ -1638,7 +1638,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             # Set operation name attribute (start_span doesn't set this automatically)
             self._set_attributes(
                 span,
@@ -2614,7 +2614,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Join all accumulated output content
                     complete_content = "".join(self.accumulated_output)
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Add tool call events if we detected any output items (tool calls, etc.)
                         if self.has_output_items:
                             # Create mock response with output items for event generation
@@ -2721,7 +2721,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     )
 
                     # End span with proper status
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         self.span.span_instance.set_status(
                             # pyright: ignore [reportPossiblyUnboundVariable]
                             StatusCode.OK
@@ -2764,7 +2764,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             span_attributes=span_attributes,
                             error_type=str(type(e).__name__),
                         )
-                        if self.span.span_instance.is_recording:
+                        if self.span.span_instance.is_recording():
                             self.span.span_instance.set_status(
                                 # pyright: ignore [reportPossiblyUnboundVariable]
                                 StatusCode.ERROR,
@@ -2791,7 +2791,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         span_attributes=span_attributes,
                     )
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Note: For streaming responses, response metadata like tokens, finish_reasons
                         # are typically not available in individual chunks, so we focus on content.
 
@@ -3092,7 +3092,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     # Join all accumulated output content
                     complete_content = "".join(self.accumulated_output)
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Add tool call events if we detected any output items (tool calls, etc.)
                         if self.has_output_items:
                             # Create mock response with output items for event generation
@@ -3199,7 +3199,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                     )
 
                     # End span with proper status
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         self.span.span_instance.set_status(
                             # pyright: ignore [reportPossiblyUnboundVariable]
                             StatusCode.OK
@@ -3241,7 +3241,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                             span_attributes=span_attributes,
                             error_type=str(type(e).__name__),
                         )
-                        if self.span.span_instance.is_recording:
+                        if self.span.span_instance.is_recording():
                             self.span.span_instance.set_status(
                                 # pyright: ignore [reportPossiblyUnboundVariable]
                                 StatusCode.ERROR,
@@ -3268,7 +3268,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
                         span_attributes=span_attributes,
                     )
 
-                    if self.span.span_instance.is_recording:
+                    if self.span.span_instance.is_recording():
                         # Note: For streaming responses, response metadata like tokens, finish_reasons
                         # are typically not available in individual chunks, so we focus on content.
 
@@ -3407,7 +3407,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             self._set_span_attribute_safe(span, GEN_AI_OPERATION_NAME, OperationName.CREATE_CONVERSATION.value)
 
         return span
@@ -3605,7 +3605,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
             gen_ai_provider=RESPONSES_PROVIDER,
         )
 
-        if span and span.span_instance.is_recording:
+        if span and span.span_instance.is_recording():
             # Set operation name attribute (start_span doesn't set this automatically)
             self._set_attributes(
                 span,
@@ -3624,7 +3624,7 @@ class _ResponsesInstrumentorPreview:  # pylint: disable=too-many-instance-attrib
         item: Any,
     ) -> None:
         """Add a conversation item event to the span."""
-        if not span or not span.span_instance.is_recording:
+        if not span or not span.span_instance.is_recording():
             return
 
         # Extract basic item information

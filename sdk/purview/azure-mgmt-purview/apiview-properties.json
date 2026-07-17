@@ -125,5 +125,6 @@
         "azure.mgmt.purview.aio.operations.DefaultAccountsOperations.set": "Microsoft.Purview.DefaultAccountsOperationGroup.set",
         "azure.mgmt.purview.operations.UsagesOperations.get": "Microsoft.Purview.UsagesOperationGroup.get",
         "azure.mgmt.purview.aio.operations.UsagesOperations.get": "Microsoft.Purview.UsagesOperationGroup.get"
-    }
+    },
+    "CrossLanguageVersion": "13944bac439f"
 }

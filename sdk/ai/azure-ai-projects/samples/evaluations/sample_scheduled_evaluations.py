@@ -24,7 +24,7 @@ USAGE:
     4) DATASET_NAME - Optional. The name of the Dataset to create and use in this sample.
     5) DATASET_VERSION - Optional. The version of the Dataset to create and use in this sample.
     6) DATA_FOLDER - Optional. The folder path where the data files for upload are located.
-    7) FOUNDRY_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    7) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 from datetime import datetime
@@ -37,7 +37,7 @@ from azure.ai.projects.models._models import PromptAgentDefinition
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
     AgentVersionDetails,
@@ -143,7 +143,7 @@ def assign_rbac():  # pylint: disable=too-many-statements
 
             # Define the Azure AI User role definition ID
             # This is the built-in role ID for "Azure AI User"
-            azure_ai_user_role_id = "64702f94-c441-49e6-a78b-ef80e0188fee"
+            azure_ai_user_role_id = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
             # Create the scope (project level)
             scope = f"/subscriptions/{subscription_id}/resourceGroups/{resource_group_name}/providers/Microsoft.CognitiveServices/accounts/{account_name}/projects/{project_name}"
@@ -258,14 +258,14 @@ def schedule_dataset_evaluation() -> None:
                 name="violence",
                 evaluator_name="builtin.violence",
                 data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
             TestingCriterionAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
             TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="coherence",
                 evaluator_name="builtin.coherence",
-                initialization_parameters={"deployment_name": "{{aoai_deployment_and_model}}"},
+                initialization_parameters={"model": "{{aoai_deployment_and_model}}"},
             ),
         ]
 
@@ -328,7 +328,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
     load_dotenv()
     #
     endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
     # Construct the paths to the data folder and data file used in this sample
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -380,7 +380,7 @@ def schedule_redteam_evaluation() -> None:  # pylint: disable=too-many-locals
             description="Taxonomy for red teaming evaluation", taxonomy_input=agent_taxonomy_input
         )
 
-        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
+        taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, taxonomy=eval_taxonomy_input)
         taxonomy_path = os.path.join(data_folder, f"taxonomy_{agent_name}.json")
         # Create the data folder if it doesn't exist
         os.makedirs(data_folder, exist_ok=True)

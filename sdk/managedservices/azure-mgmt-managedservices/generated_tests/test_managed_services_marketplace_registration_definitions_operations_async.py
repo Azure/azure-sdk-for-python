@@ -21,10 +21,10 @@ class TestManagedServicesMarketplaceRegistrationDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_marketplace_registration_definitions_list(self, resource_group):
         response = self.client.marketplace_registration_definitions.list(
             scope="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,11 +32,11 @@ class TestManagedServicesMarketplaceRegistrationDefinitionsOperationsAsync(Azure
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_marketplace_registration_definitions_get(self, resource_group):
         response = await self.client.marketplace_registration_definitions.get(
             scope="str",
             marketplace_identifier="str",
-            api_version="2022-10-01",
+            api_version="2020-02-01-preview",
         )
 
         # please add some check logic here by yourself

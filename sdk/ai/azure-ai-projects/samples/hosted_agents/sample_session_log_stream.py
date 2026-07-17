@@ -6,53 +6,49 @@
 
 """
 DESCRIPTION:
-        This sample demonstrates how to stream hosted agent session logs
-        using `project_client.beta.agents.get_session_log_stream` with the
-        synchronous AIProjectClient.
+    This sample demonstrates how to stream hosted agent session logs
+    using `project_client.agents.get_session_log_stream` with the
+    synchronous AIProjectClient.
 
-        Sessions only work with Hosted Agents.
-
-        Session and log stream operations are currently preview features.
-        In the Python SDK, you access these operations via
-        `project_client.beta.agents`.
+    Sessions only work with Hosted Agents.
 
 USAGE:
-        python sample_session_log_stream.py
+    python sample_session_log_stream.py
 
-        Before running the sample:
+    Before running the sample:
 
-        pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
-        Set these environment variables with your own values:
-        1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-           page of your Microsoft Foundry portal.
-        2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
-
-        You can build and push an example image from
-        `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-        for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    Set these environment variables with your own values:
+    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
 """
 
 import os
-
+from pathlib import Path
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AgentEndpoint,
-    AgentEndpointProtocol,
-    FixedRatioVersionSelectionRule,
-    VersionSelector,
+    CodeConfiguration,
+    CodeDependencyResolution,
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+    VersionRefIndicator,
 )
-from hosted_agents_util import create_agent_and_session
+from hosted_agents_util import create_version_from_code
+from util import zip_directory
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
-agent_name = "MySessionHostedAgent"
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+model_name = os.environ["FOUNDRY_MODEL_NAME"]
+hosted_agent_source_dir = Path(__file__).parent / "assets" / "basic-agent"
+
+zip_path = zip_directory(hosted_agent_source_dir, "basic-agent.zip")[2]
 
 
 def _iter_sse_frames(stream, max_log_events: int):
@@ -85,31 +81,42 @@ def _iter_sse_frames(stream, max_log_events: int):
 
 
 with (
+    zip_path.open("rb") as code_stream,
     DefaultAzureCredential() as credential,
     AIProjectClient(
         endpoint=endpoint,
         credential=credential,
-        allow_preview=True,
     ) as project_client,
-    create_agent_and_session(project_client, agent_name, image) as (agent, session),
-):
-    endpoint_config = AgentEndpoint(
-        version_selector=VersionSelector(
-            version_selection_rules=[
-                FixedRatioVersionSelectionRule(agent_version=agent.version, traffic_percentage=100),
-            ]
-        ),
-        protocols=[AgentEndpointProtocol.RESPONSES],
-    )
-
-    project_client.beta.agents.patch_agent_details(
+    create_version_from_code(
+        project_client=project_client,
         agent_name=agent_name,
-        agent_endpoint=endpoint_config,
+        description="Session log stream hosted agent uploaded from assets/basic-agent.",
+        definition=HostedAgentDefinition(
+            cpu="0.5",
+            memory="1Gi",
+            code_configuration=CodeConfiguration(
+                runtime="python_3_14",
+                entry_point=["python", "main.py"],
+                dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+            ),
+            environment_variables={
+                "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                "FOUNDRY_MODEL_NAME": model_name,
+            },
+            protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+        ),
+        code=code_stream,
+    ) as created,
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
+    session = project_client.agents.create_session(
+        agent_name=agent_name,
+        version_indicator=VersionRefIndicator(agent_version=created.version),
     )
-    print(f"Agent endpoint configured for agent: {agent_name}")
-    input_text = "Say hello in one short sentence."
+    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+    try:
+        input_text = "Say hello in one short sentence."
 
-    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
         response = openai_client.responses.create(
             input=input_text,
             extra_body={
@@ -118,12 +125,18 @@ with (
         )
         print(f"Response output: {response.output_text}")
 
-    print("Streaming session logs...")
-    raw_stream = project_client.beta.agents.get_session_log_stream(
-        agent_name=agent_name,
-        agent_version=agent.version,
-        session_id=session.agent_session_id,
-    )
-    for frame in _iter_sse_frames(raw_stream, max_log_events=30):
-        print(f"SSE event: {frame.get('event')}")
-        print(f"SSE data: {frame.get('data')}\n")
+        print("Streaming session logs...")
+        raw_stream = project_client.agents.get_session_log_stream(
+            agent_name=agent_name,
+            agent_version=created.version,
+            session_id=session.agent_session_id,
+        )
+        for frame in _iter_sse_frames(raw_stream, max_log_events=30):
+            print(f"SSE event: {frame.get('event')}")
+            print(f"SSE data: {frame.get('data')}\n")
+    finally:
+        project_client.agents.delete_session(
+            agent_name=agent_name,
+            session_id=session.agent_session_id,
+        )
+        print(f"Session deleted (id: {session.agent_session_id})")

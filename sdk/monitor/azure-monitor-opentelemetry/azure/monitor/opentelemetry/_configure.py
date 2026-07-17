@@ -56,6 +56,9 @@ from azure.monitor.opentelemetry._types import ConfigurationValue
 from azure.monitor.opentelemetry.exporter._quickpulse import (  # pylint: disable=import-error,no-name-in-module
     enable_live_metrics,
 )
+from azure.monitor.opentelemetry.exporter.statsbeat._state import (  # pylint: disable=import-error,no-name-in-module
+    set_statsbeat_live_metrics_feature_set,
+)
 from azure.monitor.opentelemetry.exporter._performance_counters import (  # pylint: disable=import-error,no-name-in-module
     enable_performance_counters,
 )
@@ -157,6 +160,9 @@ def configure_azure_monitor(**kwargs) -> None:  # pylint: disable=C4758
     # Set up live metrics
     if enable_live_metrics_config:
         _setup_live_metrics(configurations)
+    else:
+        # Live metrics is enabled by default. Track explicit local disable in statsbeat.
+        set_statsbeat_live_metrics_feature_set()
 
     # Set up tracing pipeline
     if not disable_tracing:

@@ -137,14 +137,17 @@ class Condition(_Model):
     :ivar scalar_function: Scalar function applied for filtering. Known values are: "max", "min",
      "avg", and "sum".
     :vartype scalar_function: str or ~azure.mgmt.monitorslis.models.ScalarFunction
-    :ivar sampling_type: Defines the sampling type. Known values are: "max", "min", "avg", and
-     "sum".
+    :ivar sampling_type: Defines the sampling type. Known values are: "Average", "Sum", "Count",
+     "Min", and "Max".
     :vartype sampling_type: str or ~azure.mgmt.monitorslis.models.SamplingType
-    :ivar operator: Operator used in the filtering condition. Required. Known values are: "==",
-     "!=", "<", "<=", ">", ">=", "@in", "!in", "startswith", "!startswith", "contains", and
-     "!contains".
+    :ivar operator: Operator used in the filtering condition. Required. Known values are: "eq",
+     "ne", "lt", "lte", "gt", "gte", "in", "notin", "startswith", "notstartswith", "contains", and
+     "notcontains".
     :vartype operator: str or ~azure.mgmt.monitorslis.models.ConditionOperator
-    :ivar value: Value used in filtering. Required.
+    :ivar value: Value used in filtering. For most operators (eq, ne, lt, lte, gt, gte, startswith,
+     notstartswith, contains, notcontains) this is a single value (for example "GetContosoUsers").
+     For the ``in`` and ``notin`` operators, multiple values must be joined by the delimiter ``^^``
+     (for example "east^^west^^north"). Required.
     :vartype value: str
     """
 
@@ -160,15 +163,19 @@ class Condition(_Model):
     sampling_type: Optional[Union[str, "_models.SamplingType"]] = rest_field(
         name="samplingType", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Defines the sampling type. Known values are: \"max\", \"min\", \"avg\", and \"sum\"."""
+    """Defines the sampling type. Known values are: \"Average\", \"Sum\", \"Count\", \"Min\", and
+     \"Max\"."""
     operator: Union[str, "_models.ConditionOperator"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Operator used in the filtering condition. Required. Known values are: \"==\", \"!=\", \"<\",
-     \"<=\", \">\", \">=\", \"@in\", \"!in\", \"startswith\", \"!startswith\", \"contains\", and
-     \"!contains\"."""
+    """Operator used in the filtering condition. Required. Known values are: \"eq\", \"ne\", \"lt\",
+     \"lte\", \"gt\", \"gte\", \"in\", \"notin\", \"startswith\", \"notstartswith\", \"contains\",
+     and \"notcontains\"."""
     value: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Value used in filtering. Required."""
+    """Value used in filtering. For most operators (eq, ne, lt, lte, gt, gte, startswith,
+     notstartswith, contains, notcontains) this is a single value (for example \"GetContosoUsers\").
+     For the ``in`` and ``notin`` operators, multiple values must be joined by the delimiter ``^^``
+     (for example \"east^^west^^north\"). Required."""
 
     @overload
     def __init__(
@@ -902,7 +909,7 @@ class WindowUptimeCriteria(_Model):
     :ivar target: Threshold value used to determine uptime. Required.
     :vartype target: float
     :ivar comparator: Comparison operator used for uptime evaluation. Required. Known values are:
-     "<", ">", "<=", and ">=".
+     "lt", "gt", "lte", and "gte".
     :vartype comparator: str or ~azure.mgmt.monitorslis.models.WindowUptimeCriteriaComparator
     """
 
@@ -911,8 +918,8 @@ class WindowUptimeCriteria(_Model):
     comparator: Union[str, "_models.WindowUptimeCriteriaComparator"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Comparison operator used for uptime evaluation. Required. Known values are: \"<\", \">\",
-     \"<=\", and \">=\"."""
+    """Comparison operator used for uptime evaluation. Required. Known values are: \"lt\", \"gt\",
+     \"lte\", and \"gte\"."""
 
     @overload
     def __init__(

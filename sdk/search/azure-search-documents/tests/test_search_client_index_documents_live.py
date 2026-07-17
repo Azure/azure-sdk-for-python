@@ -39,9 +39,7 @@ class TestSearchClientIndexDocuments(AzureRecordedTestCase):
 
         with hotel_index(self, endpoint, index_name) as (search_client, _):
             batch = IndexDocumentsBatch()
-            batch.add_upload_actions(
-                [build_hotel_document("1000", rating=5), build_hotel_document("1001", rating=4)]
-            )
+            batch.add_upload_actions([build_hotel_document("1000", rating=5), build_hotel_document("1001", rating=4)])
             batch.add_delete_actions([{"HotelId": "2"}])
             batch.add_merge_actions([{"HotelId": "3", "Rating": 1}])
 
@@ -126,9 +124,7 @@ class TestSearchClientIndexDocuments(AzureRecordedTestCase):
         index_name = self.get_resource_name("index-merge-documents-existing")
 
         with hotel_index(self, endpoint, index_name) as (search_client, _):
-            results = search_client.merge_documents(
-                [{"HotelId": "5", "Rating": 1}, {"HotelId": "6", "Rating": 2}]
-            )
+            results = search_client.merge_documents([{"HotelId": "5", "Rating": 1}, {"HotelId": "6", "Rating": 2}])
             self._wait_for_indexing()
 
             assert len(results) == 2

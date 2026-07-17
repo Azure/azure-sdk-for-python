@@ -21,7 +21,6 @@ USAGE:
     2) STORAGE_ACCOUNT_NAME - the name of the storage account
 """
 
-
 import asyncio
 import os
 import sys
@@ -38,12 +37,16 @@ class FileSamplesAsync(object):
 
     async def simple_file_operations_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: simple_file_operations_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: simple_file_operations_async"
+            )
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
+
         share = ShareClient.from_connection_string(self.connection_string, "filesamples1async")
 
         # Create the share
@@ -85,12 +88,16 @@ class FileSamplesAsync(object):
 
     async def copy_file_from_url_async(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
-                  "Test: copy_file_from_url_async")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: copy_file_from_url_async"
+            )
             sys.exit(1)
 
         # Instantiate the ShareClient from a connection string
         from azure.storage.fileshare.aio import ShareClient
+
         share = ShareClient.from_connection_string(self.connection_string, "filesamples2async")
 
         # Create the share
@@ -108,9 +115,7 @@ class FileSamplesAsync(object):
 
                 # Build the url from which to copy the file
                 source_url = "https://{}.file.core.windows.net/{}/{}".format(
-                    self.account_name,
-                    'filesamples2async',
-                    'sourcefile'
+                    self.account_name, "filesamples2async", "sourcefile"
                 )
 
                 # Copy the sample source file from the url to the destination file
@@ -127,5 +132,6 @@ async def main():
     await sample.simple_file_operations_async()
     await sample.copy_file_from_url_async()
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

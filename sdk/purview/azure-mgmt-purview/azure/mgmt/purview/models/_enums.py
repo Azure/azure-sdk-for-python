@@ -117,8 +117,8 @@ class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """None."""
     SYSTEM_ASSIGNED = "SystemAssigned"
     """SystemAssigned."""
-    USER_ASSIGNED = "UserAssigned"
-    """UserAssigned."""
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+    """Both SystemAssigned and UserAssigned identities."""
 
 
 class MergeAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

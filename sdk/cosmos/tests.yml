@@ -3,6 +3,8 @@ trigger: none
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      # Cosmos split lane takes long (real partition splits); 120 min default is too tight.
+      TestTimeoutInMinutes: 180
       CloudConfig:
         Public:
           ServiceConnection: azure-sdk-tests-cosmos
@@ -14,3 +16,8 @@ extends:
       MaxParallel: 8
       BuildTargetingString: azure-cosmos
       ServiceDirectory: cosmos
+      VariableGroups:
+        - 'Test Secrets for Cosmos Live Tests - user administered'
+      EnvVars:
+        GSI_ACCOUNT_HOST: $(gsi-pipeline-uri)
+        GSI_ACCOUNT_KEY: $(gsi-pipeline-key)

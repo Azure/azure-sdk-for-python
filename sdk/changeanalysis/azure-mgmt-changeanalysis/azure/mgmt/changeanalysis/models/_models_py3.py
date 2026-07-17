@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -6,16 +7,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-from typing import List, Optional, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .._utils import serialization as _serialization
 
-from ._azure_change_analysis_management_client_enums import *
+if TYPE_CHECKING:
+    from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -31,28 +34,43 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
 
 
-class Change(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+
+class Change(ProxyResource):
     """The detected change.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -65,81 +83,82 @@ class Change(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :param properties: The properties of a change.
-    :type properties: ~Microsoft.ChangeAnalysis.models.ChangeProperties
+    :ivar properties: The properties of a change.
+    :vartype properties: ~azure.mgmt.changeanalysis.models.ChangeProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'ChangeProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ChangeProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["ChangeProperties"] = None,
-        **kwargs
-    ):
-        super(Change, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.ChangeProperties"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: The properties of a change.
+        :paramtype properties: ~azure.mgmt.changeanalysis.models.ChangeProperties
+        """
+        super().__init__(**kwargs)
         self.properties = properties
 
 
-class ChangeList(msrest.serialization.Model):
+class ChangeList(_serialization.Model):
     """The list of detected changes.
 
-    :param value: The list of changes.
-    :type value: list[~Microsoft.ChangeAnalysis.models.Change]
-    :param next_link: The URI that can be used to request the next page of changes.
-    :type next_link: str
+    :ivar value: The list of changes.
+    :vartype value: list[~azure.mgmt.changeanalysis.models.Change]
+    :ivar next_link: The URI that can be used to request the next page of changes.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Change]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Change]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Change"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ChangeList, self).__init__(**kwargs)
+        self, *, value: Optional[list["_models.Change"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of changes.
+        :paramtype value: list[~azure.mgmt.changeanalysis.models.Change]
+        :keyword next_link: The URI that can be used to request the next page of changes.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ChangeProperties(msrest.serialization.Model):
+class ChangeProperties(_serialization.Model):
     """The properties of a change.
 
-    :param resource_id: The resource id that the change is attached to.
-    :type resource_id: str
-    :param time_stamp: The time when the change is detected.
-    :type time_stamp: ~datetime.datetime
-    :param initiated_by_list: The list of identities who might initiated the change.
-     The identity could be user name (email address) or the object ID of the Service Principal.
-    :type initiated_by_list: list[str]
-    :param change_type: The type of the change. Possible values include: "Add", "Remove", "Update".
-    :type change_type: str or ~Microsoft.ChangeAnalysis.models.ChangeType
-    :param property_changes: The list of detailed changes at json property level.
-    :type property_changes: list[~Microsoft.ChangeAnalysis.models.PropertyChange]
+    :ivar resource_id: The resource id that the change is attached to.
+    :vartype resource_id: str
+    :ivar time_stamp: The time when the change is detected.
+    :vartype time_stamp: ~datetime.datetime
+    :ivar initiated_by_list: The list of identities who might initiated the change. The identity
+     could be user name (email address) or the object ID of the Service Principal.
+    :vartype initiated_by_list: list[str]
+    :ivar change_type: The type of the change. Known values are: "Add", "Remove", and "Update".
+    :vartype change_type: str or ~azure.mgmt.changeanalysis.models.ChangeType
+    :ivar property_changes: The list of detailed changes at json property level.
+    :vartype property_changes: list[~azure.mgmt.changeanalysis.models.PropertyChange]
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'time_stamp': {'key': 'timeStamp', 'type': 'iso-8601'},
-        'initiated_by_list': {'key': 'initiatedByList', 'type': '[str]'},
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'property_changes': {'key': 'propertyChanges', 'type': '[PropertyChange]'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "time_stamp": {"key": "timeStamp", "type": "iso-8601"},
+        "initiated_by_list": {"key": "initiatedByList", "type": "[str]"},
+        "change_type": {"key": "changeType", "type": "str"},
+        "property_changes": {"key": "propertyChanges", "type": "[PropertyChange]"},
     }
 
     def __init__(
@@ -147,12 +166,25 @@ class ChangeProperties(msrest.serialization.Model):
         *,
         resource_id: Optional[str] = None,
         time_stamp: Optional[datetime.datetime] = None,
-        initiated_by_list: Optional[List[str]] = None,
-        change_type: Optional[Union[str, "ChangeType"]] = None,
-        property_changes: Optional[List["PropertyChange"]] = None,
-        **kwargs
-    ):
-        super(ChangeProperties, self).__init__(**kwargs)
+        initiated_by_list: Optional[list[str]] = None,
+        change_type: Optional[Union[str, "_models.ChangeType"]] = None,
+        property_changes: Optional[list["_models.PropertyChange"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword resource_id: The resource id that the change is attached to.
+        :paramtype resource_id: str
+        :keyword time_stamp: The time when the change is detected.
+        :paramtype time_stamp: ~datetime.datetime
+        :keyword initiated_by_list: The list of identities who might initiated the change. The identity
+         could be user name (email address) or the object ID of the Service Principal.
+        :paramtype initiated_by_list: list[str]
+        :keyword change_type: The type of the change. Known values are: "Add", "Remove", and "Update".
+        :paramtype change_type: str or ~azure.mgmt.changeanalysis.models.ChangeType
+        :keyword property_changes: The list of detailed changes at json property level.
+        :paramtype property_changes: list[~azure.mgmt.changeanalysis.models.PropertyChange]
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.time_stamp = time_stamp
         self.initiated_by_list = initiated_by_list
@@ -160,7 +192,7 @@ class ChangeProperties(msrest.serialization.Model):
         self.property_changes = property_changes
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -168,29 +200,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: object
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
-        self.type = None
-        self.info = None
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
+        self.info: Optional[JSON] = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -202,113 +232,135 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~Microsoft.ChangeAnalysis.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.changeanalysis.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~Microsoft.ChangeAnalysis.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.changeanalysis.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
-        self.details = None
-        self.additional_info = None
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
-class ErrorResponse(msrest.serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
+class ErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~Microsoft.ChangeAnalysis.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.changeanalysis.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.changeanalysis.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class PropertyChange(msrest.serialization.Model):
+class PropertyChange(_serialization.Model):
     """Data of a property change.
 
-    :param change_type: The type of the change. Possible values include: "Add", "Remove", "Update".
-    :type change_type: str or ~Microsoft.ChangeAnalysis.models.ChangeType
-    :param change_category: The change category. Possible values include: "User", "System".
-    :type change_category: str or ~Microsoft.ChangeAnalysis.models.ChangeCategory
-    :param json_path: The json path of the changed property.
-    :type json_path: str
-    :param display_name: The enhanced display name of the json path. E.g., the json path
+    :ivar change_type: The type of the change. Known values are: "Add", "Remove", and "Update".
+    :vartype change_type: str or ~azure.mgmt.changeanalysis.models.ChangeType
+    :ivar change_category: The change category. Known values are: "User" and "System".
+    :vartype change_category: str or ~azure.mgmt.changeanalysis.models.ChangeCategory
+    :ivar json_path: The json path of the changed property.
+    :vartype json_path: str
+    :ivar display_name: The enhanced display name of the json path. E.g., the json path
      value[0].properties will be translated to something meaningful like
      slots["Staging"].properties.
-    :type display_name: str
-    :param level:  Possible values include: "Noisy", "Normal", "Important".
-    :type level: str or ~Microsoft.ChangeAnalysis.models.Level
-    :param description: The description of the changed property.
-    :type description: str
-    :param old_value: The value of the property before the change.
-    :type old_value: str
-    :param new_value: The value of the property after the change.
-    :type new_value: str
-    :param is_data_masked: The boolean indicating whether the oldValue and newValue are masked. The
+    :vartype display_name: str
+    :ivar level: Known values are: "Noisy", "Normal", and "Important".
+    :vartype level: str or ~azure.mgmt.changeanalysis.models.Level
+    :ivar description: The description of the changed property.
+    :vartype description: str
+    :ivar old_value: The value of the property before the change.
+    :vartype old_value: str
+    :ivar new_value: The value of the property after the change.
+    :vartype new_value: str
+    :ivar is_data_masked: The boolean indicating whether the oldValue and newValue are masked. The
      values are masked if it contains sensitive information that the user doesn't have access to.
-    :type is_data_masked: bool
+    :vartype is_data_masked: bool
     """
 
     _attribute_map = {
-        'change_type': {'key': 'changeType', 'type': 'str'},
-        'change_category': {'key': 'changeCategory', 'type': 'str'},
-        'json_path': {'key': 'jsonPath', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'level': {'key': 'level', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'old_value': {'key': 'oldValue', 'type': 'str'},
-        'new_value': {'key': 'newValue', 'type': 'str'},
-        'is_data_masked': {'key': 'isDataMasked', 'type': 'bool'},
+        "change_type": {"key": "changeType", "type": "str"},
+        "change_category": {"key": "changeCategory", "type": "str"},
+        "json_path": {"key": "jsonPath", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "level": {"key": "level", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "old_value": {"key": "oldValue", "type": "str"},
+        "new_value": {"key": "newValue", "type": "str"},
+        "is_data_masked": {"key": "isDataMasked", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        change_type: Optional[Union[str, "ChangeType"]] = None,
-        change_category: Optional[Union[str, "ChangeCategory"]] = None,
+        change_type: Optional[Union[str, "_models.ChangeType"]] = None,
+        change_category: Optional[Union[str, "_models.ChangeCategory"]] = None,
         json_path: Optional[str] = None,
         display_name: Optional[str] = None,
-        level: Optional[Union[str, "Level"]] = None,
+        level: Optional[Union[str, "_models.Level"]] = None,
         description: Optional[str] = None,
         old_value: Optional[str] = None,
         new_value: Optional[str] = None,
         is_data_masked: Optional[bool] = None,
-        **kwargs
-    ):
-        super(PropertyChange, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword change_type: The type of the change. Known values are: "Add", "Remove", and "Update".
+        :paramtype change_type: str or ~azure.mgmt.changeanalysis.models.ChangeType
+        :keyword change_category: The change category. Known values are: "User" and "System".
+        :paramtype change_category: str or ~azure.mgmt.changeanalysis.models.ChangeCategory
+        :keyword json_path: The json path of the changed property.
+        :paramtype json_path: str
+        :keyword display_name: The enhanced display name of the json path. E.g., the json path
+         value[0].properties will be translated to something meaningful like
+         slots["Staging"].properties.
+        :paramtype display_name: str
+        :keyword level: Known values are: "Noisy", "Normal", and "Important".
+        :paramtype level: str or ~azure.mgmt.changeanalysis.models.Level
+        :keyword description: The description of the changed property.
+        :paramtype description: str
+        :keyword old_value: The value of the property before the change.
+        :paramtype old_value: str
+        :keyword new_value: The value of the property after the change.
+        :paramtype new_value: str
+        :keyword is_data_masked: The boolean indicating whether the oldValue and newValue are masked.
+         The values are masked if it contains sensitive information that the user doesn't have access
+         to.
+        :paramtype is_data_masked: bool
+        """
+        super().__init__(**kwargs)
         self.change_type = change_type
         self.change_category = change_category
         self.json_path = json_path
@@ -320,84 +372,56 @@ class PropertyChange(msrest.serialization.Model):
         self.is_data_masked = is_data_masked
 
 
-class ProxyResource(Resource):
-    """The resource model definition for a Azure Resource Manager proxy resource. It will not have tags and a location.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
-
-
-class ResourceProviderOperationDefinition(msrest.serialization.Model):
+class ResourceProviderOperationDefinition(_serialization.Model):
     """The resource provider operation definition.
 
-    :param name: The resource provider operation name.
-    :type name: str
-    :param display: The resource provider operation details.
-    :type display: ~Microsoft.ChangeAnalysis.models.ResourceProviderOperationDisplay
+    :ivar name: The resource provider operation name.
+    :vartype name: str
+    :ivar display: The resource provider operation details.
+    :vartype display: ~azure.mgmt.changeanalysis.models.ResourceProviderOperationDisplay
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceProviderOperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceProviderOperationDisplay"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceProviderOperationDisplay"] = None,
-        **kwargs
-    ):
-        super(ResourceProviderOperationDefinition, self).__init__(**kwargs)
+        display: Optional["_models.ResourceProviderOperationDisplay"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The resource provider operation name.
+        :paramtype name: str
+        :keyword display: The resource provider operation details.
+        :paramtype display: ~azure.mgmt.changeanalysis.models.ResourceProviderOperationDisplay
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
 
 
-class ResourceProviderOperationDisplay(msrest.serialization.Model):
+class ResourceProviderOperationDisplay(_serialization.Model):
     """The resource provider operation details.
 
-    :param provider: Name of the resource provider.
-    :type provider: str
-    :param resource: Name of the resource type.
-    :type resource: str
-    :param operation: Name of the resource provider operation.
-    :type operation: str
-    :param description: Description of the resource provider operation.
-    :type description: str
+    :ivar provider: Name of the resource provider.
+    :vartype provider: str
+    :ivar resource: Name of the resource type.
+    :vartype resource: str
+    :ivar operation: Name of the resource provider operation.
+    :vartype operation: str
+    :ivar description: Description of the resource provider operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -407,37 +431,54 @@ class ResourceProviderOperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         operation: Optional[str] = None,
         description: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceProviderOperationDisplay, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword provider: Name of the resource provider.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type.
+        :paramtype resource: str
+        :keyword operation: Name of the resource provider operation.
+        :paramtype operation: str
+        :keyword description: Description of the resource provider operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ResourceProviderOperationList(msrest.serialization.Model):
+class ResourceProviderOperationList(_serialization.Model):
     """The resource provider operation list.
 
-    :param value: Resource provider operations list.
-    :type value: list[~Microsoft.ChangeAnalysis.models.ResourceProviderOperationDefinition]
-    :param next_link: The URI that can be used to request the next page for list of Azure
+    :ivar value: Resource provider operations list.
+    :vartype value: list[~azure.mgmt.changeanalysis.models.ResourceProviderOperationDefinition]
+    :ivar next_link: The URI that can be used to request the next page for list of Azure
      operations.
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceProviderOperationDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ResourceProviderOperationDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["ResourceProviderOperationDefinition"]] = None,
+        value: Optional[list["_models.ResourceProviderOperationDefinition"]] = None,
         next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(ResourceProviderOperationList, self).__init__(**kwargs)
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: Resource provider operations list.
+        :paramtype value: list[~azure.mgmt.changeanalysis.models.ResourceProviderOperationDefinition]
+        :keyword next_link: The URI that can be used to request the next page for list of Azure
+         operations.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link

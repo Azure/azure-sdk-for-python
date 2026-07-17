@@ -103,6 +103,7 @@ class CertificateClient(AsyncKeyVaultClientBase):
             or policy.san_ip_addresses
             or policy.san_uris
             or policy.subject
+            or policy.platform_managed
         ):
             raise ValueError(NO_SAN_OR_SUBJECT)
 

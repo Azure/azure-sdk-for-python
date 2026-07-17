@@ -21,6 +21,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
@@ -40,7 +41,6 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
 
-    # [START tool_declaration]
     # Load the CSV file to be processed
     asset_file_path = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "../assets/synthetic_500_quarterly_results.csv")
@@ -51,13 +51,12 @@ with (
         file = openai_client.files.create(purpose="assistants", file=f)
 
     tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
-    # [END tool_declaration]
 
     print(f"File uploaded (id: {file.id})")
 
     # Create agent with code interpreter tool
     agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant.",

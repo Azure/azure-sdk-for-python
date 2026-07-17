@@ -1,5 +1,4 @@
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,13 +6,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, TYPE_CHECKING, Union
+from collections.abc import MutableMapping
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
+JSON = MutableMapping[str, Any]
 
 
 class Resource(_serialization.Model):
@@ -21,7 +21,7 @@ class Resource(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ARM resource identifier.
     :vartype id: str
@@ -50,7 +50,7 @@ class Resource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -58,19 +58,19 @@ class Resource(_serialization.Model):
         :paramtype tags: dict[str, str]
         """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
         self.location = location
         self.tags = tags
 
 
-class App(Resource):  # pylint: disable=too-many-instance-attributes
+class App(Resource):
     """The IoT Central application.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The ARM resource identifier.
     :vartype id: str
@@ -130,13 +130,13 @@ class App(Resource):  # pylint: disable=too-many-instance-attributes
         *,
         location: str,
         sku: "_models.AppSkuInfo",
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
         display_name: Optional[str] = None,
         subdomain: Optional[str] = None,
         template: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword location: The resource location. Required.
         :paramtype location: str
@@ -158,15 +158,16 @@ class App(Resource):  # pylint: disable=too-many-instance-attributes
         super().__init__(location=location, tags=tags, **kwargs)
         self.sku = sku
         self.identity = identity
-        self.application_id = None
+        self.application_id: Optional[str] = None
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
-        self.state = None
+        self.state: Optional[Union[str, "_models.AppState"]] = None
 
 
 class AppAvailabilityInfo(_serialization.Model):
-    """The properties indicating whether a given IoT Central application name or subdomain is available.
+    """The properties indicating whether a given IoT Central application name or subdomain is
+    available.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -190,12 +191,12 @@ class AppAvailabilityInfo(_serialization.Model):
         "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.name_available = None
-        self.reason = None
-        self.message = None
+        self.name_available: Optional[bool] = None
+        self.reason: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class AppListResult(_serialization.Model):
@@ -212,7 +213,9 @@ class AppListResult(_serialization.Model):
         "value": {"key": "value", "type": "[App]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, value: Optional[List["_models.App"]] = None, **kwargs):
+    def __init__(
+        self, *, next_link: Optional[str] = None, value: Optional[list["_models.App"]] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword next_link: The link used to get the next page of IoT Central Applications.
         :paramtype next_link: str
@@ -268,14 +271,14 @@ class AppPatch(_serialization.Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         sku: Optional["_models.AppSkuInfo"] = None,
         identity: Optional["_models.SystemAssignedServiceIdentity"] = None,
         display_name: Optional[str] = None,
         subdomain: Optional[str] = None,
         template: Optional[str] = None,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Instance tags.
         :paramtype tags: dict[str, str]
@@ -296,17 +299,17 @@ class AppPatch(_serialization.Model):
         self.tags = tags
         self.sku = sku
         self.identity = identity
-        self.application_id = None
+        self.application_id: Optional[str] = None
         self.display_name = display_name
         self.subdomain = subdomain
         self.template = template
-        self.state = None
+        self.state: Optional[Union[str, "_models.AppState"]] = None
 
 
 class AppSkuInfo(_serialization.Model):
     """Information about the SKU of the IoT Central application.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the SKU. Required. Known values are: "ST0", "ST1", and "ST2".
     :vartype name: str or ~azure.mgmt.iotcentral.models.AppSku
@@ -320,7 +323,7 @@ class AppSkuInfo(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, name: Union[str, "_models.AppSku"], **kwargs):
+    def __init__(self, *, name: Union[str, "_models.AppSku"], **kwargs: Any) -> None:
         """
         :keyword name: The name of the SKU. Required. Known values are: "ST0", "ST1", and "ST2".
         :paramtype name: str or ~azure.mgmt.iotcentral.models.AppSku
@@ -374,17 +377,17 @@ class AppTemplate(_serialization.Model):
         "locations": {"key": "locations", "type": "[AppTemplateLocations]"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.manifest_id = None
-        self.manifest_version = None
-        self.name = None
-        self.title = None
-        self.order = None
-        self.description = None
-        self.industry = None
-        self.locations = None
+        self.manifest_id: Optional[str] = None
+        self.manifest_version: Optional[str] = None
+        self.name: Optional[str] = None
+        self.title: Optional[str] = None
+        self.order: Optional[float] = None
+        self.description: Optional[str] = None
+        self.industry: Optional[str] = None
+        self.locations: Optional[list["_models.AppTemplateLocations"]] = None
 
 
 class AppTemplateLocations(_serialization.Model):
@@ -408,11 +411,11 @@ class AppTemplateLocations(_serialization.Model):
         "display_name": {"key": "displayName", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.display_name = None
+        self.id: Optional[str] = None
+        self.display_name: Optional[str] = None
 
 
 class AppTemplatesResult(_serialization.Model):
@@ -435,14 +438,14 @@ class AppTemplatesResult(_serialization.Model):
         "value": {"key": "value", "type": "[AppTemplate]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of IoT Central application templates.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.next_link = next_link
-        self.value = None
+        self.value: Optional[list["_models.AppTemplate"]] = None
 
 
 class CloudErrorBody(_serialization.Model):
@@ -473,15 +476,15 @@ class CloudErrorBody(_serialization.Model):
         "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
-    def __init__(self, *, details: Optional[List["_models.CloudErrorBody"]] = None, **kwargs):
+    def __init__(self, *, details: Optional[list["_models.CloudErrorBody"]] = None, **kwargs: Any) -> None:
         """
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.iotcentral.models.CloudErrorBody]
         """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.target = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
         self.details = details
 
 
@@ -513,16 +516,16 @@ class Operation(_serialization.Model):
         "properties": {"key": "properties", "type": "object"},
     }
 
-    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.iotcentral.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = None
+        self.name: Optional[str] = None
         self.display = display
-        self.origin = None
-        self.properties = None
+        self.origin: Optional[str] = None
+        self.properties: Optional[JSON] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -554,19 +557,19 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.provider = None
-        self.resource = None
-        self.operation = None
-        self.description = None
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationInputs(_serialization.Model):
     """Input values.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar name: The name of the IoT Central application instance to check. Required.
     :vartype name: str
@@ -583,7 +586,7 @@ class OperationInputs(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, name: str, type: str = "IoTApps", **kwargs):
+    def __init__(self, *, name: str, type: str = "IoTApps", **kwargs: Any) -> None:
         """
         :keyword name: The name of the IoT Central application instance to check. Required.
         :paramtype name: str
@@ -596,7 +599,8 @@ class OperationInputs(_serialization.Model):
 
 
 class OperationListResult(_serialization.Model):
-    """A list of IoT Central operations. It contains a list of operations and a URL link to get the next set of results.
+    """A list of IoT Central operations. It contains a list of operations and a URL link to get the
+    next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -615,14 +619,14 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword next_link: The link used to get the next page of IoT Central description objects.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.next_link = next_link
-        self.value = None
+        self.value: Optional[list["_models.Operation"]] = None
 
 
 class SystemAssignedServiceIdentity(_serialization.Model):
@@ -630,7 +634,7 @@ class SystemAssignedServiceIdentity(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar principal_id: The service principal ID of the system assigned identity. This property
      will only be provided for a system assigned identity.
@@ -655,13 +659,13 @@ class SystemAssignedServiceIdentity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, type: Union[str, "_models.SystemAssignedServiceIdentityType"], **kwargs):
+    def __init__(self, *, type: Union[str, "_models.SystemAssignedServiceIdentityType"], **kwargs: Any) -> None:
         """
         :keyword type: Type of managed service identity (either system assigned, or none). Required.
          Known values are: "None" and "SystemAssigned".
         :paramtype type: str or ~azure.mgmt.iotcentral.models.SystemAssignedServiceIdentityType
         """
         super().__init__(**kwargs)
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id: Optional[str] = None
+        self.tenant_id: Optional[str] = None
         self.type = type

@@ -27,7 +27,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
             resource_group_name=resource_group.name,
             network_interface_name="str",
             tap_configuration_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -58,6 +58,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                     "id": "str",
                                     "name": "str",
                                     "properties": {
+                                        "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                         "gatewayLoadBalancer": {"id": "str"},
                                         "inboundNatPools": [{"id": "str"}],
                                         "inboundNatRules": [{"id": "str"}],
@@ -75,6 +76,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             "name": "str",
                                             "properties": {
                                                 "ddosSettings": {
+                                                    "ddosCustomPolicy": {"id": "str"},
                                                     "ddosProtectionPlan": {"id": "str"},
                                                     "protectionMode": "str",
                                                 },
@@ -481,6 +483,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -623,6 +626,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -815,6 +819,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -1378,6 +1383,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -1389,6 +1395,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -1474,6 +1483,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     "name": "str",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 0,
+                                                        "nat64": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -1562,6 +1572,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -1585,6 +1596,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -1901,6 +1913,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1942,6 +1957,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -2021,6 +2037,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -2152,6 +2169,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -2335,6 +2353,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -2553,6 +2572,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2594,6 +2616,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2962,6 +2985,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -2973,6 +2997,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -3162,6 +3187,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                             "name": "str",
                                             "properties": {
                                                 "ddosSettings": {
+                                                    "ddosCustomPolicy": {"id": "str"},
                                                     "ddosProtectionPlan": {"id": "str"},
                                                     "protectionMode": "str",
                                                 },
@@ -3404,6 +3430,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -3515,6 +3542,11 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -3586,6 +3618,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -3778,6 +3811,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -4086,6 +4120,11 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -4217,6 +4256,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -4228,6 +4268,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -4313,6 +4356,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     "name": "str",
                                                     "properties": {
                                                         "idleTimeoutInMinutes": 0,
+                                                        "nat64": "str",
                                                         "provisioningState": "str",
                                                         "publicIpAddresses": [{"id": "str"}],
                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -4400,6 +4444,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "ddosSettings": {
+                                                                        "ddosCustomPolicy": {"id": "str"},
                                                                         "ddosProtectionPlan": {"id": "str"},
                                                                         "protectionMode": "str",
                                                                     },
@@ -4423,6 +4468,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "idleTimeoutInMinutes": 0,
+                                                                            "nat64": "str",
                                                                             "provisioningState": "str",
                                                                             "publicIpAddresses": [{"id": "str"}],
                                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -4612,6 +4658,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -4712,6 +4759,11 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -4742,6 +4794,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4783,6 +4838,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -4884,6 +4940,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -5067,6 +5124,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -5358,6 +5416,11 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5388,6 +5451,9 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -5429,6 +5495,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -5588,6 +5655,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                     "name": "str",
                                                     "properties": {
                                                         "disableBgpRoutePropagation": bool,
+                                                        "disablePeeringRoute": "str",
                                                         "provisioningState": "str",
                                                         "resourceGuid": "str",
                                                         "routes": [
@@ -5599,6 +5667,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                                                                     "nextHopType": "str",
                                                                     "addressPrefix": "str",
                                                                     "hasBgpOverride": bool,
+                                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                     "nextHopIpAddress": "str",
                                                                     "provisioningState": "str",
                                                                 },
@@ -5685,7 +5754,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5700,7 +5769,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
                 resource_group_name=resource_group.name,
                 network_interface_name="str",
                 tap_configuration_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -5713,7 +5782,7 @@ class TestNetworkManagementNetworkInterfaceTapConfigurationsOperationsAsync(Azur
         response = self.client.network_interface_tap_configurations.list(
             resource_group_name=resource_group.name,
             network_interface_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

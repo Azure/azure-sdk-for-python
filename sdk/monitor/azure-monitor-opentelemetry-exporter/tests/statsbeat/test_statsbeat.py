@@ -10,7 +10,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 from azure.monitor.opentelemetry.exporter.statsbeat import StatsbeatConfig, _statsbeat
 from azure.monitor.opentelemetry.exporter.statsbeat._manager import StatsbeatManager
-from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatFeature
+from azure.monitor.opentelemetry.exporter.statsbeat._statsbeat_metrics import _StatsbeatFeature, _StatsbeatMetrics
 from azure.monitor.opentelemetry.exporter.statsbeat._state import (
     _STATSBEAT_STATE,
     _STATSBEAT_STATE_LOCK,
@@ -23,6 +23,8 @@ from azure.monitor.opentelemetry.exporter._constants import (
 )
 
 # cSpell:disable
+
+_StatsbeatMetrics_FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics._FEATURE_ATTRIBUTES)
 
 
 # pylint: disable=protected-access, unused-argument
@@ -41,6 +43,8 @@ class TestStatsbeat(unittest.TestCase):
             _STATSBEAT_STATE["CUSTOM_EVENTS_FEATURE_SET"] = False
             _STATSBEAT_STATE["LIVE_METRICS_FEATURE_SET"] = False
             _STATSBEAT_STATE["CUSTOMER_SDKSTATS_FEATURE_SET"] = False
+            _STATSBEAT_STATE["FEATURE_ATTRIBUTE_BITS"] = 0
+        _StatsbeatMetrics._FEATURE_ATTRIBUTES = dict(_StatsbeatMetrics_FEATURE_ATTRIBUTES)
 
     def tearDown(self):
         """Clean up after tests."""
@@ -56,7 +60,10 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.AzureMonitorMetricExporter")
-    def test_collect_statsbeat_metrics(self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics):
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
+    def test_collect_statsbeat_metrics(
+        self, mock_timer_class, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics
+    ):
         """Test that collect_statsbeat_metrics properly initializes statsbeat collection."""
         # Arrange
         exporter = mock.Mock()
@@ -78,6 +85,9 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock = mock.Mock()
         mock_meter_provider_instance.force_flush = flush_mock
 
+        mock_timer = mock.Mock()
+        mock_timer_class.return_value = mock_timer
+
         mock_statsbeat_metrics_instance = mock.Mock()
         mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
 
@@ -86,6 +96,10 @@ class TestStatsbeat(unittest.TestCase):
 
         # Act
         _statsbeat.collect_statsbeat_metrics(exporter)
+
+        # Simulate warmup timer callback execution.
+        timer_callback = mock_timer_class.call_args[0][1]
+        timer_callback()
 
         # Assert - verify manager is initialized
         self.assertTrue(manager._initialized)
@@ -329,8 +343,15 @@ class TestStatsbeat(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.MeterProvider")
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.PeriodicExportingMetricReader")
     @mock.patch("azure.monitor.opentelemetry.exporter.export.metrics._exporter.AzureMonitorMetricExporter")
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._manager.threading.Timer")
     def test_collect_statsbeat_metrics_exists(
-        self, mock_exporter, mock_reader, mock_meter_provider, mock_statsbeat_metrics, mock_get_manager
+        self,
+        mock_timer_class,
+        mock_exporter,
+        mock_reader,
+        mock_meter_provider,
+        mock_statsbeat_metrics,
+        mock_get_manager,
     ):
         """Test that collect_statsbeat_metrics reuses existing configuration when called multiple times with same config."""  # pylint: disable=line-too-long
         # Arrange
@@ -353,6 +374,9 @@ class TestStatsbeat(unittest.TestCase):
         flush_mock = mock.Mock()
         mock_meter_provider_instance.force_flush = flush_mock
 
+        mock_timer = mock.Mock()
+        mock_timer_class.return_value = mock_timer
+
         mock_statsbeat_metrics_instance = mock.Mock()
         mock_statsbeat_metrics.return_value = mock_statsbeat_metrics_instance
 
@@ -362,6 +386,8 @@ class TestStatsbeat(unittest.TestCase):
 
         # Act - Initialize first time
         _statsbeat.collect_statsbeat_metrics(exporter)
+        timer_callback = mock_timer_class.call_args[0][1]
+        timer_callback()
         first_metrics = manager._metrics
         self.assertTrue(manager._initialized)
         self.assertEqual(first_metrics, mock_statsbeat_metrics_instance)

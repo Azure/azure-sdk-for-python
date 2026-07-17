@@ -1,0 +1,32 @@
+{
+    "CrossLanguagePackageId": null,
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.marketplaceordering.models.Resource": null,
+        "azure.mgmt.marketplaceordering.models.AgreementTerms": null,
+        "azure.mgmt.marketplaceordering.models.ErrorResponse": null,
+        "azure.mgmt.marketplaceordering.models.ErrorResponseError": null,
+        "azure.mgmt.marketplaceordering.models.OldAgreementTerms": null,
+        "azure.mgmt.marketplaceordering.models.OldAgreementTermsList": null,
+        "azure.mgmt.marketplaceordering.models.Operation": null,
+        "azure.mgmt.marketplaceordering.models.OperationDisplay": null,
+        "azure.mgmt.marketplaceordering.models.OperationListResult": null,
+        "azure.mgmt.marketplaceordering.models.SystemData": null,
+        "azure.mgmt.marketplaceordering.models.State": null,
+        "azure.mgmt.marketplaceordering.models.OfferType": null,
+        "azure.mgmt.marketplaceordering.models.CreatedByType": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.get": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.get": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.create": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.create": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.sign": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.sign": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.cancel": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.cancel": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.get_agreement": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.get_agreement": null,
+        "azure.mgmt.marketplaceordering.operations.MarketplaceAgreementsOperations.list": null,
+        "azure.mgmt.marketplaceordering.aio.operations.MarketplaceAgreementsOperations.list": null,
+        "azure.mgmt.marketplaceordering.operations.Operations.list": null,
+        "azure.mgmt.marketplaceordering.aio.operations.Operations.list": null
+    }
+}

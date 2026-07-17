@@ -105,5 +105,6 @@
         "azure.mgmt.certificateregistration.aio.operations.CertificateOrdersDiagnosticsOperations.list_app_service_certificate_order_detector_response": "Microsoft.CertificateRegistration.CertificateOrdersDiagnostics.listAppServiceCertificateOrderDetectorResponse",
         "azure.mgmt.certificateregistration.operations.CertificateRegistrationProviderOperations.list_operations": "Azure.ResourceManager.Legacy.Operations.list",
         "azure.mgmt.certificateregistration.aio.operations.CertificateRegistrationProviderOperations.list_operations": "Azure.ResourceManager.Legacy.Operations.list"
-    }
+    },
+    "CrossLanguageVersion": "17fac497d8c4"
 }

@@ -1,6 +1,9 @@
 # Azure AI Agent Server Invocations client library for Python
 
-The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
+The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and supports two transports on the same host:
+
+- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
+- **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
 
 ## Getting started
 
@@ -25,6 +28,7 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 - `@app.invoke_handler` — **Required.** Handles `POST /invocations`.
 - `@app.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
 - `@app.cancel_invocation_handler` — Optional. Handles `POST /invocations/{id}/cancel`.
+- `@app.ws_handler` — Optional. Handles WebSocket connections at `/invocations_ws`.
 
 ### Protocol endpoints
 
@@ -34,6 +38,9 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 | `GET` | `/invocations/{invocation_id}` | No | Retrieve invocation status or result |
 | `POST` | `/invocations/{invocation_id}/cancel` | No | Cancel a running invocation |
 | `GET` | `/invocations/docs/openapi.json` | No | Serve the agent's OpenAPI 3.x spec |
+| `GET` | `/invocations/docs/asyncapi.json` | No | Serve the agent's AsyncAPI 3.x spec (JSON) |
+| `GET` | `/invocations/docs/asyncapi.yaml` | No | Serve the agent's AsyncAPI 3.x spec (YAML) |
+| `WS`   | `/invocations_ws` | No | Full-duplex WebSocket transport (`invocations_ws` protocol) |
 
 ### Request and response headers
 
@@ -60,6 +67,8 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 - `request.state.invocation_id` — The invocation ID (echoed or generated).
 - `request.state.session_id` — The resolved session ID (POST /invocations only).
+- `request.state.user_id` — The per-user ID from `x-agent-user-id` (container protocol `2.0.0`); use for per-user state.
+- `request.state.call_id` — The per-request call ID from `x-agent-foundry-call-id` (protocol `2.0.0`); forward on outbound Foundry calls.
 
 ### Distributed tracing
 
@@ -86,6 +95,42 @@ app = InvocationAgentServerHost()
 async def handle(request: Request) -> Response:
     data = await request.json()
     return JSONResponse({"greeting": f"Hello, {data['name']}!"})
+
+app.run()
+```
+
+### Multi-user session (per-request call ID)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `request.state.user_id` only for the container's own per-user state.)
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler
+async def handle(request: Request) -> Response:
+    # platform_headers() echoes x-agent-foundry-call-id only (never x-agent-user-id).
+    headers = get_request_context().platform_headers()
+
+    # Toolbox / MCP — attach the call ID PER CALL (the MCP session is shared across users/turns).
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **headers},  # get_agent_token(): the agent's managed-identity token
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+        # The toolbox resolved the caller from the call ID and returned THIS user's issues.
+
+    return JSONResponse(resp.json())
 
 app.run()
 ```
@@ -182,6 +227,102 @@ app = InvocationAgentServerHost(openapi_spec={
 })
 ```
 
+### Serving an AsyncAPI spec
+
+AsyncAPI is the companion to OpenAPI for streaming/bidirectional surfaces (e.g. the
+`invocations_ws` WebSocket protocol) that OpenAPI cannot express. Pass either or both
+representations to enable the discovery endpoints:
+
+```python
+app = InvocationAgentServerHost(
+    asyncapi_spec_json={
+        "asyncapi": "3.0.0",
+        "info": {"title": "My Agent", "version": "1.0.0"},
+        "channels": { ... },
+        "operations": { ... },
+    },
+    asyncapi_spec_yaml="""asyncapi: 3.0.0
+info:
+  title: My Agent
+  version: 1.0.0
+channels:
+  ...
+""",
+)
+```
+
+Each representation is served at its own path:
+
+- `GET /invocations/docs/asyncapi.json` — `application/json`
+- `GET /invocations/docs/asyncapi.yaml` — `application/yaml`
+
+The path extension is authoritative for the returned content type (no `Accept`
+negotiation, no format conversion). If you only pass one, the other returns `404`.
+Serving both is recommended for tooling compatibility.
+
+## WebSocket protocol (`invocations_ws`)
+
+The same `InvocationAgentServerHost` object also exposes a WebSocket transport at `/invocations_ws`. Container authors do not install or import a second package — registering an `@app.ws_handler` is the only step. A multi-protocol agent shares one host, one session, and one process.
+
+### Quick start
+
+```python
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+from starlette.websockets import WebSocket
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler                 # POST /invocations (HTTP)
+async def invoke(request: Request) -> Response:
+    payload = await request.json()
+    return JSONResponse({"echo": payload})
+
+
+@app.ws_handler                     # /invocations_ws (WebSocket)
+async def ws(websocket: WebSocket) -> None:
+    async for message in websocket.iter_text():
+        await websocket.send_text(message)
+
+
+app.run()
+```
+
+### What the SDK does for `@app.ws_handler`
+
+- Registers `/invocations_ws` on the same Starlette host as `/invocations` and `/readiness`.
+- Calls `await websocket.accept()` before invoking your handler.
+- Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). Set the value to `0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across upstream proxy / load-balancer idle timeouts without any extra application traffic.
+- Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
+- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
+- Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
+
+### Per-connection tracing
+
+A WebSocket connection is wrapped by the SDK in a single connection-scoped `websocket_session` OpenTelemetry span. The span carries the GenAI semantic-convention attributes plus `azure.ai.agentserver.invocations_ws.session_id`, `close_code`, and `duration_ms`. Any child spans your handler opens — e.g. via `opentelemetry.trace.get_tracer(...).start_as_current_span(...)` — are automatically parented to the connection span.
+
+### Handler signature
+
+The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`. The full WebSocket API — `iter_text`, `iter_bytes`, `iter_json`, `send_text`, `send_bytes`, `send_json`, `close`, `headers`, `query_params`, `client`, `state` — is available, so application protocols on top of `invocations_ws` are entirely under your control.
+
+[starlette-ws]: https://www.starlette.io/websockets/
+
+### Reference: configuration
+
+| Environment variable | Default | Description |
+|---|---|---|
+| `WS_KEEPALIVE_INTERVAL` | unset (disabled) | Platform-injected WebSocket Ping interval, in seconds. `0` disables keep-alive. Surfaced on `app.config.ws_ping_interval` and wired into Hypercorn's `websocket_ping_interval` by `AgentServerHost`. |
+
+### Reference: close codes
+
+| Close code | Meaning |
+|---|---|
+| `1000` | Handler returned cleanly (normal close). |
+| `1011` | Handler raised an unhandled exception (mapped by the SDK). |
+| `4000`-`4999` | Application-defined codes (set by the handler via `await websocket.close(code=...)` — surfaced unchanged to the client). |
+
 ## Troubleshooting
 
 ### Reporting issues
@@ -196,6 +337,8 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 |---|---|
 | [simple_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/simple_invoke_agent/) | Minimal synchronous request-response |
 | [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
+| [ws_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent/) | Combined `POST /invocations` (HTTP) and `/invocations_ws` (WebSocket) host |
+| [ws_bidirectional_streaming_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent/) | Full-duplex `/invocations_ws` agent: concurrent token streams + mid-flight cancel (relies on the SDK's WS protocol Ping/Pong keep-alive, not application-level heartbeats) |
 
 ## Contributing
 

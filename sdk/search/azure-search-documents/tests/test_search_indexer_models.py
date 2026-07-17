@@ -1,22 +1,34 @@
+# pylint: disable=line-too-long
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Unit tests for search indexer model helper serialization."""
+"""Unit tests for hand-written overload contracts on indexer models.
+
+These tests verify the public API promises declared by `@overload`
+signatures in `azure.search.documents.indexes.models._patch`:
+
+* `SearchIndexerDataSourceConnection(connection_string=...)` is a
+  hand-written alternative to passing `credentials=DataSourceCredentials(...)`.
+* `SearchResourceEncryptionKey()` accepts a no-arg construction and
+  exposes `is_service_level_key` as an optional preview-only field.
+
+If a future regeneration changes the generated parent so these
+constructions fail or serialize differently, these tests catch the
+silent regression before it reaches customers.
+"""
 
 from __future__ import annotations
 
 from azure.search.documents.indexes.models import (
-    CognitiveServicesAccountKey,
-    InputFieldMappingEntry,
-    OutputFieldMappingEntry,
     SearchIndexerDataContainer,
     SearchIndexerDataSourceConnection,
     SearchIndexerDataSourceType,
-    SearchIndexerSkillset,
-    SplitSkill,
-    TextSplitMode,
+    SearchResourceEncryptionKey,
 )
+
+from _capabilities import require_capability
+
 
 DATA_SOURCE_NAME = "hotel-data-source"
 CONNECTION_STRING = (
@@ -24,11 +36,6 @@ CONNECTION_STRING = (
     "providers/Microsoft.Storage/storageAccounts/hotels"
 )
 CONTAINER_NAME = "hotel-documents"
-REPLACEMENT_CONNECTION_STRING = "<unchanged>"
-SKILLSET_NAME = "hotel-skillset"
-SPLIT_SKILL_NAME = "split-hotel-description"
-COGNITIVE_SERVICES_KEY = "00000000000000000000000000000000"
-COGNITIVE_SERVICES_DESCRIPTION = "Skillset cognitive services account"
 
 
 def create_data_source(connection_string=CONNECTION_STRING):
@@ -40,27 +47,7 @@ def create_data_source(connection_string=CONNECTION_STRING):
     )
 
 
-def create_skillset():
-    return SearchIndexerSkillset(
-        name=SKILLSET_NAME,
-        skills=[
-            SplitSkill(
-                name=SPLIT_SKILL_NAME,
-                inputs=[InputFieldMappingEntry(name="text", source="/document/Description")],
-                outputs=[OutputFieldMappingEntry(name="textItems", target_name="pages")],
-                context="/document",
-                text_split_mode=TextSplitMode.PAGES,
-                maximum_page_length=5000,
-            )
-        ],
-        cognitive_services_account=CognitiveServicesAccountKey(
-            key=COGNITIVE_SERVICES_KEY,
-            description=COGNITIVE_SERVICES_DESCRIPTION,
-        ),
-    )
-
-
-class TestSearchIndexerDataSourceConnectionSerialization:
+class TestSearchIndexerDataSourceConnectionOverloads:
     def test_connection_string_overload_serializes_as_nested_credentials(self):
         data_source = create_data_source()
 
@@ -73,42 +60,12 @@ class TestSearchIndexerDataSourceConnectionSerialization:
             "container": {"name": CONTAINER_NAME},
         }
 
-    def test_connection_string_property_round_trips_through_credentials(self):
-        data_source = create_data_source()
 
-        data_source.connection_string = REPLACEMENT_CONNECTION_STRING
+class TestSearchResourceEncryptionKeyOverloads:
+    def test_search_resource_encryption_key_allows_service_level_key_without_vault_details(self):
+        require_capability("azure.search.documents.indexes.models.SearchResourceEncryptionKey.is_service_level_key")
 
-        assert data_source.connection_string == REPLACEMENT_CONNECTION_STRING
-        assert data_source.credentials.connection_string == REPLACEMENT_CONNECTION_STRING
-        assert data_source.as_dict()["credentials"] == {"connectionString": REPLACEMENT_CONNECTION_STRING}
+        encryption_key = SearchResourceEncryptionKey()
+        encryption_key.is_service_level_key = True
 
-
-class TestSearchIndexerSkillsetSerialization:
-    def test_skillset_round_trips_split_skill_and_cognitive_services(self):
-        skillset = create_skillset()
-
-        serialized = skillset.as_dict()
-        round_trip = SearchIndexerSkillset(serialized)
-
-        assert serialized["name"] == SKILLSET_NAME
-        assert serialized["cognitiveServices"] == {
-            "@odata.type": "#Microsoft.Azure.Search.CognitiveServicesByKey",
-            "description": COGNITIVE_SERVICES_DESCRIPTION,
-            "key": COGNITIVE_SERVICES_KEY,
-        }
-        assert serialized["skills"][0]["@odata.type"] == "#Microsoft.Skills.Text.SplitSkill"
-        assert serialized["skills"][0]["name"] == SPLIT_SKILL_NAME
-        assert serialized["skills"][0]["context"] == "/document"
-        assert serialized["skills"][0]["inputs"] == [{"name": "text", "source": "/document/Description"}]
-        assert serialized["skills"][0]["outputs"] == [{"name": "textItems", "targetName": "pages"}]
-        assert serialized["skills"][0]["textSplitMode"] == "pages"
-        assert serialized["skills"][0]["maximumPageLength"] == 5000
-        assert round_trip.name == SKILLSET_NAME
-        assert round_trip.cognitive_services_account.key == COGNITIVE_SERVICES_KEY
-        assert round_trip.cognitive_services_account.description == COGNITIVE_SERVICES_DESCRIPTION
-        assert round_trip.skills[0].name == SPLIT_SKILL_NAME
-        assert round_trip.skills[0].context == "/document"
-        assert round_trip.skills[0].inputs[0].source == "/document/Description"
-        assert round_trip.skills[0].outputs[0].target_name == "pages"
-        assert round_trip.skills[0].text_split_mode == "pages"
-        assert round_trip.skills[0].maximum_page_length == 5000
+        assert encryption_key.as_dict() == {"isServiceLevelKey": True}

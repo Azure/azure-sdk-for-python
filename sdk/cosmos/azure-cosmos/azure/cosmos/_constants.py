@@ -90,6 +90,12 @@ class _Constants:
     TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT: int = 10
     # -------------------------------------------------------------------------
 
+    # Controls how the SDK handles invalid UTF-8 bytes in HTTP response bodies.
+    # Accepted values: "REPLACE", "IGNORE". Anything else (including unset)
+    # leaves strict decoding in effect, which is the historical default.
+    CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT: str = \
+        "AZURE_COSMOS_CHARSET_DECODER_ERROR_ACTION_ON_MALFORMED_INPUT"
+
     # Error code translations
     ERROR_TRANSLATIONS: dict[int, str] = {
         400: "BAD_REQUEST - Request being sent is invalid.",

@@ -239,6 +239,51 @@ class TestSampleCreateAnalyzerWithLabels(ContentUnderstandingClientTestBase):
                 if result.knowledge_sources:
                     print(f"[PASS] Knowledge sources: {len(result.knowledge_sources)}")
 
+            # Test analyzer with a sample document if training data was provided
+            if container_sas_url:
+                from azure.ai.contentunderstanding.models import (
+                    AnalysisInput,
+                    AnalysisResult,
+                    DocumentContent,
+                    StringField,
+                )
+
+                test_data_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "test_data"))
+                pdf_files = sorted(
+                    file_name for file_name in os.listdir(test_data_dir) if file_name.lower().endswith(".pdf")
+                )
+                assert pdf_files, f"No PDF test files found in {test_data_dir}"
+                test_doc_path = os.path.join(test_data_dir, pdf_files[0])
+                with open(test_doc_path, "rb") as test_doc_file:
+                    test_doc_data = test_doc_file.read()
+
+                analyze_poller = client.begin_analyze(
+                    analyzer_id=analyzer_id,
+                    inputs=[AnalysisInput(data=test_doc_data)],
+                )
+                analyze_result: AnalysisResult = analyze_poller.result()
+                assert analyze_result is not None, "Analyze result should not be None"
+                assert (
+                    analyze_result.contents and len(analyze_result.contents) > 0
+                ), "Analyze result should contain at least one content"
+                print(
+                    f"[PASS] Analyze completed with {len(analyze_result.contents)} content(s) "
+                    f"using local test file '{os.path.basename(test_doc_path)}'"
+                )
+
+                content_obj = analyze_result.contents[0]
+                assert isinstance(
+                    content_obj, DocumentContent
+                ), "First content should be DocumentContent"
+                if content_obj.fields:
+                    print(f"[PASS] Extracted fields: {len(content_obj.fields)}")
+                    merchant_field = content_obj.fields.get("MerchantName")
+                    if isinstance(merchant_field, StringField) and merchant_field.value:
+                        print(f"[PASS] MerchantName: {merchant_field.value}")
+                    total_field = content_obj.fields.get("TotalPrice")
+                    if isinstance(total_field, StringField) and total_field.value:
+                        print(f"[PASS] TotalPrice: {total_field.value}")
+
         except ResourceNotFoundError as proxy_error:
             # Check if this is a test proxy playback error (missing recording)
             error_msg = str(proxy_error)

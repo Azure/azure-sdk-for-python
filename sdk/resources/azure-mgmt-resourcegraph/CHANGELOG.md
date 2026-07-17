@@ -1,5 +1,36 @@
 # Release History
 
+## 8.1.0b4 (2026-06-02)
+
+### Features Added
+
+  - Client `ResourceGraphClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ResourceGraphClient` added method `send_request`
+  - Client `ResourceGraphClient` added operation group `graph_query`
+  - Added enum `CreatedByType`
+  - Added model `ErrorFieldContract`
+  - Added model `GraphQueryError`
+  - Added model `GraphQueryErrorError`
+  - Added model `GraphQueryProperties`
+  - Added model `GraphQueryPropertiesUpdateParameters`
+  - Added model `GraphQueryResource`
+  - Added model `GraphQueryUpdateParameters`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added enum `ResultKind`
+  - Added model `SystemData`
+  - Added model `GraphQueryOperations`
+
+### Breaking Changes
+
+  - Method `ResourceGraphClient.__init__` inserted a `positional_or_keyword` parameter `subscription_id`
+
+### Other Changes
+
+  - Deleted model `Column`/`ColumnDataType`/`Table` which actually was not used by SDK users
+  - Method `ResourceGraphClient.resources_history` changed return type from `JSON` to `Any`
+  - Renamed operation group `ResourceGraphClientOperationsMixin` to `_ResourceGraphClientOperationsMixin`
+
 ## 8.0.1 (2025-11-24)
 
 ### Other Changes

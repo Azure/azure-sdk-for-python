@@ -1,8 +1,0 @@
-include *.md
-include LICENSE
-include client/alternateapiversion/service/query/py.typed
-recursive-include tests *.py
-recursive-include samples *.py *.md
-include client/__init__.py
-include client/alternateapiversion/__init__.py
-include client/alternateapiversion/service/__init__.py

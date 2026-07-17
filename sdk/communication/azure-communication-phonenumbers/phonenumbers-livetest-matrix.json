@@ -24,7 +24,7 @@
         "COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST": "false"
       }
     },
-    "PythonVersion": ["pypy3.11", "3.11", "3.12"],
+    "PythonVersion": ["3.11", "3.12"],
     "CoverageArg": "--disablecov",
     "TestSamples": "false"
   },

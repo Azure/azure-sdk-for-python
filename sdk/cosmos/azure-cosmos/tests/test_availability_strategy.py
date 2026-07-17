@@ -15,7 +15,7 @@ from azure.core.exceptions import ServiceResponseError
 
 import test_config
 from _fault_injection_transport import FaultInjectionTransport
-from azure.cosmos import CosmosClient, _location_cache
+from azure.cosmos import _location_cache
 from azure.cosmos._availability_strategy_config import _validate_request_hedging_strategy
 from azure.cosmos.documents import _OperationType as OperationType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -33,6 +33,14 @@ class MockHandler(logging.Handler):
 
     def emit(self, record):
         self.messages.append(record.msg)
+
+
+def _select_primary_and_failover_region(write_locations, read_locations):
+    region_1 = write_locations[0]
+    unique_locations = write_locations + [loc for loc in read_locations if loc not in write_locations]
+    region_2 = next((loc for loc in unique_locations if loc != region_1), None)
+    return region_1, region_2
+
 
 # Operation constants
 READ = "read"
@@ -260,6 +268,7 @@ def _get_operation_type(test_operation_type: str) -> str:
     raise ValueError("invalid operationType")
 
 @pytest.mark.cosmosMultiRegion
+@pytest.mark.cosmosAADMultiRegion
 class TestAvailabilityStrategy:
     host = test_config.TestConfig.host
     master_key = test_config.TestConfig.masterKey
@@ -278,13 +287,14 @@ class TestAvailabilityStrategy:
         logger.addHandler(cls.MOCK_HANDLER)
         logger.setLevel(logging.DEBUG)
 
-        cls.client_without_fault = CosmosClient(cls.host, cls.master_key)
+        cls.client_without_fault = test_config.TestConfig.create_data_client()
         database_account = cls.client_without_fault.get_database_account()
         cls.write_locations = [loc["name"] for loc in database_account._WritableLocations]
         cls.read_locations = [loc["name"] for loc in database_account._ReadableLocations]
-        # Use first writable location as primary region and second as failover
-        cls.REGION_1 = cls.write_locations[0]
-        cls.REGION_2 = cls.write_locations[1] if len(cls.write_locations) > 1 else cls.read_locations[0]
+        # Use first writable location as primary region and any distinct region as failover.
+        cls.REGION_1, cls.REGION_2 = _select_primary_and_failover_region(cls.write_locations, cls.read_locations)
+        if cls.REGION_2 is None:
+            raise RuntimeError("Availability strategy tests require at least two distinct account regions.")
 
     def setup_method(self):
         """Reset mock handler before each test"""
@@ -292,8 +302,7 @@ class TestAvailabilityStrategy:
 
     def _setup_method_with_custom_transport(self, custom_transport, default_endpoint=None, retry_write=False, **kwargs):
         """Initialize test client with optional custom transport and endpoint"""
-        if default_endpoint is None:
-            default_endpoint = self.host
+        endpoint = default_endpoint or self.host
 
         # Set preferred locations with write locations first
         preferred_locations = self.write_locations + [loc for loc in self.read_locations if loc not in self.write_locations]
@@ -302,14 +311,13 @@ class TestAvailabilityStrategy:
         if not container_id:
             container_id = self.TEST_CONTAINER_MULTI_PARTITION_ID
 
-        client = CosmosClient(
-            default_endpoint, 
-            self.master_key,
-            preferred_locations=preferred_locations,
-            transport=custom_transport,
-            retry_write=retry_write,
-            **kwargs
-        )
+        client_kwargs = {
+            "preferred_locations": preferred_locations,
+            "transport": custom_transport,
+            "retry_write": retry_write,
+            **kwargs,
+        }
+        client = test_config.TestConfig.create_data_client_for_endpoint(endpoint, **client_kwargs)
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         return {"client": client, "db": db, "col": container}
@@ -885,6 +893,52 @@ class TestAvailabilityStrategy:
                 expected_uris,
                 [],
                 retry_write=True)
+        self._clean_up_container(setup['db'].id, setup['col'].id)
+
+    # When the client is built with a hedging strategy and a per-call
+    # surface explicitly passes ``availability_strategy=None``, the
+    # request must still hedge per the client's strategy. The None
+    # means "use what the client was configured with."
+    def test_per_request_none_falls_back_to_client_strategy(self):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_1)
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, self.REGION_2)
+
+        # Inject a 1-second delay on the first region so the hedging
+        # threshold (150 ms) fires and the second region gets the read.
+        predicate = lambda r: (FaultInjectionTransport.predicate_is_document_operation(r) and
+                               FaultInjectionTransport.predicate_is_operation_type(r, OperationType.Read) and
+                               FaultInjectionTransport.predicate_targets_region(r, uri_down))
+        error_lambda = lambda r: FaultInjectionTransport.error_after_delay(
+            1000,
+            CosmosHttpResponseError(status_code=400, message="Injected Error"),
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+
+        client_strategy = {'threshold_ms': 150, 'threshold_steps_ms': 50}
+        setup = self._setup_method_with_custom_transport(
+            custom_transport,
+            multiple_write_locations=True,
+            availability_strategy=client_strategy,
+        )
+
+        # Seed the document via a separate fault-free client.
+        setup_without_fault = self._setup_method_with_custom_transport(None)
+        doc = _create_doc()
+        setup_without_fault['col'].create_item(body=doc)
+
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        setup['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
+            [uri_down, failed_over_uri],
+            [],
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
+        )
         self._clean_up_container(setup['db'].id, setup['col'].id)
 
 if __name__ == '__main__':

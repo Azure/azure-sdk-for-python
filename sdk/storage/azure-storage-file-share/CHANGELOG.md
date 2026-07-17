@@ -4,6 +4,29 @@
 
 ### Features Added
 
+### Bugs Fixed
+- Return type of get_share_access_policies is now the publicly exposed SignedIdentifier model containing the publicly exposed AccessPolicy model. Previously we were leaking the internal generated SignedIdentifier model without exposing it in the api.
+
+
+### Other Changes
+- Custom transports that use legacy azure-core Request/Response types will not be supported moving forward
+- Removed support for Python 3.9, Python 3.10 or later is required to use this package
+
+## 12.26.0 (2026-06-08)
+
+### Features Added
+- Stable release of features from 12.26.0b1
+
+## 12.25.0 (2026-05-14)
+
+### Features Added
+- Stable release of features from 12.25.0b1
+
+### Bugs Fixed
+- Fixed various issues with configuring logging via `logging_enable` and `logging_body` keywords on a per-request
+basis and with retries. Prior to this fix logging may have not behaved as expected, especially on retries.
+- Fix a potential memory leak caused by improper exception handling that could occur under rare circumstances.
+
 ## 12.26.0b1 (2026-04-01)
 
 ### Features Added
@@ -12,7 +35,7 @@
 `create_directory` APIs, which specifies permissions to be configured upon directory creation.
 - Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
 optional initial data to be uploaded (up to 4MB).
-- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes
 for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
 
 ### Other Changes
@@ -45,11 +68,11 @@ significantly better throughput on large file downloads for most environments.
 - Added support for service version 2026-02-06.
 - Added new `get_user_delegation_key` API to `ShareServiceClient` to obtain a user delegation key
 for the purposes of signing SAS tokens.
-- Added support for the keyword `user_delegation_oid` to `generate_share_sas` and `generate_file_sas`, 
+- Added support for the keyword `user_delegation_oid` to `generate_share_sas` and `generate_file_sas`,
 which specifies the Entra ID of the user that is authorized to use the generated SAS URL.
-- Added support for the keyword `user_delegation_key` to `generate_share_sas` and `generate_file_sas` used with 
+- Added support for the keyword `user_delegation_key` to `generate_share_sas` and `generate_file_sas` used with
 `user_delegation_oid` to authenticate the request to generate a new SAS URL.
-- Added support for the keyword `encryption_in_transit`in `ShareSmbSettings` used by `set_service_properties` 
+- Added support for the keyword `encryption_in_transit`in `ShareSmbSettings` used by `set_service_properties`
 for the SMB protocol to specify whether encryption in transit is required.
 - Added the ability to skip auto decompression on `ShareFileClient.download_file` via the `decompress` keyword.
 
@@ -70,7 +93,7 @@ for the SMB protocol to specify whether encryption in transit is required.
 ### Bugs Fixed
 - Fixed an issue where `ShareClient`'s `list_directories_and_files` API specified with `name_starts_with`
 would not return all results when the share contains a large number of files and directories.
-- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`,
 and let the `AttributeError` raise directly.
 
 ## 12.22.0 (2025-07-16)
@@ -90,7 +113,7 @@ This version and all future versions will require Python 3.9+. Python 3.8 is no 
 
 ### Features Added
 - Added support for service version 2025-07-05.
-- Added new `create_symbolic_link` and `get_symbolic_link` APIs to `ShareFileClient` to 
+- Added new `create_symbolic_link` and `get_symbolic_link` APIs to `ShareFileClient` to
 create/get symbolic links to specified files and is only supported for the `NFS` protocol.
 
 ## 12.21.0 (2025-03-11)
@@ -106,9 +129,9 @@ create/get symbolic links to specified files and is only supported for the `NFS`
 `create_file`, `create_directory`, `set_http_headers` (File and Directory), `DirectoryProperties`, and `FileProperties`.
 - Added new `create_hard_link` method to `ShareFileClient` to create hard links to specified
 files and is only supported for the `NFS` protocol.
-- `create_file`, `create_directory`, and `set_http_headers` (File and Directory) APIs no longer send 
-request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-creation-time`, and 
-`x-ms-file-last-write-time` by default. The request headers have been optional in the REST API since 
+- `create_file`, `create_directory`, and `set_http_headers` (File and Directory) APIs no longer send
+request headers `x-ms-file-permission-key`, `x-ms-file-attributes`, `x-ms-file-creation-time`, and
+`x-ms-file-last-write-time` by default. The request headers have been optional in the REST API since
 service version 2021-06-08. The default behavior of these APIs remain the same.
 
 ## 12.20.1 (2025-01-22)
@@ -127,10 +150,10 @@ service version 2021-06-08. The default behavior of these APIs remain the same.
 - Added support for service version 2025-01-05.
 - Added support to specify `Premium` enum value in `access_tier` for `create_share` and `set_share_properties` APIs.
 - Added `file_permission_format` to specify permission format for File's `copy_file` API.
-- Added support for provisioned V2 billing model, including `provisioned_iops` and `provisioned_bandwidth_mibps` for 
+- Added support for provisioned V2 billing model, including `provisioned_iops` and `provisioned_bandwidth_mibps` for
 `ShareClient` and `ShareServiceClient`'s `create_share` APIs; `provisioned_max_iops` and `provisioned_max_bandwidth_mibps`
-for `ShareClient`'s `set_share_properties` API; and retrieve `included_burst_iop`, `max_burst_credits_for_iops`, 
-`next_provisioned_iops_downgrade` and `next_provisioned_bandwidth_downgrade` through `get_share_properties` API. 
+for `ShareClient`'s `set_share_properties` API; and retrieve `included_burst_iop`, `max_burst_credits_for_iops`,
+`next_provisioned_iops_downgrade` and `next_provisioned_bandwidth_downgrade` through `get_share_properties` API.
 `ShareServiceClient`'s `list_shares` API returns the new properties through `get_share_properties` for each share.
 
 ## 12.19.0 (2024-10-08)

@@ -280,6 +280,9 @@ class TestConfigure(unittest.TestCase):
         "azure.monitor.opentelemetry._configure._setup_instrumentations",
     )
     @patch(
+        "azure.monitor.opentelemetry._configure.set_statsbeat_live_metrics_feature_set",
+    )
+    @patch(
         "azure.monitor.opentelemetry._configure._setup_live_metrics",
     )
     @patch(
@@ -301,6 +304,7 @@ class TestConfigure(unittest.TestCase):
         logging_mock,
         metrics_mock,
         live_metrics_mock,
+        statsbeat_live_metrics_feature_mock,
         instrumentation_mock,
     ):
         configurations = {
@@ -318,6 +322,7 @@ class TestConfigure(unittest.TestCase):
         logging_mock.assert_called_once_with(configurations)
         metrics_mock.assert_called_once_with(configurations)
         live_metrics_mock.assert_not_called()
+        statsbeat_live_metrics_feature_mock.assert_called_once_with()
         instrumentation_mock.assert_called_once_with(configurations)
 
     @patch(

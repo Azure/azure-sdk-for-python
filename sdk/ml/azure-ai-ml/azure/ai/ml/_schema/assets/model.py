@@ -8,9 +8,9 @@ import logging
 
 from marshmallow import fields, post_load, pre_dump
 
+from azure.ai.ml._schema.assets.default_deployment_template import DeploymentTemplateReferenceSchema
 from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
 from azure.ai.ml._schema.core.intellectual_property import IntellectualPropertySchema
-from azure.ai.ml._schema.assets.default_deployment_template import DefaultDeploymentTemplateSchema
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AssetTypes, AzureMLResourceType
@@ -45,7 +45,8 @@ class ModelSchema(PathAwareSchema):
     datastore = fields.Str(metadata={"description": "Name of the datastore to upload to."}, required=False)
     intellectual_property = ExperimentalField(NestedField(IntellectualPropertySchema, required=False), dump_only=True)
     system_metadata = fields.Dict()
-    default_deployment_template = NestedField(DefaultDeploymentTemplateSchema, required=False)
+    default_deployment_template = NestedField(DeploymentTemplateReferenceSchema, required=False)
+    allowed_deployment_templates = fields.List(NestedField(DeploymentTemplateReferenceSchema), required=False)
 
     @pre_dump
     def validate(self, data, **kwargs):

@@ -7,3 +7,4 @@
 azure-mgmt-loganalytics==2.0.0
 ../../resources/azure-mgmt-msi/
 aiohttp
+azure-identity

@@ -1,0 +1,4 @@
+directory: specification/subscription/resource-manager/Microsoft.Subscription/Subscription
+commit: 8966e4942153329571a093034f4808cc06b4c9df
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

@@ -12,10 +12,14 @@ from typing import Union, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
-from ._patch_agents import _PREVIEW_FEATURE_REQUIRED_CODE, _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE
 from .. import models as _models
 from ..models._enums import _FoundryFeaturesOptInKeys
-from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
+from ..models._patch import (
+    _FOUNDRY_FEATURES_HEADER_NAME,
+    _has_header_case_insensitive,
+    _PREVIEW_FEATURE_REQUIRED_CODE,
+    _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE,
+)
 
 
 class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):

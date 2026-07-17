@@ -7,7 +7,7 @@ from __future__ import annotations
 import re
 from types import ModuleType
 
-from scripts.validator_emitter import build_validator_module
+from _scripts.validator_emitter import build_validator_module
 
 
 def _load_module(code: str) -> ModuleType:

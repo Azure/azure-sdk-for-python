@@ -1,0 +1,10 @@
+{
+  "apiVersions": {
+    "Quota": "2020-10-25",
+    "Reservations": "2022-11-01"
+  },
+  "commit": "16e90365f2fcc4efaa3e67e39c15f75c3712ad3d",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/reservations/resource-manager/Microsoft.Capacity/Reservations",
+  "emitterVersion": "0.62.1"
+}

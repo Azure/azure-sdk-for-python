@@ -32,14 +32,13 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import PurviewManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -911,7 +910,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1047,7 +1049,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account: Union[_models.Account, JSON, IO[bytes]],
+        account: Union[_models.Account, _types.Account, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1153,7 +1155,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account: JSON,
+        account: _types.Account,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1168,7 +1170,7 @@ class AccountsOperations:
         :param account_name: The name of the account. Required.
         :type account_name: str
         :param account: The account. Required.
-        :type account: JSON
+        :type account: ~azure.mgmt.purview.types.Account
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1213,7 +1215,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account: Union[_models.Account, JSON, IO[bytes]],
+        account: Union[_models.Account, _types.Account, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Account]:
         """Create or update an account resource.
@@ -1225,8 +1227,9 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the account. Required.
         :type account_name: str
-        :param account: The account. Is one of the following types: Account, JSON, IO[bytes] Required.
-        :type account: ~azure.mgmt.purview.models.Account or JSON or IO[bytes]
+        :param account: The account. Is either a Account type or a IO[bytes] type. Required.
+        :type account: ~azure.mgmt.purview.models.Account or ~azure.mgmt.purview.types.Account or
+         IO[bytes]
         :return: An instance of LROPoller that returns Account. The Account is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.purview.models.Account]
@@ -1288,7 +1291,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account_update_parameters: Union[_models.AccountUpdateParameters, JSON, IO[bytes]],
+        account_update_parameters: Union[_models.AccountUpdateParameters, _types.AccountUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1394,7 +1397,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account_update_parameters: JSON,
+        account_update_parameters: _types.AccountUpdateParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1409,7 +1412,7 @@ class AccountsOperations:
         :param account_name: The name of the account. Required.
         :type account_name: str
         :param account_update_parameters: The account update parameters. Required.
-        :type account_update_parameters: JSON
+        :type account_update_parameters: ~azure.mgmt.purview.types.AccountUpdateParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1454,7 +1457,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        account_update_parameters: Union[_models.AccountUpdateParameters, JSON, IO[bytes]],
+        account_update_parameters: Union[_models.AccountUpdateParameters, _types.AccountUpdateParameters, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Account]:
         """Patches the account resource.
@@ -1466,10 +1469,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the account. Required.
         :type account_name: str
-        :param account_update_parameters: The account update parameters. Is one of the following types:
-         AccountUpdateParameters, JSON, IO[bytes] Required.
-        :type account_update_parameters: ~azure.mgmt.purview.models.AccountUpdateParameters or JSON or
-         IO[bytes]
+        :param account_update_parameters: The account update parameters. Is either a
+         AccountUpdateParameters type or a IO[bytes] type. Required.
+        :type account_update_parameters: ~azure.mgmt.purview.models.AccountUpdateParameters or
+         ~azure.mgmt.purview.types.AccountUpdateParameters or IO[bytes]
         :return: An instance of LROPoller that returns Account. The Account is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.purview.models.Account]
@@ -1704,7 +1707,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1799,7 +1805,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1875,7 +1884,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        collection_admin_update: JSON,
+        collection_admin_update: _types.CollectionAdminUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1890,7 +1899,7 @@ class AccountsOperations:
         :param account_name: The name of the account. Required.
         :type account_name: str
         :param collection_admin_update: The collection admin update payload. Required.
-        :type collection_admin_update: JSON
+        :type collection_admin_update: ~azure.mgmt.purview.types.CollectionAdminUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1933,7 +1942,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        collection_admin_update: Union[_models.CollectionAdminUpdate, JSON, IO[bytes]],
+        collection_admin_update: Union[_models.CollectionAdminUpdate, _types.CollectionAdminUpdate, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Add the administrator for root collection.
@@ -1945,10 +1954,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the account. Required.
         :type account_name: str
-        :param collection_admin_update: The collection admin update payload. Is one of the following
-         types: CollectionAdminUpdate, JSON, IO[bytes] Required.
-        :type collection_admin_update: ~azure.mgmt.purview.models.CollectionAdminUpdate or JSON or
-         IO[bytes]
+        :param collection_admin_update: The collection admin update payload. Is either a
+         CollectionAdminUpdate type or a IO[bytes] type. Required.
+        :type collection_admin_update: ~azure.mgmt.purview.models.CollectionAdminUpdate or
+         ~azure.mgmt.purview.types.CollectionAdminUpdate or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2104,14 +2113,18 @@ class AccountsOperations:
 
     @overload
     def check_name_availability(
-        self, check_name_availability_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_name_availability_request: _types.CheckNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks the account name availability.
 
         Checks if account name is available.
 
         :param check_name_availability_request: The request body. Required.
-        :type check_name_availability_request: JSON
+        :type check_name_availability_request: ~azure.mgmt.purview.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2143,17 +2156,19 @@ class AccountsOperations:
     @distributed_trace
     def check_name_availability(
         self,
-        check_name_availability_request: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        check_name_availability_request: Union[
+            _models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """Checks the account name availability.
 
         Checks if account name is available.
 
-        :param check_name_availability_request: The request body. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
+        :param check_name_availability_request: The request body. Is either a
+         CheckNameAvailabilityRequest type or a IO[bytes] type. Required.
         :type check_name_availability_request: ~azure.mgmt.purview.models.CheckNameAvailabilityRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.purview.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.purview.models.CheckNameAvailabilityResult
@@ -2357,7 +2372,7 @@ class KafkaConfigurationsOperations:
         resource_group_name: str,
         account_name: str,
         kafka_configuration_name: str,
-        kafka_configuration: JSON,
+        kafka_configuration: _types.KafkaConfiguration,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2374,7 +2389,7 @@ class KafkaConfigurationsOperations:
         :param kafka_configuration_name: Name of kafka configuration. Required.
         :type kafka_configuration_name: str
         :param kafka_configuration: The kafka configuration of the account. Required.
-        :type kafka_configuration: JSON
+        :type kafka_configuration: ~azure.mgmt.purview.types.KafkaConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2421,7 +2436,7 @@ class KafkaConfigurationsOperations:
         resource_group_name: str,
         account_name: str,
         kafka_configuration_name: str,
-        kafka_configuration: Union[_models.KafkaConfiguration, JSON, IO[bytes]],
+        kafka_configuration: Union[_models.KafkaConfiguration, _types.KafkaConfiguration, IO[bytes]],
         **kwargs: Any
     ) -> _models.KafkaConfiguration:
         """Create or update the kafka configuration.
@@ -2435,9 +2450,10 @@ class KafkaConfigurationsOperations:
         :type account_name: str
         :param kafka_configuration_name: Name of kafka configuration. Required.
         :type kafka_configuration_name: str
-        :param kafka_configuration: The kafka configuration of the account. Is one of the following
-         types: KafkaConfiguration, JSON, IO[bytes] Required.
-        :type kafka_configuration: ~azure.mgmt.purview.models.KafkaConfiguration or JSON or IO[bytes]
+        :param kafka_configuration: The kafka configuration of the account. Is either a
+         KafkaConfiguration type or a IO[bytes] type. Required.
+        :type kafka_configuration: ~azure.mgmt.purview.models.KafkaConfiguration or
+         ~azure.mgmt.purview.types.KafkaConfiguration or IO[bytes]
         :return: KafkaConfiguration. The KafkaConfiguration is compatible with MutableMapping
         :rtype: ~azure.mgmt.purview.models.KafkaConfiguration
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2636,7 +2652,10 @@ class KafkaConfigurationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2779,7 +2798,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        request: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        request: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2890,7 +2909,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        request: JSON,
+        request: _types.PrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2907,7 +2926,7 @@ class PrivateEndpointConnectionsOperations:
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
         :param request: The request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.purview.types.PrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2956,7 +2975,7 @@ class PrivateEndpointConnectionsOperations:
         resource_group_name: str,
         account_name: str,
         private_endpoint_connection_name: str,
-        request: Union[_models.PrivateEndpointConnection, JSON, IO[bytes]],
+        request: Union[_models.PrivateEndpointConnection, _types.PrivateEndpointConnection, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.PrivateEndpointConnection]:
         """Approves/Rejects private endpoint connection request.
@@ -2970,9 +2989,10 @@ class PrivateEndpointConnectionsOperations:
         :type account_name: str
         :param private_endpoint_connection_name: Name of the private endpoint connection. Required.
         :type private_endpoint_connection_name: str
-        :param request: The request. Is one of the following types: PrivateEndpointConnection, JSON,
-         IO[bytes] Required.
-        :type request: ~azure.mgmt.purview.models.PrivateEndpointConnection or JSON or IO[bytes]
+        :param request: The request. Is either a PrivateEndpointConnection type or a IO[bytes] type.
+         Required.
+        :type request: ~azure.mgmt.purview.models.PrivateEndpointConnection or
+         ~azure.mgmt.purview.types.PrivateEndpointConnection or IO[bytes]
         :return: An instance of LROPoller that returns PrivateEndpointConnection. The
          PrivateEndpointConnection is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.purview.models.PrivateEndpointConnection]
@@ -3219,7 +3239,10 @@ class PrivateEndpointConnectionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3415,7 +3438,10 @@ class PrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3511,7 +3537,7 @@ class FeaturesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        feature_request: JSON,
+        feature_request: _types.BatchFeatureRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3528,7 +3554,7 @@ class FeaturesOperations:
         :param account_name: The name of the account. Required.
         :type account_name: str
         :param feature_request: Request body with feature names. Required.
-        :type feature_request: JSON
+        :type feature_request: ~azure.mgmt.purview.types.BatchFeatureRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3573,7 +3599,7 @@ class FeaturesOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        feature_request: Union[_models.BatchFeatureRequest, JSON, IO[bytes]],
+        feature_request: Union[_models.BatchFeatureRequest, _types.BatchFeatureRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.BatchFeatureStatus:
         """Gets a list of features and their status for the account. Status of enabled features will be
@@ -3587,9 +3613,10 @@ class FeaturesOperations:
         :type resource_group_name: str
         :param account_name: The name of the account. Required.
         :type account_name: str
-        :param feature_request: Request body with feature names. Is one of the following types:
-         BatchFeatureRequest, JSON, IO[bytes] Required.
-        :type feature_request: ~azure.mgmt.purview.models.BatchFeatureRequest or JSON or IO[bytes]
+        :param feature_request: Request body with feature names. Is either a BatchFeatureRequest type
+         or a IO[bytes] type. Required.
+        :type feature_request: ~azure.mgmt.purview.models.BatchFeatureRequest or
+         ~azure.mgmt.purview.types.BatchFeatureRequest or IO[bytes]
         :return: BatchFeatureStatus. The BatchFeatureStatus is compatible with MutableMapping
         :rtype: ~azure.mgmt.purview.models.BatchFeatureStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3690,7 +3717,12 @@ class FeaturesOperations:
 
     @overload
     def subscription_get(
-        self, locations: str, feature_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        locations: str,
+        feature_request: _types.BatchFeatureRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.BatchFeatureStatus:
         """Gets a list of features and their status for the location and subscription. Status of enabled
         features will be true. Status of disabled features will be false. Features that don't exist
@@ -3701,7 +3733,7 @@ class FeaturesOperations:
         :param locations: Location of feature. Required.
         :type locations: str
         :param feature_request: The request body. Required.
-        :type feature_request: JSON
+        :type feature_request: ~azure.mgmt.purview.types.BatchFeatureRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3734,7 +3766,10 @@ class FeaturesOperations:
 
     @distributed_trace
     def subscription_get(
-        self, locations: str, feature_request: Union[_models.BatchFeatureRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        locations: str,
+        feature_request: Union[_models.BatchFeatureRequest, _types.BatchFeatureRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.BatchFeatureStatus:
         """Gets a list of features and their status for the location and subscription. Status of enabled
         features will be true. Status of disabled features will be false. Features that don't exist
@@ -3744,9 +3779,10 @@ class FeaturesOperations:
 
         :param locations: Location of feature. Required.
         :type locations: str
-        :param feature_request: The request body. Is one of the following types: BatchFeatureRequest,
-         JSON, IO[bytes] Required.
-        :type feature_request: ~azure.mgmt.purview.models.BatchFeatureRequest or JSON or IO[bytes]
+        :param feature_request: The request body. Is either a BatchFeatureRequest type or a IO[bytes]
+         type. Required.
+        :type feature_request: ~azure.mgmt.purview.models.BatchFeatureRequest or
+         ~azure.mgmt.purview.types.BatchFeatureRequest or IO[bytes]
         :return: BatchFeatureStatus. The BatchFeatureStatus is compatible with MutableMapping
         :rtype: ~azure.mgmt.purview.models.BatchFeatureStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3894,7 +3930,10 @@ class IngestionPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3971,7 +4010,7 @@ class IngestionPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         self,
         resource_group_name: str,
         account_name: str,
-        request: JSON,
+        request: _types.PrivateEndpointConnectionStatusUpdateRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3986,7 +4025,7 @@ class IngestionPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         :param account_name: The name of the account. Required.
         :type account_name: str
         :param request: The ingestion private endpoint connection status update request. Required.
-        :type request: JSON
+        :type request: ~azure.mgmt.purview.types.PrivateEndpointConnectionStatusUpdateRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4031,7 +4070,11 @@ class IngestionPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         self,
         resource_group_name: str,
         account_name: str,
-        request: Union[_models.PrivateEndpointConnectionStatusUpdateRequest, JSON, IO[bytes]],
+        request: Union[
+            _models.PrivateEndpointConnectionStatusUpdateRequest,
+            _types.PrivateEndpointConnectionStatusUpdateRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.PrivateEndpointConnectionStatusUpdateResponse:
         """Updates ingestion private endpoint connection status.
@@ -4043,10 +4086,10 @@ class IngestionPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         :type resource_group_name: str
         :param account_name: The name of the account. Required.
         :type account_name: str
-        :param request: The ingestion private endpoint connection status update request. Is one of the
-         following types: PrivateEndpointConnectionStatusUpdateRequest, JSON, IO[bytes] Required.
-        :type request: ~azure.mgmt.purview.models.PrivateEndpointConnectionStatusUpdateRequest or JSON
-         or IO[bytes]
+        :param request: The ingestion private endpoint connection status update request. Is either a
+         PrivateEndpointConnectionStatusUpdateRequest type or a IO[bytes] type. Required.
+        :type request: ~azure.mgmt.purview.models.PrivateEndpointConnectionStatusUpdateRequest or
+         ~azure.mgmt.purview.types.PrivateEndpointConnectionStatusUpdateRequest or IO[bytes]
         :return: PrivateEndpointConnectionStatusUpdateResponse. The
          PrivateEndpointConnectionStatusUpdateResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.purview.models.PrivateEndpointConnectionStatusUpdateResponse
@@ -4312,14 +4355,18 @@ class DefaultAccountsOperations:
 
     @overload
     def set(
-        self, default_account_payload: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        default_account_payload: _types.DefaultAccountPayload,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.DefaultAccountPayload:
         """Sets the default account for the scope.
 
         Sets the default account for the scope.
 
         :param default_account_payload: The request body. Required.
-        :type default_account_payload: JSON
+        :type default_account_payload: ~azure.mgmt.purview.types.DefaultAccountPayload
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4348,16 +4395,18 @@ class DefaultAccountsOperations:
 
     @distributed_trace
     def set(
-        self, default_account_payload: Union[_models.DefaultAccountPayload, JSON, IO[bytes]], **kwargs: Any
+        self,
+        default_account_payload: Union[_models.DefaultAccountPayload, _types.DefaultAccountPayload, IO[bytes]],
+        **kwargs: Any
     ) -> _models.DefaultAccountPayload:
         """Sets the default account for the scope.
 
         Sets the default account for the scope.
 
-        :param default_account_payload: The request body. Is one of the following types:
-         DefaultAccountPayload, JSON, IO[bytes] Required.
-        :type default_account_payload: ~azure.mgmt.purview.models.DefaultAccountPayload or JSON or
-         IO[bytes]
+        :param default_account_payload: The request body. Is either a DefaultAccountPayload type or a
+         IO[bytes] type. Required.
+        :type default_account_payload: ~azure.mgmt.purview.models.DefaultAccountPayload or
+         ~azure.mgmt.purview.types.DefaultAccountPayload or IO[bytes]
         :return: DefaultAccountPayload. The DefaultAccountPayload is compatible with MutableMapping
         :rtype: ~azure.mgmt.purview.models.DefaultAccountPayload
         :raises ~azure.core.exceptions.HttpResponseError:

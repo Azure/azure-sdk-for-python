@@ -30,11 +30,8 @@ extends:
   parameters:
     ServiceDirectory: servicebus
     TestProxy: true
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-mgmt-servicebus
       safeName: azuremgmtservicebus
     - name: azure-servicebus
       safeName: azureservicebus
-

@@ -960,7 +960,8 @@ class Identity(_Model):
     :vartype principal_id: str
     :ivar tenant_id: Tenant Id.
     :vartype tenant_id: str
-    :ivar type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
+    :ivar type: Identity Type. Known values are: "None", "SystemAssigned", and
+     "SystemAssigned,UserAssigned".
     :vartype type: str or ~azure.mgmt.purview.models.ManagedIdentityType
     :ivar user_assigned_identities: User Assigned Identities.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.purview.models.UserAssignedIdentity]
@@ -973,7 +974,8 @@ class Identity(_Model):
     type: Optional[Union[str, "_models.ManagedIdentityType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Identity Type. Known values are: \"None\", \"SystemAssigned\", and \"UserAssigned\"."""
+    """Identity Type. Known values are: \"None\", \"SystemAssigned\", and
+     \"SystemAssigned,UserAssigned\"."""
     user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )

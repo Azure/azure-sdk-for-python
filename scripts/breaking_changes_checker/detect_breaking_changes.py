@@ -18,12 +18,16 @@ import ast
 import logging
 import inspect
 import subprocess
+import sys
+import shutil
+import tempfile
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
 from breaking_changes_allowlist import RUN_BREAKING_CHANGES_PACKAGES, IGNORE_BREAKING_CHANGES
 from breaking_changes_tracker import BreakingChangesTracker
 from changelog_tracker import ChangelogTracker
+from apiview_converter import convert_api_md_to_report
 from pathlib import Path
 from supported_checkers import CHECKERS, POST_PROCESSING_CHECKERS
 
@@ -239,9 +243,39 @@ def get_properties(cls: Type) -> Dict:
     return attribute_names
 
 
+def _is_overload_decorator(dec: ast.expr) -> bool:
+    """Return True if the AST decorator node is `@overload` or `@typing.overload`."""
+    # Bare `@overload`
+    if isinstance(dec, ast.Name) and dec.id == "overload":
+        return True
+    # Qualified `@typing.overload` (or any `pkg.overload`)
+    if isinstance(dec, ast.Attribute) and dec.attr == "overload":
+        return True
+    return False
+
+
+def _find_function_def_in_body(body, target_name: str) -> Optional[Union[ast.FunctionDef, ast.AsyncFunctionDef]]:
+    """Return the first non-overload (Async)FunctionDef in ``body`` matching ``target_name``.
+
+    Only scans direct children of ``body`` -- does NOT recurse -- so a method
+    lookup is scoped to the owning class body and a module-level function
+    lookup is scoped to the module's top level.
+    """
+    for node in body:
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        if node.name != target_name:
+            continue
+        # Skip @overload stubs - handled separately by `get_overload_data`.
+        if any(_is_overload_decorator(dec) for dec in node.decorator_list):
+            continue
+        return node
+    return None
+
+
 def create_function_report(f: Callable, is_async: bool = False) -> Dict:
     function = inspect.signature(f)
-    func_obj = {"parameters": {}, "is_async": is_async}
+    func_obj = {"parameters": {}, "is_async": is_async, "return_type": None}
 
     for par in function.parameters.values():
         default_value = get_parameter_default(par)
@@ -262,6 +296,50 @@ def create_function_report(f: Callable, is_async: bool = False) -> Dict:
         param[par.name]["param_type"] = param_type
         func_obj["parameters"].update(param)
 
+    # Capture the return type annotation by inspecting the source AST. We use
+    # the AST rather than `inspect.signature(f).return_annotation` because the
+    # latter resolves to live type objects whose `str()` representation differs
+    # from the source-level annotation (e.g. fully qualified module paths,
+    # generic alias quirks). Using AST keeps the captured value consistent with
+    # how parameter types are recorded for overloads via `get_parameter_type`.
+    #
+    # Scope the lookup so we don't pick up an unrelated same-named function or
+    # a method on a different class in the same module:
+    #   - For methods (qualname like "Cls.method"), search only the owning
+    #     ClassDef's direct body.
+    #   - For module-level functions, search only the module's top-level body.
+    try:
+        lookup_target = f
+        try:
+            lookup_target = inspect.unwrap(f)
+        except (AttributeError, ValueError, TypeError):
+            # Fall back to the original callable when unwrap is not possible.
+            lookup_target = f
+
+        source_path = inspect.getsourcefile(lookup_target)
+        target_name = getattr(lookup_target, "__name__", None)
+        qualname = getattr(lookup_target, "__qualname__", target_name) or ""
+        if source_path and target_name:
+            module_ast = _get_parsed_module(source_path)
+            target_node = None
+            # Heuristic: a qualname of the form "Owner.method" with no
+            # "<locals>" segment indicates a method bound to a class named
+            # by the first qualname component.
+            qualname_parts = qualname.split(".")
+            if len(qualname_parts) >= 2 and qualname_parts[-1] == target_name and "<locals>" not in qualname_parts:
+                owner_class = qualname_parts[-2]
+                cls_node = _find_class_node(module_ast, owner_class)
+                if cls_node is not None:
+                    target_node = _find_function_def_in_body(cls_node.body, target_name)
+            if target_node is None:
+                # Module-level function (or fallback if class lookup failed).
+                target_node = _find_function_def_in_body(module_ast.body, target_name)
+            if target_node is not None and target_node.returns is not None:
+                func_obj["return_type"] = get_parameter_type(target_node.returns)
+    except (TypeError, OSError, SyntaxError) as exc:
+        # Built-ins, C-implemented functions, or unreadable source files.
+        _LOGGER.debug("Unable to capture return type for %r: %s", f, exc)
+
     return func_obj
 
 
@@ -276,6 +354,8 @@ def get_parameter_default_ast(default):
 
 
 def get_parameter_type(annotation) -> str:
+    if annotation is None:
+        return None
     if isinstance(annotation, ast.Name):
         return annotation.id
     if isinstance(annotation, ast.Attribute):
@@ -291,7 +371,28 @@ def get_parameter_type(annotation) -> str:
         return f"{get_parameter_type(annotation.value)}[{get_parameter_type(annotation.slice)}]"
     if isinstance(annotation, ast.Tuple):
         return ", ".join([get_parameter_type(el) for el in annotation.elts])
-    return annotation
+    # PEP 604 union syntax (e.g. ``int | None``) parses as ``ast.BinOp`` with
+    # ``ast.BitOr``. Represent it as a ``Union[...]`` string so the captured
+    # value remains JSON-serializable.
+    if isinstance(annotation, ast.BinOp) and isinstance(annotation.op, ast.BitOr):
+        parts = []
+
+        def _flatten(node):
+            if isinstance(node, ast.BinOp) and isinstance(node.op, ast.BitOr):
+                _flatten(node.left)
+                _flatten(node.right)
+            else:
+                parts.append(get_parameter_type(node))
+
+        _flatten(annotation)
+        return f"Union[{', '.join(str(p) for p in parts)}]"
+    # Fall back to a source-level string representation so we never return a
+    # raw AST node (which would not be JSON-serializable when the report is
+    # written via ``json.dump``).
+    try:
+        return ast.unparse(annotation)
+    except Exception:  # pylint: disable=broad-except
+        return str(annotation)
 
 
 def create_parameters(args: ast.arg) -> Dict:
@@ -391,11 +492,14 @@ def get_overload_data(node: ast.ClassDef, cls_methods: Dict) -> None:
             is_async = True
         # method_overloads.update({func.name: {"parameters": {}, "is_async": False, "return_type": None}})
         for decorator in func.decorator_list:
-            if hasattr(decorator, "id") and decorator.id == "overload":
+            if _is_overload_decorator(decorator):
+                overload_return_type = None
+                if func.returns is not None:
+                    overload_return_type = get_parameter_type(func.returns)
                 overload_report = {
                     "parameters": create_parameters(func.args),
                     "is_async": is_async,
-                    "return_type": None,
+                    "return_type": overload_return_type,
                 }
                 cls_methods[func.name]["overloads"].append(overload_report)
 
@@ -466,6 +570,25 @@ def build_library_report(target_module: str) -> Dict:
     return public_api
 
 
+def compare_report_dicts(stable: Dict, current: Dict, package_name: str, changelog: bool):
+    """Compare two code report dicts and run the breaking change / changelog checks."""
+    if "azure-mgmt-" in package_name:
+        stable = report_azure_mgmt_versioned_module(stable)
+        current = report_azure_mgmt_versioned_module(current)
+
+    tracker_cls = ChangelogTracker if changelog else BreakingChangesTracker
+    checker = tracker_cls(
+        stable,
+        current,
+        package_name,
+        checkers=CHECKERS,
+        ignore=IGNORE_BREAKING_CHANGES,
+        post_processing_checkers=POST_PROCESSING_CHECKERS,
+    )
+    checker.run_checks()
+    return checker
+
+
 def test_compare_reports(
     pkg_dir: str, changelog: bool, source_report: str = "stable.json", target_report: str = "current.json"
 ) -> None:
@@ -485,28 +608,7 @@ def test_compare_reports(
     with open(target_report, "r") as fd:
         current = json.load(fd)
 
-    if "azure-mgmt-" in package_name:
-        stable = report_azure_mgmt_versioned_module(stable)
-        current = report_azure_mgmt_versioned_module(current)
-
-    checker = BreakingChangesTracker(
-        stable,
-        current,
-        package_name,
-        checkers=CHECKERS,
-        ignore=IGNORE_BREAKING_CHANGES,
-        post_processing_checkers=POST_PROCESSING_CHECKERS,
-    )
-    if changelog:
-        checker = ChangelogTracker(
-            stable,
-            current,
-            package_name,
-            checkers=CHECKERS,
-            ignore=IGNORE_BREAKING_CHANGES,
-            post_processing_checkers=POST_PROCESSING_CHECKERS,
-        )
-    checker.run_checks()
+    checker = compare_report_dicts(stable, current, package_name, changelog)
 
     # Only clean up reports that were generated into pkg_dir with default, non-absolute names.
     cleanup_default_reports = (
@@ -558,6 +660,91 @@ def report_azure_mgmt_versioned_module(code_report):
     return merged_report
 
 
+def generate_apistub_markdown(
+    package_name: str, out_dir: str, version: Optional[str] = None, from_pypi: bool = True
+) -> str:
+    """Generate ``api.md`` for ``package_name`` and return its path.
+
+    Delegates to ``azpysdk apistub``. When ``from_pypi`` is set, the released
+    wheel for ``version`` is downloaded from PyPI; otherwise ``api.md`` is
+    generated from the local source in ``out_dir``. The APIView token file is
+    generated and exported to ``api.md``.
+    """
+    azpysdk = shutil.which("azpysdk")
+    if not azpysdk:
+        raise RuntimeError(
+            "azpysdk is not installed. Install it with "
+            "'pip install -e eng/tools/azure-sdk-tools' (or 'pip install azure-sdk-tools')."
+        )
+
+    # Use a fresh temp dir per call so a stale api.md is never picked up.
+    suffix = version if from_pypi else "local"
+    dest_dir = tempfile.mkdtemp(prefix=f"apistub_{package_name}_{suffix}_")
+
+    command = [azpysdk, "apistub", "--dest-dir", dest_dir]
+    if from_pypi:
+        if not version:
+            raise ValueError("A version is required when generating api.md from PyPI.")
+        command += ["--generate-from-pypi", version]
+    command.append(".")
+
+    subprocess.check_call(command, cwd=out_dir)
+    api_md = os.path.join(dest_dir, "api.md")
+    if not os.path.isfile(api_md):
+        raise FileNotFoundError(f"apistub did not produce api.md at {api_md}")
+    return api_md
+
+
+def build_report_from_apistub(
+    package_name: str,
+    out_dir: str,
+    version: Optional[str] = None,
+    debug: bool = False,
+    label: str = "",
+    from_pypi: bool = True,
+) -> Dict:
+    """Generate api.md via apistub and convert it to a code report dict.
+
+    When ``debug`` is set, the generated ``api.md`` and the resulting
+    ``code_report.json`` are copied into ``out_dir`` (prefixed with ``label``)
+    so they can be inspected after the run instead of being left in a temp dir.
+    """
+    api_md = generate_apistub_markdown(package_name, out_dir, version, from_pypi=from_pypi)
+    dest_dir = os.path.dirname(api_md)
+    try:
+        report = convert_api_md_to_report(api_md)
+        if debug:
+            prefix = f"{label}_" if label else ""
+            debug_api_md = os.path.join(out_dir, f"{prefix}api.md")
+            shutil.copyfile(api_md, debug_api_md)
+            debug_report = os.path.join(out_dir, f"{prefix}code_report.json")
+            with open(debug_report, "w") as fd:
+                json.dump(report, fd, indent=2)
+            _LOGGER.info(f"[debug] kept {debug_api_md} and {debug_report}")
+    finally:
+        shutil.rmtree(dest_dir, ignore_errors=True)
+    return report
+
+
+def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
+    """Resolve the PyPI version to compare against.
+
+    Returns the latest release (which may be a preview) when
+    ``latest_pypi_version`` is set, otherwise the most recent stable release.
+    Exits cleanly when no relevant version exists on PyPI.
+    """
+    from pypi_tools.pypi import PyPIClient
+
+    client = PyPIClient()
+    try:
+        if latest_pypi_version:
+            return str(client.get_ordered_versions(package_name)[-1])
+        return str(client.get_relevant_versions(package_name)[1])
+    except IndexError:
+        _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
+        exit(0)
+
+
 def main(
     package_name: str,
     target_module: str,
@@ -569,10 +756,15 @@ def main(
     latest_pypi_version: bool,
     source_report: Optional[Path],
     target_report: Optional[Path],
+    use_apistub: bool = False,
+    debug: bool = False,
 ):
     # If code_report is set, only generate a code report for the package and return
     if code_report:
-        public_api = build_library_report(target_module)
+        if use_apistub:
+            public_api = build_report_from_apistub(package_name, pkg_dir, from_pypi=False)
+        else:
+            public_api = build_library_report(target_module)
         with open("code_report.json", "w") as fd:
             json.dump(public_api, fd, indent=2)
         _LOGGER.info("code_report.json is written.")
@@ -583,22 +775,29 @@ def main(
         test_compare_reports(pkg_dir, changelog, str(source_report), str(target_report))
         return
 
+    # If using apistub, generate api.md for the stable (PyPI) and current (local)
+    # versions, convert both to code reports, and compare them directly.
+    if use_apistub:
+        # Resolve the previous released version on PyPI when one was not provided,
+        # otherwise apistub falls back to the installed version and "stable" would
+        # match "current", producing an empty changelog.
+        if not version:
+            version = _resolve_pypi_version(package_name, latest_pypi_version)
+        # "current" is generated from the local source, "stable" from the
+        # resolved PyPI version.
+        current = build_report_from_apistub(package_name, pkg_dir, debug=debug, label="current", from_pypi=False)
+        stable = build_report_from_apistub(
+            package_name, pkg_dir, version=version, debug=debug, label="stable", from_pypi=True
+        )
+        checker = compare_report_dicts(stable, current, package_name, changelog)
+        print(checker.report_changes())
+        if not changelog and checker.breaking_changes:
+            exit(1)
+        return
+
     # For default behavior, find the latest stable version on PyPi
     if not version:
-
-        from pypi_tools.pypi import PyPIClient
-
-        client = PyPIClient()
-
-        try:
-            if latest_pypi_version:
-                versions = client.get_ordered_versions(package_name)
-                version = str(versions[-1])
-            else:
-                version = str(client.get_relevant_versions(package_name)[1])
-        except IndexError:
-            _LOGGER.warning(f"No revelant version for {package_name} on PyPi. Exiting...")
-            exit(0)
+        version = _resolve_pypi_version(package_name, latest_pypi_version)
 
     in_venv = True if in_venv == "true" else False  # subprocess sends back string so convert to bool
 
@@ -704,6 +903,22 @@ if __name__ == "__main__":
         default=False,
     )
 
+    parser.add_argument(
+        "--use-apistub",
+        dest="use_apistub",
+        help="Generate the code report from an apistub-generated api.md instead of importing the package.",
+        action="store_true",
+        default=False,
+    )
+
+    parser.add_argument(
+        "--debug",
+        dest="debug",
+        help="Keep the generated api.md and code_report.json files (in the target directory) for easier debugging.",
+        action="store_true",
+        default=False,
+    )
+
     args, unknown = parser.parse_known_args()
     if unknown:
         _LOGGER.info(f"Ignoring unknown arguments: {unknown}")
@@ -753,4 +968,6 @@ if __name__ == "__main__":
         args.latest_pypi_version,
         args.source_report,
         args.target_report,
+        args.use_apistub,
+        args.debug,
     )

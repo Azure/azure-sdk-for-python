@@ -10,6 +10,7 @@ code path that can trigger a partition key range fetch.
 
 import unittest
 from typing import Optional, Mapping, Any
+from unittest.mock import patch
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.routing_map_provider import (
     PartitionKeyRangeCache,
@@ -17,6 +18,7 @@ from azure.cosmos._routing.routing_map_provider import (
 )
 from azure.cosmos._routing.collection_routing_map import CollectionRoutingMap
 from azure.cosmos import _base, http_constants
+from azure.cosmos.exceptions import CosmosHttpResponseError
 
 
 # =====================================================================
@@ -333,11 +335,10 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             "returning a delta instead of the complete set of ranges"
         )
 
-    def test_full_load_with_incomplete_ranges_returns_none(self):
-        """When a full load (no previous routing map) returns ranges with gaps,
-        CompleteRoutingMap returns None. The method must return None immediately
-        without retrying — there is no incremental state to fall back from, and
-        repeating the identical request would produce the same result."""
+    def test_full_load_with_incomplete_ranges_surfaces_503(self):
+        """When a full load (no previous routing map) repeatedly returns gapped
+        ranges, the retry budget should be exhausted and _fetch_routing_map
+        should surface a retryable HTTP 503."""
 
         class IncompleteRangesClient:
             """Returns ranges with a gap — CompleteRoutingMap will return None."""
@@ -354,16 +355,15 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         client = IncompleteRangesClient()
         cache = PartitionKeyRangeCache(client)
 
-        result = cache._fetch_routing_map(
-            COLLECTION_LINK,
-            _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
-            None,  # full load (no previous map)
-            {},
-        )
-        assert result is None, (
-            "Full load with incomplete ranges must return None "
-            "instead of retrying infinitely"
-        )
+        with patch('azure.cosmos._routing.routing_map_provider.time.sleep', return_value=None):
+            with self.assertRaises(CosmosHttpResponseError) as ctx:
+                cache._fetch_routing_map(
+                    COLLECTION_LINK,
+                    _base.GetResourceIdOrFullNameFromLink(COLLECTION_LINK),
+                    None,  # full load (no previous map)
+                    {},
+                )
+        self.assertEqual(ctx.exception.status_code, http_constants.StatusCodes.SERVICE_UNAVAILABLE)
 
     def test_incremental_fallback_to_full_load_succeeds(self):
         """When an incremental (change-feed) update fails because a returned

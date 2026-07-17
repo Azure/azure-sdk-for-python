@@ -29,18 +29,17 @@ key = os.environ["AZURE_SEARCH_API_KEY"]
 async def sample_send_request_async():
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest
+    from azure.search.documents import DEFAULT_VERSION
     from azure.search.documents.aio import SearchClient
-    import sys
-    from pathlib import Path
-
-    sys.path.append(str(Path(__file__).resolve().parent))
-    from sample_utils import AZURE_SEARCH_API_VERSION
 
     search_client = SearchClient(service_endpoint, index_name, AzureKeyCredential(key))
 
     # The `send_request` method can send custom HTTP requests that share the client's existing pipeline,
     # while adding convenience for endpoint construction.
-    request = HttpRequest(method="GET", url=f"/docs/$count?api-version={AZURE_SEARCH_API_VERSION}")
+    request = HttpRequest(
+        method="GET",
+        url=f"/indexes('{index_name}')/docs/$count?api-version={DEFAULT_VERSION.value}",
+    )
     async with search_client:
         response = await search_client.send_request(request)
     response.raise_for_status()

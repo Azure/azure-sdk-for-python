@@ -760,6 +760,13 @@ class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESILIENCY_VIEW."""
 
 
+class InterconnectBlockExpandTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The expand expression to apply on the operation for an Interconnect Block."""
+
+    INSTANCE_VIEW = "instanceView"
+    """Retrieve the runtime instance view of the Interconnect Block."""
+
+
 class IntervalInMins(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Interval value in minutes used to create LogAnalytics call rate logs."""
 

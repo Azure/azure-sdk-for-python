@@ -4,10 +4,8 @@ from datetime import datetime
 import pytest
 
 from azure.ai.ml import load_capability_host
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import CapabilityHost as RestCapabilityHost
-from azure.ai.ml._restclient.v2025_01_01_preview.models._models_py3 import (
-    CapabilityHostProperties as RestCapabilityHostProperties,
-)
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHost as RestCapabilityHost
+from azure.ai.ml._restclient.arm_ml_service.models import CapabilityHostProperties as RestCapabilityHostProperties
 from azure.ai.ml.entities._workspace._ai_workspaces.capability_host import CapabilityHost
 
 

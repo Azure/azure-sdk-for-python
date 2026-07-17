@@ -6,7 +6,9 @@
   - Client `ApiManagementClient` added operation group `api_gateway_hostname_binding`
   - Client `ApiManagementClient` added operation group `client_application`
   - Client `ApiManagementClient` added operation group `client_application_product_link`
+  - Model `AccessInformationContract` added property `properties`
   - Model `AccessInformationContract` added property `system_data`
+  - Model `AllPoliciesContract` added property `properties`
   - Model `AllPoliciesContract` added property `system_data`
   - Model `ApiContract` added property `properties`
   - Model `ApiContract` added property `system_data`
@@ -25,12 +27,17 @@
   - Model `ApiManagementSkuRestrictions` added property `values_property`
   - Model `ApiManagementWorkspaceLinksResource` added property `properties`
   - Model `ApiManagementWorkspaceLinksResource` added property `system_data`
+  - Model `ApiReleaseContract` added property `properties`
   - Model `ApiReleaseContract` added property `system_data`
   - Model `ApiVersionSetContract` added property `properties`
   - Model `ApiVersionSetContract` added property `system_data`
+  - Model `AssociationContract` added property `properties`
   - Model `AssociationContract` added property `system_data`
+  - Model `AuthorizationAccessPolicyContract` added property `properties`
   - Model `AuthorizationAccessPolicyContract` added property `system_data`
+  - Model `AuthorizationContract` added property `properties`
   - Model `AuthorizationContract` added property `system_data`
+  - Model `AuthorizationProviderContract` added property `properties`
   - Model `AuthorizationProviderContract` added property `system_data`
   - Model `AuthorizationProviderOAuth2Settings` added property `key_vault`
   - Model `AuthorizationServerContract` added property `properties`
@@ -50,21 +57,32 @@
   - Model `BackendTlsProperties` added property `server_certificate_thumbprints`
   - Model `BackendTlsProperties` added property `server_x509_names`
   - Model `BackendUpdateParameterProperties` added property `azure_region`
+  - Model `CacheContract` added property `properties`
   - Model `CacheContract` added property `system_data`
+  - Model `CertificateContract` added property `properties`
   - Model `CertificateContract` added property `system_data`
   - Model `CircuitBreakerRule` added property `failure_response`
   - Model `ContentItemContract` added property `system_data`
+  - Model `ContentTypeContract` added property `properties`
   - Model `ContentTypeContract` added property `system_data`
+  - Model `DeletedServiceContract` added property `properties`
   - Model `DeletedServiceContract` added property `system_data`
+  - Model `DiagnosticContract` added property `properties`
   - Model `DiagnosticContract` added property `system_data`
   - Model `DiagnosticUpdateContract` added property `properties`
   - Model `DiagnosticUpdateContract` added property `system_data`
+  - Model `DocumentationContract` added property `properties`
   - Model `DocumentationContract` added property `system_data`
+  - Model `EmailTemplateContract` added property `properties`
   - Model `EmailTemplateContract` added property `system_data`
+  - Model `GatewayCertificateAuthorityContract` added property `properties`
   - Model `GatewayCertificateAuthorityContract` added property `system_data`
+  - Model `GatewayContract` added property `properties`
   - Model `GatewayContract` added property `identity`
   - Model `GatewayContract` added property `system_data`
+  - Model `GatewayHostnameConfigurationContract` added property `properties`
   - Model `GatewayHostnameConfigurationContract` added property `system_data`
+  - Model `GlobalSchemaContract` added property `properties`
   - Model `GlobalSchemaContract` added property `system_data`
   - Model `GroupContract` added property `properties`
   - Model `GroupContract` added property `system_data`
@@ -75,36 +93,53 @@
   - Model `IdentityProviderCreateContract` added property `system_data`
   - Model `IdentityProviderCreateContractProperties` added property `certificate_id`
   - Model `IdentityProviderUpdateProperties` added property `certificate_id`
+  - Model `IssueAttachmentContract` added property `properties`
   - Model `IssueAttachmentContract` added property `system_data`
+  - Model `IssueCommentContract` added property `properties`
   - Model `IssueCommentContract` added property `system_data`
   - Model `IssueContract` added property `properties`
   - Model `IssueContract` added property `system_data`
+  - Model `LoggerContract` added property `properties`
   - Model `LoggerContract` added property `system_data`
   - Model `NamedValueContract` added property `properties`
   - Model `NamedValueContract` added property `system_data`
   - Model `NamedValueCreateContract` added property `properties`
   - Model `NamedValueCreateContract` added property `system_data`
+  - Model `NotificationContract` added property `properties`
   - Model `NotificationContract` added property `system_data`
+  - Model `OpenidConnectProviderContract` added property `properties`
   - Model `OpenidConnectProviderContract` added property `system_data`
   - Model `OperationContract` added property `properties`
   - Model `OperationContract` added property `system_data`
+  - Model `OperationResultContract` added property `properties`
   - Model `OperationResultContract` added property `system_data`
   - Model `ParameterContract` added property `values_property`
+  - Model `PolicyContract` added property `properties`
   - Model `PolicyContract` added property `system_data`
+  - Model `PolicyDescriptionContract` added property `properties`
   - Model `PolicyDescriptionContract` added property `system_data`
+  - Model `PolicyFragmentContract` added property `properties`
   - Model `PolicyFragmentContract` added property `system_data`
+  - Model `PolicyRestrictionContract` added property `properties`
   - Model `PolicyRestrictionContract` added property `system_data`
   - Model `PortalConfigContract` added property `properties`
   - Model `PortalConfigContract` added property `system_data`
+  - Model `PortalDelegationSettings` added property `properties`
   - Model `PortalDelegationSettings` added property `system_data`
+  - Model `PortalRevisionContract` added property `properties`
   - Model `PortalRevisionContract` added property `system_data`
+  - Model `PortalSettingsContract` added property `properties`
   - Model `PortalSettingsContract` added property `system_data`
   - Model `PortalSigninSettings` added property `properties`
   - Model `PortalSigninSettings` added property `system_data`
+  - Model `PortalSignupSettings` added property `properties`
   - Model `PortalSignupSettings` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `properties`
   - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `properties`
   - Model `PrivateLinkResource` added property `system_data`
   - Model `PrivateLinkResourceListResult` added property `next_link`
+  - Model `ProductApiLinkContract` added property `properties`
   - Model `ProductApiLinkContract` added property `system_data`
   - Model `ProductContract` added property `properties`
   - Model `ProductContract` added property `system_data`
@@ -112,12 +147,14 @@
   - Model `ProductContractProperties` added property `application`
   - Model `ProductEntityBaseParameters` added property `authentication_type`
   - Model `ProductEntityBaseParameters` added property `application`
+  - Model `ProductGroupLinkContract` added property `properties`
   - Model `ProductGroupLinkContract` added property `system_data`
   - Model `ProductTagResourceContractProperties` added property `authentication_type`
   - Model `ProductTagResourceContractProperties` added property `application`
   - Model `ProductUpdateProperties` added property `authentication_type`
   - Model `ProductUpdateProperties` added property `application`
   - Model `ProxyResource` added property `system_data`
+  - Model `RecipientEmailContract` added property `properties`
   - Model `RecipientEmailContract` added property `system_data`
   - Model `RecipientUserContract` added property `properties`
   - Model `RecipientUserContract` added property `system_data`
@@ -126,23 +163,40 @@
   - Model `ResolverContract` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `ResourceCollectionValueItem` added property `system_data`
+  - Model `SchemaContract` added property `properties`
   - Model `SchemaContract` added property `system_data`
   - Enum `SkuType` added member `PREMIUM_V2`
+  - Model `SubscriptionContract` added property `properties`
   - Model `SubscriptionContract` added property `system_data`
+  - Model `TagApiLinkContract` added property `properties`
   - Model `TagApiLinkContract` added property `system_data`
+  - Model `TagContract` added property `properties`
   - Model `TagContract` added property `system_data`
   - Model `TagDescriptionContract` added property `properties`
   - Model `TagDescriptionContract` added property `system_data`
+  - Model `TagOperationLinkContract` added property `properties`
   - Model `TagOperationLinkContract` added property `system_data`
+  - Model `TagProductLinkContract` added property `properties`
   - Model `TagProductLinkContract` added property `system_data`
+  - Model `TenantConfigurationSyncStateContract` added property `properties`
   - Model `TenantConfigurationSyncStateContract` added property `system_data`
+  - Model `TenantSettingsContract` added property `properties`
   - Model `TenantSettingsContract` added property `system_data`
   - Model `UserContract` added property `properties`
   - Model `UserContract` added property `system_data`
+  - Model `WikiContract` added property `properties`
   - Model `WikiContract` added property `system_data`
+  - Model `WorkspaceContract` added property `properties`
   - Model `WorkspaceContract` added property `system_data`
+  - Added model `AccessInformationContractProperties`
   - Added model `AccessInformationCreateParameterProperties`
   - Added model `AccessInformationUpdateParameterProperties`
+  - Added model `AllPoliciesContractProperties`
+  - Added model `ApiReleaseContractProperties`
+  - Added model `AssociationContractProperties`
+  - Added model `AuthorizationAccessPolicyContractProperties`
+  - Added model `AuthorizationContractProperties`
+  - Added model `AuthorizationProviderContractProperties`
   - Added model `AuthorizationProviderKeyVaultContract`
   - Added model `AuthorizationProviderKeyVaultCreateProperties`
   - Added model `BackendFailureResponse`
@@ -150,8 +204,10 @@
   - Added model `BackendSessionAffinity`
   - Added model `BackendSessionId`
   - Added enum `BackendSessionIdSource`
+  - Added model `CacheContractProperties`
   - Added model `CacheUpdateProperties`
   - Added enum `CarbonEmissionCategory`
+  - Added model `CertificateContractProperties`
   - Added model `CertificateCreateOrUpdateProperties`
   - Added model `ClientApplicationContract`
   - Added model `ClientApplicationContractProperties`
@@ -160,46 +216,84 @@
   - Added model `ClientApplicationSecretsContract`
   - Added model `ClientApplicationSecretsContractEntra`
   - Added enum `ClientApplicationState`
+  - Added model `ContentTypeContractProperties`
+  - Added model `DeletedServiceContractProperties`
   - Added model `DeployConfigurationParameterProperties`
+  - Added model `DiagnosticContractProperties`
   - Added model `DiagnosticContractUpdateProperties`
+  - Added model `DocumentationContractProperties`
+  - Added model `EmailTemplateContractProperties`
   - Added model `EmailTemplateUpdateParameterProperties`
+  - Added model `GatewayCertificateAuthorityContractProperties`
   - Added model `GatewayConfigConnectionBaseProperties`
+  - Added model `GatewayContractProperties`
   - Added model `GatewayHostnameBindingBaseProperties`
   - Added model `GatewayHostnameBindingCertificate`
   - Added model `GatewayHostnameBindingKeyVault`
   - Added model `GatewayHostnameBindingKeyVaultLastStatus`
   - Added model `GatewayHostnameBindingResource`
+  - Added model `GatewayHostnameConfigurationContractProperties`
+  - Added model `GlobalSchemaContractProperties`
   - Added model `GroupCreateParametersProperties`
   - Added model `GroupUpdateParametersProperties`
+  - Added model `IssueAttachmentContractProperties`
+  - Added model `IssueCommentContractProperties`
   - Added enum `KeyVaultFetchCode`
   - Added model `LLMDiagnosticSettings`
   - Added model `LLMMessageDiagnosticSettings`
   - Added enum `LlmDiagnosticSettings`
   - Added enum `LlmMessageLogTypes`
+  - Added model `LoggerContractProperties`
   - Added model `LoggerUpdateParameters`
   - Added model `ManagedServiceIdentity`
   - Added enum `ManagedServiceIdentityType`
+  - Added model `NotificationContractProperties`
+  - Added model `OpenidConnectProviderContractProperties`
   - Added model `OpenidConnectProviderUpdateContractProperties`
+  - Added model `OperationResultContractProperties`
+  - Added model `PolicyContractProperties`
+  - Added model `PolicyDescriptionContractProperties`
+  - Added model `PolicyFragmentContractProperties`
+  - Added model `PolicyRestrictionContractProperties`
   - Added model `PortalConfigProperties`
+  - Added model `PortalDelegationSettingsProperties`
+  - Added model `PortalRevisionContractProperties`
+  - Added model `PortalSettingsContractProperties`
   - Added model `PortalSigninSettingProperties`
+  - Added model `PortalSignupSettingsProperties`
+  - Added model `PrivateEndpointConnectionProperties`
   - Added model `PrivateEndpointConnectionWrapperProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `ProductApiLinkContractProperties`
   - Added model `ProductApplicationContract`
   - Added model `ProductApplicationContractEntra`
   - Added enum `ProductAuthType`
   - Added model `ProductEntityBaseParametersApplication`
+  - Added model `ProductGroupLinkContractProperties`
+  - Added model `RecipientEmailContractProperties`
   - Added model `RecipientUsersContractProperties`
   - Added enum `ReleaseChannel`
   - Added model `ResolverEntityBaseContract`
   - Added model `ResolverUpdateContractProperties`
   - Added model `SaveConfigurationParameterProperties`
+  - Added model `SchemaContractProperties`
   - Added model `SchemaDocumentProperties`
+  - Added model `SubscriptionContractProperties`
   - Added model `SubscriptionCreateParameterProperties`
   - Added model `SubscriptionUpdateParameterProperties`
+  - Added model `TagApiLinkContractProperties`
+  - Added model `TagContractProperties`
+  - Added model `TagOperationLinkContractProperties`
+  - Added model `TagProductLinkContractProperties`
+  - Added model `TenantConfigurationSyncStateContractProperties`
+  - Added model `TenantSettingsContractProperties`
   - Added model `ToolContract`
   - Added model `ToolContractProperties`
   - Added model `TrackedResource`
   - Added model `UserAssignedIdentity`
   - Added model `UserTokenParameterProperties`
+  - Added model `WikiContractProperties`
+  - Added model `WorkspaceContractProperties`
   - Model `ApiDiagnosticOperations` added parameter `etag` in method `create_or_update`
   - Model `ApiDiagnosticOperations` added parameter `match_condition` in method `create_or_update`
   - Model `ApiDiagnosticOperations` added parameter `etag` in method `delete`
@@ -585,11 +679,16 @@
 
 ### Breaking Changes
 
+  - Model `AccessInformationContract` deleted or renamed its instance variable `id_properties_id`
+  - Model `AccessInformationContract` deleted or renamed its instance variable `principal_id`
+  - Model `AccessInformationContract` deleted or renamed its instance variable `enabled`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `principal_id`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `primary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `secondary_key`
   - Model `AccessInformationCreateParameters` deleted or renamed its instance variable `enabled`
   - Model `AccessInformationUpdateParameters` deleted or renamed its instance variable `enabled`
+  - Model `AllPoliciesContract` deleted or renamed its instance variable `reference_policy_id`
+  - Model `AllPoliciesContract` deleted or renamed its instance variable `compliance_state`
   - Model `ApiContract` deleted or renamed its instance variable `description`
   - Model `ApiContract` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiContract` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -726,6 +825,10 @@
   - Model `ApiManagementSkuRestrictions` deleted or renamed its instance variable `values`
   - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `workspace_id`
   - Model `ApiManagementWorkspaceLinksResource` deleted or renamed its instance variable `gateways`
+  - Model `ApiReleaseContract` deleted or renamed its instance variable `api_id`
+  - Model `ApiReleaseContract` deleted or renamed its instance variable `created_date_time`
+  - Model `ApiReleaseContract` deleted or renamed its instance variable `updated_date_time`
+  - Model `ApiReleaseContract` deleted or renamed its instance variable `notes`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `description`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `authentication_settings`
   - Model `ApiUpdateContract` deleted or renamed its instance variable `subscription_key_parameter_names`
@@ -755,6 +858,18 @@
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `version_header_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `ApiVersionSetUpdateParameters` deleted or renamed its instance variable `versioning_scheme`
+  - Model `AssociationContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `app_ids`
+  - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `tenant_id`
+  - Model `AuthorizationAccessPolicyContract` deleted or renamed its instance variable `object_id`
+  - Model `AuthorizationContract` deleted or renamed its instance variable `authorization_type`
+  - Model `AuthorizationContract` deleted or renamed its instance variable `o_auth2_grant_type`
+  - Model `AuthorizationContract` deleted or renamed its instance variable `parameters`
+  - Model `AuthorizationContract` deleted or renamed its instance variable `error`
+  - Model `AuthorizationContract` deleted or renamed its instance variable `status`
+  - Model `AuthorizationProviderContract` deleted or renamed its instance variable `display_name`
+  - Model `AuthorizationProviderContract` deleted or renamed its instance variable `identity_provider`
+  - Model `AuthorizationProviderContract` deleted or renamed its instance variable `oauth2`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `description`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `authorization_methods`
   - Model `AuthorizationServerContract` deleted or renamed its instance variable `client_authentication_method`
@@ -814,15 +929,41 @@
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `type`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `url`
   - Model `BackendUpdateParameters` deleted or renamed its instance variable `protocol`
+  - Model `CacheContract` deleted or renamed its instance variable `description`
+  - Model `CacheContract` deleted or renamed its instance variable `connection_string`
+  - Model `CacheContract` deleted or renamed its instance variable `use_from_location`
+  - Model `CacheContract` deleted or renamed its instance variable `resource_id`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `description`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `connection_string`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `use_from_location`
   - Model `CacheUpdateParameters` deleted or renamed its instance variable `resource_id`
+  - Model `CertificateContract` deleted or renamed its instance variable `subject`
+  - Model `CertificateContract` deleted or renamed its instance variable `thumbprint`
+  - Model `CertificateContract` deleted or renamed its instance variable `expiration_date`
+  - Model `CertificateContract` deleted or renamed its instance variable `key_vault`
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `data`
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `password`
   - Model `CertificateCreateOrUpdateParameters` deleted or renamed its instance variable `key_vault`
+  - Model `ContentTypeContract` deleted or renamed its instance variable `id_properties_id`
+  - Model `ContentTypeContract` deleted or renamed its instance variable `name_properties_name`
+  - Model `ContentTypeContract` deleted or renamed its instance variable `description`
+  - Model `ContentTypeContract` deleted or renamed its instance variable `schema`
+  - Model `ContentTypeContract` deleted or renamed its instance variable `version`
+  - Model `DeletedServiceContract` deleted or renamed its instance variable `service_id`
+  - Model `DeletedServiceContract` deleted or renamed its instance variable `scheduled_purge_date`
+  - Model `DeletedServiceContract` deleted or renamed its instance variable `deletion_date`
   - Model `DeployConfigurationParameters` deleted or renamed its instance variable `branch`
   - Model `DeployConfigurationParameters` deleted or renamed its instance variable `force`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `always_log`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `logger_id`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `sampling`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `frontend`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `backend`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `log_client_ip`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `http_correlation_protocol`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `verbosity`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `operation_name_format`
+  - Model `DiagnosticContract` deleted or renamed its instance variable `metrics`
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `always_log`
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `logger_id`
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `sampling`
@@ -833,13 +974,35 @@
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `verbosity`
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `operation_name_format`
   - Model `DiagnosticUpdateContract` deleted or renamed its instance variable `metrics`
+  - Model `DocumentationContract` deleted or renamed its instance variable `title`
+  - Model `DocumentationContract` deleted or renamed its instance variable `content`
   - Model `DocumentationUpdateContract` deleted or renamed its instance variable `title`
   - Model `DocumentationUpdateContract` deleted or renamed its instance variable `content`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `subject`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `body`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `title`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `description`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `is_default`
+  - Model `EmailTemplateContract` deleted or renamed its instance variable `parameters`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `subject`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `title`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `description`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `body`
   - Model `EmailTemplateUpdateParameters` deleted or renamed its instance variable `parameters`
+  - Model `GatewayCertificateAuthorityContract` deleted or renamed its instance variable `is_trusted`
+  - Model `GatewayContract` deleted or renamed its instance variable `location_data`
+  - Model `GatewayContract` deleted or renamed its instance variable `description`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `hostname`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `certificate_id`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `negotiate_client_certificate`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `tls10_enabled`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `tls11_enabled`
+  - Model `GatewayHostnameConfigurationContract` deleted or renamed its instance variable `http2_enabled`
+  - Model `GlobalSchemaContract` deleted or renamed its instance variable `schema_type`
+  - Model `GlobalSchemaContract` deleted or renamed its instance variable `description`
+  - Model `GlobalSchemaContract` deleted or renamed its instance variable `value`
+  - Model `GlobalSchemaContract` deleted or renamed its instance variable `document`
+  - Model `GlobalSchemaContract` deleted or renamed its instance variable `provisioning_state`
   - Model `GroupContract` deleted or renamed its instance variable `display_name`
   - Model `GroupContract` deleted or renamed its instance variable `description`
   - Model `GroupContract` deleted or renamed its instance variable `built_in`
@@ -886,6 +1049,12 @@
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_library`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_id`
   - Model `IdentityProviderUpdateParameters` deleted or renamed its instance variable `client_secret`
+  - Model `IssueAttachmentContract` deleted or renamed its instance variable `title`
+  - Model `IssueAttachmentContract` deleted or renamed its instance variable `content_format`
+  - Model `IssueAttachmentContract` deleted or renamed its instance variable `content`
+  - Model `IssueCommentContract` deleted or renamed its instance variable `text`
+  - Model `IssueCommentContract` deleted or renamed its instance variable `created_date`
+  - Model `IssueCommentContract` deleted or renamed its instance variable `user_id`
   - Model `IssueContract` deleted or renamed its instance variable `created_date`
   - Model `IssueContract` deleted or renamed its instance variable `state`
   - Model `IssueContract` deleted or renamed its instance variable `api_id`
@@ -898,6 +1067,11 @@
   - Model `IssueUpdateContract` deleted or renamed its instance variable `title`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `description`
   - Model `IssueUpdateContract` deleted or renamed its instance variable `user_id`
+  - Model `LoggerContract` deleted or renamed its instance variable `logger_type`
+  - Model `LoggerContract` deleted or renamed its instance variable `description`
+  - Model `LoggerContract` deleted or renamed its instance variable `credentials`
+  - Model `LoggerContract` deleted or renamed its instance variable `is_buffered`
+  - Model `LoggerContract` deleted or renamed its instance variable `resource_id`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `logger_type`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `description`
   - Model `LoggerUpdateContract` deleted or renamed its instance variable `credentials`
@@ -918,6 +1092,16 @@
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `value`
   - Model `NamedValueUpdateParameters` deleted or renamed its instance variable `key_vault`
+  - Model `NotificationContract` deleted or renamed its instance variable `title`
+  - Model `NotificationContract` deleted or renamed its instance variable `description`
+  - Model `NotificationContract` deleted or renamed its instance variable `recipients`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `display_name`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `description`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `metadata_endpoint`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `client_id`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `client_secret`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `use_in_test_console`
+  - Model `OpenidConnectProviderContract` deleted or renamed its instance variable `use_in_api_documentation`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `display_name`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `description`
   - Model `OpenidConnectProviderUpdateContract` deleted or renamed its instance variable `metadata_endpoint`
@@ -933,6 +1117,13 @@
   - Model `OperationContract` deleted or renamed its instance variable `display_name`
   - Model `OperationContract` deleted or renamed its instance variable `method`
   - Model `OperationContract` deleted or renamed its instance variable `url_template`
+  - Model `OperationResultContract` deleted or renamed its instance variable `id_properties_id`
+  - Model `OperationResultContract` deleted or renamed its instance variable `status`
+  - Model `OperationResultContract` deleted or renamed its instance variable `started`
+  - Model `OperationResultContract` deleted or renamed its instance variable `updated`
+  - Model `OperationResultContract` deleted or renamed its instance variable `result_info`
+  - Model `OperationResultContract` deleted or renamed its instance variable `error`
+  - Model `OperationResultContract` deleted or renamed its instance variable `action_log`
   - Model `OperationStatusResult` deleted or renamed its instance variable `resource_id`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `template_parameters`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `description`
@@ -943,6 +1134,16 @@
   - Model `OperationUpdateContract` deleted or renamed its instance variable `method`
   - Model `OperationUpdateContract` deleted or renamed its instance variable `url_template`
   - Model `ParameterContract` deleted or renamed its instance variable `values`
+  - Model `PolicyContract` deleted or renamed its instance variable `value`
+  - Model `PolicyContract` deleted or renamed its instance variable `format`
+  - Model `PolicyDescriptionContract` deleted or renamed its instance variable `description`
+  - Model `PolicyDescriptionContract` deleted or renamed its instance variable `scope`
+  - Model `PolicyFragmentContract` deleted or renamed its instance variable `value`
+  - Model `PolicyFragmentContract` deleted or renamed its instance variable `description`
+  - Model `PolicyFragmentContract` deleted or renamed its instance variable `format`
+  - Model `PolicyFragmentContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `PolicyRestrictionContract` deleted or renamed its instance variable `scope`
+  - Model `PolicyRestrictionContract` deleted or renamed its instance variable `require_base`
   - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `scope`
   - Model `PolicyRestrictionUpdateContract` deleted or renamed its instance variable `require_base`
   - Model `PortalConfigContract` deleted or renamed its instance variable `enable_basic_auth`
@@ -951,7 +1152,33 @@
   - Model `PortalConfigContract` deleted or renamed its instance variable `delegation`
   - Model `PortalConfigContract` deleted or renamed its instance variable `cors`
   - Model `PortalConfigContract` deleted or renamed its instance variable `csp`
+  - Model `PortalDelegationSettings` deleted or renamed its instance variable `url`
+  - Model `PortalDelegationSettings` deleted or renamed its instance variable `validation_key`
+  - Model `PortalDelegationSettings` deleted or renamed its instance variable `subscriptions`
+  - Model `PortalDelegationSettings` deleted or renamed its instance variable `user_registration`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `description`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `status_details`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `status`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `is_current`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `created_date_time`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `updated_date_time`
+  - Model `PortalRevisionContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `url`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `validation_key`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `subscriptions`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `user_registration`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `enabled`
+  - Model `PortalSettingsContract` deleted or renamed its instance variable `terms_of_service`
   - Model `PortalSigninSettings` deleted or renamed its instance variable `enabled`
+  - Model `PortalSignupSettings` deleted or renamed its instance variable `enabled`
+  - Model `PortalSignupSettings` deleted or renamed its instance variable `terms_of_service`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `ProductApiLinkContract` deleted or renamed its instance variable `api_id`
   - Model `ProductContract` deleted or renamed its instance variable `description`
   - Model `ProductContract` deleted or renamed its instance variable `terms`
   - Model `ProductContract` deleted or renamed its instance variable `subscription_required`
@@ -959,6 +1186,7 @@
   - Model `ProductContract` deleted or renamed its instance variable `subscriptions_limit`
   - Model `ProductContract` deleted or renamed its instance variable `state`
   - Model `ProductContract` deleted or renamed its instance variable `display_name`
+  - Model `ProductGroupLinkContract` deleted or renamed its instance variable `group_id`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `description`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `terms`
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `subscription_required`
@@ -968,6 +1196,7 @@
   - Model `ProductUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `calls_count`
   - Model `QuotaCounterValueUpdateContract` deleted or renamed its instance variable `kb_transferred`
+  - Model `RecipientEmailContract` deleted or renamed its instance variable `email`
   - Model `RecipientUserContract` deleted or renamed its instance variable `user_id`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_endpoint`
   - Model `RemotePrivateEndpointConnectionWrapper` deleted or renamed its instance variable `private_link_service_connection_state`
@@ -981,6 +1210,24 @@
   - Model `ResolverUpdateContract` deleted or renamed its instance variable `description`
   - Model `SaveConfigurationParameter` deleted or renamed its instance variable `branch`
   - Model `SaveConfigurationParameter` deleted or renamed its instance variable `force`
+  - Model `SchemaContract` deleted or renamed its instance variable `content_type`
+  - Model `SchemaContract` deleted or renamed its instance variable `provisioning_state`
+  - Model `SchemaContract` deleted or renamed its instance variable `value`
+  - Model `SchemaContract` deleted or renamed its instance variable `definitions`
+  - Model `SchemaContract` deleted or renamed its instance variable `components`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `owner_id`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `scope`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `display_name`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `state`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `created_date`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `start_date`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `expiration_date`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `end_date`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `notification_date`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `primary_key`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `secondary_key`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `state_comment`
+  - Model `SubscriptionContract` deleted or renamed its instance variable `allow_tracing`
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `owner_id`
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `scope`
   - Model `SubscriptionCreateParameters` deleted or renamed its instance variable `display_name`
@@ -997,6 +1244,8 @@
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `state_comment`
   - Model `SubscriptionUpdateParameters` deleted or renamed its instance variable `allow_tracing`
+  - Model `TagApiLinkContract` deleted or renamed its instance variable `api_id`
+  - Model `TagContract` deleted or renamed its instance variable `display_name`
   - Model `TagCreateUpdateParameters` deleted or renamed its instance variable `display_name`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `description`
   - Model `TagDescriptionContract` deleted or renamed its instance variable `external_docs_url`
@@ -1006,6 +1255,17 @@
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `description`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_url`
   - Model `TagDescriptionCreateParameters` deleted or renamed its instance variable `external_docs_description`
+  - Model `TagOperationLinkContract` deleted or renamed its instance variable `operation_id`
+  - Model `TagProductLinkContract` deleted or renamed its instance variable `product_id`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `branch`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `commit_id`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `is_export`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `is_synced`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `is_git_enabled`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `sync_date`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `configuration_change_date`
+  - Model `TenantConfigurationSyncStateContract` deleted or renamed its instance variable `last_operation_id`
+  - Model `TenantSettingsContract` deleted or renamed its instance variable `settings`
   - Model `UserContract` deleted or renamed its instance variable `state`
   - Model `UserContract` deleted or renamed its instance variable `note`
   - Model `UserContract` deleted or renamed its instance variable `identities`
@@ -1032,11 +1292,18 @@
   - Model `UserUpdateParameters` deleted or renamed its instance variable `password`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `first_name`
   - Model `UserUpdateParameters` deleted or renamed its instance variable `last_name`
+  - Model `WikiContract` deleted or renamed its instance variable `documents`
   - Model `WikiUpdateContract` deleted or renamed its instance variable `documents`
+  - Model `WorkspaceContract` deleted or renamed its instance variable `display_name`
+  - Model `WorkspaceContract` deleted or renamed its instance variable `description`
   - Deleted or renamed model `AccessInformationCollection`
   - Deleted or renamed model `AllPoliciesCollection`
   - Deleted or renamed model `ApiCollection`
+  - Deleted or renamed model `ApiManagementGatewayConfigConnectionListResult`
+  - Deleted or renamed model `ApiManagementGatewayListResult`
+  - Deleted or renamed model `ApiManagementServiceListResult`
   - Deleted or renamed model `ApiManagementSkusResult`
+  - Deleted or renamed model `ApiManagementWorkspaceLinksListResult`
   - Deleted or renamed model `ApiReleaseCollection`
   - Deleted or renamed model `ApiRevisionCollection`
   - Deleted or renamed model `ApiRevisionInfoContract`
@@ -1070,16 +1337,19 @@
   - Deleted or renamed model `NotificationCollection`
   - Deleted or renamed model `OpenIdConnectProviderCollection`
   - Deleted or renamed model `OperationCollection`
+  - Deleted or renamed model `OperationListResult`
   - Deleted or renamed model `PolicyFragmentCollection`
   - Deleted or renamed model `PolicyRestrictionCollection`
   - Deleted or renamed model `PolicyWithComplianceCollection`
   - Deleted or renamed model `PolicyWithComplianceContract`
   - Deleted or renamed model `PortalConfigCollection`
   - Deleted or renamed model `PortalRevisionCollection`
+  - Deleted or renamed model `PrivateEndpointConnectionListResult`
   - Deleted or renamed model `ProductApiLinkCollection`
   - Deleted or renamed model `ProductCollection`
   - Deleted or renamed model `ProductGroupLinkCollection`
   - Deleted or renamed model `QuotaCounterValueContract`
+  - Deleted or renamed model `RegionListResult`
   - Deleted or renamed model `ReportCollection`
   - Deleted or renamed model `RequestReportCollection`
   - Deleted or renamed model `ResolverCollection`

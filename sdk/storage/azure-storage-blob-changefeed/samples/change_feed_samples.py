@@ -37,8 +37,9 @@ class ChangeFeedSamples(object):
         # Instantiate a ChangeFeedClient
         # [START list_events_by_page]
         # [START create_change_feed_client]
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
+        cf_client = ChangeFeedClient(
+            "https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME), credential=self.ACCOUNT_KEY
+        )
         # [END create_change_feed_client]
 
         change_feed = cf_client.list_changes(results_per_page=10).by_page()
@@ -56,18 +57,21 @@ class ChangeFeedSamples(object):
 
     def list_all_events(self):
         # [START list_all_events]
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
+        cf_client = ChangeFeedClient(
+            "https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME), credential=self.ACCOUNT_KEY
+        )
         change_feed = cf_client.list_changes()
 
         # print all events
         for event in change_feed:
             print(event)
+
     # [END list_all_events]
 
     def list_range_of_events(self):
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
+        cf_client = ChangeFeedClient(
+            "https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME), credential=self.ACCOUNT_KEY
+        )
         start_time = datetime(2020, 8, 18, 10)
         end_time = datetime(2020, 3, 4)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
@@ -78,8 +82,9 @@ class ChangeFeedSamples(object):
 
     def list_events_in_live_mode(self):
         # Instantiate a ChangeFeedClient
-        cf_client = ChangeFeedClient("https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME),
-                                     credential=self.ACCOUNT_KEY)
+        cf_client = ChangeFeedClient(
+            "https://{}.blob.core.windows.net".format(self.ACCOUNT_NAME), credential=self.ACCOUNT_KEY
+        )
         token = None
         while True:
             change_feed = cf_client.list_changes(results_per_page=500).by_page(continuation_token=token)
@@ -93,7 +98,7 @@ class ChangeFeedSamples(object):
             print("continue printing events")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = ChangeFeedSamples()
     sample.list_events_by_page()
     sample.list_all_events()

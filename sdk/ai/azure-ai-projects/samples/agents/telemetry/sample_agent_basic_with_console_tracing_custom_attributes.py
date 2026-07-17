@@ -22,9 +22,10 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING - Set to `true` to enable GenAI telemetry tracing, which is
        disabled by default.
-    4) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
+    5) OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT - Optional. Set to `true` to trace the content of chat
        messages, which may contain personal data. False by default.
 """
 
@@ -50,7 +51,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 # Define the custom span processor that is used for adding the custom
 # attributes to spans when they are started.
-# [START custom_attribute_span_processor]
 class CustomAttributeSpanProcessor(SpanProcessor):
     def __init__(self) -> None:
         pass
@@ -68,8 +68,6 @@ class CustomAttributeSpanProcessor(SpanProcessor):
         pass
 
 
-# [END custom_attribute_span_processor]
-
 # Setup tracing to console
 # Requires opentelemetry-sdk
 span_exporter = ConsoleSpanExporter()
@@ -82,24 +80,24 @@ tracer = trace.get_tracer(__name__)
 AIProjectInstrumentor().instrument()
 
 # Add the custom span processor to the global tracer provider
-# [START add_custom_span_processor_to_tracer_provider]
 provider = cast(TracerProvider, trace.get_tracer_provider())
 provider.add_span_processor(CustomAttributeSpanProcessor())
-# [END add_custom_span_processor_to_tracer_provider]
 
 scenario = os.path.basename(__file__)
-with tracer.start_as_current_span(scenario):
-    with (
-        DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential) as client,
-    ):
+with (
+    tracer.start_as_current_span(scenario),
+    DefaultAzureCredential() as credential,
+    AIProjectClient(endpoint=endpoint, credential=credential) as client,
+):
 
-        agent_definition = PromptAgentDefinition(
-            model=os.environ["FOUNDRY_MODEL_NAME"],
-            instructions="You are a helpful assistant that answers general questions",
-        )
+    agent_definition = PromptAgentDefinition(
+        model=os.environ["FOUNDRY_MODEL_NAME"],
+        instructions="You are a helpful assistant that answers general questions",
+    )
 
-        agent = client.agents.create_version(agent_name="MyAgent", definition=agent_definition)
+    agent = client.agents.create_version(
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"), definition=agent_definition
+    )
 
-        client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
+    client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+    print("Agent deleted")

@@ -44,6 +44,37 @@ class AvatarOutputProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WebSocket protocol, output the video frames over WebSocket."""
 
 
+class AzureRealtimeNativeVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Currently known voice names for the Azure realtime native voice type. This is an extensible
+    enum; additional voice names may be accepted by the service in the future.
+    """
+
+    AARTI = "aarti"
+    """Aarti voice."""
+    ANDREW = "andrew"
+    """Andrew voice."""
+    AVA = "ava"
+    """Ava voice."""
+    DENISE = "denise"
+    """Denise voice."""
+    DIYA = "diya"
+    """Diya voice."""
+    ELSA = "elsa"
+    """Elsa voice."""
+    FLORIAN = "florian"
+    """Florian voice."""
+    FRANCISCA = "francisca"
+    """Francisca voice."""
+    MEERA = "meera"
+    """Meera voice."""
+    XIAOXIAO = "xiaoxiao"
+    """Xiaoxiao voice."""
+    YUNXI = "yunxi"
+    """Yunxi voice."""
+    XIMENA = "ximena"
+    """Ximena voice."""
+
+
 class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Union of all supported Azure voice types."""
 
@@ -53,6 +84,8 @@ class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure standard voice."""
     AZURE_PERSONAL = "azure-personal"
     """Azure personal voice."""
+    AVATAR_VOICE_SYNC = "avatar-voice-sync"
+    """Azure avatar voice sync."""
 
 
 class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -92,6 +125,12 @@ class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SESSION_AVATAR_CONNECT."""
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     """MCP_APPROVAL_RESPONSE."""
+    OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
+    """Client request to clear the avatar output buffer."""
+    INPUT_TEXT_DELTA = "input_text.delta"
+    """Streamed delta of input text content being appended to an item."""
+    INPUT_TEXT_DONE = "input_text.done"
+    """Signals that the streamed input text content for an item is complete."""
 
 
 class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -107,6 +146,15 @@ class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """TEXT."""
     AUDIO = "audio"
     """AUDIO."""
+
+
+class EchoCancellationReferenceSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source of the echo cancellation reference signal."""
+
+    SERVER = "server"
+    """EC uses the internal TTS loopback as the reference signal."""
+    CLIENT = "client"
+    """EC uses the client-supplied reference channel from the stereo input stream."""
 
 
 class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -177,6 +225,10 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MCP_APPROVAL_REQUEST."""
     MCP_APPROVAL_RESPONSE = "mcp_approval_response"
     """MCP_APPROVAL_RESPONSE."""
+    WEB_SEARCH_CALL = "web_search_call"
+    """Web search call item."""
+    FILE_SEARCH_CALL = "file_search_call"
+    """File search call item."""
 
 
 class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -237,6 +289,12 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cedar voice."""
 
 
+_LEGACY_OUTPUT_AUDIO_FORMAT_VALUES = {
+    "pcm16-8000hz": "pcm16_8000hz",
+    "pcm16-16000hz": "pcm16_16000hz",
+}
+
+
 class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output audio format types supported."""
 
@@ -251,6 +309,14 @@ class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     G711_ALAW = "g711_alaw"
     """G.711 A-law audio format at 8kHz sampling rate."""
 
+    @classmethod
+    def _missing_(cls, value):
+        if isinstance(value, str):
+            current_value = _LEGACY_OUTPUT_AUDIO_FORMAT_VALUES.get(value.lower())
+            if current_value is not None:
+                return cls(current_value)
+        return None
+
 
 class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PersonalVoice models."""
@@ -261,6 +327,10 @@ class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use the latest Phoenix model."""
     PHOENIX_V2_NEURAL = "PhoenixV2Neural"
     """Use the Phoenix V2 model."""
+    DRAGON_HD_OMNI_LATEST_NEURAL = "DragonHDOmniLatestNeural"
+    """Use the latest Dragon HD Omni model."""
+    MAI_VOICE1 = "MAI-Voice-1"
+    """Use the MAI-Voice-1 model."""
 
 
 class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -418,6 +488,41 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_MCP_CALL_COMPLETED."""
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
     """RESPONSE_MCP_CALL_FAILED."""
+    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
+    """Avatar switches to speaking state."""
+    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
+    """Avatar switches to idle state."""
+    RESPONSE_VIDEO_DELTA = "response.video.delta"
+    """Delta update for avatar video frames."""
+    RESPONSE_WEB_SEARCH_CALL_SEARCHING = "response.web_search_call.searching"
+    """Web search call is searching."""
+    RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS = "response.web_search_call.in_progress"
+    """Web search call is in progress."""
+    RESPONSE_WEB_SEARCH_CALL_COMPLETED = "response.web_search_call.completed"
+    """Web search call completed."""
+    RESPONSE_FILE_SEARCH_CALL_SEARCHING = "response.file_search_call.searching"
+    """File search call is searching."""
+    RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS = "response.file_search_call.in_progress"
+    """File search call is in progress."""
+    RESPONSE_FILE_SEARCH_CALL_COMPLETED = "response.file_search_call.completed"
+    """File search call completed."""
+    OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
+    """Output audio buffer has been cleared."""
+    RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED = "response.audio_transcript.annotation.added"
+    """Audio transcript annotation added."""
+    RESPONSE_INVOCATION_DELTA = "response.invocation.delta"
+    """Invocation passthrough delta from hosted agent."""
+
+
+class SessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Options for what additional data to include in session responses."""
+
+    ITEM_INPUT_AUDIO_TRANSCRIPTION_LOGPROBS = "item.input_audio_transcription.logprobs"
+    """Include log probabilities for input audio transcription."""
+    ITEM_INPUT_AUDIO_TRANSCRIPTION_PHRASES = "item.input_audio_transcription.phrases"
+    """Include phrase-level details for input audio transcription."""
+    FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
+    """Include file search call results."""
 
 
 class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):

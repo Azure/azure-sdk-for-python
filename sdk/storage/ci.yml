@@ -39,8 +39,6 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
-    MatrixFilters:
-      - PythonVersion=^(?!pypy3).*
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob

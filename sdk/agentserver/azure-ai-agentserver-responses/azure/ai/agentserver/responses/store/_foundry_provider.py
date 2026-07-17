@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core._platform_headers import CHAT_ISOLATION_KEY, PLATFORM_ERROR_TAG, USER_ISOLATION_KEY  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core._platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG  # pylint: disable=import-error,no-name-in-module
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ServiceRequestError, ServiceResponseError
@@ -31,7 +31,7 @@ from ._foundry_serializer import (
 from ._foundry_settings import FoundryStorageSettings
 
 if TYPE_CHECKING:
-    from .._response_context import IsolationContext
+    from .._response_context import PlatformContext
 
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
@@ -68,20 +68,24 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
-def _apply_isolation_headers(request: HttpRequest, isolation: IsolationContext | None) -> None:
-    """Add isolation key headers to an outbound HTTP request when present.
+def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
+    """Forward the per-request call ID on an outbound HTTP request when present.
+
+    On protocol version ``2.0.0`` the container forwards the per-request call ID
+    (``x-agent-foundry-call-id``) on outbound calls to Foundry platform services;
+    the storage service resolves the caller context server-side from it. The
+    ``x-agent-user-id`` header is **not** forwarded — it is not accepted/trusted
+    by 1P services and is used only for container-side state partitioning.
 
     :param request: The outbound HTTP request to modify.
     :type request: ~azure.core.rest.HttpRequest
-    :param isolation: Isolation context containing user/chat keys, or ``None``.
-    :type isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+    :param context: Platform context containing the call ID, or ``None``.
+    :type context: ~azure.ai.agentserver.responses.PlatformContext | None
     """
-    if isolation is None:
+    if context is None:
         return
-    if isolation.user_key is not None:
-        request.headers[USER_ISOLATION_KEY] = isolation.user_key
-    if isolation.chat_key is not None:
-        request.headers[CHAT_ISOLATION_KEY] = isolation.chat_key
+    if context.call_id is not None:
+        request.headers[FOUNDRY_CALL_ID] = context.call_id
 
 
 class FoundryStorageProvider:
@@ -202,7 +206,7 @@ class FoundryStorageProvider:
         input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> None:
         """Persist a new response with its associated input items and history.
 
@@ -212,23 +216,23 @@ class FoundryStorageProvider:
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Item IDs from the prior conversation turn, if any.
         :type history_item_ids: Iterable[str] | None
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :raises FoundryApiError: On non-success HTTP response.
         """
         body = serialize_create_request(response, input_items, history_item_ids)
         url = self._settings.build_url("responses")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         await self._send_storage_request(request)
 
-    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
+    async def get_response(self, response_id: str, *, context: PlatformContext | None = None) -> ResponseObject:
         """Retrieve a stored response by its ID.
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: The deserialized :class:`ResponseObject` model.
         :rtype: ResponseObject
         :raises FoundryResourceNotFoundError: If the response does not exist.
@@ -236,17 +240,17 @@ class FoundryStorageProvider:
         """
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("GET", url)
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         http_resp = await self._send_storage_request(request)
         return deserialize_response(http_resp.text())
 
-    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
+    async def update_response(self, response: ResponseObject, *, context: PlatformContext | None = None) -> None:
         """Persist an updated response snapshot.
 
         :param response: The updated response model.  Must contain a valid ``id`` field.
         :type response: ResponseObject
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :raises FoundryResourceNotFoundError: If the response does not exist.
         :raises FoundryApiError: On other non-success HTTP response.
         """
@@ -254,22 +258,22 @@ class FoundryStorageProvider:
         body = serialize_response(response)
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         await self._send_storage_request(request)
 
-    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
+    async def delete_response(self, response_id: str, *, context: PlatformContext | None = None) -> None:
         """Delete a stored response and its associated data.
 
         :param response_id: The response identifier.
         :type response_id: str
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :raises FoundryResourceNotFoundError: If the response does not exist.
         :raises FoundryApiError: On other non-success HTTP response.
         """
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("DELETE", url)
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         await self._send_storage_request(request)
 
     async def get_input_items(
@@ -280,7 +284,7 @@ class FoundryStorageProvider:
         after: str | None = None,
         before: str | None = None,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[OutputItem]:
         """Retrieve a page of input items for the given response.
 
@@ -294,8 +298,8 @@ class FoundryStorageProvider:
         :type after: str | None
         :param before: End the page before this item ID (cursor-based pagination).
         :type before: str | None
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of deserialized :class:`OutputItem` instances.
         :rtype: list[OutputItem]
         :raises FoundryResourceNotFoundError: If the response does not exist.
@@ -312,12 +316,12 @@ class FoundryStorageProvider:
 
         url = self._settings.build_url(f"responses/{_encode(response_id)}/input_items", **extra)
         request = HttpRequest("GET", url)
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         http_resp = await self._send_storage_request(request)
         return deserialize_paged_items(http_resp.text())
 
     async def get_items(
-        self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None
+        self, item_ids: Iterable[str], *, context: PlatformContext | None = None
     ) -> list[OutputItem | None]:
         """Retrieve multiple items by their IDs in a single batch request.
 
@@ -326,8 +330,8 @@ class FoundryStorageProvider:
 
         :param item_ids: The item identifiers to retrieve.
         :type item_ids: Iterable[str]
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: A list of :class:`OutputItem` instances (or ``None`` for missing items).
         :rtype: list[OutputItem | None]
         :raises FoundryApiError: On non-success HTTP response.
@@ -336,7 +340,7 @@ class FoundryStorageProvider:
         body = serialize_batch_request(ids)
         url = self._settings.build_url("items/batch/retrieve")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         http_resp = await self._send_storage_request(request)
         return deserialize_items_array(http_resp.text())
 
@@ -346,7 +350,7 @@ class FoundryStorageProvider:
         conversation_id: str | None,
         limit: int,
         *,
-        isolation: IsolationContext | None = None,
+        context: PlatformContext | None = None,
     ) -> list[str]:
         """Retrieve the ordered list of item IDs that form the conversation history.
 
@@ -356,8 +360,8 @@ class FoundryStorageProvider:
         :type conversation_id: str | None
         :param limit: Maximum number of item IDs to return.
         :type limit: int
-        :keyword isolation: Isolation context for multi-tenant partitioning.
-        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :keyword context: Platform context for multi-tenant partitioning.
+        :paramtype context: ~azure.ai.agentserver.responses.PlatformContext | None
         :returns: Ordered list of item ID strings.
         :rtype: list[str]
         :raises FoundryApiError: On non-success HTTP response.
@@ -370,6 +374,6 @@ class FoundryStorageProvider:
 
         url = self._settings.build_url("history/item_ids", **extra)
         request = HttpRequest("GET", url)
-        _apply_isolation_headers(request, isolation)
+        _apply_platform_headers(request, context)
         http_resp = await self._send_storage_request(request)
         return deserialize_history_ids(http_resp.text())

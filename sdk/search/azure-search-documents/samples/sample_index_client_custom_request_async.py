@@ -23,14 +23,10 @@ USAGE:
 async def sample_send_request_async():
     # [START sample_send_request_async]
     import os
-    import sys
-    from pathlib import Path
     from azure.core.credentials import AzureKeyCredential
     from azure.core.rest import HttpRequest
+    from azure.search.documents import DEFAULT_VERSION
     from azure.search.documents.indexes.aio import SearchIndexClient
-
-    sys.path.append(str(Path(__file__).resolve().parent))
-    from sample_utils import AZURE_SEARCH_API_VERSION
 
     endpoint = os.environ["AZURE_SEARCH_SERVICE_ENDPOINT"]
     index_name = os.environ["AZURE_SEARCH_INDEX_NAME"]
@@ -42,7 +38,7 @@ async def sample_send_request_async():
     # while adding convenience for endpoint construction.
     request = HttpRequest(
         method="GET",
-        url=f"/indexes('{index_name}')?api-version={AZURE_SEARCH_API_VERSION}",
+        url=f"/indexes('{index_name}')?api-version={DEFAULT_VERSION.value}",
     )
     async with index_client:
         response = await index_client.send_request(request)

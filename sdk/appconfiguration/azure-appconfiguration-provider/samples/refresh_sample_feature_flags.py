@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import os
 import time
-from sample_utilities import get_client_modifications
+from sample_utilities import get_authority, get_credential, get_client_modifications
 from azure.appconfiguration import (  # type:ignore
     AzureAppConfigurationClient,
     ConfigurationSetting,
@@ -13,11 +13,13 @@ from azure.appconfiguration import (  # type:ignore
 )
 from azure.appconfiguration.provider import load, WatchKey
 
+endpoint = os.environ.get("APPCONFIGURATION_ENDPOINT_STRING")
+authority = get_authority(endpoint)
+credential = get_credential(authority)
 kwargs = get_client_modifications()
-connection_string = os.environ.get("APPCONFIGURATION_CONNECTION_STRING")
 
 # Setting up a configuration setting with a known value
-client = AzureAppConfigurationClient.from_connection_string(connection_string)
+client = AzureAppConfigurationClient(endpoint, credential)
 
 configuration_setting = ConfigurationSetting(key="message", value="Hello World!")
 feature_flag_setting = FeatureFlagConfigurationSetting("Beta", enabled=True)
@@ -30,18 +32,25 @@ def my_callback_on_fail(_):
     print("Refresh failed!")
 
 
-# Connecting to Azure App Configuration using connection string, and refreshing when the configuration setting message
-# changes
+# [START refresh_feature_flags]
+import os
+from azure.appconfiguration.provider import load, WatchKey
+
+connection_string = os.environ["APPCONFIGURATION_CONNECTION_STRING"]
+
 config = load(
-    connection_string=connection_string,
+    endpoint=endpoint,
+    credential=credential,
     refresh_on=[WatchKey("message")],
     refresh_on_feature_flags=True,
-    refresh_interval=1,
-    on_refresh_error=my_callback_on_fail,
+    refresh_interval=60,
     feature_flag_enabled=True,
     feature_flag_refresh_enabled=True,
     **kwargs,
 )
+# [END refresh_feature_flags]
+
+# Reload with test-specific configuration
 
 print(config["message"])
 print(config["my_json"]["key"])

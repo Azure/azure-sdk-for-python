@@ -31,7 +31,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
@@ -84,7 +84,6 @@ from ...operations._operations import (
 )
 from .._configuration import PeeringManagementClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -194,7 +193,7 @@ class PeerAsnsOperations:
 
     @overload
     async def create_or_update(
-        self, peer_asn_name: str, peer_asn: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, peer_asn_name: str, peer_asn: _types.PeerAsn, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PeerAsn:
         """Creates a new peer ASN or updates an existing peer ASN with the specified name under the given
         subscription.
@@ -202,7 +201,7 @@ class PeerAsnsOperations:
         :param peer_asn_name: The peer ASN name. Required.
         :type peer_asn_name: str
         :param peer_asn: The peer ASN. Required.
-        :type peer_asn: JSON
+        :type peer_asn: ~azure.mgmt.peering.types.PeerAsn
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -232,16 +231,16 @@ class PeerAsnsOperations:
 
     @distributed_trace_async
     async def create_or_update(
-        self, peer_asn_name: str, peer_asn: Union[_models.PeerAsn, JSON, IO[bytes]], **kwargs: Any
+        self, peer_asn_name: str, peer_asn: Union[_models.PeerAsn, _types.PeerAsn, IO[bytes]], **kwargs: Any
     ) -> _models.PeerAsn:
         """Creates a new peer ASN or updates an existing peer ASN with the specified name under the given
         subscription.
 
         :param peer_asn_name: The peer ASN name. Required.
         :type peer_asn_name: str
-        :param peer_asn: The peer ASN. Is one of the following types: PeerAsn, JSON, IO[bytes]
-         Required.
-        :type peer_asn: ~azure.mgmt.peering.models.PeerAsn or JSON or IO[bytes]
+        :param peer_asn: The peer ASN. Is either a PeerAsn type or a IO[bytes] type. Required.
+        :type peer_asn: ~azure.mgmt.peering.models.PeerAsn or ~azure.mgmt.peering.types.PeerAsn or
+         IO[bytes]
         :return: PeerAsn. The PeerAsn is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeerAsn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -413,7 +412,10 @@ class PeerAsnsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -577,7 +579,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        peering: JSON,
+        peering: _types.Peering,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -591,7 +593,7 @@ class PeeringsOperations:
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
         :param peering: The properties needed to create or update a peering. Required.
-        :type peering: JSON
+        :type peering: ~azure.mgmt.peering.types.Peering
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -633,7 +635,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        peering: Union[_models.Peering, JSON, IO[bytes]],
+        peering: Union[_models.Peering, _types.Peering, IO[bytes]],
         **kwargs: Any
     ) -> _models.Peering:
         """Creates a new peering or updates an existing peering with the specified name under the given
@@ -644,9 +646,10 @@ class PeeringsOperations:
         :type resource_group_name: str
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
-        :param peering: The properties needed to create or update a peering. Is one of the following
-         types: Peering, JSON, IO[bytes] Required.
-        :type peering: ~azure.mgmt.peering.models.Peering or JSON or IO[bytes]
+        :param peering: The properties needed to create or update a peering. Is either a Peering type
+         or a IO[bytes] type. Required.
+        :type peering: ~azure.mgmt.peering.models.Peering or ~azure.mgmt.peering.types.Peering or
+         IO[bytes]
         :return: Peering. The Peering is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.Peering
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -751,7 +754,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        tags: JSON,
+        tags: _types.ResourceTags,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -765,7 +768,7 @@ class PeeringsOperations:
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
         :param tags: The resource tags. Required.
-        :type tags: JSON
+        :type tags: ~azure.mgmt.peering.types.ResourceTags
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -807,7 +810,7 @@ class PeeringsOperations:
         self,
         resource_group_name: str,
         peering_name: str,
-        tags: Union[_models.ResourceTags, JSON, IO[bytes]],
+        tags: Union[_models.ResourceTags, _types.ResourceTags, IO[bytes]],
         **kwargs: Any
     ) -> _models.Peering:
         """Updates tags for a peering with the specified name under the given subscription and resource
@@ -818,9 +821,9 @@ class PeeringsOperations:
         :type resource_group_name: str
         :param peering_name: The name of the peering. Required.
         :type peering_name: str
-        :param tags: The resource tags. Is one of the following types: ResourceTags, JSON, IO[bytes]
-         Required.
-        :type tags: ~azure.mgmt.peering.models.ResourceTags or JSON or IO[bytes]
+        :param tags: The resource tags. Is either a ResourceTags type or a IO[bytes] type. Required.
+        :type tags: ~azure.mgmt.peering.models.ResourceTags or ~azure.mgmt.peering.types.ResourceTags
+         or IO[bytes]
         :return: Peering. The Peering is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.Peering
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1002,7 +1005,10 @@ class PeeringsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1092,7 +1098,10 @@ class PeeringsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1266,7 +1275,7 @@ class ConnectionMonitorTestsOperations:
         resource_group_name: str,
         peering_service_name: str,
         connection_monitor_test_name: str,
-        connection_monitor_test: JSON,
+        connection_monitor_test: _types.ConnectionMonitorTest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1283,7 +1292,7 @@ class ConnectionMonitorTestsOperations:
         :type connection_monitor_test_name: str
         :param connection_monitor_test: The properties needed to create a connection monitor test.
          Required.
-        :type connection_monitor_test: JSON
+        :type connection_monitor_test: ~azure.mgmt.peering.types.ConnectionMonitorTest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1330,7 +1339,7 @@ class ConnectionMonitorTestsOperations:
         resource_group_name: str,
         peering_service_name: str,
         connection_monitor_test_name: str,
-        connection_monitor_test: Union[_models.ConnectionMonitorTest, JSON, IO[bytes]],
+        connection_monitor_test: Union[_models.ConnectionMonitorTest, _types.ConnectionMonitorTest, IO[bytes]],
         **kwargs: Any
     ) -> _models.ConnectionMonitorTest:
         """Creates or updates a connection monitor test with the specified name under the given
@@ -1344,9 +1353,9 @@ class ConnectionMonitorTestsOperations:
         :param connection_monitor_test_name: The name of the connection monitor test. Required.
         :type connection_monitor_test_name: str
         :param connection_monitor_test: The properties needed to create a connection monitor test. Is
-         one of the following types: ConnectionMonitorTest, JSON, IO[bytes] Required.
-        :type connection_monitor_test: ~azure.mgmt.peering.models.ConnectionMonitorTest or JSON or
-         IO[bytes]
+         either a ConnectionMonitorTest type or a IO[bytes] type. Required.
+        :type connection_monitor_test: ~azure.mgmt.peering.models.ConnectionMonitorTest or
+         ~azure.mgmt.peering.types.ConnectionMonitorTest or IO[bytes]
         :return: ConnectionMonitorTest. The ConnectionMonitorTest is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.ConnectionMonitorTest
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1541,7 +1550,10 @@ class ConnectionMonitorTestsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1705,7 +1717,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        peering_service: JSON,
+        peering_service: _types.PeeringService,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1719,7 +1731,7 @@ class PeeringServicesOperations:
         :param peering_service_name: The name of the peering. Required.
         :type peering_service_name: str
         :param peering_service: The properties needed to create or update a peering service. Required.
-        :type peering_service: JSON
+        :type peering_service: ~azure.mgmt.peering.types.PeeringService
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1761,7 +1773,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        peering_service: Union[_models.PeeringService, JSON, IO[bytes]],
+        peering_service: Union[_models.PeeringService, _types.PeeringService, IO[bytes]],
         **kwargs: Any
     ) -> _models.PeeringService:
         """Creates a new peering service or updates an existing peering with the specified name under the
@@ -1772,9 +1784,10 @@ class PeeringServicesOperations:
         :type resource_group_name: str
         :param peering_service_name: The name of the peering. Required.
         :type peering_service_name: str
-        :param peering_service: The properties needed to create or update a peering service. Is one of
-         the following types: PeeringService, JSON, IO[bytes] Required.
-        :type peering_service: ~azure.mgmt.peering.models.PeeringService or JSON or IO[bytes]
+        :param peering_service: The properties needed to create or update a peering service. Is either
+         a PeeringService type or a IO[bytes] type. Required.
+        :type peering_service: ~azure.mgmt.peering.models.PeeringService or
+         ~azure.mgmt.peering.types.PeeringService or IO[bytes]
         :return: PeeringService. The PeeringService is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeeringService
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1879,7 +1892,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        tags: JSON,
+        tags: _types.ResourceTags,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1893,7 +1906,7 @@ class PeeringServicesOperations:
         :param peering_service_name: The name of the peering. Required.
         :type peering_service_name: str
         :param tags: The resource tags. Required.
-        :type tags: JSON
+        :type tags: ~azure.mgmt.peering.types.ResourceTags
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1935,7 +1948,7 @@ class PeeringServicesOperations:
         self,
         resource_group_name: str,
         peering_service_name: str,
-        tags: Union[_models.ResourceTags, JSON, IO[bytes]],
+        tags: Union[_models.ResourceTags, _types.ResourceTags, IO[bytes]],
         **kwargs: Any
     ) -> _models.PeeringService:
         """Updates tags for a peering service with the specified name under the given subscription and
@@ -1946,9 +1959,9 @@ class PeeringServicesOperations:
         :type resource_group_name: str
         :param peering_service_name: The name of the peering. Required.
         :type peering_service_name: str
-        :param tags: The resource tags. Is one of the following types: ResourceTags, JSON, IO[bytes]
-         Required.
-        :type tags: ~azure.mgmt.peering.models.ResourceTags or JSON or IO[bytes]
+        :param tags: The resource tags. Is either a ResourceTags type or a IO[bytes] type. Required.
+        :type tags: ~azure.mgmt.peering.models.ResourceTags or ~azure.mgmt.peering.types.ResourceTags
+         or IO[bytes]
         :return: PeeringService. The PeeringService is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeeringService
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2132,7 +2145,10 @@ class PeeringServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2222,7 +2238,10 @@ class PeeringServicesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2379,7 +2398,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2552,7 +2574,7 @@ class RegisteredAsnsOperations:
         resource_group_name: str,
         peering_name: str,
         registered_asn_name: str,
-        registered_asn: JSON,
+        registered_asn: _types.PeeringRegisteredAsn,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2568,7 +2590,7 @@ class RegisteredAsnsOperations:
         :param registered_asn_name: The name of the registered ASN. Required.
         :type registered_asn_name: str
         :param registered_asn: The properties needed to create a registered ASN. Required.
-        :type registered_asn: JSON
+        :type registered_asn: ~azure.mgmt.peering.types.PeeringRegisteredAsn
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2614,7 +2636,7 @@ class RegisteredAsnsOperations:
         resource_group_name: str,
         peering_name: str,
         registered_asn_name: str,
-        registered_asn: Union[_models.PeeringRegisteredAsn, JSON, IO[bytes]],
+        registered_asn: Union[_models.PeeringRegisteredAsn, _types.PeeringRegisteredAsn, IO[bytes]],
         **kwargs: Any
     ) -> _models.PeeringRegisteredAsn:
         """Creates a new registered ASN with the specified name under the given subscription, resource
@@ -2627,9 +2649,10 @@ class RegisteredAsnsOperations:
         :type peering_name: str
         :param registered_asn_name: The name of the registered ASN. Required.
         :type registered_asn_name: str
-        :param registered_asn: The properties needed to create a registered ASN. Is one of the
-         following types: PeeringRegisteredAsn, JSON, IO[bytes] Required.
-        :type registered_asn: ~azure.mgmt.peering.models.PeeringRegisteredAsn or JSON or IO[bytes]
+        :param registered_asn: The properties needed to create a registered ASN. Is either a
+         PeeringRegisteredAsn type or a IO[bytes] type. Required.
+        :type registered_asn: ~azure.mgmt.peering.models.PeeringRegisteredAsn or
+         ~azure.mgmt.peering.types.PeeringRegisteredAsn or IO[bytes]
         :return: PeeringRegisteredAsn. The PeeringRegisteredAsn is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeeringRegisteredAsn
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2823,7 +2846,10 @@ class RegisteredAsnsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2971,7 +2997,10 @@ class ReceivedRoutesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3091,7 +3120,10 @@ class RpUnbilledPrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3264,7 +3296,7 @@ class RegisteredPrefixesOperations:
         resource_group_name: str,
         peering_name: str,
         registered_prefix_name: str,
-        registered_prefix: JSON,
+        registered_prefix: _types.PeeringRegisteredPrefix,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3280,7 +3312,7 @@ class RegisteredPrefixesOperations:
         :param registered_prefix_name: The name of the registered prefix. Required.
         :type registered_prefix_name: str
         :param registered_prefix: The properties needed to create a registered prefix. Required.
-        :type registered_prefix: JSON
+        :type registered_prefix: ~azure.mgmt.peering.types.PeeringRegisteredPrefix
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3326,7 +3358,7 @@ class RegisteredPrefixesOperations:
         resource_group_name: str,
         peering_name: str,
         registered_prefix_name: str,
-        registered_prefix: Union[_models.PeeringRegisteredPrefix, JSON, IO[bytes]],
+        registered_prefix: Union[_models.PeeringRegisteredPrefix, _types.PeeringRegisteredPrefix, IO[bytes]],
         **kwargs: Any
     ) -> _models.PeeringRegisteredPrefix:
         """Creates a new registered prefix with the specified name under the given subscription, resource
@@ -3339,10 +3371,10 @@ class RegisteredPrefixesOperations:
         :type peering_name: str
         :param registered_prefix_name: The name of the registered prefix. Required.
         :type registered_prefix_name: str
-        :param registered_prefix: The properties needed to create a registered prefix. Is one of the
-         following types: PeeringRegisteredPrefix, JSON, IO[bytes] Required.
-        :type registered_prefix: ~azure.mgmt.peering.models.PeeringRegisteredPrefix or JSON or
-         IO[bytes]
+        :param registered_prefix: The properties needed to create a registered prefix. Is either a
+         PeeringRegisteredPrefix type or a IO[bytes] type. Required.
+        :type registered_prefix: ~azure.mgmt.peering.models.PeeringRegisteredPrefix or
+         ~azure.mgmt.peering.types.PeeringRegisteredPrefix or IO[bytes]
         :return: PeeringRegisteredPrefix. The PeeringRegisteredPrefix is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeeringRegisteredPrefix
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3536,7 +3568,10 @@ class RegisteredPrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3794,7 +3829,7 @@ class PrefixesOperations:
         resource_group_name: str,
         peering_service_name: str,
         prefix_name: str,
-        peering_service_prefix: JSON,
+        peering_service_prefix: _types.PeeringServicePrefix,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3810,7 +3845,7 @@ class PrefixesOperations:
         :param prefix_name: The name of the prefix. Required.
         :type prefix_name: str
         :param peering_service_prefix: The properties needed to create a prefix. Required.
-        :type peering_service_prefix: JSON
+        :type peering_service_prefix: ~azure.mgmt.peering.types.PeeringServicePrefix
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3856,7 +3891,7 @@ class PrefixesOperations:
         resource_group_name: str,
         peering_service_name: str,
         prefix_name: str,
-        peering_service_prefix: Union[_models.PeeringServicePrefix, JSON, IO[bytes]],
+        peering_service_prefix: Union[_models.PeeringServicePrefix, _types.PeeringServicePrefix, IO[bytes]],
         **kwargs: Any
     ) -> _models.PeeringServicePrefix:
         """Creates a new prefix with the specified name under the given subscription, resource group and
@@ -3869,10 +3904,10 @@ class PrefixesOperations:
         :type peering_service_name: str
         :param prefix_name: The name of the prefix. Required.
         :type prefix_name: str
-        :param peering_service_prefix: The properties needed to create a prefix. Is one of the
-         following types: PeeringServicePrefix, JSON, IO[bytes] Required.
-        :type peering_service_prefix: ~azure.mgmt.peering.models.PeeringServicePrefix or JSON or
-         IO[bytes]
+        :param peering_service_prefix: The properties needed to create a prefix. Is either a
+         PeeringServicePrefix type or a IO[bytes] type. Required.
+        :type peering_service_prefix: ~azure.mgmt.peering.models.PeeringServicePrefix or
+         ~azure.mgmt.peering.types.PeeringServicePrefix or IO[bytes]
         :return: PeeringServicePrefix. The PeeringServicePrefix is compatible with MutableMapping
         :rtype: ~azure.mgmt.peering.models.PeeringServicePrefix
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4069,7 +4104,10 @@ class PrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4180,7 +4218,10 @@ class CdnPeeringPrefixesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4311,7 +4352,10 @@ class LegacyPeeringsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4537,7 +4581,10 @@ class PeeringLocationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4646,7 +4693,10 @@ class PeeringServiceCountriesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4759,7 +4809,10 @@ class PeeringServiceLocationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4868,7 +4921,10 @@ class PeeringServiceProvidersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4938,12 +4994,17 @@ class _PeeringManagementClientOperationsMixin(
 
     @overload
     async def check_service_provider_availability(
-        self, check_service_provider_availability_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        check_service_provider_availability_input: _types.CheckServiceProviderAvailabilityInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> Union[str, _models.Enum0]:
         """Checks if the peering service provider is present within 1000 miles of customer's location.
 
         :param check_service_provider_availability_input: The request body. Required.
-        :type check_service_provider_availability_input: JSON
+        :type check_service_provider_availability_input:
+         ~azure.mgmt.peering.types.CheckServiceProviderAvailabilityInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4976,16 +5037,17 @@ class _PeeringManagementClientOperationsMixin(
     async def check_service_provider_availability(
         self,
         check_service_provider_availability_input: Union[
-            _models.CheckServiceProviderAvailabilityInput, JSON, IO[bytes]
+            _models.CheckServiceProviderAvailabilityInput, _types.CheckServiceProviderAvailabilityInput, IO[bytes]
         ],
         **kwargs: Any
     ) -> Union[str, _models.Enum0]:
         """Checks if the peering service provider is present within 1000 miles of customer's location.
 
-        :param check_service_provider_availability_input: The request body. Is one of the following
-         types: CheckServiceProviderAvailabilityInput, JSON, IO[bytes] Required.
+        :param check_service_provider_availability_input: The request body. Is either a
+         CheckServiceProviderAvailabilityInput type or a IO[bytes] type. Required.
         :type check_service_provider_availability_input:
-         ~azure.mgmt.peering.models.CheckServiceProviderAvailabilityInput or JSON or IO[bytes]
+         ~azure.mgmt.peering.models.CheckServiceProviderAvailabilityInput or
+         ~azure.mgmt.peering.types.CheckServiceProviderAvailabilityInput or IO[bytes]
         :return: Enum0
         :rtype: str or ~azure.mgmt.peering.models.Enum0
         :raises ~azure.core.exceptions.HttpResponseError:

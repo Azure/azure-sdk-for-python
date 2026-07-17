@@ -52,3 +52,16 @@ class TestComputeLimitMgmtFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
         # please add some check logic here by yourself
         # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_features_begin_disable(self, resource_group):
+        response = await (
+            await self.client.features.begin_disable(
+                location="str",
+                feature_name="str",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...

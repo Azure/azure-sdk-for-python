@@ -21,9 +21,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_NAME - The name of the AI agent to use for evaluation.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
@@ -48,14 +48,13 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
 
-# [START agent_evaluation_basic]
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
-        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=PromptAgentDefinition(
             model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",
@@ -82,14 +81,14 @@ with (
             type="azure_ai_evaluator",
             name="fluency",
             evaluator_name="builtin.fluency",
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         ),
         TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="task_adherence",
             evaluator_name="builtin.task_adherence",
-            initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+            initialization_parameters={"model": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_items}}"},
         ),
     ]
@@ -126,7 +125,6 @@ with (
         eval_id=eval_object.id, name=f"Evaluation Run for Agent {agent.name}", data_source=data_source  # type: ignore
     )
     print(f"Evaluation run created (id: {agent_eval_run.id})")
-    # [END agent_evaluation_basic]
 
     while agent_eval_run.status not in ["completed", "failed"]:
         agent_eval_run = openai_client.evals.runs.retrieve(run_id=agent_eval_run.id, eval_id=eval_object.id)

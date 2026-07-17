@@ -3,8 +3,9 @@
   "apiVersions": {
     "Microsoft.Purview": "2024-04-01-preview"
   },
-  "commit": "f2012bb6d1aab240f459e8bb4237f8e7e5b92ebb",
+  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/purview/resource-manager/Microsoft.Purview/Purview",
-  "emitterVersion": "0.61.2"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
 }

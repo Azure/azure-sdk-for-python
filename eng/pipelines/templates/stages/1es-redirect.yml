@@ -36,7 +36,10 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive
+      networkIsolationPolicy: Permissive, CFSClean
+    ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
+      featureFlags:
+        autoBaseline: false
     sdl:
       ${{ if and(eq(variables['Build.DefinitionName'], 'python - core'), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['System.TeamProject'], 'internal')) }}:
         autobaseline:
