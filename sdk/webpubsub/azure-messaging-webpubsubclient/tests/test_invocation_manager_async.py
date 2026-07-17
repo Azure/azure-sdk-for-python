@@ -51,6 +51,18 @@ class TestInvocationManagerAsync:
 
         assert exc_info.value.invocation_id == "same-id"
 
+    def test_generated_id_skips_pending_custom_numeric_ids(self):
+        """Test generated IDs skip numeric IDs registered by callers."""
+        inv_mgr = InvocationManagerAsync()
+        inv_mgr.register("1")
+        inv_mgr.register("3")
+
+        first_id, _ = inv_mgr.register()
+        second_id, _ = inv_mgr.register()
+
+        assert first_id == "2"
+        assert second_id == "4"
+
     def test_reject_sets_event(self):
         """Test that rejecting sets the event"""
         inv_mgr = InvocationManagerAsync()

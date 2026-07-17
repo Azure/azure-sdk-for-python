@@ -6,8 +6,6 @@
 
 - Add preview API `invoke_event`
 
-## 1.1.1 (Unreleased)
-
 ### Other Changes
 
 - Clean useless warnings in log

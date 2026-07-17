@@ -1297,12 +1297,17 @@ class InvocationManager:
         :raises InvocationError: If invocation id is already registered.
         """
         with self._lock:
-            resolved_id = invocation_id if invocation_id else self._generate_invocation_id()
-            if resolved_id in self._entries:
-                raise InvocationError(
-                    "Invocation id is already registered.",
-                    invocation_id=resolved_id,
-                )
+            if invocation_id is not None:
+                resolved_id = invocation_id
+                if resolved_id in self._entries:
+                    raise InvocationError(
+                        "Invocation id is already registered.",
+                        invocation_id=resolved_id,
+                    )
+            else:
+                resolved_id = self._generate_invocation_id()
+                while resolved_id in self._entries:
+                    resolved_id = self._generate_invocation_id()
             entry = _InvocationEntry(resolved_id)
             self._entries[resolved_id] = entry
             return resolved_id, entry
@@ -1386,12 +1391,17 @@ class InvocationManagerAsync:
         :rtype: Tuple[str, _InvocationEntryAsync]
         :raises InvocationError: If invocation id is already registered.
         """
-        resolved_id = invocation_id if invocation_id else self._generate_invocation_id()
-        if resolved_id in self._entries:
-            raise InvocationError(
-                "Invocation id is already registered.",
-                invocation_id=resolved_id,
-            )
+        if invocation_id is not None:
+            resolved_id = invocation_id
+            if resolved_id in self._entries:
+                raise InvocationError(
+                    "Invocation id is already registered.",
+                    invocation_id=resolved_id,
+                )
+        else:
+            resolved_id = self._generate_invocation_id()
+            while resolved_id in self._entries:
+                resolved_id = self._generate_invocation_id()
         entry = _InvocationEntryAsync(resolved_id)
         self._entries[resolved_id] = entry
         return resolved_id, entry
