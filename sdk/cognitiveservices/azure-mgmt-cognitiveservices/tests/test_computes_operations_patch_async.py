@@ -22,6 +22,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.polling import AsyncNoPolling
 from azure.mgmt.cognitiveservices.aio import CognitiveServicesManagementClient
 from azure.mgmt.cognitiveservices.aio.operations._patch import _AsyncComputeListPolling
+from azure.mgmt.cognitiveservices.operations._patch import _encode_continuation_token
 
 RESOURCE_URL = (
     "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000"
@@ -240,11 +241,82 @@ async def test_continuation_token_does_not_send_new_create_request():
     computes._client._pipeline.run = AsyncMock()
     computes.list = _list_mock([_compute(state="Succeeded")])
 
+    token = _encode_continuation_token("rg", "acct", "test-compute")
     poller = await computes.begin_create_or_update(
-        "rg", "acct", "test-compute", b"{}", continuation_token="resume-token", polling_interval=0
+        "rg", "acct", "test-compute", b"{}", continuation_token=token, polling_interval=0
     )
     await poller.result()
     computes._client._pipeline.run.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_continuation_token_is_source_of_truth_for_scope():
+    """The token (not the method arguments) decides which compute is resumed, so a token that encodes a
+    different scope drives the list() poll to that scope."""
+    computes = _make_computes()
+    computes._client._pipeline.run = AsyncMock()
+    computes.list = _list_mock([_compute(name="real-compute", state="Succeeded")])
+
+    token = _encode_continuation_token("real-rg", "real-acct", "real-compute")
+    poller = await computes.begin_create_or_update(
+        "ignored-rg", "ignored-acct", "ignored-compute", b"{}", continuation_token=token, polling_interval=0
+    )
+    result = await poller.result()
+
+    assert result.name == "real-compute"
+    computes.list.assert_called_with("real-rg", "real-acct")  # scope came from the token, not the args
+
+
+@pytest.mark.asyncio
+async def test_continuation_token_malformed_raises():
+    """A malformed/unrelated continuation_token must fail loudly instead of silently resuming the wrong
+    (current-argument) operation."""
+    computes = _make_computes()
+    computes._client._pipeline.run = AsyncMock()
+    computes.list = MagicMock()
+
+    with pytest.raises(ValueError):
+        await computes.begin_create_or_update(
+            "rg", "acct", "test-compute", b"{}", continuation_token="not-a-valid-token", polling_interval=0
+        )
+    computes._client._pipeline.run.assert_not_called()
+    computes.list.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_create_preserves_canceled_status():
+    """A compute that provisions to Canceled must be reported as ``Canceled`` (not collapsed to
+    ``Failed``) so callers can inspect poller.status(), while still raising."""
+    computes = _make_computes()
+    computes._client._pipeline.run = AsyncMock(return_value=_pipeline_response(202, ACCEPTED_BODY))
+    computes.list = _list_mock([_compute(state="Canceled")])
+
+    poller = await computes.begin_create_or_update("rg", "acct", "test-compute", b"{}", polling_interval=0)
+    with pytest.raises(HttpResponseError):
+        await poller.result()
+    assert poller.status() == "Canceled"
+
+
+@pytest.mark.asyncio
+async def test_create_applies_cls_hook():
+    """A caller-supplied ``cls`` must be applied to the final resource, preserving the generated
+    method's ``cls=`` contract."""
+    computes = _make_computes()
+    computes._client._pipeline.run = AsyncMock(return_value=_pipeline_response(202, ACCEPTED_BODY))
+    computes.list = _list_mock([_compute(state="Succeeded")])
+
+    sentinel = object()
+    calls = []
+
+    def cls(pipeline_response, deserialized, headers):
+        calls.append((pipeline_response, deserialized, headers))
+        return sentinel
+
+    poller = await computes.begin_create_or_update("rg", "acct", "test-compute", b"{}", cls=cls, polling_interval=0)
+    result = await poller.result()
+
+    assert result is sentinel  # the cls hook's return value is what the caller receives
+    assert calls and calls[0][1].name == "test-compute"  # cls received the deserialized compute
 
 
 @pytest.mark.asyncio

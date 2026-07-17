@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import base64
 import json
 import time
 from collections.abc import MutableMapping
@@ -39,6 +40,32 @@ JSON = MutableMapping[str, Any]
 
 _TERMINAL_FAILED_STATES = frozenset({"failed", "canceled", "cancelled"})
 _TERMINAL_SUCCESS_STATES = frozenset({"succeeded"})
+_CANCELED_STATES = frozenset({"canceled", "cancelled"})
+
+
+def _encode_continuation_token(resource_group_name: str, account_name: str, compute_name: str) -> str:
+    """Encode the polling scope (resource group, account, compute) into an opaque continuation token."""
+    payload = json.dumps(
+        {
+            "resource_group_name": resource_group_name,
+            "account_name": account_name,
+            "compute_name": compute_name,
+        }
+    )
+    return base64.urlsafe_b64encode(payload.encode("utf-8")).decode("ascii")
+
+
+def _decode_continuation_token(continuation_token: str):
+    """Decode a token produced by :func:`_encode_continuation_token` into its polling scope.
+
+    :raises ValueError: if the token is malformed, so a bad or unrelated token fails loudly instead of
+        silently resuming the wrong operation.
+    """
+    try:
+        payload = json.loads(base64.urlsafe_b64decode(continuation_token.encode("ascii")).decode("utf-8"))
+        return payload["resource_group_name"], payload["account_name"], payload["compute_name"]
+    except Exception as exc:  # pylint: disable=broad-except
+        raise ValueError("Invalid continuation_token for compute begin_create_or_update.") from exc
 
 
 def _state_of(compute: Any) -> str:
@@ -107,12 +134,14 @@ class _ComputeListPolling(PollingMethod):
         account_name: str,
         compute_name: str,
         interval: float,
+        cls: Any = None,
     ) -> None:
         self._operations = operations
         self._resource_group_name = resource_group_name
         self._account_name = account_name
         self._compute_name = compute_name
         self._interval = interval
+        self._cls = cls
         self._status = "InProgress"
         self._resource: Optional[_models.Compute] = None
         self._first_missing_at: Optional[float] = None
@@ -147,7 +176,9 @@ class _ComputeListPolling(PollingMethod):
                 if state in _TERMINAL_SUCCESS_STATES:
                     self._status = "Succeeded"
                 elif state in _TERMINAL_FAILED_STATES:
-                    self._status = "Failed"
+                    # Preserve the service's terminal status (``Canceled`` vs ``Failed``) so callers can
+                    # inspect ``poller.status()`` correctly, while still raising the provisioning error.
+                    self._status = "Canceled" if state in _CANCELED_STATES else "Failed"
                     raise _provisioning_error(compute)
             if not self.finished():
                 time.sleep(self._interval)
@@ -159,13 +190,21 @@ class _ComputeListPolling(PollingMethod):
         return self._status in ("Succeeded", "Failed", "Canceled")
 
     def resource(self) -> Optional[_models.Compute]:
+        # Apply the caller's ``cls`` hook (if any) to the final resource, preserving the generated
+        # method's ``cls=`` contract. There is no final pipeline response for the list-based read-back,
+        # so ``None`` is passed for that positional argument.
+        if self._resource is not None and self._cls is not None:
+            return self._cls(None, self._resource, {})
         return self._resource
 
     def get_continuation_token(self) -> str:
-        return self._compute_name
+        return _encode_continuation_token(self._resource_group_name, self._account_name, self._compute_name)
 
     @classmethod
     def from_continuation_token(cls, continuation_token: str, **kwargs: Any):
+        # Validate the token is well-formed; the polling scope it encodes is applied when the poller is
+        # (re)constructed in ``begin_create_or_update``.
+        _decode_continuation_token(continuation_token)
         client = kwargs["client"]
         deserialization_callback = kwargs["deserialization_callback"]
         return client, None, deserialization_callback
@@ -401,6 +440,11 @@ class ComputesOperations(_ComputesOperationsGenerated):
                 initial_body = None
             if isinstance(initial_body, MutableMapping) and _state_of(initial_body) in _TERMINAL_FAILED_STATES:
                 raise _provisioning_error(initial_body)
+        else:
+            # Opaque-token contract: the token is the source of truth for which operation to resume, so
+            # decode the polling scope from it (raising on a malformed token) rather than trusting the
+            # method arguments, and do not re-issue the create.
+            resource_group_name, account_name, compute_name = _decode_continuation_token(cont_token)
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
@@ -413,7 +457,7 @@ class ComputesOperations(_ComputesOperationsGenerated):
         if polling is True:
             polling_method: PollingMethod = cast(
                 PollingMethod,
-                _ComputeListPolling(self, resource_group_name, account_name, compute_name, lro_delay),
+                _ComputeListPolling(self, resource_group_name, account_name, compute_name, lro_delay, cls),
             )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())

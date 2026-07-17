@@ -25,7 +25,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 from azure.core.polling import NoPolling
 from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
-from azure.mgmt.cognitiveservices.operations._patch import _ComputeListPolling
+from azure.mgmt.cognitiveservices.operations._patch import _ComputeListPolling, _encode_continuation_token
 
 RESOURCE_URL = (
     "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000"
@@ -227,11 +227,78 @@ def test_continuation_token_does_not_send_new_create_request():
     computes._client._pipeline.run = MagicMock()
     computes.list = MagicMock(return_value=[_compute(state="Succeeded")])
 
+    token = _encode_continuation_token("rg", "acct", "test-compute")
     poller = computes.begin_create_or_update(
-        "rg", "acct", "test-compute", b"{}", continuation_token="resume-token", polling_interval=0
+        "rg", "acct", "test-compute", b"{}", continuation_token=token, polling_interval=0
     )
     poller.result()
     computes._client._pipeline.run.assert_not_called()  # no new create PUT on resume
+
+
+def test_continuation_token_is_source_of_truth_for_scope():
+    """The token (not the method arguments) decides which compute is resumed, so a token that encodes a
+    different scope drives the list() poll to that scope."""
+    computes = _make_computes()
+    computes._client._pipeline.run = MagicMock()
+    computes.list = MagicMock(return_value=[_compute(name="real-compute", state="Succeeded")])
+
+    token = _encode_continuation_token("real-rg", "real-acct", "real-compute")
+    poller = computes.begin_create_or_update(
+        "ignored-rg", "ignored-acct", "ignored-compute", b"{}", continuation_token=token, polling_interval=0
+    )
+    result = poller.result()
+
+    assert result.name == "real-compute"
+    computes.list.assert_called_with("real-rg", "real-acct")  # scope came from the token, not the args
+
+
+def test_continuation_token_malformed_raises():
+    """A malformed/unrelated continuation_token must fail loudly instead of silently resuming the wrong
+    (current-argument) operation."""
+    computes = _make_computes()
+    computes._client._pipeline.run = MagicMock()
+    computes.list = MagicMock()
+
+    with pytest.raises(ValueError):
+        computes.begin_create_or_update(
+            "rg", "acct", "test-compute", b"{}", continuation_token="not-a-valid-token", polling_interval=0
+        )
+    computes._client._pipeline.run.assert_not_called()
+    computes.list.assert_not_called()
+
+
+def test_create_preserves_canceled_status():
+    """A compute that provisions to Canceled must be reported as ``Canceled`` (not collapsed to
+    ``Failed``) so callers can inspect poller.status(), while still raising."""
+    computes = _make_computes()
+    computes._client._pipeline.run = MagicMock(return_value=_pipeline_response(202, ACCEPTED_BODY))
+    computes.list = MagicMock(return_value=[_compute(state="Canceled")])
+
+    poller = computes.begin_create_or_update("rg", "acct", "test-compute", b"{}", polling_interval=0)
+    with pytest.raises(HttpResponseError):
+        poller.result()
+    assert poller.status() == "Canceled"
+
+
+def test_create_applies_cls_hook():
+    """A caller-supplied ``cls`` must be applied to the final resource, preserving the generated
+    method's ``cls=`` contract."""
+    computes = _make_computes()
+    computes._client._pipeline.run = MagicMock(return_value=_pipeline_response(202, ACCEPTED_BODY))
+    computes.list = MagicMock(return_value=[_compute(state="Succeeded")])
+
+    sentinel = object()
+    calls = []
+
+    def cls(pipeline_response, deserialized, headers):
+        calls.append((pipeline_response, deserialized, headers))
+        return sentinel
+
+    poller = computes.begin_create_or_update("rg", "acct", "test-compute", b"{}", cls=cls, polling_interval=0)
+    result = poller.result()
+
+    assert result is sentinel  # the cls hook's return value is what the caller receives
+    assert calls and calls[0][1].name == "test-compute"  # cls received the deserialized compute
 
 
 def test_failed_initial_body_surfaces_error():
