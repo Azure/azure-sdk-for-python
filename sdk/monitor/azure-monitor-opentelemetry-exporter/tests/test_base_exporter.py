@@ -7,7 +7,7 @@ import unittest
 from unittest import mock
 from datetime import datetime, timedelta, timezone
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.transport import HttpResponse
 from azure.monitor.opentelemetry.exporter.export._base import (
     _get_auth_policy,
@@ -861,6 +861,11 @@ class TestBaseExporter(unittest.TestCase):
             result = self._base._transmit(self._envelopes_to_export)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
+    def test_transmit_response_error(self):
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
+            result = self._base._transmit(self._envelopes_to_export)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
     def test_transmission_200(self):
         with mock.patch.object(AzureMonitorClient, "track") as post:
             post.return_value = TrackResponse(
@@ -1176,6 +1181,25 @@ class TestBaseExporter(unittest.TestCase):
         stats_mock.assert_called_once()
         self.assertEqual(len(_REQUESTS_MAP), 3)
         self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceRequestError"], 1)
+        self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
+        self.assertEqual(_REQUESTS_MAP["count"], 1)
+        self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
+
+    @mock.patch.dict(
+        os.environ,
+        {
+            "APPLICATIONINSIGHTS_STATSBEAT_DISABLED_ALL": "false",
+            "APPLICATIONINSIGHTS_SDKSTATS_DISABLED": "false",
+        },
+    )
+    @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
+    def test_transmit_response_error_statsbeat(self, stats_mock):
+        exporter = BaseExporter(disable_offline_storage=True)
+        with mock.patch.object(AzureMonitorClient, "track", throw(ServiceResponseError, message="Read timed out")):
+            result = exporter._transmit(self._envelopes_to_export)
+        stats_mock.assert_called_once()
+        self.assertEqual(len(_REQUESTS_MAP), 3)
+        self.assertEqual(_REQUESTS_MAP[_REQ_EXCEPTION_NAME[1]]["ServiceResponseError"], 1)
         self.assertIsNotNone(_REQUESTS_MAP[_REQ_DURATION_NAME[1]])
         self.assertEqual(_REQUESTS_MAP["count"], 1)
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
