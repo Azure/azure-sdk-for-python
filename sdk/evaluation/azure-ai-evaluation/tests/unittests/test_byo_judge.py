@@ -259,6 +259,32 @@ class TestAsyncByoProjectResponsesClient:
         assert "extra_headers" not in rkwargs
 
     @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_per_request_extra_headers_merged_and_forwarded(self, mock_aipc):
+        # Headers passed per-request to chat.completions.create(extra_headers=...) must be forwarded
+        # to responses.create and merged over client-level headers (per-request wins), as a copy.
+        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+        mock_aipc.return_value.get_openai_client.return_value = oai
+
+        client_headers = {"x-ms-client-request-id": "client-1", "x-shared": "from-client"}
+        request_headers = {"Connection": "close", "x-shared": "from-request"}
+        client = AsyncByoProjectResponsesClient(
+            "c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock(), extra_headers=client_headers
+        )
+        asyncio.run(
+            client.chat.completions.create(messages=[{"role": "user", "content": "hi"}], extra_headers=request_headers)
+        )
+
+        _, rkwargs = oai.responses.create.call_args
+        fwd = rkwargs["extra_headers"]
+        assert fwd == {"x-ms-client-request-id": "client-1", "Connection": "close", "x-shared": "from-request"}
+        # Per-request value wins on conflict.
+        assert fwd["x-shared"] == "from-request"
+        # Forwarded as a copy — neither source dict is the forwarded object (no mutation leak).
+        assert fwd is not client_headers and fwd is not request_headers
+
+    @patch("azure.ai.projects.aio.AIProjectClient")
     def test_preserves_server_created_timestamp(self, mock_aipc):
         # When the Responses result carries a server ``created`` timestamp, the shim preserves it
         # instead of overwriting with local wall-clock time.

@@ -224,11 +224,18 @@ class AsyncByoProjectResponsesClient:
 
     async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
         client = await self._ensure_client()
+        # Per-request headers (those an OpenAI-compatible caller passes to
+        # chat.completions.create(extra_headers=...)) are merged over the client-level headers
+        # (per-request wins) and forwarded as a fresh copy so neither source dict is mutated.
+        request_headers = kwargs.pop("extra_headers", None)
+        merged_headers: Optional[Dict[str, str]] = None
+        if self._extra_headers or request_headers:
+            merged_headers = {**(self._extra_headers or {}), **(request_headers or {})}
         extra: Dict[str, Any] = {}
         if self._timeout is not None:
             extra["timeout"] = self._timeout
-        if self._extra_headers:
-            extra["extra_headers"] = self._extra_headers
+        if merged_headers:
+            extra["extra_headers"] = merged_headers
         return await client.responses.create(
             model=self._byo_model,
             input=_to_responses_input(messages),
