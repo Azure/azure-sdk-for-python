@@ -97,20 +97,20 @@ class AnalyzeDocumentsAsyncLROPoller(AsyncLROPoller[PollingReturnType_co], Gener
 
 
 class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
-    @overload
-    async def begin_submit_job(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def begin_submit_job(
         self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload
-    async def begin_submit_job(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def begin_submit_job(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
 
-    @overload
-    async def begin_submit_job(  # type: ignore[override]
+    @overload  # type: ignore[override]
+    async def begin_submit_job(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> AnalyzeDocumentsAsyncLROPoller[AsyncItemPaged[_models.Tasks]]:
         ...
