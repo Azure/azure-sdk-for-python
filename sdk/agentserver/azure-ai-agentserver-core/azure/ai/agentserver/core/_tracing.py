@@ -299,6 +299,15 @@ def _append_grpc_otlp_components(
     protocol here so customers only need to set OTLP environment variables.
     Returns True when OTLP environment variables should be hidden from the
     distro call so it does not also create HTTP/protobuf exporters.
+
+    :param span_processors: Span processors to append gRPC trace export to.
+    :type span_processors: list[~typing.Any]
+    :param metric_readers: Metric readers to append gRPC metric export to.
+    :type metric_readers: list[~typing.Any]
+    :param log_record_processors: Log record processors to append gRPC log export to.
+    :type log_record_processors: list[~typing.Any]
+    :return: Whether OTLP environment variables should be hidden from the distro call.
+    :rtype: bool
     """
     if not _is_otlp_enabled() or _resolve_otlp_protocol() != _OTLP_GRPC:
         return False
