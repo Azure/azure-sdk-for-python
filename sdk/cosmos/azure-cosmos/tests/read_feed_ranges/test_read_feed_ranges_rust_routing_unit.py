@@ -13,11 +13,10 @@ including the multi-partition / mixed-case EPK cases the end-to-end emulator
 suites cannot reach (the emulator container is single-partition, so its only
 range is ("", "FF"), which is invariant under upper-casing).
 
-This is layer 1 of a three-layer defense for the Rust migration: unit (here) ->
-emulator parity -> legacy snapshot. It runs in milliseconds with no network and guards
+These tests run in milliseconds with no network and guard
 the one line that makes the migration safe -- the parser up-casing both EPK bounds so the
-Rust feed-range value stays byte-for-byte identical to legacy -- and proves a malformed
-Rust payload fails with a clear ValueError, not a bare KeyError. Without this layer, a
+Rust feed-range value stays byte-for-byte identical to legacy -- and prove a malformed
+Rust payload fails with a clear ValueError, not a bare KeyError. Without them, a
 regression in that normalization would surface only in a slow emulator run, or in
 production as a silently mismatched feed-range value.
 """

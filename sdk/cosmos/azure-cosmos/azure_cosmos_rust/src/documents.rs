@@ -60,6 +60,7 @@ use crate::wire::{
     extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
     extract_read_feed_ranges_force_refresh, extract_required_item_id,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
+    run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
     run_read_all_items_operation, run_read_all_items_operation_async,
     run_read_feed_ranges_operation, run_read_feed_ranges_operation_async, run_read_offer_operation,
@@ -430,6 +431,24 @@ pub(crate) fn feed_range_from_partition_key<'py>(
     )
 }
 
+/// is_feed_range_subset: pure client-side check of whether one feed range's
+/// effective-partition-key span sits entirely inside another's. No network call;
+/// the two feed ranges arrive in the request body as `{"parent": <feed-range
+/// dict>, "child": <feed-range dict>}` and the answer comes back as
+/// `{"IsSubset": <bool>}`. The binding normalizes both ranges to `[min, max)`
+/// bounds (matching the legacy python path) before asking the driver. Without it,
+/// is_feed_range_subset could not run on the rust backend and would stay on the
+/// legacy python path.
+#[pyfunction]
+pub(crate) fn is_feed_range_subset<'py>(
+    py: Python<'py>,
+    _handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_is_feed_range_subset_operation(py, body_bytes)
+}
+
 /// read_offer: read a container's provisioned throughput by querying the account's
 /// `/offers` feed. Offers are an account-level, non-partitioned resource, so the
 /// container link and partition-key header on the PreparedRequest are unused here;
@@ -723,6 +742,17 @@ pub(crate) fn feed_range_from_partition_key_async<'py>(
         &partition_key_header,
         "feed_range_from_partition_key",
     )
+}
+
+/// Async twin of `is_feed_range_subset`.
+#[pyfunction]
+pub(crate) fn is_feed_range_subset_async<'py>(
+    py: Python<'py>,
+    _handle: &str,
+    prepared: &Bound<'py, PyAny>,
+) -> PyResult<Bound<'py, PyAny>> {
+    let body_bytes = extract_body_bytes(prepared)?;
+    run_is_feed_range_subset_operation_async(py, body_bytes, "is_feed_range_subset")
 }
 
 /// Async twin of `read_offer`.

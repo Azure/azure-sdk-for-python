@@ -54,8 +54,10 @@ from .._helpers._item_dispatch import (
 from ._helpers.item_helper import AsyncItemHelper
 from .._feed_ranges_rust_routing import (
     can_use_rust_backend_for_feed_range_from_partition_key,
+    can_use_rust_backend_for_is_feed_range_subset,
     can_use_rust_backend_for_read_feed_ranges,
     try_feed_range_from_partition_key_with_rust_backend_async,
+    try_is_feed_range_subset_with_rust_backend_async,
     try_read_feed_ranges_with_rust_backend_async,
 )
 from .._offer_rust_routing import (
@@ -2308,6 +2310,23 @@ class ContainerProxy:
           are present. It therefore should only be treated as an opaque value.
 
         """
+        backend = pick_backend(self.client_connection)
+        # This is a pure client-side subset check (no network call). Try Rust first: it
+        # normalizes both feed ranges to [min, max) bounds and compares them exactly as the
+        # legacy path below does, so the boolean answer is identical. Parsing the two feed-range
+        # dicts is left to whichever path handles the call -- Rust parses them itself, and the
+        # legacy fallback parses them below -- so the accepted case is not parsed twice. Rust
+        # returns None (and we fall through to legacy) when it can't handle the inputs.
+        if can_use_rust_backend_for_is_feed_range_subset(
+            backend=backend,
+        ):
+            rust_is_subset = await try_is_feed_range_subset_with_rust_backend_async(
+                client_connection=self.client_connection,
+                parent_feed_range=parent_feed_range,
+                child_feed_range=child_feed_range,
+            )
+            if rust_is_subset is not None:
+                return rust_is_subset
         parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
         child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
         return child_feed_range_epk.get_normalized_range().is_subset(

@@ -203,7 +203,10 @@ mod tests {
 
     fn make_python_credential(py: Python<'_>, body: &str) -> PyResult<Py<PyAny>> {
         let module = PyModule::from_code_bound(py, body, "test_credential.py", "test_credential")?;
-        module.getattr("Credential")?.call0().map(|obj| obj.unbind())
+        module
+            .getattr("Credential")?
+            .call0()
+            .map(|obj| obj.unbind())
     }
 
     #[test]

@@ -360,6 +360,31 @@ _register_op(
 )
 
 
+# is_feed_range_subset ---------------------------------------------------------
+# Points the parity harness at the customer call that checks whether one feed
+# range sits entirely inside another. This is a pure client-side check (no
+# network), so the capture records the returned yes/no rather than any wire
+# response. Without this registration the harness would not know how to intercept
+# the subset check, so the two-column is_feed_range_subset audit (core-python vs
+# rust) could not be generated at all.
+
+def _sync_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "is_feed_range_subset"
+
+
+def _aio_is_feed_range_subset_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "is_feed_range_subset"
+
+
+_register_op(
+    "is_feed_range_subset",
+    sync=_sync_is_feed_range_subset_target,
+    aio=_aio_is_feed_range_subset_target,
+)
+
+
 # read_offer (get_throughput) --------------------------------------------------
 # Points the parity harness at the customer call that reports provisioned RU/s
 # and the autoscale ceiling. Without this registration the harness would not

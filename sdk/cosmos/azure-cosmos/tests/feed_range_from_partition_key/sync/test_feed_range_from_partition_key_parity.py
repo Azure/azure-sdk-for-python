@@ -9,10 +9,9 @@ Each test runs the same call once on core-python and once on rust, then compares
 returned feed-range value. During migration, rust must return the same feed-range for a
 given partition key so callers can safely reuse that value in downstream APIs.
 
-This is layer 2 of a three-layer defense (unit -> emulator parity -> legacy snapshot). It
-proves the two backends agree with each other across every key shape a customer can pass:
+These tests prove the two backends agree with each other across every key shape a customer can pass:
 string, JSON-null, numeric, bool, NonePartitionKeyValue, and hierarchical full and prefix
-keys. Without it, nothing would prove rust returns the same opaque value for those shapes,
+keys. Without them, nothing would prove rust returns the same opaque value for those shapes,
 and a hierarchical/prefix mismatch would reach customers as a silently wrong feed-range.
 The hierarchical cases auto-skip when the account/emulator cannot create a MultiHash
 container, which is why those shapes stay verified-by-implementation rather than fully

@@ -6,7 +6,6 @@ Self-contained: builds its own database + container in ``setUp`` and deletes the
 ``tearDown``. The class name and method name match the source at ``tests/test_feed_range.py``
 so test IDs differ only by path.
 
-This is layer 3 of a three-layer defense (unit -> emulator parity -> legacy snapshot).
 The parity suite only proves the two backends agree with each other; if both drifted the
 same way they would still pass while the value is wrong. This test pins the feed range for
 a known key to a hard-coded expected value, so an absolute regression is caught even when

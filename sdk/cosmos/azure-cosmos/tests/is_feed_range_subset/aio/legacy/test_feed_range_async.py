@@ -1,19 +1,19 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
-"""Async ``test_partition_key_to_feed_range_async`` test against the ``_backend="rust"`` path.
+"""Async ``is_feed_range_subset`` test against the ``_backend="rust"`` path.
 
-Self-contained: builds its own database + container in ``asyncSetUp`` and deletes them in
-``asyncTearDown``. The class name and method name match the source at
+Self-contained: builds its own database + container in ``asyncSetUp`` and deletes
+them in ``asyncTearDown``. The class name and method name match the source at
 ``tests/test_feed_range_async.py`` so test IDs differ only by path.
 
-The parity suite only proves the two backends agree with each other; if
-both drifted the same way they would still pass while the value is wrong. This test pins
-the async feed range for a known key to a hard-coded expected value, so an absolute
+The parity suite only proves the two backends agree with each other; if both
+drifted the same way they would still pass while the answer is wrong. This test
+pins the async subset answer for a known feed-range pair, so an absolute
 regression is caught even when the backends match.
 
 Run with::
 
-    pytest --noconftest tests/feed_range_from_partition_key/aio/legacy/test_feed_range_async.py -v
+    pytest --noconftest tests/is_feed_range_subset/aio/legacy/test_feed_range_async.py -v
 """
 import os
 import unittest
@@ -40,7 +40,7 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         self.client = CosmosClient(HOST, KEY, _backend="rust")
         await self.client.__aenter__()
-        self._db_id = "legacy_feed_range_pk_async_" + uuid.uuid4().hex[:8]
+        self._db_id = "legacy_is_feed_range_subset_async_" + uuid.uuid4().hex[:8]
         self._container_id = "c_" + uuid.uuid4().hex[:8]
         self.database = await self.client.create_database(self._db_id)
         self.container = await self.database.create_container(
@@ -54,18 +54,6 @@ class TestFeedRangeAsync(unittest.IsolatedAsyncioTestCase):
         except Exception:  # pylint: disable=broad-except
             pass
         await self.client.close()
-
-    async def test_partition_key_to_feed_range_async(self):
-        # Source: tests/test_feed_range_async.py::TestFeedRangeAsync.test_partition_key_to_feed_range_async
-        feed_range = await self.container.feed_range_from_partition_key("1")
-        feed_range_epk = FeedRangeInternalEpk.from_json(feed_range)
-        expected_range = Range(
-            "3C80B1B7310BB39F29CC4EA05BDD461E",
-            "3c80b1b7310bb39f29cc4ea05bdd461f",
-            True,
-            False,
-        )
-        self.assertEqual(feed_range_epk.get_normalized_range(), expected_range)
 
     async def test_feed_range_is_subset_from_pk_async(self):
         # Source: tests/test_feed_range_async.py::TestFeedRangeAsync.test_feed_range_is_subset_from_pk_async

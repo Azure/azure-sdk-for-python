@@ -8,9 +8,8 @@
 Each test runs the same async call once on core-python and once on rust, then compares the
 returned feed-range value.
 
-This is the async half of layer 2 of a three-layer defense (unit -> emulator parity ->
-legacy snapshot). It proves the two backends agree with each other across every key shape
-a customer can pass. Without it, an async-only divergence (for example the async path
+These tests prove the two backends agree with each other across every key shape
+a customer can pass. Without them, an async-only divergence (for example the async path
 building a different prepared request) would reach customers as a silently wrong
 feed-range that the sync parity suite cannot catch.
 """

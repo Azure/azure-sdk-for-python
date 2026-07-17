@@ -853,10 +853,7 @@ class Config:
 
             let err = get_config_opt::<String>(&config, "exploding")
                 .expect_err("non-attribute getattr failure must be surfaced");
-            assert!(
-                err.to_string().contains("boom"),
-                "unexpected error: {err}"
-            );
+            assert!(err.to_string().contains("boom"), "unexpected error: {err}");
         });
     }
 

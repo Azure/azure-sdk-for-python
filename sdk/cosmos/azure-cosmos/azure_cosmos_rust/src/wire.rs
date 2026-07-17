@@ -58,6 +58,7 @@ use azure_data_cosmos_driver::{
 };
 use serde::{Deserialize, Serialize};
 
+use crate::feed_range_subset::compute_is_feed_range_subset;
 use crate::runtime::{drivers, require_runtime_context};
 
 // A NEW exception type, defined here, for a driver operation that failed
@@ -1824,6 +1825,81 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
         PyRuntimeError::new_err(format!(
             "failed to serialize feed_range_from_partition_key response body: {e}"
         ))
+    })
+}
+
+// ---------------------------------------------------------------------------
+// is_feed_range_subset (binding plumbing)
+// ---------------------------------------------------------------------------
+//
+// The pure parse/normalize/compare math lives in `crate::feed_range_subset`
+// (`compute_is_feed_range_subset`), which has no Python or wire dependencies. The
+// functions below are the binding side: they run that computation -- sync and
+// async -- and package the yes/no into the `BackendResponse` 5-tuple the python
+// parser reads (`{"IsSubset": <bool>}`). There is no network call, so the sync
+// entry needs no driver handle or Tokio runtime.
+
+/// Shape the boolean result (or a validation error) into the `BackendResponse`
+/// 5-tuple the python parser reads, with a `{"IsSubset": <bool>}` body.
+fn tuple_from_is_feed_range_subset_result<'py>(
+    py: Python<'py>,
+    result: Result<bool, String>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    match result {
+        Ok(is_subset) => {
+            let response_headers = PyDict::new_bound(py);
+            let body: &[u8] = if is_subset {
+                br#"{"IsSubset":true}"#
+            } else {
+                br#"{"IsSubset":false}"#
+            };
+            backend_response_tuple(py, 200, 0, response_headers, body, None)
+        }
+        Err(message) => Err(PyValueError::new_err(message)),
+    }
+}
+
+/// Entry point that computes is_feed_range_subset (sync). This is a pure local
+/// computation, so unlike the network operations it needs no driver handle and
+/// does not touch the Tokio runtime.
+pub(crate) fn run_is_feed_range_subset_operation<'py>(
+    py: Python<'py>,
+    body_bytes: Vec<u8>,
+) -> PyResult<Bound<'py, PyTuple>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let result = compute_is_feed_range_subset(&body_bytes);
+    tuple_from_is_feed_range_subset_result(py, result)
+}
+
+/// Async sibling of `run_is_feed_range_subset_operation`. The work is still a
+/// pure local computation; it runs on the shared Tokio runtime only so the async
+/// caller gets a real awaitable, matching every other async entry point.
+pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
+    py: Python<'py>,
+    body_bytes: Vec<u8>,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
+    let runtime_ctx = require_runtime_context(op_name)?;
+
+    let join = runtime_ctx
+        .tokio_rt
+        .spawn(async move { compute_is_feed_range_subset(&body_bytes) });
+    let abort_guard = AbortOnDrop(join.abort_handle());
+
+    pyo3_async_runtimes::tokio::future_into_py(py, async move {
+        let _abort_guard = abort_guard;
+        let result = join.await.map_err(|join_error| {
+            if join_error.is_cancelled() {
+                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
+            } else {
+                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
+            }
+        })?;
+        Python::with_gil(|py| {
+            tuple_from_is_feed_range_subset_result(py, result)
+                .map(|tuple| tuple.into_any().unbind())
+        })
     })
 }
 

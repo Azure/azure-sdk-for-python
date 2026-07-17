@@ -150,6 +150,7 @@
 
 mod credential;
 mod documents;
+mod feed_range_subset;
 mod runtime;
 mod wire;
 
@@ -179,6 +180,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_all_items);
     add_pyfn!(m, documents::read_feed_ranges);
     add_pyfn!(m, documents::feed_range_from_partition_key);
+    add_pyfn!(m, documents::is_feed_range_subset);
     add_pyfn!(m, documents::read_offer);
     add_pyfn!(m, documents::replace_offer);
     // Async siblings: each returns a Python awaitable that completes on the
@@ -193,6 +195,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_all_items_async);
     add_pyfn!(m, documents::read_feed_ranges_async);
     add_pyfn!(m, documents::feed_range_from_partition_key_async);
+    add_pyfn!(m, documents::is_feed_range_subset_async);
     add_pyfn!(m, documents::read_offer_async);
     add_pyfn!(m, documents::replace_offer_async);
     // Concrete backend provenance: a counter incremented inside the binding on
