@@ -266,8 +266,6 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)
 
-        kwargs.pop("error_map", None)
-
         def get_long_running_output(pipeline_response):
             if cls:
                 return cls(pipeline_response, None, {})
