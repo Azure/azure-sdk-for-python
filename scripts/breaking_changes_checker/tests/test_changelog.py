@@ -18,6 +18,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
         sys.path.insert(0, path)
 
 from breaking_changes_checker.checkers.added_method_overloads_checker import AddedMethodOverloadChecker
+from breaking_changes_checker.checkers.shadow_types_module_checker import ShadowTypesModuleChecker
 from breaking_changes_checker.changelog_tracker import ChangelogTracker, BreakingChangesTracker
 from breaking_changes_checker.detect_breaking_changes import main
 from breaking_changes_checker.detect_breaking_changes import test_compare_reports as compare_reports
@@ -149,6 +150,86 @@ def test_async_cleanup_check():
     assert len(bc.features_added) == 1
     msg, _, *args = bc.features_added[0]
     assert msg == ChangelogTracker.ADDED_CLASS_PROPERTY_MSG
+
+
+def test_shadow_types_module_cleanup():
+    # A TypeSpec generated `types` module holds TypedDict input aliases that shadow the
+    # real models in the sibling `models` module. A newly added model therefore shows up in
+    # both modules and would be reported twice (e.g. "Added model `TrustedHostSubscription`").
+    # The ShadowTypesModuleChecker post-processing step should drop the `types` duplicate.
+    stable = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    current = {
+        "azure.mgmt.computelimit.models": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                "TrustedHostSubscription": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                "TrustedHostSubscription": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    bc = ChangelogTracker(
+        stable, current, "azure-mgmt-computelimit", post_processing_checkers=[ShadowTypesModuleChecker()]
+    )
+    bc.run_checks()
+
+    added_models = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+    # Should only have 1 "Added model" reported instead of 2 (the `types` duplicate is removed).
+    assert len(added_models) == 1
+    _, _, module_name, class_name = added_models[0]
+    assert module_name == "azure.mgmt.computelimit.models"
+    assert class_name == "TrustedHostSubscription"
+    # No change originating from the shadow `types` module should remain.
+    assert not any(fa[2] == "azure.mgmt.computelimit.types" for fa in bc.features_added)
+
+
+def test_shadow_types_module_kept_without_models_sibling():
+    # If there is no sibling `models` module, a `types` module is a real public module and
+    # its changes should NOT be dropped.
+    stable = {
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    current = {
+        "azure.mgmt.computelimit.types": {
+            "class_nodes": {
+                "ExistingModel": {"type": None, "methods": {}, "properties": {}},
+                "TrustedHostSubscription": {"type": None, "methods": {}, "properties": {}},
+            }
+        },
+    }
+
+    bc = ChangelogTracker(
+        stable, current, "azure-mgmt-computelimit", post_processing_checkers=[ShadowTypesModuleChecker()]
+    )
+    bc.run_checks()
+
+    added_models = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+    assert len(added_models) == 1
+    _, _, module_name, class_name = added_models[0]
+    assert module_name == "azure.mgmt.computelimit.types"
+    assert class_name == "TrustedHostSubscription"
 
 
 def test_new_class_property_added_init():
