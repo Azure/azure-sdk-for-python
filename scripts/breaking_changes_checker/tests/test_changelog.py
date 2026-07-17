@@ -276,32 +276,78 @@ def test_shadow_types_module_kept_when_class_missing_in_models():
 
 
 def test_shadow_types_module_breaking_change_preserved_for_unmatched_member():
-    # A breaking change on a `types` class that has NO counterpart in the sibling `models`
-    # module must be preserved, while a duplicate whose class does exist in `models` is dropped.
+    # A `types` change is dropped only when the sibling `models` module reports the *same*
+    # change. Here `OrphanInput` is removed only from `types` (no matching `models` entry), so it
+    # must be preserved, while the `RealModel` addition is mirrored in `models` and thus deduped.
     checker = ShadowTypesModuleChecker()
-    current_nodes = {
-        "azure.mgmt.computelimit.models": {"class_nodes": {"RealModel": {}}},
-        "azure.mgmt.computelimit.types": {"class_nodes": {"RealModel": {}}},
-    }
-    stable_nodes = {
-        "azure.mgmt.computelimit.models": {"class_nodes": {"RealModel": {}}},
-        "azure.mgmt.computelimit.types": {"class_nodes": {"RealModel": {}, "OrphanInput": {}}},
-    }
     breaking_changes = [
         # `OrphanInput` only ever existed in `types`, so its removal is a real breaking change.
         ("Deleted model `{}`", "RemovedOrRenamedClass", "azure.mgmt.computelimit.types", "OrphanInput"),
     ]
     features_added = [
-        # `RealModel` exists in `models`, so the `types` copy is a shadow duplicate.
+        # `RealModel` is added in both modules, so the `types` copy is a shadow duplicate.
+        ("Added model `{}`", "AddedClass", "azure.mgmt.computelimit.models", "RealModel"),
         ("Added model `{}`", "AddedClass", "azure.mgmt.computelimit.types", "RealModel"),
     ]
 
     bc_out, fa_out = checker.run_check(
-        breaking_changes, features_added, diff={}, stable_nodes=stable_nodes, current_nodes=current_nodes
+        breaking_changes, features_added, diff={}, stable_nodes={}, current_nodes={}
     )
 
     assert bc_out == breaking_changes  # unmatched `types` breaking change preserved
-    assert fa_out == []  # shadow duplicate removed
+    assert len(fa_out) == 1  # shadow duplicate removed, `models` entry kept
+    assert fa_out[0][2] == "azure.mgmt.computelimit.models"
+
+
+def test_shadow_types_module_member_change_preserved_when_not_mirrored():
+    # An unmatched *member* change on a class that exists in both modules must be preserved:
+    # `RealModel` loses `orphanProp` only on the `types` side, `models` reports nothing.
+    checker = ShadowTypesModuleChecker()
+    breaking_changes = [
+        (
+            "Model `{}` removed property `{}`",
+            "RemovedOrRenamedInstanceAttribute",
+            "azure.mgmt.computelimit.types",
+            "RealModel",
+            "orphanProp",
+        ),
+    ]
+
+    bc_out, fa_out = checker.run_check(
+        breaking_changes, [], diff={}, stable_nodes={}, current_nodes={}
+    )
+
+    assert bc_out == breaking_changes  # no matching `models` change -> preserved
+    assert fa_out == []
+
+
+def test_shadow_types_module_member_change_deduped_across_naming():
+    # A member change reported in both modules is deduped even though `types` uses the wire name
+    # (`serviceTreeId`) and `models` uses the Python attribute name (`service_tree_id`).
+    checker = ShadowTypesModuleChecker()
+    breaking_changes = [
+        (
+            "Model `{}` removed property `{}`",
+            "RemovedOrRenamedInstanceAttribute",
+            "azure.mgmt.computelimit.models",
+            "FeatureEnableRequest",
+            "service_tree_id",
+        ),
+        (
+            "Model `{}` removed property `{}`",
+            "RemovedOrRenamedInstanceAttribute",
+            "azure.mgmt.computelimit.types",
+            "FeatureEnableRequest",
+            "serviceTreeId",
+        ),
+    ]
+
+    bc_out, _ = checker.run_check(
+        breaking_changes, [], diff={}, stable_nodes={}, current_nodes={}
+    )
+
+    assert len(bc_out) == 1  # `types` duplicate removed despite the camelCase/snake_case names
+    assert bc_out[0][2] == "azure.mgmt.computelimit.models"
 
 
 def test_new_class_property_added_init():
