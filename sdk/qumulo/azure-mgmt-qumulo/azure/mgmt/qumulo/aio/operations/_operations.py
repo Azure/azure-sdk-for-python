@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -48,7 +48,6 @@ from .._configuration import QumuloMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -253,7 +252,7 @@ class FileSystemsOperations:
         self,
         resource_group_name: str,
         file_system_name: str,
-        resource: Union[_models.FileSystemResource, JSON, IO[bytes]],
+        resource: Union[_models.FileSystemResource, _types.FileSystemResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -359,7 +358,7 @@ class FileSystemsOperations:
         self,
         resource_group_name: str,
         file_system_name: str,
-        resource: JSON,
+        resource: _types.FileSystemResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -372,7 +371,7 @@ class FileSystemsOperations:
         :param file_system_name: Name of the File System resource. Required.
         :type file_system_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.qumulo.types.FileSystemResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -415,7 +414,7 @@ class FileSystemsOperations:
         self,
         resource_group_name: str,
         file_system_name: str,
-        resource: Union[_models.FileSystemResource, JSON, IO[bytes]],
+        resource: Union[_models.FileSystemResource, _types.FileSystemResource, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.FileSystemResource]:
         """Create a FileSystemResource.
@@ -425,9 +424,10 @@ class FileSystemsOperations:
         :type resource_group_name: str
         :param file_system_name: Name of the File System resource. Required.
         :type file_system_name: str
-        :param resource: Resource create parameters. Is one of the following types: FileSystemResource,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.qumulo.models.FileSystemResource or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a FileSystemResource type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.qumulo.models.FileSystemResource or
+         ~azure.mgmt.qumulo.types.FileSystemResource or IO[bytes]
         :return: An instance of AsyncLROPoller that returns FileSystemResource. The FileSystemResource
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.qumulo.models.FileSystemResource]
@@ -517,7 +517,7 @@ class FileSystemsOperations:
         self,
         resource_group_name: str,
         file_system_name: str,
-        properties: JSON,
+        properties: _types.FileSystemResourceUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -530,7 +530,7 @@ class FileSystemsOperations:
         :param file_system_name: Name of the File System resource. Required.
         :type file_system_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.qumulo.types.FileSystemResourceUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -571,7 +571,7 @@ class FileSystemsOperations:
         self,
         resource_group_name: str,
         file_system_name: str,
-        properties: Union[_models.FileSystemResourceUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FileSystemResourceUpdate, _types.FileSystemResourceUpdate, IO[bytes]],
         **kwargs: Any
     ) -> _models.FileSystemResource:
         """Update a FileSystemResource.
@@ -581,9 +581,10 @@ class FileSystemsOperations:
         :type resource_group_name: str
         :param file_system_name: Name of the File System resource. Required.
         :type file_system_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FileSystemResourceUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.qumulo.models.FileSystemResourceUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FileSystemResourceUpdate
+         type or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.qumulo.models.FileSystemResourceUpdate or
+         ~azure.mgmt.qumulo.types.FileSystemResourceUpdate or IO[bytes]
         :return: FileSystemResource. The FileSystemResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.qumulo.models.FileSystemResource
         :raises ~azure.core.exceptions.HttpResponseError:
