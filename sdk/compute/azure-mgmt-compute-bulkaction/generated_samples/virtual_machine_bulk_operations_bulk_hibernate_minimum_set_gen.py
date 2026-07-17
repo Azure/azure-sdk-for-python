@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.compute.bulkaction import ComputeBulkActionsMgmtClient
     pip install azure-identity
     pip install azure-mgmt-compute-bulkaction
 # USAGE
-    python launch_bulk_instances_operation_get_maximum_set_gen.py
+    python virtual_machine_bulk_operations_bulk_hibernate_minimum_set_gen.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,21 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.launch_bulk_instances_operation.get(
-        resource_group_name="rgBulkactions",
-        location="useast2euap",
-        name="495544ae-8710-4e8b-bca3-49a1dbb1623a",
+    response = client.virtual_machine_bulk_operations.bulk_hibernate_operation(
+        resource_group_name="myResourceGroup",
+        location="eastus2euap",
+        request_body={
+            "executionParameters": {},
+            "resources": {
+                "ids": [
+                    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
+                ]
+            },
+        },
     )
     print(response)
 
 
-# x-ms-original-file: 2026-07-06-preview/LaunchBulkInstancesOperation_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-06/VirtualMachineBulkOperations_BulkHibernate_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()
