@@ -229,6 +229,59 @@ def test_new_class_property_added_init():
     assert args == ['azure.ai.contentsafety', 'AnalyzeTextResult', 'new_class_att']
 
 
+def test_added_operation_group_class_not_labeled_as_model():
+    # A newly added operation group class must be reported as "Added operation group `X`",
+    # not "Added model `X`". It appears in both the sync `...operations` module and the async
+    # `...aio.operations` module, but the async cleanup should collapse it into a single entry.
+    def _op_group_module():
+        return {
+            "class_nodes": {
+                "ExistingOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                },
+                "PrivateLinkResourcesOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                }
+            }
+        }
+
+    def _stable_op_group_module():
+        return {
+            "class_nodes": {
+                "ExistingOperations": {
+                    "type": None,
+                    "methods": {},
+                    "properties": {}
+                }
+            }
+        }
+
+    current = {
+        "azure.mgmt.attestation.operations": _op_group_module(),
+        "azure.mgmt.attestation.aio.operations": _op_group_module(),
+    }
+    stable = {
+        "azure.mgmt.attestation.operations": _stable_op_group_module(),
+        "azure.mgmt.attestation.aio.operations": _stable_op_group_module(),
+    }
+
+    bc = ChangelogTracker(stable, current, "azure-mgmt-attestation")
+    bc.run_checks()
+
+    op_group_entries = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_OPERATION_GROUP_CLASS_MSG]
+    added_model_entries = [fa for fa in bc.features_added if fa[0] == ChangelogTracker.ADDED_CLASS_MSG]
+
+    # Exactly one operation group entry (sync/async duplicate collapsed) and no "Added model".
+    assert len(op_group_entries) == 1
+    assert not added_model_entries
+    _, _, _, class_name = op_group_entries[0]
+    assert class_name == "PrivateLinkResourcesOperations"
+
+
 def test_new_class_property_added_init_only():
     # Testing if we get a report on a new class property added only in the init
     current = {
