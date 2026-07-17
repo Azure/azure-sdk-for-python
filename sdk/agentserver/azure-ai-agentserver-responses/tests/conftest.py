@@ -36,9 +36,10 @@ def _prevent_distro_setup(request):
     mark_expression = request.config.getoption("-m", default="")
     # Only enable the real distro when the marker expression actually *selects*
     # the E2E suite. A plain substring check would also match exclusions like
-    # ``-m "not tracing_e2e"`` and wrongly leave the real distro enabled for
-    # ordinary tests, contaminating global OpenTelemetry state.
-    normalized = mark_expression.replace(" ", "")
+    # ``-m "not tracing_e2e"`` (or a parenthesized ``-m "not (tracing_e2e)"``)
+    # and wrongly leave the real distro enabled for ordinary tests,
+    # contaminating global OpenTelemetry state.
+    normalized = mark_expression.replace(" ", "").replace("(", "").replace(")", "")
     selects_e2e = "tracing_e2e" in normalized and "nottracing_e2e" not in normalized
     if selects_e2e:
         yield

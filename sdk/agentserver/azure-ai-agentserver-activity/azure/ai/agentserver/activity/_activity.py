@@ -104,6 +104,23 @@ def _sanitize_id(value: str, fallback: str) -> str:
     return value
 
 
+def _scrub_for_log(value: str) -> str:
+    """Strip control characters so untrusted values cannot forge log lines.
+
+    Activity fields and request headers are written to a line-oriented log; a
+    value containing ``\\r``/``\\n`` (or other control characters) could
+    otherwise inject additional, attacker-controlled log records.
+
+    :param value: The raw value to sanitize.
+    :type value: str
+    :return: The value with control characters removed.
+    :rtype: str
+    """
+    if not value:
+        return value
+    return "".join(ch for ch in value if ch == " " or (ch.isprintable() and ch not in "\r\n\t"))
+
+
 def _enrich_record(record: logging.LogRecord) -> None:
     """Populate activity scope fields on a log record from the request context.
 
@@ -811,16 +828,16 @@ class ActivityAgentServerHost(AgentServerHost):
                 "Activity request received | type=%s | activity_id=%s | conversation_id=%s | "
                 "session_id=%s | from=%s | recipient=%s | channelId=%s | serviceUrl=%s | "
                 "locale=%s | x_request_id=%s",
-                meta.type,
+                _scrub_for_log(meta.type),
                 activity_id,
-                conversation_id,
+                _scrub_for_log(conversation_id),
                 session_id,
-                meta.from_id,
-                meta.recipient_id,
-                meta.channel_id,
-                meta.service_url,
-                meta.locale,
-                meta.x_request_id,
+                _scrub_for_log(meta.from_id),
+                _scrub_for_log(meta.recipient_id),
+                _scrub_for_log(meta.channel_id),
+                _scrub_for_log(meta.service_url),
+                _scrub_for_log(meta.locale),
+                _scrub_for_log(meta.x_request_id),
             )
 
             baggage_token = self._set_correlation_baggage(session_id, conversation_id)

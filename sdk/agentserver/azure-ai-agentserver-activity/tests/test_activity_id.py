@@ -105,3 +105,14 @@ async def test_trailing_newline_activity_id_falls_back_to_uuid(asgi_client):
     assert "\n" not in activity_id
     uuid.UUID(activity_id)  # fallback UUID
 
+
+def test_scrub_for_log_strips_control_characters():
+    """Untrusted values are stripped of CR/LF/tab so they cannot forge log lines."""
+    from azure.ai.agentserver.activity._activity import _scrub_for_log
+
+    assert _scrub_for_log("normal value") == "normal value"
+    assert _scrub_for_log("evil\r\nInjected: line") == "evilInjected: line"
+    assert _scrub_for_log("tab\there") == "tabhere"
+    assert "\n" not in _scrub_for_log("a\nb")
+    assert _scrub_for_log("") == ""
+

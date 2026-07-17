@@ -194,9 +194,19 @@ async def test_invoke_agent_span_carries_identity_project_and_response_id(
 
 
 @pytest.mark.asyncio
-async def test_invoke_agent_span_omits_blank_attributes(asgi_client, span_collector):
+async def test_invoke_agent_span_omits_blank_attributes(asgi_client, span_collector, monkeypatch):
     """Without the platform environment variables, identity/project are omitted
     (not emitted as blanks); the operation name and response id are still set."""
+    # Ensure a Foundry-configured dev/CI environment does not populate the
+    # identity/project config and defeat the assertions below.
+    for _var in (
+        "FOUNDRY_AGENT_NAME",
+        "FOUNDRY_AGENT_VERSION",
+        "FOUNDRY_AGENT_ID",
+        "FOUNDRY_PROJECT_ENDPOINT",
+        "FOUNDRY_PROJECT_ARM_ID",
+    ):
+        monkeypatch.delenv(_var, raising=False)
 
     async def handle(_request):
         return JSONResponse({"ok": True})

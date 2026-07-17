@@ -41,6 +41,7 @@ dev = [
     "microsoft-agents-authentication-msal>=1.0.0",
     "microsoft-agents-activity>=1.0.0",
     "azure-identity>=1.25.3",
+    "azure-monitor-query",
 ]
 
 [project.urls]
