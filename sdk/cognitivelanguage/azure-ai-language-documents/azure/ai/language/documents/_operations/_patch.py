@@ -126,6 +126,8 @@ class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOper
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         polling: Union[bool, PollingMethod[ItemPaged[_models.Tasks]]] = kwargs.pop("polling", True)
+        if polling is False:
+            raise ValueError("polling=False is not supported for this long-running operation.")
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         cls: ClsType[ItemPaged[_models.Tasks]] = kwargs.pop("cls", None)
