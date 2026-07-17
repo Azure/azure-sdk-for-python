@@ -154,11 +154,11 @@ def _apply_error_source_headers(
     """
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
-        # Strip control characters (CR/LF/etc.) so request-derived exception text
-        # cannot inject additional headers or cause response splitting.
-        sanitized_detail = "".join(
-            ch for ch in error_detail if ch == " " or (ch.isprintable() and ch not in "\r\n")
-        )
+        # Keep only ASCII printable characters. This strips CR/LF (so request-
+        # derived exception text cannot inject headers or split the response) and
+        # also drops non-latin-1 code points that Starlette cannot encode into an
+        # HTTP header value.
+        sanitized_detail = "".join(ch for ch in error_detail if ch == " " or (ch.isascii() and ch.isprintable()))
         if sanitized_detail:
             merged[ERROR_DETAIL] = sanitized_detail
     return merged

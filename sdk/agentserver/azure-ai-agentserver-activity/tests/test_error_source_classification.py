@@ -70,3 +70,26 @@ async def test_platform_error_detail_strips_control_characters(asgi_client):
     assert "\r" not in detail and "\n" not in detail
     assert "injected-header" not in resp.headers
 
+
+@pytest.mark.asyncio
+async def test_platform_error_detail_drops_non_latin1(asgi_client):
+    """Non-ASCII code points are dropped so Starlette can latin-1 encode the header."""
+
+    async def handle(_request):
+        exc = RuntimeError("caf\u00e9 \U0001f600 failure")  # accented + emoji
+        setattr(exc, PLATFORM_ERROR_TAG, True)
+        raise exc
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    async with asgi_client(app) as client:
+        resp = await client.post(
+            "/activity/messages",
+            json={"type": "message", "text": "hello"},
+            headers={"Authorization": "Bearer test-token", "x-agent-session-id": "session-123"},
+        )
+
+    assert resp.status_code == 500
+    detail = resp.headers[ERROR_DETAIL]
+    detail.encode("latin-1")  # must not raise
+    assert "\U0001f600" not in detail
+
