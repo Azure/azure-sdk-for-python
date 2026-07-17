@@ -18,8 +18,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class VirtualEnclavesMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
-    """Configuration for VirtualEnclavesMgmtClient.
+class EnclaveMgmtClientConfiguration:  # pylint: disable=too-many-instance-attributes
+    """Configuration for EnclaveMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.enclave.aio import VirtualEnclavesMgmtClient
+from azure.mgmt.enclave.aio import EnclaveMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
+class TestEnclaveMgmtEnclaveEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(VirtualEnclavesMgmtClient, is_async=True)
+        self.client = self.create_mgmt_client(EnclaveMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_get(self, resource_group):
-        response = await self.client.community_endpoints.get(
+    async def test_enclave_endpoints_get(self, resource_group):
+        response = await self.client.enclave_endpoints.get(
             resource_group_name=resource_group.name,
-            community_name="str",
-            community_endpoint_name="str",
+            virtual_enclave_name="str",
+            enclave_endpoint_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,26 +33,19 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_begin_create_or_update(self, resource_group):
+    async def test_enclave_endpoints_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.community_endpoints.begin_create_or_update(
+            await self.client.enclave_endpoints.begin_create_or_update(
                 resource_group_name=resource_group.name,
-                community_name="str",
-                community_endpoint_name="str",
+                virtual_enclave_name="str",
+                enclave_endpoint_name="str",
                 resource={
                     "location": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
                         "ruleCollection": [
-                            {
-                                "destination": "str",
-                                "destinationType": "str",
-                                "endpointRuleName": "str",
-                                "ports": "str",
-                                "protocols": ["str"],
-                                "transitHubResourceId": "str",
-                            }
+                            {"destination": "str", "endpointRuleName": "str", "ports": "str", "protocols": ["str"]}
                         ],
                         "provisioningState": "str",
                         "resourceCollection": ["str"],
@@ -77,23 +70,16 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_begin_update(self, resource_group):
+    async def test_enclave_endpoints_begin_update(self, resource_group):
         response = await (
-            await self.client.community_endpoints.begin_update(
+            await self.client.enclave_endpoints.begin_update(
                 resource_group_name=resource_group.name,
-                community_name="str",
-                community_endpoint_name="str",
+                virtual_enclave_name="str",
+                enclave_endpoint_name="str",
                 properties={
                     "properties": {
                         "ruleCollection": [
-                            {
-                                "destination": "str",
-                                "destinationType": "str",
-                                "endpointRuleName": "str",
-                                "ports": "str",
-                                "protocols": ["str"],
-                                "transitHubResourceId": "str",
-                            }
+                            {"destination": "str", "endpointRuleName": "str", "ports": "str", "protocols": ["str"]}
                         ],
                         "updateMode": "str",
                     },
@@ -107,12 +93,12 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_begin_delete(self, resource_group):
+    async def test_enclave_endpoints_begin_delete(self, resource_group):
         response = await (
-            await self.client.community_endpoints.begin_delete(
+            await self.client.enclave_endpoints.begin_delete(
                 resource_group_name=resource_group.name,
-                community_name="str",
-                community_endpoint_name="str",
+                virtual_enclave_name="str",
+                enclave_endpoint_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -121,10 +107,10 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_list_by_community_resource(self, resource_group):
-        response = self.client.community_endpoints.list_by_community_resource(
+    async def test_enclave_endpoints_list_by_enclave_resource(self, resource_group):
+        response = self.client.enclave_endpoints.list_by_enclave_resource(
             resource_group_name=resource_group.name,
-            community_name="str",
+            virtual_enclave_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -132,9 +118,9 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_list_by_subscription(self, resource_group):
-        response = self.client.community_endpoints.list_by_subscription(
-            community_name="str",
+    async def test_enclave_endpoints_list_by_subscription(self, resource_group):
+        response = self.client.enclave_endpoints.list_by_subscription(
+            virtual_enclave_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -142,12 +128,12 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_begin_handle_approval_creation(self, resource_group):
+    async def test_enclave_endpoints_begin_handle_approval_creation(self, resource_group):
         response = await (
-            await self.client.community_endpoints.begin_handle_approval_creation(
+            await self.client.enclave_endpoints.begin_handle_approval_creation(
                 resource_group_name=resource_group.name,
-                community_name="str",
-                community_endpoint_name="str",
+                virtual_enclave_name="str",
+                enclave_endpoint_name="str",
                 body={
                     "approvalStatus": "Approved",
                     "resourceRequestAction": "Create",
@@ -161,12 +147,12 @@ class TestVirtualEnclavesMgmtCommunityEndpointsOperationsAsync(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_community_endpoints_begin_handle_approval_deletion(self, resource_group):
+    async def test_enclave_endpoints_begin_handle_approval_deletion(self, resource_group):
         response = await (
-            await self.client.community_endpoints.begin_handle_approval_deletion(
+            await self.client.enclave_endpoints.begin_handle_approval_deletion(
                 resource_group_name=resource_group.name,
-                community_name="str",
-                community_endpoint_name="str",
+                virtual_enclave_name="str",
+                enclave_endpoint_name="str",
                 body={"resourceRequestAction": "Create"},
             )
         ).result()  # call '.result()' to poll until service return final result

@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import VirtualEnclavesMgmtClientConfiguration
+from ._configuration import EnclaveMgmtClientConfiguration
 from .operations import (
     ApprovalOperations,
     CommunityEndpointsOperations,
@@ -42,7 +42,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class VirtualEnclavesMgmtClient:  # pylint: disable=too-many-instance-attributes
+class EnclaveMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Microsoft Mission Resource Provider management API.
 
     :ivar operations: Operations operations
@@ -98,7 +98,7 @@ class VirtualEnclavesMgmtClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = VirtualEnclavesMgmtClientConfiguration(
+        self._config = EnclaveMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

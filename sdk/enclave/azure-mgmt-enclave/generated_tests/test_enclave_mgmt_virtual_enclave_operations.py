@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.enclave import VirtualEnclavesMgmtClient
+from azure.mgmt.enclave import EnclaveMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
+class TestEnclaveMgmtVirtualEnclaveOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(VirtualEnclavesMgmtClient)
+        self.client = self.create_mgmt_client(EnclaveMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_get(self, resource_group):
-        response = self.client.community.get(
+    def test_virtual_enclave_get(self, resource_group):
+        response = self.client.virtual_enclave.get(
             resource_group_name=resource_group.name,
-            community_name="str",
+            virtual_enclave_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_begin_create_or_update(self, resource_group):
-        response = self.client.community.begin_create_or_update(
+    def test_virtual_enclave_begin_create_or_update(self, resource_group):
+        response = self.client.virtual_enclave.begin_create_or_update(
             resource_group_name=resource_group.name,
-            community_name="str",
+            virtual_enclave_name="str",
             resource={
                 "location": "str",
                 "id": "str",
@@ -46,30 +46,30 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                 },
                 "name": "str",
                 "properties": {
-                    "addressSpace": "str",
-                    "addressSpaces": ["str"],
+                    "communityResourceId": "str",
+                    "enclaveVirtualNetwork": {
+                        "allowSubnetCommunication": bool,
+                        "customCidrRange": "str",
+                        "networkName": "str",
+                        "networkSize": "str",
+                        "subnetConfigurations": [
+                            {
+                                "networkPrefixSize": 0,
+                                "subnetName": "str",
+                                "addressPrefix": "str",
+                                "networkSecurityGroupResourceId": "str",
+                                "subnetDelegation": "str",
+                                "subnetResourceId": "str",
+                            }
+                        ],
+                    },
                     "approvalSettings": {
-                        "communityEndpointUpdate": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
-                        "communityMaintenanceMode": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
                         "connectionCreation": {
                             "approvalPolicy": "str",
                             "mandatoryApprovers": [{"approverEntraId": "str"}],
                             "minimumApproversRequired": 0,
                         },
                         "connectionUpdate": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
-                        "enclaveCreation": {
                             "approvalPolicy": "str",
                             "mandatoryApprovers": [{"approverEntraId": "str"}],
                             "minimumApproversRequired": 0,
@@ -85,35 +85,18 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                             "minimumApproversRequired": 0,
                         },
                     },
-                    "communityRoleAssignments": [
+                    "bastionEnabled": bool,
+                    "dedicatedHubResourceId": "str",
+                    "enclaveAddressSpaces": {"enclaveAddressSpace": "str", "managedAddressSpace": "str"},
+                    "enclaveDefaultSettings": {
+                        "diagnosticDestination": "str",
+                        "keyVaultResourceId": "str",
+                        "logAnalyticsResourceIdCollection": ["str"],
+                        "storageAccountResourceId": "str",
+                    },
+                    "enclaveRoleAssignments": [
                         {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
                     ],
-                    "dedicatedHubList": [
-                        {
-                            "location": "str",
-                            "id": "str",
-                            "name": "str",
-                            "properties": {
-                                "designation": "str",
-                                "firewallPolicyResourceId": "str",
-                                "firewallResourceId": "str",
-                                "provisioningState": "str",
-                                "vHubResourceId": "str",
-                            },
-                            "systemData": {
-                                "createdAt": "2020-02-20 00:00:00",
-                                "createdBy": "str",
-                                "createdByType": "str",
-                                "lastModifiedAt": "2020-02-20 00:00:00",
-                                "lastModifiedBy": "str",
-                                "lastModifiedByType": "str",
-                            },
-                            "tags": {"str": "str"},
-                            "type": "str",
-                        }
-                    ],
-                    "dnsServers": ["str"],
-                    "firewallSku": "str",
                     "governedServiceList": [
                         {
                             "serviceId": "str",
@@ -145,9 +128,13 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                             "diagnosticSettingsName": "str",
                         },
                     },
-                    "policyOverride": "Enclave",
                     "provisioningState": "str",
+                    "rbacInheritance": "str",
                     "resourceCollection": ["str"],
+                    "workloadResourceVisibility": "str",
+                    "workloadRoleAssignments": [
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                    ],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
@@ -167,10 +154,10 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_begin_update(self, resource_group):
-        response = self.client.community.begin_update(
+    def test_virtual_enclave_begin_update(self, resource_group):
+        response = self.client.virtual_enclave.begin_update(
             resource_group_name=resource_group.name,
-            community_name="str",
+            virtual_enclave_name="str",
             properties={
                 "identity": {
                     "type": "str",
@@ -179,29 +166,29 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                     "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
                 },
                 "properties": {
-                    "addressSpaces": ["str"],
+                    "enclaveVirtualNetwork": {
+                        "allowSubnetCommunication": bool,
+                        "customCidrRange": "str",
+                        "networkName": "str",
+                        "networkSize": "str",
+                        "subnetConfigurations": [
+                            {
+                                "networkPrefixSize": 0,
+                                "subnetName": "str",
+                                "addressPrefix": "str",
+                                "networkSecurityGroupResourceId": "str",
+                                "subnetDelegation": "str",
+                                "subnetResourceId": "str",
+                            }
+                        ],
+                    },
                     "approvalSettings": {
-                        "communityEndpointUpdate": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
-                        "communityMaintenanceMode": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
                         "connectionCreation": {
                             "approvalPolicy": "str",
                             "mandatoryApprovers": [{"approverEntraId": "str"}],
                             "minimumApproversRequired": 0,
                         },
                         "connectionUpdate": {
-                            "approvalPolicy": "str",
-                            "mandatoryApprovers": [{"approverEntraId": "str"}],
-                            "minimumApproversRequired": 0,
-                        },
-                        "enclaveCreation": {
                             "approvalPolicy": "str",
                             "mandatoryApprovers": [{"approverEntraId": "str"}],
                             "minimumApproversRequired": 0,
@@ -217,11 +204,12 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                             "minimumApproversRequired": 0,
                         },
                     },
-                    "communityRoleAssignments": [
+                    "bastionEnabled": bool,
+                    "dedicatedHubResourceId": "str",
+                    "enclaveDefaultSettings": {"diagnosticDestination": "str"},
+                    "enclaveRoleAssignments": [
                         {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
                     ],
-                    "dnsServers": ["str"],
-                    "firewallSku": "str",
                     "governedServiceList": [
                         {
                             "serviceId": "str",
@@ -251,7 +239,11 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
                             "diagnosticSettingsName": "str",
                         },
                     },
-                    "policyOverride": "Enclave",
+                    "rbacInheritance": "str",
+                    "workloadResourceVisibility": "str",
+                    "workloadRoleAssignments": [
+                        {"roleDefinitionId": "str", "condition": "str", "principals": [{"id": "str", "type": "User"}]}
+                    ],
                 },
                 "tags": {"str": "str"},
             },
@@ -262,10 +254,10 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_begin_delete(self, resource_group):
-        response = self.client.community.begin_delete(
+    def test_virtual_enclave_begin_delete(self, resource_group):
+        response = self.client.virtual_enclave.begin_delete(
             resource_group_name=resource_group.name,
-            community_name="str",
+            virtual_enclave_name="str",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -273,8 +265,8 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_list_by_resource_group(self, resource_group):
-        response = self.client.community.list_by_resource_group(
+    def test_virtual_enclave_list_by_resource_group(self, resource_group):
+        response = self.client.virtual_enclave.list_by_resource_group(
             resource_group_name=resource_group.name,
         )
         result = [r for r in response]
@@ -283,38 +275,32 @@ class TestVirtualEnclavesMgmtCommunityOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_list_by_subscription(self, resource_group):
-        response = self.client.community.list_by_subscription()
+    def test_virtual_enclave_list_by_subscription(self, resource_group):
+        response = self.client.virtual_enclave.list_by_subscription()
         result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_community_check_address_space_availability(self, resource_group):
-        response = self.client.community.check_address_space_availability(
+    def test_virtual_enclave_begin_handle_approval_creation(self, resource_group):
+        response = self.client.virtual_enclave.begin_handle_approval_creation(
             resource_group_name=resource_group.name,
-            community_name="str",
-            check_address_space_availability_request={
-                "communityResourceId": "str",
-                "enclaveVirtualNetwork": {
-                    "allowSubnetCommunication": bool,
-                    "customCidrRange": "str",
-                    "networkName": "str",
-                    "networkSize": "str",
-                    "subnetConfigurations": [
-                        {
-                            "networkPrefixSize": 0,
-                            "subnetName": "str",
-                            "addressPrefix": "str",
-                            "networkSecurityGroupResourceId": "str",
-                            "subnetDelegation": "str",
-                            "subnetResourceId": "str",
-                        }
-                    ],
-                },
-            },
-        )
+            virtual_enclave_name="str",
+            body={"approvalStatus": "Approved", "resourceRequestAction": "Create", "approvalCallbackPayload": "str"},
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_virtual_enclave_begin_handle_approval_deletion(self, resource_group):
+        response = self.client.virtual_enclave.begin_handle_approval_deletion(
+            resource_group_name=resource_group.name,
+            virtual_enclave_name="str",
+            body={"resourceRequestAction": "Create"},
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

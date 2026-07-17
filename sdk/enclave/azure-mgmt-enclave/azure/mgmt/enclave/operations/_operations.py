@@ -33,7 +33,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import VirtualEnclavesMgmtClientConfiguration
+from .._configuration import EnclaveMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._validation import api_version_validation
@@ -1858,14 +1858,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1968,14 +1968,14 @@ class WorkloadOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`workload` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2885,14 +2885,14 @@ class VirtualEnclaveOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`virtual_enclave` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4277,14 +4277,14 @@ class CommunityOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`community` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5323,14 +5323,14 @@ class TransitHubOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`transit_hub` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6240,14 +6240,14 @@ class EnclaveConnectionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`enclave_connection` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7581,14 +7581,14 @@ class EnclaveEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`enclave_endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9060,14 +9060,14 @@ class CommunityEndpointsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`community_endpoints` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10540,14 +10540,14 @@ class DedicatedHubOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`dedicated_hub` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11569,14 +11569,14 @@ class ApprovalOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.enclave.VirtualEnclavesMgmtClient`'s
+        :class:`~azure.mgmt.enclave.EnclaveMgmtClient`'s
         :attr:`approval` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: VirtualEnclavesMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: EnclaveMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

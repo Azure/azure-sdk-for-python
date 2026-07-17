@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.enclave.aio import VirtualEnclavesMgmtClient
+from azure.mgmt.enclave.aio import EnclaveMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,17 +15,17 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
+class TestEnclaveMgmtTransitHubOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(VirtualEnclavesMgmtClient, is_async=True)
+        self.client = self.create_mgmt_client(EnclaveMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_get(self, resource_group):
-        response = await self.client.workload.get(
+    async def test_transit_hub_get(self, resource_group):
+        response = await self.client.transit_hub.get(
             resource_group_name=resource_group.name,
-            virtual_enclave_name="str",
-            workload_name="str",
+            community_name="str",
+            transit_hub_name="str",
         )
 
         # please add some check logic here by yourself
@@ -33,20 +33,22 @@ class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_begin_create_or_update(self, resource_group):
+    async def test_transit_hub_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.workload.begin_create_or_update(
+            await self.client.transit_hub.begin_create_or_update(
                 resource_group_name=resource_group.name,
-                virtual_enclave_name="str",
-                workload_name="str",
+                community_name="str",
+                transit_hub_name="str",
                 resource={
                     "location": "str",
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "managedOnBehalfOfConfiguration": {"moboBrokerResources": [{"id": "str"}]},
                         "provisioningState": "str",
-                        "resourceGroupCollection": ["str"],
+                        "resourceCollection": ["str"],
+                        "securityProvider": "str",
+                        "state": "str",
+                        "transitOption": {"params": {"remoteVirtualNetworkId": "str", "scaleUnits": 0}, "type": "str"},
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -67,13 +69,20 @@ class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_begin_update(self, resource_group):
+    async def test_transit_hub_begin_update(self, resource_group):
         response = await (
-            await self.client.workload.begin_update(
+            await self.client.transit_hub.begin_update(
                 resource_group_name=resource_group.name,
-                virtual_enclave_name="str",
-                workload_name="str",
-                properties={"properties": {"resourceGroupCollection": ["str"]}, "tags": {"str": "str"}},
+                community_name="str",
+                transit_hub_name="str",
+                properties={
+                    "properties": {
+                        "securityProvider": "str",
+                        "state": "str",
+                        "transitOption": {"params": {"remoteVirtualNetworkId": "str", "scaleUnits": 0}, "type": "str"},
+                    },
+                    "tags": {"str": "str"},
+                },
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -82,12 +91,12 @@ class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_begin_delete(self, resource_group):
+    async def test_transit_hub_begin_delete(self, resource_group):
         response = await (
-            await self.client.workload.begin_delete(
+            await self.client.transit_hub.begin_delete(
                 resource_group_name=resource_group.name,
-                virtual_enclave_name="str",
-                workload_name="str",
+                community_name="str",
+                transit_hub_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -96,10 +105,10 @@ class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_list_by_enclave_resource(self, resource_group):
-        response = self.client.workload.list_by_enclave_resource(
+    async def test_transit_hub_list_by_community_resource(self, resource_group):
+        response = self.client.transit_hub.list_by_community_resource(
             resource_group_name=resource_group.name,
-            virtual_enclave_name="str",
+            community_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -107,9 +116,9 @@ class TestVirtualEnclavesMgmtWorkloadOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_workload_list_by_subscription(self, resource_group):
-        response = self.client.workload.list_by_subscription(
-            virtual_enclave_name="str",
+    async def test_transit_hub_list_by_subscription(self, resource_group):
+        response = self.client.transit_hub.list_by_subscription(
+            community_name="str",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.enclave
 
-    class azure.mgmt.enclave.VirtualEnclavesMgmtClient: implements ContextManager 
+    class azure.mgmt.enclave.EnclaveMgmtClient: implements ContextManager 
         approval: ApprovalOperations
         community: CommunityOperations
         community_endpoints: CommunityEndpointsOperations
@@ -38,7 +38,7 @@ namespace azure.mgmt.enclave
 
 namespace azure.mgmt.enclave.aio
 
-    class azure.mgmt.enclave.aio.VirtualEnclavesMgmtClient: implements AsyncContextManager 
+    class azure.mgmt.enclave.aio.EnclaveMgmtClient: implements AsyncContextManager 
         approval: ApprovalOperations
         community: CommunityOperations
         community_endpoints: CommunityEndpointsOperations
