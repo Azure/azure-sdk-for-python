@@ -34,7 +34,13 @@ def _prevent_distro_setup(request):
     When running E2E tracing tests (``-m tracing_e2e``), the real distro
     export is needed so spans actually reach Application Insights."""
     mark_expression = request.config.getoption("-m", default="")
-    if "tracing_e2e" in mark_expression:
+    # Only enable the real distro when the marker expression actually *selects*
+    # the E2E suite. A plain substring check would also match exclusions like
+    # ``-m "not tracing_e2e"`` and wrongly leave the real distro enabled for
+    # ordinary tests, contaminating global OpenTelemetry state.
+    normalized = mark_expression.replace(" ", "")
+    selects_e2e = "tracing_e2e" in normalized and "nottracing_e2e" not in normalized
+    if selects_e2e:
         yield
     else:
         with patch("azure.ai.agentserver.core._tracing._setup_distro_export", create=True):

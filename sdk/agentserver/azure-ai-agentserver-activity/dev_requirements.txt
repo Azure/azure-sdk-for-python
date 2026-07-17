@@ -4,3 +4,7 @@
 pytest
 pytest-asyncio
 opentelemetry-sdk>=1.43.0
+microsoft-agents-hosting-core>=1.0.0
+microsoft-agents-authentication-msal>=1.0.0
+microsoft-agents-activity>=1.0.0
+azure-identity>=1.25.3

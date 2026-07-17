@@ -37,6 +37,7 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (
     AgentServerHost,
     FoundryAgentRequestContext,
+    build_server_version,
     create_error_response,
     detach_context,
     end_span,
@@ -68,6 +69,7 @@ from ._constants import (
     LogRecordFields,
     SpanAttributes,
 )
+from ._version import VERSION as _ACTIVITY_VERSION
 
 if TYPE_CHECKING:  # pragma: no cover - type-only imports (M365 SDK is optional)
     from microsoft_agents.hosting.core import (
@@ -367,6 +369,13 @@ class ActivityAgentServerHost(AgentServerHost):
         activity_routes: list[Route] = self._build_activity_routes()
         existing_routes: list[Route] = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing_routes + activity_routes, **kwargs)
+
+        # Register this package's version so the ``x-platform-server`` header
+        # advertises the activity protocol segment (core requires each protocol
+        # package to register its own version).
+        self.register_server_version(
+            build_server_version("azure-ai-agentserver-activity", _ACTIVITY_VERSION)
+        )
 
         if request_handler is not None:
             # Custom-handler mode: the caller owns the pipeline; the M365 SDK is

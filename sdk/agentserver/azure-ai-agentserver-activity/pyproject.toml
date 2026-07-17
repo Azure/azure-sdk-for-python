@@ -24,6 +24,10 @@ dependencies = [
     "azure-ai-agentserver-core>=2.0.0b7",
     "opentelemetry-api>=1.43.0",
     "aiohttp>=3.10.0,<4.0.0a0",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
 ]
 
 [dependency-groups]
@@ -33,6 +37,10 @@ dev = [
     "opentelemetry-sdk>=1.43.0",
     "pytest-asyncio",
     "pytest",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
 ]
 
 [project.urls]

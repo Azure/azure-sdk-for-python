@@ -85,7 +85,8 @@ host.run()
 
 `POST /activity/messages` consumes:
 
-- `x-agent-session-id` (preferred session source)
+- `agent_session_id` query parameter (highest-precedence session source), then
+  the `x-agent-session-id` header, then config, then a generated UUID fallback
 - `x-agent-conversation-id`
 - `x-agent-user-id` (per-user identity) and `x-agent-foundry-call-id` (per-request call ID, container protocol `2.0.0`)
 - `traceparent`, `tracestate`, and `baggage`
@@ -126,8 +127,10 @@ See the [samples directory](https://github.com/Azure/azure-sdk-for-python/tree/m
 
 ### `ImportError`: M365 Agents SDK not installed
 
-Constructing `ActivityAgentServerHost()` directly (or with `agent_app=`)
-requires the M365 Agents SDK. Install it:
+The M365 Agents SDK ships as a dependency of this package, so a standard
+`pip install azure-ai-agentserver-activity` covers the default
+`ActivityAgentServerHost()` path. If you have deliberately trimmed the M365
+packages from your environment, reinstall them:
 
 ```bash
 pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity azure-identity

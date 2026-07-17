@@ -30,6 +30,20 @@ async def test_post_activity_returns_200(asgi_client):
 
 
 @pytest.mark.asyncio
+async def test_server_version_registers_activity_segment():
+    """The host advertises the activity package in its server version segments."""
+    from azure.ai.agentserver.activity._version import VERSION
+
+    async def handle(_request):
+        return None
+
+    app = ActivityAgentServerHost(request_handler=handle, configure_observability=None)
+    server_version = app._build_server_version()
+    assert "azure-ai-agentserver-activity" in server_version
+    assert VERSION in server_version
+
+
+@pytest.mark.asyncio
 async def test_post_activity_requires_json_object(asgi_client):
     async def handle(_request):
         return None
