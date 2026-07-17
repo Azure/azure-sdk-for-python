@@ -32,6 +32,14 @@ def _to_snake_case(name):
     return name.lower()
 
 
+def _hashable(value):
+    # Change tuples may carry list arguments (e.g. parameter-ordering changes); convert them to
+    # tuples so the resulting match key can live in a set.
+    if isinstance(value, list):
+        return tuple(_hashable(item) for item in value)
+    return value
+
+
 class ShadowTypesModuleChecker:
     def run_check(self, breaking_changes: list, features_added: list, *, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> tuple[list, list]:
         def _sibling_models_module(module_name):
@@ -48,31 +56,26 @@ class ShadowTypesModuleChecker:
             # names.
             args = change[3:]
             normalized_args = tuple(
-                _to_snake_case(arg) if index == 1 else arg for index, arg in enumerate(args)
+                _hashable(_to_snake_case(arg) if index == 1 else arg) for index, arg in enumerate(args)
             )
             return (change[1], module) + normalized_args
 
-        def _is_shadow_duplicate(change, changes_list) -> bool:
-            # The module name is the third element of every reported change tuple and the
-            # class name (when present) is the fourth.
-            sibling_models = _sibling_models_module(change[2])
-            if sibling_models is None:
-                return False
-            if len(change) <= 3:
-                # Module-level change with no class to match against; keep it to be safe.
-                return False
-            target = _match_key(change, sibling_models)
-            for candidate in changes_list:
-                if candidate is change or candidate[2] != sibling_models:
+        def _filter(changes_list):
+            # Pre-index the match key of every change once so each `types` entry can be checked
+            # with a single O(1) set lookup instead of rescanning the whole list (avoids O(n^2)).
+            candidate_keys = {_match_key(change, change[2]) for change in changes_list if len(change) > 3}
+            result = []
+            for change in changes_list:
+                sibling_models = _sibling_models_module(change[2])
+                # Drop a `types` entry only when the sibling `models` module reports the same
+                # change. A module-level change (len <= 3) has no class to match, so keep it.
+                if (
+                    sibling_models is not None
+                    and len(change) > 3
+                    and _match_key(change, sibling_models) in candidate_keys
+                ):
                     continue
-                if _match_key(candidate, candidate[2]) == target:
-                    return True
-            return False
+                result.append(change)
+            return result
 
-        breaking_changes_copy = [
-            change for change in breaking_changes if not _is_shadow_duplicate(change, breaking_changes)
-        ]
-        features_added_copy = [
-            change for change in features_added if not _is_shadow_duplicate(change, features_added)
-        ]
-        return breaking_changes_copy, features_added_copy
+        return _filter(breaking_changes), _filter(features_added)
