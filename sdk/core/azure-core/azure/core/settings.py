@@ -23,8 +23,8 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-"""Provide access to settings for globally used Azure configuration values.
-"""
+"""Provide access to settings for globally used Azure configuration values."""
+
 from __future__ import annotations
 from collections import namedtuple
 from enum import Enum
@@ -471,7 +471,7 @@ class Settings:
       ``opentelemetry``. If the value is invalid, a warning is logged and the default is used.
       Default: None.
     * ``AZURE_SDK_CLOUD_CONF`` - Azure cloud environment. Accepted values:
-      ``AZURE_PUBLIC_CLOUD``, ``AZURE_CHINA_CLOUD``, ``AZURE_US_GOVERNMENT``.
+      ``AZURE_PUBLIC_CLOUD``, ``AZURE_CHINA_CLOUD``, ``AZURE_US_GOVERNMENT``, ``AZURE_BLEUCLOUD``.
       Default: ``AZURE_PUBLIC_CLOUD``.
 
     :Example:
