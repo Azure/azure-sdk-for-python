@@ -20,10 +20,10 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
-    3) AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO - Required. The name of the model deployment for audio to use for evaluation, recommend to use "gpt-4o-audio-preview"
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
+    3) FOUNDRY_MODEL_NAME_FOR_AUDIO - Required. The name of the model deployment for audio to use for evaluation, recommend to use "gpt-4o-audio-preview"
 """
 
 import base64
@@ -48,9 +48,9 @@ load_dotenv()
 file_path = os.path.abspath(__file__)
 folder_path = os.path.dirname(file_path)
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
-model_deployment_name_for_audio = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME_FOR_AUDIO"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
+model_deployment_name_for_audio = os.environ["FOUNDRY_MODEL_NAME_FOR_AUDIO"]
 
 
 def audio_to_base64(audio_path: str) -> str:
