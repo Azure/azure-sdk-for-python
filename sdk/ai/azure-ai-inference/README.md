@@ -37,12 +37,12 @@ To report an issue with the client library, or request additional features, plea
 * For Serverless API endpoints or Managed Compute endpoints
   * An [Azure subscription](https://azure.microsoft.com/free).
   * An [AI Model from the catalog](https://ai.azure.com/explore/models) deployed through Azure AI Foundry.
-  * The endpoint URL of your model, in of the form `https://<your-host-name>.<your-azure-region>.models.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
+  * The endpoint URL of your model, in the form `https://<your-host-name>.<your-azure-region>.models.ai.azure.com`, where `your-host-name` is your unique model deployment host name and `your-azure-region` is the Azure region where the model is deployed (e.g. `eastus2`).
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials.
 * For Azure OpenAI (AOAI) service
   * An [Azure subscription](https://azure.microsoft.com/free).
   * An [OpenAI Model from the catalog](https://oai.azure.com/resource/models) deployed through Azure AI Foundry.
-  * The endpoint URL of your model, in the form `https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
+  * The endpoint URL of your model, in the form `https://<your-resource-name>.openai.azure.com/openai/deployments/<your-deployment-name>`, where `your-resource-name` is your globally unique AOAI resource name, and `your-deployment-name` is your AI Model deployment name.
   * Depending on your authentication preference, you either need an API key to authenticate against the service, or Entra ID credentials.
   * An api-version. Latest preview or GA version listed in the `Data plane - inference` row in [the API Specs table](https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions). At the time of writing, latest GA version was "2024-06-01".
 
@@ -91,7 +91,7 @@ client = ChatCompletionsClient(
 
 # For Azure OpenAI endpoint
 client = ChatCompletionsClient(
-    endpoint=endpoint,  # Of the form https://<your-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
+    endpoint=endpoint,  # Of the form https://<your-resource-name>.openai.azure.com/openai/deployments/<your-deployment-name>
     credential=AzureKeyCredential(key),
     api_version="2024-06-01",  # Azure OpenAI api-version. See https://aka.ms/azsdk/azure-ai-inference/azure-openai-api-versions
 )
@@ -197,7 +197,7 @@ Entra ID authentication is also supported by the `load_client` function. Replace
 
 ### Get AI model information
 
-If you are using Serverless API or Managed Compute endpoints, you can call the client method `get_model_info` to retrive AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info). This call will not work for GitHub Models or Azure OpenAI endpoints.
+If you are using Serverless API or Managed Compute endpoints, you can call the client method `get_model_info` to retrieve AI model information. This makes a REST call to the `/info` route on the provided endpoint, as documented in [the REST API reference](https://learn.microsoft.com/azure/ai-studio/reference/reference-model-inference-info). This call will not work for GitHub Models or Azure OpenAI endpoints.
 
 <!-- SNIPPET:sample_get_model_info.get_model_info -->
 
@@ -211,7 +211,7 @@ print(f"Model type: {model_info.model_type}")
 
 <!-- END SNIPPET -->
 
-AI model information is cached in the client, and futher calls to `get_model_info` will access the cached value and wil not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
+AI model information is cached in the client, and further calls to `get_model_info` will access the cached value and will not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
 
 AI model information is displayed (if available) when you `print(client)`.
 
@@ -245,7 +245,7 @@ In the following sections you will find simple examples of:
 * [Image Embeddings](#image-embeddings-example)
 
 The examples create a synchronous client assuming a Serverless API or Managed Compute endpoint. Modify client
-construction code as descirbed in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
+construction code as described in [Key concepts](#key-concepts) to have it work with GitHub Models endpoint or Azure OpenAI
 endpoint. Only mandatory input settings are shown for simplicity.
 
 See the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-inference/samples) folder for full working samples for synchronous and asynchronous clients.
