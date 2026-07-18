@@ -14,7 +14,7 @@ These are runnable console Python scripts that show how to do chat completion an
 
 Samples with `azure_openai` in their name show how to do chat completions and text embeddings against Azure OpenAI endpoints.
 
-Samples in this folder use the synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, you can easily modify any of the synchronous samples to asynchronous.
+Samples in this folder use the synchronous clients. Samples in the subfolder `async_samples` use the asynchronous clients. The concepts are similar, so you can easily adapt any of the synchronous samples for asynchronous use.
 
 ## Prerequisites
 
