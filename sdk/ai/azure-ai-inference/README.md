@@ -211,7 +211,7 @@ print(f"Model type: {model_info.model_type}")
 
 <!-- END SNIPPET -->
 
-AI model information is cached in the client, and further calls to `get_model_info` will access the cached value and will not result in a REST API call. Note that if you created the client using `load_client` function, model information will already be cached in the client.
+AI model information is cached in the client, and further calls to `get_model_info` will access the cached value and will not result in a REST API call. Note that if you created the client using the `load_client` function, model information will already be cached in the client.
 
 AI model information is displayed (if available) when you `print(client)`.
 
