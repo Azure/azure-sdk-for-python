@@ -142,7 +142,7 @@ async def upload_substream_blocks(
         for block in uploader.get_substream_blocks():
             range_ids.append(await uploader.process_substream_block(block))
     if any(range_ids):
-        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
+        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
     return
 
 

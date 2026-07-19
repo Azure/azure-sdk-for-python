@@ -6,7 +6,6 @@
 # pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import asyncio
-import base64
 import os
 import tempfile
 import uuid
@@ -63,45 +62,12 @@ from azure.storage.blob.aio import (
     download_blob_from_url,
     upload_blob_to_url,
 )
-from azure.storage.blob._shared.uploads_async import (
-    BlockBlobChunkUploader,
-    upload_data_chunks,
-    upload_substream_blocks,
-)
 
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
 TEST_CONTAINER_PREFIX = "container"
 TEST_BLOB_PREFIX = "blob"
 # ------------------------------------------------------------------------------
-
-
-class _RecordingBlockBlobServiceAsync:
-    """Minimal fake async service that records the block IDs and data passed to stage_block."""
-
-    def __init__(self):
-        self.blocks = {}  # block_id -> staged bytes
-
-    async def stage_block(self, block_id, length, data=None, body=None, **kwargs):  # pylint: disable=unused-argument
-        content = data if data is not None else body
-        if hasattr(content, "read"):
-            content = content.read()
-        self.blocks[block_id] = content
-
-
-def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks, expected_length):
-    # The data was actually split into multiple blocks.
-    assert len(block_ids) > 1
-    # Every block ID is unique (the point of the feature).
-    assert len(set(block_ids)) == len(block_ids)
-    # All block IDs are equal-length, valid base64 (Azure requires equal length per blob).
-    assert len({len(block_id) for block_id in block_ids}) == 1
-    for block_id in block_ids:
-        # Length is fixed per upload path to match the previous scheme (chunk=64, substream=12).
-        assert len(block_id) == expected_length
-        base64.b64decode(block_id)  # must be valid base64
-    # Committing the blocks in the returned order must reproduce the original content.
-    assert b"".join(staged_blocks[block_id] for block_id in block_ids) == expected_data
 
 
 class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
@@ -3961,48 +3927,5 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert downloader.properties.smart_access_tier is not None
         assert downloader.properties.blob_tier_change_time is not None
         assert not downloader.properties.blob_tier_inferred
-
-    def test_block_blob_upload_generates_unique_ordered_block_ids(self):
-        # Each staged block must get a unique block ID, and the block list must be
-        # committed in byte-offset order even when chunks finish out of order under concurrency.
-        data = b"".join(bytes([i]) * 8 for i in range(20))  # 20 distinct 8-byte chunks
-        service = _RecordingBlockBlobServiceAsync()
-
-        async def run():
-            return await upload_data_chunks(
-                service=service,
-                uploader_class=BlockBlobChunkUploader,
-                total_size=len(data),
-                chunk_size=8,
-                max_concurrency=4,
-                stream=BytesIO(data),
-                validate_content=False,
-                progress_hook=None,
-            )
-
-        block_ids = asyncio.run(run())
-        # Chunk path uses a 48-digit zero-padded UUID -> 64-char block IDs.
-        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 64)
-
-    def test_block_blob_substream_upload_generates_unique_ordered_block_ids(self):
-        data = b"".join(bytes([i]) * 8 for i in range(20))
-        service = _RecordingBlockBlobServiceAsync()
-
-        async def run():
-            return await upload_substream_blocks(
-                service=service,
-                uploader_class=BlockBlobChunkUploader,
-                total_size=len(data),
-                chunk_size=8,
-                max_concurrency=4,
-                stream=BytesIO(data),
-                validate_content=False,
-                progress_hook=None,
-            )
-
-        block_ids = asyncio.run(run())
-        # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
-        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
-
 
 # ------------------------------------------------------------------------------

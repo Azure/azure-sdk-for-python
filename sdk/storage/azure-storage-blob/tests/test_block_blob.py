@@ -6,6 +6,8 @@
 # pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import tempfile
+import threading
+from base64 import b64decode
 from datetime import datetime, timedelta
 from io import BytesIO
 from unittest import mock
@@ -35,6 +37,12 @@ from azure.storage.blob import (
     ImmutabilityPolicy,
     StandardBlobTier,
 )
+from azure.storage.blob._shared.uploads import (
+    BlockBlobChunkUploader,
+    upload_data_chunks,
+    upload_substream_blocks,
+)
+
 from azure.storage.blob._shared.validation import calculate_content_md5
 
 # ------------------------------------------------------------------------------
@@ -43,6 +51,34 @@ SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
 # ------------------------------------------------------------------------------
+
+
+def _assert_unique_ordered_block_ids(block_ids, expected_data, staged_blocks, expected_length):
+    # The data was actually split into multiple blocks.
+    assert len(block_ids) > 1
+    # Every block ID is unique (the point of the feature).
+    assert len(set(block_ids)) == len(block_ids)
+    # All block IDs are equal-length, valid base64 (Azure requires equal length per blob).
+    assert len({len(block_id) for block_id in block_ids}) == 1
+    for block_id in block_ids:
+        # Length is fixed per upload path to match the previous scheme (chunk=64, substream=12).
+        assert len(block_id) == expected_length
+        b64decode(block_id)  # must be valid base64
+    # Committing the blocks in the returned order must reproduce the original content.
+    assert b"".join(staged_blocks[block_id] for block_id in block_ids) == expected_data
+
+
+class _RecordingBlockBlobService:
+    """Minimal fake service that records the block IDs and data passed to stage_block."""
+
+    def __init__(self):
+        self._lock = threading.Lock()
+        self.blocks = {}  # block_id -> staged bytes
+
+    def stage_block(self, block_id, length, data, **kwargs):  # pylint: disable=unused-argument
+        content = data.read() if hasattr(data, "read") else data
+        with self._lock:
+            self.blocks[block_id] = content
 
 
 class TestStorageBlockBlob(StorageRecordedTestCase):
@@ -2126,5 +2162,42 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
 
+    def test_block_blob_upload_generates_unique_ordered_block_ids(self):
+        # Each staged block must get a unique block ID, and the block list must be
+        # committed in byte-offset order even when chunks finish out of order under concurrency.
+        data = b"".join(bytes([i]) * 8 for i in range(20))  # 20 distinct 8-byte chunks
+        service = _RecordingBlockBlobService()
+
+        block_ids = upload_data_chunks(
+            service=service,
+            uploader_class=BlockBlobChunkUploader,
+            total_size=len(data),
+            chunk_size=8,
+            max_concurrency=4,
+            stream=BytesIO(data),
+            validate_content=False,
+            progress_hook=None,
+        )
+
+        # Chunk path uses a 48-digit zero-padded UUID -> 64-char block IDs.
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 64)
+
+    def test_block_blob_substream_upload_generates_unique_ordered_block_ids(self):
+        data = b"".join(bytes([i]) * 8 for i in range(20))
+        service = _RecordingBlockBlobService()
+
+        block_ids = upload_substream_blocks(
+            service=service,
+            uploader_class=BlockBlobChunkUploader,
+            total_size=len(data),
+            chunk_size=8,
+            max_concurrency=4,
+            stream=BytesIO(data),
+            validate_content=False,
+            progress_hook=None,
+        )
+
+        # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
+        _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
 # ------------------------------------------------------------------------------

@@ -24,8 +24,8 @@ from test_content_validation import (
     assert_structured_message,
     assert_structured_message_get,
     TestIter,
-    _deterministic_urandom,
 )
+from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient

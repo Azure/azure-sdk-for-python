@@ -118,7 +118,7 @@ def upload_substream_blocks(
     else:
         range_ids = [uploader.process_substream_block(b) for b in uploader.get_substream_blocks()]
     if any(range_ids):
-        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
+        return [r[1] for r in sorted(range_ids, key=lambda r: r[0])]
     return []
 
 

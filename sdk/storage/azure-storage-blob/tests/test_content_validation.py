@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import itertools
 from io import BytesIO
 from unittest import mock
 
@@ -17,6 +16,7 @@ from devtools_testutils.storage import (
 )
 from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
@@ -54,11 +54,6 @@ def assert_structured_message(request):
 def assert_structured_message_get(response):
     assert response.http_request.headers.get("x-ms-structured-body") is not None
     assert response.http_response.headers.get("x-ms-structured-body") is not None
-
-
-def _deterministic_urandom():
-    counter = itertools.count(1)
-    return lambda size: next(counter).to_bytes(size, "big")
 
 
 class TestIter:
