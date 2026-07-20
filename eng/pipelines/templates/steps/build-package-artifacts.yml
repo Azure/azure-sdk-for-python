@@ -165,11 +165,13 @@ steps:
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
 
-  # Linux: Set CIBW_ENVIRONMENT to use PIP_INDEX_URL to fetch dependencies from 
-  # the Azure DevOps feed instead of PyPI.
+  # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
+  # dependencies from the Azure DevOps feed instead of PyPI. Using
+  # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
+  # own [tool.cibuildwheel].environment (CFLAGS) setting.
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT]PIP_INDEX_URL=$(PIP_INDEX_URL)"
-    displayName: 'Set CIBW_ENVIRONMENT'
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+    displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
     condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
 
   - pwsh: |
