@@ -22,12 +22,6 @@ name: Pipeline Analysis - Next Steps Trigger
 on:
   check_run:
     types: [completed]
-  workflow_dispatch:
-    inputs:
-      pr_number:
-        description: "Open pull request number to analyze"
-        required: true
-        type: string
 
 permissions:
   actions: write # dispatch the agentic (lock) workflow
@@ -38,11 +32,11 @@ jobs:
   dispatch-next-steps:
     # Only react to a failing Azure DevOps PR-CI check run whose name ends in `- pullrequest`;
     # ignore every other check run (github-actions, policy service, SDL sub-jobs, and this
-    # workflow's own runs). Manual dispatch always runs.
+    # workflow's own runs).
     if: >
-      github.event_name != 'check_run' ||
-      (endsWith(github.event.check_run.name, '- pullrequest') &&
-       github.event.check_run.conclusion == 'failure')
+      github.event.check_run.check_suite.app.slug == 'azure-pipelines' &&
+      endsWith(github.event.check_run.name, '- pullrequest') &&
+      github.event.check_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch pipeline next-steps analysis
@@ -53,7 +47,6 @@ jobs:
           PR_NUMBER: ${{ github.event.check_run.pull_requests[0].number }}
           CI_CONCLUSION: ${{ github.event.check_run.conclusion }}
           CI_HEAD_SHA: ${{ github.event.check_run.head_sha }}
-          MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
 
@@ -105,18 +98,7 @@ jobs:
             echo "Dispatched pipeline next-steps analysis for PR #$pr_number."
           }
 
-          if [ "$GITHUB_EVENT_NAME" = "check_run" ]; then
-            if [ -z "$PR_NUMBER" ]; then
-              PR_NUMBER="$(find_open_pr_for_head_sha "$CI_HEAD_SHA")"
-            fi
-            dispatch_next_steps "$PR_NUMBER" "$CI_CONCLUSION" "$CI_HEAD_SHA"
-            exit 0
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER="$(find_open_pr_for_head_sha "$CI_HEAD_SHA")"
           fi
-
-          # Manual dispatch: resolve the current head SHA and run against it.
-          head_sha="$(gh api "repos/$REPOSITORY/pulls/$MANUAL_PR_NUMBER" --jq 'select(.state == "open") | .head.sha' 2>/dev/null || true)"
-          if [ -z "$head_sha" ]; then
-            echo "Skipping PR #$MANUAL_PR_NUMBER; PR was not found or is not open."
-            exit 0
-          fi
-          dispatch_next_steps "$MANUAL_PR_NUMBER" "manual" "$head_sha"
+          dispatch_next_steps "$PR_NUMBER" "$CI_CONCLUSION" "$CI_HEAD_SHA"
