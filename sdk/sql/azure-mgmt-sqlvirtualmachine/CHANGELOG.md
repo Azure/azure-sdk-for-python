@@ -4,8 +4,7 @@
 
 ### Other Changes
 
-  - Deleted unused TypedDict aliases `ErrorAdditionalInfo`/`ErrorDetail`/`ErrorResponse`/`Operation`/`OperationDisplay` from `azure.mgmt.sqlvirtualmachine.types`
-  - First stable release of the Azure SQL Virtual Machine Management client library.
+  - First GA
 
 ## 1.0.0b7 (2026-07-07)
 
