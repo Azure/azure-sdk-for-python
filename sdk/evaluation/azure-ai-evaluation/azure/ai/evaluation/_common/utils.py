@@ -18,7 +18,7 @@ from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCateg
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
-    BYOModelConfiguration,
+    _BYOModelConfiguration,
     OpenAIModelConfiguration,
 )
 
@@ -223,7 +223,7 @@ def parse_model_config_type(
 
 
 def construct_prompty_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, BYOModelConfiguration],
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, _BYOModelConfiguration],
     default_api_version: str,
     user_agent: str,
 ) -> dict:
@@ -312,14 +312,14 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
 
 def validate_model_config(
     config: dict,
-) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, BYOModelConfiguration]:
+) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, _BYOModelConfiguration]:
     # Admin-connected (BYO) judge models are referenced as "connection/deployment" and served via the
     # Foundry project Responses API. Their config intentionally omits azure_endpoint/azure_deployment,
     # so bypass the AzureOpenAI/OpenAI TypedDict validation and let the prompty layer route them.
     from azure.ai.evaluation._byo_judge import is_byo_model_config
 
     if is_byo_model_config(config):
-        return cast(BYOModelConfiguration, config)
+        return cast(_BYOModelConfiguration, config)
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:
