@@ -65,6 +65,7 @@
         "azure.mgmt.iothub.models.RoutingCosmosDBSqlApiProperties": "Microsoft.Devices.RoutingCosmosDBSqlApiProperties",
         "azure.mgmt.iothub.models.RoutingEndpoints": "Microsoft.Devices.RoutingEndpoints",
         "azure.mgmt.iothub.models.RoutingEventHubProperties": "Microsoft.Devices.RoutingEventHubProperties",
+        "azure.mgmt.iothub.models.RoutingEventStreamProperties": "Microsoft.Devices.RoutingEventStreamProperties",
         "azure.mgmt.iothub.models.RoutingMessage": "Microsoft.Devices.RoutingMessage",
         "azure.mgmt.iothub.models.RoutingProperties": "Microsoft.Devices.RoutingProperties",
         "azure.mgmt.iothub.models.RoutingServiceBusQueueEndpointProperties": "Microsoft.Devices.RoutingServiceBusQueueEndpointProperties",
@@ -92,6 +93,7 @@
         "azure.mgmt.iothub.models.NetworkRuleIPAction": "Microsoft.Devices.NetworkRuleIPAction",
         "azure.mgmt.iothub.models.AuthenticationType": "Microsoft.Devices.AuthenticationType",
         "azure.mgmt.iothub.models.RoutingStorageContainerPropertiesEncoding": "Microsoft.Devices.RoutingStorageContainerPropertiesEncoding",
+        "azure.mgmt.iothub.models.EventStreamAuthenticationType": "Microsoft.Devices.EventStreamAuthenticationType",
         "azure.mgmt.iothub.models.RoutingSource": "Microsoft.Devices.RoutingSource",
         "azure.mgmt.iothub.models.Capabilities": "Microsoft.Devices.Capabilities",
         "azure.mgmt.iothub.models.IotHubReplicaRoleType": "Microsoft.Devices.IotHubReplicaRoleType",
@@ -184,5 +186,5 @@
         "azure.mgmt.iothub.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota",
         "azure.mgmt.iothub.aio.operations.ResourceProviderCommonOperations.get_subscription_quota": "Microsoft.Devices.ResourceProviderCommonOperationGroup.getSubscriptionQuota"
     },
-    "CrossLanguageVersion": "b229e6a1f8d0"
+    "CrossLanguageVersion": "9dea9d992167"
 }

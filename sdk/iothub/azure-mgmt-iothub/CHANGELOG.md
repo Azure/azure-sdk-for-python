@@ -1,5 +1,18 @@
 # Release History
 
+## 5.0.0b4 (2026-07-20)
+
+### Features Added
+
+  - Model `RoutingEndpoints` added property `event_streams`
+  - Added enum `EventStreamAuthenticationType`
+  - Added model `RoutingEventStreamProperties`
+
+### Breaking Changes
+
+  - Deleted or renamed enum value `IotHubSku.GEN2`
+  - Deleted or renamed enum value `IotHubSkuTier.GENERATION2`
+
 ## 5.0.0b3 (2026-05-20)
 
 ### Features Added
