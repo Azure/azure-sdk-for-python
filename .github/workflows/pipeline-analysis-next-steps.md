@@ -19,12 +19,12 @@ on:
         description: "Pull request number whose failing pipeline should be analyzed"
         required: true
         type: string
-      check_suite_conclusion:
-        description: "Conclusion of the completed azure-pipelines check suite (e.g. failure) for CI-triggered runs"
+      ci_conclusion:
+        description: "Conclusion of the completed azure-pipelines PR-CI check run (e.g. failure) for CI-triggered runs"
         required: false
         type: string
-      check_suite_head_sha:
-        description: "Head SHA of the completed check suite, for stale-commit detection on CI-triggered runs"
+      ci_head_sha:
+        description: "Head SHA of the completed PR-CI check run, for stale-commit detection on CI-triggered runs"
         required: false
         type: string
 
@@ -84,7 +84,10 @@ steps:
       azsdk ci analyze "$PR_URL" > "$GITHUB_WORKSPACE/pipeline-analysis.txt" 2>&1 || exit_code=$?
       echo "azsdk ci analyze exit code: $exit_code"
       echo "----- pipeline-analysis.txt -----"
-      cat "$GITHUB_WORKSPACE/pipeline-analysis.txt"
+      # The file holds PR-controlled build output. Prefix any line that looks like a GitHub
+      # Actions workflow command (starts with `::`) with a space so it is logged as plain text
+      # instead of being interpreted.
+      sed 's/^::/ ::/' "$GITHUB_WORKSPACE/pipeline-analysis.txt"
       if [ "$exit_code" -ne 0 ]; then
         if grep -qF "No failed Azure Pipeline builds found" "$GITHUB_WORKSPACE/pipeline-analysis.txt"; then
           echo "No failing Azure Pipeline builds resolved for this PR; the agent will no-op."
@@ -113,6 +116,12 @@ safe-outputs:
   noop:
     report-as-issue: false
   # Failures surface on the PR/run; do not open tracking issues.
+  missing-tool:
+    create-issue: false
+  missing-data:
+    create-issue: false
+  report-incomplete:
+    create-issue: false
   report-failure-as-issue: false
 
 timeout-minutes: 20
@@ -135,7 +144,7 @@ workspace root. Your job is to turn that raw tool output into one concise, actio
 2. If the file is empty, or contains `No failed Azure Pipeline builds found`, or otherwise
    shows no real pipeline/test failures, then there is nothing to report: use the `noop` safe
    output and stop. Do **not** post a comment in that case.
-3. Stale-commit guard: if `${{ github.event.inputs.check_suite_head_sha }}` is non-empty, fetch
+3. Stale-commit guard: if `${{ github.event.inputs.ci_head_sha }}` is non-empty, fetch
    the PR's current head SHA. If they differ, the completed run is for a superseded commit -
    use `noop` and stop rather than posting stale analysis.
 
