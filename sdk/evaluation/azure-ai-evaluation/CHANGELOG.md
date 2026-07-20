@@ -2,6 +2,16 @@
 
 ## 1.18.1 (2026-07-09)
 
+### Features Added
+
+- Added support for admin-connected (bring-your-own / BYO) models as
+  LLM-as-a-judge evaluator models. A model configuration carrying
+  `byo_model` (`"connection/deployment"`) and `project_endpoint` routes
+  prompty-based judges through the Foundry project Responses API, where the
+  platform resolves the connection and its auth (API key / managed identity /
+  OAuth2). This path requires the optional `azure-ai-projects` package to be
+  installed; a clear error is raised if it is missing.
+
 ### Bugs Fixed
 
 - Enabled `azure_ai_search`, `azure_fabric`, and `sharepoint_grounding` tool
