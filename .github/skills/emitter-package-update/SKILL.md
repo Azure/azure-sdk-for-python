@@ -70,7 +70,12 @@ npx npm-check-updates --packageFile eng/emitter-package.json -u
 > (cross-checked against `packages/typespec-python/package.json` on `main`) — and edit
 > `eng/emitter-package.json` by hand to that version.
 
-Align `@azure-tools/openai-typespec` and `@typespec/openapi3` with the versions pinned in [azure-rest-api-specs/package.json](https://github.com/Azure/azure-rest-api-specs/blob/main/package.json) to ensure consistency between the emitter and the spec repo. Read the spec repo's current values for those two packages and set them to match in `eng/emitter-package.json` (do not assume specific version numbers — use whatever the spec repo currently pins).
+Align the packages listed in `alignment-sources.json` with the versions pinned in each
+configured source repo package file to ensure consistency between the emitter and its
+upstream sources. For each source, read `packageJsonUrl`, set every package listed in
+that source's `packages` array to the version currently pinned there, and do not assume
+specific version numbers. To add more libraries for alignment later, add their package
+names to the relevant `packages` array in `alignment-sources.json`.
 
 If a specific version was requested, pin `@azure-tools/typespec-python` to that exact
 version in `eng/emitter-package.json` (overriding what npm-check-updates picked).

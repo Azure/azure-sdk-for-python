@@ -32,7 +32,8 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the chat model (e.g., gpt-4o, gpt-4o-mini, gpt-5o, gpt-5o-mini)
        used by the Agent for understanding and responding to prompts. This is NOT the image generation model.
-    3) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME - The deployment name of the image generation model (e.g. gpt-image-1)
        used by the ImageGenTool.
 
     NOTE:
@@ -45,7 +46,9 @@ USAGE:
 import base64
 import os
 import tempfile
+from pathlib import Path
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
@@ -54,51 +57,42 @@ from azure.ai.projects.models import PromptAgentDefinition, ImageGenTool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
+
+tool = ImageGenTool(
+    model=image_generation_model,  # Model such as "gpt-image-1"
+    quality="low",
+    size="1024x1024",
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-    image_generation_model = os.environ["IMAGE_GENERATION_MODEL_DEPLOYMENT_NAME"]
-
-    tool = ImageGenTool(
-        model=image_generation_model,  # Model such as "gpt-image-1"
-        quality="low",
-        size="1024x1024",
-    )
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="Generate images based on user prompts",
             tools=[tool],
         ),
         description="Agent for image generation.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     response = openai_client.responses.create(
         input="Generate an image of Microsoft logo.",
         extra_headers={
             "x-ms-oai-image-generation-deployment": image_generation_model
         },  # this is required at the moment for image generation
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
     print(f"Response created: {response.id}")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")
 
     image_data = [output.result for output in response.output if output.type == "image_generation_call"]
     if image_data and image_data[0]:
         print("Downloading generated image...")
         filename = "microsoft.png"
-        file_path = os.path.join(tempfile.gettempdir(), filename)
-
-        with open(file_path, "wb") as f:
-            f.write(base64.b64decode(image_data[0]))
-
+        file_path = Path(tempfile.gettempdir()) / filename
+        file_path.write_bytes(base64.b64decode(image_data[0]))
         print(f"Image saved to: {file_path}")

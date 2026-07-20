@@ -301,6 +301,7 @@
     "ivars",
     "jwks",
     "kashifkhan",
+    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -1848,6 +1849,7 @@
     {
       "filename": "sdk/confidentialledger/azure-confidentialledger/**",
       "words": [
+        "deser",
         "mrenclave",
         "MRENCLAVE",
         "oeverify"

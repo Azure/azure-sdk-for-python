@@ -21,9 +21,9 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_NAME - The name of the AI agent to use for evaluation.
-    3) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
@@ -54,7 +54,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
-        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
+        agent_name=os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent"),
         definition=PromptAgentDefinition(
             model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",

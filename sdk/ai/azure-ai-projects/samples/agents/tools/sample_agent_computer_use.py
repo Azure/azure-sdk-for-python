@@ -27,10 +27,12 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) (Optional) COMPUTER_USE_MODEL_DEPLOYMENT_NAME - The deployment name of the computer-use-preview model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 
 # Import shared helper functions
 from computer_use_util import (  # pylint: disable=import-error
@@ -46,40 +48,40 @@ from azure.ai.projects.models import PromptAgentDefinition, ComputerUsePreviewTo
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+# Initialize state machine
+current_state = SearchState.INITIAL
+
+# Load screenshot assets
+try:
+    screenshots = load_screenshot_assets()
+    print("Successfully loaded screenshot assets")
+except FileNotFoundError:
+    print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
+    exit(1)  # pylint: disable=consider-using-sys-exit
+
+tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-    # Initialize state machine
-    current_state = SearchState.INITIAL
-
-    # Load screenshot assets
-    try:
-        screenshots = load_screenshot_assets()
-        print("Successfully loaded screenshot assets")
-    except FileNotFoundError:
-        print("Failed to load required screenshot assets. Please ensure the asset files exist in ../assets/")
-        exit(1)  # pylint: disable=consider-using-sys-exit
-
-    tool = ComputerUsePreviewTool(display_width=1026, display_height=769, environment="windows")
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ.get("COMPUTER_USE_MODEL_DEPLOYMENT_NAME", "computer-use-preview"),
             instructions="""
-            You are a computer automation assistant.
+        You are a computer automation assistant.
 
-            Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
-            """,
+        Be direct and efficient. When you reach the search results page, read and describe the actual search result titles and descriptions you can see.
+        """,
             tools=[tool],
         ),
         description="Computer automation agent with screen interaction capabilities.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     # Initial request with screenshot - start with Bing search page
     print("Starting computer automation session (initial screenshot: cua_browser_search.png)...")
     response = openai_client.responses.create(
@@ -95,11 +97,10 @@ with (
                         "type": "input_image",
                         "image_url": screenshots["browser_search"]["url"],
                         "detail": "high",
-                    },  # Start with Bing search page
+                    },
                 ],
             }
         ],
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         truncation="auto",
     )
 
@@ -149,12 +150,7 @@ with (
                     },
                 }
             ],
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
             truncation="auto",
         )
 
         print(f"Follow-up response received (ID: {response.id})")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

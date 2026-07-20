@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -95,7 +95,6 @@ from ...operations._operations import (
 )
 from .._configuration import DeploymentsMgmtClientConfiguration
 
-JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
@@ -243,7 +242,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     async def _create_or_update_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -347,7 +350,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         scope: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -361,7 +364,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -404,7 +407,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update_at_scope(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at a given scope.
 
@@ -414,9 +421,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentExtended. The DeploymentExtended
          is compatible with MutableMapping
         :rtype:
@@ -764,7 +772,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     async def _validate_at_scope_initial(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -867,7 +879,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         scope: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -880,7 +892,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -922,7 +934,11 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_validate_at_scope(
-        self, scope: str, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        scope: str,
+        deployment_name: str,
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -931,9 +947,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type scope: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -1181,7 +1198,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     async def _create_or_update_at_tenant_scope_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1278,7 +1298,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_create_or_update_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at tenant scope.
 
@@ -1287,7 +1312,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1322,7 +1347,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at tenant scope.
 
@@ -1330,9 +1358,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: ScopedDeployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentExtended. The DeploymentExtended
          is compatible with MutableMapping
         :rtype:
@@ -1562,7 +1591,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     async def _validate_at_tenant_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1658,7 +1690,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_validate_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -1666,7 +1703,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1700,16 +1737,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_validate_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: ScopedDeployment,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -1768,7 +1809,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _what_if_at_tenant_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1864,7 +1908,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_what_if_at_tenant_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.ScopedDeploymentWhatIf,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
@@ -1872,7 +1921,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1906,17 +1955,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_what_if_at_tenant_scope(
-        self, deployment_name: str, parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the tenant
         group.
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types:
-         ScopedDeploymentWhatIf, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or JSON or
-         IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WhatIfOperationResult. The
          WhatIfOperationResult is compatible with MutableMapping
         :rtype:
@@ -2276,7 +2328,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2381,7 +2433,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2395,7 +2447,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2441,7 +2493,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at management group scope.
@@ -2452,9 +2504,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: ScopedDeployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a
+         ScopedDeployment type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentExtended. The DeploymentExtended
          is compatible with MutableMapping
         :rtype:
@@ -2809,7 +2862,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2913,7 +2966,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2926,7 +2979,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2971,7 +3024,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeployment, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeployment, _types.ScopedDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
@@ -2981,9 +3034,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: ScopedDeployment,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeployment type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeployment or
+         ~azure.mgmt.resource.deployments.types.ScopedDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -3046,7 +3100,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3150,7 +3204,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.ScopedDeploymentWhatIf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3163,7 +3217,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3208,7 +3262,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         group_id: str,
         deployment_name: str,
-        parameters: Union[_models.ScopedDeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.ScopedDeploymentWhatIf, _types.ScopedDeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the management
@@ -3218,10 +3272,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types:
-         ScopedDeploymentWhatIf, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or JSON or
-         IO[bytes]
+        :param parameters: Parameters to validate. Is either a ScopedDeploymentWhatIf type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.ScopedDeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.ScopedDeploymentWhatIf or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WhatIfOperationResult. The
          WhatIfOperationResult is compatible with MutableMapping
         :rtype:
@@ -3471,7 +3525,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         return 200 <= response.status_code <= 299
 
     async def _create_or_update_at_subscription_scope_initial(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3569,7 +3623,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_create_or_update_at_subscription_scope(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.Deployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at subscription scope.
 
@@ -3578,7 +3637,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3613,7 +3672,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_create_or_update_at_subscription_scope(  # pylint: disable=name-too-long
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources at subscription scope.
 
@@ -3621,9 +3680,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentExtended. The DeploymentExtended
          is compatible with MutableMapping
         :rtype:
@@ -3959,7 +4019,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
     async def _validate_at_subscription_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4056,7 +4116,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_validate_at_subscription_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.Deployment,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
@@ -4064,7 +4129,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4098,16 +4163,17 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_validate_at_subscription_scope(
-        self, deployment_name: str, parameters: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
+        self, deployment_name: str, parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
         Resource Manager..
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -4166,7 +4232,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         )
 
     async def _what_if_at_subscription_scope_initial(
-        self, deployment_name: str, parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4263,7 +4332,12 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     async def begin_what_if_at_subscription_scope(
-        self, deployment_name: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: _types.DeploymentWhatIf,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
@@ -4271,7 +4345,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to What If. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.DeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4305,16 +4379,20 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
 
     @distributed_trace_async
     async def begin_what_if_at_subscription_scope(
-        self, deployment_name: str, parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]], **kwargs: Any
+        self,
+        deployment_name: str,
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the
         subscription.
 
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to What If. Is one of the following types: DeploymentWhatIf,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or JSON or IO[bytes]
+        :param parameters: Parameters to What If. Is either a DeploymentWhatIf type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.DeploymentWhatIf or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WhatIfOperationResult. The
          WhatIfOperationResult is compatible with MutableMapping
         :rtype:
@@ -4570,7 +4648,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4676,7 +4754,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4690,7 +4768,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Additional parameters supplied to the operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4736,7 +4814,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentExtended]:
         """Deploys resources to a resource group.
@@ -4747,9 +4825,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Additional parameters supplied to the operation. Is one of the following
-         types: Deployment, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Additional parameters supplied to the operation. Is either a Deployment type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentExtended. The DeploymentExtended
          is compatible with MutableMapping
         :rtype:
@@ -5106,7 +5185,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5211,7 +5290,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.Deployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5224,7 +5303,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.Deployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5269,7 +5348,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.Deployment, JSON, IO[bytes]],
+        parameters: Union[_models.Deployment, _types.Deployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.DeploymentValidateResult]:
         """Validates whether the specified template is syntactically correct and will be accepted by Azure
@@ -5279,9 +5358,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: Deployment, JSON,
-         IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a Deployment type or a IO[bytes] type.
+         Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.Deployment or
+         ~azure.mgmt.resource.deployments.types.Deployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns DeploymentValidateResult. The
          DeploymentValidateResult is compatible with MutableMapping
         :rtype:
@@ -5344,7 +5424,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5449,7 +5529,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: JSON,
+        parameters: _types.DeploymentWhatIf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5462,7 +5542,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
         :param parameters: Parameters to validate. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.resource.deployments.types.DeploymentWhatIf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5507,7 +5587,7 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         deployment_name: str,
-        parameters: Union[_models.DeploymentWhatIf, JSON, IO[bytes]],
+        parameters: Union[_models.DeploymentWhatIf, _types.DeploymentWhatIf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WhatIfOperationResult]:
         """Returns changes that will be made by the deployment if executed at the scope of the resource
@@ -5517,9 +5597,10 @@ class DeploymentsOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param deployment_name: The name of the deployment. Required.
         :type deployment_name: str
-        :param parameters: Parameters to validate. Is one of the following types: DeploymentWhatIf,
-         JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or JSON or IO[bytes]
+        :param parameters: Parameters to validate. Is either a DeploymentWhatIf type or a IO[bytes]
+         type. Required.
+        :type parameters: ~azure.mgmt.resource.deployments.models.DeploymentWhatIf or
+         ~azure.mgmt.resource.deployments.types.DeploymentWhatIf or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WhatIfOperationResult. The
          WhatIfOperationResult is compatible with MutableMapping
         :rtype:
