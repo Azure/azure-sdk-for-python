@@ -299,6 +299,8 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_session_log_stream.py",  # Specified through AdditionalSampleTestDetail
                 "sample_sessions_crud.py",  # Specified through AdditionalSampleTestDetail
                 "sample_sessions_files_upload_download.py",  # Specified through AdditionalSampleTestDetail
+                "sample_routines_with_dispatch.py",  # 500
+                "sample_routines_with_github_issue_trigger.py",  # Cannot run without interact on Github
             ],
         ),
     )
