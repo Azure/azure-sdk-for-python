@@ -8,25 +8,12 @@
   - Client `ServiceBusManagementClient` added method `send_request`
   - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configuration`
   - Client `ServiceBusManagementClient` added operation group `network_security_perimeter_configurations`
-  - Model `ArmDisasterRecovery` added property `properties`
-  - Model `MigrationConfigProperties` added property `properties`
-  - Model `NetworkRuleSet` added property `properties`
-  - Model `PrivateEndpointConnection` added property `properties`
-  - Model `PrivateLinkResource` added property `properties`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `ResourceNamespacePatch` added property `system_data`
-  - Model `Rule` added property `properties`
-  - Model `SBAuthorizationRule` added property `properties`
-  - Model `SBNamespace` added property `properties`
-  - Model `SBNamespaceUpdateParameters` added property `properties`
   - Model `SBNamespaceUpdateParameters` added property `system_data`
-  - Model `SBQueue` added property `properties`
-  - Model `SBSubscription` added property `properties`
-  - Model `SBTopic` added property `properties`
   - Enum `TlsVersion` added member `ONE3`
   - Model `TrackedResource` added property `system_data`
-  - Added model `ArmDisasterRecoveryProperties`
   - Added model `ConfidentialCompute`
   - Added model `FailOver`
   - Added model `FailOverProperties`
@@ -34,11 +21,9 @@
   - Added enum `GeoDRRoleType`
   - Added model `GeoDataReplicationProperties`
   - Added enum `IpAddressType`
-  - Added model `MigrationConfigPropertiesProperties`
   - Added enum `Mode`
   - Added model `NamespaceFailoverProperties`
   - Added model `NamespaceReplicaLocation`
-  - Added model `NetworkRuleSetProperties`
   - Added model `NetworkSecurityPerimeter`
   - Added model `NetworkSecurityPerimeterConfiguration`
   - Added model `NetworkSecurityPerimeterConfigurationProperties`
@@ -50,147 +35,35 @@
   - Added model `NspAccessRuleProperties`
   - Added model `NspAccessRulePropertiesSubscriptionsItem`
   - Added model `PlatformCapabilities`
-  - Added model `PrivateEndpointConnectionProperties`
-  - Added model `PrivateLinkResourceProperties`
   - Added model `ProvisioningIssue`
   - Added model `ProvisioningIssueProperties`
   - Added enum `ResourceAssociationAccessMode`
-  - Added model `Ruleproperties`
-  - Added model `SBAuthorizationRuleProperties`
-  - Added model `SBNamespaceProperties`
-  - Added model `SBNamespaceUpdateProperties`
-  - Added model `SBQueueProperties`
-  - Added model `SBSubscriptionProperties`
-  - Added model `SBTopicProperties`
-  - Model `NamespacesOperations` added method `begin_failover`
+  - Operation group `NamespacesOperations` added method `begin_failover`
   - Added operation group `NetworkSecurityPerimeterConfigurationOperations`
   - Added operation group `NetworkSecurityPerimeterConfigurationsOperations`
 
 ### Breaking Changes
 
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `alternate_name`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `partner_namespace`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `pending_replication_operations_count`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `provisioning_state`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `role`
-  - Model `MigrationConfigProperties` deleted or renamed its instance variable `migration_state`
-  - Model `MigrationConfigProperties` deleted or renamed its instance variable `pending_replication_operations_count`
-  - Model `MigrationConfigProperties` deleted or renamed its instance variable `post_migration_name`
-  - Model `MigrationConfigProperties` deleted or renamed its instance variable `provisioning_state`
-  - Model `MigrationConfigProperties` deleted or renamed its instance variable `target_namespace`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `default_action`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `ip_rules`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `public_network_access`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `trusted_service_access_enabled`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `virtual_network_rules`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ArmDisasterRecovery` moved instance variable `provisioning_state`, `pending_replication_operations_count`, `partner_namespace`, `alternate_name` and `role` under property `properties` whose type is `ArmDisasterRecoveryProperties`
+  - Model `MigrationConfigProperties` moved instance variable `provisioning_state`, `pending_replication_operations_count`, `target_namespace`, `post_migration_name` and `migration_state` under property `properties` whose type is `MigrationConfigPropertiesProperties`
+  - Model `NetworkRuleSet` moved instance variable `trusted_service_access_enabled`, `default_action`, `virtual_network_rules`, `ip_rules` and `public_network_access` under property `properties` whose type is `NetworkRuleSetProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
   - Model `ProxyResource` deleted or renamed its instance variable `location`
-  - Model `Rule` deleted or renamed its instance variable `action`
-  - Model `Rule` deleted or renamed its instance variable `correlation_filter`
-  - Model `Rule` deleted or renamed its instance variable `filter_type`
-  - Model `Rule` deleted or renamed its instance variable `sql_filter`
-  - Model `SBAuthorizationRule` deleted or renamed its instance variable `rights`
-  - Model `SBNamespace` deleted or renamed its instance variable `alternate_name`
-  - Model `SBNamespace` deleted or renamed its instance variable `created_at`
-  - Model `SBNamespace` deleted or renamed its instance variable `disable_local_auth`
-  - Model `SBNamespace` deleted or renamed its instance variable `encryption`
-  - Model `SBNamespace` deleted or renamed its instance variable `metric_id`
-  - Model `SBNamespace` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `SBNamespace` deleted or renamed its instance variable `premium_messaging_partitions`
-  - Model `SBNamespace` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `SBNamespace` deleted or renamed its instance variable `provisioning_state`
-  - Model `SBNamespace` deleted or renamed its instance variable `public_network_access`
-  - Model `SBNamespace` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `SBNamespace` deleted or renamed its instance variable `status`
-  - Model `SBNamespace` deleted or renamed its instance variable `updated_at`
-  - Model `SBNamespace` deleted or renamed its instance variable `zone_redundant`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `alternate_name`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `created_at`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `disable_local_auth`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `encryption`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `metric_id`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `provisioning_state`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `status`
-  - Model `SBNamespaceUpdateParameters` deleted or renamed its instance variable `updated_at`
-  - Model `SBQueue` deleted or renamed its instance variable `accessed_at`
-  - Model `SBQueue` deleted or renamed its instance variable `auto_delete_on_idle`
-  - Model `SBQueue` deleted or renamed its instance variable `count_details`
-  - Model `SBQueue` deleted or renamed its instance variable `created_at`
-  - Model `SBQueue` deleted or renamed its instance variable `dead_lettering_on_message_expiration`
-  - Model `SBQueue` deleted or renamed its instance variable `default_message_time_to_live`
-  - Model `SBQueue` deleted or renamed its instance variable `duplicate_detection_history_time_window`
-  - Model `SBQueue` deleted or renamed its instance variable `enable_batched_operations`
-  - Model `SBQueue` deleted or renamed its instance variable `enable_express`
-  - Model `SBQueue` deleted or renamed its instance variable `enable_partitioning`
-  - Model `SBQueue` deleted or renamed its instance variable `forward_dead_lettered_messages_to`
-  - Model `SBQueue` deleted or renamed its instance variable `forward_to`
-  - Model `SBQueue` deleted or renamed its instance variable `lock_duration`
-  - Model `SBQueue` deleted or renamed its instance variable `max_delivery_count`
-  - Model `SBQueue` deleted or renamed its instance variable `max_message_size_in_kilobytes`
-  - Model `SBQueue` deleted or renamed its instance variable `max_size_in_megabytes`
-  - Model `SBQueue` deleted or renamed its instance variable `message_count`
-  - Model `SBQueue` deleted or renamed its instance variable `requires_duplicate_detection`
-  - Model `SBQueue` deleted or renamed its instance variable `requires_session`
-  - Model `SBQueue` deleted or renamed its instance variable `size_in_bytes`
-  - Model `SBQueue` deleted or renamed its instance variable `status`
-  - Model `SBQueue` deleted or renamed its instance variable `updated_at`
-  - Model `SBSubscription` deleted or renamed its instance variable `accessed_at`
-  - Model `SBSubscription` deleted or renamed its instance variable `auto_delete_on_idle`
-  - Model `SBSubscription` deleted or renamed its instance variable `client_affine_properties`
-  - Model `SBSubscription` deleted or renamed its instance variable `count_details`
-  - Model `SBSubscription` deleted or renamed its instance variable `created_at`
-  - Model `SBSubscription` deleted or renamed its instance variable `dead_lettering_on_filter_evaluation_exceptions`
-  - Model `SBSubscription` deleted or renamed its instance variable `dead_lettering_on_message_expiration`
-  - Model `SBSubscription` deleted or renamed its instance variable `default_message_time_to_live`
-  - Model `SBSubscription` deleted or renamed its instance variable `duplicate_detection_history_time_window`
-  - Model `SBSubscription` deleted or renamed its instance variable `enable_batched_operations`
-  - Model `SBSubscription` deleted or renamed its instance variable `forward_dead_lettered_messages_to`
-  - Model `SBSubscription` deleted or renamed its instance variable `forward_to`
-  - Model `SBSubscription` deleted or renamed its instance variable `is_client_affine`
-  - Model `SBSubscription` deleted or renamed its instance variable `lock_duration`
-  - Model `SBSubscription` deleted or renamed its instance variable `max_delivery_count`
-  - Model `SBSubscription` deleted or renamed its instance variable `message_count`
-  - Model `SBSubscription` deleted or renamed its instance variable `requires_session`
-  - Model `SBSubscription` deleted or renamed its instance variable `status`
-  - Model `SBSubscription` deleted or renamed its instance variable `updated_at`
-  - Model `SBTopic` deleted or renamed its instance variable `accessed_at`
-  - Model `SBTopic` deleted or renamed its instance variable `auto_delete_on_idle`
-  - Model `SBTopic` deleted or renamed its instance variable `count_details`
-  - Model `SBTopic` deleted or renamed its instance variable `created_at`
-  - Model `SBTopic` deleted or renamed its instance variable `default_message_time_to_live`
-  - Model `SBTopic` deleted or renamed its instance variable `duplicate_detection_history_time_window`
-  - Model `SBTopic` deleted or renamed its instance variable `enable_batched_operations`
-  - Model `SBTopic` deleted or renamed its instance variable `enable_express`
-  - Model `SBTopic` deleted or renamed its instance variable `enable_partitioning`
-  - Model `SBTopic` deleted or renamed its instance variable `max_message_size_in_kilobytes`
-  - Model `SBTopic` deleted or renamed its instance variable `max_size_in_megabytes`
-  - Model `SBTopic` deleted or renamed its instance variable `requires_duplicate_detection`
-  - Model `SBTopic` deleted or renamed its instance variable `size_in_bytes`
-  - Model `SBTopic` deleted or renamed its instance variable `status`
-  - Model `SBTopic` deleted or renamed its instance variable `subscription_count`
-  - Model `SBTopic` deleted or renamed its instance variable `support_ordering`
-  - Model `SBTopic` deleted or renamed its instance variable `updated_at`
-  - Deleted or renamed model `ArmDisasterRecoveryListResult`
-  - Deleted or renamed model `FailoverProperties`
-  - Deleted or renamed model `MigrationConfigListResult`
-  - Deleted or renamed model `NetworkRuleSetListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionListResult`
-  - Deleted or renamed model `RuleListResult`
-  - Deleted or renamed model `SBAuthorizationRuleListResult`
-  - Deleted or renamed model `SBNamespaceListResult`
-  - Deleted or renamed model `SBQueueListResult`
-  - Deleted or renamed model `SBSubscriptionListResult`
-  - Deleted or renamed model `SBTopicListResult`
-  - Deleted or renamed model `SqlRuleAction`
+  - Model `Rule` moved instance variable `action`, `filter_type`, `sql_filter` and `correlation_filter` under property `properties` whose type is `Ruleproperties`
+  - Model `SBAuthorizationRule` moved instance variable `rights` under property `properties` whose type is `SBAuthorizationRuleProperties`
+  - Model `SBNamespace` moved instance variable `minimum_tls_version`, `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `zone_redundant`, `encryption`, `private_endpoint_connections`, `disable_local_auth`, `alternate_name`, `public_network_access` and `premium_messaging_partitions` under property `properties` whose type is `SBNamespaceProperties`
+  - Model `SBNamespaceUpdateParameters` moved instance variable `provisioning_state`, `status`, `created_at`, `updated_at`, `service_bus_endpoint`, `metric_id`, `encryption`, `private_endpoint_connections`, `disable_local_auth` and `alternate_name` under property `properties` whose type is `SBNamespaceUpdateProperties`
+  - Model `SBQueue` moved instance variable `count_details`, `created_at`, `updated_at`, `accessed_at`, `size_in_bytes`, `message_count`, `lock_duration`, `max_size_in_megabytes`, `max_message_size_in_kilobytes`, `requires_duplicate_detection`, `requires_session`, `default_message_time_to_live`, `dead_lettering_on_message_expiration`, `duplicate_detection_history_time_window`, `max_delivery_count`, `status`, `enable_batched_operations`, `auto_delete_on_idle`, `enable_partitioning`, `enable_express`, `forward_to` and `forward_dead_lettered_messages_to` under property `properties` whose type is `SBQueueProperties`
+  - Model `SBSubscription` moved instance variable `message_count`, `created_at`, `accessed_at`, `updated_at`, `count_details`, `lock_duration`, `requires_session`, `default_message_time_to_live`, `dead_lettering_on_filter_evaluation_exceptions`, `dead_lettering_on_message_expiration`, `duplicate_detection_history_time_window`, `max_delivery_count`, `status`, `enable_batched_operations`, `auto_delete_on_idle`, `forward_to`, `forward_dead_lettered_messages_to`, `is_client_affine` and `client_affine_properties` under property `properties` whose type is `SBSubscriptionProperties`
+  - Model `SBTopic` moved instance variable `size_in_bytes`, `created_at`, `updated_at`, `accessed_at`, `subscription_count`, `count_details`, `default_message_time_to_live`, `max_size_in_megabytes`, `max_message_size_in_kilobytes`, `requires_duplicate_detection`, `duplicate_detection_history_time_window`, `enable_batched_operations`, `status`, `support_ordering`, `auto_delete_on_idle`, `enable_partitioning` and `enable_express` under property `properties` whose type is `SBTopicProperties`
   - Method `DisasterRecoveryConfigsOperations.fail_over` changed type of its parameter `parameters` from `FailoverProperties` to `NamespaceFailoverProperties`
+
+### Other Changes
+
+  - Deleted model `ArmDisasterRecoveryListResult`/`MigrationConfigListResult`/`NetworkRuleSetListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`RuleListResult`/`SBAuthorizationRuleListResult`/`SBNamespaceListResult`/`SBQueueListResult`/`SBSubscriptionListResult`/`SBTopicListResult` which actually were not used by SDK users
+  - Deleted model `FailoverProperties`/`SqlRuleAction` which actually were not used by SDK users
 
 ## 10.0.0b2 (2026-07-07)
 
