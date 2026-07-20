@@ -1,8 +1,10 @@
 # Release History
 
-## 0.6.0 (2026-07-20)
+## 1.0.0 (2026-07-20)
 
-change log generation failed!!! You need to write it manually!!!
+### Other Changes
+
+  - First GA
 
 ## 1.0.0b7 (2026-07-07)
 
