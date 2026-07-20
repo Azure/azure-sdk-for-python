@@ -21,9 +21,9 @@ class PyPIClient:
     * If the URL contains ``pkgs.dev.azure.com`` → Azure Artifacts REST API.
     * Otherwise → PyPI JSON API (``https://pypi.org``).
 
-    Pass ``force_pypi=True`` to always use the public PyPI JSON API, ignoring
-    ``PIP_INDEX_URL``. This is useful when the caller needs versions that only
-    exist on public PyPI and not in a curated Azure Artifacts feed.
+    Pass ``force_pypi=True`` to ignore ``PIP_INDEX_URL`` and select the PyPI
+    JSON backend. Requests use ``host`` (public PyPI by default), so an
+    explicitly supplied host is still honored.
     """
 
     def __init__(self, host="https://pypi.org", force_pypi=False):
