@@ -35,7 +35,9 @@ _generated_all = [
     name
     for module in (_generated_types, _generated_unions)
     for name in dir(module)
-    if not name.startswith("_") and name not in _TYPE_EXPORT_EXCLUDES
+    if not name.startswith("_")
+    and name not in _TYPE_EXPORT_EXCLUDES
+    and isinstance(getattr(module, name), type)
 ]
 
 

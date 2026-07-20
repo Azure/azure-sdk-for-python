@@ -957,7 +957,7 @@ namespace azure.ai.agentserver.responses.models
     def azure.ai.agentserver.responses.models.get_input_expanded(request: CreateResponse) -> list[Item]: ...
 
 
-    def azure.ai.agentserver.responses.models.get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoiceParam]: ...
+    def azure.ai.agentserver.responses.models.get_tool_choice_expanded(request: CreateResponse) -> dict[str, Any] | None: ...
 
 
     class azure.ai.agentserver.responses.models.A2APreviewTool(TypedDict, total=False):
@@ -1052,24 +1052,9 @@ namespace azure.ai.agentserver.responses.models
         version: str
 
 
-    class azure.ai.agentserver.responses.models.AnnotationType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ApiErrorResponse(TypedDict, total=False):
         key "error": Required[Error]
         error: Error
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchCallOutputStatus(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchCallOutputStatusParam(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchCallStatus(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchCallStatusParam(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ApplyPatchCreateFileOperation(TypedDict, total=False):
@@ -1102,12 +1087,6 @@ namespace azure.ai.agentserver.responses.models
         key "type": Required[Literal["delete_file"]]
         path: str
         type: Literal[delete_file]
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchFileOperationType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ApplyPatchOperationParamType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ApplyPatchToolCallItemParam(TypedDict, total=False):
@@ -1180,9 +1159,6 @@ namespace azure.ai.agentserver.responses.models
         memory_limit: ContainerMemoryLimit
         network_policy: ContainerNetworkPolicyParam
         type: Literal[auto]
-
-
-    class azure.ai.agentserver.responses.models.AzureAISearchQueryType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.AzureAISearchTool(TypedDict, total=False):
@@ -1543,9 +1519,6 @@ namespace azure.ai.agentserver.responses.models
         updated_at: int
 
 
-    class azure.ai.agentserver.responses.models.ClickButtonType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ClickParam(TypedDict, total=False):
         key "button": Required[Literal["left", "right", "wheel", "back", "forward"]]
         key "keys": Optional[list[str]]
@@ -1639,9 +1612,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[and, or]
 
 
-    class azure.ai.agentserver.responses.models.ComputerActionType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ComputerCallOutputItemParam(TypedDict, total=False):
         key "acknowledged_safety_checks": Optional[list[ComputerCallSafetyCheckParam]]
         key "call_id": Required[str]
@@ -1664,9 +1634,6 @@ namespace azure.ai.agentserver.responses.models
         code: str
         id: str
         message: str
-
-
-    class azure.ai.agentserver.responses.models.ComputerEnvironment(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ComputerScreenshotContent(TypedDict, total=False):
@@ -1731,9 +1698,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[container_file_citation]
 
 
-    class azure.ai.agentserver.responses.models.ContainerMemoryLimit(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ContainerNetworkPolicyAllowlistParam(TypedDict, total=False):
         key "allowed_domains": Required[list[str]]
         key "type": Required[Literal["allowlist"]]
@@ -1756,17 +1720,11 @@ namespace azure.ai.agentserver.responses.models
         value: str
 
 
-    class azure.ai.agentserver.responses.models.ContainerNetworkPolicyParamType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ContainerReferenceResource(TypedDict, total=False):
         key "container_id": Required[str]
         key "type": Required[Literal["container_reference"]]
         container_id: str
         type: Literal[container_reference]
-
-
-    class azure.ai.agentserver.responses.models.ContainerSkillType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ContextManagementParam(TypedDict, total=False):
@@ -1927,9 +1885,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[custom]
 
 
-    class azure.ai.agentserver.responses.models.CustomToolParamFormatType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.DeleteResponseResult(TypedDict, total=False):
         key "deleted": Required[Literal[True]]
         key "id": Required[str]
@@ -1937,9 +1892,6 @@ namespace azure.ai.agentserver.responses.models
         deleted: Literal[True]
         id: str
         object: Literal[response]
-
-
-    class azure.ai.agentserver.responses.models.DetailEnum(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.DoubleClickAction(TypedDict, total=False):
@@ -2034,9 +1986,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[file_citation]
 
 
-    class azure.ai.agentserver.responses.models.FileInputDetail(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.FilePath(TypedDict, total=False):
         key "file_id": Required[str]
         key "index": Required[int]
@@ -2109,12 +2058,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[input_text]
 
 
-    class azure.ai.agentserver.responses.models.FunctionAndCustomToolCallOutputType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.FunctionCallItemStatus(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.FunctionCallOutputItemParam(TypedDict, total=False):
         key "call_id": Required[str]
         key "id": Optional[str]
@@ -2126,12 +2069,6 @@ namespace azure.ai.agentserver.responses.models
         output: Union[str, list[Union[InputTextContentParam, InputImageContentParamAutoParam, InputFileContentParam]]]
         status: FunctionCallItemStatus
         type: Literal[function_call_output]
-
-
-    class azure.ai.agentserver.responses.models.FunctionCallOutputStatusEnum(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.FunctionCallStatus(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.FunctionShellAction(TypedDict, total=False):
@@ -2150,9 +2087,6 @@ namespace azure.ai.agentserver.responses.models
         commands: list[str]
         max_output_length: int
         timeout_ms: int
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallEnvironmentType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.FunctionShellCallItemParam(TypedDict, total=False):
@@ -2181,12 +2115,6 @@ namespace azure.ai.agentserver.responses.models
         key "type": Required[Literal["local"]]
         skills: list[LocalSkillParam]
         type: Literal[local]
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallItemParamEnvironmentType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallItemStatus(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.FunctionShellCallOutputContent(TypedDict, total=False):
@@ -2238,15 +2166,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[shell_call_output]
 
 
-    class azure.ai.agentserver.responses.models.FunctionShellCallOutputOutcomeParamType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallOutputOutcomeType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallOutputStatusEnum(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.FunctionShellCallOutputTimeoutOutcome(TypedDict, total=False):
         key "type": Required[Literal["timeout"]]
         type: Literal[timeout]
@@ -2255,9 +2174,6 @@ namespace azure.ai.agentserver.responses.models
     class azure.ai.agentserver.responses.models.FunctionShellCallOutputTimeoutOutcomeParam(TypedDict, total=False):
         key "type": Required[Literal["timeout"]]
         type: Literal[timeout]
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellCallStatus(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.FunctionShellToolParam(TypedDict, total=False):
@@ -2282,9 +2198,6 @@ namespace azure.ai.agentserver.responses.models
         key "type": Required[Literal["local"]]
         skills: list[LocalSkillParam]
         type: Literal[local]
-
-
-    class azure.ai.agentserver.responses.models.FunctionShellToolParamEnvironmentType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.FunctionTool(TypedDict, total=False):
@@ -2317,20 +2230,11 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[function]
 
 
-    class azure.ai.agentserver.responses.models.GrammarSyntax1(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.HybridSearchOptions(TypedDict, total=False):
         key "embedding_weight": Required[float]
         key "text_weight": Required[float]
         embedding_weight: float
         text_weight: float
-
-
-    class azure.ai.agentserver.responses.models.ImageDetail(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ImageGenActionEnum(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ImageGenTool(TypedDict, total=False):
@@ -2371,9 +2275,6 @@ namespace azure.ai.agentserver.responses.models
         image_url: str
 
 
-    class azure.ai.agentserver.responses.models.IncludeEnum(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.InlineSkillParam(TypedDict, total=False):
         key "description": Required[str]
         key "name": Required[str]
@@ -2392,9 +2293,6 @@ namespace azure.ai.agentserver.responses.models
         data: str
         media_type: Literal[application/zip]
         type: Literal[base64]
-
-
-    class azure.ai.agentserver.responses.models.InputFidelity(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.InputFileContent(TypedDict, total=False):
@@ -2877,9 +2775,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[tool_search_output]
 
 
-    class azure.ai.agentserver.responses.models.ItemFieldType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ItemFieldWebSearchToolCall(TypedDict, total=False):
         key "action": Required[Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind]]
         key "id": Required[str]
@@ -3049,9 +2944,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[item_reference]
 
 
-    class azure.ai.agentserver.responses.models.ItemType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ItemWebSearchToolCall(TypedDict, total=False):
         key "action": Required[Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind]]
         key "id": Required[str]
@@ -3176,9 +3068,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[mcp]
 
 
-    class azure.ai.agentserver.responses.models.MCPToolCallStatus(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.MCPToolFilter(TypedDict, total=False):
         key "read_only": bool
         read_only: bool
@@ -3190,9 +3079,6 @@ namespace azure.ai.agentserver.responses.models
         key "never": ForwardRef('MCPToolFilter', module='types')
         always: MCPToolFilter
         never: MCPToolFilter
-
-
-    class azure.ai.agentserver.responses.models.MemoryItemKind(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.MemorySearchItem(TypedDict, total=False):
@@ -3302,18 +3188,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[refusal]
 
 
-    class azure.ai.agentserver.responses.models.MessageContentType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.MessagePhase(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.MessageRole(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.MessageStatus(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.Metadata(TypedDict, total=False):
 
 
@@ -3328,17 +3202,11 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[fabric_dataagent_preview]
 
 
-    class azure.ai.agentserver.responses.models.ModelIdsCompaction(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.Moderation(TypedDict, total=False):
         key "input": Required[ModerationEntry]
         key "output": Required[ModerationEntry]
         input: ModerationEntry
         output: ModerationEntry
-
-
-    class azure.ai.agentserver.responses.models.ModerationEntryType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ModerationErrorBody(TypedDict, total=False):
@@ -3348,9 +3216,6 @@ namespace azure.ai.agentserver.responses.models
         code: str
         message: str
         type: Literal[error]
-
-
-    class azure.ai.agentserver.responses.models.ModerationInputType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ModerationParam(TypedDict, total=False):
@@ -3413,9 +3278,6 @@ namespace azure.ai.agentserver.responses.models
     class azure.ai.agentserver.responses.models.OpenApiAnonymousAuthDetails(TypedDict, total=False):
         key "type": Required[Literal["anonymous"]]
         type: Literal[anonymous]
-
-
-    class azure.ai.agentserver.responses.models.OpenApiAuthType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.OpenApiFunctionDefinition(TypedDict, total=False):
@@ -3532,9 +3394,6 @@ namespace azure.ai.agentserver.responses.models
         key "type": Required[Literal["refusal"]]
         refusal: str
         type: Literal[refusal]
-
-
-    class azure.ai.agentserver.responses.models.OutputContentType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.OutputItemAdditionalTools(TypedDict, total=False):
@@ -3969,9 +3828,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[tool_search_output]
 
 
-    class azure.ai.agentserver.responses.models.OutputItemType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.OutputItemWebSearchToolCall(TypedDict, total=False):
         key "action": Required[Union[WebSearchActionSearch, WebSearchActionOpenPage, WebSearchActionFind]]
         key "agent_reference": ForwardRef('AgentReference', module='types')
@@ -4005,12 +3861,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[refusal]
 
 
-    class azure.ai.agentserver.responses.models.OutputMessageContentType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.PageOrder(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.Prompt(TypedDict, total=False):
         key "id": Required[str]
         key "variables": Optional[ResponsePromptVariables]
@@ -4018,12 +3868,6 @@ namespace azure.ai.agentserver.responses.models
         id: str
         variables: ResponsePromptVariables
         version: str
-
-
-    class azure.ai.agentserver.responses.models.PromptCacheRetentionEnum(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.RankerVersionType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.RankingOptions(TypedDict, total=False):
@@ -4060,9 +3904,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[tool_execution_error]
 
 
-    class azure.ai.agentserver.responses.models.RealtimeMcpErrorType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.Reasoning(TypedDict, total=False):
         key "context": Optional[Literal["auto", "current_turn", "all_turns"]]
         key "effort": Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]]
@@ -4072,9 +3913,6 @@ namespace azure.ai.agentserver.responses.models
         effort: ReasoningEffort
         generate_summary: Literal[auto, concise, detailed]
         summary: Literal[auto, concise, detailed]
-
-
-    class azure.ai.agentserver.responses.models.ReasoningEffort(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ReasoningTextContent(TypedDict, total=False):
@@ -4247,9 +4085,6 @@ namespace azure.ai.agentserver.responses.models
         output_index: int
         sequence_number: int
         type: Literal[done]
-
-
-    class azure.ai.agentserver.responses.models.ResponseErrorCode(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ResponseErrorEvent(TypedDict, total=False):
@@ -4785,9 +4620,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[done]
 
 
-    class azure.ai.agentserver.responses.models.ResponseStreamEventType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ResponseStreamOptions(TypedDict, total=False):
         key "include_obfuscation": bool
         include_obfuscation: bool
@@ -4910,15 +4742,6 @@ namespace azure.ai.agentserver.responses.models
         y: int
 
 
-    class azure.ai.agentserver.responses.models.SearchContentType(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.SearchContextSize(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ServiceTierEnum(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.SharepointGroundingToolCall(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "arguments": Required[str]
@@ -5039,9 +4862,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[text]
 
 
-    class azure.ai.agentserver.responses.models.TextResponseFormatConfigurationType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.TextResponseFormatJsonSchema(TypedDict, total=False):
         key "description": str
         key "name": Required[str]
@@ -5053,9 +4873,6 @@ namespace azure.ai.agentserver.responses.models
         schema: ResponseFormatJsonSchemaSchema
         strict: bool
         type: Literal[json_schema]
-
-
-    class azure.ai.agentserver.responses.models.ToolCallStatus(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.ToolChoiceAllowed(TypedDict, total=False):
@@ -5120,12 +4937,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[mcp]
 
 
-    class azure.ai.agentserver.responses.models.ToolChoiceOptions(TypedDict):
-
-
-    class azure.ai.agentserver.responses.models.ToolChoiceParamType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ToolChoiceWebSearchPreview(TypedDict, total=False):
         key "type": Required[Literal["web_search_preview"]]
         type: Literal[web_search_preview]
@@ -5160,9 +4971,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[tool_search_call]
 
 
-    class azure.ai.agentserver.responses.models.ToolSearchExecutionType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.ToolSearchOutputItemParam(TypedDict, total=False):
         key "call_id": Optional[str]
         key "execution": Literal["server", "client"]
@@ -5187,9 +4995,6 @@ namespace azure.ai.agentserver.responses.models
         execution: ToolSearchExecutionType
         parameters: EmptyModelParam
         type: Literal[tool_search]
-
-
-    class azure.ai.agentserver.responses.models.ToolType(TypedDict):
 
 
     class azure.ai.agentserver.responses.models.TopLogProb(TypedDict, total=False):

@@ -25,7 +25,14 @@
       "bkey",
       "bval",
       "xhigh",
-      "MCPHTTP"
+      "MCPHTTP",
+      "caresp",
+      "dataagent",
+      "aiso",
+      "azfo",
+      "bcso",
+      "fdao",
+      "rtype"
     ],
     "ignorePaths": [
       "*.csv",

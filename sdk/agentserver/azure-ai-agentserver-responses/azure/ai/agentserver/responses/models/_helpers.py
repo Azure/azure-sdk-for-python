@@ -18,7 +18,6 @@ from azure.ai.agentserver.responses.models import (
     MessageRole,
     OutputItem,
     ResponseObject,
-    ToolChoiceParam,
 )
 
 
@@ -156,8 +155,8 @@ def _get_input_text(request: CreateResponse) -> str:
     return "\n".join(texts)
 
 
-def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoiceParam]:
-    """Expand ``CreateResponse.tool_choice`` into a typed :class:`ToolChoiceParam`.
+def get_tool_choice_expanded(request: CreateResponse) -> dict[str, Any] | None:
+    """Expand ``CreateResponse.tool_choice`` into a tool choice payload.
 
     String shorthands (``"auto"``, ``"required"``) are expanded to
     :class:`ToolChoiceAllowed` with the corresponding mode.
@@ -165,19 +164,19 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
 
     :param request: The create-response request.
     :type request: CreateResponse
-    :returns: The typed tool choice, or ``None`` if unset or ``"none"``.
-    :rtype: ToolChoiceParam | None
+    :returns: The tool choice payload, or ``None`` if unset or ``"none"``.
+    :rtype: dict[str, Any] | None
     :raises ValueError: If the tool_choice value is an unrecognized string.
     """
     tc = _get_field(request, "tool_choice")
     if tc is None:
         return None
     if isinstance(tc, dict) and "type" in tc:
-        return cast(ToolChoiceParam, tc)
+        return cast(dict[str, Any], tc)
     if isinstance(tc, str):
         normalized = getattr(tc, "value", tc)
         if normalized in ("auto", "required"):
-            return cast(ToolChoiceParam, {"type": "allowed_tools", "mode": normalized, "tools": []})
+            return {"type": "allowed_tools", "mode": normalized, "tools": []}
         if normalized == "none":
             return None
         raise ValueError(
