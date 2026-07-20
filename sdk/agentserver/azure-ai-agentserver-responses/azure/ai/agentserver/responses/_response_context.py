@@ -138,11 +138,17 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         items = await self.get_input_items(resolve_references=resolve_references)
         texts: list[str] = []
         for item in items:
-            if _is_wire_type(item, "message") or _get_field(item, "content") is not None:
-                for part in _get_field(item, "content") or []:
-                    text = _get_field(part, "text")
-                    if text is not None:
-                        texts.append(text)
+            if _is_wire_type(item, "message"):
+                content = _get_field(item, "content")
+                if isinstance(content, str):
+                    if content:
+                        texts.append(content)
+                    continue
+                for part in content or []:
+                    if _is_wire_type(part, "input_text"):
+                        text = _get_field(part, "text")
+                        if isinstance(text, str):
+                            texts.append(text)
         return "\n".join(texts)
 
     async def _get_input_items_for_persistence(self) -> Sequence[OutputItem]:

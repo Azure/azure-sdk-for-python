@@ -3,6 +3,7 @@
 """Canonical non-generated model types for the response server."""
 
 from enum import Enum
+from typing import Union, get_origin
 
 from azure.core import CaseInsensitiveEnumMeta
 
@@ -31,13 +32,19 @@ _TYPE_EXPORT_EXCLUDES = {
     "Union",
     "builtins",
 }
+
+
+def _is_public_generated_export(value: object) -> bool:
+    return isinstance(value, type) or get_origin(value) is Union
+
+
 _generated_all = [
     name
     for module in (_generated_types, _generated_unions)
     for name in dir(module)
     if not name.startswith("_")
     and name not in _TYPE_EXPORT_EXCLUDES
-    and isinstance(getattr(module, name), type)
+    and _is_public_generated_export(getattr(module, name))
 ]
 
 

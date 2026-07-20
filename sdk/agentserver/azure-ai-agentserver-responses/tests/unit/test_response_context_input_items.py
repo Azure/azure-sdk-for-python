@@ -19,7 +19,7 @@ from azure.ai.agentserver.responses.models import (
     MessageRole,
     OutputItemMessage,
 )
-from azure.ai.agentserver.responses.models._helpers import to_output_item
+from azure.ai.agentserver.responses.models._helpers import to_item, to_output_item
 from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
 
@@ -374,6 +374,38 @@ def test_to_output_item__returns_none_for_reference() -> None:
     ref = _item_ref("item_abc")
     result = to_output_item(ref)
     assert result is None
+
+
+@pytest.mark.parametrize(
+    "item_type",
+    ["memory_search_call", "tool_search_call", "tool_search_output"],
+)
+def test_to_output_item__defaults_new_required_status_items(item_type: str) -> None:
+    result = to_output_item(cast(Item, {"type": item_type}), "resp_123")
+
+    assert result is not None
+    assert result["status"] == "completed"
+
+
+def test_to_output_item__preserves_tool_search_status() -> None:
+    item = cast(Item, {"type": "tool_search_call", "status": "in_progress"})
+
+    result = to_output_item(item, "resp_123")
+
+    assert result is not None
+    assert result["status"] == "in_progress"
+
+
+@pytest.mark.parametrize(
+    "output_item",
+    [
+        {"type": "structured_outputs", "id": "item_1"},
+        {"type": "oauth_consent_request", "id": "item_2"},
+        {"type": "workflow_action", "id": "item_3"},
+    ],
+)
+def test_to_item__returns_none_for_output_only_types(output_item: dict[str, str]) -> None:
+    assert to_item(cast(OutputItemMessage, output_item)) is None
 
 
 # ------------------------------------------------------------------

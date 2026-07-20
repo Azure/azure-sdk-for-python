@@ -312,6 +312,7 @@ _COMPLETED_STATUS_ITEM_TYPES = frozenset(
         "shell_call",  # OutputItemFunctionShellCall
         "shell_call_output",  # OutputItemFunctionShellCallOutput
         "mcp_call",  # OutputItemMcpToolCall
+        "memory_search_call",  # MemorySearchToolCallItemResource
         "reasoning",  # OutputItemReasoningItem
     }
 )
@@ -325,6 +326,42 @@ _PRESERVE_STATUS_ITEM_TYPES = frozenset(
         "output_message",  # ItemOutputMessage – status semantics preserved
         "apply_patch_call",  # ApplyPatchToolCallItemParam → ApplyPatchCallStatus
         "apply_patch_call_output",  # ApplyPatchToolCallOutputItemParam → ApplyPatchCallOutputStatus
+        "tool_search_call",  # ToolSearchCallItemParam → OutputItemToolSearchCall
+        "tool_search_output",  # ToolSearchOutputItemParam → OutputItemToolSearchOutput
+    }
+)
+
+_INPUT_ITEM_TYPES = frozenset(
+    {
+        "additional_tools",
+        "apply_patch_call",
+        "apply_patch_call_output",
+        "code_interpreter_call",
+        "compaction",
+        "computer_call",
+        "computer_call_output",
+        "custom_tool_call",
+        "custom_tool_call_output",
+        "file_search_call",
+        "function_call",
+        "function_call_output",
+        "image_generation_call",
+        "item_reference",
+        "local_shell_call",
+        "local_shell_call_output",
+        "mcp_approval_request",
+        "mcp_approval_response",
+        "mcp_call",
+        "mcp_list_tools",
+        "memory_search_call",
+        "message",
+        "output_message",
+        "reasoning",
+        "shell_call",
+        "shell_call_output",
+        "tool_search_call",
+        "tool_search_output",
+        "web_search_call",
     }
 )
 
@@ -358,20 +395,22 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
     # Avoid circular import — IdGenerator lives one level up.
     from .._id_generator import IdGenerator
 
-    item_id = IdGenerator.new_item_id(item, response_id)
+    data = _ensure_item_type(dict(item))
+    item_type = data.get("type", "")
+    if item_type not in _INPUT_ITEM_TYPES or item_type == "item_reference":
+        return None
+
+    item_id = IdGenerator.new_item_id(data, response_id)
     if item_id is None:
         return None  # ItemReferenceParam or unrecognised
 
-    data = _ensure_item_type(dict(item))
     data["id"] = item_id
-
-    item_type = data.get("type", "")
 
     # ── Status handling (opt-in) ─────────────────────────────────────
     if item_type in _COMPLETED_STATUS_ITEM_TYPES:
         data["status"] = "completed"
     elif item_type in _PRESERVE_STATUS_ITEM_TYPES:
-        pass  # keep the original status from the input item
+        data.setdefault("status", "completed")
 
     return cast(OutputItem, data)
 
@@ -395,6 +434,7 @@ def to_item(output_item: OutputItem) -> Item | None:
     if output_item.get("type") == "output_message":
         return cast(Item, {**output_item, "type": "message"})
     item = _ensure_item_type(dict(output_item))
-    if "type" not in item:
+    item_type = item.get("type")
+    if item_type not in _INPUT_ITEM_TYPES:
         return None
     return cast(Item, item)

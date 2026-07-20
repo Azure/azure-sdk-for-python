@@ -24,6 +24,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
+from azure.ai.agentserver.responses import models
 from azure.ai.agentserver.responses._response_context import ResponseContext
 from azure.ai.agentserver.responses.models import (
     CreateResponse,
@@ -78,6 +79,17 @@ def _content_text(item: Any, index: int = 0) -> str:
     content = _field(item, "content")
     part = content[index]
     return _field(part, "text")
+
+
+# =====================================================================
+# 0. public model exports
+# =====================================================================
+
+
+def test_generated_union_aliases_are_publicly_exported() -> None:
+    for name in ("InputParam", "Item", "MessageContent", "OutputItem", "ResponseStreamEvent"):
+        assert name in models.__all__
+        assert hasattr(models, name)
 
 
 # =====================================================================
@@ -181,6 +193,26 @@ class TestInputTextContractTypes:
 
         assert isinstance(result, str)
         assert result == ""
+
+    @pytest.mark.asyncio
+    async def test_ignores_non_input_text_content(self) -> None:
+        request = _make_request(
+            [
+                {
+                    "type": "message",
+                    "role": "assistant",
+                    "content": [
+                        {"type": "output_text", "text": "assistant text"},
+                        {"type": "input_text", "text": "user text"},
+                    ],
+                }
+            ]
+        )
+        ctx = ResponseContext(response_id="resp_type_3c", mode_flags=_mode_flags(), request=request)
+
+        result = await ctx.get_input_text(resolve_references=False)
+
+        assert result == "user text"
 
 
 # =====================================================================

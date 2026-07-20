@@ -23,9 +23,9 @@ except Exception:
     _generated_enums = None
 
 _LITERAL_ENUM_ALIASES = {
-    'ServiceTier': 'ServiceTierEnum',
 }
 _LITERAL_ENUM_VALUES = {
+    'ServiceTier': ('auto', 'default', 'flex', 'scale', 'priority'),
     'Verbosity': ('low', 'medium', 'high'),
 }
 

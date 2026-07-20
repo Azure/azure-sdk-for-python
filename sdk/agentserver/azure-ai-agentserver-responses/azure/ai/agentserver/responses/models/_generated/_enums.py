@@ -17,7 +17,11 @@ def _normalize_enum_value(value: str) -> str:
 
 
 def _member_value(enum_name: str, member_name: str) -> str:
-    return _ENUM_VALUES.get(enum_name, {}).get(_normalize_enum_value(member_name), member_name.lower())
+    enum_values = _ENUM_VALUES.get(enum_name, {})
+    normalized = _normalize_enum_value(member_name)
+    if normalized not in enum_values:
+        raise AttributeError(f"{enum_name!r} has no attribute {member_name!r}")
+    return enum_values[normalized]
 
 
 class _EnumFallbackMeta(type):

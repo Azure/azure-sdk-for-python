@@ -55,6 +55,21 @@ def test_emitter_uses_generated_enum_values_when_available() -> None:
     assert "_enum_values('ToolType')" in code
 
 
+def test_emitter_uses_service_tier_literals_instead_of_incomplete_generated_enum() -> None:
+    schemas = {
+        "OpenAI.ServiceTier": {
+            "type": "string",
+            "enum": ["auto", "default", "flex", "scale"],
+        }
+    }
+
+    code = build_validator_module(schemas, ["OpenAI.ServiceTier"])
+    module = _load_module(code)
+
+    assert "'ServiceTier': ('auto', 'default', 'flex', 'scale', 'priority')" in code
+    assert module.validate_OpenAI_ServiceTier("scale") == []
+
+
 def test_emitter_deduplicates_string_union_error_message() -> None:
     schemas = {
         "OpenAI.InputItemType": {

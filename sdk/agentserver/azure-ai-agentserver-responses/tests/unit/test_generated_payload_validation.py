@@ -55,6 +55,11 @@ def test_generated_create_response_validator_accepts_array_input_items() -> None
     assert errors == []
 
 
+def test_generated_create_response_validator_accepts_scale_service_tier() -> None:
+    errors = validate_create_response_payload({"input": "hello world", "service_tier": "scale"})
+    assert errors == []
+
+
 def test_generated_create_response_validator_rejects_non_string_non_array_input() -> None:
     errors = validate_create_response_payload({"input": 123})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
