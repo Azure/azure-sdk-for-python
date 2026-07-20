@@ -24,12 +24,10 @@ class TestByoJudgeHelpers:
         assert is_byo_model_config({"byo_model": "c/d", "project_endpoint": "https://x"})
         assert not is_byo_model_config({"azure_endpoint": "https://x"})
         assert not is_byo_model_config({})
-        # Both markers are required — byo_model alone must not activate the BYO path
-        # (the prompty branch needs project_endpoint to route, else it would KeyError).
+        # Both markers required — byo_model alone must not activate BYO (prompty needs project_endpoint).
         assert not is_byo_model_config({"byo_model": "c/d"})
         assert not is_byo_model_config({"project_endpoint": "https://x"})
-        # Markers must be non-empty strings — truthy-but-invalid values (e.g. ints) must not
-        # activate BYO, else they bypass validate_model_config and fail deep inside the client.
+        # Markers must be non-empty strings; truthy-but-invalid values (e.g. ints) must not activate BYO.
         assert not is_byo_model_config({"byo_model": 1, "project_endpoint": 2})
         assert not is_byo_model_config({"byo_model": "", "project_endpoint": "https://x"})
         assert not is_byo_model_config({"byo_model": "c/d", "project_endpoint": ""})
@@ -171,8 +169,7 @@ class TestAsyncByoProjectResponsesClient:
         mock_aipc.assert_called_once()
         _, pkwargs = mock_aipc.call_args
         assert pkwargs["endpoint"] == "https://acct.services.ai.azure.com/api/projects/p1"
-        # The OpenAI client is built with max_retries=0 so AsyncPrompty's own retry loop is the only
-        # retry layer (no hidden per-request retries multiplying the budget).
+        # max_retries=0 so AsyncPrompty's own retry loop is the only retry layer.
         _, gkwargs = mock_aipc.return_value.get_openai_client.call_args
         assert gkwargs["max_retries"] == 0
         _, rkwargs = oai.responses.create.call_args
@@ -184,8 +181,7 @@ class TestAsyncByoProjectResponsesClient:
         assert rkwargs["timeout"] == 30
 
     def test_non_numeric_timeout_is_not_forwarded(self):
-        # openai passes a NotGiven() sentinel when no timeout is configured; the shim must ignore it
-        # (only a concrete numeric timeout is forwarded to responses.create).
+        # openai passes NotGiven() when no timeout is set; the shim forwards only a numeric timeout.
         client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
         client.with_options(timeout=object())
         assert client._timeout is None
@@ -212,10 +208,8 @@ class TestAsyncByoProjectResponsesClient:
         assert client.with_options(timeout=5) is client
 
     def test_missing_azure_ai_projects_raises_clear_error(self, monkeypatch):
-        # azure-ai-projects is an optional dependency (not in install_requires). When the BYO path
-        # is used without it installed, the shim must surface a clear MissingRequiredPackage error
-        # instead of a raw ModuleNotFoundError. A None entry in sys.modules makes
-        # ``from azure.ai.projects.aio import AIProjectClient`` raise ImportError.
+        # azure-ai-projects is optional (not in install_requires); the BYO path must surface a clear
+        # MissingRequiredPackage error. A None entry in sys.modules makes the import raise ImportError.
         import sys
 
         from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
@@ -227,8 +221,7 @@ class TestAsyncByoProjectResponsesClient:
 
     @patch("azure.ai.projects.aio.AIProjectClient")
     def test_extra_headers_forwarded_to_responses(self, mock_aipc):
-        # ACA may supply additional headers (e.g. correlation/telemetry headers) when running
-        # continuous evaluations; the shim must forward them to responses.create.
+        # ACA may supply extra headers for continuous evals; the shim must forward them to responses.create.
         resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
         oai = MagicMock()
         oai.responses.create = AsyncMock(return_value=resp)
@@ -265,7 +258,7 @@ class TestAsyncByoProjectResponsesClient:
     @patch("azure.ai.projects.aio.AIProjectClient")
     def test_per_request_extra_headers_merged_and_forwarded(self, mock_aipc):
         # Headers passed per-request to chat.completions.create(extra_headers=...) must be forwarded
-        # to responses.create and merged over client-level headers (per-request wins), as a copy.
+        # to responses.create, merged over client-level headers (per-request wins), as a copy.
         resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed")
         oai = MagicMock()
         oai.responses.create = AsyncMock(return_value=resp)
@@ -290,8 +283,7 @@ class TestAsyncByoProjectResponsesClient:
 
     @patch("azure.ai.projects.aio.AIProjectClient")
     def test_preserves_server_created_timestamp(self, mock_aipc):
-        # OpenAI Responses objects expose the server timestamp as ``created_at``; the shim preserves it
-        # instead of overwriting with local wall-clock time.
+        # Responses exposes the server timestamp as created_at; the shim preserves it (not local time).
         cc = _ChatCompletion(SimpleNamespace(output_text="ok", usage=None, id="r", model="m", created_at=1752694800))
         assert cc.created == 1752694800
 

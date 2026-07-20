@@ -297,11 +297,10 @@ class AsyncPrompty:
 
         api_client: Union[AsyncAzureOpenAI, AsyncOpenAI, AsyncByoProjectResponsesClient]
         if is_byo:
-            # Admin-connected (BYO) judge model referenced as "connection/deployment": route the
-            # chat.completions call through the Foundry project Responses API. The platform resolves
-            # the connection and every auth type (API key / managed identity / OAuth2).
-            # Merge the SDK default headers (e.g. User-Agent) with any caller-supplied extra headers,
-            # keeping parity with the non-BYO paths' default_headers; caller headers take precedence.
+            # BYO judge model (connection/deployment): route chat.completions through the Foundry
+            # Responses API, which resolves the connection and auth (API key / managed identity / OAuth2).
+            # Merge SDK default headers (e.g. User-Agent) with caller extra_headers (caller wins),
+            # matching the non-BYO paths' default_headers.
             byo_headers = {**default_headers, **(configuration.get("extra_headers") or {})}
             api_client = AsyncByoProjectResponsesClient(
                 byo_model=configuration["byo_model"],

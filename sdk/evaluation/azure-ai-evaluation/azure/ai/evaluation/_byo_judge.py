@@ -143,8 +143,7 @@ class _ChatCompletion:
         _usage = getattr(response, "usage", None)
         self.usage = _Usage(_usage) if _usage is not None else None
         self.object = "chat.completion"
-        # Preserve the server-provided created timestamp when present. OpenAI Responses objects expose
-        # it as ``created_at`` (older/mocked shapes may use ``created``); fall back to now otherwise.
+        # Server timestamp: Responses uses created_at (older/mocked shapes may use created); else now.
         _created = getattr(response, "created_at", None)
         if _created is None:
             _created = getattr(response, "created", None)
@@ -191,16 +190,15 @@ class AsyncByoProjectResponsesClient:
         self._byo_model = byo_model
         self._project_endpoint = project_endpoint
         self._credential = credential
-        # Optional headers forwarded on every Responses API call, needed when ACA runs continuous evaluations.
+        # Headers forwarded on every Responses call; used when ACA runs continuous evaluations.
         self._extra_headers: Optional[Dict[str, str]] = dict(extra_headers) if extra_headers else None
         self._client: Any = None
         self._timeout: Optional[float] = None
         self.chat = _AsyncChat(self)
 
     def with_options(self, *, timeout: Any = None, **_kwargs: Any) -> "AsyncByoProjectResponsesClient":
-        # The prompty runner sets a per-request timeout via with_options(timeout=...). Capture a
-        # concrete numeric value so it reaches responses.create; openai's ``NotGiven`` sentinel (used
-        # when no timeout is configured) is not numeric and is therefore ignored.
+        # Capture a numeric per-request timeout so it reaches responses.create; openai's NotGiven
+        # sentinel (no timeout configured) is non-numeric and is ignored.
         if isinstance(timeout, (int, float)) and not isinstance(timeout, bool):
             self._timeout = float(timeout)
         return self
@@ -217,15 +215,12 @@ class AsyncByoProjectResponsesClient:
                     "(BYO) judge models."
                 ) from ex
 
-            # AsyncPrompty disables the OpenAI client's built-in retries and runs its own observable
-            # retry loop (see _prompty.py), so build the project client with max_retries=0 to avoid
-            # hidden per-request retries multiplying the intended retry budget. get_openai_client
-            # forwards kwargs to the underlying AsyncOpenAI client.
+            # AsyncPrompty runs its own retry loop, so use max_retries=0 to avoid compounding retries.
+            # get_openai_client forwards kwargs to the underlying AsyncOpenAI client.
             client = AIProjectClient(endpoint=self._project_endpoint, credential=self._credential).get_openai_client(
                 max_retries=0
             )
-            # ``get_openai_client()`` is synchronous in some azure-ai-projects versions and a coroutine
-            # in others; await it only when needed so the shim works across both.
+            # get_openai_client() is sync in some azure-ai-projects versions, async in others; await if needed.
             if inspect.isawaitable(client):
                 client = await client
             self._client = client
@@ -233,9 +228,8 @@ class AsyncByoProjectResponsesClient:
 
     async def _responses_create(self, messages: Optional[List[Dict[str, Any]]] = None, **kwargs: Any) -> Any:
         client = await self._ensure_client()
-        # Per-request headers (those an OpenAI-compatible caller passes to
-        # chat.completions.create(extra_headers=...)) are merged over the client-level headers
-        # (per-request wins) and forwarded as a fresh copy so neither source dict is mutated.
+        # Merge per-request extra_headers over the client-level headers (per-request wins),
+        # forwarding a fresh copy so neither source dict is mutated.
         request_headers = kwargs.pop("extra_headers", None)
         merged_headers: Optional[Dict[str, str]] = None
         if self._extra_headers or request_headers:

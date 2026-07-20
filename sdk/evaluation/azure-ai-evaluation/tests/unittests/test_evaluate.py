@@ -556,10 +556,8 @@ class TestEvaluate:
         if use_relative_path:
             output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
         else:
-            # A bare relative filename resolves against the process CWD. Under pytest-xdist the CWD is
-            # shared across worker processes, so writing/removing a relative file in the CWD races with
-            # other workers (intermittent FileNotFoundError on cleanup). chdir into the per-test tmpdir
-            # to keep the relative-path behavior under test while isolating the file per test.
+            # A bare relative filename races across pytest-xdist workers sharing the CWD (intermittent
+            # FileNotFoundError on cleanup); chdir into the per-test tmpdir to isolate it.
             monkeypatch.chdir(tmpdir)
             output_path = "eval_test_results.jsonl"
 
