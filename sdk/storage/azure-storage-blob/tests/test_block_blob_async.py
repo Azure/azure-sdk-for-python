@@ -2332,4 +2332,5 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Substream path uses os.urandom(9) -> 12-char block IDs (matches old length).
         _assert_unique_ordered_block_ids(block_ids, data, service.blocks, 12)
 
+
 # ------------------------------------------------------------------------------
