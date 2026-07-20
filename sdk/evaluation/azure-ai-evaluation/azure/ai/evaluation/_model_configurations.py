@@ -83,6 +83,27 @@ class OpenAIModelConfiguration(TypedDict):
     extra_headers: NotRequired[Dict[str, str]]
 
 
+class BYOModelConfiguration(TypedDict):
+    """Model configuration for an admin-connected (bring-your-own / BYO) model.
+
+    An admin-connected model (a Foundry ``ModelGateway`` / ``ApiManagement`` connection) is
+    referenced as ``"connection/deployment"`` and served through the Foundry project Responses API,
+    where the platform resolves the connection and its auth. Both markers are required.
+
+    :param byo_model: The admin-connected model reference, ``"connection-name/deployment-name"``.
+    :type byo_model: str
+    :param project_endpoint: The Foundry project endpoint,
+        ``https://<account>.services.ai.azure.com/api/projects/<project>``.
+    :type project_endpoint: str
+    :param extra_headers: Additional HTTP headers to include in every request. Optional.
+    :type extra_headers: NotRequired[Dict[str, str]]
+    """
+
+    byo_model: str
+    project_endpoint: str
+    extra_headers: NotRequired[Dict[str, str]]
+
+
 class AzureAIProject(TypedDict):
     """Information about the Azure AI project
 
