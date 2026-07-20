@@ -106,6 +106,7 @@ RESPONSES_PROVIDER = "microsoft.foundry"
 AGENT_TYPE_PROMPT = "prompt"
 AGENT_TYPE_WORKFLOW = "workflow"
 AGENT_TYPE_HOSTED = "hosted"
+AGENT_TYPE_EXTERNAL = "external"
 AGENT_TYPE_UNKNOWN = "unknown"
 
 # Span name prefixes for responses API operations

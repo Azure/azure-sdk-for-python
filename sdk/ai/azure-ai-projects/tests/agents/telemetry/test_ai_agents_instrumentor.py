@@ -18,7 +18,7 @@ from test_ai_instrumentor_base import (  # pylint: disable=import-error
 )
 from azure.ai.projects.telemetry import AIProjectInstrumentor, _utils
 from azure.core.settings import settings
-from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions
+from azure.ai.projects.models import PromptAgentDefinition, PromptAgentDefinitionTextOptions, ExternalAgentDefinition
 from azure.ai.projects.telemetry._utils import (
     GEN_AI_AGENT_ID,
     GEN_AI_AGENT_NAME,
@@ -34,6 +34,7 @@ from azure.ai.projects.telemetry._utils import (
     AGENTS_PROVIDER,
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
+    AGENT_TYPE_EXTERNAL,
     _set_use_message_events,
 )
 
@@ -1097,3 +1098,63 @@ trigger:
         self._test_agent_with_structured_output_without_instructions_impl(
             use_events=False, content_recording_enabled=False, **kwargs
         )
+
+    # ---- External agent creation tests ----
+
+    def _test_external_agent_creation_impl(self, content_recording_enabled: bool, **kwargs):
+        """Implementation for external agent creation test.
+
+        :param content_recording_enabled: Whether content recording is enabled.
+        :type content_recording_enabled: bool
+        """
+        self.cleanup()
+        os.environ.update({CONTENT_TRACING_ENV_VARIABLE: "True" if content_recording_enabled else "False"})
+        self.setup_telemetry()
+        assert content_recording_enabled == AIProjectInstrumentor().is_content_recording_enabled()
+        assert True == AIProjectInstrumentor().is_instrumented()
+
+        operation_group = "tracing" if content_recording_enabled else "agents"
+        with self.create_client(operation_group=operation_group, allow_preview=True, **kwargs) as project_client:
+
+            agent = project_client.agents.create_version(
+                agent_name="my-external-agent",
+                definition=ExternalAgentDefinition(otel_agent_id="external-service-agent-001"),
+            )
+            version = agent.version
+
+            project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
+            print("Deleted external agent")
+
+        # ------------------------- Validate "create_agent" span ---------------------------------
+        self.exporter.force_flush()
+        spans = self.exporter.get_spans_by_name("create_agent my-external-agent")
+        assert len(spans) == 1
+        span = spans[0]
+        expected_attributes = [
+            (GEN_AI_PROVIDER_NAME, AGENTS_PROVIDER),
+            (GEN_AI_OPERATION_NAME, "create_agent"),
+            (SERVER_ADDRESS, ""),
+            (GEN_AI_AGENT_NAME, "my-external-agent"),
+            (GEN_AI_AGENT_ID, "my-external-agent:" + str(version)),
+            (GEN_AI_AGENT_VERSION, str(version)),
+            (GEN_AI_AGENT_TYPE, AGENT_TYPE_EXTERNAL),
+        ]
+        attributes_match = GenAiTraceVerifier().check_span_attributes(span, expected_attributes)
+        assert attributes_match == True
+
+        # External agents have no instructions, no model, no tools — so no events or content attributes
+        assert len(span.events) == 0
+
+    @pytest.mark.usefixtures("instrument_with_content")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_external_agent_creation_with_tracing_content_recording_enabled(self, **kwargs):
+        """Test external agent creation with content recording enabled."""
+        self._test_external_agent_creation_impl(content_recording_enabled=True, **kwargs)
+
+    @pytest.mark.usefixtures("instrument_without_content")
+    @servicePreparer()
+    @recorded_by_proxy
+    def test_external_agent_creation_with_tracing_content_recording_disabled(self, **kwargs):
+        """Test external agent creation with content recording disabled."""
+        self._test_external_agent_creation_impl(content_recording_enabled=False, **kwargs)

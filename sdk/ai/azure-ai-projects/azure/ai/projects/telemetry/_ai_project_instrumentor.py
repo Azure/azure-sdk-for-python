@@ -48,6 +48,7 @@ from ._utils import (
     AGENT_TYPE_PROMPT,
     AGENT_TYPE_WORKFLOW,
     AGENT_TYPE_HOSTED,
+    AGENT_TYPE_EXTERNAL,
     AGENT_TYPE_UNKNOWN,
     GEN_AI_AGENT_TYPE,
     ERROR_MESSAGE,
@@ -901,9 +902,20 @@ class _AIAgentsInstrumentorPreview:
         hosted_cpu = definition.get("cpu")
         hosted_memory = definition.get("memory")
         hosted_image = definition.get("image")
+        # Also check container_configuration for image
+        if not hosted_image:
+            container_config = definition.get("container_configuration")
+            if container_config:
+                if hasattr(container_config, "image"):
+                    hosted_image = getattr(container_config, "image", None)
+                elif isinstance(container_config, dict):
+                    hosted_image = container_config.get("image")
         hosted_protocol = None
         hosted_protocol_version = None
+        # Check both old and new field names for protocol versions
         container_protocol_versions = definition.get("container_protocol_versions")
+        if not container_protocol_versions:
+            container_protocol_versions = definition.get("protocol_versions")
         if container_protocol_versions and len(container_protocol_versions) > 0:
             # Extract protocol and version from first entry
             protocol_record = container_protocol_versions[0]
@@ -920,10 +932,21 @@ class _AIAgentsInstrumentorPreview:
         # Determine agent type from definition
         # Check for hosted agent first (most specific - has container/image configuration)
         agent_type = None
+        # Extract kind discriminator for external agents
+        kind = definition.get("kind")
+        if isinstance(kind, str):
+            kind = kind.lower()
+        elif hasattr(kind, "value"):
+            kind = str(kind.value).lower()
+        else:
+            kind = None
+
         if hosted_image or hosted_cpu or hosted_memory:
             agent_type = AGENT_TYPE_HOSTED
         elif workflow_yaml:
             agent_type = AGENT_TYPE_WORKFLOW
+        elif kind == "external" or definition.get("otel_agent_id") is not None:
+            agent_type = AGENT_TYPE_EXTERNAL
         elif instructions or model:
             # Prompt agent - identified by having instructions and/or a model.
             # Note: An agent with only a model (no instructions) is treated as a prompt agent,
