@@ -8,7 +8,7 @@ import time
 import sys
 from pathlib import Path
 from enum import Enum
-from typing import List, Optional, Any
+from typing import Dict, List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
@@ -42,6 +42,7 @@ from azure.monitor.opentelemetry.exporter._constants import (
     _REQ_THROTTLE_NAME,
     _RETRYABLE_STATUS_CODES,
     _THROTTLE_STATUS_CODES,
+    _ONE_SETTINGS_FEATURE_LOCAL_STORAGE,
     DropCode,
     _exception_categories,
 )
@@ -49,6 +50,9 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._configuration._utils import (
+    evaluate_feature,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
@@ -660,7 +664,30 @@ class BaseExporter:
         self._consecutive_redirects = 0
         return ExportResult.SUCCESS
 
-    # check to see whether its the case of stats collection
+    # OneSettings configuration-change callback: toggles local (offline) storage.
+    def _local_storage_configuration_callback(self, settings: Dict[str, str]) -> None:
+        """Toggle local (offline) storage in response to a OneSettings configuration change.
+
+        OneSettings acts as a remote kill-switch via the FEATURE_LOCAL_STORAGE feature flag:
+        it can force storage off, and re-enable it only when the user did not explicitly opt out
+        with ``disable_offline_storage=True``. A user opt-out is a hard gate that OneSettings can
+        never override.
+
+        :param settings: Configuration settings from OneSettings.
+        :type settings: dict[str, str]
+        """
+        # The user's explicit opt-out is a hard gate - never override it.
+        if self._disable_offline_storage:
+            return
+        local_storage_enabled = evaluate_feature(_ONE_SETTINGS_FEATURE_LOCAL_STORAGE, settings)
+        # None means the flag is absent/invalid; leave the current storage state unchanged.
+        if local_storage_enabled is None:
+            return
+        if local_storage_enabled:
+            self._enable_local_storage()
+        else:
+            self._disable_local_storage()
+
     def _enable_local_storage(self) -> None:
         # Idempotent: create the local file storage only if it is not already active.
         if self.storage is not None:
@@ -676,6 +703,18 @@ class BaseExporter:
             lease_period=self._storage_min_retry_interval,
         )
 
+    def _disable_local_storage(self) -> None:
+        # Idempotent: close and drop the local file storage if it is currently active. Any telemetry
+        # already persisted to disk is left in place so it can still be retried if storage is later
+        # re-enabled.
+        if self.storage is not None:
+            try:
+                self.storage.close()
+            except Exception:  # pylint: disable=broad-except
+                pass
+            self.storage = None
+
+    # check to see whether its the case of stats collection
     def _should_collect_stats(self):
         return (
             is_statsbeat_enabled()

@@ -311,6 +311,66 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
 
+    # ========================================================================
+    # ONESETTINGS LOCAL STORAGE TOGGLE TESTS
+    # ========================================================================
+
+    def _make_local_storage_settings(self, enabled):
+        state = "enabled" if enabled else "disabled"
+        return {"FEATURE_LOCAL_STORAGE": {"default": state}}
+
+    def test_configuration_callback_disables_storage(self):
+        """OneSettings FEATURE_LOCAL_STORAGE=disabled closes and drops active local storage."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        self.assertIsNotNone(base.storage)
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+            self.assertIsNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_reenables_storage(self):
+        """After a disable, FEATURE_LOCAL_STORAGE=enabled recreates local storage."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        base._local_storage_configuration_callback(self._make_local_storage_settings(False))
+        self.assertIsNone(base.storage)
+        try:
+            base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+            self.assertIsNotNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    def test_configuration_callback_respects_user_optout(self):
+        """A user's explicit disable_offline_storage=True is a hard gate OneSettings cannot override."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=True,
+        )
+        self.assertIsNone(base.storage)
+        base._local_storage_configuration_callback(self._make_local_storage_settings(True))
+        self.assertIsNone(base.storage)
+
+    def test_configuration_callback_flag_absent_no_change(self):
+        """When FEATURE_LOCAL_STORAGE is absent, storage state is left unchanged."""
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            base._local_storage_configuration_callback({})
+            self.assertIsNotNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
     def test_normal_exporter_includes_http_logging_policy(self):
         from azure.core.pipeline.policies import HttpLoggingPolicy
 

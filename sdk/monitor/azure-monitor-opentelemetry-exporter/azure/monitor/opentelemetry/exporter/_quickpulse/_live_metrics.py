@@ -64,6 +64,10 @@ def get_quickpulse_configuration_callback(settings: Dict[str, str]) -> None:
     if live_metrics_enabled and not manager.is_initialized():
         # Enable live metrics if it's not currently enabled
         # This should be a re-initialization with previous parameters
+        # Gate: only re-enable if the user already opted into live metrics (i.e. previously called
+        # enable_live_metrics(), which stored a connection string). OneSettings acts as a remote
+        # kill-switch - it can force live metrics off and re-enable only what the user opted into,
+        # but it must never turn on live metrics the user never enabled (no stored connection string).
         if manager._connection_string:  # pylint:disable=protected-access
             manager.initialize(
                 connection_string=manager._connection_string,  # pylint:disable=protected-access
