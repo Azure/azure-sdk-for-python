@@ -1,20 +1,27 @@
 # Release History
 
-## 11.0.0 (2026-07-14)
+## 11.0.0 (2026-07-20)
 
 ### Features Added
 
   - Client `ConsumptionManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `ConsumptionManagementClient` added parameter `polling_interval` in method `__init__`
   - Client `ConsumptionManagementClient` added method `send_request`
+  - Model `Balance` added property `properties`
   - Model `Balance` added property `system_data`
+  - Model `Budget` added property `properties`
   - Model `Budget` added property `system_data`
+  - Model `BudgetComparisonExpression` added property `values_property`
   - Model `ChargeSummary` added property `etag`
   - Model `ChargeSummary` added property `system_data`
+  - Model `CreditSummary` added property `properties`
   - Model `CreditSummary` added property `system_data`
+  - Model `EventSummary` added property `properties`
   - Model `EventSummary` added property `system_data`
   - Model `LegacyChargeSummary` added property `etag`
+  - Model `LegacyChargeSummary` added property `properties`
   - Model `LegacyChargeSummary` added property `system_data`
+  - Model `LegacyReservationRecommendation` added property `properties`
   - Model `LegacyReservationRecommendation` added property `system_data`
   - Model `LegacyReservationRecommendationProperties` added property `last_usage_date`
   - Model `LegacyReservationRecommendationProperties` added property `total_hours`
@@ -22,97 +29,502 @@
   - Model `LegacySharedScopeReservationRecommendationProperties` added property `total_hours`
   - Model `LegacySingleScopeReservationRecommendationProperties` added property `last_usage_date`
   - Model `LegacySingleScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacyUsageDetail` added property `properties`
   - Model `LegacyUsageDetail` added property `system_data`
+  - Model `LotSummary` added property `properties`
   - Model `LotSummary` added property `system_data`
+  - Model `ManagementGroupAggregatedCostResult` added property `properties`
   - Model `ManagementGroupAggregatedCostResult` added property `system_data`
+  - Model `Marketplace` added property `properties`
   - Model `Marketplace` added property `system_data`
   - Model `ModernChargeSummary` added property `etag`
+  - Model `ModernChargeSummary` added property `properties`
   - Model `ModernChargeSummary` added property `system_data`
+  - Model `ModernReservationRecommendation` added property `properties`
   - Model `ModernReservationRecommendation` added property `system_data`
+  - Model `ModernReservationTransaction` added property `properties`
   - Model `ModernReservationTransaction` added property `system_data`
+  - Model `ModernUsageDetail` added property `properties`
   - Model `ModernUsageDetail` added property `system_data`
   - Model `PriceSheetProperties` added property `savings_plan`
+  - Model `PriceSheetResult` added property `properties`
   - Model `PriceSheetResult` added property `system_data`
   - Model `ProxyResource` added property `system_data`
+  - Model `ReservationDetail` added property `properties`
   - Model `ReservationDetail` added property `system_data`
   - Model `ReservationRecommendation` added property `system_data`
+  - Model `ReservationRecommendationDetailsModel` added property `properties`
   - Model `ReservationRecommendationDetailsModel` added property `system_data`
+  - Model `ReservationSummary` added property `properties`
   - Model `ReservationSummary` added property `system_data`
+  - Model `ReservationTransaction` added property `properties`
   - Model `ReservationTransaction` added property `system_data`
   - Model `Resource` added property `system_data`
+  - Model `TagsResult` added property `properties`
   - Model `TagsResult` added property `system_data`
   - Enum `Term` added member `P1_M`
   - Model `UsageDetail` added property `system_data`
+  - Added model `BalanceProperties`
+  - Added model `BudgetProperties`
   - Added enum `CreatedByType`
+  - Added model `CreditSummaryProperties`
   - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `EventProperties`
   - Added model `ExtensionResource`
+  - Added model `LegacyChargeSummaryProperties`
+  - Added model `LegacyReservationTransactionProperties`
+  - Added model `LegacyUsageDetailProperties`
+  - Added model `LotProperties`
+  - Added model `ManagementGroupAggregatedCostProperties`
+  - Added model `MarketplaceProperties`
+  - Added model `ModernChargeSummaryProperties`
+  - Added model `ModernReservationRecommendationProperties`
+  - Added model `ModernReservationTransactionProperties`
   - Added model `ModernSharedScopeReservationRecommendationProperties`
   - Added model `ModernSingleScopeReservationRecommendationProperties`
+  - Added model `ModernUsageDetailProperties`
   - Added model `OperationStatus`
   - Added enum `OperationStatusType`
   - Added enum `OrganizationType`
+  - Added model `PriceSheetModel`
   - Added model `PricesheetDownloadProperties`
+  - Added model `ReservationDetailProperties`
+  - Added model `ReservationRecommendationDetailsProperties`
+  - Added model `ReservationSummaryProperties`
   - Added model `SavingsPlan`
   - Added model `SystemData`
-  - Operation group `BudgetsOperations` added parameter `content_type` in method `create_or_update`
-  - Operation group `PriceSheetOperations` added method `begin_download_by_billing_account_period`
-  - Operation group `ReservationRecommendationDetailsOperations` added parameter `filter` in method `get`
-  - Operation group `ReservationTransactionsOperations` added parameter `preview_markup_percentage` in method `list`
-  - Operation group `ReservationTransactionsOperations` added parameter `use_markup_if_partner` in method `list`
+  - Added model `TagProperties`
+  - Model `BudgetsOperations` added parameter `content_type` in method `create_or_update`
+  - Model `PriceSheetOperations` added method `begin_download_by_billing_account_period`
+  - Model `ReservationRecommendationDetailsOperations` added parameter `filter` in method `get`
+  - Model `ReservationTransactionsOperations` added parameter `preview_markup_percentage` in method `list`
+  - Model `ReservationTransactionsOperations` added parameter `use_markup_if_partner` in method `list`
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
-  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Model `Balance` moved instance variable `adjustment_details`, `adjustments`, `azure_marketplace_service_charges`, `beginning_balance`, `billing_frequency`, `charges_billed_separately`, `currency`, `ending_balance`, `new_purchases`, `new_purchases_details`, `price_hidden`, `service_overage`, `total_overage`, `total_usage` and `utilized` under property `properties` whose type is `BalanceProperties`
-  - Model `Budget` moved instance variable `amount`, `category`, `current_spend`, `filter`, `forecast_spend`, `notifications`, `time_grain` and `time_period` under property `properties` whose type is `BudgetProperties`
-  - Model `BudgetComparisonExpression` renamed its instance variable `values` to `values_property`
-  - Renamed enum value `BudgetOperatorType.IN_ENUM` to `IN`
-  - Model `CreditSummary` moved instance variable `balance_summary`, `billing_currency`, `credit_currency`, `expired_credit`, `pending_credit_adjustments`, `pending_eligible_charges` and `reseller` under property `properties` whose type is `CreditSummaryProperties`
-  - Model `EventSummary` moved instance variable `adjustments`, `adjustments_in_billing_currency`, `billing_currency`, `billing_profile_display_name`, `billing_profile_id`, `canceled_credit`, `charges`, `charges_in_billing_currency`, `closed_balance`, `closed_balance_in_billing_currency`, `credit_currency`, `credit_expired`, `credit_expired_in_billing_currency`, `description`, `event_type`, `invoice_number`, `lot_id`, `lot_source`, `new_credit`, `new_credit_in_billing_currency`, `reseller` and `transaction_date` under property `properties` whose type is `EventProperties`
-  - Model `LegacyChargeSummary` moved instance variable `azure_charges`, `billing_period_id`, `charges_billed_separately`, `currency`, `usage_end` and `usage_start` under property `properties` whose type is `LegacyChargeSummaryProperties`
-  - Model `LegacyReservationRecommendation` moved instance variable `cost_with_no_reserved_instances`, `first_usage_date`, `instance_flexibility_group`, `instance_flexibility_ratio`, `look_back_period`, `meter_id`, `net_savings`, `normalized_size`, `recommended_quantity`, `recommended_quantity_normalized`, `resource_type`, `scope`, `sku_properties`, `term` and `total_cost_with_reserved_instances` under property `properties` whose type is `LegacyReservationRecommendationProperties`
-  - Model `LegacyUsageDetail` moved instance variable `account_name`, `account_owner_id`, `additional_info`, `benefit_id`, `benefit_name`, `billing_account_id`, `billing_account_name`, `billing_currency`, `billing_period_end_date`, `billing_period_start_date`, `billing_profile_id`, `billing_profile_name`, `charge_type`, `consumed_service`, `cost`, `cost_center`, `date`, `effective_price`, `frequency`, `invoice_section`, `is_azure_credit_eligible`, `meter_details`, `meter_id`, `offer_id`, `part_number`, `pay_g_price`, `plan_name`, `pricing_model`, `product`, `product_order_id`, `product_order_name`, `publisher_name`, `publisher_type`, `quantity`, `reservation_id`, `reservation_name`, `resource_group`, `resource_id`, `resource_location`, `resource_name`, `service_info1`, `service_info2`, `subscription_id`, `subscription_name`, `term` and `unit_price` under property `properties` whose type is `LegacyUsageDetailProperties`
-  - Model `LotSummary` moved instance variable `billing_currency`, `closed_balance`, `closed_balance_in_billing_currency`, `credit_currency`, `expiration_date`, `original_amount`, `original_amount_in_billing_currency`, `po_number`, `purchased_date`, `reseller`, `source`, `start_date` and `status` under property `properties` whose type is `LotProperties`
-  - Model `ManagementGroupAggregatedCostResult` moved instance variable `azure_charges`, `billing_period_id`, `charges_billed_separately`, `children`, `currency`, `excluded_subscriptions`, `included_subscriptions`, `marketplace_charges`, `usage_end` and `usage_start` under property `properties` whose type is `ManagementGroupAggregatedCostProperties`
-  - Model `Marketplace` moved instance variable `account_name`, `additional_info`, `billing_period_id`, `consumed_quantity`, `consumed_service`, `cost_center`, `currency`, `department_name`, `instance_id`, `instance_name`, `is_estimated`, `is_recurring_charge`, `meter_id`, `offer_name`, `order_number`, `plan_name`, `pretax_cost`, `publisher_name`, `resource_group`, `resource_rate`, `subscription_guid`, `subscription_name`, `unit_of_measure`, `usage_end` and `usage_start` under property `properties` whose type is `MarketplaceProperties`
-  - Model `ModernChargeSummary` moved instance variable `azure_charges`, `billing_account_id`, `billing_period_id`, `billing_profile_id`, `charges_billed_separately`, `customer_id`, `invoice_section_id`, `is_invoiced`, `marketplace_charges`, `usage_end` and `usage_start` under property `properties` whose type is `ModernChargeSummaryProperties`
-  - Model `ModernReservationRecommendation` moved instance variable `cost_with_no_reserved_instances`, `first_usage_date`, `instance_flexibility_group`, `instance_flexibility_ratio`, `look_back_period`, `meter_id`, `net_savings`, `normalized_size`, `recommended_quantity`, `recommended_quantity_normalized`, `scope`, `sku_name`, `sku_properties`, `term` and `total_cost_with_reserved_instances` under property `properties` whose type is `ModernReservationRecommendationProperties`
-  - Model `ModernReservationTransaction` moved instance variable `amount`, `arm_sku_name`, `billing_frequency`, `billing_profile_id`, `billing_profile_name`, `currency`, `description`, `event_date`, `event_type`, `invoice`, `invoice_id`, `invoice_section_id`, `invoice_section_name`, `purchasing_subscription_guid`, `purchasing_subscription_name`, `quantity`, `region`, `reservation_order_id`, `reservation_order_name` and `term` under property `properties` whose type is `ModernReservationTransactionProperties`
-  - Model `ModernUsageDetail` moved instance variable `additional_info`, `benefit_id`, `benefit_name`, `billing_account_id`, `billing_account_name`, `billing_currency_code`, `billing_period_end_date`, `billing_period_start_date`, `billing_profile_id`, `billing_profile_name`, `charge_type`, `consumed_service`, `cost_allocation_rule_name`, `cost_center`, `cost_in_billing_currency`, `cost_in_pricing_currency`, `cost_in_usd`, `customer_name`, `customer_tenant_id`, `date`, `effective_price`, `exchange_rate`, `exchange_rate_date`, `exchange_rate_pricing_to_billing`, `frequency`, `instance_name`, `invoice_id`, `invoice_section_id`, `invoice_section_name`, `is_azure_credit_eligible`, `market_price`, `meter_category`, `meter_id`, `meter_name`, `meter_region`, `meter_sub_category`, `partner_earned_credit_applied`, `partner_earned_credit_rate`, `partner_name`, `partner_tenant_id`, `pay_g_price`, `payg_cost_in_billing_currency`, `payg_cost_in_usd`, `previous_invoice_id`, `pricing_currency_code`, `pricing_model`, `product`, `product_identifier`, `product_order_id`, `product_order_name`, `provider`, `publisher_id`, `publisher_name`, `publisher_type`, `quantity`, `reseller_mpn_id`, `reseller_name`, `reservation_id`, `reservation_name`, `resource_group`, `resource_location`, `resource_location_normalized`, `service_family`, `service_info1`, `service_info2`, `service_period_end_date`, `service_period_start_date`, `subscription_guid`, `subscription_name`, `term`, `unit_of_measure` and `unit_price` under property `properties` whose type is `ModernUsageDetailProperties`
-  - Model `PriceSheetResult` moved instance variable `download`, `next_link` and `pricesheets` under property `properties` whose type is `PriceSheetModel`
-  - Model `ReservationDetail` moved instance variable `instance_flexibility_group`, `instance_flexibility_ratio`, `instance_id`, `kind`, `reservation_id`, `reservation_order_id`, `reserved_hours`, `sku_name`, `total_reserved_quantity`, `usage_date` and `used_hours` under property `properties` whose type is `ReservationDetailProperties`
-  - Model `ReservationRecommendationDetailsModel` moved instance variable `currency`, `resource`, `resource_group`, `savings`, `scope` and `usage` under property `properties` whose type is `ReservationRecommendationDetailsProperties`
-  - Model `ReservationSummary` moved instance variable `avg_utilization_percentage`, `kind`, `max_utilization_percentage`, `min_utilization_percentage`, `purchased_quantity`, `remaining_quantity`, `reservation_id`, `reservation_order_id`, `reserved_hours`, `sku_name`, `total_reserved_quantity`, `usage_date`, `used_hours`, `used_quantity` and `utilized_percentage` under property `properties` whose type is `ReservationSummaryProperties`
-  - Model `ReservationTransaction` moved instance variable `account_name`, `account_owner_email`, `amount`, `arm_sku_name`, `billing_frequency`, `billing_month`, `cost_center`, `currency`, `current_enrollment`, `department_name`, `description`, `event_date`, `event_type`, `monetary_commitment`, `overage`, `purchasing_enrollment`, `purchasing_subscription_guid`, `purchasing_subscription_name`, `quantity`, `region`, `reservation_order_id`, `reservation_order_name` and `term` under property `properties` whose type is `LegacyReservationTransactionProperties`
-  - Model `TagsResult` moved instance variable `next_link`, `previous_link` and `tags` under property `properties` whose type is `TagProperties`
-  - Model `Resource` deleted or renamed its instance variable `etag`
-  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `Balance` deleted or renamed its instance variable `adjustment_details`
+  - Model `Balance` deleted or renamed its instance variable `adjustments`
+  - Model `Balance` deleted or renamed its instance variable `azure_marketplace_service_charges`
+  - Model `Balance` deleted or renamed its instance variable `beginning_balance`
+  - Model `Balance` deleted or renamed its instance variable `billing_frequency`
+  - Model `Balance` deleted or renamed its instance variable `charges_billed_separately`
+  - Model `Balance` deleted or renamed its instance variable `currency`
+  - Model `Balance` deleted or renamed its instance variable `ending_balance`
+  - Model `Balance` deleted or renamed its instance variable `new_purchases`
+  - Model `Balance` deleted or renamed its instance variable `new_purchases_details`
+  - Model `Balance` deleted or renamed its instance variable `price_hidden`
+  - Model `Balance` deleted or renamed its instance variable `service_overage`
+  - Model `Balance` deleted or renamed its instance variable `total_overage`
+  - Model `Balance` deleted or renamed its instance variable `total_usage`
+  - Model `Balance` deleted or renamed its instance variable `utilized`
+  - Model `Budget` deleted or renamed its instance variable `amount`
+  - Model `Budget` deleted or renamed its instance variable `category`
+  - Model `Budget` deleted or renamed its instance variable `current_spend`
+  - Model `Budget` deleted or renamed its instance variable `filter`
+  - Model `Budget` deleted or renamed its instance variable `forecast_spend`
+  - Model `Budget` deleted or renamed its instance variable `notifications`
+  - Model `Budget` deleted or renamed its instance variable `time_grain`
+  - Model `Budget` deleted or renamed its instance variable `time_period`
+  - Model `BudgetComparisonExpression` deleted or renamed its instance variable `values`
+  - Deleted or renamed enum value `BudgetOperatorType.IN_ENUM`
+  - Model `ChargeSummary` deleted or renamed its instance variable `e_tag`
+  - Model `CreditSummary` deleted or renamed its instance variable `balance_summary`
+  - Model `CreditSummary` deleted or renamed its instance variable `billing_currency`
+  - Model `CreditSummary` deleted or renamed its instance variable `credit_currency`
+  - Model `CreditSummary` deleted or renamed its instance variable `e_tag`
+  - Model `CreditSummary` deleted or renamed its instance variable `expired_credit`
+  - Model `CreditSummary` deleted or renamed its instance variable `pending_credit_adjustments`
+  - Model `CreditSummary` deleted or renamed its instance variable `pending_eligible_charges`
+  - Model `CreditSummary` deleted or renamed its instance variable `reseller`
+  - Model `EventSummary` deleted or renamed its instance variable `adjustments`
+  - Model `EventSummary` deleted or renamed its instance variable `adjustments_in_billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `billing_profile_display_name`
+  - Model `EventSummary` deleted or renamed its instance variable `billing_profile_id`
+  - Model `EventSummary` deleted or renamed its instance variable `canceled_credit`
+  - Model `EventSummary` deleted or renamed its instance variable `charges`
+  - Model `EventSummary` deleted or renamed its instance variable `charges_in_billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `closed_balance`
+  - Model `EventSummary` deleted or renamed its instance variable `closed_balance_in_billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `credit_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `credit_expired`
+  - Model `EventSummary` deleted or renamed its instance variable `credit_expired_in_billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `description`
+  - Model `EventSummary` deleted or renamed its instance variable `e_tag_properties_e_tag`
+  - Model `EventSummary` deleted or renamed its instance variable `event_type`
+  - Model `EventSummary` deleted or renamed its instance variable `invoice_number`
+  - Model `EventSummary` deleted or renamed its instance variable `lot_id`
+  - Model `EventSummary` deleted or renamed its instance variable `lot_source`
+  - Model `EventSummary` deleted or renamed its instance variable `new_credit`
+  - Model `EventSummary` deleted or renamed its instance variable `new_credit_in_billing_currency`
+  - Model `EventSummary` deleted or renamed its instance variable `reseller`
+  - Model `EventSummary` deleted or renamed its instance variable `transaction_date`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `azure_charges`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `billing_period_id`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `charges_billed_separately`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `currency`
   - Model `LegacyChargeSummary` deleted or renamed its instance variable `e_tag`
   - Model `LegacyChargeSummary` deleted or renamed its instance variable `marketplace_charges`
-  - Model `ModernChargeSummary` deleted or renamed its instance variable `e_tag`
-  - Model `ChargeSummary` deleted or renamed its instance variable `e_tag`
-  - Model `ProxyResource` deleted or renamed its instance variable `e_tag`
-  - Model `EventSummary` deleted or renamed its instance variable `e_tag_properties_e_tag`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `usage_end`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `usage_start`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `cost_with_no_reserved_instances`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `first_usage_date`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `instance_flexibility_group`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `instance_flexibility_ratio`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `look_back_period`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `meter_id`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `net_savings`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `normalized_size`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `recommended_quantity`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `recommended_quantity_normalized`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `resource_type`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `scope`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `sku_properties`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `term`
+  - Model `LegacyReservationRecommendation` deleted or renamed its instance variable `total_cost_with_reserved_instances`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `account_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `account_owner_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `additional_info`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `benefit_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `benefit_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_account_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_account_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_currency`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_period_end_date`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_period_start_date`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_profile_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `billing_profile_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `charge_type`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `consumed_service`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `cost`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `cost_center`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `date`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `effective_price`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `frequency`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `invoice_section`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `is_azure_credit_eligible`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `meter_details`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `meter_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `offer_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `part_number`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `pay_g_price`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `plan_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `pricing_model`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `product`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `product_order_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `product_order_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `publisher_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `publisher_type`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `quantity`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `reservation_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `reservation_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `resource_group`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `resource_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `resource_location`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `resource_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `service_info1`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `service_info2`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `subscription_id`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `subscription_name`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `term`
+  - Model `LegacyUsageDetail` deleted or renamed its instance variable `unit_price`
+  - Model `LotSummary` deleted or renamed its instance variable `billing_currency`
+  - Model `LotSummary` deleted or renamed its instance variable `closed_balance`
+  - Model `LotSummary` deleted or renamed its instance variable `closed_balance_in_billing_currency`
+  - Model `LotSummary` deleted or renamed its instance variable `credit_currency`
   - Model `LotSummary` deleted or renamed its instance variable `e_tag_properties_e_tag`
+  - Model `LotSummary` deleted or renamed its instance variable `expiration_date`
+  - Model `LotSummary` deleted or renamed its instance variable `original_amount`
+  - Model `LotSummary` deleted or renamed its instance variable `original_amount_in_billing_currency`
+  - Model `LotSummary` deleted or renamed its instance variable `po_number`
+  - Model `LotSummary` deleted or renamed its instance variable `purchased_date`
+  - Model `LotSummary` deleted or renamed its instance variable `reseller`
+  - Model `LotSummary` deleted or renamed its instance variable `source`
+  - Model `LotSummary` deleted or renamed its instance variable `start_date`
+  - Model `LotSummary` deleted or renamed its instance variable `status`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `azure_charges`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `billing_period_id`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `charges_billed_separately`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `children`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `currency`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `excluded_subscriptions`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `included_subscriptions`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `marketplace_charges`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `usage_end`
+  - Model `ManagementGroupAggregatedCostResult` deleted or renamed its instance variable `usage_start`
+  - Model `Marketplace` deleted or renamed its instance variable `account_name`
+  - Model `Marketplace` deleted or renamed its instance variable `additional_info`
+  - Model `Marketplace` deleted or renamed its instance variable `billing_period_id`
+  - Model `Marketplace` deleted or renamed its instance variable `consumed_quantity`
+  - Model `Marketplace` deleted or renamed its instance variable `consumed_service`
+  - Model `Marketplace` deleted or renamed its instance variable `cost_center`
+  - Model `Marketplace` deleted or renamed its instance variable `currency`
+  - Model `Marketplace` deleted or renamed its instance variable `department_name`
+  - Model `Marketplace` deleted or renamed its instance variable `instance_id`
+  - Model `Marketplace` deleted or renamed its instance variable `instance_name`
+  - Model `Marketplace` deleted or renamed its instance variable `is_estimated`
+  - Model `Marketplace` deleted or renamed its instance variable `is_recurring_charge`
+  - Model `Marketplace` deleted or renamed its instance variable `meter_id`
+  - Model `Marketplace` deleted or renamed its instance variable `offer_name`
+  - Model `Marketplace` deleted or renamed its instance variable `order_number`
+  - Model `Marketplace` deleted or renamed its instance variable `plan_name`
+  - Model `Marketplace` deleted or renamed its instance variable `pretax_cost`
+  - Model `Marketplace` deleted or renamed its instance variable `publisher_name`
+  - Model `Marketplace` deleted or renamed its instance variable `resource_group`
+  - Model `Marketplace` deleted or renamed its instance variable `resource_rate`
+  - Model `Marketplace` deleted or renamed its instance variable `subscription_guid`
+  - Model `Marketplace` deleted or renamed its instance variable `subscription_name`
+  - Model `Marketplace` deleted or renamed its instance variable `unit_of_measure`
+  - Model `Marketplace` deleted or renamed its instance variable `usage_end`
+  - Model `Marketplace` deleted or renamed its instance variable `usage_start`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `azure_charges`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `billing_account_id`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `billing_period_id`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `billing_profile_id`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `charges_billed_separately`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `customer_id`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `e_tag`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `invoice_section_id`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `is_invoiced`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `marketplace_charges`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `usage_end`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `usage_start`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `cost_with_no_reserved_instances`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `first_usage_date`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `instance_flexibility_group`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `instance_flexibility_ratio`
   - Model `ModernReservationRecommendation` deleted or renamed its instance variable `location_properties_location`
-  - Renamed model `ErrorDetails` to `ErrorDetail`
-  - Method `ChargesOperations.list` changed its parameter `apply`/`end_date`/`start_date` from `positional_or_keyword` to `keyword_only`
-  - Method `EventsOperations.list_by_billing_profile` changed its parameter `end_date`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `look_back_period`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `meter_id`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `net_savings`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `normalized_size`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `recommended_quantity`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `recommended_quantity_normalized`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `scope`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `sku_name`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `sku_properties`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `term`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `total_cost_with_reserved_instances`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `amount`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `arm_sku_name`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `billing_frequency`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `billing_profile_id`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `billing_profile_name`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `currency`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `description`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `event_date`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `event_type`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `invoice`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `invoice_id`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `invoice_section_id`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `invoice_section_name`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `purchasing_subscription_guid`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `purchasing_subscription_name`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `quantity`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `region`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `reservation_order_id`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `reservation_order_name`
+  - Model `ModernReservationTransaction` deleted or renamed its instance variable `term`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `additional_info`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `benefit_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `benefit_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_account_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_account_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_currency_code`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_period_end_date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_period_start_date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_profile_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `billing_profile_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `charge_type`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `consumed_service`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `cost_allocation_rule_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `cost_center`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `cost_in_billing_currency`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `cost_in_pricing_currency`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `cost_in_usd`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `customer_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `customer_tenant_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `effective_price`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `exchange_rate`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `exchange_rate_date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `exchange_rate_pricing_to_billing`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `frequency`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `instance_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `invoice_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `invoice_section_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `invoice_section_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `is_azure_credit_eligible`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `market_price`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `meter_category`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `meter_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `meter_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `meter_region`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `meter_sub_category`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `partner_earned_credit_applied`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `partner_earned_credit_rate`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `partner_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `partner_tenant_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `pay_g_price`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `payg_cost_in_billing_currency`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `payg_cost_in_usd`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `previous_invoice_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `pricing_currency_code`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `pricing_model`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `product`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `product_identifier`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `product_order_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `product_order_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `provider`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `publisher_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `publisher_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `publisher_type`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `quantity`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `reseller_mpn_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `reseller_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `reservation_id`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `reservation_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `resource_group`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `resource_location`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `resource_location_normalized`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `service_family`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `service_info1`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `service_info2`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `service_period_end_date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `service_period_start_date`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `subscription_guid`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `subscription_name`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `term`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `unit_of_measure`
+  - Model `ModernUsageDetail` deleted or renamed its instance variable `unit_price`
+  - Model `PriceSheetResult` deleted or renamed its instance variable `download`
+  - Model `PriceSheetResult` deleted or renamed its instance variable `next_link`
+  - Model `PriceSheetResult` deleted or renamed its instance variable `pricesheets`
+  - Model `ProxyResource` deleted or renamed its instance variable `e_tag`
+  - Model `ReservationDetail` deleted or renamed its instance variable `instance_flexibility_group`
+  - Model `ReservationDetail` deleted or renamed its instance variable `instance_flexibility_ratio`
+  - Model `ReservationDetail` deleted or renamed its instance variable `instance_id`
+  - Model `ReservationDetail` deleted or renamed its instance variable `kind`
+  - Model `ReservationDetail` deleted or renamed its instance variable `reservation_id`
+  - Model `ReservationDetail` deleted or renamed its instance variable `reservation_order_id`
+  - Model `ReservationDetail` deleted or renamed its instance variable `reserved_hours`
+  - Model `ReservationDetail` deleted or renamed its instance variable `sku_name`
+  - Model `ReservationDetail` deleted or renamed its instance variable `total_reserved_quantity`
+  - Model `ReservationDetail` deleted or renamed its instance variable `usage_date`
+  - Model `ReservationDetail` deleted or renamed its instance variable `used_hours`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `currency`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `resource`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `resource_group`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `savings`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `scope`
+  - Model `ReservationRecommendationDetailsModel` deleted or renamed its instance variable `usage`
+  - Model `ReservationSummary` deleted or renamed its instance variable `avg_utilization_percentage`
+  - Model `ReservationSummary` deleted or renamed its instance variable `kind`
+  - Model `ReservationSummary` deleted or renamed its instance variable `max_utilization_percentage`
+  - Model `ReservationSummary` deleted or renamed its instance variable `min_utilization_percentage`
+  - Model `ReservationSummary` deleted or renamed its instance variable `purchased_quantity`
+  - Model `ReservationSummary` deleted or renamed its instance variable `remaining_quantity`
+  - Model `ReservationSummary` deleted or renamed its instance variable `reservation_id`
+  - Model `ReservationSummary` deleted or renamed its instance variable `reservation_order_id`
+  - Model `ReservationSummary` deleted or renamed its instance variable `reserved_hours`
+  - Model `ReservationSummary` deleted or renamed its instance variable `sku_name`
+  - Model `ReservationSummary` deleted or renamed its instance variable `total_reserved_quantity`
+  - Model `ReservationSummary` deleted or renamed its instance variable `usage_date`
+  - Model `ReservationSummary` deleted or renamed its instance variable `used_hours`
+  - Model `ReservationSummary` deleted or renamed its instance variable `used_quantity`
+  - Model `ReservationSummary` deleted or renamed its instance variable `utilized_percentage`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `account_name`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `account_owner_email`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `amount`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `arm_sku_name`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `billing_frequency`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `billing_month`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `cost_center`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `currency`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `current_enrollment`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `department_name`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `description`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `event_date`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `event_type`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `monetary_commitment`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `overage`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `purchasing_enrollment`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `purchasing_subscription_guid`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `purchasing_subscription_name`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `quantity`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `region`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `reservation_order_id`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `reservation_order_name`
+  - Model `ReservationTransaction` deleted or renamed its instance variable `term`
+  - Model `Resource` deleted or renamed its instance variable `etag`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `TagsResult` deleted or renamed its instance variable `next_link`
+  - Model `TagsResult` deleted or renamed its instance variable `previous_link`
+  - Model `TagsResult` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `BudgetsListResult`
+  - Deleted or renamed model `DownloadProperties`
+  - Deleted or renamed model `ErrorDetails`
+  - Deleted or renamed model `Events`
+  - Deleted or renamed model `LegacyReservationTransaction`
+  - Deleted or renamed model `Lots`
+  - Deleted or renamed model `MarketplacesListResult`
+  - Deleted or renamed model `ModernReservationTransactionsListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `ReservationDetailsListResult`
+  - Deleted or renamed model `ReservationRecommendationsListResult`
+  - Deleted or renamed model `ReservationSummariesListResult`
+  - Deleted or renamed model `ReservationTransactionResource`
+  - Deleted or renamed model `ReservationTransactionsListResult`
+  - Deleted or renamed model `ResourceAttributes`
+  - Deleted or renamed model `UsageDetailsListResult`
+  - Method `ChargesOperations.list` changed its parameter `apply` from `positional_or_keyword` to `keyword_only`
+  - Method `ChargesOperations.list` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ChargesOperations.list` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `EventsOperations.list_by_billing_profile` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `EventsOperations.list_by_billing_profile` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
   - Method `MarketplacesOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `PriceSheetOperations.get` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `PriceSheetOperations.get_by_billing_period` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
-  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `look_back_period`/`product`/`region`/`scope`/`term` from `positional_or_keyword` to `keyword_only`
-  - Method `ReservationsDetailsOperations.list` changed its parameter `end_date`/`reservation_id`/`reservation_order_id`/`start_date` from `positional_or_keyword` to `keyword_only`
-  - Method `ReservationsSummariesOperations.list` changed its parameter `end_date`/`grain`/`reservation_id`/`reservation_order_id`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get_by_billing_period` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get_by_billing_period` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `look_back_period` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `product` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `scope` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `term` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `reservation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `reservation_order_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `end_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `reservation_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `reservation_order_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `start_date` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationsSummariesOperations.list_by_reservation_order` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
-  - Method `UsageDetailsOperations.list` changed its parameter `expand`/`metric`/`skiptoken` from `positional_or_keyword` to `keyword_only`
-
-### Other Changes
-
-  - Deleted model `BudgetsListResult`/`Events`/`Lots`/`MarketplacesListResult`/`ModernReservationTransactionsListResult`/`OperationListResult`/`ReservationDetailsListResult`/`ReservationSummariesListResult`/`ReservationTransactionsListResult`/`UsageDetailsListResult` which actually were not used by SDK users
-  - Deleted model `DownloadProperties`/`LegacyReservationTransaction`/`ReservationRecommendationsListResult`/`ReservationTransactionResource`/`ResourceAttributes` which actually were not used by SDK users
+  - Method `UsageDetailsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `UsageDetailsOperations.list` changed its parameter `metric` from `positional_or_keyword` to `keyword_only`
+  - Method `UsageDetailsOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `BudgetsOperations.list` changed return type from `AsyncIterable[BudgetsListResult]` to `AsyncItemPaged[Budget]`
+  - Method `EventsOperations.list_by_billing_account` changed return type from `AsyncIterable[Events]` to `AsyncItemPaged[EventSummary]`
+  - Method `EventsOperations.list_by_billing_profile` changed return type from `AsyncIterable[Events]` to `AsyncItemPaged[EventSummary]`
+  - Method `LotsOperations.list_by_billing_account` changed return type from `AsyncIterable[Lots]` to `AsyncItemPaged[LotSummary]`
+  - Method `LotsOperations.list_by_billing_profile` changed return type from `AsyncIterable[Lots]` to `AsyncItemPaged[LotSummary]`
+  - Method `LotsOperations.list_by_customer` changed return type from `AsyncIterable[Lots]` to `AsyncItemPaged[LotSummary]`
+  - Method `MarketplacesOperations.list` changed return type from `AsyncIterable[MarketplacesListResult]` to `AsyncItemPaged[Marketplace]`
+  - Method `Operations.list` changed return type from `AsyncIterable[OperationListResult]` to `AsyncItemPaged[Operation]`
+  - Method `ReservationRecommendationsOperations.list` changed return type from `AsyncIterable[ReservationRecommendationsListResult]` to `AsyncItemPaged[ReservationRecommendation]`
+  - Method `ReservationTransactionsOperations.list` changed return type from `AsyncIterable[ReservationTransactionsListResult]` to `AsyncItemPaged[ReservationTransaction]`
+  - Method `ReservationTransactionsOperations.list_by_billing_profile` changed return type from `AsyncIterable[ModernReservationTransactionsListResult]` to `AsyncItemPaged[ModernReservationTransaction]`
+  - Method `ReservationsDetailsOperations.list` changed return type from `AsyncIterable[ReservationDetailsListResult]` to `AsyncItemPaged[ReservationDetail]`
+  - Method `ReservationsDetailsOperations.list_by_reservation_order` changed return type from `AsyncIterable[ReservationDetailsListResult]` to `AsyncItemPaged[ReservationDetail]`
+  - Method `ReservationsDetailsOperations.list_by_reservation_order_and_reservation` changed return type from `AsyncIterable[ReservationDetailsListResult]` to `AsyncItemPaged[ReservationDetail]`
+  - Method `ReservationsSummariesOperations.list` changed return type from `AsyncIterable[ReservationSummariesListResult]` to `AsyncItemPaged[ReservationSummary]`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order` changed return type from `AsyncIterable[ReservationSummariesListResult]` to `AsyncItemPaged[ReservationSummary]`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed return type from `AsyncIterable[ReservationSummariesListResult]` to `AsyncItemPaged[ReservationSummary]`
+  - Method `UsageDetailsOperations.list` changed return type from `AsyncIterable[UsageDetailsListResult]` to `AsyncItemPaged[UsageDetail]`
   - Method `BudgetsOperations.list` changed return type from `Iterable[BudgetsListResult]` to `ItemPaged[Budget]`
   - Method `EventsOperations.list_by_billing_account` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
   - Method `EventsOperations.list_by_billing_profile` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
@@ -131,6 +543,8 @@
   - Method `ReservationsSummariesOperations.list_by_reservation_order` changed return type from `Iterable[ReservationSummariesListResult]` to `ItemPaged[ReservationSummary]`
   - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed return type from `Iterable[ReservationSummariesListResult]` to `ItemPaged[ReservationSummary]`
   - Method `UsageDetailsOperations.list` changed return type from `Iterable[UsageDetailsListResult]` to `ItemPaged[UsageDetail]`
+  - Method `ReservationRecommendationDetailsOperations.get` re-ordered its parameters from `['self', 'cls', 'look_back_period', 'product', 'region', 'resource_scope', 'scope', 'term', 'kwargs']` to `['self', 'filter', 'look_back_period', 'product', 'region', 'resource_scope', 'scope', 'term', 'kwargs']`
+  - Method `BudgetsOperations.create_or_update` re-ordered its parameters from `['self', 'budget_name', 'cls', 'parameters', 'scope', 'kwargs']` to `['self', 'budget_name', 'content_type', 'parameters', 'scope', 'kwargs']`
 
 ## 11.0.0b2 (2026-05-25)
 
