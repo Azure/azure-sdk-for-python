@@ -161,7 +161,7 @@ Post exactly one comment using the `add-comment` safe output, in this shape:
 
 ````markdown
 <details>
-<summary><strong>Pipeline Analysis Next Steps</strong></summary>
+<summary><strong>[Pilot] PR Pipeline Failure Analysis</strong></summary>
 
 A CI pipeline failed on this pull request. Here is an automated analysis of what went wrong
 and how to get the build green.
