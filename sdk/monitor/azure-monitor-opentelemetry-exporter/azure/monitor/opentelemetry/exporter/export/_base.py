@@ -215,14 +215,7 @@ class BaseExporter:
         #     )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
-            self.storage = LocalFileStorage(  # pyright: ignore
-                path=self._storage_directory,  # type: ignore
-                max_size=self._storage_max_size,
-                maintenance_period=self._storage_maintenance_period,
-                retention_period=self._storage_retention_period,
-                name="{} Storage".format(self.__class__.__name__),
-                lease_period=self._storage_min_retry_interval,
-            )
+            self._enable_local_storage()
 
         # statsbeat initialization
         if self._should_collect_stats():
@@ -668,6 +661,21 @@ class BaseExporter:
         return ExportResult.SUCCESS
 
     # check to see whether its the case of stats collection
+    def _enable_local_storage(self) -> None:
+        # Idempotent: create the local file storage only if it is not already active.
+        if self.storage is not None:
+            return
+        if self._storage_directory is None:
+            self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
+        self.storage = LocalFileStorage(  # pyright: ignore
+            path=self._storage_directory,  # type: ignore
+            max_size=self._storage_max_size,
+            maintenance_period=self._storage_maintenance_period,
+            retention_period=self._storage_retention_period,
+            name="{} Storage".format(self.__class__.__name__),
+            lease_period=self._storage_min_retry_interval,
+        )
+
     def _should_collect_stats(self):
         return (
             is_statsbeat_enabled()
