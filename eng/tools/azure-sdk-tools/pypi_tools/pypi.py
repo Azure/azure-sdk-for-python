@@ -20,15 +20,19 @@ class PyPIClient:
     By default, reads ``PIP_INDEX_URL`` to decide the backend:
     * If the URL contains ``pkgs.dev.azure.com`` → Azure Artifacts REST API.
     * Otherwise → PyPI JSON API (``https://pypi.org``).
+
+    Pass ``force_pypi=True`` to always use the public PyPI JSON API, ignoring
+    ``PIP_INDEX_URL``. This is useful when the caller needs versions that only
+    exist on public PyPI and not in a curated Azure Artifacts feed.
     """
 
-    def __init__(self, host="https://pypi.org"):
+    def __init__(self, host="https://pypi.org", force_pypi=False):
         index_url = os.environ.get("PIP_INDEX_URL", "")
 
         # Lazy import to avoid circular deps at module level.
         from pypi_tools.azdo import parse_pip_index_url, AzureArtifactsClient
 
-        azdo_cfg = parse_pip_index_url(index_url) if index_url else None
+        azdo_cfg = None if force_pypi else (parse_pip_index_url(index_url) if index_url else None)
 
         if azdo_cfg is not None:
             self._backend = "azdo"
