@@ -13,6 +13,7 @@
   - Model `ResourceNamespacePatch` added property `system_data`
   - Model `SBNamespaceUpdateParameters` added property `system_data`
   - Enum `TlsVersion` added member `ONE3`
+  - Enum `MigrationConfigurationName` added member `DEFAULT`
   - Model `TrackedResource` added property `system_data`
   - Added model `ConfidentialCompute`
   - Added model `FailOver`
