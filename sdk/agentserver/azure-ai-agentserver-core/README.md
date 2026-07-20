@@ -143,6 +143,16 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol; set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` to use an
+OTLP/gRPC collector:
+
+```bash
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
 ## Troubleshooting
 
 ### Logging

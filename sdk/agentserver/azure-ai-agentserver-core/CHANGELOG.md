@@ -1,5 +1,12 @@
 # Release History
 
+## 2.0.0b8 (Unreleased)
+
+### Other Changes
+
+- Added local OTLP HTTP/protobuf and gRPC protocol regression tests covering traces, metrics, and logs without requiring external collector infrastructure.
+- Added Agent Server-managed OTLP/gRPC export when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` is configured.
+
 ## 2.0.0b7 (2026-06-28)
 
 ### Features Added
