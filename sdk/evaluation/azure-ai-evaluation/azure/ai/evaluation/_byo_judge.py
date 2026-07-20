@@ -143,8 +143,11 @@ class _ChatCompletion:
         _usage = getattr(response, "usage", None)
         self.usage = _Usage(_usage) if _usage is not None else None
         self.object = "chat.completion"
-        # Preserve the server-provided created timestamp when present; fall back to now otherwise.
-        _created = getattr(response, "created", None)
+        # Preserve the server-provided created timestamp when present. OpenAI Responses objects expose
+        # it as ``created_at`` (older/mocked shapes may use ``created``); fall back to now otherwise.
+        _created = getattr(response, "created_at", None)
+        if _created is None:
+            _created = getattr(response, "created", None)
         self.created = (
             int(_created) if isinstance(_created, (int, float)) and not isinstance(_created, bool) else int(time.time())
         )
@@ -214,7 +217,13 @@ class AsyncByoProjectResponsesClient:
                     "(BYO) judge models."
                 ) from ex
 
-            client = AIProjectClient(endpoint=self._project_endpoint, credential=self._credential).get_openai_client()
+            # AsyncPrompty disables the OpenAI client's built-in retries and runs its own observable
+            # retry loop (see _prompty.py), so build the project client with max_retries=0 to avoid
+            # hidden per-request retries multiplying the intended retry budget. get_openai_client
+            # forwards kwargs to the underlying AsyncOpenAI client.
+            client = AIProjectClient(endpoint=self._project_endpoint, credential=self._credential).get_openai_client(
+                max_retries=0
+            )
             # ``get_openai_client()`` is synchronous in some azure-ai-projects versions and a coroutine
             # in others; await it only when needed so the shim works across both.
             if inspect.isawaitable(client):

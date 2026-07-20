@@ -171,6 +171,10 @@ class TestAsyncByoProjectResponsesClient:
         mock_aipc.assert_called_once()
         _, pkwargs = mock_aipc.call_args
         assert pkwargs["endpoint"] == "https://acct.services.ai.azure.com/api/projects/p1"
+        # The OpenAI client is built with max_retries=0 so AsyncPrompty's own retry loop is the only
+        # retry layer (no hidden per-request retries multiplying the budget).
+        _, gkwargs = mock_aipc.return_value.get_openai_client.call_args
+        assert gkwargs["max_retries"] == 0
         _, rkwargs = oai.responses.create.call_args
         assert rkwargs["model"] == "my-conn/gpt-4o"
         assert rkwargs["input"] == [{"type": "message", "role": "user", "content": "rate coherence"}]
@@ -286,16 +290,16 @@ class TestAsyncByoProjectResponsesClient:
 
     @patch("azure.ai.projects.aio.AIProjectClient")
     def test_preserves_server_created_timestamp(self, mock_aipc):
-        # When the Responses result carries a server ``created`` timestamp, the shim preserves it
+        # OpenAI Responses objects expose the server timestamp as ``created_at``; the shim preserves it
         # instead of overwriting with local wall-clock time.
-        resp = MagicMock(output_text="ok", usage=None, id="r", model="m", status="completed", created=1752694800)
-        oai = MagicMock()
-        oai.responses.create = AsyncMock(return_value=resp)
-        mock_aipc.return_value.get_openai_client.return_value = oai
+        cc = _ChatCompletion(SimpleNamespace(output_text="ok", usage=None, id="r", model="m", created_at=1752694800))
+        assert cc.created == 1752694800
 
-        client = AsyncByoProjectResponsesClient("c/d", "https://acct.services.ai.azure.com/api/projects/p", MagicMock())
-        result = asyncio.run(client.chat.completions.create(messages=[{"role": "user", "content": "hi"}]))
-        assert result.created == 1752694800
+    def test_created_timestamp_falls_back_to_created_then_now(self):
+        # Older/mocked shapes may only carry ``created``; that is honored as a fallback.
+        assert _ChatCompletion(SimpleNamespace(output_text="ok", created=1700000000)).created == 1700000000
+        # When neither is a real number, fall back to the local wall-clock time (a positive int).
+        assert _ChatCompletion(SimpleNamespace(output_text="ok")).created > 0
 
 
 class TestValidateModelConfigByo:
@@ -315,3 +319,56 @@ class TestValidateModelConfigByo:
 
         with pytest.raises(EvaluationException):
             validate_model_config({"not": "a valid model config"})
+
+
+class TestAsyncPromptyByoIntegration:
+    """Exercise the BYO branch through AsyncPrompty end-to-end (not just the shim in isolation)."""
+
+    _PROMPTY = (
+        "---\n"
+        "name: byo-judge\n"
+        "model:\n"
+        "  api: chat\n"
+        "  parameters:\n"
+        "    temperature: 0.0\n"
+        "inputs:\n"
+        "  question:\n"
+        "    type: string\n"
+        "---\n"
+        "system:\n"
+        "You are a judge.\n"
+        "\n"
+        "user:\n"
+        "{{question}}\n"
+    )
+
+    @patch("azure.ai.projects.aio.AIProjectClient")
+    def test_async_prompty_routes_byo_config_through_shim(self, mock_aipc, tmp_path):
+        from azure.ai.evaluation._legacy.prompty._prompty import AsyncPrompty
+
+        prompty_path = tmp_path / "byo_judge.prompty"
+        prompty_path.write_text(self._PROMPTY, encoding="utf-8")
+
+        resp = SimpleNamespace(output_text="score: 5", usage=None, id="r", model="conn/dep", created_at=1)
+        oai = MagicMock()
+        oai.responses.create = AsyncMock(return_value=resp)
+        mock_aipc.return_value.get_openai_client.return_value = oai
+
+        model = {
+            "configuration": {
+                "byo_model": "conn/dep",
+                "project_endpoint": "https://acct.services.ai.azure.com/api/projects/p",
+            },
+            "parameters": {"temperature": 0.0},
+        }
+        flow = AsyncPrompty.load(source=str(prompty_path), model=model, token_credential=MagicMock())
+        result = asyncio.run(flow(question="rate this"))
+
+        # The BYO branch built the project client with the project endpoint and routed to responses.
+        mock_aipc.assert_called_once()
+        _, pkwargs = mock_aipc.call_args
+        assert pkwargs["endpoint"] == "https://acct.services.ai.azure.com/api/projects/p"
+        _, rkwargs = oai.responses.create.call_args
+        assert rkwargs["model"] == "conn/dep"
+        # The formatted judge output flows back through AsyncPrompty's response formatting.
+        assert "score: 5" in str(result)
