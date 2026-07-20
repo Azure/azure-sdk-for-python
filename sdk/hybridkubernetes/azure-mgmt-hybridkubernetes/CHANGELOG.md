@@ -1,5 +1,60 @@
 # Release History
 
+## 2.0.0 (2026-07-20)
+
+### Features Added
+
+  - Client `ConnectedKubernetesClient` added method `send_request`
+  - Model `ConnectedCluster` added property `kind`
+  - Model `ConnectedCluster` added property `properties`
+  - Enum `ConnectivityStatus` added member `AGENT_NOT_INSTALLED`
+  - Model `HybridConnectionConfig` added property `relay_tid`
+  - Model `HybridConnectionConfig` added property `relay_type`
+  - Model `Operation` added property `action_type`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `AadProfile`
+  - Added enum `ActionType`
+  - Added model `AgentError`
+  - Added model `ArcAgentProfile`
+  - Added model `ArcAgentryConfigurations`
+  - Added enum `AutoUpgradeOptions`
+  - Added enum `AzureHybridBenefit`
+  - Added enum `ConnectedClusterKind`
+  - Added model `ConnectedClusterPatchProperties`
+  - Added model `ConnectedClusterProperties`
+  - Added model `Gateway`
+  - Added model `OidcIssuerProfile`
+  - Added enum `Origin`
+  - Added enum `PrivateLinkState`
+  - Added model `SecurityProfile`
+  - Added model `SecurityProfileWorkloadIdentity`
+  - Added model `SystemComponent`
+  - Model `ConnectedClusterOperations` added method `begin_create_or_replace`
+  - Model `ConnectedClusterOperations` added method `begin_update_async`
+
+### Breaking Changes
+
+  - Model `ConnectedCluster` deleted or renamed its instance variable `agent_public_key_certificate`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `agent_version`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `connectivity_status`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `distribution`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `infrastructure`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `kubernetes_version`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `last_connectivity_time`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `managed_identity_certificate_expiration_time`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `offering`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `provisioning_state`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `total_core_count`
+  - Model `ConnectedCluster` deleted or renamed its instance variable `total_node_count`
+  - Deleted or renamed model `ConnectedClusterList`
+  - Deleted or renamed model `LastModifiedByType`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed method `ConnectedClusterOperations.begin_create`
+  - Deleted or renamed method `ConnectedClusterOperations.update`
+
 ## 2.0.0b1 (2026-05-20)
 
 ### Features Added
