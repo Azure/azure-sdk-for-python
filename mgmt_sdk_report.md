@@ -29,7 +29,7 @@
 | 24 | azure-mgmt-managementgroups | 2023-04-01 | 2.0.0b1 | [#46074](https://github.com/Azure/azure-sdk-for-python/pull/46074) | 2026-04-02 | Done | [47665](https://github.com/Azure/azure-sdk-for-python/pull/47665) |
 | 25 | azure-mgmt-networkcloud | 2025-09-01 | 3.0.0b1 | [#46048](https://github.com/Azure/azure-sdk-for-python/pull/46048) | 2026-04-02 | Doing | [48146](https://github.com/Azure/azure-sdk-for-python/pull/48146) |
 | 30 | azure-mgmt-sqlvirtualmachine | 2023-10-01 | 1.0.0b7 |  | 2026-07-07 | Doing | [48149](https://github.com/Azure/azure-sdk-for-python/pull/48149) |
-| 31 | azure-mgmt-servicebus | 2026-01-01 | 10.0.0b2 |  | 2026-07-07 | Not Started |  |
+| 31 | azure-mgmt-servicebus | 2026-01-01 | 10.0.0b2 |  | 2026-07-07 | Doing | [48151](https://github.com/Azure/azure-sdk-for-python/pull/48151) |
 | 32 | azure-mgmt-peering | 2025-05-01 | 2.0.0b2 |  | 2026-07-07 | Done | [#47907](https://github.com/Azure/azure-sdk-for-python/pull/47907) |
 | 33 | azure-mgmt-guestconfig | 2024-04-05 | 1.0.0b3 |  | 2026-07-07 | Not Started |  |
 | 34 | azure-mgmt-eventhub | 2026-01-01 | 12.0.0b2 |  | 2026-07-07 | Not Started |  |
