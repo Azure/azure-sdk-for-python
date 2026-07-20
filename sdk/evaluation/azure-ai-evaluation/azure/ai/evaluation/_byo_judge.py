@@ -17,17 +17,19 @@ import inspect
 import time
 from typing import Any, Dict, List, Optional
 
+from openai.types.responses import EasyInputMessageParam, ResponseInputParam
 
-def _to_responses_input(messages: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+
+def _to_responses_input(messages: Optional[List[Dict[str, Any]]]) -> ResponseInputParam:
     """Map chat-completions messages ({role, content}) to Responses API input items."""
-    items: List[Dict[str, Any]] = []
+    items: ResponseInputParam = []
     for message in messages or []:
         items.append(
-            {
-                "type": "message",
-                "role": message.get("role", "user"),
-                "content": message.get("content", ""),
-            }
+            EasyInputMessageParam(
+                type="message",
+                role=message.get("role", "user"),
+                content=message.get("content", ""),
+            )
         )
     return items
 
