@@ -79,7 +79,7 @@ def download_blob_from_url(
     ...
 ```
 
-> Note: Do not use comment style type hints (`# type: str`). Some of our libraries use type comments due to legacy code supporting Python 2, but these will be updated to annotation style.
+> Note: Do not use comment style type hints (`# type: str`). Use inline annotation style instead.
 
 A fully annotated signature includes type annotations for all parameters and the return type. The type of a parameter
 should follow the `:` syntax and a default argument can be supplied like in the `overwrite` parameter above. A return
