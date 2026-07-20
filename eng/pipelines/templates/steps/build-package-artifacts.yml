@@ -150,11 +150,7 @@ steps:
       $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
       $nugetCpython = Join-Path $cache "nuget-cpython"
       New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
-      $nuget = (Get-Command nuget -ErrorAction SilentlyContinue).Source
-      if (-not $nuget) {
-        $nuget = Join-Path $cache "nuget.exe"
-        Invoke-WebRequest -Uri "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe" -OutFile $nuget
-      }
+      $nuget = (Get-Command nuget).Source
       & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
       & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
