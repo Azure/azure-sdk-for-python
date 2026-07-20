@@ -11,7 +11,7 @@ service responses.
 ### Other Changes
 - Deprecated `ShareFileClient`'s `get_ranges` and `get_ranges_diff` APIs in favor of `list_ranges` and
 `list_ranges_diff`.
-- Migrated generated code to use new TypeSpec generator.
+- Migrated generated code to use the new TypeSpec generator.
 
 ## 12.26.0 (2026-06-08)
 

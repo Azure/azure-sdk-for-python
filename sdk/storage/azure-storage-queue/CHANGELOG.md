@@ -6,7 +6,7 @@
 - Added support for service version 2026-10-06.
 
 ### Other Changes
-- Migrated generated code to use new TypeSpec generator.
+- Migrated generated code to use the new TypeSpec generator.
 
 ## 12.17.0 (2026-06-08)
 
