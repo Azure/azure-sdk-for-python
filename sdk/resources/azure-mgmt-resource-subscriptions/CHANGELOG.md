@@ -2,7 +2,13 @@
 
 ## 1.0.0 (2026-07-20)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Added TypedDict request body types `azure.mgmt.resource.subscriptions.types.CheckZonePeersRequest` and `azure.mgmt.resource.subscriptions.types.ResourceName`
+
+### Other Changes
+
+  - First stable release of the Azure Resource Subscriptions Management client library.
 
 ## 1.0.0b2 (2026-05-21)
 
