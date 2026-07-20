@@ -22,7 +22,7 @@ async def main() -> None:
     # call-id. ``load_tools=False`` keeps the toolbox's tools hidden so only its
     # Agent Skills (SEP-2640) are surfaced; passing it via ``tools=`` connects the
     # MCP session that ``as_skills_provider()`` reads from.
-    toolbox = FoundryToolbox(url=os.environ["MCP_SERVER_URL"], credential=credential, load_tools=False)
+    toolbox = FoundryToolbox(url=os.environ["MCP_SERVER_URL"], credential=credential)
 
     # as_skills_provider() discovers skills from skill://index.json on the toolbox
     # MCP session and exposes them as an agent context provider; SKILL.md bodies are
