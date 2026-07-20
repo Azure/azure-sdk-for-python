@@ -42,8 +42,7 @@ jobs:
     if: >
       github.event_name != 'check_suite' ||
       (github.event.check_suite.app.slug == 'azure-pipelines' &&
-       (github.event.check_suite.conclusion == 'failure' ||
-        github.event.check_suite.conclusion == 'timed_out'))
+       github.event.check_suite.conclusion == 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch pipeline next-steps analysis

@@ -74,11 +74,25 @@ steps:
       GITHUB_TOKEN: ${{ github.token }}
       PR_URL: "https://github.com/${{ github.repository }}/pull/${{ github.event.inputs.pr_number }}"
     run: |
-      set +e
-      azsdk ci analyze "$PR_URL" > "$GITHUB_WORKSPACE/pipeline-analysis.txt" 2>&1
-      echo "azsdk ci analyze exit code: $?"
+      set -uo pipefail
+      # `azsdk ci analyze` exits non-zero both when it finds no failing builds (it sets a
+      # "No failed Azure Pipeline builds found ..." response error) and on real auth/network/CLI
+      # errors. Only the former is an acceptable no-op; every other non-zero exit must fail this
+      # step so the run surfaces the problem instead of the agent silently treating an error as
+      # "nothing to report" and finishing green.
+      exit_code=0
+      azsdk ci analyze "$PR_URL" > "$GITHUB_WORKSPACE/pipeline-analysis.txt" 2>&1 || exit_code=$?
+      echo "azsdk ci analyze exit code: $exit_code"
       echo "----- pipeline-analysis.txt -----"
       cat "$GITHUB_WORKSPACE/pipeline-analysis.txt"
+      if [ "$exit_code" -ne 0 ]; then
+        if grep -qF "No failed Azure Pipeline builds found" "$GITHUB_WORKSPACE/pipeline-analysis.txt"; then
+          echo "No failing Azure Pipeline builds resolved for this PR; the agent will no-op."
+        else
+          echo "::error::azsdk ci analyze failed (exit $exit_code) with an unexpected error; failing the step."
+          exit "$exit_code"
+        fi
+      fi
 
 tools:
   github:
@@ -93,8 +107,11 @@ safe-outputs:
     max: 1
     target: "${{ github.event.inputs.pr_number }}"
     hide-older-comments: true
-  # Let the agent cleanly do nothing when the tool reports no failing builds.
+  # Let the agent cleanly do nothing when the tool reports no failing builds. report-as-issue:
+  # false stops gh-aw's default of opening/updating an "[aw] No-Op Runs" tracking issue on every
+  # stale/no-failure run.
   noop:
+    report-as-issue: false
   # Failures surface on the PR/run; do not open tracking issues.
   report-failure-as-issue: false
 
