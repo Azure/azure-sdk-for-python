@@ -300,6 +300,8 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_sessions_crud.py",  # Specified through AdditionalSampleTestDetail
                 "sample_sessions_files_upload_download.py",  # Specified through AdditionalSampleTestDetail
                 "sample_routines_with_dispatch.py",  # 500
+                "sample_routines_with_schedule_trigger.py",  # 500
+                "sample_routines_with_timer_trigger.py",  # Timer is used causing request response not matched
                 "sample_routines_with_github_issue_trigger.py",  # Cannot run without interact on Github
             ],
         ),
