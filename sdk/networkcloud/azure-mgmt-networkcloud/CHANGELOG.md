@@ -1,5 +1,730 @@
 # Release History
 
+## 3.0.0 (2026-07-20)
+
+### Features Added
+
+  - Client `NetworkCloudMgmtClient` added method `send_request`
+  - Model `AgentPool` added property `properties`
+  - Model `AgentPoolPatchParameters` added property `properties`
+  - Model `BareMetalMachine` added property `properties`
+  - Model `BareMetalMachineKeySet` added property `properties`
+  - Model `BareMetalMachineKeySetPatchParameters` added property `properties`
+  - Model `BareMetalMachinePatchParameters` added property `properties`
+  - Model `BmcKeySet` added property `properties`
+  - Model `BmcKeySetPatchParameters` added property `properties`
+  - Model `CloudServicesNetwork` added property `properties`
+  - Model `CloudServicesNetworkPatchParameters` added property `properties`
+  - Model `Cluster` added property `properties`
+  - Model `ClusterManager` added property `properties`
+  - Model `ClusterMetricsConfiguration` added property `properties`
+  - Model `ClusterMetricsConfigurationPatchParameters` added property `properties`
+  - Model `ClusterPatchParameters` added property `properties`
+  - Model `Console` added property `properties`
+  - Model `ConsolePatchParameters` added property `properties`
+  - Model `KubernetesCluster` added property `properties`
+  - Model `KubernetesClusterFeature` added property `properties`
+  - Model `KubernetesClusterFeaturePatchParameters` added property `properties`
+  - Model `KubernetesClusterPatchParameters` added property `properties`
+  - Model `L2Network` added property `properties`
+  - Model `L3Network` added property `properties`
+  - Model `MachineSkuSlot` added property `properties`
+  - Model `OperationStatusResult` added property `properties`
+  - Model `Rack` added property `properties`
+  - Model `RackPatchParameters` added property `properties`
+  - Model `RackSku` added property `properties`
+  - Model `StorageAppliance` added property `properties`
+  - Model `StorageAppliancePatchParameters` added property `properties`
+  - Model `StorageApplianceSkuSlot` added property `properties`
+  - Model `TrunkedNetwork` added property `properties`
+  - Model `VirtualMachine` added property `properties`
+  - Model `VirtualMachinePatchParameters` added property `properties`
+  - Model `Volume` added property `properties`
+  - Added model `AgentPoolPatchProperties`
+  - Added model `AgentPoolProperties`
+  - Added model `BareMetalMachineKeySetPatchProperties`
+  - Added model `BareMetalMachineKeySetProperties`
+  - Added model `BareMetalMachinePatchProperties`
+  - Added model `BareMetalMachineProperties`
+  - Added model `BmcKeySetPatchProperties`
+  - Added model `BmcKeySetProperties`
+  - Added model `CloudServicesNetworkPatchProperties`
+  - Added model `CloudServicesNetworkProperties`
+  - Added model `ClusterManagerProperties`
+  - Added model `ClusterMetricsConfigurationPatchProperties`
+  - Added model `ClusterMetricsConfigurationProperties`
+  - Added model `ClusterPatchProperties`
+  - Added model `ClusterProperties`
+  - Added model `ConsolePatchProperties`
+  - Added model `ConsoleProperties`
+  - Added enum `ExtendedLocationType`
+  - Added model `KubernetesClusterFeaturePatchProperties`
+  - Added model `KubernetesClusterFeatureProperties`
+  - Added model `KubernetesClusterPatchProperties`
+  - Added model `KubernetesClusterProperties`
+  - Added model `L2NetworkProperties`
+  - Added model `L3NetworkProperties`
+  - Added model `MachineSkuProperties`
+  - Added model `OperationStatusResultProperties`
+  - Added model `ProxyResource`
+  - Added model `RackProperties`
+  - Added model `RackSkuProperties`
+  - Added model `RacksPatchProperties`
+  - Added model `StorageAppliancePatchProperties`
+  - Added model `StorageApplianceProperties`
+  - Added model `StorageApplianceSkuProperties`
+  - Added model `TrunkedNetworkProperties`
+  - Added model `VirtualMachinePatchProperties`
+  - Added model `VirtualMachineProperties`
+  - Added model `VolumeProperties`
+  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_delete`
+  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `AgentPoolsOperations` added parameter `etag` in method `begin_update`
+  - Model `AgentPoolsOperations` added parameter `match_condition` in method `begin_update`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_delete`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `etag` in method `begin_update`
+  - Model `BareMetalMachineKeySetsOperations` added parameter `match_condition` in method `begin_update`
+  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_delete`
+  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `BareMetalMachinesOperations` added parameter `etag` in method `begin_update`
+  - Model `BareMetalMachinesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_delete`
+  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `BmcKeySetsOperations` added parameter `etag` in method `begin_update`
+  - Model `BmcKeySetsOperations` added parameter `match_condition` in method `begin_update`
+  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_delete`
+  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `CloudServicesNetworksOperations` added parameter `etag` in method `begin_update`
+  - Model `CloudServicesNetworksOperations` added parameter `match_condition` in method `begin_update`
+  - Model `ClusterManagersOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `ClusterManagersOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `ClusterManagersOperations` added parameter `etag` in method `begin_delete`
+  - Model `ClusterManagersOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `ClusterManagersOperations` added parameter `etag` in method `update`
+  - Model `ClusterManagersOperations` added parameter `match_condition` in method `update`
+  - Model `ClustersOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `ClustersOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `ClustersOperations` added parameter `etag` in method `begin_delete`
+  - Model `ClustersOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `ClustersOperations` added parameter `etag` in method `begin_update`
+  - Model `ClustersOperations` added parameter `match_condition` in method `begin_update`
+  - Model `ConsolesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `ConsolesOperations` added parameter `etag` in method `begin_delete`
+  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `ConsolesOperations` added parameter `etag` in method `begin_update`
+  - Model `ConsolesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_delete`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `etag` in method `begin_update`
+  - Model `KubernetesClusterFeaturesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_delete`
+  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `KubernetesClustersOperations` added parameter `etag` in method `begin_update`
+  - Model `KubernetesClustersOperations` added parameter `match_condition` in method `begin_update`
+  - Model `L2NetworksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `L2NetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `L2NetworksOperations` added parameter `etag` in method `begin_delete`
+  - Model `L2NetworksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `L2NetworksOperations` added parameter `etag` in method `update`
+  - Model `L2NetworksOperations` added parameter `match_condition` in method `update`
+  - Model `L3NetworksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `L3NetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `L3NetworksOperations` added parameter `etag` in method `begin_delete`
+  - Model `L3NetworksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `L3NetworksOperations` added parameter `etag` in method `update`
+  - Model `L3NetworksOperations` added parameter `match_condition` in method `update`
+  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_delete`
+  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `MetricsConfigurationsOperations` added parameter `etag` in method `begin_update`
+  - Model `MetricsConfigurationsOperations` added parameter `match_condition` in method `begin_update`
+  - Model `RacksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `RacksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `RacksOperations` added parameter `etag` in method `begin_delete`
+  - Model `RacksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `RacksOperations` added parameter `etag` in method `begin_update`
+  - Model `RacksOperations` added parameter `match_condition` in method `begin_update`
+  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_delete`
+  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `StorageAppliancesOperations` added parameter `etag` in method `begin_update`
+  - Model `StorageAppliancesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `TrunkedNetworksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `TrunkedNetworksOperations` added parameter `etag` in method `begin_delete`
+  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `TrunkedNetworksOperations` added parameter `etag` in method `update`
+  - Model `TrunkedNetworksOperations` added parameter `match_condition` in method `update`
+  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_delete`
+  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `VirtualMachinesOperations` added parameter `etag` in method `begin_update`
+  - Model `VirtualMachinesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `VolumesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `VolumesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `VolumesOperations` added parameter `etag` in method `begin_delete`
+  - Model `VolumesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `VolumesOperations` added parameter `etag` in method `update`
+  - Model `VolumesOperations` added parameter `match_condition` in method `update`
+
+### Breaking Changes
+
+  - Model `AgentPool` deleted or renamed its instance variable `administrator_configuration`
+  - Model `AgentPool` deleted or renamed its instance variable `agent_options`
+  - Model `AgentPool` deleted or renamed its instance variable `attached_network_configuration`
+  - Model `AgentPool` deleted or renamed its instance variable `availability_zones`
+  - Model `AgentPool` deleted or renamed its instance variable `count`
+  - Model `AgentPool` deleted or renamed its instance variable `detailed_status`
+  - Model `AgentPool` deleted or renamed its instance variable `detailed_status_message`
+  - Model `AgentPool` deleted or renamed its instance variable `kubernetes_version`
+  - Model `AgentPool` deleted or renamed its instance variable `labels`
+  - Model `AgentPool` deleted or renamed its instance variable `mode`
+  - Model `AgentPool` deleted or renamed its instance variable `provisioning_state`
+  - Model `AgentPool` deleted or renamed its instance variable `taints`
+  - Model `AgentPool` deleted or renamed its instance variable `upgrade_settings`
+  - Model `AgentPool` deleted or renamed its instance variable `vm_sku_name`
+  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `administrator_configuration`
+  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `count`
+  - Model `AgentPoolPatchParameters` deleted or renamed its instance variable `upgrade_settings`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `action_states`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `associated_resource_ids`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `bmc_connection_string`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `bmc_credentials`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `bmc_mac_address`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `boot_mac_address`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `ca_certificate`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `cluster_id`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `cordon_status`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `detailed_status`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `detailed_status_message`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `hardware_inventory`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `hardware_validation_status`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `hybrid_aks_clusters_associated_ids`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `kubernetes_node_name`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `kubernetes_version`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `machine_cluster_version`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `machine_details`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `machine_name`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `machine_roles`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `machine_sku_id`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `oam_ipv4_address`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `oam_ipv6_address`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `os_image`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `power_state`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `provisioning_state`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `rack_id`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `rack_slot`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `ready_state`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `runtime_protection_status`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `secret_rotation_status`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `serial_number`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `service_tag`
+  - Model `BareMetalMachine` deleted or renamed its instance variable `virtual_machines_associated_ids`
+  - Deleted or renamed enum value `BareMetalMachineHardwareValidationResult.PASS_ENUM`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `azure_group_id`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `detailed_status`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `detailed_status_message`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `expiration`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `jump_hosts_allowed`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `last_validation`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `os_group_name`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `privilege_level`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `privilege_level_name`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `provisioning_state`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `user_list`
+  - Model `BareMetalMachineKeySet` deleted or renamed its instance variable `user_list_status`
+  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `expiration`
+  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `jump_hosts_allowed`
+  - Model `BareMetalMachineKeySetPatchParameters` deleted or renamed its instance variable `user_list`
+  - Model `BareMetalMachinePatchParameters` deleted or renamed its instance variable `machine_details`
+  - Model `BmcKeySet` deleted or renamed its instance variable `azure_group_id`
+  - Model `BmcKeySet` deleted or renamed its instance variable `detailed_status`
+  - Model `BmcKeySet` deleted or renamed its instance variable `detailed_status_message`
+  - Model `BmcKeySet` deleted or renamed its instance variable `expiration`
+  - Model `BmcKeySet` deleted or renamed its instance variable `last_validation`
+  - Model `BmcKeySet` deleted or renamed its instance variable `privilege_level`
+  - Model `BmcKeySet` deleted or renamed its instance variable `provisioning_state`
+  - Model `BmcKeySet` deleted or renamed its instance variable `user_list`
+  - Model `BmcKeySet` deleted or renamed its instance variable `user_list_status`
+  - Model `BmcKeySetPatchParameters` deleted or renamed its instance variable `expiration`
+  - Model `BmcKeySetPatchParameters` deleted or renamed its instance variable `user_list`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `additional_egress_endpoints`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `associated_resource_ids`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `cluster_id`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `detailed_status`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `detailed_status_message`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `enable_default_egress_endpoints`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `enabled_egress_endpoints`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `hybrid_aks_clusters_associated_ids`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `interface_name`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `provisioning_state`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `storage_options`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `storage_status`
+  - Model `CloudServicesNetwork` deleted or renamed its instance variable `virtual_machines_associated_ids`
+  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `additional_egress_endpoints`
+  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `enable_default_egress_endpoints`
+  - Model `CloudServicesNetworkPatchParameters` deleted or renamed its instance variable `storage_options`
+  - Model `Cluster` deleted or renamed its instance variable `action_states`
+  - Model `Cluster` deleted or renamed its instance variable `aggregator_or_single_rack_definition`
+  - Model `Cluster` deleted or renamed its instance variable `analytics_output_settings`
+  - Model `Cluster` deleted or renamed its instance variable `analytics_workspace_id`
+  - Model `Cluster` deleted or renamed its instance variable `available_upgrade_versions`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_capacity`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_connection_status`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_extended_location`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_location`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_manager_connection_status`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_manager_id`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_service_principal`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_type`
+  - Model `Cluster` deleted or renamed its instance variable `cluster_version`
+  - Model `Cluster` deleted or renamed its instance variable `command_output_settings`
+  - Model `Cluster` deleted or renamed its instance variable `compute_deployment_threshold`
+  - Model `Cluster` deleted or renamed its instance variable `compute_rack_definitions`
+  - Model `Cluster` deleted or renamed its instance variable `detailed_status`
+  - Model `Cluster` deleted or renamed its instance variable `detailed_status_message`
+  - Model `Cluster` deleted or renamed its instance variable `hybrid_aks_extended_location`
+  - Model `Cluster` deleted or renamed its instance variable `managed_resource_group_configuration`
+  - Model `Cluster` deleted or renamed its instance variable `manual_action_count`
+  - Model `Cluster` deleted or renamed its instance variable `network_fabric_id`
+  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
+  - Model `Cluster` deleted or renamed its instance variable `runtime_protection_configuration`
+  - Model `Cluster` deleted or renamed its instance variable `secret_archive`
+  - Model `Cluster` deleted or renamed its instance variable `secret_archive_settings`
+  - Model `Cluster` deleted or renamed its instance variable `support_expiry_date`
+  - Model `Cluster` deleted or renamed its instance variable `update_strategy`
+  - Model `Cluster` deleted or renamed its instance variable `vulnerability_scanning_settings`
+  - Model `Cluster` deleted or renamed its instance variable `workload_resource_ids`
+  - Model `ClusterManager` deleted or renamed its instance variable `analytics_workspace_id`
+  - Model `ClusterManager` deleted or renamed its instance variable `availability_zones`
+  - Model `ClusterManager` deleted or renamed its instance variable `cluster_versions`
+  - Model `ClusterManager` deleted or renamed its instance variable `detailed_status`
+  - Model `ClusterManager` deleted or renamed its instance variable `detailed_status_message`
+  - Model `ClusterManager` deleted or renamed its instance variable `fabric_controller_id`
+  - Model `ClusterManager` deleted or renamed its instance variable `managed_resource_group_configuration`
+  - Model `ClusterManager` deleted or renamed its instance variable `manager_extended_location`
+  - Model `ClusterManager` deleted or renamed its instance variable `provisioning_state`
+  - Model `ClusterManager` deleted or renamed its instance variable `vm_size`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `collection_interval`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `detailed_status`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `detailed_status_message`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `disabled_metrics`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `enabled_metrics`
+  - Model `ClusterMetricsConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `ClusterMetricsConfigurationPatchParameters` deleted or renamed its instance variable `collection_interval`
+  - Model `ClusterMetricsConfigurationPatchParameters` deleted or renamed its instance variable `enabled_metrics`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `aggregator_or_single_rack_definition`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `analytics_output_settings`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `cluster_location`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `cluster_service_principal`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `command_output_settings`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `compute_deployment_threshold`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `compute_rack_definitions`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `runtime_protection_configuration`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `secret_archive`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `secret_archive_settings`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `update_strategy`
+  - Model `ClusterPatchParameters` deleted or renamed its instance variable `vulnerability_scanning_settings`
+  - Model `Console` deleted or renamed its instance variable `detailed_status`
+  - Model `Console` deleted or renamed its instance variable `detailed_status_message`
+  - Model `Console` deleted or renamed its instance variable `enabled`
+  - Model `Console` deleted or renamed its instance variable `expiration`
+  - Model `Console` deleted or renamed its instance variable `private_link_service_id`
+  - Model `Console` deleted or renamed its instance variable `provisioning_state`
+  - Model `Console` deleted or renamed its instance variable `ssh_public_key`
+  - Model `Console` deleted or renamed its instance variable `virtual_machine_access_id`
+  - Model `ConsolePatchParameters` deleted or renamed its instance variable `enabled`
+  - Model `ConsolePatchParameters` deleted or renamed its instance variable `expiration`
+  - Model `ConsolePatchParameters` deleted or renamed its instance variable `ssh_public_key`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `aad_configuration`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `administrator_configuration`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `attached_network_ids`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `available_upgrades`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `cluster_id`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `connected_cluster_id`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `control_plane_kubernetes_version`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `control_plane_node_configuration`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `detailed_status`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `detailed_status_message`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `feature_statuses`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `initial_agent_pool_configurations`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `kubernetes_version`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `managed_resource_group_configuration`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `network_configuration`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `nodes`
+  - Model `KubernetesCluster` deleted or renamed its instance variable `provisioning_state`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `availability_lifecycle`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `detailed_status`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `detailed_status_message`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `options`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `provisioning_state`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `required`
+  - Model `KubernetesClusterFeature` deleted or renamed its instance variable `version`
+  - Model `KubernetesClusterFeaturePatchParameters` deleted or renamed its instance variable `options`
+  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `administrator_configuration`
+  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `control_plane_node_configuration`
+  - Model `KubernetesClusterPatchParameters` deleted or renamed its instance variable `kubernetes_version`
+  - Model `L2Network` deleted or renamed its instance variable `associated_resource_ids`
+  - Model `L2Network` deleted or renamed its instance variable `cluster_id`
+  - Model `L2Network` deleted or renamed its instance variable `detailed_status`
+  - Model `L2Network` deleted or renamed its instance variable `detailed_status_message`
+  - Model `L2Network` deleted or renamed its instance variable `hybrid_aks_clusters_associated_ids`
+  - Model `L2Network` deleted or renamed its instance variable `hybrid_aks_plugin_type`
+  - Model `L2Network` deleted or renamed its instance variable `interface_name`
+  - Model `L2Network` deleted or renamed its instance variable `l2_isolation_domain_id`
+  - Model `L2Network` deleted or renamed its instance variable `provisioning_state`
+  - Model `L2Network` deleted or renamed its instance variable `virtual_machines_associated_ids`
+  - Model `L3Network` deleted or renamed its instance variable `associated_resource_ids`
+  - Model `L3Network` deleted or renamed its instance variable `cluster_id`
+  - Model `L3Network` deleted or renamed its instance variable `detailed_status`
+  - Model `L3Network` deleted or renamed its instance variable `detailed_status_message`
+  - Model `L3Network` deleted or renamed its instance variable `hybrid_aks_clusters_associated_ids`
+  - Model `L3Network` deleted or renamed its instance variable `hybrid_aks_ipam_enabled`
+  - Model `L3Network` deleted or renamed its instance variable `hybrid_aks_plugin_type`
+  - Model `L3Network` deleted or renamed its instance variable `interface_name`
+  - Model `L3Network` deleted or renamed its instance variable `ip_allocation_type`
+  - Model `L3Network` deleted or renamed its instance variable `ipv4_connected_prefix`
+  - Model `L3Network` deleted or renamed its instance variable `ipv6_connected_prefix`
+  - Model `L3Network` deleted or renamed its instance variable `l3_isolation_domain_id`
+  - Model `L3Network` deleted or renamed its instance variable `provisioning_state`
+  - Model `L3Network` deleted or renamed its instance variable `virtual_machines_associated_ids`
+  - Model `L3Network` deleted or renamed its instance variable `vlan`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `bootstrap_protocol`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `cpu_cores`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `cpu_sockets`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `disks`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `generation`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `hardware_version`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `memory_capacity_gb`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `model`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `network_interfaces`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `total_threads`
+  - Model `MachineSkuSlot` deleted or renamed its instance variable `vendor`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `exit_code`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `output_head`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `result_ref`
+  - Model `OperationStatusResult` deleted or renamed its instance variable `result_url`
+  - Model `Rack` deleted or renamed its instance variable `availability_zone`
+  - Model `Rack` deleted or renamed its instance variable `cluster_id`
+  - Model `Rack` deleted or renamed its instance variable `detailed_status`
+  - Model `Rack` deleted or renamed its instance variable `detailed_status_message`
+  - Model `Rack` deleted or renamed its instance variable `provisioning_state`
+  - Model `Rack` deleted or renamed its instance variable `rack_location`
+  - Model `Rack` deleted or renamed its instance variable `rack_serial_number`
+  - Model `Rack` deleted or renamed its instance variable `rack_sku_id`
+  - Model `RackPatchParameters` deleted or renamed its instance variable `rack_location`
+  - Model `RackPatchParameters` deleted or renamed its instance variable `rack_serial_number`
+  - Model `RackSku` deleted or renamed its instance variable `compute_machines`
+  - Model `RackSku` deleted or renamed its instance variable `controller_machines`
+  - Model `RackSku` deleted or renamed its instance variable `description`
+  - Model `RackSku` deleted or renamed its instance variable `max_cluster_slots`
+  - Model `RackSku` deleted or renamed its instance variable `provisioning_state`
+  - Model `RackSku` deleted or renamed its instance variable `rack_type`
+  - Model `RackSku` deleted or renamed its instance variable `storage_appliances`
+  - Model `RackSku` deleted or renamed its instance variable `supported_rack_sku_ids`
+  - Model `StorageAppliance` deleted or renamed its instance variable `administrator_credentials`
+  - Model `StorageAppliance` deleted or renamed its instance variable `ca_certificate`
+  - Model `StorageAppliance` deleted or renamed its instance variable `capacity`
+  - Model `StorageAppliance` deleted or renamed its instance variable `capacity_used`
+  - Model `StorageAppliance` deleted or renamed its instance variable `cluster_id`
+  - Model `StorageAppliance` deleted or renamed its instance variable `detailed_status`
+  - Model `StorageAppliance` deleted or renamed its instance variable `detailed_status_message`
+  - Model `StorageAppliance` deleted or renamed its instance variable `management_ipv4_address`
+  - Model `StorageAppliance` deleted or renamed its instance variable `manufacturer`
+  - Model `StorageAppliance` deleted or renamed its instance variable `model`
+  - Model `StorageAppliance` deleted or renamed its instance variable `provisioning_state`
+  - Model `StorageAppliance` deleted or renamed its instance variable `rack_id`
+  - Model `StorageAppliance` deleted or renamed its instance variable `rack_slot`
+  - Model `StorageAppliance` deleted or renamed its instance variable `remote_vendor_management_feature`
+  - Model `StorageAppliance` deleted or renamed its instance variable `remote_vendor_management_status`
+  - Model `StorageAppliance` deleted or renamed its instance variable `secret_rotation_status`
+  - Model `StorageAppliance` deleted or renamed its instance variable `serial_number`
+  - Model `StorageAppliance` deleted or renamed its instance variable `storage_appliance_sku_id`
+  - Model `StorageAppliance` deleted or renamed its instance variable `version`
+  - Model `StorageAppliancePatchParameters` deleted or renamed its instance variable `serial_number`
+  - Model `StorageApplianceSkuSlot` deleted or renamed its instance variable `capacity_gb`
+  - Model `StorageApplianceSkuSlot` deleted or renamed its instance variable `model`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `associated_resource_ids`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `cluster_id`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `detailed_status`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `detailed_status_message`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `hybrid_aks_clusters_associated_ids`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `hybrid_aks_plugin_type`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `interface_name`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `isolation_domain_ids`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `provisioning_state`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `virtual_machines_associated_ids`
+  - Model `TrunkedNetwork` deleted or renamed its instance variable `vlans`
+  - Model `VirtualMachine` deleted or renamed its instance variable `admin_username`
+  - Model `VirtualMachine` deleted or renamed its instance variable `availability_zone`
+  - Model `VirtualMachine` deleted or renamed its instance variable `bare_metal_machine_id`
+  - Model `VirtualMachine` deleted or renamed its instance variable `boot_method`
+  - Model `VirtualMachine` deleted or renamed its instance variable `cloud_services_network_attachment`
+  - Model `VirtualMachine` deleted or renamed its instance variable `cluster_id`
+  - Model `VirtualMachine` deleted or renamed its instance variable `console_extended_location`
+  - Model `VirtualMachine` deleted or renamed its instance variable `cpu_cores`
+  - Model `VirtualMachine` deleted or renamed its instance variable `detailed_status`
+  - Model `VirtualMachine` deleted or renamed its instance variable `detailed_status_message`
+  - Model `VirtualMachine` deleted or renamed its instance variable `isolate_emulator_thread`
+  - Model `VirtualMachine` deleted or renamed its instance variable `memory_size_gb`
+  - Model `VirtualMachine` deleted or renamed its instance variable `network_attachments`
+  - Model `VirtualMachine` deleted or renamed its instance variable `network_data`
+  - Model `VirtualMachine` deleted or renamed its instance variable `network_data_content`
+  - Model `VirtualMachine` deleted or renamed its instance variable `placement_hints`
+  - Model `VirtualMachine` deleted or renamed its instance variable `power_state`
+  - Model `VirtualMachine` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualMachine` deleted or renamed its instance variable `ssh_public_keys`
+  - Model `VirtualMachine` deleted or renamed its instance variable `storage_profile`
+  - Model `VirtualMachine` deleted or renamed its instance variable `user_data`
+  - Model `VirtualMachine` deleted or renamed its instance variable `user_data_content`
+  - Model `VirtualMachine` deleted or renamed its instance variable `virtio_interface`
+  - Model `VirtualMachine` deleted or renamed its instance variable `vm_device_model`
+  - Model `VirtualMachine` deleted or renamed its instance variable `vm_image`
+  - Model `VirtualMachine` deleted or renamed its instance variable `vm_image_repository_credentials`
+  - Model `VirtualMachine` deleted or renamed its instance variable `volumes`
+  - Model `VirtualMachinePatchParameters` deleted or renamed its instance variable `vm_image_repository_credentials`
+  - Model `Volume` deleted or renamed its instance variable `allocated_size_mi_b`
+  - Model `Volume` deleted or renamed its instance variable `attached_to`
+  - Model `Volume` deleted or renamed its instance variable `detailed_status`
+  - Model `Volume` deleted or renamed its instance variable `detailed_status_message`
+  - Model `Volume` deleted or renamed its instance variable `provisioning_state`
+  - Model `Volume` deleted or renamed its instance variable `serial_number`
+  - Model `Volume` deleted or renamed its instance variable `size_mi_b`
+  - Model `Volume` deleted or renamed its instance variable `storage_appliance_id`
+  - Deleted or renamed model `AgentPoolConfiguration`
+  - Deleted or renamed model `AgentPoolList`
+  - Deleted or renamed model `BareMetalMachineKeySetList`
+  - Deleted or renamed model `BareMetalMachineList`
+  - Deleted or renamed model `BmcKeySetList`
+  - Deleted or renamed model `CloudServicesNetworkList`
+  - Deleted or renamed model `ClusterList`
+  - Deleted or renamed model `ClusterManagerList`
+  - Deleted or renamed model `ClusterMetricsConfigurationList`
+  - Deleted or renamed model `ConsoleList`
+  - Deleted or renamed model `KubernetesClusterFeatureList`
+  - Deleted or renamed model `KubernetesClusterList`
+  - Deleted or renamed model `L2NetworkList`
+  - Deleted or renamed model `L3NetworkList`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `RackList`
+  - Deleted or renamed model `RackSkuList`
+  - Deleted or renamed model `StorageApplianceList`
+  - Deleted or renamed model `TagsParameter`
+  - Deleted or renamed model `TrunkedNetworkList`
+  - Deleted or renamed model `VirtualMachineList`
+  - Deleted or renamed model `VolumeList`
+  - Method `AgentPoolsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `AgentPoolsOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BareMetalMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `BmcKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BmcKeySetsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `CloudServicesNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `CloudServicesNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `CloudServicesNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClusterManagersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClusterManagersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClusterManagersOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClusterManagersOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `ConsolesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `ConsolesOperations.list_by_virtual_machine` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClusterFeaturesOperations.list_by_kubernetes_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `KubernetesClustersOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `KubernetesClustersOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L2NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L2NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L2NetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L2NetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L3NetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `L3NetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `L3NetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `MetricsConfigurationsOperations.list_by_cluster` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RacksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `RacksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RacksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAppliancesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `StorageAppliancesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `StorageAppliancesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `TrunkedNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `TrunkedNetworksOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `TrunkedNetworksOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `TrunkedNetworksOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.begin_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualMachinesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VirtualMachinesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.begin_delete` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.list_by_subscription` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `VolumesOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VolumesOperations.update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `BareMetalMachineKeySetsOperations.begin_delete` re-ordered its parameters from `['self', 'bare_metal_machine_key_set_name', 'cluster_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_key_set_name', 'cluster_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BareMetalMachineKeySetsOperations.begin_update` re-ordered its parameters from `['self', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_update_parameters', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_update_parameters', 'cluster_name', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BareMetalMachineKeySetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_parameters', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_key_set_name', 'bare_metal_machine_key_set_parameters', 'cluster_name', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `StorageAppliancesOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'resource_group_name', 'storage_appliance_name', 'kwargs']` to `['self', 'etag', 'match_condition', 'resource_group_name', 'storage_appliance_name', 'kwargs']`
+  - Method `StorageAppliancesOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_update_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_update_parameters', 'kwargs']`
+  - Method `StorageAppliancesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'storage_appliance_name', 'storage_appliance_parameters', 'kwargs']`
+  - Method `ClustersOperations.begin_delete` re-ordered its parameters from `['self', 'cluster_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `ClustersOperations.begin_update` re-ordered its parameters from `['self', 'cluster_name', 'cluster_update_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'cluster_update_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `ClustersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'cluster_name', 'cluster_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'cluster_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BareMetalMachinesOperations.begin_delete` re-ordered its parameters from `['self', 'bare_metal_machine_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BareMetalMachinesOperations.begin_update` re-ordered its parameters from `['self', 'bare_metal_machine_name', 'bare_metal_machine_update_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_name', 'bare_metal_machine_update_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BareMetalMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'bare_metal_machine_name', 'bare_metal_machine_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bare_metal_machine_name', 'bare_metal_machine_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `AgentPoolsOperations.begin_delete` re-ordered its parameters from `['self', 'agent_pool_name', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'agent_pool_name', 'etag', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `AgentPoolsOperations.begin_update` re-ordered its parameters from `['self', 'agent_pool_name', 'agent_pool_update_parameters', 'content_type', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'agent_pool_name', 'agent_pool_update_parameters', 'content_type', 'etag', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `AgentPoolsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'agent_pool_name', 'agent_pool_parameters', 'content_type', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'agent_pool_name', 'agent_pool_parameters', 'content_type', 'etag', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `TrunkedNetworksOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'resource_group_name', 'trunked_network_name', 'kwargs']` to `['self', 'etag', 'match_condition', 'resource_group_name', 'trunked_network_name', 'kwargs']`
+  - Method `TrunkedNetworksOperations.update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'trunked_network_name', 'trunked_network_update_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'trunked_network_name', 'trunked_network_update_parameters', 'kwargs']`
+  - Method `TrunkedNetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'trunked_network_name', 'trunked_network_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'trunked_network_name', 'trunked_network_parameters', 'kwargs']`
+  - Method `MetricsConfigurationsOperations.begin_delete` re-ordered its parameters from `['self', 'cluster_name', 'if_match', 'if_none_match', 'metrics_configuration_name', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'etag', 'match_condition', 'metrics_configuration_name', 'resource_group_name', 'kwargs']`
+  - Method `MetricsConfigurationsOperations.begin_update` re-ordered its parameters from `['self', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'metrics_configuration_name', 'metrics_configuration_update_parameters', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'content_type', 'etag', 'match_condition', 'metrics_configuration_name', 'metrics_configuration_update_parameters', 'resource_group_name', 'kwargs']`
+  - Method `MetricsConfigurationsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'metrics_configuration_name', 'metrics_configuration_parameters', 'resource_group_name', 'kwargs']` to `['self', 'cluster_name', 'content_type', 'etag', 'match_condition', 'metrics_configuration_name', 'metrics_configuration_parameters', 'resource_group_name', 'kwargs']`
+  - Method `L2NetworksOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'l2_network_name', 'resource_group_name', 'kwargs']` to `['self', 'etag', 'l2_network_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `L2NetworksOperations.update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'l2_network_name', 'l2_network_update_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'l2_network_name', 'l2_network_update_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `L2NetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'l2_network_name', 'l2_network_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'l2_network_name', 'l2_network_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BmcKeySetsOperations.begin_delete` re-ordered its parameters from `['self', 'bmc_key_set_name', 'cluster_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bmc_key_set_name', 'cluster_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BmcKeySetsOperations.begin_update` re-ordered its parameters from `['self', 'bmc_key_set_name', 'bmc_key_set_update_parameters', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bmc_key_set_name', 'bmc_key_set_update_parameters', 'cluster_name', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `BmcKeySetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'bmc_key_set_name', 'bmc_key_set_parameters', 'cluster_name', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'bmc_key_set_name', 'bmc_key_set_parameters', 'cluster_name', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'kwargs']` to `['self', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_update_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_update_parameters', 'kwargs']`
+  - Method `VirtualMachinesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'virtual_machine_parameters', 'kwargs']`
+  - Method `KubernetesClustersOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'etag', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `KubernetesClustersOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'kubernetes_cluster_update_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'kubernetes_cluster_name', 'kubernetes_cluster_update_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `KubernetesClustersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'kubernetes_cluster_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'kubernetes_cluster_name', 'kubernetes_cluster_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `KubernetesClusterFeaturesOperations.begin_delete` re-ordered its parameters from `['self', 'feature_name', 'if_match', 'if_none_match', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'etag', 'feature_name', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `KubernetesClusterFeaturesOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'feature_name', 'if_match', 'if_none_match', 'kubernetes_cluster_feature_update_parameters', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'feature_name', 'kubernetes_cluster_feature_update_parameters', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `KubernetesClusterFeaturesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'feature_name', 'if_match', 'if_none_match', 'kubernetes_cluster_feature_parameters', 'kubernetes_cluster_name', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'feature_name', 'kubernetes_cluster_feature_parameters', 'kubernetes_cluster_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `RacksOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'rack_name', 'resource_group_name', 'kwargs']` to `['self', 'etag', 'match_condition', 'rack_name', 'resource_group_name', 'kwargs']`
+  - Method `RacksOperations.begin_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'rack_name', 'rack_update_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'rack_name', 'rack_update_parameters', 'resource_group_name', 'kwargs']`
+  - Method `RacksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'rack_name', 'rack_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'rack_name', 'rack_parameters', 'resource_group_name', 'kwargs']`
+  - Method `ClusterManagersOperations.begin_delete` re-ordered its parameters from `['self', 'cluster_manager_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_manager_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `ClusterManagersOperations.update` re-ordered its parameters from `['self', 'cluster_manager_name', 'cluster_manager_update_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_manager_name', 'cluster_manager_update_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `ClusterManagersOperations.begin_create_or_update` re-ordered its parameters from `['self', 'cluster_manager_name', 'cluster_manager_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cluster_manager_name', 'cluster_manager_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `L3NetworksOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'l3_network_name', 'resource_group_name', 'kwargs']` to `['self', 'etag', 'l3_network_name', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `L3NetworksOperations.update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'l3_network_name', 'l3_network_update_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'l3_network_name', 'l3_network_update_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `L3NetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'l3_network_name', 'l3_network_parameters', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'l3_network_name', 'l3_network_parameters', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `CloudServicesNetworksOperations.begin_delete` re-ordered its parameters from `['self', 'cloud_services_network_name', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cloud_services_network_name', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `CloudServicesNetworksOperations.begin_update` re-ordered its parameters from `['self', 'cloud_services_network_name', 'cloud_services_network_update_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cloud_services_network_name', 'cloud_services_network_update_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `CloudServicesNetworksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'cloud_services_network_name', 'cloud_services_network_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'kwargs']` to `['self', 'cloud_services_network_name', 'cloud_services_network_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'kwargs']`
+  - Method `VolumesOperations.begin_delete` re-ordered its parameters from `['self', 'if_match', 'if_none_match', 'resource_group_name', 'volume_name', 'kwargs']` to `['self', 'etag', 'match_condition', 'resource_group_name', 'volume_name', 'kwargs']`
+  - Method `VolumesOperations.update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'volume_name', 'volume_update_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'volume_name', 'volume_update_parameters', 'kwargs']`
+  - Method `VolumesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'volume_name', 'volume_parameters', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'volume_name', 'volume_parameters', 'kwargs']`
+  - Method `ConsolesOperations.begin_delete` re-ordered its parameters from `['self', 'console_name', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'kwargs']` to `['self', 'console_name', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'kwargs']`
+  - Method `ConsolesOperations.begin_update` re-ordered its parameters from `['self', 'console_name', 'console_update_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'kwargs']` to `['self', 'console_name', 'console_update_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'kwargs']`
+  - Method `ConsolesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'console_name', 'console_parameters', 'content_type', 'if_match', 'if_none_match', 'resource_group_name', 'virtual_machine_name', 'kwargs']` to `['self', 'console_name', 'console_parameters', 'content_type', 'etag', 'match_condition', 'resource_group_name', 'virtual_machine_name', 'kwargs']`
+
 ## 3.0.0b2 (2026-06-24)
 
 ### Features Added

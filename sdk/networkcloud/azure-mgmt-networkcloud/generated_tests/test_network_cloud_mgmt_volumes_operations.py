@@ -41,7 +41,6 @@ class TestNetworkCloudMgmtVolumesOperations(AzureMgmtRecordedTestCase):
                 "properties": {
                     "sizeMiB": 0,
                     "allocatedSizeMiB": 0,
-                    "assignedStorageApplianceId": "str",
                     "attachedTo": ["str"],
                     "detailedStatus": "str",
                     "detailedStatusMessage": "str",

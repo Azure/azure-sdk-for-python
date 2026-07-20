@@ -458,21 +458,21 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def keys(self) -> typing.KeysView[str]:
         """
-        :returns: a set-like object providing a view on D's keys
+        :returns: a set-like object providing a view on the mapping's keys
         :rtype: ~typing.KeysView
         """
         return self._data.keys()
 
     def values(self) -> typing.ValuesView[typing.Any]:
         """
-        :returns: an object providing a view on D's values
+        :returns: an object providing a view on the mapping's values
         :rtype: ~typing.ValuesView
         """
         return self._data.values()
 
     def items(self) -> typing.ItemsView[str, typing.Any]:
         """
-        :returns: set-like object providing a view on D's items
+        :returns: a set-like object providing a view on the mapping's items
         :rtype: ~typing.ItemsView
         """
         return self._data.items()
@@ -482,7 +482,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Get the value for key if key is in the dictionary, else default.
         :param str key: The key to look up.
         :param any default: The value to return if key is not in the dictionary. Defaults to None
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         try:
@@ -517,19 +517,19 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         Removes and returns some (key, value) pair
         :returns: The (key, value) pair.
         :rtype: tuple
-        :raises KeyError: if D is empty.
+        :raises KeyError: if the dictionary is empty.
         """
         return self._data.popitem()
 
     def clear(self) -> None:
         """
-        Remove all items from D.
+        Remove all items from the dictionary.
         """
         self._data.clear()
 
     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=arguments-differ
         """
-        Updates D from mapping/iterable E and F.
+        Update the dictionary from a mapping or an iterable of key-value pairs.
         :param any args: Either a mapping object or an iterable of key-value pairs.
         """
         self._data.update(*args, **kwargs)
@@ -542,10 +542,11 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
 
     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
         """
-        Same as calling D.get(k, d), and setting D[k]=d if k not found
+        Return the value for key if key is in the dictionary; otherwise set the key to
+        default and return default.
         :param str key: The key to look up.
         :param any default: The value to set if key is not in the dictionary
-        :returns: D[k] if k in D, else d.
+        :returns: The value for key if key is in the dictionary, else default.
         :rtype: any
         """
         if default is _UNSET:
@@ -1021,10 +1022,6 @@ class Model(_MyMutableMapping):
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
-            cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
-                Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
-                for attr, rf in cls._attr_to_rest_field.items()
-            }
             # Build XML field plan for fast _init_from_xml (only for XML models)
             if getattr(cls, "_xml", None):
                 cls._xml_field_plan = _build_xml_field_plan(cls, attr_to_rest_field)
@@ -1036,16 +1033,6 @@ class Model(_MyMutableMapping):
         for base in cls.__bases__:
             if hasattr(base, "__mapping__"):
                 base.__mapping__[discriminator or cls.__name__] = cls  # type: ignore
-
-    @classmethod
-    def _get_backcompat_attribute_name(cls, attr_to_rest_field: dict[str, "_RestField"], attr_name: str) -> str:
-        rest_field_obj = attr_to_rest_field.get(attr_name)  # pylint: disable=protected-access
-        if rest_field_obj is None:
-            return attr_name
-        original_tsp_name = getattr(rest_field_obj, "_original_tsp_name", None)  # pylint: disable=protected-access
-        if original_tsp_name:
-            return original_tsp_name
-        return attr_name
 
     @classmethod
     def _get_discriminator(cls, exist_discriminators) -> typing.Optional["_RestField"]:
@@ -1413,7 +1400,6 @@ class _RestField:
         is_multipart_file_input: bool = False,
         xml: typing.Optional[dict[str, typing.Any]] = None,
         deserializer: typing.Optional[typing.Callable] = None,
-        original_tsp_name: typing.Optional[str] = None,
     ):
         self._type = type
         self._rest_name_input = name
@@ -1427,7 +1413,6 @@ class _RestField:
         self._is_multipart_file_input = is_multipart_file_input
         self._xml = xml if xml is not None else {}
         self._deserializer = deserializer
-        self._original_tsp_name = original_tsp_name
 
     @property
     def _class_type(self) -> typing.Any:
@@ -1514,7 +1499,6 @@ def rest_field(
     is_multipart_file_input: bool = False,
     xml: typing.Optional[dict[str, typing.Any]] = None,
     deserializer: typing.Optional[typing.Callable] = None,
-    original_tsp_name: typing.Optional[str] = None,
 ) -> typing.Any:
     return _RestField(
         name=name,
@@ -1525,7 +1509,6 @@ def rest_field(
         is_multipart_file_input=is_multipart_file_input,
         xml=xml,
         deserializer=deserializer,
-        original_tsp_name=original_tsp_name,
     )
 
 

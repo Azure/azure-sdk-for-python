@@ -41,10 +41,9 @@ def main():
                     "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedIdentity/userAssignedIdentities/userIdentity1": {}
                 },
             },
-            "kind": "AzureLocal",
             "location": "location",
             "properties": {
-                "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.OperationalInsights/workspaces/logAnalyticsWorkspaceName",
+                "analyticsWorkspaceId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/microsoft.operationalInsights/workspaces/logAnalyticsWorkspaceName",
                 "fabricControllerId": "/subscriptions/123e4567-e89b-12d3-a456-426655440000/resourceGroups/resourceGroupName/providers/Microsoft.ManagedNetworkFabric/networkFabricControllers/fabricControllerName",
                 "managedResourceGroupConfiguration": {"location": "East US", "name": "my-managed-rg"},
             },
@@ -54,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01-preview/ClusterManagers_Create_Uami.json
+# x-ms-original-file: 2025-09-01/ClusterManagers_Create_Uami.json
 if __name__ == "__main__":
     main()

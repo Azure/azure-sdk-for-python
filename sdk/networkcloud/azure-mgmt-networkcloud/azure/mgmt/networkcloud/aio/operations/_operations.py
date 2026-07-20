@@ -34,17 +34,10 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._validation import api_version_validation
 from ...operations._operations import (
-    build_access_bridges_create_or_update_request,
-    build_access_bridges_delete_request,
-    build_access_bridges_get_request,
-    build_access_bridges_list_by_resource_group_request,
-    build_access_bridges_list_by_subscription_request,
-    build_access_bridges_update_request,
     build_agent_pools_create_or_update_request,
     build_agent_pools_delete_request,
     build_agent_pools_get_request,
@@ -88,17 +81,14 @@ from ...operations._operations import (
     build_cluster_managers_get_request,
     build_cluster_managers_list_by_resource_group_request,
     build_cluster_managers_list_by_subscription_request,
-    build_cluster_managers_update_relay_private_endpoint_connection_request,
     build_cluster_managers_update_request,
     build_clusters_continue_update_version_request,
     build_clusters_create_or_update_request,
     build_clusters_delete_request,
     build_clusters_deploy_request,
     build_clusters_get_request,
-    build_clusters_inspect_request,
     build_clusters_list_by_resource_group_request,
     build_clusters_list_by_subscription_request,
-    build_clusters_rotate_credential_request,
     build_clusters_scan_runtime_request,
     build_clusters_update_request,
     build_clusters_update_version_request,
@@ -119,12 +109,6 @@ from ...operations._operations import (
     build_kubernetes_clusters_list_by_subscription_request,
     build_kubernetes_clusters_restart_node_request,
     build_kubernetes_clusters_update_request,
-    build_kubernetes_versions_create_or_update_request,
-    build_kubernetes_versions_delete_request,
-    build_kubernetes_versions_get_request,
-    build_kubernetes_versions_list_by_resource_group_request,
-    build_kubernetes_versions_list_by_subscription_request,
-    build_kubernetes_versions_update_request,
     build_l2_networks_create_or_update_request,
     build_l2_networks_delete_request,
     build_l2_networks_get_request,
@@ -188,7 +172,6 @@ from .._configuration import NetworkCloudMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -274,1118 +257,6 @@ class Operations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.Operation],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-
-class AccessBridgesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
-        :attr:`access_bridges` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def get(
-        self, resource_group_name: str, access_bridge_name: Union[str, _models.AccessBridgeAllowedName], **kwargs: Any
-    ) -> _models.AccessBridge:
-        """Get the properties of the provided access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :return: AccessBridge. The AccessBridge is compatible with MutableMapping
-        :rtype: ~azure.mgmt.networkcloud.models.AccessBridge
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
-
-        _request = build_access_bridges_get_request(
-            resource_group_name=resource_group_name,
-            access_bridge_name=access_bridge_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AccessBridge, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge: Union[_models.AccessBridge, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(access_bridge, (IOBase, bytes)):
-            _content = access_bridge
-        else:
-            _content = json.dumps(access_bridge, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_access_bridges_create_or_update_request(
-            resource_group_name=resource_group_name,
-            access_bridge_name=access_bridge_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge: _models.AccessBridge,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Create a new access bridge or update the properties of the existing access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge: The access bridge configuration. Required.
-        :type access_bridge: ~azure.mgmt.networkcloud.models.AccessBridge
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Create a new access bridge or update the properties of the existing access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge: The access bridge configuration. Required.
-        :type access_bridge: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Create a new access bridge or update the properties of the existing access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge: The access bridge configuration. Required.
-        :type access_bridge: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "content_type",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge: Union[_models.AccessBridge, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Create a new access bridge or update the properties of the existing access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge: The access bridge configuration. Is one of the following types:
-         AccessBridge, JSON, IO[bytes] Required.
-        :type access_bridge: ~azure.mgmt.networkcloud.models.AccessBridge or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                access_bridge_name=access_bridge_name,
-                access_bridge=access_bridge,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AccessBridge, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.AccessBridge].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.AccessBridge](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _update_initial(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge_update_parameters: Optional[Union[_models.AccessBridgePatchParameters, JSON, IO[bytes]]] = None,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if access_bridge_update_parameters else None
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if access_bridge_update_parameters else None
-        _content = None
-        if isinstance(access_bridge_update_parameters, (IOBase, bytes)):
-            _content = access_bridge_update_parameters
-        else:
-            if access_bridge_update_parameters is not None:
-                _content = json.dumps(access_bridge_update_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_access_bridges_update_request(
-            resource_group_name=resource_group_name,
-            access_bridge_name=access_bridge_name,
-            subscription_id=self._config.subscription_id,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge_update_parameters: Optional[_models.AccessBridgePatchParameters] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Update properties of the provided access bridge, or update tags associated with the access
-        bridge. Properties and tag updates can be done independently.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge_update_parameters: The request body. Default value is None.
-        :type access_bridge_update_parameters:
-         ~azure.mgmt.networkcloud.models.AccessBridgePatchParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge_update_parameters: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Update properties of the provided access bridge, or update tags associated with the access
-        bridge. Properties and tag updates can be done independently.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge_update_parameters: The request body. Default value is None.
-        :type access_bridge_update_parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge_update_parameters: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Update properties of the provided access bridge, or update tags associated with the access
-        bridge. Properties and tag updates can be done independently.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge_update_parameters: The request body. Default value is None.
-        :type access_bridge_update_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        access_bridge_update_parameters: Optional[Union[_models.AccessBridgePatchParameters, JSON, IO[bytes]]] = None,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.AccessBridge]:
-        """Update properties of the provided access bridge, or update tags associated with the access
-        bridge. Properties and tag updates can be done independently.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :param access_bridge_update_parameters: The request body. Is one of the following types:
-         AccessBridgePatchParameters, JSON, IO[bytes] Default value is None.
-        :type access_bridge_update_parameters:
-         ~azure.mgmt.networkcloud.models.AccessBridgePatchParameters or JSON or IO[bytes]
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns AccessBridge. The AccessBridge is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if access_bridge_update_parameters else None
-        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_group_name=resource_group_name,
-                access_bridge_name=access_bridge_name,
-                access_bridge_update_parameters=access_bridge_update_parameters,
-                etag=etag,
-                match_condition=match_condition,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AccessBridge, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.AccessBridge].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.AccessBridge](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _delete_initial(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_access_bridges_delete_request(
-            resource_group_name=resource_group_name,
-            access_bridge_name=access_bridge_name,
-            subscription_id=self._config.subscription_id,
-            etag=etag,
-            match_condition=match_condition,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "access_bridge_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_delete(
-        self,
-        resource_group_name: str,
-        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Delete the specified access bridge.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
-         "PrivateVault", and "StorageDashboard". Required.
-        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
-                access_bridge_name=access_bridge_name,
-                etag=etag,
-                match_condition=match_condition,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.OperationStatusResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "top",
-                "skip_token",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    def list_by_resource_group(
-        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AccessBridge"]:
-        """Get a list of access bridges in the provided resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
-         Default value is None.
-        :paramtype top: int
-        :keyword skip_token: The opaque token that the server returns to indicate where to continue
-         listing resources from. This is used for paging through large result sets. Default value is
-         None.
-        :paramtype skip_token: str
-        :return: An iterator like instance of AccessBridge
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AccessBridge]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_access_bridges_list_by_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    top=top,
-                    skip_token=skip_token,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AccessBridge],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    def list_by_subscription(
-        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AccessBridge"]:
-        """Get a list of access bridges in the provided subscription.
-
-        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
-         Default value is None.
-        :paramtype top: int
-        :keyword skip_token: The opaque token that the server returns to indicate where to continue
-         listing resources from. This is used for paging through large result sets. Default value is
-         None.
-        :paramtype skip_token: str
-        :return: An iterator like instance of AccessBridge
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.AccessBridge]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AccessBridge]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_access_bridges_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    top=top,
-                    skip_token=skip_token,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AccessBridge],
                 deserialized.get("value", []),
             )
             if cls:
@@ -1507,7 +378,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_parameters: Union[_models.BareMetalMachine, JSON, IO[bytes]],
+        bare_metal_machine_parameters: Union[_models.BareMetalMachine, _types.BareMetalMachine, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1632,7 +503,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_parameters: JSON,
+        bare_metal_machine_parameters: _types.BareMetalMachine,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1649,7 +520,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_parameters: The request body. Required.
-        :type bare_metal_machine_parameters: JSON
+        :type bare_metal_machine_parameters: ~azure.mgmt.networkcloud.types.BareMetalMachine
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1706,7 +577,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_parameters: Union[_models.BareMetalMachine, JSON, IO[bytes]],
+        bare_metal_machine_parameters: Union[_models.BareMetalMachine, _types.BareMetalMachine, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -1721,10 +592,10 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_parameters: The request body. Is one of the following types:
-         BareMetalMachine, JSON, IO[bytes] Required.
-        :type bare_metal_machine_parameters: ~azure.mgmt.networkcloud.models.BareMetalMachine or JSON
-         or IO[bytes]
+        :param bare_metal_machine_parameters: The request body. Is either a BareMetalMachine type or a
+         IO[bytes] type. Required.
+        :type bare_metal_machine_parameters: ~azure.mgmt.networkcloud.models.BareMetalMachine or
+         ~azure.mgmt.networkcloud.types.BareMetalMachine or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -1794,7 +665,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_update_parameters: Optional[
-            Union[_models.BareMetalMachinePatchParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachinePatchParameters, _types.BareMetalMachinePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -1925,7 +796,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_update_parameters: Optional[JSON] = None,
+        bare_metal_machine_update_parameters: Optional[_types.BareMetalMachinePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -1941,7 +812,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_update_parameters: The request body. Default value is None.
-        :type bare_metal_machine_update_parameters: JSON
+        :type bare_metal_machine_update_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachinePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1998,7 +870,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_update_parameters: Optional[
-            Union[_models.BareMetalMachinePatchParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachinePatchParameters, _types.BareMetalMachinePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -2013,10 +885,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_update_parameters: The request body. Is one of the following types:
-         BareMetalMachinePatchParameters, JSON, IO[bytes] Default value is None.
+        :param bare_metal_machine_update_parameters: The request body. Is either a
+         BareMetalMachinePatchParameters type or a IO[bytes] type. Default value is None.
         :type bare_metal_machine_update_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachinePatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachinePatchParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachinePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -2458,7 +1331,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_cordon_parameters: Optional[
-            Union[_models.BareMetalMachineCordonParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachineCordonParameters, _types.BareMetalMachineCordonParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -2568,7 +1441,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_cordon_parameters: Optional[JSON] = None,
+        bare_metal_machine_cordon_parameters: Optional[_types.BareMetalMachineCordonParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2581,7 +1454,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_cordon_parameters: The request body. Default value is None.
-        :type bare_metal_machine_cordon_parameters: JSON
+        :type bare_metal_machine_cordon_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineCordonParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2627,7 +1501,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_cordon_parameters: Optional[
-            Union[_models.BareMetalMachineCordonParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachineCordonParameters, _types.BareMetalMachineCordonParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -2638,10 +1512,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_cordon_parameters: The request body. Is one of the following types:
-         BareMetalMachineCordonParameters, JSON, IO[bytes] Default value is None.
+        :param bare_metal_machine_cordon_parameters: The request body. Is either a
+         BareMetalMachineCordonParameters type or a IO[bytes] type. Default value is None.
         :type bare_metal_machine_cordon_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineCordonParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineCordonParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineCordonParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -2710,7 +1585,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_power_off_parameters: Optional[
-            Union[_models.BareMetalMachinePowerOffParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachinePowerOffParameters, _types.BareMetalMachinePowerOffParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -2820,7 +1695,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_power_off_parameters: Optional[JSON] = None,
+        bare_metal_machine_power_off_parameters: Optional[_types.BareMetalMachinePowerOffParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2833,7 +1708,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_power_off_parameters: The request body. Default value is None.
-        :type bare_metal_machine_power_off_parameters: JSON
+        :type bare_metal_machine_power_off_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachinePowerOffParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2879,7 +1755,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_power_off_parameters: Optional[
-            Union[_models.BareMetalMachinePowerOffParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachinePowerOffParameters, _types.BareMetalMachinePowerOffParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -2890,10 +1766,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_power_off_parameters: The request body. Is one of the following
-         types: BareMetalMachinePowerOffParameters, JSON, IO[bytes] Default value is None.
+        :param bare_metal_machine_power_off_parameters: The request body. Is either a
+         BareMetalMachinePowerOffParameters type or a IO[bytes] type. Default value is None.
         :type bare_metal_machine_power_off_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachinePowerOffParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachinePowerOffParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachinePowerOffParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -2957,25 +1834,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "bare_metal_machine_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
-    )
     async def _reimage_initial(
-        self,
-        resource_group_name: str,
-        bare_metal_machine_name: str,
-        body: Optional[Union[_models.BareMetalMachineReimageParameters, JSON, IO[bytes]]] = None,
-        **kwargs: Any
+        self, resource_group_name: str, bare_metal_machine_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2985,30 +1845,16 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if body else None
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            if body is not None:
-                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
 
         _request = build_bare_metal_machines_reimage_request(
             resource_group_name=resource_group_name,
             bare_metal_machine_name=bare_metal_machine_name,
             subscription_id=self._config.subscription_id,
-            content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -3048,113 +1894,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @overload
-    async def begin_reimage(
-        self,
-        resource_group_name: str,
-        bare_metal_machine_name: str,
-        body: Optional[_models.BareMetalMachineReimageParameters] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Reimage the provided bare metal machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param bare_metal_machine_name: The name of the bare metal machine. Required.
-        :type bare_metal_machine_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: ~azure.mgmt.networkcloud.models.BareMetalMachineReimageParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_reimage(
-        self,
-        resource_group_name: str,
-        bare_metal_machine_name: str,
-        body: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Reimage the provided bare metal machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param bare_metal_machine_name: The name of the bare metal machine. Required.
-        :type bare_metal_machine_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_reimage(
-        self,
-        resource_group_name: str,
-        bare_metal_machine_name: str,
-        body: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Reimage the provided bare metal machine.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param bare_metal_machine_name: The name of the bare metal machine. Required.
-        :type bare_metal_machine_name: str
-        :param body: The content of the action request. Default value is None.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
     @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "bare_metal_machine_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
-    )
     async def begin_reimage(
-        self,
-        resource_group_name: str,
-        bare_metal_machine_name: str,
-        body: Optional[Union[_models.BareMetalMachineReimageParameters, JSON, IO[bytes]]] = None,
-        **kwargs: Any
+        self, resource_group_name: str, bare_metal_machine_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Reimage the provided bare metal machine.
 
@@ -3163,21 +1905,15 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param body: The content of the action request. Is one of the following types:
-         BareMetalMachineReimageParameters, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.networkcloud.models.BareMetalMachineReimageParameters or JSON or
-         IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if body else None
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -3186,8 +1922,6 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = await self._reimage_initial(
                 resource_group_name=resource_group_name,
                 bare_metal_machine_name=bare_metal_machine_name,
-                body=body,
-                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -3235,7 +1969,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_replace_parameters: Optional[
-            Union[_models.BareMetalMachineReplaceParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachineReplaceParameters, _types.BareMetalMachineReplaceParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -3345,7 +2079,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_replace_parameters: Optional[JSON] = None,
+        bare_metal_machine_replace_parameters: Optional[_types.BareMetalMachineReplaceParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3358,7 +2092,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_replace_parameters: The request body. Default value is None.
-        :type bare_metal_machine_replace_parameters: JSON
+        :type bare_metal_machine_replace_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineReplaceParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3404,7 +2139,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_replace_parameters: Optional[
-            Union[_models.BareMetalMachineReplaceParameters, JSON, IO[bytes]]
+            Union[_models.BareMetalMachineReplaceParameters, _types.BareMetalMachineReplaceParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -3415,10 +2150,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_replace_parameters: The request body. Is one of the following types:
-         BareMetalMachineReplaceParameters, JSON, IO[bytes] Default value is None.
+        :param bare_metal_machine_replace_parameters: The request body. Is either a
+         BareMetalMachineReplaceParameters type or a IO[bytes] type. Default value is None.
         :type bare_metal_machine_replace_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineReplaceParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineReplaceParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -3616,7 +2352,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_command_parameters: Union[_models.BareMetalMachineRunCommandParameters, JSON, IO[bytes]],
+        bare_metal_machine_run_command_parameters: Union[
+            _models.BareMetalMachineRunCommandParameters, _types.BareMetalMachineRunCommandParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3723,7 +2461,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_command_parameters: JSON,
+        bare_metal_machine_run_command_parameters: _types.BareMetalMachineRunCommandParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3738,7 +2476,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_run_command_parameters: The request body. Required.
-        :type bare_metal_machine_run_command_parameters: JSON
+        :type bare_metal_machine_run_command_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunCommandParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3785,7 +2524,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_command_parameters: Union[_models.BareMetalMachineRunCommandParameters, JSON, IO[bytes]],
+        bare_metal_machine_run_command_parameters: Union[
+            _models.BareMetalMachineRunCommandParameters, _types.BareMetalMachineRunCommandParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Run the command or the script on the provided bare metal machine. The URL to storage account
@@ -3797,10 +2538,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_run_command_parameters: The request body. Is one of the following
-         types: BareMetalMachineRunCommandParameters, JSON, IO[bytes] Required.
+        :param bare_metal_machine_run_command_parameters: The request body. Is either a
+         BareMetalMachineRunCommandParameters type or a IO[bytes] type. Required.
         :type bare_metal_machine_run_command_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineRunCommandParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineRunCommandParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunCommandParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -3868,7 +2610,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_data_extracts_parameters: Union[
-            _models.BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunDataExtractsParameters,
+            _types.BareMetalMachineRunDataExtractsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -3976,7 +2720,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_data_extracts_parameters: JSON,
+        bare_metal_machine_run_data_extracts_parameters: _types.BareMetalMachineRunDataExtractsParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3991,7 +2735,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_run_data_extracts_parameters: The request body. Required.
-        :type bare_metal_machine_run_data_extracts_parameters: JSON
+        :type bare_metal_machine_run_data_extracts_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunDataExtractsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4039,7 +2784,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_data_extracts_parameters: Union[
-            _models.BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunDataExtractsParameters,
+            _types.BareMetalMachineRunDataExtractsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -4052,10 +2799,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_run_data_extracts_parameters: The request body. Is one of the
-         following types: BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes] Required.
+        :param bare_metal_machine_run_data_extracts_parameters: The request body. Is either a
+         BareMetalMachineRunDataExtractsParameters type or a IO[bytes] type. Required.
         :type bare_metal_machine_run_data_extracts_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineRunDataExtractsParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineRunDataExtractsParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunDataExtractsParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -4123,7 +2871,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_data_extracts_restricted_parameters: Union[
-            _models.BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunDataExtractsParameters,
+            _types.BareMetalMachineRunDataExtractsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4231,7 +2981,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_data_extracts_restricted_parameters: JSON,
+        bare_metal_machine_run_data_extracts_restricted_parameters: _types.BareMetalMachineRunDataExtractsParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4246,7 +2996,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_run_data_extracts_restricted_parameters: The request body. Required.
-        :type bare_metal_machine_run_data_extracts_restricted_parameters: JSON
+        :type bare_metal_machine_run_data_extracts_restricted_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunDataExtractsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4294,7 +3045,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_data_extracts_restricted_parameters: Union[
-            _models.BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunDataExtractsParameters,
+            _types.BareMetalMachineRunDataExtractsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -4307,10 +3060,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_run_data_extracts_restricted_parameters: The request body. Is one of
-         the following types: BareMetalMachineRunDataExtractsParameters, JSON, IO[bytes] Required.
+        :param bare_metal_machine_run_data_extracts_restricted_parameters: The request body. Is either
+         a BareMetalMachineRunDataExtractsParameters type or a IO[bytes] type. Required.
         :type bare_metal_machine_run_data_extracts_restricted_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineRunDataExtractsParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineRunDataExtractsParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunDataExtractsParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -4378,7 +3132,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_read_commands_parameters: Union[
-            _models.BareMetalMachineRunReadCommandsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunReadCommandsParameters,
+            _types.BareMetalMachineRunReadCommandsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -4486,7 +3242,7 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         bare_metal_machine_name: str,
-        bare_metal_machine_run_read_commands_parameters: JSON,
+        bare_metal_machine_run_read_commands_parameters: _types.BareMetalMachineRunReadCommandsParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4501,7 +3257,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
         :param bare_metal_machine_run_read_commands_parameters: The request body. Required.
-        :type bare_metal_machine_run_read_commands_parameters: JSON
+        :type bare_metal_machine_run_read_commands_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunReadCommandsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4549,7 +3306,9 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         bare_metal_machine_name: str,
         bare_metal_machine_run_read_commands_parameters: Union[
-            _models.BareMetalMachineRunReadCommandsParameters, JSON, IO[bytes]
+            _models.BareMetalMachineRunReadCommandsParameters,
+            _types.BareMetalMachineRunReadCommandsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -4562,10 +3321,11 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
-        :param bare_metal_machine_run_read_commands_parameters: The request body. Is one of the
-         following types: BareMetalMachineRunReadCommandsParameters, JSON, IO[bytes] Required.
+        :param bare_metal_machine_run_read_commands_parameters: The request body. Is either a
+         BareMetalMachineRunReadCommandsParameters type or a IO[bytes] type. Required.
         :type bare_metal_machine_run_read_commands_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineRunReadCommandsParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineRunReadCommandsParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineRunReadCommandsParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -4982,7 +3742,7 @@ class CloudServicesNetworksOperations:
         self,
         resource_group_name: str,
         cloud_services_network_name: str,
-        cloud_services_network_parameters: Union[_models.CloudServicesNetwork, JSON, IO[bytes]],
+        cloud_services_network_parameters: Union[_models.CloudServicesNetwork, _types.CloudServicesNetwork, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5107,7 +3867,7 @@ class CloudServicesNetworksOperations:
         self,
         resource_group_name: str,
         cloud_services_network_name: str,
-        cloud_services_network_parameters: JSON,
+        cloud_services_network_parameters: _types.CloudServicesNetwork,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5123,7 +3883,7 @@ class CloudServicesNetworksOperations:
         :param cloud_services_network_name: The name of the cloud services network. Required.
         :type cloud_services_network_name: str
         :param cloud_services_network_parameters: The request body. Required.
-        :type cloud_services_network_parameters: JSON
+        :type cloud_services_network_parameters: ~azure.mgmt.networkcloud.types.CloudServicesNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5181,7 +3941,7 @@ class CloudServicesNetworksOperations:
         self,
         resource_group_name: str,
         cloud_services_network_name: str,
-        cloud_services_network_parameters: Union[_models.CloudServicesNetwork, JSON, IO[bytes]],
+        cloud_services_network_parameters: Union[_models.CloudServicesNetwork, _types.CloudServicesNetwork, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -5195,10 +3955,10 @@ class CloudServicesNetworksOperations:
         :type resource_group_name: str
         :param cloud_services_network_name: The name of the cloud services network. Required.
         :type cloud_services_network_name: str
-        :param cloud_services_network_parameters: The request body. Is one of the following types:
-         CloudServicesNetwork, JSON, IO[bytes] Required.
+        :param cloud_services_network_parameters: The request body. Is either a CloudServicesNetwork
+         type or a IO[bytes] type. Required.
         :type cloud_services_network_parameters: ~azure.mgmt.networkcloud.models.CloudServicesNetwork
-         or JSON or IO[bytes]
+         or ~azure.mgmt.networkcloud.types.CloudServicesNetwork or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5269,7 +4029,7 @@ class CloudServicesNetworksOperations:
         resource_group_name: str,
         cloud_services_network_name: str,
         cloud_services_network_update_parameters: Optional[
-            Union[_models.CloudServicesNetworkPatchParameters, JSON, IO[bytes]]
+            Union[_models.CloudServicesNetworkPatchParameters, _types.CloudServicesNetworkPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -5401,7 +4161,7 @@ class CloudServicesNetworksOperations:
         self,
         resource_group_name: str,
         cloud_services_network_name: str,
-        cloud_services_network_update_parameters: Optional[JSON] = None,
+        cloud_services_network_update_parameters: Optional[_types.CloudServicesNetworkPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -5417,7 +4177,8 @@ class CloudServicesNetworksOperations:
         :param cloud_services_network_name: The name of the cloud services network. Required.
         :type cloud_services_network_name: str
         :param cloud_services_network_update_parameters: The request body. Default value is None.
-        :type cloud_services_network_update_parameters: JSON
+        :type cloud_services_network_update_parameters:
+         ~azure.mgmt.networkcloud.types.CloudServicesNetworkPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5476,7 +4237,7 @@ class CloudServicesNetworksOperations:
         resource_group_name: str,
         cloud_services_network_name: str,
         cloud_services_network_update_parameters: Optional[
-            Union[_models.CloudServicesNetworkPatchParameters, JSON, IO[bytes]]
+            Union[_models.CloudServicesNetworkPatchParameters, _types.CloudServicesNetworkPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -5491,10 +4252,11 @@ class CloudServicesNetworksOperations:
         :type resource_group_name: str
         :param cloud_services_network_name: The name of the cloud services network. Required.
         :type cloud_services_network_name: str
-        :param cloud_services_network_update_parameters: The request body. Is one of the following
-         types: CloudServicesNetworkPatchParameters, JSON, IO[bytes] Default value is None.
+        :param cloud_services_network_update_parameters: The request body. Is either a
+         CloudServicesNetworkPatchParameters type or a IO[bytes] type. Default value is None.
         :type cloud_services_network_update_parameters:
-         ~azure.mgmt.networkcloud.models.CloudServicesNetworkPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.CloudServicesNetworkPatchParameters or
+         ~azure.mgmt.networkcloud.types.CloudServicesNetworkPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6023,7 +4785,7 @@ class ClusterManagersOperations:
         self,
         resource_group_name: str,
         cluster_manager_name: str,
-        cluster_manager_parameters: Union[_models.ClusterManager, JSON, IO[bytes]],
+        cluster_manager_parameters: Union[_models.ClusterManager, _types.ClusterManager, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6146,7 +4908,7 @@ class ClusterManagersOperations:
         self,
         resource_group_name: str,
         cluster_manager_name: str,
-        cluster_manager_parameters: JSON,
+        cluster_manager_parameters: _types.ClusterManager,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -6161,7 +4923,7 @@ class ClusterManagersOperations:
         :param cluster_manager_name: The name of the cluster manager. Required.
         :type cluster_manager_name: str
         :param cluster_manager_parameters: The request body. Required.
-        :type cluster_manager_parameters: JSON
+        :type cluster_manager_parameters: ~azure.mgmt.networkcloud.types.ClusterManager
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6216,7 +4978,7 @@ class ClusterManagersOperations:
         self,
         resource_group_name: str,
         cluster_manager_name: str,
-        cluster_manager_parameters: Union[_models.ClusterManager, JSON, IO[bytes]],
+        cluster_manager_parameters: Union[_models.ClusterManager, _types.ClusterManager, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -6229,10 +4991,10 @@ class ClusterManagersOperations:
         :type resource_group_name: str
         :param cluster_manager_name: The name of the cluster manager. Required.
         :type cluster_manager_name: str
-        :param cluster_manager_parameters: The request body. Is one of the following types:
-         ClusterManager, JSON, IO[bytes] Required.
-        :type cluster_manager_parameters: ~azure.mgmt.networkcloud.models.ClusterManager or JSON or
-         IO[bytes]
+        :param cluster_manager_parameters: The request body. Is either a ClusterManager type or a
+         IO[bytes] type. Required.
+        :type cluster_manager_parameters: ~azure.mgmt.networkcloud.models.ClusterManager or
+         ~azure.mgmt.networkcloud.types.ClusterManager or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6338,7 +5100,7 @@ class ClusterManagersOperations:
         self,
         resource_group_name: str,
         cluster_manager_name: str,
-        cluster_manager_update_parameters: Optional[JSON] = None,
+        cluster_manager_update_parameters: Optional[_types.ClusterManagerPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -6354,7 +5116,8 @@ class ClusterManagersOperations:
         :param cluster_manager_name: The name of the cluster manager. Required.
         :type cluster_manager_name: str
         :param cluster_manager_update_parameters: The request body. Default value is None.
-        :type cluster_manager_update_parameters: JSON
+        :type cluster_manager_update_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterManagerPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6409,7 +5172,7 @@ class ClusterManagersOperations:
         resource_group_name: str,
         cluster_manager_name: str,
         cluster_manager_update_parameters: Optional[
-            Union[_models.ClusterManagerPatchParameters, JSON, IO[bytes]]
+            Union[_models.ClusterManagerPatchParameters, _types.ClusterManagerPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -6424,10 +5187,11 @@ class ClusterManagersOperations:
         :type resource_group_name: str
         :param cluster_manager_name: The name of the cluster manager. Required.
         :type cluster_manager_name: str
-        :param cluster_manager_update_parameters: The request body. Is one of the following types:
-         ClusterManagerPatchParameters, JSON, IO[bytes] Default value is None.
+        :param cluster_manager_update_parameters: The request body. Is either a
+         ClusterManagerPatchParameters type or a IO[bytes] type. Default value is None.
         :type cluster_manager_update_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterManagerPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterManagerPatchParameters or
+         ~azure.mgmt.networkcloud.types.ClusterManagerPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6884,305 +5648,8 @@ class ClusterManagersOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_manager_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _update_relay_private_endpoint_connection_initial(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        cluster_manager_name: str,
-        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
-            Union[_models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters, JSON, IO[bytes]]
-        ] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if cluster_manager_update_relay_private_endpoint_connection_parameters else None
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = (
-            content_type or "application/json"
-            if cluster_manager_update_relay_private_endpoint_connection_parameters
-            else None
-        )
-        _content = None
-        if isinstance(cluster_manager_update_relay_private_endpoint_connection_parameters, (IOBase, bytes)):
-            _content = cluster_manager_update_relay_private_endpoint_connection_parameters
-        else:
-            if cluster_manager_update_relay_private_endpoint_connection_parameters is not None:
-                _content = json.dumps(cluster_manager_update_relay_private_endpoint_connection_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_cluster_managers_update_relay_private_endpoint_connection_request(
-            resource_group_name=resource_group_name,
-            cluster_manager_name=cluster_manager_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        cluster_manager_name: str,
-        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
-            _models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
-        ] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
-        cluster manager. Use this operation to approve or reject a pending private endpoint connection
-        request for the relay namespace managed by the cluster manager.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_manager_name: The name of the cluster manager. Required.
-        :type cluster_manager_name: str
-        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
-         Default value is None.
-        :type cluster_manager_update_relay_private_endpoint_connection_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        cluster_manager_name: str,
-        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
-        cluster manager. Use this operation to approve or reject a pending private endpoint connection
-        request for the relay namespace managed by the cluster manager.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_manager_name: The name of the cluster manager. Required.
-        :type cluster_manager_name: str
-        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
-         Default value is None.
-        :type cluster_manager_update_relay_private_endpoint_connection_parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        cluster_manager_name: str,
-        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
-        cluster manager. Use this operation to approve or reject a pending private endpoint connection
-        request for the relay namespace managed by the cluster manager.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_manager_name: The name of the cluster manager. Required.
-        :type cluster_manager_name: str
-        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
-         Default value is None.
-        :type cluster_manager_update_relay_private_endpoint_connection_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_manager_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
-        self,
-        resource_group_name: str,
-        cluster_manager_name: str,
-        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
-            Union[_models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters, JSON, IO[bytes]]
-        ] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
-        cluster manager. Use this operation to approve or reject a pending private endpoint connection
-        request for the relay namespace managed by the cluster manager.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_manager_name: The name of the cluster manager. Required.
-        :type cluster_manager_name: str
-        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
-         Is one of the following types: ClusterManagerUpdateRelayPrivateEndpointConnectionParameters,
-         JSON, IO[bytes] Default value is None.
-        :type cluster_manager_update_relay_private_endpoint_connection_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters or
-         JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if cluster_manager_update_relay_private_endpoint_connection_parameters else None
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_relay_private_endpoint_connection_initial(
-                resource_group_name=resource_group_name,
-                cluster_manager_name=cluster_manager_name,
-                cluster_manager_update_relay_private_endpoint_connection_parameters=cluster_manager_update_relay_private_endpoint_connection_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OperationStatusResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-
-class ClustersOperations:  # pylint: disable=too-many-public-methods
+class ClustersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -7273,7 +5740,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        cluster_parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7396,7 +5863,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_parameters: JSON,
+        cluster_parameters: _types.Cluster,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -7411,7 +5878,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_parameters: The request body. Required.
-        :type cluster_parameters: JSON
+        :type cluster_parameters: ~azure.mgmt.networkcloud.types.Cluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7466,7 +5933,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_parameters: Union[_models.Cluster, JSON, IO[bytes]],
+        cluster_parameters: Union[_models.Cluster, _types.Cluster, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7479,9 +5946,10 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_parameters: The request body. Is one of the following types: Cluster, JSON,
-         IO[bytes] Required.
-        :type cluster_parameters: ~azure.mgmt.networkcloud.models.Cluster or JSON or IO[bytes]
+        :param cluster_parameters: The request body. Is either a Cluster type or a IO[bytes] type.
+         Required.
+        :type cluster_parameters: ~azure.mgmt.networkcloud.models.Cluster or
+         ~azure.mgmt.networkcloud.types.Cluster or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -7550,7 +6018,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_parameters: Optional[Union[_models.ClusterPatchParameters, JSON, IO[bytes]]] = None,
+        cluster_update_parameters: Optional[
+            Union[_models.ClusterPatchParameters, _types.ClusterPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7679,7 +6149,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_parameters: Optional[JSON] = None,
+        cluster_update_parameters: Optional[_types.ClusterPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -7695,7 +6165,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_update_parameters: The request body. Default value is None.
-        :type cluster_update_parameters: JSON
+        :type cluster_update_parameters: ~azure.mgmt.networkcloud.types.ClusterPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7751,7 +6221,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_parameters: Optional[Union[_models.ClusterPatchParameters, JSON, IO[bytes]]] = None,
+        cluster_update_parameters: Optional[
+            Union[_models.ClusterPatchParameters, _types.ClusterPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -7765,10 +6237,10 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_update_parameters: The request body. Is one of the following types:
-         ClusterPatchParameters, JSON, IO[bytes] Default value is None.
-        :type cluster_update_parameters: ~azure.mgmt.networkcloud.models.ClusterPatchParameters or JSON
-         or IO[bytes]
+        :param cluster_update_parameters: The request body. Is either a ClusterPatchParameters type or
+         a IO[bytes] type. Default value is None.
+        :type cluster_update_parameters: ~azure.mgmt.networkcloud.models.ClusterPatchParameters or
+         ~azure.mgmt.networkcloud.types.ClusterPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -8207,7 +6679,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         cluster_continue_update_version_parameters: Union[
-            _models.ClusterContinueUpdateVersionParameters, JSON, IO[bytes]
+            _models.ClusterContinueUpdateVersionParameters, _types.ClusterContinueUpdateVersionParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -8314,7 +6786,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_continue_update_version_parameters: JSON,
+        cluster_continue_update_version_parameters: _types.ClusterContinueUpdateVersionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8328,7 +6800,8 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_continue_update_version_parameters: The request body. Required.
-        :type cluster_continue_update_version_parameters: JSON
+        :type cluster_continue_update_version_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterContinueUpdateVersionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8375,7 +6848,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         cluster_name: str,
         cluster_continue_update_version_parameters: Union[
-            _models.ClusterContinueUpdateVersionParameters, JSON, IO[bytes]
+            _models.ClusterContinueUpdateVersionParameters, _types.ClusterContinueUpdateVersionParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -8387,10 +6860,11 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_continue_update_version_parameters: The request body. Is one of the following
-         types: ClusterContinueUpdateVersionParameters, JSON, IO[bytes] Required.
+        :param cluster_continue_update_version_parameters: The request body. Is either a
+         ClusterContinueUpdateVersionParameters type or a IO[bytes] type. Required.
         :type cluster_continue_update_version_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterContinueUpdateVersionParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterContinueUpdateVersionParameters or
+         ~azure.mgmt.networkcloud.types.ClusterContinueUpdateVersionParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -8457,7 +6931,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_deploy_parameters: Optional[Union[_models.ClusterDeployParameters, JSON, IO[bytes]]] = None,
+        cluster_deploy_parameters: Optional[
+            Union[_models.ClusterDeployParameters, _types.ClusterDeployParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8565,7 +7041,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_deploy_parameters: Optional[JSON] = None,
+        cluster_deploy_parameters: Optional[_types.ClusterDeployParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8578,7 +7054,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_deploy_parameters: The request body. Default value is None.
-        :type cluster_deploy_parameters: JSON
+        :type cluster_deploy_parameters: ~azure.mgmt.networkcloud.types.ClusterDeployParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8623,7 +7099,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_deploy_parameters: Optional[Union[_models.ClusterDeployParameters, JSON, IO[bytes]]] = None,
+        cluster_deploy_parameters: Optional[
+            Union[_models.ClusterDeployParameters, _types.ClusterDeployParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Deploy the cluster using the rack configuration provided during creation.
@@ -8633,10 +7111,10 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_deploy_parameters: The request body. Is one of the following types:
-         ClusterDeployParameters, JSON, IO[bytes] Default value is None.
+        :param cluster_deploy_parameters: The request body. Is either a ClusterDeployParameters type or
+         a IO[bytes] type. Default value is None.
         :type cluster_deploy_parameters: ~azure.mgmt.networkcloud.models.ClusterDeployParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.types.ClusterDeployParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -8700,556 +7178,13 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _inspect_initial(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        cluster_inspect_parameters: Optional[Union[_models.ClusterInspectParameters, JSON, IO[bytes]]] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if cluster_inspect_parameters else None
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if cluster_inspect_parameters else None
-        _content = None
-        if isinstance(cluster_inspect_parameters, (IOBase, bytes)):
-            _content = cluster_inspect_parameters
-        else:
-            if cluster_inspect_parameters is not None:
-                _content = json.dumps(cluster_inspect_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_clusters_inspect_request(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_inspect(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        cluster_inspect_parameters: Optional[_models.ClusterInspectParameters] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Trigger an inspection of the cluster to perform validation and optional corrective actions
-        based on the supplied additional actions and filters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_inspect_parameters: The request body. Default value is None.
-        :type cluster_inspect_parameters: ~azure.mgmt.networkcloud.models.ClusterInspectParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_inspect(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        cluster_inspect_parameters: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Trigger an inspection of the cluster to perform validation and optional corrective actions
-        based on the supplied additional actions and filters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_inspect_parameters: The request body. Default value is None.
-        :type cluster_inspect_parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_inspect(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        cluster_inspect_parameters: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Trigger an inspection of the cluster to perform validation and optional corrective actions
-        based on the supplied additional actions and filters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_inspect_parameters: The request body. Default value is None.
-        :type cluster_inspect_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_inspect(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        cluster_inspect_parameters: Optional[Union[_models.ClusterInspectParameters, JSON, IO[bytes]]] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Trigger an inspection of the cluster to perform validation and optional corrective actions
-        based on the supplied additional actions and filters.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param cluster_inspect_parameters: The request body. Is one of the following types:
-         ClusterInspectParameters, JSON, IO[bytes] Default value is None.
-        :type cluster_inspect_parameters: ~azure.mgmt.networkcloud.models.ClusterInspectParameters or
-         JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if cluster_inspect_parameters else None
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._inspect_initial(
-                resource_group_name=resource_group_name,
-                cluster_name=cluster_name,
-                cluster_inspect_parameters=cluster_inspect_parameters,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OperationStatusResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
-    )
-    async def _rotate_credential_initial(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        body: Union[_models.ClusterRotateCredentialParameters, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_clusters_rotate_credential_request(
-            resource_group_name=resource_group_name,
-            cluster_name=cluster_name,
-            subscription_id=self._config.subscription_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_rotate_credential(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        body: _models.ClusterRotateCredentialParameters,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Rotate the specified cluster credential.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param body: The content of the action request. Required.
-        :type body: ~azure.mgmt.networkcloud.models.ClusterRotateCredentialParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_rotate_credential(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        body: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Rotate the specified cluster credential.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param body: The content of the action request. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_rotate_credential(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        body: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Rotate the specified cluster credential.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param body: The content of the action request. Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-05-01-preview",
-        params_added_on={
-            "2026-05-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "cluster_name",
-                "content_type",
-            ]
-        },
-        api_versions_list=["2026-05-01-preview"],
-    )
-    async def begin_rotate_credential(
-        self,
-        resource_group_name: str,
-        cluster_name: str,
-        body: Union[_models.ClusterRotateCredentialParameters, JSON, IO[bytes]],
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Rotate the specified cluster credential.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param cluster_name: The name of the cluster. Required.
-        :type cluster_name: str
-        :param body: The content of the action request. Is one of the following types:
-         ClusterRotateCredentialParameters, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.networkcloud.models.ClusterRotateCredentialParameters or JSON or
-         IO[bytes]
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._rotate_credential_initial(
-                resource_group_name=resource_group_name,
-                cluster_name=cluster_name,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
-            deserialized = _deserialize(_models.OperationStatusResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
     async def _scan_runtime_initial(
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_scan_runtime_parameters: Optional[Union[_models.ClusterScanRuntimeParameters, JSON, IO[bytes]]] = None,
+        cluster_scan_runtime_parameters: Optional[
+            Union[_models.ClusterScanRuntimeParameters, _types.ClusterScanRuntimeParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9359,7 +7294,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_scan_runtime_parameters: Optional[JSON] = None,
+        cluster_scan_runtime_parameters: Optional[_types.ClusterScanRuntimeParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9373,7 +7308,8 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_scan_runtime_parameters: The request body. Default value is None.
-        :type cluster_scan_runtime_parameters: JSON
+        :type cluster_scan_runtime_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterScanRuntimeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9419,7 +7355,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_scan_runtime_parameters: Optional[Union[_models.ClusterScanRuntimeParameters, JSON, IO[bytes]]] = None,
+        cluster_scan_runtime_parameters: Optional[
+            Union[_models.ClusterScanRuntimeParameters, _types.ClusterScanRuntimeParameters, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Triggers the execution of a runtime protection scan to detect and remediate detected issues, in
@@ -9430,10 +7368,11 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_scan_runtime_parameters: The request body. Is one of the following types:
-         ClusterScanRuntimeParameters, JSON, IO[bytes] Default value is None.
+        :param cluster_scan_runtime_parameters: The request body. Is either a
+         ClusterScanRuntimeParameters type or a IO[bytes] type. Default value is None.
         :type cluster_scan_runtime_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterScanRuntimeParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterScanRuntimeParameters or
+         ~azure.mgmt.networkcloud.types.ClusterScanRuntimeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -9501,7 +7440,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_version_parameters: Union[_models.ClusterUpdateVersionParameters, JSON, IO[bytes]],
+        cluster_update_version_parameters: Union[
+            _models.ClusterUpdateVersionParameters, _types.ClusterUpdateVersionParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -9606,7 +7547,7 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_version_parameters: JSON,
+        cluster_update_version_parameters: _types.ClusterUpdateVersionParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9619,7 +7560,8 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
         :param cluster_update_version_parameters: The request body. Required.
-        :type cluster_update_version_parameters: JSON
+        :type cluster_update_version_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterUpdateVersionParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9664,7 +7606,9 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         cluster_name: str,
-        cluster_update_version_parameters: Union[_models.ClusterUpdateVersionParameters, JSON, IO[bytes]],
+        cluster_update_version_parameters: Union[
+            _models.ClusterUpdateVersionParameters, _types.ClusterUpdateVersionParameters, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
         """Update the version of the provided cluster to one of the available supported versions.
@@ -9674,10 +7618,11 @@ class ClustersOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param cluster_name: The name of the cluster. Required.
         :type cluster_name: str
-        :param cluster_update_version_parameters: The request body. Is one of the following types:
-         ClusterUpdateVersionParameters, JSON, IO[bytes] Required.
+        :param cluster_update_version_parameters: The request body. Is either a
+         ClusterUpdateVersionParameters type or a IO[bytes] type. Required.
         :type cluster_update_version_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterUpdateVersionParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterUpdateVersionParameters or
+         ~azure.mgmt.networkcloud.types.ClusterUpdateVersionParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -9834,7 +7779,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, JSON, IO[bytes]],
+        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, _types.KubernetesCluster, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -9957,7 +7902,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: JSON,
+        kubernetes_cluster_parameters: _types.KubernetesCluster,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -9972,7 +7917,7 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_parameters: The request body. Required.
-        :type kubernetes_cluster_parameters: JSON
+        :type kubernetes_cluster_parameters: ~azure.mgmt.networkcloud.types.KubernetesCluster
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10027,7 +7972,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, JSON, IO[bytes]],
+        kubernetes_cluster_parameters: Union[_models.KubernetesCluster, _types.KubernetesCluster, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -10040,10 +7985,10 @@ class KubernetesClustersOperations:
         :type resource_group_name: str
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
-        :param kubernetes_cluster_parameters: The request body. Is one of the following types:
-         KubernetesCluster, JSON, IO[bytes] Required.
-        :type kubernetes_cluster_parameters: ~azure.mgmt.networkcloud.models.KubernetesCluster or JSON
-         or IO[bytes]
+        :param kubernetes_cluster_parameters: The request body. Is either a KubernetesCluster type or a
+         IO[bytes] type. Required.
+        :type kubernetes_cluster_parameters: ~azure.mgmt.networkcloud.models.KubernetesCluster or
+         ~azure.mgmt.networkcloud.types.KubernetesCluster or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -10113,7 +8058,7 @@ class KubernetesClustersOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         kubernetes_cluster_update_parameters: Optional[
-            Union[_models.KubernetesClusterPatchParameters, JSON, IO[bytes]]
+            Union[_models.KubernetesClusterPatchParameters, _types.KubernetesClusterPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -10244,7 +8189,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_update_parameters: Optional[JSON] = None,
+        kubernetes_cluster_update_parameters: Optional[_types.KubernetesClusterPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -10260,7 +8205,8 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_update_parameters: The request body. Default value is None.
-        :type kubernetes_cluster_update_parameters: JSON
+        :type kubernetes_cluster_update_parameters:
+         ~azure.mgmt.networkcloud.types.KubernetesClusterPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10317,7 +8263,7 @@ class KubernetesClustersOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         kubernetes_cluster_update_parameters: Optional[
-            Union[_models.KubernetesClusterPatchParameters, JSON, IO[bytes]]
+            Union[_models.KubernetesClusterPatchParameters, _types.KubernetesClusterPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -10332,10 +8278,11 @@ class KubernetesClustersOperations:
         :type resource_group_name: str
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
-        :param kubernetes_cluster_update_parameters: The request body. Is one of the following types:
-         KubernetesClusterPatchParameters, JSON, IO[bytes] Default value is None.
+        :param kubernetes_cluster_update_parameters: The request body. Is either a
+         KubernetesClusterPatchParameters type or a IO[bytes] type. Default value is None.
         :type kubernetes_cluster_update_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterPatchParameters or
+         ~azure.mgmt.networkcloud.types.KubernetesClusterPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -10776,7 +8723,7 @@ class KubernetesClustersOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         kubernetes_cluster_restart_node_parameters: Union[
-            _models.KubernetesClusterRestartNodeParameters, JSON, IO[bytes]
+            _models.KubernetesClusterRestartNodeParameters, _types.KubernetesClusterRestartNodeParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -10882,7 +8829,7 @@ class KubernetesClustersOperations:
         self,
         resource_group_name: str,
         kubernetes_cluster_name: str,
-        kubernetes_cluster_restart_node_parameters: JSON,
+        kubernetes_cluster_restart_node_parameters: _types.KubernetesClusterRestartNodeParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10895,7 +8842,8 @@ class KubernetesClustersOperations:
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
         :param kubernetes_cluster_restart_node_parameters: The request body. Required.
-        :type kubernetes_cluster_restart_node_parameters: JSON
+        :type kubernetes_cluster_restart_node_parameters:
+         ~azure.mgmt.networkcloud.types.KubernetesClusterRestartNodeParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10941,7 +8889,7 @@ class KubernetesClustersOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         kubernetes_cluster_restart_node_parameters: Union[
-            _models.KubernetesClusterRestartNodeParameters, JSON, IO[bytes]
+            _models.KubernetesClusterRestartNodeParameters, _types.KubernetesClusterRestartNodeParameters, IO[bytes]
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -10952,10 +8900,11 @@ class KubernetesClustersOperations:
         :type resource_group_name: str
         :param kubernetes_cluster_name: The name of the Kubernetes cluster. Required.
         :type kubernetes_cluster_name: str
-        :param kubernetes_cluster_restart_node_parameters: The request body. Is one of the following
-         types: KubernetesClusterRestartNodeParameters, JSON, IO[bytes] Required.
+        :param kubernetes_cluster_restart_node_parameters: The request body. Is either a
+         KubernetesClusterRestartNodeParameters type or a IO[bytes] type. Required.
         :type kubernetes_cluster_restart_node_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterRestartNodeParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterRestartNodeParameters or
+         ~azure.mgmt.networkcloud.types.KubernetesClusterRestartNodeParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -11017,1166 +8966,6 @@ class KubernetesClustersOperations:
         return AsyncLROPoller[_models.OperationStatusResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
-
-
-class KubernetesVersionsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient`'s
-        :attr:`kubernetes_versions` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def get(
-        self, resource_group_name: str, kubernetes_version_name: str, **kwargs: Any
-    ) -> _models.KubernetesVersion:
-        """Retrieve the Kubernetes version resource that describes the available Kubernetes versions for
-        deployment.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :return: KubernetesVersion. The KubernetesVersion is compatible with MutableMapping
-        :rtype: ~azure.mgmt.networkcloud.models.KubernetesVersion
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
-
-        _request = build_kubernetes_versions_get_request(
-            resource_group_name=resource_group_name,
-            kubernetes_version_name=kubernetes_version_name,
-            subscription_id=self._config.subscription_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.KubernetesVersion, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _create_or_update_initial(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_parameters: Union[_models.KubernetesVersion, JSON, IO[bytes]],
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(kubernetes_version_parameters, (IOBase, bytes)):
-            _content = kubernetes_version_parameters
-        else:
-            _content = json.dumps(kubernetes_version_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_kubernetes_versions_create_or_update_request(
-            resource_group_name=resource_group_name,
-            kubernetes_version_name=kubernetes_version_name,
-            subscription_id=self._config.subscription_id,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 201:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_parameters: _models.KubernetesVersion,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Create the Kubernetes version resource or update its tags. This resource is system managed and
-        should only be created with the name "default".
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_parameters: The request body. Required.
-        :type kubernetes_version_parameters: ~azure.mgmt.networkcloud.models.KubernetesVersion
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_parameters: JSON,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Create the Kubernetes version resource or update its tags. This resource is system managed and
-        should only be created with the name "default".
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_parameters: The request body. Required.
-        :type kubernetes_version_parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_parameters: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Create the Kubernetes version resource or update its tags. This resource is system managed and
-        should only be created with the name "default".
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_parameters: The request body. Required.
-        :type kubernetes_version_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_create_or_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_parameters: Union[_models.KubernetesVersion, JSON, IO[bytes]],
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Create the Kubernetes version resource or update its tags. This resource is system managed and
-        should only be created with the name "default".
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_parameters: The request body. Is one of the following types:
-         KubernetesVersion, JSON, IO[bytes] Required.
-        :type kubernetes_version_parameters: ~azure.mgmt.networkcloud.models.KubernetesVersion or JSON
-         or IO[bytes]
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._create_or_update_initial(
-                resource_group_name=resource_group_name,
-                kubernetes_version_name=kubernetes_version_name,
-                kubernetes_version_parameters=kubernetes_version_parameters,
-                etag=etag,
-                match_condition=match_condition,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.KubernetesVersion, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.KubernetesVersion].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.KubernetesVersion](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _update_initial(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_patch_parameters: Optional[
-            Union[_models.KubernetesVersionPatchParameters, JSON, IO[bytes]]
-        ] = None,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if kubernetes_version_patch_parameters else None
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        content_type = content_type or "application/json" if kubernetes_version_patch_parameters else None
-        _content = None
-        if isinstance(kubernetes_version_patch_parameters, (IOBase, bytes)):
-            _content = kubernetes_version_patch_parameters
-        else:
-            if kubernetes_version_patch_parameters is not None:
-                _content = json.dumps(kubernetes_version_patch_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-            else:
-                _content = None
-
-        _request = build_kubernetes_versions_update_request(
-            resource_group_name=resource_group_name,
-            kubernetes_version_name=kubernetes_version_name,
-            subscription_id=self._config.subscription_id,
-            etag=etag,
-            match_condition=match_condition,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_patch_parameters: Optional[_models.KubernetesVersionPatchParameters] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Update tags associated with the Kubernetes version resource. No other properties are supported
-        for update.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_patch_parameters: The request body. Default value is None.
-        :type kubernetes_version_patch_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesVersionPatchParameters
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_patch_parameters: Optional[JSON] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Update tags associated with the Kubernetes version resource. No other properties are supported
-        for update.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_patch_parameters: The request body. Default value is None.
-        :type kubernetes_version_patch_parameters: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_patch_parameters: Optional[IO[bytes]] = None,
-        *,
-        content_type: str = "application/json",
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Update tags associated with the Kubernetes version resource. No other properties are supported
-        for update.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_patch_parameters: The request body. Default value is None.
-        :type kubernetes_version_patch_parameters: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "content_type",
-                "accept",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_update(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        kubernetes_version_patch_parameters: Optional[
-            Union[_models.KubernetesVersionPatchParameters, JSON, IO[bytes]]
-        ] = None,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.KubernetesVersion]:
-        """Update tags associated with the Kubernetes version resource. No other properties are supported
-        for update.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :param kubernetes_version_patch_parameters: The request body. Is one of the following types:
-         KubernetesVersionPatchParameters, JSON, IO[bytes] Default value is None.
-        :type kubernetes_version_patch_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesVersionPatchParameters or JSON or IO[bytes]
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns KubernetesVersion. The KubernetesVersion is
-         compatible with MutableMapping
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        content_type = content_type if kubernetes_version_patch_parameters else None
-        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_group_name=resource_group_name,
-                kubernetes_version_name=kubernetes_version_name,
-                kubernetes_version_patch_parameters=kubernetes_version_patch_parameters,
-                etag=etag,
-                match_condition=match_condition,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response = pipeline_response.http_response
-            deserialized = _deserialize(_models.KubernetesVersion, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, {})  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.KubernetesVersion].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.KubernetesVersion](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def _delete_initial(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        if match_condition == MatchConditions.IfNotModified:
-            error_map[412] = ResourceModifiedError
-        elif match_condition == MatchConditions.IfPresent:
-            error_map[412] = ResourceNotFoundError
-        elif match_condition == MatchConditions.IfMissing:
-            error_map[412] = ResourceExistsError
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_kubernetes_versions_delete_request(
-            resource_group_name=resource_group_name,
-            kubernetes_version_name=kubernetes_version_name,
-            subscription_id=self._config.subscription_id,
-            etag=etag,
-            match_condition=match_condition,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = True
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202, 204]:
-            try:
-                await response.read()  # Load the body in memory and close the socket
-            except (StreamConsumedError, StreamClosedError):
-                pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        response_headers = {}
-        if response.status_code == 202:
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "kubernetes_version_name",
-                "etag",
-                "match_condition",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    async def begin_delete(
-        self,
-        resource_group_name: str,
-        kubernetes_version_name: str,
-        *,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Delete the specified Kubernetes version resource.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
-        :type kubernetes_version_name: str
-        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
-         None.
-        :paramtype etag: str
-        :keyword match_condition: The match condition to use upon the etag. Default value is None.
-        :paramtype match_condition: ~azure.core.MatchConditions
-        :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
-         OperationStatusResult is compatible with MutableMapping
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(
-                resource_group_name=resource_group_name,
-                kubernetes_version_name=kubernetes_version_name,
-                etag=etag,
-                match_condition=match_condition,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-            await raw_result.http_response.read()  # type: ignore
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-
-            deserialized = _deserialize(_models.OperationStatusResult, response.json())
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-            return deserialized
-
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
-        }
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller[_models.OperationStatusResult].from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller[_models.OperationStatusResult](
-            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
-        )
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={
-            "2026-01-01-preview": [
-                "api_version",
-                "subscription_id",
-                "resource_group_name",
-                "top",
-                "skip_token",
-                "accept",
-            ]
-        },
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    def list_by_resource_group(
-        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.KubernetesVersion"]:
-        """Get a list of Kubernetes version resources in the provided resource group.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
-         Default value is None.
-        :paramtype top: int
-        :keyword skip_token: The opaque token that the server returns to indicate where to continue
-         listing resources from. This is used for paging through large result sets. Default value is
-         None.
-        :paramtype skip_token: str
-        :return: An iterator like instance of KubernetesVersion
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.KubernetesVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_kubernetes_versions_list_by_resource_group_request(
-                    resource_group_name=resource_group_name,
-                    subscription_id=self._config.subscription_id,
-                    top=top,
-                    skip_token=skip_token,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.KubernetesVersion],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    @api_version_validation(
-        method_added_on="2026-01-01-preview",
-        params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
-        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
-    )
-    def list_by_subscription(
-        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
-    ) -> AsyncItemPaged["_models.KubernetesVersion"]:
-        """Get a list of Kubernetes version resources in the provided subscription.
-
-        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
-         Default value is None.
-        :paramtype top: int
-        :keyword skip_token: The opaque token that the server returns to indicate where to continue
-         listing resources from. This is used for paging through large result sets. Default value is
-         None.
-        :paramtype skip_token: str
-        :return: An iterator like instance of KubernetesVersion
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.networkcloud.models.KubernetesVersion]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.KubernetesVersion]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                _request = build_kubernetes_versions_list_by_subscription_request(
-                    subscription_id=self._config.subscription_id,
-                    top=top,
-                    skip_token=skip_token,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    headers=_headers,
-                    params=_next_request_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.KubernetesVersion],
-                deserialized.get("value", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
 
 
 class L2NetworksOperations:
@@ -12270,7 +9059,7 @@ class L2NetworksOperations:
         self,
         resource_group_name: str,
         l2_network_name: str,
-        l2_network_parameters: Union[_models.L2Network, JSON, IO[bytes]],
+        l2_network_parameters: Union[_models.L2Network, _types.L2Network, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -12393,7 +9182,7 @@ class L2NetworksOperations:
         self,
         resource_group_name: str,
         l2_network_name: str,
-        l2_network_parameters: JSON,
+        l2_network_parameters: _types.L2Network,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -12408,7 +9197,7 @@ class L2NetworksOperations:
         :param l2_network_name: The name of the L2 network. Required.
         :type l2_network_name: str
         :param l2_network_parameters: The request body. Required.
-        :type l2_network_parameters: JSON
+        :type l2_network_parameters: ~azure.mgmt.networkcloud.types.L2Network
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12463,7 +9252,7 @@ class L2NetworksOperations:
         self,
         resource_group_name: str,
         l2_network_name: str,
-        l2_network_parameters: Union[_models.L2Network, JSON, IO[bytes]],
+        l2_network_parameters: Union[_models.L2Network, _types.L2Network, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -12476,9 +9265,10 @@ class L2NetworksOperations:
         :type resource_group_name: str
         :param l2_network_name: The name of the L2 network. Required.
         :type l2_network_name: str
-        :param l2_network_parameters: The request body. Is one of the following types: L2Network, JSON,
-         IO[bytes] Required.
-        :type l2_network_parameters: ~azure.mgmt.networkcloud.models.L2Network or JSON or IO[bytes]
+        :param l2_network_parameters: The request body. Is either a L2Network type or a IO[bytes] type.
+         Required.
+        :type l2_network_parameters: ~azure.mgmt.networkcloud.models.L2Network or
+         ~azure.mgmt.networkcloud.types.L2Network or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -12582,7 +9372,7 @@ class L2NetworksOperations:
         self,
         resource_group_name: str,
         l2_network_name: str,
-        l2_network_update_parameters: Optional[JSON] = None,
+        l2_network_update_parameters: Optional[_types.L2NetworkPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -12597,7 +9387,7 @@ class L2NetworksOperations:
         :param l2_network_name: The name of the L2 network. Required.
         :type l2_network_name: str
         :param l2_network_update_parameters: The request body. Default value is None.
-        :type l2_network_update_parameters: JSON
+        :type l2_network_update_parameters: ~azure.mgmt.networkcloud.types.L2NetworkPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12650,7 +9440,9 @@ class L2NetworksOperations:
         self,
         resource_group_name: str,
         l2_network_name: str,
-        l2_network_update_parameters: Optional[Union[_models.L2NetworkPatchParameters, JSON, IO[bytes]]] = None,
+        l2_network_update_parameters: Optional[
+            Union[_models.L2NetworkPatchParameters, _types.L2NetworkPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -12663,10 +9455,10 @@ class L2NetworksOperations:
         :type resource_group_name: str
         :param l2_network_name: The name of the L2 network. Required.
         :type l2_network_name: str
-        :param l2_network_update_parameters: The request body. Is one of the following types:
-         L2NetworkPatchParameters, JSON, IO[bytes] Default value is None.
+        :param l2_network_update_parameters: The request body. Is either a L2NetworkPatchParameters
+         type or a IO[bytes] type. Default value is None.
         :type l2_network_update_parameters: ~azure.mgmt.networkcloud.models.L2NetworkPatchParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.types.L2NetworkPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -13215,7 +10007,7 @@ class L3NetworksOperations:
         self,
         resource_group_name: str,
         l3_network_name: str,
-        l3_network_parameters: Union[_models.L3Network, JSON, IO[bytes]],
+        l3_network_parameters: Union[_models.L3Network, _types.L3Network, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -13338,7 +10130,7 @@ class L3NetworksOperations:
         self,
         resource_group_name: str,
         l3_network_name: str,
-        l3_network_parameters: JSON,
+        l3_network_parameters: _types.L3Network,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -13353,7 +10145,7 @@ class L3NetworksOperations:
         :param l3_network_name: The name of the L3 network. Required.
         :type l3_network_name: str
         :param l3_network_parameters: The request body. Required.
-        :type l3_network_parameters: JSON
+        :type l3_network_parameters: ~azure.mgmt.networkcloud.types.L3Network
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13408,7 +10200,7 @@ class L3NetworksOperations:
         self,
         resource_group_name: str,
         l3_network_name: str,
-        l3_network_parameters: Union[_models.L3Network, JSON, IO[bytes]],
+        l3_network_parameters: Union[_models.L3Network, _types.L3Network, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -13421,9 +10213,10 @@ class L3NetworksOperations:
         :type resource_group_name: str
         :param l3_network_name: The name of the L3 network. Required.
         :type l3_network_name: str
-        :param l3_network_parameters: The request body. Is one of the following types: L3Network, JSON,
-         IO[bytes] Required.
-        :type l3_network_parameters: ~azure.mgmt.networkcloud.models.L3Network or JSON or IO[bytes]
+        :param l3_network_parameters: The request body. Is either a L3Network type or a IO[bytes] type.
+         Required.
+        :type l3_network_parameters: ~azure.mgmt.networkcloud.models.L3Network or
+         ~azure.mgmt.networkcloud.types.L3Network or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -13527,7 +10320,7 @@ class L3NetworksOperations:
         self,
         resource_group_name: str,
         l3_network_name: str,
-        l3_network_update_parameters: Optional[JSON] = None,
+        l3_network_update_parameters: Optional[_types.L3NetworkPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -13542,7 +10335,7 @@ class L3NetworksOperations:
         :param l3_network_name: The name of the L3 network. Required.
         :type l3_network_name: str
         :param l3_network_update_parameters: The request body. Default value is None.
-        :type l3_network_update_parameters: JSON
+        :type l3_network_update_parameters: ~azure.mgmt.networkcloud.types.L3NetworkPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13595,7 +10388,9 @@ class L3NetworksOperations:
         self,
         resource_group_name: str,
         l3_network_name: str,
-        l3_network_update_parameters: Optional[Union[_models.L3NetworkPatchParameters, JSON, IO[bytes]]] = None,
+        l3_network_update_parameters: Optional[
+            Union[_models.L3NetworkPatchParameters, _types.L3NetworkPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -13608,10 +10403,10 @@ class L3NetworksOperations:
         :type resource_group_name: str
         :param l3_network_name: The name of the L3 network. Required.
         :type l3_network_name: str
-        :param l3_network_update_parameters: The request body. Is one of the following types:
-         L3NetworkPatchParameters, JSON, IO[bytes] Default value is None.
+        :param l3_network_update_parameters: The request body. Is either a L3NetworkPatchParameters
+         type or a IO[bytes] type. Default value is None.
         :type l3_network_update_parameters: ~azure.mgmt.networkcloud.models.L3NetworkPatchParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.types.L3NetworkPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -14337,7 +11132,7 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_parameters: Union[_models.Rack, JSON, IO[bytes]],
+        rack_parameters: Union[_models.Rack, _types.Rack, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14461,7 +11256,7 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_parameters: JSON,
+        rack_parameters: _types.Rack,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -14477,7 +11272,7 @@ class RacksOperations:
         :param rack_name: The name of the rack. Required.
         :type rack_name: str
         :param rack_parameters: The request body. Required.
-        :type rack_parameters: JSON
+        :type rack_parameters: ~azure.mgmt.networkcloud.types.Rack
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14533,7 +11328,7 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_parameters: Union[_models.Rack, JSON, IO[bytes]],
+        rack_parameters: Union[_models.Rack, _types.Rack, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14547,9 +11342,9 @@ class RacksOperations:
         :type resource_group_name: str
         :param rack_name: The name of the rack. Required.
         :type rack_name: str
-        :param rack_parameters: The request body. Is one of the following types: Rack, JSON, IO[bytes]
-         Required.
-        :type rack_parameters: ~azure.mgmt.networkcloud.models.Rack or JSON or IO[bytes]
+        :param rack_parameters: The request body. Is either a Rack type or a IO[bytes] type. Required.
+        :type rack_parameters: ~azure.mgmt.networkcloud.models.Rack or
+         ~azure.mgmt.networkcloud.types.Rack or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -14618,7 +11413,9 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_update_parameters: Optional[Union[_models.RackPatchParameters, JSON, IO[bytes]]] = None,
+        rack_update_parameters: Optional[
+            Union[_models.RackPatchParameters, _types.RackPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14747,7 +11544,7 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_update_parameters: Optional[JSON] = None,
+        rack_update_parameters: Optional[_types.RackPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -14763,7 +11560,7 @@ class RacksOperations:
         :param rack_name: The name of the rack. Required.
         :type rack_name: str
         :param rack_update_parameters: The request body. Default value is None.
-        :type rack_update_parameters: JSON
+        :type rack_update_parameters: ~azure.mgmt.networkcloud.types.RackPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14819,7 +11616,9 @@ class RacksOperations:
         self,
         resource_group_name: str,
         rack_name: str,
-        rack_update_parameters: Optional[Union[_models.RackPatchParameters, JSON, IO[bytes]]] = None,
+        rack_update_parameters: Optional[
+            Union[_models.RackPatchParameters, _types.RackPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -14833,10 +11632,10 @@ class RacksOperations:
         :type resource_group_name: str
         :param rack_name: The name of the rack. Required.
         :type rack_name: str
-        :param rack_update_parameters: The request body. Is one of the following types:
-         RackPatchParameters, JSON, IO[bytes] Default value is None.
-        :type rack_update_parameters: ~azure.mgmt.networkcloud.models.RackPatchParameters or JSON or
-         IO[bytes]
+        :param rack_update_parameters: The request body. Is either a RackPatchParameters type or a
+         IO[bytes] type. Default value is None.
+        :type rack_update_parameters: ~azure.mgmt.networkcloud.models.RackPatchParameters or
+         ~azure.mgmt.networkcloud.types.RackPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -15365,7 +12164,7 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_parameters: Union[_models.StorageAppliance, JSON, IO[bytes]],
+        storage_appliance_parameters: Union[_models.StorageAppliance, _types.StorageAppliance, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -15490,7 +12289,7 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_parameters: JSON,
+        storage_appliance_parameters: _types.StorageAppliance,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -15507,7 +12306,7 @@ class StorageAppliancesOperations:
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
         :param storage_appliance_parameters: The request body. Required.
-        :type storage_appliance_parameters: JSON
+        :type storage_appliance_parameters: ~azure.mgmt.networkcloud.types.StorageAppliance
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15564,7 +12363,7 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_parameters: Union[_models.StorageAppliance, JSON, IO[bytes]],
+        storage_appliance_parameters: Union[_models.StorageAppliance, _types.StorageAppliance, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -15579,10 +12378,10 @@ class StorageAppliancesOperations:
         :type resource_group_name: str
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
-        :param storage_appliance_parameters: The request body. Is one of the following types:
-         StorageAppliance, JSON, IO[bytes] Required.
-        :type storage_appliance_parameters: ~azure.mgmt.networkcloud.models.StorageAppliance or JSON or
-         IO[bytes]
+        :param storage_appliance_parameters: The request body. Is either a StorageAppliance type or a
+         IO[bytes] type. Required.
+        :type storage_appliance_parameters: ~azure.mgmt.networkcloud.models.StorageAppliance or
+         ~azure.mgmt.networkcloud.types.StorageAppliance or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -15652,7 +12451,7 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_update_parameters: Optional[
-            Union[_models.StorageAppliancePatchParameters, JSON, IO[bytes]]
+            Union[_models.StorageAppliancePatchParameters, _types.StorageAppliancePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -15783,7 +12582,7 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_update_parameters: Optional[JSON] = None,
+        storage_appliance_update_parameters: Optional[_types.StorageAppliancePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -15799,7 +12598,8 @@ class StorageAppliancesOperations:
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
         :param storage_appliance_update_parameters: The request body. Default value is None.
-        :type storage_appliance_update_parameters: JSON
+        :type storage_appliance_update_parameters:
+         ~azure.mgmt.networkcloud.types.StorageAppliancePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15856,7 +12656,7 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_update_parameters: Optional[
-            Union[_models.StorageAppliancePatchParameters, JSON, IO[bytes]]
+            Union[_models.StorageAppliancePatchParameters, _types.StorageAppliancePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -15871,10 +12671,11 @@ class StorageAppliancesOperations:
         :type resource_group_name: str
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
-        :param storage_appliance_update_parameters: The request body. Is one of the following types:
-         StorageAppliancePatchParameters, JSON, IO[bytes] Default value is None.
+        :param storage_appliance_update_parameters: The request body. Is either a
+         StorageAppliancePatchParameters type or a IO[bytes] type. Default value is None.
         :type storage_appliance_update_parameters:
-         ~azure.mgmt.networkcloud.models.StorageAppliancePatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.StorageAppliancePatchParameters or
+         ~azure.mgmt.networkcloud.types.StorageAppliancePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -16446,7 +13247,11 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_enable_remote_vendor_management_parameters: Optional[
-            Union[_models.StorageApplianceEnableRemoteVendorManagementParameters, JSON, IO[bytes]]
+            Union[
+                _models.StorageApplianceEnableRemoteVendorManagementParameters,
+                _types.StorageApplianceEnableRemoteVendorManagementParameters,
+                IO[bytes],
+            ]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -16561,7 +13366,9 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_enable_remote_vendor_management_parameters: Optional[JSON] = None,
+        storage_appliance_enable_remote_vendor_management_parameters: Optional[
+            _types.StorageApplianceEnableRemoteVendorManagementParameters
+        ] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16575,7 +13382,8 @@ class StorageAppliancesOperations:
         :type storage_appliance_name: str
         :param storage_appliance_enable_remote_vendor_management_parameters: The request body. Default
          value is None.
-        :type storage_appliance_enable_remote_vendor_management_parameters: JSON
+        :type storage_appliance_enable_remote_vendor_management_parameters:
+         ~azure.mgmt.networkcloud.types.StorageApplianceEnableRemoteVendorManagementParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16622,7 +13430,11 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_enable_remote_vendor_management_parameters: Optional[
-            Union[_models.StorageApplianceEnableRemoteVendorManagementParameters, JSON, IO[bytes]]
+            Union[
+                _models.StorageApplianceEnableRemoteVendorManagementParameters,
+                _types.StorageApplianceEnableRemoteVendorManagementParameters,
+                IO[bytes],
+            ]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -16633,12 +13445,13 @@ class StorageAppliancesOperations:
         :type resource_group_name: str
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
-        :param storage_appliance_enable_remote_vendor_management_parameters: The request body. Is one
-         of the following types: StorageApplianceEnableRemoteVendorManagementParameters, JSON, IO[bytes]
+        :param storage_appliance_enable_remote_vendor_management_parameters: The request body. Is
+         either a StorageApplianceEnableRemoteVendorManagementParameters type or a IO[bytes] type.
          Default value is None.
         :type storage_appliance_enable_remote_vendor_management_parameters:
-         ~azure.mgmt.networkcloud.models.StorageApplianceEnableRemoteVendorManagementParameters or JSON
-         or IO[bytes]
+         ~azure.mgmt.networkcloud.models.StorageApplianceEnableRemoteVendorManagementParameters or
+         ~azure.mgmt.networkcloud.types.StorageApplianceEnableRemoteVendorManagementParameters or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -16707,7 +13520,9 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_run_read_commands_parameters: Union[
-            _models.StorageApplianceRunReadCommandsParameters, JSON, IO[bytes]
+            _models.StorageApplianceRunReadCommandsParameters,
+            _types.StorageApplianceRunReadCommandsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -16813,7 +13628,7 @@ class StorageAppliancesOperations:
         self,
         resource_group_name: str,
         storage_appliance_name: str,
-        storage_appliance_run_read_commands_parameters: JSON,
+        storage_appliance_run_read_commands_parameters: _types.StorageApplianceRunReadCommandsParameters,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16826,7 +13641,8 @@ class StorageAppliancesOperations:
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
         :param storage_appliance_run_read_commands_parameters: The request body. Required.
-        :type storage_appliance_run_read_commands_parameters: JSON
+        :type storage_appliance_run_read_commands_parameters:
+         ~azure.mgmt.networkcloud.types.StorageApplianceRunReadCommandsParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16872,7 +13688,9 @@ class StorageAppliancesOperations:
         resource_group_name: str,
         storage_appliance_name: str,
         storage_appliance_run_read_commands_parameters: Union[
-            _models.StorageApplianceRunReadCommandsParameters, JSON, IO[bytes]
+            _models.StorageApplianceRunReadCommandsParameters,
+            _types.StorageApplianceRunReadCommandsParameters,
+            IO[bytes],
         ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -16883,10 +13701,11 @@ class StorageAppliancesOperations:
         :type resource_group_name: str
         :param storage_appliance_name: The name of the storage appliance. Required.
         :type storage_appliance_name: str
-        :param storage_appliance_run_read_commands_parameters: The request body. Is one of the
-         following types: StorageApplianceRunReadCommandsParameters, JSON, IO[bytes] Required.
+        :param storage_appliance_run_read_commands_parameters: The request body. Is either a
+         StorageApplianceRunReadCommandsParameters type or a IO[bytes] type. Required.
         :type storage_appliance_run_read_commands_parameters:
-         ~azure.mgmt.networkcloud.models.StorageApplianceRunReadCommandsParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.StorageApplianceRunReadCommandsParameters or
+         ~azure.mgmt.networkcloud.types.StorageApplianceRunReadCommandsParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -17041,7 +13860,7 @@ class TrunkedNetworksOperations:
         self,
         resource_group_name: str,
         trunked_network_name: str,
-        trunked_network_parameters: Union[_models.TrunkedNetwork, JSON, IO[bytes]],
+        trunked_network_parameters: Union[_models.TrunkedNetwork, _types.TrunkedNetwork, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -17164,7 +13983,7 @@ class TrunkedNetworksOperations:
         self,
         resource_group_name: str,
         trunked_network_name: str,
-        trunked_network_parameters: JSON,
+        trunked_network_parameters: _types.TrunkedNetwork,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -17179,7 +13998,7 @@ class TrunkedNetworksOperations:
         :param trunked_network_name: The name of the trunked network. Required.
         :type trunked_network_name: str
         :param trunked_network_parameters: The request body. Required.
-        :type trunked_network_parameters: JSON
+        :type trunked_network_parameters: ~azure.mgmt.networkcloud.types.TrunkedNetwork
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17234,7 +14053,7 @@ class TrunkedNetworksOperations:
         self,
         resource_group_name: str,
         trunked_network_name: str,
-        trunked_network_parameters: Union[_models.TrunkedNetwork, JSON, IO[bytes]],
+        trunked_network_parameters: Union[_models.TrunkedNetwork, _types.TrunkedNetwork, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -17247,10 +14066,10 @@ class TrunkedNetworksOperations:
         :type resource_group_name: str
         :param trunked_network_name: The name of the trunked network. Required.
         :type trunked_network_name: str
-        :param trunked_network_parameters: The request body. Is one of the following types:
-         TrunkedNetwork, JSON, IO[bytes] Required.
-        :type trunked_network_parameters: ~azure.mgmt.networkcloud.models.TrunkedNetwork or JSON or
-         IO[bytes]
+        :param trunked_network_parameters: The request body. Is either a TrunkedNetwork type or a
+         IO[bytes] type. Required.
+        :type trunked_network_parameters: ~azure.mgmt.networkcloud.models.TrunkedNetwork or
+         ~azure.mgmt.networkcloud.types.TrunkedNetwork or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -17355,7 +14174,7 @@ class TrunkedNetworksOperations:
         self,
         resource_group_name: str,
         trunked_network_name: str,
-        trunked_network_update_parameters: Optional[JSON] = None,
+        trunked_network_update_parameters: Optional[_types.TrunkedNetworkPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -17370,7 +14189,8 @@ class TrunkedNetworksOperations:
         :param trunked_network_name: The name of the trunked network. Required.
         :type trunked_network_name: str
         :param trunked_network_update_parameters: The request body. Default value is None.
-        :type trunked_network_update_parameters: JSON
+        :type trunked_network_update_parameters:
+         ~azure.mgmt.networkcloud.types.TrunkedNetworkPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17424,7 +14244,7 @@ class TrunkedNetworksOperations:
         resource_group_name: str,
         trunked_network_name: str,
         trunked_network_update_parameters: Optional[
-            Union[_models.TrunkedNetworkPatchParameters, JSON, IO[bytes]]
+            Union[_models.TrunkedNetworkPatchParameters, _types.TrunkedNetworkPatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -17438,10 +14258,11 @@ class TrunkedNetworksOperations:
         :type resource_group_name: str
         :param trunked_network_name: The name of the trunked network. Required.
         :type trunked_network_name: str
-        :param trunked_network_update_parameters: The request body. Is one of the following types:
-         TrunkedNetworkPatchParameters, JSON, IO[bytes] Default value is None.
+        :param trunked_network_update_parameters: The request body. Is either a
+         TrunkedNetworkPatchParameters type or a IO[bytes] type. Default value is None.
         :type trunked_network_update_parameters:
-         ~azure.mgmt.networkcloud.models.TrunkedNetworkPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.TrunkedNetworkPatchParameters or
+         ~azure.mgmt.networkcloud.types.TrunkedNetworkPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -17990,7 +14811,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_parameters: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        virtual_machine_parameters: Union[_models.VirtualMachine, _types.VirtualMachine, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18113,7 +14934,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_parameters: JSON,
+        virtual_machine_parameters: _types.VirtualMachine,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18128,7 +14949,7 @@ class VirtualMachinesOperations:
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
         :param virtual_machine_parameters: The request body. Required.
-        :type virtual_machine_parameters: JSON
+        :type virtual_machine_parameters: ~azure.mgmt.networkcloud.types.VirtualMachine
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18183,7 +15004,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_parameters: Union[_models.VirtualMachine, JSON, IO[bytes]],
+        virtual_machine_parameters: Union[_models.VirtualMachine, _types.VirtualMachine, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -18196,10 +15017,10 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
-        :param virtual_machine_parameters: The request body. Is one of the following types:
-         VirtualMachine, JSON, IO[bytes] Required.
-        :type virtual_machine_parameters: ~azure.mgmt.networkcloud.models.VirtualMachine or JSON or
-         IO[bytes]
+        :param virtual_machine_parameters: The request body. Is either a VirtualMachine type or a
+         IO[bytes] type. Required.
+        :type virtual_machine_parameters: ~azure.mgmt.networkcloud.models.VirtualMachine or
+         ~azure.mgmt.networkcloud.types.VirtualMachine or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -18269,7 +15090,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_update_parameters: Optional[
-            Union[_models.VirtualMachinePatchParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachinePatchParameters, _types.VirtualMachinePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -18400,7 +15221,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_update_parameters: Optional[JSON] = None,
+        virtual_machine_update_parameters: Optional[_types.VirtualMachinePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -18416,7 +15237,8 @@ class VirtualMachinesOperations:
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
         :param virtual_machine_update_parameters: The request body. Default value is None.
-        :type virtual_machine_update_parameters: JSON
+        :type virtual_machine_update_parameters:
+         ~azure.mgmt.networkcloud.types.VirtualMachinePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18473,7 +15295,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_update_parameters: Optional[
-            Union[_models.VirtualMachinePatchParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachinePatchParameters, _types.VirtualMachinePatchParameters, IO[bytes]]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -18488,10 +15310,11 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
-        :param virtual_machine_update_parameters: The request body. Is one of the following types:
-         VirtualMachinePatchParameters, JSON, IO[bytes] Default value is None.
+        :param virtual_machine_update_parameters: The request body. Is either a
+         VirtualMachinePatchParameters type or a IO[bytes] type. Default value is None.
         :type virtual_machine_update_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachinePatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.VirtualMachinePatchParameters or
+         ~azure.mgmt.networkcloud.types.VirtualMachinePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -18930,7 +15753,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_assign_relay_parameters: Optional[
-            Union[_models.VirtualMachineAssignRelayParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachineAssignRelayParameters, _types.VirtualMachineAssignRelayParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -19041,7 +15864,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_assign_relay_parameters: Optional[JSON] = None,
+        virtual_machine_assign_relay_parameters: Optional[_types.VirtualMachineAssignRelayParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19055,7 +15878,8 @@ class VirtualMachinesOperations:
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
         :param virtual_machine_assign_relay_parameters: The request body. Default value is None.
-        :type virtual_machine_assign_relay_parameters: JSON
+        :type virtual_machine_assign_relay_parameters:
+         ~azure.mgmt.networkcloud.types.VirtualMachineAssignRelayParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19102,7 +15926,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_assign_relay_parameters: Optional[
-            Union[_models.VirtualMachineAssignRelayParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachineAssignRelayParameters, _types.VirtualMachineAssignRelayParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -19114,10 +15938,11 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
-        :param virtual_machine_assign_relay_parameters: The request body. Is one of the following
-         types: VirtualMachineAssignRelayParameters, JSON, IO[bytes] Default value is None.
+        :param virtual_machine_assign_relay_parameters: The request body. Is either a
+         VirtualMachineAssignRelayParameters type or a IO[bytes] type. Default value is None.
         :type virtual_machine_assign_relay_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachineAssignRelayParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.VirtualMachineAssignRelayParameters or
+         ~azure.mgmt.networkcloud.types.VirtualMachineAssignRelayParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -19186,7 +16011,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_power_off_parameters: Optional[
-            Union[_models.VirtualMachinePowerOffParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachinePowerOffParameters, _types.VirtualMachinePowerOffParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
@@ -19296,7 +16121,7 @@ class VirtualMachinesOperations:
         self,
         resource_group_name: str,
         virtual_machine_name: str,
-        virtual_machine_power_off_parameters: Optional[JSON] = None,
+        virtual_machine_power_off_parameters: Optional[_types.VirtualMachinePowerOffParameters] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -19309,7 +16134,8 @@ class VirtualMachinesOperations:
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
         :param virtual_machine_power_off_parameters: The request body. Default value is None.
-        :type virtual_machine_power_off_parameters: JSON
+        :type virtual_machine_power_off_parameters:
+         ~azure.mgmt.networkcloud.types.VirtualMachinePowerOffParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -19355,7 +16181,7 @@ class VirtualMachinesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         virtual_machine_power_off_parameters: Optional[
-            Union[_models.VirtualMachinePowerOffParameters, JSON, IO[bytes]]
+            Union[_models.VirtualMachinePowerOffParameters, _types.VirtualMachinePowerOffParameters, IO[bytes]]
         ] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
@@ -19366,10 +16192,11 @@ class VirtualMachinesOperations:
         :type resource_group_name: str
         :param virtual_machine_name: The name of the virtual machine. Required.
         :type virtual_machine_name: str
-        :param virtual_machine_power_off_parameters: The request body. Is one of the following types:
-         VirtualMachinePowerOffParameters, JSON, IO[bytes] Default value is None.
+        :param virtual_machine_power_off_parameters: The request body. Is either a
+         VirtualMachinePowerOffParameters type or a IO[bytes] type. Default value is None.
         :type virtual_machine_power_off_parameters:
-         ~azure.mgmt.networkcloud.models.VirtualMachinePowerOffParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.VirtualMachinePowerOffParameters or
+         ~azure.mgmt.networkcloud.types.VirtualMachinePowerOffParameters or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -19915,7 +16742,7 @@ class VolumesOperations:
         self,
         resource_group_name: str,
         volume_name: str,
-        volume_parameters: Union[_models.Volume, JSON, IO[bytes]],
+        volume_parameters: Union[_models.Volume, _types.Volume, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -20038,7 +16865,7 @@ class VolumesOperations:
         self,
         resource_group_name: str,
         volume_name: str,
-        volume_parameters: JSON,
+        volume_parameters: _types.Volume,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -20053,7 +16880,7 @@ class VolumesOperations:
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param volume_parameters: The request body. Required.
-        :type volume_parameters: JSON
+        :type volume_parameters: ~azure.mgmt.networkcloud.types.Volume
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20108,7 +16935,7 @@ class VolumesOperations:
         self,
         resource_group_name: str,
         volume_name: str,
-        volume_parameters: Union[_models.Volume, JSON, IO[bytes]],
+        volume_parameters: Union[_models.Volume, _types.Volume, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -20121,9 +16948,10 @@ class VolumesOperations:
         :type resource_group_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param volume_parameters: The request body. Is one of the following types: Volume, JSON,
-         IO[bytes] Required.
-        :type volume_parameters: ~azure.mgmt.networkcloud.models.Volume or JSON or IO[bytes]
+        :param volume_parameters: The request body. Is either a Volume type or a IO[bytes] type.
+         Required.
+        :type volume_parameters: ~azure.mgmt.networkcloud.models.Volume or
+         ~azure.mgmt.networkcloud.types.Volume or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -20227,7 +17055,7 @@ class VolumesOperations:
         self,
         resource_group_name: str,
         volume_name: str,
-        volume_update_parameters: Optional[JSON] = None,
+        volume_update_parameters: Optional[_types.VolumePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -20242,7 +17070,7 @@ class VolumesOperations:
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param volume_update_parameters: The request body. Default value is None.
-        :type volume_update_parameters: JSON
+        :type volume_update_parameters: ~azure.mgmt.networkcloud.types.VolumePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20295,7 +17123,9 @@ class VolumesOperations:
         self,
         resource_group_name: str,
         volume_name: str,
-        volume_update_parameters: Optional[Union[_models.VolumePatchParameters, JSON, IO[bytes]]] = None,
+        volume_update_parameters: Optional[
+            Union[_models.VolumePatchParameters, _types.VolumePatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -20308,10 +17138,10 @@ class VolumesOperations:
         :type resource_group_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param volume_update_parameters: The request body. Is one of the following types:
-         VolumePatchParameters, JSON, IO[bytes] Default value is None.
-        :type volume_update_parameters: ~azure.mgmt.networkcloud.models.VolumePatchParameters or JSON
-         or IO[bytes]
+        :param volume_update_parameters: The request body. Is either a VolumePatchParameters type or a
+         IO[bytes] type. Default value is None.
+        :type volume_update_parameters: ~azure.mgmt.networkcloud.models.VolumePatchParameters or
+         ~azure.mgmt.networkcloud.types.VolumePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -20866,7 +17696,9 @@ class BareMetalMachineKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
-        bare_metal_machine_key_set_parameters: Union[_models.BareMetalMachineKeySet, JSON, IO[bytes]],
+        bare_metal_machine_key_set_parameters: Union[
+            _models.BareMetalMachineKeySet, _types.BareMetalMachineKeySet, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -20996,7 +17828,7 @@ class BareMetalMachineKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
-        bare_metal_machine_key_set_parameters: JSON,
+        bare_metal_machine_key_set_parameters: _types.BareMetalMachineKeySet,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -21013,7 +17845,8 @@ class BareMetalMachineKeySetsOperations:
         :param bare_metal_machine_key_set_name: The name of the bare metal machine key set. Required.
         :type bare_metal_machine_key_set_name: str
         :param bare_metal_machine_key_set_parameters: The request body. Required.
-        :type bare_metal_machine_key_set_parameters: JSON
+        :type bare_metal_machine_key_set_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineKeySet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21074,7 +17907,9 @@ class BareMetalMachineKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
-        bare_metal_machine_key_set_parameters: Union[_models.BareMetalMachineKeySet, JSON, IO[bytes]],
+        bare_metal_machine_key_set_parameters: Union[
+            _models.BareMetalMachineKeySet, _types.BareMetalMachineKeySet, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -21089,10 +17924,11 @@ class BareMetalMachineKeySetsOperations:
         :type cluster_name: str
         :param bare_metal_machine_key_set_name: The name of the bare metal machine key set. Required.
         :type bare_metal_machine_key_set_name: str
-        :param bare_metal_machine_key_set_parameters: The request body. Is one of the following types:
-         BareMetalMachineKeySet, JSON, IO[bytes] Required.
+        :param bare_metal_machine_key_set_parameters: The request body. Is either a
+         BareMetalMachineKeySet type or a IO[bytes] type. Required.
         :type bare_metal_machine_key_set_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineKeySet or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineKeySet or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineKeySet or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -21165,7 +18001,9 @@ class BareMetalMachineKeySetsOperations:
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
         bare_metal_machine_key_set_update_parameters: Optional[
-            Union[_models.BareMetalMachineKeySetPatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.BareMetalMachineKeySetPatchParameters, _types.BareMetalMachineKeySetPatchParameters, IO[bytes]
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -21302,7 +18140,7 @@ class BareMetalMachineKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
-        bare_metal_machine_key_set_update_parameters: Optional[JSON] = None,
+        bare_metal_machine_key_set_update_parameters: Optional[_types.BareMetalMachineKeySetPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -21320,7 +18158,8 @@ class BareMetalMachineKeySetsOperations:
         :param bare_metal_machine_key_set_name: The name of the bare metal machine key set. Required.
         :type bare_metal_machine_key_set_name: str
         :param bare_metal_machine_key_set_update_parameters: The request body. Default value is None.
-        :type bare_metal_machine_key_set_update_parameters: JSON
+        :type bare_metal_machine_key_set_update_parameters:
+         ~azure.mgmt.networkcloud.types.BareMetalMachineKeySetPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21383,7 +18222,9 @@ class BareMetalMachineKeySetsOperations:
         cluster_name: str,
         bare_metal_machine_key_set_name: str,
         bare_metal_machine_key_set_update_parameters: Optional[
-            Union[_models.BareMetalMachineKeySetPatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.BareMetalMachineKeySetPatchParameters, _types.BareMetalMachineKeySetPatchParameters, IO[bytes]
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -21400,10 +18241,11 @@ class BareMetalMachineKeySetsOperations:
         :type cluster_name: str
         :param bare_metal_machine_key_set_name: The name of the bare metal machine key set. Required.
         :type bare_metal_machine_key_set_name: str
-        :param bare_metal_machine_key_set_update_parameters: The request body. Is one of the following
-         types: BareMetalMachineKeySetPatchParameters, JSON, IO[bytes] Default value is None.
+        :param bare_metal_machine_key_set_update_parameters: The request body. Is either a
+         BareMetalMachineKeySetPatchParameters type or a IO[bytes] type. Default value is None.
         :type bare_metal_machine_key_set_update_parameters:
-         ~azure.mgmt.networkcloud.models.BareMetalMachineKeySetPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.BareMetalMachineKeySetPatchParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineKeySetPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -21849,7 +18691,7 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_parameters: Union[_models.BmcKeySet, JSON, IO[bytes]],
+        bmc_key_set_parameters: Union[_models.BmcKeySet, _types.BmcKeySet, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -21978,7 +18820,7 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_parameters: JSON,
+        bmc_key_set_parameters: _types.BmcKeySet,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -21996,7 +18838,7 @@ class BmcKeySetsOperations:
         :param bmc_key_set_name: The name of the baseboard management controller key set. Required.
         :type bmc_key_set_name: str
         :param bmc_key_set_parameters: The request body. Required.
-        :type bmc_key_set_parameters: JSON
+        :type bmc_key_set_parameters: ~azure.mgmt.networkcloud.types.BmcKeySet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22056,7 +18898,7 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_parameters: Union[_models.BmcKeySet, JSON, IO[bytes]],
+        bmc_key_set_parameters: Union[_models.BmcKeySet, _types.BmcKeySet, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -22072,9 +18914,10 @@ class BmcKeySetsOperations:
         :type cluster_name: str
         :param bmc_key_set_name: The name of the baseboard management controller key set. Required.
         :type bmc_key_set_name: str
-        :param bmc_key_set_parameters: The request body. Is one of the following types: BmcKeySet,
-         JSON, IO[bytes] Required.
-        :type bmc_key_set_parameters: ~azure.mgmt.networkcloud.models.BmcKeySet or JSON or IO[bytes]
+        :param bmc_key_set_parameters: The request body. Is either a BmcKeySet type or a IO[bytes]
+         type. Required.
+        :type bmc_key_set_parameters: ~azure.mgmt.networkcloud.models.BmcKeySet or
+         ~azure.mgmt.networkcloud.types.BmcKeySet or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -22145,7 +18988,9 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_update_parameters: Optional[Union[_models.BmcKeySetPatchParameters, JSON, IO[bytes]]] = None,
+        bmc_key_set_update_parameters: Optional[
+            Union[_models.BmcKeySetPatchParameters, _types.BmcKeySetPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -22279,7 +19124,7 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_update_parameters: Optional[JSON] = None,
+        bmc_key_set_update_parameters: Optional[_types.BmcKeySetPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -22297,7 +19142,7 @@ class BmcKeySetsOperations:
         :param bmc_key_set_name: The name of the baseboard management controller key set. Required.
         :type bmc_key_set_name: str
         :param bmc_key_set_update_parameters: The request body. Default value is None.
-        :type bmc_key_set_update_parameters: JSON
+        :type bmc_key_set_update_parameters: ~azure.mgmt.networkcloud.types.BmcKeySetPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22357,7 +19202,9 @@ class BmcKeySetsOperations:
         resource_group_name: str,
         cluster_name: str,
         bmc_key_set_name: str,
-        bmc_key_set_update_parameters: Optional[Union[_models.BmcKeySetPatchParameters, JSON, IO[bytes]]] = None,
+        bmc_key_set_update_parameters: Optional[
+            Union[_models.BmcKeySetPatchParameters, _types.BmcKeySetPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -22373,10 +19220,10 @@ class BmcKeySetsOperations:
         :type cluster_name: str
         :param bmc_key_set_name: The name of the baseboard management controller key set. Required.
         :type bmc_key_set_name: str
-        :param bmc_key_set_update_parameters: The request body. Is one of the following types:
-         BmcKeySetPatchParameters, JSON, IO[bytes] Default value is None.
+        :param bmc_key_set_update_parameters: The request body. Is either a BmcKeySetPatchParameters
+         type or a IO[bytes] type. Default value is None.
         :type bmc_key_set_update_parameters: ~azure.mgmt.networkcloud.models.BmcKeySetPatchParameters
-         or JSON or IO[bytes]
+         or ~azure.mgmt.networkcloud.types.BmcKeySetPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -22820,7 +19667,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_parameters: Union[_models.AgentPool, JSON, IO[bytes]],
+        agent_pool_parameters: Union[_models.AgentPool, _types.AgentPool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -22948,7 +19795,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_parameters: JSON,
+        agent_pool_parameters: _types.AgentPool,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -22965,7 +19812,7 @@ class AgentPoolsOperations:
         :param agent_pool_name: The name of the Kubernetes cluster agent pool. Required.
         :type agent_pool_name: str
         :param agent_pool_parameters: The request body. Required.
-        :type agent_pool_parameters: JSON
+        :type agent_pool_parameters: ~azure.mgmt.networkcloud.types.AgentPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23024,7 +19871,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_parameters: Union[_models.AgentPool, JSON, IO[bytes]],
+        agent_pool_parameters: Union[_models.AgentPool, _types.AgentPool, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23039,9 +19886,10 @@ class AgentPoolsOperations:
         :type kubernetes_cluster_name: str
         :param agent_pool_name: The name of the Kubernetes cluster agent pool. Required.
         :type agent_pool_name: str
-        :param agent_pool_parameters: The request body. Is one of the following types: AgentPool, JSON,
-         IO[bytes] Required.
-        :type agent_pool_parameters: ~azure.mgmt.networkcloud.models.AgentPool or JSON or IO[bytes]
+        :param agent_pool_parameters: The request body. Is either a AgentPool type or a IO[bytes] type.
+         Required.
+        :type agent_pool_parameters: ~azure.mgmt.networkcloud.models.AgentPool or
+         ~azure.mgmt.networkcloud.types.AgentPool or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -23112,7 +19960,9 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_update_parameters: Optional[Union[_models.AgentPoolPatchParameters, JSON, IO[bytes]]] = None,
+        agent_pool_update_parameters: Optional[
+            Union[_models.AgentPoolPatchParameters, _types.AgentPoolPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23247,7 +20097,7 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_update_parameters: Optional[JSON] = None,
+        agent_pool_update_parameters: Optional[_types.AgentPoolPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -23266,7 +20116,7 @@ class AgentPoolsOperations:
         :param agent_pool_name: The name of the Kubernetes cluster agent pool. Required.
         :type agent_pool_name: str
         :param agent_pool_update_parameters: The request body. Default value is None.
-        :type agent_pool_update_parameters: JSON
+        :type agent_pool_update_parameters: ~azure.mgmt.networkcloud.types.AgentPoolPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23327,7 +20177,9 @@ class AgentPoolsOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         agent_pool_name: str,
-        agent_pool_update_parameters: Optional[Union[_models.AgentPoolPatchParameters, JSON, IO[bytes]]] = None,
+        agent_pool_update_parameters: Optional[
+            Union[_models.AgentPoolPatchParameters, _types.AgentPoolPatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23344,10 +20196,10 @@ class AgentPoolsOperations:
         :type kubernetes_cluster_name: str
         :param agent_pool_name: The name of the Kubernetes cluster agent pool. Required.
         :type agent_pool_name: str
-        :param agent_pool_update_parameters: The request body. Is one of the following types:
-         AgentPoolPatchParameters, JSON, IO[bytes] Default value is None.
+        :param agent_pool_update_parameters: The request body. Is either a AgentPoolPatchParameters
+         type or a IO[bytes] type. Default value is None.
         :type agent_pool_update_parameters: ~azure.mgmt.networkcloud.models.AgentPoolPatchParameters or
-         JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.types.AgentPoolPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -23792,7 +20644,9 @@ class KubernetesClusterFeaturesOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         feature_name: str,
-        kubernetes_cluster_feature_parameters: Union[_models.KubernetesClusterFeature, JSON, IO[bytes]],
+        kubernetes_cluster_feature_parameters: Union[
+            _models.KubernetesClusterFeature, _types.KubernetesClusterFeature, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -23923,7 +20777,7 @@ class KubernetesClusterFeaturesOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         feature_name: str,
-        kubernetes_cluster_feature_parameters: JSON,
+        kubernetes_cluster_feature_parameters: _types.KubernetesClusterFeature,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -23941,7 +20795,8 @@ class KubernetesClusterFeaturesOperations:
         :param feature_name: The name of the feature. Required.
         :type feature_name: str
         :param kubernetes_cluster_feature_parameters: The request body. Required.
-        :type kubernetes_cluster_feature_parameters: JSON
+        :type kubernetes_cluster_feature_parameters:
+         ~azure.mgmt.networkcloud.types.KubernetesClusterFeature
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24003,7 +20858,9 @@ class KubernetesClusterFeaturesOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         feature_name: str,
-        kubernetes_cluster_feature_parameters: Union[_models.KubernetesClusterFeature, JSON, IO[bytes]],
+        kubernetes_cluster_feature_parameters: Union[
+            _models.KubernetesClusterFeature, _types.KubernetesClusterFeature, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -24019,10 +20876,11 @@ class KubernetesClusterFeaturesOperations:
         :type kubernetes_cluster_name: str
         :param feature_name: The name of the feature. Required.
         :type feature_name: str
-        :param kubernetes_cluster_feature_parameters: The request body. Is one of the following types:
-         KubernetesClusterFeature, JSON, IO[bytes] Required.
+        :param kubernetes_cluster_feature_parameters: The request body. Is either a
+         KubernetesClusterFeature type or a IO[bytes] type. Required.
         :type kubernetes_cluster_feature_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterFeature or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterFeature or
+         ~azure.mgmt.networkcloud.types.KubernetesClusterFeature or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -24095,7 +20953,11 @@ class KubernetesClusterFeaturesOperations:
         kubernetes_cluster_name: str,
         feature_name: str,
         kubernetes_cluster_feature_update_parameters: Optional[
-            Union[_models.KubernetesClusterFeaturePatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.KubernetesClusterFeaturePatchParameters,
+                _types.KubernetesClusterFeaturePatchParameters,
+                IO[bytes],
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -24231,7 +21093,7 @@ class KubernetesClusterFeaturesOperations:
         resource_group_name: str,
         kubernetes_cluster_name: str,
         feature_name: str,
-        kubernetes_cluster_feature_update_parameters: Optional[JSON] = None,
+        kubernetes_cluster_feature_update_parameters: Optional[_types.KubernetesClusterFeaturePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -24248,7 +21110,8 @@ class KubernetesClusterFeaturesOperations:
         :param feature_name: The name of the feature. Required.
         :type feature_name: str
         :param kubernetes_cluster_feature_update_parameters: The request body. Default value is None.
-        :type kubernetes_cluster_feature_update_parameters: JSON
+        :type kubernetes_cluster_feature_update_parameters:
+         ~azure.mgmt.networkcloud.types.KubernetesClusterFeaturePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24310,7 +21173,11 @@ class KubernetesClusterFeaturesOperations:
         kubernetes_cluster_name: str,
         feature_name: str,
         kubernetes_cluster_feature_update_parameters: Optional[
-            Union[_models.KubernetesClusterFeaturePatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.KubernetesClusterFeaturePatchParameters,
+                _types.KubernetesClusterFeaturePatchParameters,
+                IO[bytes],
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -24326,10 +21193,11 @@ class KubernetesClusterFeaturesOperations:
         :type kubernetes_cluster_name: str
         :param feature_name: The name of the feature. Required.
         :type feature_name: str
-        :param kubernetes_cluster_feature_update_parameters: The request body. Is one of the following
-         types: KubernetesClusterFeaturePatchParameters, JSON, IO[bytes] Default value is None.
+        :param kubernetes_cluster_feature_update_parameters: The request body. Is either a
+         KubernetesClusterFeaturePatchParameters type or a IO[bytes] type. Default value is None.
         :type kubernetes_cluster_feature_update_parameters:
-         ~azure.mgmt.networkcloud.models.KubernetesClusterFeaturePatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.KubernetesClusterFeaturePatchParameters or
+         ~azure.mgmt.networkcloud.types.KubernetesClusterFeaturePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -24775,7 +21643,7 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_parameters: Union[_models.Console, JSON, IO[bytes]],
+        console_parameters: Union[_models.Console, _types.Console, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -24904,7 +21772,7 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_parameters: JSON,
+        console_parameters: _types.Console,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -24922,7 +21790,7 @@ class ConsolesOperations:
         :param console_name: The name of the virtual machine console. Required.
         :type console_name: str
         :param console_parameters: The request body. Required.
-        :type console_parameters: JSON
+        :type console_parameters: ~azure.mgmt.networkcloud.types.Console
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24982,7 +21850,7 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_parameters: Union[_models.Console, JSON, IO[bytes]],
+        console_parameters: Union[_models.Console, _types.Console, IO[bytes]],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -24998,9 +21866,10 @@ class ConsolesOperations:
         :type virtual_machine_name: str
         :param console_name: The name of the virtual machine console. Required.
         :type console_name: str
-        :param console_parameters: The request body. Is one of the following types: Console, JSON,
-         IO[bytes] Required.
-        :type console_parameters: ~azure.mgmt.networkcloud.models.Console or JSON or IO[bytes]
+        :param console_parameters: The request body. Is either a Console type or a IO[bytes] type.
+         Required.
+        :type console_parameters: ~azure.mgmt.networkcloud.models.Console or
+         ~azure.mgmt.networkcloud.types.Console or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -25071,7 +21940,9 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_update_parameters: Optional[Union[_models.ConsolePatchParameters, JSON, IO[bytes]]] = None,
+        console_update_parameters: Optional[
+            Union[_models.ConsolePatchParameters, _types.ConsolePatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -25205,7 +22076,7 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_update_parameters: Optional[JSON] = None,
+        console_update_parameters: Optional[_types.ConsolePatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -25223,7 +22094,7 @@ class ConsolesOperations:
         :param console_name: The name of the virtual machine console. Required.
         :type console_name: str
         :param console_update_parameters: The request body. Default value is None.
-        :type console_update_parameters: JSON
+        :type console_update_parameters: ~azure.mgmt.networkcloud.types.ConsolePatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25283,7 +22154,9 @@ class ConsolesOperations:
         resource_group_name: str,
         virtual_machine_name: str,
         console_name: str,
-        console_update_parameters: Optional[Union[_models.ConsolePatchParameters, JSON, IO[bytes]]] = None,
+        console_update_parameters: Optional[
+            Union[_models.ConsolePatchParameters, _types.ConsolePatchParameters, IO[bytes]]
+        ] = None,
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -25299,10 +22172,10 @@ class ConsolesOperations:
         :type virtual_machine_name: str
         :param console_name: The name of the virtual machine console. Required.
         :type console_name: str
-        :param console_update_parameters: The request body. Is one of the following types:
-         ConsolePatchParameters, JSON, IO[bytes] Default value is None.
-        :type console_update_parameters: ~azure.mgmt.networkcloud.models.ConsolePatchParameters or JSON
-         or IO[bytes]
+        :param console_update_parameters: The request body. Is either a ConsolePatchParameters type or
+         a IO[bytes] type. Default value is None.
+        :type console_update_parameters: ~azure.mgmt.networkcloud.models.ConsolePatchParameters or
+         ~azure.mgmt.networkcloud.types.ConsolePatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -25748,7 +22621,9 @@ class MetricsConfigurationsOperations:
         resource_group_name: str,
         cluster_name: str,
         metrics_configuration_name: str,
-        metrics_configuration_parameters: Union[_models.ClusterMetricsConfiguration, JSON, IO[bytes]],
+        metrics_configuration_parameters: Union[
+            _models.ClusterMetricsConfiguration, _types.ClusterMetricsConfiguration, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -25879,7 +22754,7 @@ class MetricsConfigurationsOperations:
         resource_group_name: str,
         cluster_name: str,
         metrics_configuration_name: str,
-        metrics_configuration_parameters: JSON,
+        metrics_configuration_parameters: _types.ClusterMetricsConfiguration,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -25897,7 +22772,8 @@ class MetricsConfigurationsOperations:
          Required.
         :type metrics_configuration_name: str
         :param metrics_configuration_parameters: The request body. Required.
-        :type metrics_configuration_parameters: JSON
+        :type metrics_configuration_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterMetricsConfiguration
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -25959,7 +22835,9 @@ class MetricsConfigurationsOperations:
         resource_group_name: str,
         cluster_name: str,
         metrics_configuration_name: str,
-        metrics_configuration_parameters: Union[_models.ClusterMetricsConfiguration, JSON, IO[bytes]],
+        metrics_configuration_parameters: Union[
+            _models.ClusterMetricsConfiguration, _types.ClusterMetricsConfiguration, IO[bytes]
+        ],
         *,
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
@@ -25975,10 +22853,11 @@ class MetricsConfigurationsOperations:
         :param metrics_configuration_name: The name of the metrics configuration for the cluster.
          Required.
         :type metrics_configuration_name: str
-        :param metrics_configuration_parameters: The request body. Is one of the following types:
-         ClusterMetricsConfiguration, JSON, IO[bytes] Required.
+        :param metrics_configuration_parameters: The request body. Is either a
+         ClusterMetricsConfiguration type or a IO[bytes] type. Required.
         :type metrics_configuration_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterMetricsConfiguration or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterMetricsConfiguration or
+         ~azure.mgmt.networkcloud.types.ClusterMetricsConfiguration or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -26051,7 +22930,11 @@ class MetricsConfigurationsOperations:
         cluster_name: str,
         metrics_configuration_name: str,
         metrics_configuration_update_parameters: Optional[
-            Union[_models.ClusterMetricsConfigurationPatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.ClusterMetricsConfigurationPatchParameters,
+                _types.ClusterMetricsConfigurationPatchParameters,
+                IO[bytes],
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -26189,7 +23072,7 @@ class MetricsConfigurationsOperations:
         resource_group_name: str,
         cluster_name: str,
         metrics_configuration_name: str,
-        metrics_configuration_update_parameters: Optional[JSON] = None,
+        metrics_configuration_update_parameters: Optional[_types.ClusterMetricsConfigurationPatchParameters] = None,
         *,
         content_type: str = "application/json",
         etag: Optional[str] = None,
@@ -26208,7 +23091,8 @@ class MetricsConfigurationsOperations:
          Required.
         :type metrics_configuration_name: str
         :param metrics_configuration_update_parameters: The request body. Default value is None.
-        :type metrics_configuration_update_parameters: JSON
+        :type metrics_configuration_update_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterMetricsConfigurationPatchParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -26272,7 +23156,11 @@ class MetricsConfigurationsOperations:
         cluster_name: str,
         metrics_configuration_name: str,
         metrics_configuration_update_parameters: Optional[
-            Union[_models.ClusterMetricsConfigurationPatchParameters, JSON, IO[bytes]]
+            Union[
+                _models.ClusterMetricsConfigurationPatchParameters,
+                _types.ClusterMetricsConfigurationPatchParameters,
+                IO[bytes],
+            ]
         ] = None,
         *,
         etag: Optional[str] = None,
@@ -26290,10 +23178,11 @@ class MetricsConfigurationsOperations:
         :param metrics_configuration_name: The name of the metrics configuration for the cluster.
          Required.
         :type metrics_configuration_name: str
-        :param metrics_configuration_update_parameters: The request body. Is one of the following
-         types: ClusterMetricsConfigurationPatchParameters, JSON, IO[bytes] Default value is None.
+        :param metrics_configuration_update_parameters: The request body. Is either a
+         ClusterMetricsConfigurationPatchParameters type or a IO[bytes] type. Default value is None.
         :type metrics_configuration_update_parameters:
-         ~azure.mgmt.networkcloud.models.ClusterMetricsConfigurationPatchParameters or JSON or IO[bytes]
+         ~azure.mgmt.networkcloud.models.ClusterMetricsConfigurationPatchParameters or
+         ~azure.mgmt.networkcloud.types.ClusterMetricsConfigurationPatchParameters or IO[bytes]
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
