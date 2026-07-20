@@ -6,7 +6,6 @@
 
   - Client `ConnectedKubernetesClient` added method `send_request`
   - Model `ConnectedCluster` added property `kind`
-  - Model `ConnectedCluster` added property `properties`
   - Enum `ConnectivityStatus` added member `AGENT_NOT_INSTALLED`
   - Model `HybridConnectionConfig` added property `relay_tid`
   - Model `HybridConnectionConfig` added property `relay_type`
@@ -24,7 +23,6 @@
   - Added enum `AzureHybridBenefit`
   - Added enum `ConnectedClusterKind`
   - Added model `ConnectedClusterPatchProperties`
-  - Added model `ConnectedClusterProperties`
   - Added model `Gateway`
   - Added model `OidcIssuerProfile`
   - Added enum `Origin`
@@ -32,28 +30,18 @@
   - Added model `SecurityProfile`
   - Added model `SecurityProfileWorkloadIdentity`
   - Added model `SystemComponent`
-  - Model `ConnectedClusterOperations` added method `begin_create_or_replace`
-  - Model `ConnectedClusterOperations` added method `begin_update_async`
 
 ### Breaking Changes
 
-  - Model `ConnectedCluster` deleted or renamed its instance variable `agent_public_key_certificate`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `agent_version`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `connectivity_status`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `distribution`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `infrastructure`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `kubernetes_version`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `last_connectivity_time`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `managed_identity_certificate_expiration_time`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `offering`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `total_core_count`
-  - Model `ConnectedCluster` deleted or renamed its instance variable `total_node_count`
-  - Deleted or renamed model `ConnectedClusterList`
-  - Deleted or renamed model `LastModifiedByType`
-  - Deleted or renamed model `OperationList`
-  - Deleted or renamed method `ConnectedClusterOperations.begin_create`
-  - Deleted or renamed method `ConnectedClusterOperations.update`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ConnectedCluster` moved instance variable `agent_public_key_certificate`, `agent_version`, `connectivity_status`, `distribution`, `infrastructure`, `kubernetes_version`, `last_connectivity_time`, `managed_identity_certificate_expiration_time`, `offering`, `provisioning_state`, `total_core_count` and `total_node_count` under property `properties` whose type is `ConnectedClusterProperties`
+  - Model `SystemData` renamed type of property `last_modified_by_type` from `LastModifiedByType` to `CreatedByType`
+  - Operation group `ConnectedClusterOperations` renamed method `begin_create` to `begin_create_or_replace`
+  - Operation group `ConnectedClusterOperations` renamed method `update` to `begin_update_async`
+
+### Other Changes
+
+  - Deleted model `ConnectedClusterList`/`OperationList` which actually were not used by SDK users
 
 ## 2.0.0b1 (2026-05-20)
 
