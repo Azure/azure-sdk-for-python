@@ -2,7 +2,13 @@
 
 ## 1.0.0 (2026-07-20)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Added typed dictionary request body definitions in `azure.mgmt.resource.deployments.types` for deployment operations.
+
+### Other Changes
+
+  - First stable release of the Azure Resource Deployments Management client library.
 
 ## 1.0.0b2 (2026-05-21)
 
