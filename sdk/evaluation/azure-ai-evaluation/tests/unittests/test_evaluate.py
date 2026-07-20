@@ -2302,7 +2302,11 @@ class TestProcessCriteriaMetricsThresholdInjection:
 
 
 try:
-    import opentelemetry  # noqa: F401
+    # These tests exercise the OpenTelemetry Events API (opentelemetry._events /
+    # opentelemetry.sdk._events, added in 1.26). Guard on those submodules, not just the top-level
+    # package: the sk_ CI leg pins an older opentelemetry (via semantic-kernel) that lacks them.
+    import opentelemetry._events  # noqa: F401
+    from opentelemetry.sdk._events import EventLoggerProvider  # noqa: F401
 
     MISSING_OPENTELEMETRY = False
 except ImportError:
