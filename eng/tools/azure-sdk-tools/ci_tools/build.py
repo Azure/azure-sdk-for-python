@@ -222,14 +222,14 @@ def create_package(
 ):
     """
     Builds a wheel and/or sdist file given a setup.py, pyproject.toml, or directory containing either.
-    
+
     For packages with compiled extensions (ext_modules):
     - setup.py: uses cibuildwheel to build platform-specific wheels
     - pyproject.toml: uses cibuildwheel to build platform-specific wheels (respects [tool.cibuildwheel] config)
-    
+
     For pure Python packages:
     - Uses python -m build
-    
+
     Outputs into a distribution directory and defaults to get_artifact_directory().
     """
 
@@ -243,7 +243,7 @@ def create_package(
         if enable_wheel and setup_parsed.ext_modules:
             # Use cibuildwheel for compiled extensions (respects [tool.cibuildwheel] config)
             run_logged(
-                [sys.executable, "-vv", "-m", "cibuildwheel", "--output-dir", dist],
+                [sys.executable, "-m", "cibuildwheel", "--output-dir", dist],
                 cwd=setup_parsed.folder,
                 check=True,
                 should_stream_to_console=should_log_build_output,
