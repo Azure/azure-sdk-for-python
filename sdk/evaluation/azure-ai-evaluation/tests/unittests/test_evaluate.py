@@ -551,11 +551,16 @@ class TestEvaluate:
         assert "The output directory './not_exist_dir' does not exist." in exc_info.value.args[0]
 
     @pytest.mark.parametrize("use_relative_path", [True, False])
-    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, use_relative_path):
+    def test_evaluate_output_path(self, evaluate_test_data_jsonl_file, tmpdir, monkeypatch, use_relative_path):
         # output_path is a file
         if use_relative_path:
             output_path = os.path.join(tmpdir, "eval_test_results.jsonl")
         else:
+            # A bare relative filename resolves against the process CWD. Under pytest-xdist the CWD is
+            # shared across worker processes, so writing/removing a relative file in the CWD races with
+            # other workers (intermittent FileNotFoundError on cleanup). chdir into the per-test tmpdir
+            # to keep the relative-path behavior under test while isolating the file per test.
+            monkeypatch.chdir(tmpdir)
             output_path = "eval_test_results.jsonl"
 
         result = evaluate(
