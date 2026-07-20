@@ -2,6 +2,7 @@
 namespace azure.mgmt.networkcloud
 
     class azure.mgmt.networkcloud.NetworkCloudMgmtClient: implements ContextManager 
+        access_bridges: AccessBridgesOperations
         agent_pools: AgentPoolsOperations
         bare_metal_machine_key_sets: BareMetalMachineKeySetsOperations
         bare_metal_machines: BareMetalMachinesOperations
@@ -12,6 +13,7 @@ namespace azure.mgmt.networkcloud
         consoles: ConsolesOperations
         kubernetes_cluster_features: KubernetesClusterFeaturesOperations
         kubernetes_clusters: KubernetesClustersOperations
+        kubernetes_versions: KubernetesVersionsOperations
         l2_networks: L2NetworksOperations
         l3_networks: L3NetworksOperations
         metrics_configurations: MetricsConfigurationsOperations
@@ -49,6 +51,7 @@ namespace azure.mgmt.networkcloud
 namespace azure.mgmt.networkcloud.aio
 
     class azure.mgmt.networkcloud.aio.NetworkCloudMgmtClient: implements AsyncContextManager 
+        access_bridges: AccessBridgesOperations
         agent_pools: AgentPoolsOperations
         bare_metal_machine_key_sets: BareMetalMachineKeySetsOperations
         bare_metal_machines: BareMetalMachinesOperations
@@ -59,6 +62,7 @@ namespace azure.mgmt.networkcloud.aio
         consoles: ConsolesOperations
         kubernetes_cluster_features: KubernetesClusterFeaturesOperations
         kubernetes_clusters: KubernetesClustersOperations
+        kubernetes_versions: KubernetesVersionsOperations
         l2_networks: L2NetworksOperations
         l3_networks: L3NetworksOperations
         metrics_configurations: MetricsConfigurationsOperations
@@ -94,6 +98,129 @@ namespace azure.mgmt.networkcloud.aio
 
 
 namespace azure.mgmt.networkcloud.aio.operations
+
+    class azure.mgmt.networkcloud.aio.operations.AccessBridgesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: AccessBridge, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: AccessBridge, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[AccessBridge]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                **kwargs: Any
+            ) -> AccessBridge: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AccessBridge]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_subscription(
+                self, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[AccessBridge]: ...
+
 
     class azure.mgmt.networkcloud.aio.operations.AgentPoolsOperations:
 
@@ -469,11 +596,36 @@ namespace azure.mgmt.networkcloud.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[OperationStatusResult]: ...
 
-        @distributed_trace_async
+        @overload
         async def begin_reimage(
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_reimage(
+                self, 
+                resource_group_name: str, 
+                bare_metal_machine_name: str, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_reimage(
+                self, 
+                resource_group_name: str, 
+                bare_metal_machine_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[OperationStatusResult]: ...
 
@@ -1041,6 +1193,39 @@ namespace azure.mgmt.networkcloud.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[OperationStatusResult]: ...
 
+        @overload
+        async def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
         @distributed_trace_async
         async def get(
                 self, 
@@ -1227,6 +1412,72 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 cluster_deploy_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: ClusterRotateCredentialParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: ClusterRotateCredentialParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1771,6 +2022,135 @@ namespace azure.mgmt.networkcloud.aio.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[KubernetesCluster]: ...
+
+
+    class azure.mgmt.networkcloud.aio.operations.KubernetesVersionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: KubernetesVersion, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: KubernetesVersion, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @overload
+        async def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        async def begin_delete(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OperationStatusResult]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @overload
+        async def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[KubernetesVersion]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                **kwargs: Any
+            ) -> KubernetesVersion: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[KubernetesVersion]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_subscription(
+                self, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[KubernetesVersion]: ...
 
 
     class azure.mgmt.networkcloud.aio.operations.L2NetworksOperations:
@@ -2984,6 +3364,143 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.AccessBridge(TrackedResource):
+        etag: Optional[str]
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: AccessBridgeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                extended_location: ExtendedLocation, 
+                location: str, 
+                properties: AccessBridgeProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeAllowedName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        BASTION = "Bastion"
+        PRIVATE_VAULT = "PrivateVault"
+        STORAGE_DASHBOARD = "StorageDashboard"
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEGRADED = "Degraded"
+        FAILED = "Failed"
+        RUNNING = "Running"
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeEndpoint(_Model):
+        fqdn: Optional[str]
+        ipv4_address: Optional[str]
+        ipv6_address: Optional[str]
+        name: Optional[str]
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgePatchParameters(_Model):
+        properties: Optional[AccessBridgePatchProperties]
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[AccessBridgePatchProperties] = ..., 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgePatchProperties(_Model):
+        security_rules: Optional[list[AccessBridgeSecurityRule]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                security_rules: Optional[list[AccessBridgeSecurityRule]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeProperties(_Model):
+        detailed_status: Optional[Union[str, AccessBridgeDetailedStatus]]
+        detailed_status_message: Optional[str]
+        endpoints: Optional[list[AccessBridgeEndpoint]]
+        ipv4_connected_prefix: Optional[str]
+        ipv6_connected_prefix: Optional[str]
+        network_id: str
+        protocol: Optional[Union[str, TransportProtocol]]
+        provisioning_state: Optional[Union[str, AccessBridgeProvisioningState]]
+        security_rules: Optional[list[AccessBridgeSecurityRule]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                ipv4_connected_prefix: Optional[str] = ..., 
+                ipv6_connected_prefix: Optional[str] = ..., 
+                network_id: str, 
+                security_rules: Optional[list[AccessBridgeSecurityRule]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "Accepted"
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        PROVISIONING = "Provisioning"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.networkcloud.models.AccessBridgeSecurityRule(_Model):
+        description: Optional[str]
+        direction: Union[str, SecurityRuleDirection]
+        ipv4_addresses: Optional[list[str]]
+        ipv6_addresses: Optional[list[str]]
+        port: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                direction: Union[str, SecurityRuleDirection], 
+                ipv4_addresses: Optional[list[str]] = ..., 
+                ipv6_addresses: Optional[list[str]] = ..., 
+                port: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ActionState(_Model):
         action_type: Optional[str]
         correlation_id: Optional[str]
@@ -3014,6 +3531,22 @@ namespace azure.mgmt.networkcloud.models
                 *, 
                 password: str, 
                 username: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AdministrativeCredentialsPatch(_Model):
+        password: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                password: Optional[str] = ..., 
+                username: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3342,6 +3875,33 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.BareMetalMachineConfigurationDataPatch(_Model):
+        bmc_connection_string: Optional[str]
+        bmc_credentials: Optional[AdministrativeCredentialsPatch]
+        bmc_mac_address: Optional[str]
+        boot_mac_address: Optional[str]
+        machine_details: Optional[str]
+        machine_name: Optional[str]
+        rack_slot: Optional[int]
+        serial_number: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bmc_credentials: Optional[AdministrativeCredentialsPatch] = ..., 
+                bmc_mac_address: Optional[str] = ..., 
+                boot_mac_address: Optional[str] = ..., 
+                machine_details: Optional[str] = ..., 
+                machine_name: Optional[str] = ..., 
+                rack_slot: Optional[int] = ..., 
+                serial_number: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.BareMetalMachineCordonParameters(_Model):
         evacuate: Optional[Union[str, BareMetalMachineEvacuate]]
 
@@ -3512,6 +4072,32 @@ namespace azure.mgmt.networkcloud.models
         INVALID = "Invalid"
 
 
+    class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatus(_Model):
+        log_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]]
+        metrics_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                log_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]] = ..., 
+                metrics_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
+
+
     class azure.mgmt.networkcloud.models.BareMetalMachinePatchParameters(_Model):
         properties: Optional[BareMetalMachinePatchProperties]
         tags: Optional[dict[str, str]]
@@ -3574,6 +4160,8 @@ namespace azure.mgmt.networkcloud.models
         associated_resource_ids: Optional[list[str]]
         bmc_connection_string: str
         bmc_credentials: AdministrativeCredentials
+        bmc_ipv4_address: Optional[str]
+        bmc_ipv6_address: Optional[str]
         bmc_mac_address: str
         boot_mac_address: str
         ca_certificate: Optional[CertificateInfo]
@@ -3591,6 +4179,7 @@ namespace azure.mgmt.networkcloud.models
         machine_name: str
         machine_roles: Optional[list[str]]
         machine_sku_id: str
+        monitoring_configuration_status: Optional[BareMetalMachineMonitoringConfigurationStatus]
         oam_ipv4_address: Optional[str]
         oam_ipv6_address: Optional[str]
         os_image: Optional[str]
@@ -3637,6 +4226,25 @@ namespace azure.mgmt.networkcloud.models
     class azure.mgmt.networkcloud.models.BareMetalMachineReadyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FALSE = "False"
         TRUE = "True"
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineReimageParameters(_Model):
+        safeguard_mode: Optional[Union[str, BareMetalMachineReimageSafeguardMode]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                safeguard_mode: Optional[Union[str, BareMetalMachineReimageSafeguardMode]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineReimageSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALL = "All"
+        NONE = "None"
 
 
     class azure.mgmt.networkcloud.models.BareMetalMachineReplaceParameters(_Model):
@@ -4082,6 +4690,9 @@ namespace azure.mgmt.networkcloud.models
         AVAILABLE = "Available"
         EXPANDING_VOLUME = "ExpandingVolume"
         EXPANSION_FAILED = "ExpansionFailed"
+        INITIALIZING = "Initializing"
+        NONE = "None"
+        REPAIRING = "Repairing"
 
 
     class azure.mgmt.networkcloud.models.Cluster(TrackedResource):
@@ -4089,6 +4700,7 @@ namespace azure.mgmt.networkcloud.models
         extended_location: ExtendedLocation
         id: str
         identity: Optional[ManagedServiceIdentity]
+        kind: Optional[Union[str, DeploymentType]]
         location: str
         name: str
         properties: ClusterProperties
@@ -4104,6 +4716,7 @@ namespace azure.mgmt.networkcloud.models
                 *, 
                 extended_location: ExtendedLocation, 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                kind: Optional[Union[str, DeploymentType]] = ..., 
                 location: str, 
                 properties: ClusterProperties, 
                 tags: Optional[dict[str, str]] = ...
@@ -4174,16 +4787,23 @@ namespace azure.mgmt.networkcloud.models
 
     class azure.mgmt.networkcloud.models.ClusterContinueUpdateVersionParameters(_Model):
         machine_group_targeting_mode: Optional[Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]]
+        safeguard_mode: Optional[Union[str, ClusterContinueUpdateVersionSafeguardMode]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                machine_group_targeting_mode: Optional[Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]] = ...
+                machine_group_targeting_mode: Optional[Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]] = ..., 
+                safeguard_mode: Optional[Union[str, ClusterContinueUpdateVersionSafeguardMode]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ClusterContinueUpdateVersionSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALL = "All"
+        NONE = "None"
 
 
     class azure.mgmt.networkcloud.models.ClusterDeployParameters(_Model):
@@ -4212,10 +4832,31 @@ namespace azure.mgmt.networkcloud.models
         UPDATING = "Updating"
 
 
+    class azure.mgmt.networkcloud.models.ClusterInspectAdditionalAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        RESET_HARDWARE = "ResetHardware"
+
+
+    class azure.mgmt.networkcloud.models.ClusterInspectParameters(_Model):
+        additional_actions: Optional[list[Union[str, ClusterInspectAdditionalAction]]]
+        filter_devices: Optional[FilterDevices]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                additional_actions: Optional[list[Union[str, ClusterInspectAdditionalAction]]] = ..., 
+                filter_devices: Optional[FilterDevices] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ClusterManager(TrackedResource):
         etag: Optional[str]
         id: str
         identity: Optional[ManagedServiceIdentity]
+        kind: Optional[Union[str, DeploymentType]]
         location: str
         name: str
         properties: ClusterManagerProperties
@@ -4230,6 +4871,7 @@ namespace azure.mgmt.networkcloud.models
                 self, 
                 *, 
                 identity: Optional[ManagedServiceIdentity] = ..., 
+                kind: Optional[Union[str, DeploymentType]] = ..., 
                 location: str, 
                 properties: ClusterManagerProperties, 
                 tags: Optional[dict[str, str]] = ...
@@ -4285,6 +4927,7 @@ namespace azure.mgmt.networkcloud.models
         managed_resource_group_configuration: Optional[ManagedResourceGroupConfiguration]
         manager_extended_location: Optional[ExtendedLocation]
         provisioning_state: Optional[Union[str, ClusterManagerProvisioningState]]
+        relay_configuration: Optional[ClusterManagerRelayConfiguration]
         vm_size: Optional[str]
 
         @overload
@@ -4309,6 +4952,38 @@ namespace azure.mgmt.networkcloud.models
         PROVISIONING = "Provisioning"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
+
+
+    class azure.mgmt.networkcloud.models.ClusterManagerRelayConfiguration(_Model):
+        relay_namespace_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                relay_namespace_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(_Model):
+        connection_state: Union[str, RelayPrivateEndpointConnectionState]
+        description: Optional[str]
+        private_endpoint_resource_id: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                connection_state: Union[str, RelayPrivateEndpointConnectionState], 
+                description: Optional[str] = ..., 
+                private_endpoint_resource_id: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.networkcloud.models.ClusterMetricsConfiguration(TrackedResource):
@@ -4445,34 +5120,34 @@ namespace azure.mgmt.networkcloud.models
 
 
     class azure.mgmt.networkcloud.models.ClusterPatchProperties(_Model):
-        aggregator_or_single_rack_definition: Optional[RackDefinition]
+        aggregator_or_single_rack_definition: Optional[RackDefinitionPatch]
         analytics_output_settings: Optional[AnalyticsOutputSettings]
         cluster_location: Optional[str]
-        cluster_service_principal: Optional[ServicePrincipalInformation]
+        cluster_service_principal: Optional[ServicePrincipalInformationPatch]
         command_output_settings: Optional[CommandOutputSettings]
-        compute_deployment_threshold: Optional[ValidationThreshold]
-        compute_rack_definitions: Optional[list[RackDefinition]]
-        runtime_protection_configuration: Optional[RuntimeProtectionConfiguration]
-        secret_archive: Optional[ClusterSecretArchive]
+        compute_deployment_threshold: Optional[ValidationThresholdPatch]
+        compute_rack_definitions: Optional[list[RackDefinitionPatch]]
+        runtime_protection_configuration: Optional[RuntimeProtectionConfigurationPatch]
+        secret_archive: Optional[ClusterSecretArchivePatch]
         secret_archive_settings: Optional[SecretArchiveSettings]
-        update_strategy: Optional[ClusterUpdateStrategy]
+        update_strategy: Optional[ClusterUpdateStrategyPatch]
         vulnerability_scanning_settings: Optional[VulnerabilityScanningSettingsPatch]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                aggregator_or_single_rack_definition: Optional[RackDefinition] = ..., 
+                aggregator_or_single_rack_definition: Optional[RackDefinitionPatch] = ..., 
                 analytics_output_settings: Optional[AnalyticsOutputSettings] = ..., 
                 cluster_location: Optional[str] = ..., 
-                cluster_service_principal: Optional[ServicePrincipalInformation] = ..., 
+                cluster_service_principal: Optional[ServicePrincipalInformationPatch] = ..., 
                 command_output_settings: Optional[CommandOutputSettings] = ..., 
-                compute_deployment_threshold: Optional[ValidationThreshold] = ..., 
-                compute_rack_definitions: Optional[list[RackDefinition]] = ..., 
-                runtime_protection_configuration: Optional[RuntimeProtectionConfiguration] = ..., 
-                secret_archive: Optional[ClusterSecretArchive] = ..., 
+                compute_deployment_threshold: Optional[ValidationThresholdPatch] = ..., 
+                compute_rack_definitions: Optional[list[RackDefinitionPatch]] = ..., 
+                runtime_protection_configuration: Optional[RuntimeProtectionConfigurationPatch] = ..., 
+                secret_archive: Optional[ClusterSecretArchivePatch] = ..., 
                 secret_archive_settings: Optional[SecretArchiveSettings] = ..., 
-                update_strategy: Optional[ClusterUpdateStrategy] = ..., 
+                update_strategy: Optional[ClusterUpdateStrategyPatch] = ..., 
                 vulnerability_scanning_settings: Optional[VulnerabilityScanningSettingsPatch] = ...
             ) -> None: ...
 
@@ -4501,6 +5176,8 @@ namespace azure.mgmt.networkcloud.models
         detailed_status: Optional[Union[str, ClusterDetailedStatus]]
         detailed_status_message: Optional[str]
         hybrid_aks_extended_location: Optional[ExtendedLocation]
+        last_successful_version_update_time: Optional[datetime]
+        managed_credentials: Optional[list[str]]
         managed_resource_group_configuration: Optional[ManagedResourceGroupConfiguration]
         manual_action_count: Optional[int]
         network_fabric_id: str
@@ -4549,6 +5226,20 @@ namespace azure.mgmt.networkcloud.models
         VALIDATING = "Validating"
 
 
+    class azure.mgmt.networkcloud.models.ClusterRotateCredentialParameters(_Model):
+        credentials: list[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                credentials: list[str]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ClusterScanRuntimeParameters(_Model):
         scan_activity: Optional[Union[str, ClusterScanRuntimeParametersScanActivity]]
 
@@ -4589,6 +5280,22 @@ namespace azure.mgmt.networkcloud.models
         TRUE = "True"
 
 
+    class azure.mgmt.networkcloud.models.ClusterSecretArchivePatch(_Model):
+        key_vault_id: Optional[str]
+        use_key_vault: Optional[Union[str, ClusterSecretArchiveEnabled]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_vault_id: Optional[str] = ..., 
+                use_key_vault: Optional[Union[str, ClusterSecretArchiveEnabled]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MULTI_RACK = "MultiRack"
         SINGLE_RACK = "SingleRack"
@@ -4616,23 +5323,52 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.ClusterUpdateStrategyPatch(_Model):
+        max_unavailable: Optional[int]
+        strategy_type: Optional[Union[str, ClusterUpdateStrategyType]]
+        threshold_type: Optional[Union[str, ValidationThresholdType]]
+        threshold_value: Optional[int]
+        wait_time_minutes: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_unavailable: Optional[int] = ..., 
+                strategy_type: Optional[Union[str, ClusterUpdateStrategyType]] = ..., 
+                threshold_type: Optional[Union[str, ValidationThresholdType]] = ..., 
+                threshold_value: Optional[int] = ..., 
+                wait_time_minutes: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ClusterUpdateStrategyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PAUSE_AFTER_RACK = "PauseAfterRack"
         RACK = "Rack"
 
 
     class azure.mgmt.networkcloud.models.ClusterUpdateVersionParameters(_Model):
+        safeguard_mode: Optional[Union[str, ClusterUpdateVersionSafeguardMode]]
         target_cluster_version: str
 
         @overload
         def __init__(
                 self, 
                 *, 
+                safeguard_mode: Optional[Union[str, ClusterUpdateVersionSafeguardMode]] = ..., 
                 target_cluster_version: str
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ClusterUpdateVersionSafeguardMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALL = "All"
+        NONE = "None"
 
 
     class azure.mgmt.networkcloud.models.CommandOutputOverride(_Model):
@@ -4676,6 +5412,7 @@ namespace azure.mgmt.networkcloud.models
         BARE_METAL_MACHINE_RUN_DATA_EXTRACTS = "BareMetalMachineRunDataExtracts"
         BARE_METAL_MACHINE_RUN_DATA_EXTRACTS_RESTRICTED = "BareMetalMachineRunDataExtractsRestricted"
         BARE_METAL_MACHINE_RUN_READ_COMMANDS = "BareMetalMachineRunReadCommands"
+        CLUSTER_SUPPORT_ADMINISTRATIVE_ACTIONS = "ClusterSupportAdministrativeActions"
         STORAGE_RUN_READ_COMMANDS = "StorageRunReadCommands"
 
 
@@ -4749,7 +5486,7 @@ namespace azure.mgmt.networkcloud.models
     class azure.mgmt.networkcloud.models.ConsolePatchProperties(_Model):
         enabled: Optional[Union[str, ConsoleEnabled]]
         expiration: Optional[datetime]
-        ssh_public_key: Optional[SshPublicKey]
+        ssh_public_key: Optional[SshPublicKeyPatch]
 
         @overload
         def __init__(
@@ -4757,7 +5494,7 @@ namespace azure.mgmt.networkcloud.models
                 *, 
                 enabled: Optional[Union[str, ConsoleEnabled]] = ..., 
                 expiration: Optional[datetime] = ..., 
-                ssh_public_key: Optional[SshPublicKey] = ...
+                ssh_public_key: Optional[SshPublicKeyPatch] = ...
             ) -> None: ...
 
         @overload
@@ -4846,6 +5583,11 @@ namespace azure.mgmt.networkcloud.models
     class azure.mgmt.networkcloud.models.DefaultGateway(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FALSE = "False"
         TRUE = "True"
+
+
+    class azure.mgmt.networkcloud.models.DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_LOCAL = "AzureLocal"
+        NEXUS = "Nexus"
 
 
     class azure.mgmt.networkcloud.models.DeviceConnectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4955,6 +5697,22 @@ namespace azure.mgmt.networkcloud.models
         version: Optional[str]
 
 
+    class azure.mgmt.networkcloud.models.FilterDevices(_Model):
+        bare_metal_machine_names: Optional[list[str]]
+        rack_names: Optional[list[str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bare_metal_machine_names: Optional[list[str]] = ..., 
+                rack_names: Optional[list[str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.HardwareInventory(_Model):
         additional_host_information: Optional[str]
         interfaces: Optional[list[HardwareInventoryNetworkInterface]]
@@ -5017,6 +5775,24 @@ namespace azure.mgmt.networkcloud.models
                 password: str, 
                 registry_url: str, 
                 username: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ImageRepositoryCredentialsPatch(_Model):
+        password: Optional[str]
+        registry_url: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                password: Optional[str] = ..., 
+                registry_url: Optional[str] = ..., 
+                username: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -5430,6 +6206,70 @@ namespace azure.mgmt.networkcloud.models
         MACVLAN = "MACVLAN"
         OS_DEVICE = "OSDevice"
         SRIOV = "SRIOV"
+
+
+    class azure.mgmt.networkcloud.models.KubernetesVersion(TrackedResource):
+        etag: Optional[str]
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: KubernetesVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+        def __getattr__(self, name: str) -> Any: ...
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                extended_location: ExtendedLocation, 
+                location: str, 
+                properties: KubernetesVersionProperties, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+        def __setattr__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.KubernetesVersionPatchParameters(_Model):
+        tags: Optional[dict[str, str]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                tags: Optional[dict[str, str]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.KubernetesVersionProperties(_Model):
+        provisioning_state: Optional[Union[str, KubernetesVersionProvisioningState]]
+        values_property: Optional[list[KubernetesVersionValue]]
+
+
+    class azure.mgmt.networkcloud.models.KubernetesVersionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACCEPTED = "Accepted"
+        CANCELED = "Canceled"
+        FAILED = "Failed"
+        SUCCEEDED = "Succeeded"
+
+
+    class azure.mgmt.networkcloud.models.KubernetesVersionValue(_Model):
+        description: Optional[str]
+        version: Optional[str]
 
 
     class azure.mgmt.networkcloud.models.L2Network(TrackedResource):
@@ -6016,6 +6856,32 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.RackDefinitionPatch(_Model):
+        availability_zone: Optional[str]
+        bare_metal_machine_configuration_data: Optional[list[BareMetalMachineConfigurationDataPatch]]
+        network_rack_id: Optional[str]
+        rack_location: Optional[str]
+        rack_serial_number: Optional[str]
+        rack_sku_id: Optional[str]
+        storage_appliance_configuration_data: Optional[list[StorageApplianceConfigurationDataPatch]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                availability_zone: Optional[str] = ..., 
+                bare_metal_machine_configuration_data: Optional[list[BareMetalMachineConfigurationDataPatch]] = ..., 
+                network_rack_id: Optional[str] = ..., 
+                rack_location: Optional[str] = ..., 
+                rack_serial_number: Optional[str] = ..., 
+                rack_sku_id: Optional[str] = ..., 
+                storage_appliance_configuration_data: Optional[list[StorageApplianceConfigurationDataPatch]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.RackDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABLE = "Available"
         ERROR = "Error"
@@ -6107,6 +6973,7 @@ namespace azure.mgmt.networkcloud.models
     class azure.mgmt.networkcloud.models.RackSkuProperties(_Model):
         compute_machines: Optional[list[MachineSkuSlot]]
         controller_machines: Optional[list[MachineSkuSlot]]
+        deployment_type: Optional[Union[str, DeploymentType]]
         description: Optional[str]
         max_cluster_slots: Optional[int]
         provisioning_state: Optional[Union[str, RackSkuProvisioningState]]
@@ -6143,6 +7010,11 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.RelayPrivateEndpointConnectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "Approved"
+        REJECTED = "Rejected"
+
+
     class azure.mgmt.networkcloud.models.RelayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PLATFORM = "Platform"
         PUBLIC = "Public"
@@ -6166,18 +7038,51 @@ namespace azure.mgmt.networkcloud.models
         type: Optional[str]
 
 
+    class azure.mgmt.networkcloud.models.RuntimeProtectionAgentHealthStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        HEALTHY = "Healthy"
+        UNHEALTHY = "Unhealthy"
+
+
+    class azure.mgmt.networkcloud.models.RuntimeProtectionAgentLicenseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LICENSED = "Licensed"
+        UNLICENSED = "Unlicensed"
+
+
     class azure.mgmt.networkcloud.models.RuntimeProtectionConfiguration(_Model):
+        definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]]
         enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]]
 
         @overload
         def __init__(
                 self, 
                 *, 
+                definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]] = ..., 
                 enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.RuntimeProtectionConfigurationPatch(_Model):
+        definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]]
+        enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]] = ..., 
+                enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AUTOMATIC = "Automatic"
+        NONE = "None"
 
 
     class azure.mgmt.networkcloud.models.RuntimeProtectionEnforcementLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6189,8 +7094,13 @@ namespace azure.mgmt.networkcloud.models
 
 
     class azure.mgmt.networkcloud.models.RuntimeProtectionStatus(_Model):
+        agent_health_status: Optional[Union[str, RuntimeProtectionAgentHealthStatus]]
+        agent_health_status_issues: Optional[list[str]]
+        agent_license_status: Optional[Union[str, RuntimeProtectionAgentLicenseStatus]]
+        definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]]
         definitions_last_updated: Optional[datetime]
         definitions_version: Optional[str]
+        enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]]
         scan_completed_time: Optional[datetime]
         scan_scheduled_time: Optional[datetime]
         scan_started_time: Optional[datetime]
@@ -6225,6 +7135,11 @@ namespace azure.mgmt.networkcloud.models
         rotation_period_days: Optional[int]
         secret_archive_reference: Optional[SecretArchiveReference]
         secret_type: Optional[str]
+
+
+    class azure.mgmt.networkcloud.models.SecurityRuleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INBOUND = "Inbound"
+        OUTBOUND = "Outbound"
 
 
     class azure.mgmt.networkcloud.models.ServiceLoadBalancerBgpPeer(_Model):
@@ -6279,6 +7194,26 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.ServicePrincipalInformationPatch(_Model):
+        application_id: Optional[str]
+        password: Optional[str]
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                application_id: Optional[str] = ..., 
+                password: Optional[str] = ..., 
+                principal_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FALSE = "False"
         TRUE = "True"
@@ -6292,6 +7227,20 @@ namespace azure.mgmt.networkcloud.models
                 self, 
                 *, 
                 key_data: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.SshPublicKeyPatch(_Model):
+        key_data: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_data: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6382,6 +7331,26 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.StorageApplianceConfigurationDataPatch(_Model):
+        admin_credentials: Optional[AdministrativeCredentialsPatch]
+        rack_slot: Optional[int]
+        serial_number: Optional[str]
+        storage_appliance_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                admin_credentials: Optional[AdministrativeCredentialsPatch] = ..., 
+                rack_slot: Optional[int] = ..., 
+                serial_number: Optional[str] = ..., 
+                storage_appliance_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABLE = "Available"
         DEGRADED = "Degraded"
@@ -6401,6 +7370,48 @@ namespace azure.mgmt.networkcloud.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceExpansionShelf(_Model):
+        model: Optional[str]
+        version: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                model: Optional[str] = ..., 
+                version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatus(_Model):
+        log_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]]
+        metrics_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                log_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]] = ..., 
+                metrics_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
 
 
     class azure.mgmt.networkcloud.models.StorageAppliancePatchParameters(_Model):
@@ -6449,9 +7460,11 @@ namespace azure.mgmt.networkcloud.models
         cluster_id: Optional[str]
         detailed_status: Optional[Union[str, StorageApplianceDetailedStatus]]
         detailed_status_message: Optional[str]
+        expansion_shelves: Optional[list[StorageApplianceExpansionShelf]]
         management_ipv4_address: Optional[str]
         manufacturer: Optional[str]
         model: Optional[str]
+        monitoring_configuration_status: Optional[StorageApplianceMonitoringConfigurationStatus]
         provisioning_state: Optional[Union[str, StorageApplianceProvisioningState]]
         rack_id: str
         rack_slot: int
@@ -6605,6 +7618,11 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        TCP = "TCP"
+        UDP = "UDP"
+
+
     class azure.mgmt.networkcloud.models.TrunkedNetwork(TrackedResource):
         etag: Optional[str]
         extended_location: ExtendedLocation
@@ -6737,6 +7755,24 @@ namespace azure.mgmt.networkcloud.models
         PER_RACK = "PerRack"
 
 
+    class azure.mgmt.networkcloud.models.ValidationThresholdPatch(_Model):
+        grouping: Optional[Union[str, ValidationThresholdGrouping]]
+        type: Optional[Union[str, ValidationThresholdType]]
+        value: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                grouping: Optional[Union[str, ValidationThresholdGrouping]] = ..., 
+                type: Optional[Union[str, ValidationThresholdType]] = ..., 
+                value: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ValidationThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COUNT_SUCCESS = "CountSuccess"
         PERCENT_SUCCESS = "PercentSuccess"
@@ -6853,13 +7889,13 @@ namespace azure.mgmt.networkcloud.models
 
 
     class azure.mgmt.networkcloud.models.VirtualMachinePatchProperties(_Model):
-        vm_image_repository_credentials: Optional[ImageRepositoryCredentials]
+        vm_image_repository_credentials: Optional[ImageRepositoryCredentialsPatch]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                vm_image_repository_credentials: Optional[ImageRepositoryCredentials] = ...
+                vm_image_repository_credentials: Optional[ImageRepositoryCredentialsPatch] = ...
             ) -> None: ...
 
         @overload
@@ -7047,6 +8083,7 @@ namespace azure.mgmt.networkcloud.models
 
     class azure.mgmt.networkcloud.models.VolumeProperties(_Model):
         allocated_size_mi_b: Optional[int]
+        assigned_storage_appliance_id: Optional[str]
         attached_to: Optional[list[str]]
         detailed_status: Optional[Union[str, VolumeDetailedStatus]]
         detailed_status_message: Optional[str]
@@ -7114,6 +8151,129 @@ namespace azure.mgmt.networkcloud.models
 
 
 namespace azure.mgmt.networkcloud.operations
+
+    class azure.mgmt.networkcloud.operations.AccessBridgesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: AccessBridge, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: AccessBridge, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                access_bridge_update_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[AccessBridge]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                access_bridge_name: Union[str, AccessBridgeAllowedName], 
+                **kwargs: Any
+            ) -> AccessBridge: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AccessBridge]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_subscription(
+                self, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[AccessBridge]: ...
+
 
     class azure.mgmt.networkcloud.operations.AgentPoolsOperations:
 
@@ -7489,11 +8649,36 @@ namespace azure.mgmt.networkcloud.operations
                 **kwargs: Any
             ) -> LROPoller[OperationStatusResult]: ...
 
-        @distributed_trace
+        @overload
         def begin_reimage(
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_reimage(
+                self, 
+                resource_group_name: str, 
+                bare_metal_machine_name: str, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_reimage(
+                self, 
+                resource_group_name: str, 
+                bare_metal_machine_name: str, 
+                body: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[OperationStatusResult]: ...
 
@@ -8061,6 +9246,39 @@ namespace azure.mgmt.networkcloud.operations
                 **kwargs: Any
             ) -> LROPoller[OperationStatusResult]: ...
 
+        @overload
+        def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_update_relay_private_endpoint_connection(
+                self, 
+                resource_group_name: str, 
+                cluster_manager_name: str, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
         @distributed_trace
         def get(
                 self, 
@@ -8247,6 +9465,72 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 cluster_deploy_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_inspect(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                cluster_inspect_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: ClusterRotateCredentialParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: ClusterRotateCredentialParameters, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_rotate_credential(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                body: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8791,6 +10075,135 @@ namespace azure.mgmt.networkcloud.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[KubernetesCluster]: ...
+
+
+    class azure.mgmt.networkcloud.operations.KubernetesVersionsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: KubernetesVersion, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: KubernetesVersion, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @overload
+        def begin_create_or_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_parameters: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def begin_delete(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                *, 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[OperationStatusResult]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @overload
+        def begin_update(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                kubernetes_version_patch_parameters: Optional[IO[bytes]] = None, 
+                *, 
+                content_type: str = "application/json", 
+                etag: Optional[str] = ..., 
+                match_condition: Optional[MatchConditions] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[KubernetesVersion]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                kubernetes_version_name: str, 
+                **kwargs: Any
+            ) -> KubernetesVersion: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_resource_group(
+                self, 
+                resource_group_name: str, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[KubernetesVersion]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
+        def list_by_subscription(
+                self, 
+                *, 
+                skip_token: Optional[str] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[KubernetesVersion]: ...
 
 
     class azure.mgmt.networkcloud.operations.L2NetworksOperations:
@@ -9995,6 +11408,81 @@ namespace azure.mgmt.networkcloud.types
         admin_group_object_ids: list[str]
 
 
+    class azure.mgmt.networkcloud.types.AccessBridge(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[AccessBridgeProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: AccessBridgeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeEndpoint(TypedDict, total=False):
+        key "fqdn": str
+        key "ipv4Address": str
+        key "ipv6Address": str
+        key "name": str
+        fqdn: str
+        ipv4_address: str
+        ipv6_address: str
+        name: str
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('AccessBridgePatchProperties', module='types')
+        properties: AccessBridgePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgePatchProperties(TypedDict, total=False):
+        securityRules: list[AccessBridgeSecurityRule]
+        security_rules: list[AccessBridgeSecurityRule]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeProperties(TypedDict, total=False):
+        key "detailedStatus": Union[str, AccessBridgeDetailedStatus]
+        key "detailedStatusMessage": str
+        key "ipv4ConnectedPrefix": str
+        key "ipv6ConnectedPrefix": str
+        key "networkId": Required[str]
+        key "protocol": Union[str, TransportProtocol]
+        key "provisioningState": Union[str, AccessBridgeProvisioningState]
+        detailed_status: Union[str, AccessBridgeDetailedStatus]
+        detailed_status_message: str
+        endpoints: list[AccessBridgeEndpoint]
+        ipv4_connected_prefix: str
+        ipv6_connected_prefix: str
+        network_id: str
+        protocol: Union[str, TransportProtocol]
+        provisioning_state: Union[str, AccessBridgeProvisioningState]
+        securityRules: list[AccessBridgeSecurityRule]
+        security_rules: list[AccessBridgeSecurityRule]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeSecurityRule(TypedDict, total=False):
+        key "description": str
+        key "direction": Required[Union[str, SecurityRuleDirection]]
+        key "port": Required[str]
+        description: str
+        direction: Union[str, SecurityRuleDirection]
+        ipv4Addresses: list[str]
+        ipv4_addresses: list[str]
+        ipv6Addresses: list[str]
+        ipv6_addresses: list[str]
+        port: str
+
+
     class azure.mgmt.networkcloud.types.ActionState(TypedDict, total=False):
         key "actionType": str
         key "correlationId": str
@@ -10015,6 +11503,13 @@ namespace azure.mgmt.networkcloud.types
     class azure.mgmt.networkcloud.types.AdministrativeCredentials(TypedDict, total=False):
         key "password": Required[str]
         key "username": Required[str]
+        password: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.AdministrativeCredentialsPatch(TypedDict, total=False):
+        key "password": str
+        key "username": str
         password: str
         username: str
 
@@ -10179,6 +11674,25 @@ namespace azure.mgmt.networkcloud.types
         serial_number: str
 
 
+    class azure.mgmt.networkcloud.types.BareMetalMachineConfigurationDataPatch(TypedDict, total=False):
+        key "bmcConnectionString": str
+        key "bmcCredentials": ForwardRef('AdministrativeCredentialsPatch', module='types')
+        key "bmcMacAddress": str
+        key "bootMacAddress": str
+        key "machineDetails": str
+        key "machineName": str
+        key "rackSlot": int
+        key "serialNumber": str
+        bmc_connection_string: str
+        bmc_credentials: AdministrativeCredentialsPatch
+        bmc_mac_address: str
+        boot_mac_address: str
+        machine_details: str
+        machine_name: str
+        rack_slot: int
+        serial_number: str
+
+
     class azure.mgmt.networkcloud.types.BareMetalMachineCordonParameters(TypedDict, total=False):
         key "evacuate": Union[str, BareMetalMachineEvacuate]
         evacuate: Union[str, BareMetalMachineEvacuate]
@@ -10246,6 +11760,13 @@ namespace azure.mgmt.networkcloud.types
         user_list_status: list[KeySetUserStatus]
 
 
+    class azure.mgmt.networkcloud.types.BareMetalMachineMonitoringConfigurationStatus(TypedDict, total=False):
+        key "logLevel": Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]
+        key "metricsLevel": Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]
+        log_level: Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]
+        metrics_level: Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]
+
+
     class azure.mgmt.networkcloud.types.BareMetalMachinePatchParameters(TypedDict, total=False):
         key "properties": ForwardRef('BareMetalMachinePatchProperties', module='types')
         properties: BareMetalMachinePatchProperties
@@ -10265,6 +11786,8 @@ namespace azure.mgmt.networkcloud.types
     class azure.mgmt.networkcloud.types.BareMetalMachineProperties(TypedDict, total=False):
         key "bmcConnectionString": Required[str]
         key "bmcCredentials": Required[AdministrativeCredentials]
+        key "bmcIpv4Address": str
+        key "bmcIpv6Address": str
         key "bmcMacAddress": Required[str]
         key "bootMacAddress": Required[str]
         key "caCertificate": ForwardRef('CertificateInfo', module='types')
@@ -10280,6 +11803,7 @@ namespace azure.mgmt.networkcloud.types
         key "machineDetails": Required[str]
         key "machineName": Required[str]
         key "machineSkuId": Required[str]
+        key "monitoringConfigurationStatus": ForwardRef('BareMetalMachineMonitoringConfigurationStatus', module='types')
         key "oamIpv4Address": str
         key "oamIpv6Address": str
         key "osImage": str
@@ -10297,6 +11821,8 @@ namespace azure.mgmt.networkcloud.types
         associated_resource_ids: list[str]
         bmc_connection_string: str
         bmc_credentials: AdministrativeCredentials
+        bmc_ipv4_address: str
+        bmc_ipv6_address: str
         bmc_mac_address: str
         boot_mac_address: str
         ca_certificate: CertificateInfo
@@ -10316,6 +11842,7 @@ namespace azure.mgmt.networkcloud.types
         machine_name: str
         machine_roles: list[str]
         machine_sku_id: str
+        monitoring_configuration_status: BareMetalMachineMonitoringConfigurationStatus
         oam_ipv4_address: str
         oam_ipv6_address: str
         os_image: str
@@ -10331,6 +11858,11 @@ namespace azure.mgmt.networkcloud.types
         service_tag: str
         virtualMachinesAssociatedIds: list[str]
         virtual_machines_associated_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineReimageParameters(TypedDict, total=False):
+        key "safeguardMode": Union[str, BareMetalMachineReimageSafeguardMode]
+        safeguard_mode: Union[str, BareMetalMachineReimageSafeguardMode]
 
 
     class azure.mgmt.networkcloud.types.BareMetalMachineReplaceParameters(TypedDict, total=False):
@@ -10553,6 +12085,7 @@ namespace azure.mgmt.networkcloud.types
         key "extendedLocation": Required[ExtendedLocation]
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "kind": Union[str, DeploymentType]
         key "location": Required[str]
         key "name": str
         key "properties": Required[ClusterProperties]
@@ -10562,6 +12095,7 @@ namespace azure.mgmt.networkcloud.types
         extended_location: ExtendedLocation
         id: str
         identity: ManagedServiceIdentity
+        kind: Union[str, DeploymentType]
         location: str
         name: str
         properties: ClusterProperties
@@ -10613,7 +12147,9 @@ namespace azure.mgmt.networkcloud.types
 
     class azure.mgmt.networkcloud.types.ClusterContinueUpdateVersionParameters(TypedDict, total=False):
         key "machineGroupTargetingMode": Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]
+        key "safeguardMode": Union[str, ClusterContinueUpdateVersionSafeguardMode]
         machine_group_targeting_mode: Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]
+        safeguard_mode: Union[str, ClusterContinueUpdateVersionSafeguardMode]
 
 
     class azure.mgmt.networkcloud.types.ClusterDeployParameters(TypedDict, total=False):
@@ -10621,10 +12157,18 @@ namespace azure.mgmt.networkcloud.types
         skip_validations_for_machines: list[str]
 
 
+    class azure.mgmt.networkcloud.types.ClusterInspectParameters(TypedDict, total=False):
+        key "filterDevices": ForwardRef('FilterDevices', module='types')
+        additionalActions: list[Union[str, ClusterInspectAdditionalAction]]
+        additional_actions: list[Union[str, ClusterInspectAdditionalAction]]
+        filter_devices: FilterDevices
+
+
     class azure.mgmt.networkcloud.types.ClusterManager(TrackedResource):
         key "etag": str
         key "id": str
         key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "kind": Union[str, DeploymentType]
         key "location": Required[str]
         key "name": str
         key "properties": Required[ClusterManagerProperties]
@@ -10633,6 +12177,7 @@ namespace azure.mgmt.networkcloud.types
         etag: str
         id: str
         identity: ManagedServiceIdentity
+        kind: Union[str, DeploymentType]
         location: str
         name: str
         properties: ClusterManagerProperties
@@ -10655,6 +12200,7 @@ namespace azure.mgmt.networkcloud.types
         key "managedResourceGroupConfiguration": ForwardRef('ManagedResourceGroupConfiguration', module='types')
         key "managerExtendedLocation": ForwardRef('ExtendedLocation', module='types')
         key "provisioningState": Union[str, ClusterManagerProvisioningState]
+        key "relayConfiguration": ForwardRef('ClusterManagerRelayConfiguration', module='types')
         key "vmSize": str
         analytics_workspace_id: str
         availabilityZones: list[str]
@@ -10667,7 +12213,22 @@ namespace azure.mgmt.networkcloud.types
         managed_resource_group_configuration: ManagedResourceGroupConfiguration
         manager_extended_location: ExtendedLocation
         provisioning_state: Union[str, ClusterManagerProvisioningState]
+        relay_configuration: ClusterManagerRelayConfiguration
         vm_size: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerRelayConfiguration(TypedDict, total=False):
+        key "relayNamespaceId": str
+        relay_namespace_id: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(TypedDict, total=False):
+        key "connectionState": Required[Union[str, RelayPrivateEndpointConnectionState]]
+        key "description": str
+        key "privateEndpointResourceId": Required[str]
+        connection_state: Union[str, RelayPrivateEndpointConnectionState]
+        description: str
+        private_endpoint_resource_id: str
 
 
     class azure.mgmt.networkcloud.types.ClusterMetricsConfiguration(TrackedResource):
@@ -10727,29 +12288,29 @@ namespace azure.mgmt.networkcloud.types
 
 
     class azure.mgmt.networkcloud.types.ClusterPatchProperties(TypedDict, total=False):
-        key "aggregatorOrSingleRackDefinition": ForwardRef('RackDefinition', module='types')
+        key "aggregatorOrSingleRackDefinition": ForwardRef('RackDefinitionPatch', module='types')
         key "analyticsOutputSettings": ForwardRef('AnalyticsOutputSettings', module='types')
         key "clusterLocation": str
-        key "clusterServicePrincipal": ForwardRef('ServicePrincipalInformation', module='types')
+        key "clusterServicePrincipal": ForwardRef('ServicePrincipalInformationPatch', module='types')
         key "commandOutputSettings": ForwardRef('CommandOutputSettings', module='types')
-        key "computeDeploymentThreshold": ForwardRef('ValidationThreshold', module='types')
-        key "runtimeProtectionConfiguration": ForwardRef('RuntimeProtectionConfiguration', module='types')
-        key "secretArchive": ForwardRef('ClusterSecretArchive', module='types')
+        key "computeDeploymentThreshold": ForwardRef('ValidationThresholdPatch', module='types')
+        key "runtimeProtectionConfiguration": ForwardRef('RuntimeProtectionConfigurationPatch', module='types')
+        key "secretArchive": ForwardRef('ClusterSecretArchivePatch', module='types')
         key "secretArchiveSettings": ForwardRef('SecretArchiveSettings', module='types')
-        key "updateStrategy": ForwardRef('ClusterUpdateStrategy', module='types')
+        key "updateStrategy": ForwardRef('ClusterUpdateStrategyPatch', module='types')
         key "vulnerabilityScanningSettings": ForwardRef('VulnerabilityScanningSettingsPatch', module='types')
-        aggregator_or_single_rack_definition: RackDefinition
+        aggregator_or_single_rack_definition: RackDefinitionPatch
         analytics_output_settings: AnalyticsOutputSettings
         cluster_location: str
-        cluster_service_principal: ServicePrincipalInformation
+        cluster_service_principal: ServicePrincipalInformationPatch
         command_output_settings: CommandOutputSettings
-        computeRackDefinitions: list[RackDefinition]
-        compute_deployment_threshold: ValidationThreshold
-        compute_rack_definitions: list[RackDefinition]
-        runtime_protection_configuration: RuntimeProtectionConfiguration
-        secret_archive: ClusterSecretArchive
+        computeRackDefinitions: list[RackDefinitionPatch]
+        compute_deployment_threshold: ValidationThresholdPatch
+        compute_rack_definitions: list[RackDefinitionPatch]
+        runtime_protection_configuration: RuntimeProtectionConfigurationPatch
+        secret_archive: ClusterSecretArchivePatch
         secret_archive_settings: SecretArchiveSettings
-        update_strategy: ClusterUpdateStrategy
+        update_strategy: ClusterUpdateStrategyPatch
         vulnerability_scanning_settings: VulnerabilityScanningSettingsPatch
 
 
@@ -10771,6 +12332,7 @@ namespace azure.mgmt.networkcloud.types
         key "detailedStatus": Union[str, ClusterDetailedStatus]
         key "detailedStatusMessage": str
         key "hybridAksExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "lastSuccessfulVersionUpdateTime": str
         key "managedResourceGroupConfiguration": ForwardRef('ManagedResourceGroupConfiguration', module='types')
         key "manualActionCount": int
         key "networkFabricId": Required[str]
@@ -10804,6 +12366,9 @@ namespace azure.mgmt.networkcloud.types
         detailed_status: Union[str, ClusterDetailedStatus]
         detailed_status_message: str
         hybrid_aks_extended_location: ExtendedLocation
+        last_successful_version_update_time: str
+        managedCredentials: list[str]
+        managed_credentials: list[str]
         managed_resource_group_configuration: ManagedResourceGroupConfiguration
         manual_action_count: int
         network_fabric_id: str
@@ -10818,6 +12383,11 @@ namespace azure.mgmt.networkcloud.types
         workload_resource_ids: list[str]
 
 
+    class azure.mgmt.networkcloud.types.ClusterRotateCredentialParameters(TypedDict, total=False):
+        key "credentials": Required[list[str]]
+        credentials: list[str]
+
+
     class azure.mgmt.networkcloud.types.ClusterScanRuntimeParameters(TypedDict, total=False):
         key "scanActivity": Union[str, ClusterScanRuntimeParametersScanActivity]
         scan_activity: Union[str, ClusterScanRuntimeParametersScanActivity]
@@ -10825,6 +12395,13 @@ namespace azure.mgmt.networkcloud.types
 
     class azure.mgmt.networkcloud.types.ClusterSecretArchive(TypedDict, total=False):
         key "keyVaultId": Required[str]
+        key "useKeyVault": Union[str, ClusterSecretArchiveEnabled]
+        key_vault_id: str
+        use_key_vault: Union[str, ClusterSecretArchiveEnabled]
+
+
+    class azure.mgmt.networkcloud.types.ClusterSecretArchivePatch(TypedDict, total=False):
+        key "keyVaultId": str
         key "useKeyVault": Union[str, ClusterSecretArchiveEnabled]
         key_vault_id: str
         use_key_vault: Union[str, ClusterSecretArchiveEnabled]
@@ -10843,8 +12420,23 @@ namespace azure.mgmt.networkcloud.types
         wait_time_minutes: int
 
 
+    class azure.mgmt.networkcloud.types.ClusterUpdateStrategyPatch(TypedDict, total=False):
+        key "maxUnavailable": int
+        key "strategyType": Union[str, ClusterUpdateStrategyType]
+        key "thresholdType": Union[str, ValidationThresholdType]
+        key "thresholdValue": int
+        key "waitTimeMinutes": int
+        max_unavailable: int
+        strategy_type: Union[str, ClusterUpdateStrategyType]
+        threshold_type: Union[str, ValidationThresholdType]
+        threshold_value: int
+        wait_time_minutes: int
+
+
     class azure.mgmt.networkcloud.types.ClusterUpdateVersionParameters(TypedDict, total=False):
+        key "safeguardMode": Union[str, ClusterUpdateVersionSafeguardMode]
         key "targetClusterVersion": Required[str]
+        safeguard_mode: Union[str, ClusterUpdateVersionSafeguardMode]
         target_cluster_version: str
 
 
@@ -10894,10 +12486,10 @@ namespace azure.mgmt.networkcloud.types
     class azure.mgmt.networkcloud.types.ConsolePatchProperties(TypedDict, total=False):
         key "enabled": Union[str, ConsoleEnabled]
         key "expiration": str
-        key "sshPublicKey": ForwardRef('SshPublicKey', module='types')
+        key "sshPublicKey": ForwardRef('SshPublicKeyPatch', module='types')
         enabled: Union[str, ConsoleEnabled]
         expiration: str
-        ssh_public_key: SshPublicKey
+        ssh_public_key: SshPublicKeyPatch
 
 
     class azure.mgmt.networkcloud.types.ConsoleProperties(TypedDict, total=False):
@@ -10969,6 +12561,13 @@ namespace azure.mgmt.networkcloud.types
         version: str
 
 
+    class azure.mgmt.networkcloud.types.FilterDevices(TypedDict, total=False):
+        bareMetalMachineNames: list[str]
+        bare_metal_machine_names: list[str]
+        rackNames: list[str]
+        rack_names: list[str]
+
+
     class azure.mgmt.networkcloud.types.HardwareInventory(TypedDict, total=False):
         key "additionalHostInformation": str
         additional_host_information: str
@@ -11005,6 +12604,15 @@ namespace azure.mgmt.networkcloud.types
         key "password": Required[str]
         key "registryUrl": Required[str]
         key "username": Required[str]
+        password: str
+        registry_url: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.ImageRepositoryCredentialsPatch(TypedDict, total=False):
+        key "password": str
+        key "registryUrl": str
+        key "username": str
         password: str
         registry_url: str
         username: str
@@ -11226,6 +12834,44 @@ namespace azure.mgmt.networkcloud.types
         key "value": Required[str]
         key: str
         value: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersion(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[KubernetesVersionProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: KubernetesVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionPatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, KubernetesVersionProvisioningState]
+        provisioning_state: Union[str, KubernetesVersionProvisioningState]
+        values: list[KubernetesVersionValue]
+        values_property: list[KubernetesVersionValue]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionValue(TypedDict, total=False):
+        key "description": str
+        key "version": str
+        description: str
+        version: str
 
 
     class azure.mgmt.networkcloud.types.L2Network(TrackedResource):
@@ -11478,6 +13124,23 @@ namespace azure.mgmt.networkcloud.types
         storage_appliance_configuration_data: list[StorageApplianceConfigurationData]
 
 
+    class azure.mgmt.networkcloud.types.RackDefinitionPatch(TypedDict, total=False):
+        key "availabilityZone": str
+        key "networkRackId": str
+        key "rackLocation": str
+        key "rackSerialNumber": str
+        key "rackSkuId": str
+        availability_zone: str
+        bareMetalMachineConfigurationData: list[BareMetalMachineConfigurationDataPatch]
+        bare_metal_machine_configuration_data: list[BareMetalMachineConfigurationDataPatch]
+        network_rack_id: str
+        rack_location: str
+        rack_serial_number: str
+        rack_sku_id: str
+        storageApplianceConfigurationData: list[StorageApplianceConfigurationDataPatch]
+        storage_appliance_configuration_data: list[StorageApplianceConfigurationDataPatch]
+
+
     class azure.mgmt.networkcloud.types.RackPatchParameters(TypedDict, total=False):
         key "properties": ForwardRef('RacksPatchProperties', module='types')
         properties: RacksPatchProperties
@@ -11522,18 +13185,37 @@ namespace azure.mgmt.networkcloud.types
 
 
     class azure.mgmt.networkcloud.types.RuntimeProtectionConfiguration(TypedDict, total=False):
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
         key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
+        enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
+
+
+    class azure.mgmt.networkcloud.types.RuntimeProtectionConfigurationPatch(TypedDict, total=False):
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
+        key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
         enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
 
 
     class azure.mgmt.networkcloud.types.RuntimeProtectionStatus(TypedDict, total=False):
+        key "agentHealthStatus": Union[str, RuntimeProtectionAgentHealthStatus]
+        key "agentLicenseStatus": Union[str, RuntimeProtectionAgentLicenseStatus]
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
         key "definitionsLastUpdated": str
         key "definitionsVersion": str
+        key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
         key "scanCompletedTime": str
         key "scanScheduledTime": str
         key "scanStartedTime": str
+        agentHealthStatusIssues: list[str]
+        agent_health_status: Union[str, RuntimeProtectionAgentHealthStatus]
+        agent_health_status_issues: list[str]
+        agent_license_status: Union[str, RuntimeProtectionAgentLicenseStatus]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
         definitions_last_updated: str
         definitions_version: str
+        enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
         scan_completed_time: str
         scan_scheduled_time: str
         scan_started_time: str
@@ -11604,8 +13286,24 @@ namespace azure.mgmt.networkcloud.types
         tenant_id: str
 
 
+    class azure.mgmt.networkcloud.types.ServicePrincipalInformationPatch(TypedDict, total=False):
+        key "applicationId": str
+        key "password": str
+        key "principalId": str
+        key "tenantId": str
+        application_id: str
+        password: str
+        principal_id: str
+        tenant_id: str
+
+
     class azure.mgmt.networkcloud.types.SshPublicKey(TypedDict, total=False):
         key "keyData": Required[str]
+        key_data: str
+
+
+    class azure.mgmt.networkcloud.types.SshPublicKeyPatch(TypedDict, total=False):
+        key "keyData": str
         key_data: str
 
 
@@ -11659,9 +13357,34 @@ namespace azure.mgmt.networkcloud.types
         storage_appliance_name: str
 
 
+    class azure.mgmt.networkcloud.types.StorageApplianceConfigurationDataPatch(TypedDict, total=False):
+        key "adminCredentials": ForwardRef('AdministrativeCredentialsPatch', module='types')
+        key "rackSlot": int
+        key "serialNumber": str
+        key "storageApplianceName": str
+        admin_credentials: AdministrativeCredentialsPatch
+        rack_slot: int
+        serial_number: str
+        storage_appliance_name: str
+
+
     class azure.mgmt.networkcloud.types.StorageApplianceEnableRemoteVendorManagementParameters(TypedDict, total=False):
         supportEndpoints: list[str]
         support_endpoints: list[str]
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceExpansionShelf(TypedDict, total=False):
+        key "model": str
+        key "version": str
+        model: str
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceMonitoringConfigurationStatus(TypedDict, total=False):
+        key "logLevel": Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]
+        key "metricsLevel": Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]
+        log_level: Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]
+        metrics_level: Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]
 
 
     class azure.mgmt.networkcloud.types.StorageAppliancePatchParameters(TypedDict, total=False):
@@ -11686,6 +13409,7 @@ namespace azure.mgmt.networkcloud.types
         key "managementIpv4Address": str
         key "manufacturer": str
         key "model": str
+        key "monitoringConfigurationStatus": ForwardRef('StorageApplianceMonitoringConfigurationStatus', module='types')
         key "provisioningState": Union[str, StorageApplianceProvisioningState]
         key "rackId": Required[str]
         key "rackSlot": Required[int]
@@ -11701,9 +13425,12 @@ namespace azure.mgmt.networkcloud.types
         cluster_id: str
         detailed_status: Union[str, StorageApplianceDetailedStatus]
         detailed_status_message: str
+        expansionShelves: list[StorageApplianceExpansionShelf]
+        expansion_shelves: list[StorageApplianceExpansionShelf]
         management_ipv4_address: str
         manufacturer: str
         model: str
+        monitoring_configuration_status: StorageApplianceMonitoringConfigurationStatus
         provisioning_state: Union[str, StorageApplianceProvisioningState]
         rack_id: str
         rack_slot: int
@@ -11838,6 +13565,15 @@ namespace azure.mgmt.networkcloud.types
         value: int
 
 
+    class azure.mgmt.networkcloud.types.ValidationThresholdPatch(TypedDict, total=False):
+        key "grouping": Union[str, ValidationThresholdGrouping]
+        key "type": Union[str, ValidationThresholdType]
+        key "value": int
+        grouping: Union[str, ValidationThresholdGrouping]
+        type: Union[str, ValidationThresholdType]
+        value: int
+
+
     class azure.mgmt.networkcloud.types.VirtualMachine(TrackedResource):
         key "etag": str
         key "extendedLocation": Required[ExtendedLocation]
@@ -11876,8 +13612,8 @@ namespace azure.mgmt.networkcloud.types
 
 
     class azure.mgmt.networkcloud.types.VirtualMachinePatchProperties(TypedDict, total=False):
-        key "vmImageRepositoryCredentials": ForwardRef('ImageRepositoryCredentials', module='types')
-        vm_image_repository_credentials: ImageRepositoryCredentials
+        key "vmImageRepositoryCredentials": ForwardRef('ImageRepositoryCredentialsPatch', module='types')
+        vm_image_repository_credentials: ImageRepositoryCredentialsPatch
 
 
     class azure.mgmt.networkcloud.types.VirtualMachinePlacementHint(TypedDict, total=False):
@@ -11978,6 +13714,7 @@ namespace azure.mgmt.networkcloud.types
 
     class azure.mgmt.networkcloud.types.VolumeProperties(TypedDict, total=False):
         key "allocatedSizeMiB": int
+        key "assignedStorageApplianceId": str
         key "detailedStatus": Union[str, VolumeDetailedStatus]
         key "detailedStatusMessage": str
         key "provisioningState": Union[str, VolumeProvisioningState]
@@ -11985,6 +13722,7 @@ namespace azure.mgmt.networkcloud.types
         key "sizeMiB": Required[int]
         key "storageApplianceId": str
         allocated_size_mi_b: int
+        assigned_storage_appliance_id: str
         attachedTo: list[str]
         attached_to: list[str]
         detailed_status: Union[str, VolumeDetailedStatus]

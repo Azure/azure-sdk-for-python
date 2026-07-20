@@ -12,6 +12,8 @@ from typing_extensions import Required, TypedDict
 
 if TYPE_CHECKING:
     from .models import (
+        AccessBridgeDetailedStatus,
+        AccessBridgeProvisioningState,
         ActionStateStatus,
         AdvertiseToFabric,
         AgentPoolDetailedStatus,
@@ -26,9 +28,12 @@ if TYPE_CHECKING:
         BareMetalMachineKeySetPrivilegeLevel,
         BareMetalMachineKeySetProvisioningState,
         BareMetalMachineKeySetUserSetupStatus,
+        BareMetalMachineMonitoringConfigurationStatusLogLevel,
+        BareMetalMachineMonitoringConfigurationStatusMetricsLevel,
         BareMetalMachinePowerState,
         BareMetalMachineProvisioningState,
         BareMetalMachineReadyState,
+        BareMetalMachineReimageSafeguardMode,
         BareMetalMachineReplaceSafeguardMode,
         BareMetalMachineReplaceStoragePolicy,
         BareMetalMachineSkipShutdown,
@@ -44,7 +49,9 @@ if TYPE_CHECKING:
         CloudServicesNetworkStorageStatusStatus,
         ClusterConnectionStatus,
         ClusterContinueUpdateVersionMachineGroupTargetingMode,
+        ClusterContinueUpdateVersionSafeguardMode,
         ClusterDetailedStatus,
+        ClusterInspectAdditionalAction,
         ClusterManagerConnectionStatus,
         ClusterManagerDetailedStatus,
         ClusterManagerProvisioningState,
@@ -55,6 +62,7 @@ if TYPE_CHECKING:
         ClusterSecretArchiveEnabled,
         ClusterType,
         ClusterUpdateStrategyType,
+        ClusterUpdateVersionSafeguardMode,
         CommandOutputType,
         ConsoleDetailedStatus,
         ConsoleEnabled,
@@ -62,6 +70,7 @@ if TYPE_CHECKING:
         ControlImpact,
         CreatedByType,
         DefaultGateway,
+        DeploymentType,
         ExtendedLocationType,
         FabricPeeringEnabled,
         FeatureDetailedStatus,
@@ -79,6 +88,7 @@ if TYPE_CHECKING:
         KubernetesNodePowerState,
         KubernetesNodeRole,
         KubernetesPluginType,
+        KubernetesVersionProvisioningState,
         L2NetworkDetailedStatus,
         L2NetworkProvisioningState,
         L3NetworkConfigurationIpamEnabled,
@@ -90,14 +100,22 @@ if TYPE_CHECKING:
         OsDiskDeleteOption,
         RackDetailedStatus,
         RackProvisioningState,
+        RelayPrivateEndpointConnectionState,
         RelayType,
         RemoteVendorManagementFeature,
         RemoteVendorManagementStatus,
+        RuntimeProtectionAgentHealthStatus,
+        RuntimeProtectionAgentLicenseStatus,
+        RuntimeProtectionDefinitionUpdateMode,
         RuntimeProtectionEnforcementLevel,
+        SecurityRuleDirection,
         SkipShutdown,
         StepStateStatus,
         StorageApplianceDetailedStatus,
+        StorageApplianceMonitoringConfigurationStatusLogLevel,
+        StorageApplianceMonitoringConfigurationStatusMetricsLevel,
         StorageApplianceProvisioningState,
+        TransportProtocol,
         TrunkedNetworkDetailedStatus,
         TrunkedNetworkProvisioningState,
         ValidationThresholdGrouping,
@@ -131,6 +149,246 @@ class AadConfiguration(TypedDict, total=False):
     adminGroupObjectIds: Required[list[str]]
     """The list of Azure Active Directory group object IDs that will have an administrative role on
      the Kubernetes cluster. Required."""
+
+
+class Resource(TypedDict, total=False):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    """
+
+    id: str
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: str
+    """The name of the resource."""
+    type: str
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    systemData: "SystemData"
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class TrackedResource(Resource):
+    """Tracked Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+    location: Required[str]
+    """The geo-location where the resource lives. Required."""
+
+
+class AccessBridge(TrackedResource):
+    """AccessBridge represents a managed access bridge resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The list of the resource properties. Required.
+    :vartype properties: "AccessBridgeProperties"
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar extended_location: The extended location of the resource. This property is required when
+     creating the resource. Required.
+    :vartype extended_location: "ExtendedLocation"
+    """
+
+    properties: Required["AccessBridgeProperties"]
+    """The list of the resource properties. Required."""
+    etag: str
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    extendedLocation: Required["ExtendedLocation"]
+    """The extended location of the resource. This property is required when creating the resource.
+     Required."""
+
+
+class AccessBridgeEndpoint(TypedDict, total=False):
+    """AccessBridgeEndpoint describes a single advertised service endpoint.
+
+    :ivar fqdn: The fully qualified domain name used to describe the certificate name for the
+     endpoint.
+    :vartype fqdn: str
+    :ivar ipv4_address: The IPv4 address associated with the endpoint.
+    :vartype ipv4_address: str
+    :ivar ipv6_address: The IPv6 address associated with the endpoint.
+    :vartype ipv6_address: str
+    :ivar name: The name that identifies the type of endpoint (for example VIP or host).
+    :vartype name: str
+    """
+
+    fqdn: str
+    """The fully qualified domain name used to describe the certificate name for the endpoint."""
+    ipv4Address: str
+    """The IPv4 address associated with the endpoint."""
+    ipv6Address: str
+    """The IPv6 address associated with the endpoint."""
+    name: str
+    """The name that identifies the type of endpoint (for example VIP or host)."""
+
+
+class AccessBridgePatchParameters(TypedDict, total=False):
+    """AccessBridgePatchParameters represents the payload for a PATCH request to an access bridge.
+
+    :ivar properties: The list of the resource properties.
+    :vartype properties: "AccessBridgePatchProperties"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: "AccessBridgePatchProperties"
+    """The list of the resource properties."""
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class AccessBridgePatchProperties(TypedDict, total=False):
+    """AccessBridgePatchProperties identifies the mutable properties for patch operations.
+
+    :ivar security_rules: The list of security rules enforced by the access bridge.
+    :vartype security_rules: list["AccessBridgeSecurityRule"]
+    """
+
+    securityRules: list["AccessBridgeSecurityRule"]
+    """The list of security rules enforced by the access bridge."""
+
+
+class AccessBridgeProperties(TypedDict, total=False):
+    """AccessBridgeProperties captures the input and status for an access bridge.
+
+    :ivar ipv4_connected_prefix: The IPv4 subnet from which the access bridge allocates an address.
+     This subnet must be part of the internal network specified by networkId.
+    :vartype ipv4_connected_prefix: str
+    :ivar ipv6_connected_prefix: The IPv6 subnet from which the access bridge allocates an address.
+     This subnet must be part of the internal network specified by networkId.
+    :vartype ipv6_connected_prefix: str
+    :ivar network_id: The resource ID of the internal network in a layer 3 isolation domain
+     containing the IP subnets to use. Required.
+    :vartype network_id: str
+    :ivar security_rules: The list of security rules enforced by the access bridge.
+    :vartype security_rules: list["AccessBridgeSecurityRule"]
+    :ivar detailed_status: The detailed status reported by the access bridge. Known values are:
+     "Running", "Degraded", and "Failed".
+    :vartype detailed_status: Union[str, "AccessBridgeDetailedStatus"]
+    :ivar detailed_status_message: The descriptive message that accompanies the detailed status.
+    :vartype detailed_status_message: str
+    :ivar endpoints: The observed endpoints that clients should use to reach the access bridge.
+    :vartype endpoints: list["AccessBridgeEndpoint"]
+    :ivar protocol: The protocol advertised by the access bridge endpoints. Known values are: "TCP"
+     and "UDP".
+    :vartype protocol: Union[str, "TransportProtocol"]
+    :ivar provisioning_state: The provisioning state of the access bridge. Known values are:
+     "Accepted", "Canceled", "Failed", "Provisioning", and "Succeeded".
+    :vartype provisioning_state: Union[str, "AccessBridgeProvisioningState"]
+    """
+
+    ipv4ConnectedPrefix: str
+    """The IPv4 subnet from which the access bridge allocates an address. This subnet must be part of
+     the internal network specified by networkId."""
+    ipv6ConnectedPrefix: str
+    """The IPv6 subnet from which the access bridge allocates an address. This subnet must be part of
+     the internal network specified by networkId."""
+    networkId: Required[str]
+    """The resource ID of the internal network in a layer 3 isolation domain containing the IP subnets
+     to use. Required."""
+    securityRules: list["AccessBridgeSecurityRule"]
+    """The list of security rules enforced by the access bridge."""
+    detailedStatus: Union[str, "AccessBridgeDetailedStatus"]
+    """The detailed status reported by the access bridge. Known values are: \"Running\", \"Degraded\",
+     and \"Failed\"."""
+    detailedStatusMessage: str
+    """The descriptive message that accompanies the detailed status."""
+    endpoints: list["AccessBridgeEndpoint"]
+    """The observed endpoints that clients should use to reach the access bridge."""
+    protocol: Union[str, "TransportProtocol"]
+    """The protocol advertised by the access bridge endpoints. Known values are: \"TCP\" and \"UDP\"."""
+    provisioningState: Union[str, "AccessBridgeProvisioningState"]
+    """The provisioning state of the access bridge. Known values are: \"Accepted\", \"Canceled\",
+     \"Failed\", \"Provisioning\", and \"Succeeded\"."""
+
+
+class AccessBridgeSecurityRule(TypedDict, total=False):
+    """AccessBridgeSecurityRule captures an individual access rule enforced by the bridge.
+
+    :ivar description: The user provided value describing this rule.
+    :vartype description: str
+    :ivar direction: The direction of allowed network traffic based on the rule. Required. Known
+     values are: "Inbound" and "Outbound".
+    :vartype direction: Union[str, "SecurityRuleDirection"]
+    :ivar ipv4_addresses: The set of IPv4 addresses permitted as the source or destination of the
+     security rule. For as single address, utilize a /32 (CIDR notation). One or both Ipv4Addresses
+     and Ipv6Addresses must be specified. Example formats: 10.10.10.10-10.10.10.20 or
+     10.10.10.10/24.
+    :vartype ipv4_addresses: list[str]
+    :ivar ipv6_addresses: The set of IPv6 addresses permitted as the source or destination of the
+     security rule. For as single address, utilize a /128 (CIDR notation). One or both Ipv4Addresses
+     and Ipv6Addresses must be specified. Example formats: 2001:db8:abcd::1-2001:db8:abcd::ff or
+     2001:db8:abcd::1/64.
+    :vartype ipv6_addresses: list[str]
+    :ivar port: The source or destination port or port range. Example 24562 or 24562-24570.
+     Required.
+    :vartype port: str
+    """
+
+    description: str
+    """The user provided value describing this rule."""
+    direction: Required[Union[str, "SecurityRuleDirection"]]
+    """The direction of allowed network traffic based on the rule. Required. Known values are:
+     \"Inbound\" and \"Outbound\"."""
+    ipv4Addresses: list[str]
+    """The set of IPv4 addresses permitted as the source or destination of the security rule. For as
+     single address, utilize a /32 (CIDR notation). One or both Ipv4Addresses and Ipv6Addresses must
+     be specified. Example formats: 10.10.10.10-10.10.10.20 or 10.10.10.10/24."""
+    ipv6Addresses: list[str]
+    """The set of IPv6 addresses permitted as the source or destination of the security rule. For as
+     single address, utilize a /128 (CIDR notation). One or both Ipv4Addresses and Ipv6Addresses
+     must be specified. Example formats: 2001:db8:abcd::1-2001:db8:abcd::ff or 2001:db8:abcd::1/64."""
+    port: Required[str]
+    """The source or destination port or port range. Example 24562 or 24562-24570. Required."""
 
 
 class ActionState(TypedDict, total=False):
@@ -195,6 +453,22 @@ class AdministrativeCredentials(TypedDict, total=False):
     """The username of the administrator of the device used during initialization. Required."""
 
 
+class AdministrativeCredentialsPatch(TypedDict, total=False):
+    """AdministrativeCredentialsPatch represents the admin credentials for the device requiring
+    password-based authentication.
+
+    :ivar password: The password of the administrator of the device used during initialization.
+    :vartype password: str
+    :ivar username: The username of the administrator of the device used during initialization.
+    :vartype username: str
+    """
+
+    password: str
+    """The password of the administrator of the device used during initialization."""
+    username: str
+    """The username of the administrator of the device used during initialization."""
+
+
 class AdministratorConfiguration(TypedDict, total=False):
     """AdministratorConfiguration represents the administrative credentials that will be applied to
     the control plane and agent pool nodes in Kubernetes clusters.
@@ -242,60 +516,6 @@ class AgentOptions(TypedDict, total=False):
     """The number of hugepages to allocate. Required."""
     hugepagesSize: Union[str, "HugepagesSize"]
     """The size of the hugepages to allocate. Known values are: \"2M\" and \"1G\"."""
-
-
-class Resource(TypedDict, total=False):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    """
-
-    id: str
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: str
-    """The name of the resource."""
-    type: str
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    systemData: "SystemData"
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class TrackedResource(Resource):
-    """Tracked Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    tags: dict[str, str]
-    """Resource tags."""
-    location: Required[str]
-    """The geo-location where the resource lives. Required."""
 
 
 class AgentPool(TrackedResource):
@@ -660,6 +880,59 @@ class BareMetalMachineConfigurationData(TypedDict, total=False):
      service tag. Required."""
 
 
+class BareMetalMachineConfigurationDataPatch(TypedDict, total=False):
+    """BareMetalMachineConfigurationDataPatch represents configuration for the bare metal machine for
+    patch operations.
+
+    :ivar bmc_connection_string: The connection string for the baseboard management controller
+     including IP address and protocol.
+    :vartype bmc_connection_string: str
+    :ivar bmc_credentials: The credentials of the baseboard management controller on this bare
+     metal machine. The password field is expected to be an Azure Key Vault key URL. Until the
+     cluster is converted to utilize managed identity by setting the secret archive settings, the
+     actual password value should be provided instead.
+    :vartype bmc_credentials: "AdministrativeCredentialsPatch"
+    :ivar bmc_mac_address: The MAC address of the BMC for this machine.
+    :vartype bmc_mac_address: str
+    :ivar boot_mac_address: The MAC address associated with the PXE NIC card.
+    :vartype boot_mac_address: str
+    :ivar machine_details: The free-form additional information about the machine, e.g. an asset
+     tag.
+    :vartype machine_details: str
+    :ivar machine_name: The user-provided name for the bare metal machine created from this
+     specification. If not provided, the machine name will be generated programmatically.
+    :vartype machine_name: str
+    :ivar rack_slot: The slot the physical machine is in the rack based on the BOM configuration.
+    :vartype rack_slot: int
+    :ivar serial_number: The serial number of the machine. Hardware suppliers may use an alternate
+     value. For example, service tag.
+    :vartype serial_number: str
+    """
+
+    bmcConnectionString: str
+    """The connection string for the baseboard management controller including IP address and
+     protocol."""
+    bmcCredentials: "AdministrativeCredentialsPatch"
+    """The credentials of the baseboard management controller on this bare metal machine. The password
+     field is expected to be an Azure Key Vault key URL. Until the cluster is converted to utilize
+     managed identity by setting the secret archive settings, the actual password value should be
+     provided instead."""
+    bmcMacAddress: str
+    """The MAC address of the BMC for this machine."""
+    bootMacAddress: str
+    """The MAC address associated with the PXE NIC card."""
+    machineDetails: str
+    """The free-form additional information about the machine, e.g. an asset tag."""
+    machineName: str
+    """The user-provided name for the bare metal machine created from this specification. If not
+     provided, the machine name will be generated programmatically."""
+    rackSlot: int
+    """The slot the physical machine is in the rack based on the BOM configuration."""
+    serialNumber: str
+    """The serial number of the machine. Hardware suppliers may use an alternate value. For example,
+     service tag."""
+
+
 class BareMetalMachineCordonParameters(TypedDict, total=False):
     """BareMetalMachineCordonParameters represents the body of the request to evacuate workloads from
     node on a bare metal machine.
@@ -826,6 +1099,26 @@ class BareMetalMachineKeySetProperties(TypedDict, total=False):
      \"Failed\", \"Canceled\", \"Accepted\", and \"Provisioning\"."""
 
 
+class BareMetalMachineMonitoringConfigurationStatus(TypedDict, total=False):  # pylint: disable=name-too-long
+    """BareMetalMachineMonitoringConfigurationStatus represents the monitoring configuration status of
+    the bare metal machine.
+
+    :ivar log_level: The log level for the monitoring configuration status of the bare metal
+     machine. Known values are: "Default" and "Nexus".
+    :vartype log_level: Union[str, "BareMetalMachineMonitoringConfigurationStatusLogLevel"]
+    :ivar metrics_level: The metrics level for the monitoring configuration status of the bare
+     metal machine. Known values are: "Default" and "Nexus".
+    :vartype metrics_level: Union[str, "BareMetalMachineMonitoringConfigurationStatusMetricsLevel"]
+    """
+
+    logLevel: Union[str, "BareMetalMachineMonitoringConfigurationStatusLogLevel"]
+    """The log level for the monitoring configuration status of the bare metal machine. Known values
+     are: \"Default\" and \"Nexus\"."""
+    metricsLevel: Union[str, "BareMetalMachineMonitoringConfigurationStatusMetricsLevel"]
+    """The metrics level for the monitoring configuration status of the bare metal machine. Known
+     values are: \"Default\" and \"Nexus\"."""
+
+
 class BareMetalMachinePatchParameters(TypedDict, total=False):
     """BareMetalMachinePatchParameters represents the body of the request to patch bare metal machine
     properties.
@@ -902,6 +1195,10 @@ class BareMetalMachineProperties(TypedDict, total=False):
     :ivar associated_resource_ids: The list of resource IDs for the other Microsoft.NetworkCloud
      resources that have attached this network.
     :vartype associated_resource_ids: list[str]
+    :ivar bmc_ipv4_address: The IPv4 address of the BMC interface for the bare metal machine.
+    :vartype bmc_ipv4_address: str
+    :ivar bmc_ipv6_address: The IPv6 address of the BMC interface for the bare metal machine.
+    :vartype bmc_ipv6_address: str
     :ivar ca_certificate: The CA certificate information issued by the platform for connecting to
      TLS interfaces for the bare metal machine. Callers add this certificate to the trusted CA store
      on the Kubernetes control plane nodes to allow secure communication with the bare metal
@@ -938,6 +1235,9 @@ class BareMetalMachineProperties(TypedDict, total=False):
     :ivar machine_roles: The list of roles that are assigned to the cluster node running on this
      machine.
     :vartype machine_roles: list[str]
+    :ivar monitoring_configuration_status: The monitoring configuration status of the bare metal
+     machine.
+    :vartype monitoring_configuration_status: "BareMetalMachineMonitoringConfigurationStatus"
     :ivar oam_ipv4_address: The IPv4 address that is assigned to the bare metal machine during the
      cluster deployment.
     :vartype oam_ipv4_address: str
@@ -995,6 +1295,10 @@ class BareMetalMachineProperties(TypedDict, total=False):
     associatedResourceIds: list[str]
     """The list of resource IDs for the other Microsoft.NetworkCloud resources that have attached this
      network."""
+    bmcIpv4Address: str
+    """The IPv4 address of the BMC interface for the bare metal machine."""
+    bmcIpv6Address: str
+    """The IPv6 address of the BMC interface for the bare metal machine."""
     caCertificate: "CertificateInfo"
     """The CA certificate information issued by the platform for connecting to TLS interfaces for the
      bare metal machine. Callers add this certificate to the trusted CA store on the Kubernetes
@@ -1026,6 +1330,8 @@ class BareMetalMachineProperties(TypedDict, total=False):
      update."""
     machineRoles: list[str]
     """The list of roles that are assigned to the cluster node running on this machine."""
+    monitoringConfigurationStatus: "BareMetalMachineMonitoringConfigurationStatus"
+    """The monitoring configuration status of the bare metal machine."""
     oamIpv4Address: str
     """The IPv4 address that is assigned to the bare metal machine during the cluster deployment."""
     oamIpv6Address: str
@@ -1050,6 +1356,22 @@ class BareMetalMachineProperties(TypedDict, total=False):
     provisioningState: Union[str, "BareMetalMachineProvisioningState"]
     """The provisioning state of the bare metal machine. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Provisioning\", and \"Accepted\"."""
+
+
+class BareMetalMachineReimageParameters(TypedDict, total=False):
+    """BareMetalMachineReimageParameters represents the body of the request to reimage a bare metal
+    machine.
+
+    :ivar safeguard_mode: The safeguard mode to use for the reimage action, where None indicates to
+     bypass safeguards and All indicates to utilize all safeguards. If not specified, the default is
+     All. Known values are: "All" and "None".
+    :vartype safeguard_mode: Union[str, "BareMetalMachineReimageSafeguardMode"]
+    """
+
+    safeguardMode: Union[str, "BareMetalMachineReimageSafeguardMode"]
+    """The safeguard mode to use for the reimage action, where None indicates to bypass safeguards and
+     All indicates to utilize all safeguards. If not specified, the default is All. Known values
+     are: \"All\" and \"None\"."""
 
 
 class BareMetalMachineReplaceParameters(TypedDict, total=False):
@@ -1597,7 +1919,8 @@ class CloudServicesNetworkStorageStatus(TypedDict, total=False):
     :ivar size_mi_b: The size in Mebibytes of the storage allocation.
     :vartype size_mi_b: int
     :ivar status: The status of the storage allocation for the cloud services network. Known values
-     are: "Available", "ExpandingVolume", and "ExpansionFailed".
+     are: "Available", "ExpandingVolume", "ExpansionFailed", "Initializing", "None", and
+     "Repairing".
     :vartype status: Union[str, "CloudServicesNetworkStorageStatusStatus"]
     :ivar status_message: The description for the status of the shared storage.
     :vartype status_message: str
@@ -1612,7 +1935,8 @@ class CloudServicesNetworkStorageStatus(TypedDict, total=False):
     """The size in Mebibytes of the storage allocation."""
     status: Union[str, "CloudServicesNetworkStorageStatusStatus"]
     """The status of the storage allocation for the cloud services network. Known values are:
-     \"Available\", \"ExpandingVolume\", and \"ExpansionFailed\"."""
+     \"Available\", \"ExpandingVolume\", \"ExpansionFailed\", \"Initializing\", \"None\", and
+     \"Repairing\"."""
     statusMessage: str
     """The description for the status of the shared storage."""
     volumeId: str
@@ -1649,6 +1973,11 @@ class Cluster(TrackedResource):
     :vartype extended_location: "ExtendedLocation"
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
+    :ivar kind: The type (kind) of the cluster. When specified, the value must exactly match the
+     kind configured on the cluster manager that manages the cluster. If omitted, the service will
+     default the value to the kind value of the cluster manager. Known values are: "Nexus" and
+     "AzureLocal".
+    :vartype kind: Union[str, "DeploymentType"]
     """
 
     properties: Required["ClusterProperties"]
@@ -1663,6 +1992,11 @@ class Cluster(TrackedResource):
      Required."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+    kind: Union[str, "DeploymentType"]
+    """The type (kind) of the cluster. When specified, the value must exactly match the kind
+     configured on the cluster manager that manages the cluster. If omitted, the service will
+     default the value to the kind value of the cluster manager. Known values are: \"Nexus\" and
+     \"AzureLocal\"."""
 
 
 class ClusterAvailableUpgradeVersion(TypedDict, total=False):
@@ -1776,11 +2110,19 @@ class ClusterContinueUpdateVersionParameters(TypedDict, total=False):
      of servers to continue the update. "AlphaByRack"
     :vartype machine_group_targeting_mode: Union[str,
      "ClusterContinueUpdateVersionMachineGroupTargetingMode"]
+    :ivar safeguard_mode: Specifies how safeguards are applied during the continue update version
+     operation. Use All to run all pre‑operation validation checks. Use None to bypass safeguards.
+     If not specified, the default is All. Known values are: "All" and "None".
+    :vartype safeguard_mode: Union[str, "ClusterContinueUpdateVersionSafeguardMode"]
     """
 
     machineGroupTargetingMode: Union[str, "ClusterContinueUpdateVersionMachineGroupTargetingMode"]
     """The mode by which the cluster will target the next grouping of servers to continue the update.
      \"AlphaByRack\""""
+    safeguardMode: Union[str, "ClusterContinueUpdateVersionSafeguardMode"]
+    """Specifies how safeguards are applied during the continue update version operation. Use All to
+     run all pre‑operation validation checks. Use None to bypass safeguards. If not specified, the
+     default is All. Known values are: \"All\" and \"None\"."""
 
 
 class ClusterDeployParameters(TypedDict, total=False):
@@ -1794,6 +2136,26 @@ class ClusterDeployParameters(TypedDict, total=False):
     skipValidationsForMachines: list[str]
     """The names of bare metal machines in the cluster that should be skipped during environment
      validation."""
+
+
+class ClusterInspectParameters(TypedDict, total=False):
+    """ClusterInspectParameters represents the body of the request to inspect the cluster.
+
+    :ivar additional_actions: Additional actions supplement the default non-disruptive cluster
+     inspection. Additional actions may be disallowed if the cluster is in a deployed and running
+     state.
+    :vartype additional_actions: list[Union[str, "ClusterInspectAdditionalAction"]]
+    :ivar filter_devices: Indicates which devices are included in the inspection. By default, all
+     devices that can be targeted will be included in the inspection.
+    :vartype filter_devices: "FilterDevices"
+    """
+
+    additionalActions: list[Union[str, "ClusterInspectAdditionalAction"]]
+    """Additional actions supplement the default non-disruptive cluster inspection. Additional actions
+     may be disallowed if the cluster is in a deployed and running state."""
+    filterDevices: "FilterDevices"
+    """Indicates which devices are included in the inspection. By default, all devices that can be
+     targeted will be included in the inspection."""
 
 
 class ClusterManager(TrackedResource):
@@ -1823,6 +2185,8 @@ class ClusterManager(TrackedResource):
     :vartype etag: str
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: "ManagedServiceIdentity"
+    :ivar kind: The kind of the cluster manager. Known values are: "Nexus" and "AzureLocal".
+    :vartype kind: Union[str, "DeploymentType"]
     """
 
     properties: Required["ClusterManagerProperties"]
@@ -1834,6 +2198,8 @@ class ClusterManager(TrackedResource):
      14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
     identity: "ManagedServiceIdentity"
     """The managed service identities assigned to this resource."""
+    kind: Union[str, "DeploymentType"]
+    """The kind of the cluster manager. Known values are: \"Nexus\" and \"AzureLocal\"."""
 
 
 class ClusterManagerPatchParameters(TypedDict, total=False):
@@ -1883,6 +2249,8 @@ class ClusterManagerProperties(TypedDict, total=False):
     :ivar provisioning_state: The provisioning state of the cluster manager. Known values are:
      "Succeeded", "Failed", "Canceled", "Provisioning", "Accepted", and "Updating".
     :vartype provisioning_state: Union[str, "ClusterManagerProvisioningState"]
+    :ivar relay_configuration: The relay configuration for the cluster manager.
+    :vartype relay_configuration: "ClusterManagerRelayConfiguration"
     :ivar vm_size: The size of the Azure virtual machines to use for hosting the cluster manager
      resource.
     :vartype vm_size: str
@@ -1913,8 +2281,49 @@ class ClusterManagerProperties(TypedDict, total=False):
     provisioningState: Union[str, "ClusterManagerProvisioningState"]
     """The provisioning state of the cluster manager. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Provisioning\", \"Accepted\", and \"Updating\"."""
+    relayConfiguration: "ClusterManagerRelayConfiguration"
+    """The relay configuration for the cluster manager."""
     vmSize: str
     """The size of the Azure virtual machines to use for hosting the cluster manager resource."""
+
+
+class ClusterManagerRelayConfiguration(TypedDict, total=False):
+    """ClusterManagerRelayConfiguration represents the relay configuration for the cluster manager.
+
+    :ivar relay_namespace_id: The resource ID of the Azure relay namespace managed by the cluster
+     manager.
+    :vartype relay_namespace_id: str
+    """
+
+    relayNamespaceId: str
+    """The resource ID of the Azure relay namespace managed by the cluster manager."""
+
+
+class ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(
+    TypedDict, total=False
+):  # pylint: disable=name-too-long
+    """ClusterManagerUpdateRelayPrivateEndpointConnectionParameters represents the body of the request
+    to approve or reject the relay private endpoint connection for the private relay managed by a
+    cluster manager.
+
+    :ivar connection_state: The state to set for the private endpoint connection. Required. Known
+     values are: "Approved" and "Rejected".
+    :vartype connection_state: Union[str, "RelayPrivateEndpointConnectionState"]
+    :ivar description: The description to associate with the private endpoint connection.
+    :vartype description: str
+    :ivar private_endpoint_resource_id: The resource ID of private endpoint to be permitted or
+     denied connection to the relay namespace. Required.
+    :vartype private_endpoint_resource_id: str
+    """
+
+    connectionState: Required[Union[str, "RelayPrivateEndpointConnectionState"]]
+    """The state to set for the private endpoint connection. Required. Known values are: \"Approved\"
+     and \"Rejected\"."""
+    description: str
+    """The description to associate with the private endpoint connection."""
+    privateEndpointResourceId: Required[str]
+    """The resource ID of private endpoint to be permitted or denied connection to the relay
+     namespace. Required."""
 
 
 class ClusterMetricsConfiguration(TrackedResource):
@@ -2058,7 +2467,7 @@ class ClusterPatchProperties(TypedDict, total=False):
 
     :ivar aggregator_or_single_rack_definition: The rack definition that is intended to reflect
      only a single rack in a single rack cluster, or an aggregator rack in a multi-rack cluster.
-    :vartype aggregator_or_single_rack_definition: "RackDefinition"
+    :vartype aggregator_or_single_rack_definition: "RackDefinitionPatch"
     :ivar analytics_output_settings: The settings for the log analytics workspace used for output
      of logs from this cluster.
     :vartype analytics_output_settings: "AnalyticsOutputSettings"
@@ -2067,57 +2476,57 @@ class ClusterPatchProperties(TypedDict, total=False):
     :vartype cluster_location: str
     :ivar cluster_service_principal: Field Deprecated: Use managed identity to provide cluster
      privileges. The service principal to be used by the cluster during Arc Appliance installation.
-    :vartype cluster_service_principal: "ServicePrincipalInformation"
+    :vartype cluster_service_principal: "ServicePrincipalInformationPatch"
     :ivar command_output_settings: The settings for commands run in this cluster, such as bare
      metal machine run read only commands and data extracts.
     :vartype command_output_settings: "CommandOutputSettings"
     :ivar compute_deployment_threshold: The validation threshold indicating the allowable failures
      of compute machines during environment validation and deployment.
-    :vartype compute_deployment_threshold: "ValidationThreshold"
+    :vartype compute_deployment_threshold: "ValidationThresholdPatch"
     :ivar compute_rack_definitions: The list of rack definitions for the compute racks in a
      multi-rack cluster, or an empty list in a single-rack cluster.
-    :vartype compute_rack_definitions: list["RackDefinition"]
+    :vartype compute_rack_definitions: list["RackDefinitionPatch"]
     :ivar runtime_protection_configuration: The settings for cluster runtime protection.
-    :vartype runtime_protection_configuration: "RuntimeProtectionConfiguration"
+    :vartype runtime_protection_configuration: "RuntimeProtectionConfigurationPatch"
     :ivar secret_archive: The configuration for use of a key vault to store secrets for later
      retrieval by the operator.
-    :vartype secret_archive: "ClusterSecretArchive"
+    :vartype secret_archive: "ClusterSecretArchivePatch"
     :ivar secret_archive_settings: The settings for the secret archive used to hold credentials for
      the cluster.
     :vartype secret_archive_settings: "SecretArchiveSettings"
     :ivar update_strategy: The strategy for updating the cluster.
-    :vartype update_strategy: "ClusterUpdateStrategy"
+    :vartype update_strategy: "ClusterUpdateStrategyPatch"
     :ivar vulnerability_scanning_settings: The settings for how security vulnerability scanning is
      applied to the cluster.
     :vartype vulnerability_scanning_settings: "VulnerabilityScanningSettingsPatch"
     """
 
-    aggregatorOrSingleRackDefinition: "RackDefinition"
+    aggregatorOrSingleRackDefinition: "RackDefinitionPatch"
     """The rack definition that is intended to reflect only a single rack in a single rack cluster, or
      an aggregator rack in a multi-rack cluster."""
     analyticsOutputSettings: "AnalyticsOutputSettings"
     """The settings for the log analytics workspace used for output of logs from this cluster."""
     clusterLocation: str
     """The customer-provided location information to identify where the cluster resides."""
-    clusterServicePrincipal: "ServicePrincipalInformation"
+    clusterServicePrincipal: "ServicePrincipalInformationPatch"
     """Field Deprecated: Use managed identity to provide cluster privileges. The service principal to
      be used by the cluster during Arc Appliance installation."""
     commandOutputSettings: "CommandOutputSettings"
     """The settings for commands run in this cluster, such as bare metal machine run read only
      commands and data extracts."""
-    computeDeploymentThreshold: "ValidationThreshold"
+    computeDeploymentThreshold: "ValidationThresholdPatch"
     """The validation threshold indicating the allowable failures of compute machines during
      environment validation and deployment."""
-    computeRackDefinitions: list["RackDefinition"]
+    computeRackDefinitions: list["RackDefinitionPatch"]
     """The list of rack definitions for the compute racks in a multi-rack cluster, or an empty list in
      a single-rack cluster."""
-    runtimeProtectionConfiguration: "RuntimeProtectionConfiguration"
+    runtimeProtectionConfiguration: "RuntimeProtectionConfigurationPatch"
     """The settings for cluster runtime protection."""
-    secretArchive: "ClusterSecretArchive"
+    secretArchive: "ClusterSecretArchivePatch"
     """The configuration for use of a key vault to store secrets for later retrieval by the operator."""
     secretArchiveSettings: "SecretArchiveSettings"
     """The settings for the secret archive used to hold credentials for the cluster."""
-    updateStrategy: "ClusterUpdateStrategy"
+    updateStrategy: "ClusterUpdateStrategyPatch"
     """The strategy for updating the cluster."""
     vulnerabilityScanningSettings: "VulnerabilityScanningSettingsPatch"
     """The settings for how security vulnerability scanning is applied to the cluster."""
@@ -2207,6 +2616,12 @@ class ClusterProperties(TypedDict, total=False):
      control plane location. This extended location is used when creating provisioned clusters
      (Hybrid AKS clusters).
     :vartype hybrid_aks_extended_location: "ExtendedLocation"
+    :ivar last_successful_version_update_time: The date and time of the end of the last successful
+     version update for the cluster.
+    :vartype last_successful_version_update_time: str
+    :ivar managed_credentials: The list of credentials that are managed for the cluster and can be
+     rotated on-demand.
+    :vartype managed_credentials: list[str]
     :ivar manual_action_count: The count of Manual Action Taken (MAT) events that have not been
      validated.
     :vartype manual_action_count: int
@@ -2291,6 +2706,10 @@ class ClusterProperties(TypedDict, total=False):
     """Field Deprecated. This field will not be populated in an upcoming version. The extended
      location (custom location) that represents the Hybrid AKS control plane location. This extended
      location is used when creating provisioned clusters (Hybrid AKS clusters)."""
+    lastSuccessfulVersionUpdateTime: str
+    """The date and time of the end of the last successful version update for the cluster."""
+    managedCredentials: list[str]
+    """The list of credentials that are managed for the cluster and can be rotated on-demand."""
     manualActionCount: int
     """The count of Manual Action Taken (MAT) events that have not been validated."""
     supportExpiryDate: str
@@ -2300,6 +2719,18 @@ class ClusterProperties(TypedDict, total=False):
     provisioningState: Union[str, "ClusterProvisioningState"]
     """The provisioning state of the cluster. Known values are: \"Succeeded\", \"Failed\",
      \"Canceled\", \"Accepted\", \"Validating\", and \"Updating\"."""
+
+
+class ClusterRotateCredentialParameters(TypedDict, total=False):
+    """ClusterRotateCredentialParameters represents the body of the request to rotate cluster
+    credentials.
+
+    :ivar credentials: The list of credential names for the credentials to rotate. Required.
+    :vartype credentials: list[str]
+    """
+
+    credentials: Required[list[str]]
+    """The list of credential names for the credentials to rotate. Required."""
 
 
 class ClusterScanRuntimeParameters(TypedDict, total=False):
@@ -2329,6 +2760,24 @@ class ClusterSecretArchive(TypedDict, total=False):
 
     keyVaultId: Required[str]
     """The resource ID of the key vault to archive the secrets of the cluster. Required."""
+    useKeyVault: Union[str, "ClusterSecretArchiveEnabled"]
+    """The indicator if the specified key vault should be used to archive the secrets of the cluster.
+     Known values are: \"True\" and \"False\"."""
+
+
+class ClusterSecretArchivePatch(TypedDict, total=False):
+    """ClusterSecretArchivePatch configures the key vault to archive the secrets of the cluster for
+    later retrieval for patch operations.
+
+    :ivar key_vault_id: The resource ID of the key vault to archive the secrets of the cluster.
+    :vartype key_vault_id: str
+    :ivar use_key_vault: The indicator if the specified key vault should be used to archive the
+     secrets of the cluster. Known values are: "True" and "False".
+    :vartype use_key_vault: Union[str, "ClusterSecretArchiveEnabled"]
+    """
+
+    keyVaultId: str
+    """The resource ID of the key vault to archive the secrets of the cluster."""
     useKeyVault: Union[str, "ClusterSecretArchiveEnabled"]
     """The indicator if the specified key vault should be used to archive the secrets of the cluster.
      Known values are: \"True\" and \"False\"."""
@@ -2370,13 +2819,58 @@ class ClusterUpdateStrategy(TypedDict, total=False):
     """The time to wait between the increments of update defined by the strategy."""
 
 
+class ClusterUpdateStrategyPatch(TypedDict, total=False):
+    """ClusterUpdateStrategyPatch represents the strategy for updating the cluster for patch
+    operations.
+
+    :ivar max_unavailable: The maximum number of worker nodes that can be offline within the
+     increment of update, e.g., rack-by-rack. Limited by the maximum number of machines in the
+     increment. Defaults to the whole increment size.
+    :vartype max_unavailable: int
+    :ivar strategy_type: The mode of operation for runtime protection. Known values are: "Rack" and
+     "PauseAfterRack".
+    :vartype strategy_type: Union[str, "ClusterUpdateStrategyType"]
+    :ivar threshold_type: Selection of how the threshold should be evaluated. Known values are:
+     "CountSuccess" and "PercentSuccess".
+    :vartype threshold_type: Union[str, "ValidationThresholdType"]
+    :ivar threshold_value: The numeric threshold value.
+    :vartype threshold_value: int
+    :ivar wait_time_minutes: The time to wait between the increments of update defined by the
+     strategy.
+    :vartype wait_time_minutes: int
+    """
+
+    maxUnavailable: int
+    """The maximum number of worker nodes that can be offline within the increment of update, e.g.,
+     rack-by-rack. Limited by the maximum number of machines in the increment. Defaults to the whole
+     increment size."""
+    strategyType: Union[str, "ClusterUpdateStrategyType"]
+    """The mode of operation for runtime protection. Known values are: \"Rack\" and
+     \"PauseAfterRack\"."""
+    thresholdType: Union[str, "ValidationThresholdType"]
+    """Selection of how the threshold should be evaluated. Known values are: \"CountSuccess\" and
+     \"PercentSuccess\"."""
+    thresholdValue: int
+    """The numeric threshold value."""
+    waitTimeMinutes: int
+    """The time to wait between the increments of update defined by the strategy."""
+
+
 class ClusterUpdateVersionParameters(TypedDict, total=False):
     """ClusterUpdateVersionParameters represents the body of the request to update cluster version.
 
+    :ivar safeguard_mode: Specifies how safeguards are applied during the update version operation.
+     Use All to run all pre‑operation validation checks. Use None to bypass safeguards. If not
+     specified, the default is All. Known values are: "All" and "None".
+    :vartype safeguard_mode: Union[str, "ClusterUpdateVersionSafeguardMode"]
     :ivar target_cluster_version: The version to be applied to the cluster during update. Required.
     :vartype target_cluster_version: str
     """
 
+    safeguardMode: Union[str, "ClusterUpdateVersionSafeguardMode"]
+    """Specifies how safeguards are applied during the update version operation. Use All to run all
+     pre‑operation validation checks. Use None to bypass safeguards. If not specified, the default
+     is All. Known values are: \"All\" and \"None\"."""
     targetClusterVersion: Required[str]
     """The version to be applied to the cluster during update. Required."""
 
@@ -2389,8 +2883,8 @@ class CommandOutputOverride(TypedDict, total=False):
     :vartype associated_identity: "IdentitySelector"
     :ivar command_output_type: The type of command output for the override. Known values are:
      "BareMetalMachineRunCommand", "BareMetalMachineRunDataExtracts",
-     "BareMetalMachineRunReadCommands", "StorageRunReadCommands", and
-     "BareMetalMachineRunDataExtractsRestricted".
+     "BareMetalMachineRunReadCommands", "ClusterSupportAdministrativeActions",
+     "StorageRunReadCommands", and "BareMetalMachineRunDataExtractsRestricted".
     :vartype command_output_type: Union[str, "CommandOutputType"]
     :ivar container_url: The URL of the storage account container that is to be used by the
      specified identities.
@@ -2403,7 +2897,8 @@ class CommandOutputOverride(TypedDict, total=False):
     commandOutputType: Union[str, "CommandOutputType"]
     """The type of command output for the override. Known values are: \"BareMetalMachineRunCommand\",
      \"BareMetalMachineRunDataExtracts\", \"BareMetalMachineRunReadCommands\",
-     \"StorageRunReadCommands\", and \"BareMetalMachineRunDataExtractsRestricted\"."""
+     \"ClusterSupportAdministrativeActions\", \"StorageRunReadCommands\", and
+     \"BareMetalMachineRunDataExtractsRestricted\"."""
     containerUrl: str
     """The URL of the storage account container that is to be used by the specified identities."""
 
@@ -2503,7 +2998,7 @@ class ConsolePatchProperties(TypedDict, total=False):
     :vartype expiration: str
     :ivar ssh_public_key: The SSH public key that will be provisioned for user access. The user is
      expected to have the corresponding SSH private key for logging in.
-    :vartype ssh_public_key: "SshPublicKey"
+    :vartype ssh_public_key: "SshPublicKeyPatch"
     """
 
     enabled: Union[str, "ConsoleEnabled"]
@@ -2511,7 +3006,7 @@ class ConsolePatchProperties(TypedDict, total=False):
      \"False\"."""
     expiration: str
     """The date and time after which the key will be disallowed access."""
-    sshPublicKey: "SshPublicKey"
+    sshPublicKey: "SshPublicKeyPatch"
     """The SSH public key that will be provisioned for user access. The user is expected to have the
      corresponding SSH private key for logging in."""
 
@@ -2687,6 +3182,22 @@ class FeatureStatus(TypedDict, total=False):
     """The version of the feature."""
 
 
+class FilterDevices(TypedDict, total=False):
+    """FilterDevices defines the filtered target of the inspection.
+
+    :ivar bare_metal_machine_names: The list of bare metal machine names to include in the
+     inspection.
+    :vartype bare_metal_machine_names: list[str]
+    :ivar rack_names: The list of rack names to include in the inspection.
+    :vartype rack_names: list[str]
+    """
+
+    bareMetalMachineNames: list[str]
+    """The list of bare metal machine names to include in the inspection."""
+    rackNames: list[str]
+    """The list of rack names to include in the inspection."""
+
+
 class HardwareInventory(TypedDict, total=False):
     """HardwareInventory represents the hardware configuration of this machine as exposed to the
     customer, including information acquired from the model/sku information and from the ironic
@@ -2793,6 +3304,27 @@ class ImageRepositoryCredentials(TypedDict, total=False):
     """The URL of the authentication server used to validate the repository credentials. Required."""
     username: Required[str]
     """The username used to access an image in the target repository. Required."""
+
+
+class ImageRepositoryCredentialsPatch(TypedDict, total=False):
+    """ImageRepositoryCredentialsPatch represents the credentials used to login to the image
+    repository for patch operations.
+
+    :ivar password: The password or token used to access an image in the target repository.
+    :vartype password: str
+    :ivar registry_url: The URL of the authentication server used to validate the repository
+     credentials.
+    :vartype registry_url: str
+    :ivar username: The username used to access an image in the target repository.
+    :vartype username: str
+    """
+
+    password: str
+    """The password or token used to access an image in the target repository."""
+    registryUrl: str
+    """The URL of the authentication server used to validate the repository credentials."""
+    username: str
+    """The username used to access an image in the target repository."""
 
 
 class InitialAgentPoolConfiguration(TypedDict, total=False):
@@ -3353,6 +3885,92 @@ class KubernetesLabel(TypedDict, total=False):
     """The name of the label or taint. Required."""
     value: Required[str]
     """The value of the label or taint. Required."""
+
+
+class KubernetesVersion(TrackedResource):
+    """KubernetesVersion represents the available Kubernetes versions for a cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The list of the resource properties. Required.
+    :vartype properties: "KubernetesVersionProperties"
+    :ivar etag: "If etag is provided in the response body, it may also be provided as a header per
+     the normal etag convention.  Entity tags are used for comparing two or more entities from the
+     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
+     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.").
+    :vartype etag: str
+    :ivar extended_location: The extended location of the resource. This property is required when
+     creating the resource. Required.
+    :vartype extended_location: "ExtendedLocation"
+    """
+
+    properties: Required["KubernetesVersionProperties"]
+    """The list of the resource properties. Required."""
+    etag: str
+    """\"If etag is provided in the response body, it may also be provided as a header per the normal
+     etag convention.  Entity tags are used for comparing two or more entities from the same
+     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
+     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.\")."""
+    extendedLocation: Required["ExtendedLocation"]
+    """The extended location of the resource. This property is required when creating the resource.
+     Required."""
+
+
+class KubernetesVersionPatchParameters(TypedDict, total=False):
+    """KubernetesVersionPatchParameters represents the body of the request to patch Kubernetes version
+    tags.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    tags: dict[str, str]
+    """Resource tags."""
+
+
+class KubernetesVersionProperties(TypedDict, total=False):
+    """KubernetesVersionProperties contains the read-only properties describing available versions.
+
+    :ivar values_property: The list of available Kubernetes versions.
+    :vartype values_property: list["KubernetesVersionValue"]
+    :ivar provisioning_state: The provisioning state of the Kubernetes version resource. Known
+     values are: "Accepted", "Canceled", "Failed", and "Succeeded".
+    :vartype provisioning_state: Union[str, "KubernetesVersionProvisioningState"]
+    """
+
+    values: list["KubernetesVersionValue"]
+    """The list of available Kubernetes versions."""
+    provisioningState: Union[str, "KubernetesVersionProvisioningState"]
+    """The provisioning state of the Kubernetes version resource. Known values are: \"Accepted\",
+     \"Canceled\", \"Failed\", and \"Succeeded\"."""
+
+
+class KubernetesVersionValue(TypedDict, total=False):
+    """KubernetesVersionValue describes a specific Kubernetes version that can be deployed.
+
+    :ivar description: Additional description for the Kubernetes version.
+    :vartype description: str
+    :ivar version: The Kubernetes version identifier.
+    :vartype version: str
+    """
+
+    description: str
+    """Additional description for the Kubernetes version."""
+    version: str
+    """The Kubernetes version identifier."""
 
 
 class L2Network(TrackedResource):
@@ -4032,6 +4650,47 @@ class RackDefinition(TypedDict, total=False):
     """The list of storage appliance configuration data for this rack."""
 
 
+class RackDefinitionPatch(TypedDict, total=False):
+    """RackDefinitionPatch represents details regarding the rack for patch operations.
+
+    :ivar availability_zone: The zone name used for this rack when created. Availability zones are
+     used for workload placement.
+    :vartype availability_zone: str
+    :ivar bare_metal_machine_configuration_data: The unordered list of bare metal machine
+     configuration.
+    :vartype bare_metal_machine_configuration_data: list["BareMetalMachineConfigurationDataPatch"]
+    :ivar network_rack_id: The resource ID of the network rack that matches this rack definition.
+    :vartype network_rack_id: str
+    :ivar rack_location: The free-form description of the rack's location.
+    :vartype rack_location: str
+    :ivar rack_serial_number: The unique identifier for the rack within Network Cloud cluster. An
+     alternate unique alphanumeric value other than a serial number may be provided if desired.
+    :vartype rack_serial_number: str
+    :ivar rack_sku_id: The resource ID of the sku for the rack being added.
+    :vartype rack_sku_id: str
+    :ivar storage_appliance_configuration_data: The list of storage appliance configuration data
+     for this rack.
+    :vartype storage_appliance_configuration_data: list["StorageApplianceConfigurationDataPatch"]
+    """
+
+    availabilityZone: str
+    """The zone name used for this rack when created. Availability zones are used for workload
+     placement."""
+    bareMetalMachineConfigurationData: list["BareMetalMachineConfigurationDataPatch"]
+    """The unordered list of bare metal machine configuration."""
+    networkRackId: str
+    """The resource ID of the network rack that matches this rack definition."""
+    rackLocation: str
+    """The free-form description of the rack's location."""
+    rackSerialNumber: str
+    """The unique identifier for the rack within Network Cloud cluster. An alternate unique
+     alphanumeric value other than a serial number may be provided if desired."""
+    rackSkuId: str
+    """The resource ID of the sku for the rack being added."""
+    storageApplianceConfigurationData: list["StorageApplianceConfigurationDataPatch"]
+    """The list of storage appliance configuration data for this rack."""
+
+
 class RackPatchParameters(TypedDict, total=False):
     """RackPatchParameters represents the body of the request to patch the rack properties.
 
@@ -4120,11 +4779,37 @@ class RacksPatchProperties(TypedDict, total=False):
 class RuntimeProtectionConfiguration(TypedDict, total=False):
     """RuntimeProtectionConfiguration represents the runtime protection configuration for the cluster.
 
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
     :ivar enforcement_level: The mode of operation for runtime protection. Known values are:
      "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
     :vartype enforcement_level: Union[str, "RuntimeProtectionEnforcementLevel"]
     """
 
+    definitionUpdateMode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
+    """The definition update mode for runtime protection. Known values are: \"Automatic\" and
+     \"None\"."""
+    enforcementLevel: Union[str, "RuntimeProtectionEnforcementLevel"]
+    """The mode of operation for runtime protection. Known values are: \"Audit\", \"Disabled\",
+     \"OnDemand\", \"Passive\", and \"RealTime\"."""
+
+
+class RuntimeProtectionConfigurationPatch(TypedDict, total=False):
+    """RuntimeProtectionConfigurationPatch represents the runtime protection configuration for the
+    cluster for patch operations.
+
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
+    :ivar enforcement_level: The mode of operation for runtime protection. Known values are:
+     "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
+    :vartype enforcement_level: Union[str, "RuntimeProtectionEnforcementLevel"]
+    """
+
+    definitionUpdateMode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
+    """The definition update mode for runtime protection. Known values are: \"Automatic\" and
+     \"None\"."""
     enforcementLevel: Union[str, "RuntimeProtectionEnforcementLevel"]
     """The mode of operation for runtime protection. Known values are: \"Audit\", \"Disabled\",
      \"OnDemand\", \"Passive\", and \"RealTime\"."""
@@ -4133,10 +4818,25 @@ class RuntimeProtectionConfiguration(TypedDict, total=False):
 class RuntimeProtectionStatus(TypedDict, total=False):
     """RuntimeProtectionStatus represents the runtime protection status of the bare metal machine.
 
+    :ivar agent_health_status: The runtime protection agent health status. Known values are:
+     "Healthy" and "Unhealthy".
+    :vartype agent_health_status: Union[str, "RuntimeProtectionAgentHealthStatus"]
+    :ivar agent_health_status_issues: The runtime protection agent health status issues, if
+     present.
+    :vartype agent_health_status_issues: list[str]
+    :ivar agent_license_status: The runtime protection agent license status. Known values are:
+     "Licensed" and "Unlicensed".
+    :vartype agent_license_status: Union[str, "RuntimeProtectionAgentLicenseStatus"]
+    :ivar definition_update_mode: The definition update mode for runtime protection. Known values
+     are: "Automatic" and "None".
+    :vartype definition_update_mode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
     :ivar definitions_last_updated: The timestamp when the malware definitions were last updated.
     :vartype definitions_last_updated: str
     :ivar definitions_version: The version of the malware definitions.
     :vartype definitions_version: str
+    :ivar enforcement_level: The enforcement level set for the runtime protection on the bare metal
+     machine. Known values are: "Audit", "Disabled", "OnDemand", "Passive", and "RealTime".
+    :vartype enforcement_level: Union[str, "RuntimeProtectionEnforcementLevel"]
     :ivar scan_completed_time: The timestamp of the most recently completed scan, or empty if there
      has never been a scan.
     :vartype scan_completed_time: str
@@ -4148,10 +4848,22 @@ class RuntimeProtectionStatus(TypedDict, total=False):
     :vartype scan_started_time: str
     """
 
+    agentHealthStatus: Union[str, "RuntimeProtectionAgentHealthStatus"]
+    """The runtime protection agent health status. Known values are: \"Healthy\" and \"Unhealthy\"."""
+    agentHealthStatusIssues: list[str]
+    """The runtime protection agent health status issues, if present."""
+    agentLicenseStatus: Union[str, "RuntimeProtectionAgentLicenseStatus"]
+    """The runtime protection agent license status. Known values are: \"Licensed\" and \"Unlicensed\"."""
+    definitionUpdateMode: Union[str, "RuntimeProtectionDefinitionUpdateMode"]
+    """The definition update mode for runtime protection. Known values are: \"Automatic\" and
+     \"None\"."""
     definitionsLastUpdated: str
     """The timestamp when the malware definitions were last updated."""
     definitionsVersion: str
     """The version of the malware definitions."""
+    enforcementLevel: Union[str, "RuntimeProtectionEnforcementLevel"]
+    """The enforcement level set for the runtime protection on the bare metal machine. Known values
+     are: \"Audit\", \"Disabled\", \"OnDemand\", \"Passive\", and \"RealTime\"."""
     scanCompletedTime: str
     """The timestamp of the most recently completed scan, or empty if there has never been a scan."""
     scanScheduledTime: str
@@ -4319,6 +5031,32 @@ class ServicePrincipalInformation(TypedDict, total=False):
      created. Required."""
 
 
+class ServicePrincipalInformationPatch(TypedDict, total=False):
+    """ServicePrincipalInformationPatch represents the details of the service principal to be used by
+    the cluster during Arc Appliance installation for patch operations.
+
+    :ivar application_id: The application ID, also known as client ID, of the service principal.
+    :vartype application_id: str
+    :ivar password: The password of the service principal.
+    :vartype password: str
+    :ivar principal_id: The principal ID, also known as the object ID, of the service principal.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID, also known as the directory ID, of the tenant in which the
+     service principal is created.
+    :vartype tenant_id: str
+    """
+
+    applicationId: str
+    """The application ID, also known as client ID, of the service principal."""
+    password: str
+    """The password of the service principal."""
+    principalId: str
+    """The principal ID, also known as the object ID, of the service principal."""
+    tenantId: str
+    """The tenant ID, also known as the directory ID, of the tenant in which the service principal is
+     created."""
+
+
 class SshPublicKey(TypedDict, total=False):
     """SshPublicKey represents the public key used to authenticate with a resource through SSH.
 
@@ -4328,6 +5066,17 @@ class SshPublicKey(TypedDict, total=False):
 
     keyData: Required[str]
     """The SSH public key data. Required."""
+
+
+class SshPublicKeyPatch(TypedDict, total=False):
+    """SshPublicKeyPatch represents the public key used to authenticate with a resource through SSH.
+
+    :ivar key_data: The SSH public key data.
+    :vartype key_data: str
+    """
+
+    keyData: str
+    """The SSH public key data."""
 
 
 class StepState(TypedDict, total=False):
@@ -4451,6 +5200,37 @@ class StorageApplianceConfigurationData(TypedDict, total=False):
     """The user-provided name for the storage appliance that will be created from this specification."""
 
 
+class StorageApplianceConfigurationDataPatch(TypedDict, total=False):
+    """StorageApplianceConfigurationDataPatch represents configuration for the storage application for
+    patch operations.
+
+    :ivar admin_credentials: The credentials of the administrative interface on this storage
+     appliance. The password field is expected to be an Azure Key Vault key URL. Until the cluster
+     is converted to utilize managed identity by setting the secret archive settings, the actual
+     password value should be provided instead.
+    :vartype admin_credentials: "AdministrativeCredentialsPatch"
+    :ivar rack_slot: The slot that storage appliance is in the rack based on the BOM configuration.
+    :vartype rack_slot: int
+    :ivar serial_number: The serial number of the appliance.
+    :vartype serial_number: str
+    :ivar storage_appliance_name: The user-provided name for the storage appliance that will be
+     created from this specification.
+    :vartype storage_appliance_name: str
+    """
+
+    adminCredentials: "AdministrativeCredentialsPatch"
+    """The credentials of the administrative interface on this storage appliance. The password field
+     is expected to be an Azure Key Vault key URL. Until the cluster is converted to utilize managed
+     identity by setting the secret archive settings, the actual password value should be provided
+     instead."""
+    rackSlot: int
+    """The slot that storage appliance is in the rack based on the BOM configuration."""
+    serialNumber: str
+    """The serial number of the appliance."""
+    storageApplianceName: str
+    """The user-provided name for the storage appliance that will be created from this specification."""
+
+
 class StorageApplianceEnableRemoteVendorManagementParameters(TypedDict, total=False):  # pylint: disable=name-too-long
     """StorageApplianceEnableRemoteVendorManagementParameters represents the body of the request to
     enable remote vendor management of a storage appliance.
@@ -4466,6 +5246,40 @@ class StorageApplianceEnableRemoteVendorManagementParameters(TypedDict, total=Fa
     """Field Deprecated. This field is not used and will be rejected if provided. The list of IPv4
      subnets (in CIDR format), IPv6 subnets (in CIDR format), or hostnames that the storage
      appliance needs accessible in order to turn on the remote vendor management."""
+
+
+class StorageApplianceExpansionShelf(TypedDict, total=False):
+    """StorageApplianceExpansionShelf represents an expansion shelf connected to a storage appliance.
+
+    :ivar model: The model of the expansion shelf.
+    :vartype model: str
+    :ivar version: The version of the expansion shelf.
+    :vartype version: str
+    """
+
+    model: str
+    """The model of the expansion shelf."""
+    version: str
+    """The version of the expansion shelf."""
+
+
+class StorageApplianceMonitoringConfigurationStatus(TypedDict, total=False):  # pylint: disable=name-too-long
+    """The monitoring configuration status of the storage appliance.
+
+    :ivar log_level: The log level for the monitoring configuration status of the storage
+     appliance. Known values are: "Default" and "Nexus".
+    :vartype log_level: Union[str, "StorageApplianceMonitoringConfigurationStatusLogLevel"]
+    :ivar metrics_level: The metrics level for the monitoring configuration status of the storage
+     appliance. Known values are: "Default" and "Nexus".
+    :vartype metrics_level: Union[str, "StorageApplianceMonitoringConfigurationStatusMetricsLevel"]
+    """
+
+    logLevel: Union[str, "StorageApplianceMonitoringConfigurationStatusLogLevel"]
+    """The log level for the monitoring configuration status of the storage appliance. Known values
+     are: \"Default\" and \"Nexus\"."""
+    metricsLevel: Union[str, "StorageApplianceMonitoringConfigurationStatusMetricsLevel"]
+    """The metrics level for the monitoring configuration status of the storage appliance. Known
+     values are: \"Default\" and \"Nexus\"."""
 
 
 class StorageAppliancePatchParameters(TypedDict, total=False):
@@ -4526,6 +5340,8 @@ class StorageApplianceProperties(TypedDict, total=False):
     :vartype detailed_status: Union[str, "StorageApplianceDetailedStatus"]
     :ivar detailed_status_message: The descriptive message about the current detailed status.
     :vartype detailed_status_message: str
+    :ivar expansion_shelves: The list of expansion shelves connected to the storage appliance.
+    :vartype expansion_shelves: list["StorageApplianceExpansionShelf"]
     :ivar management_ipv4_address: The endpoint for the management interface of the storage
      appliance.
     :vartype management_ipv4_address: str
@@ -4533,6 +5349,9 @@ class StorageApplianceProperties(TypedDict, total=False):
     :vartype manufacturer: str
     :ivar model: The model of the storage appliance.
     :vartype model: str
+    :ivar monitoring_configuration_status: The monitoring configuration status of the storage
+     appliance.
+    :vartype monitoring_configuration_status: "StorageApplianceMonitoringConfigurationStatus"
     :ivar remote_vendor_management_feature: The indicator of whether the storage appliance supports
      remote vendor management. Known values are: "Supported" and "Unsupported".
     :vartype remote_vendor_management_feature: Union[str, "RemoteVendorManagementFeature"]
@@ -4574,12 +5393,16 @@ class StorageApplianceProperties(TypedDict, total=False):
      \"Error\", and \"Provisioning\"."""
     detailedStatusMessage: str
     """The descriptive message about the current detailed status."""
+    expansionShelves: list["StorageApplianceExpansionShelf"]
+    """The list of expansion shelves connected to the storage appliance."""
     managementIpv4Address: str
     """The endpoint for the management interface of the storage appliance."""
     manufacturer: str
     """The manufacturer of the storage appliance."""
     model: str
     """The model of the storage appliance."""
+    monitoringConfigurationStatus: "StorageApplianceMonitoringConfigurationStatus"
+    """The monitoring configuration status of the storage appliance."""
     remoteVendorManagementFeature: Union[str, "RemoteVendorManagementFeature"]
     """The indicator of whether the storage appliance supports remote vendor management. Known values
      are: \"Supported\" and \"Unsupported\"."""
@@ -4866,6 +5689,30 @@ class ValidationThreshold(TypedDict, total=False):
     """The numeric threshold value. Required."""
 
 
+class ValidationThresholdPatch(TypedDict, total=False):
+    """ValidationThresholdPatch indicates allowed machine and node hardware and deployment failures
+    for patch operations.
+
+    :ivar grouping: Selection of how the type evaluation is applied to the cluster calculation.
+     Known values are: "PerCluster" and "PerRack".
+    :vartype grouping: Union[str, "ValidationThresholdGrouping"]
+    :ivar type: Selection of how the threshold should be evaluated. Known values are:
+     "CountSuccess" and "PercentSuccess".
+    :vartype type: Union[str, "ValidationThresholdType"]
+    :ivar value: The numeric threshold value.
+    :vartype value: int
+    """
+
+    grouping: Union[str, "ValidationThresholdGrouping"]
+    """Selection of how the type evaluation is applied to the cluster calculation. Known values are:
+     \"PerCluster\" and \"PerRack\"."""
+    type: Union[str, "ValidationThresholdType"]
+    """Selection of how the threshold should be evaluated. Known values are: \"CountSuccess\" and
+     \"PercentSuccess\"."""
+    value: int
+    """The numeric threshold value."""
+
+
 class VirtualMachine(TrackedResource):
     """VirtualMachine represents the on-premises Network Cloud virtual machine.
 
@@ -4958,10 +5805,10 @@ class VirtualMachinePatchProperties(TypedDict, total=False):
 
     :ivar vm_image_repository_credentials: The credentials used to login to the image repository
      that has access to the specified image.
-    :vartype vm_image_repository_credentials: "ImageRepositoryCredentials"
+    :vartype vm_image_repository_credentials: "ImageRepositoryCredentialsPatch"
     """
 
-    vmImageRepositoryCredentials: "ImageRepositoryCredentials"
+    vmImageRepositoryCredentials: "ImageRepositoryCredentialsPatch"
     """The credentials used to login to the image repository that has access to the specified image."""
 
 
@@ -5220,6 +6067,9 @@ class VolumeProperties(TypedDict, total=False):
     :vartype storage_appliance_id: str
     :ivar allocated_size_mi_b: The allocated size of the volume in Mebibytes.
     :vartype allocated_size_mi_b: int
+    :ivar assigned_storage_appliance_id: The assigned resource ID of the storage appliance that
+     hosts the volume.
+    :vartype assigned_storage_appliance_id: str
     :ivar attached_to: The list of resource IDs that attach the volume. It may include virtual
      machines and Hybrid AKS clusters.
     :vartype attached_to: list[str]
@@ -5241,6 +6091,8 @@ class VolumeProperties(TypedDict, total=False):
     """The resource ID of the storage appliance that hosts the volume."""
     allocatedSizeMiB: int
     """The allocated size of the volume in Mebibytes."""
+    assignedStorageApplianceId: str
+    """The assigned resource ID of the storage appliance that hosts the volume."""
     attachedTo: list[str]
     """The list of resource IDs that attach the volume. It may include virtual machines and Hybrid AKS
      clusters."""

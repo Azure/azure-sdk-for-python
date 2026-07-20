@@ -38,6 +38,7 @@ from .._configuration import NetworkCloudMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
+from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
@@ -51,7 +52,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -66,13 +67,224 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_access_bridges_get_request(
+    resource_group_name: str,
+    access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/accessBridges/{accessBridgeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accessBridgeName": _SERIALIZER.url("access_bridge_name", access_bridge_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_access_bridges_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+    subscription_id: str,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/accessBridges/{accessBridgeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accessBridgeName": _SERIALIZER.url("access_bridge_name", access_bridge_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_access_bridges_update_request(
+    resource_group_name: str,
+    access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+    subscription_id: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/accessBridges/{accessBridgeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accessBridgeName": _SERIALIZER.url("access_bridge_name", access_bridge_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_access_bridges_delete_request(
+    resource_group_name: str,
+    access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+    subscription_id: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/accessBridges/{accessBridgeName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "accessBridgeName": _SERIALIZER.url("access_bridge_name", access_bridge_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_access_bridges_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/accessBridges"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_access_bridges_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.NetworkCloud/accessBridges"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_bare_metal_machines_get_request(
     resource_group_name: str, bare_metal_machine_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -107,7 +319,7 @@ def build_bare_metal_machines_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -150,7 +362,7 @@ def build_bare_metal_machines_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -192,7 +404,7 @@ def build_bare_metal_machines_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}"
     path_format_arguments = {
@@ -228,7 +440,7 @@ def build_bare_metal_machines_list_by_resource_group_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -259,7 +471,7 @@ def build_bare_metal_machines_list_by_subscription_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -290,7 +502,7 @@ def build_bare_metal_machines_cordon_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/cordon"
     path_format_arguments = {
@@ -318,7 +530,7 @@ def build_bare_metal_machines_power_off_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/powerOff"
     path_format_arguments = {
@@ -342,9 +554,11 @@ def build_bare_metal_machines_power_off_request(  # pylint: disable=name-too-lon
 def build_bare_metal_machines_reimage_request(  # pylint: disable=name-too-long
     resource_group_name: str, bare_metal_machine_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/reimage"
     path_format_arguments = {
@@ -358,7 +572,11 @@ def build_bare_metal_machines_reimage_request(  # pylint: disable=name-too-long
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_bare_metal_machines_replace_request(  # pylint: disable=name-too-long
@@ -368,7 +586,7 @@ def build_bare_metal_machines_replace_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/replace"
     path_format_arguments = {
@@ -394,7 +612,7 @@ def build_bare_metal_machines_restart_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/restart"
     path_format_arguments = {
@@ -418,7 +636,7 @@ def build_bare_metal_machines_run_command_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/runCommand"
     path_format_arguments = {
@@ -446,7 +664,7 @@ def build_bare_metal_machines_run_data_extracts_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/runDataExtracts"
     path_format_arguments = {
@@ -474,7 +692,7 @@ def build_bare_metal_machines_run_data_extracts_restricted_request(  # pylint: d
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/runDataExtractsRestricted"
     path_format_arguments = {
@@ -502,7 +720,7 @@ def build_bare_metal_machines_run_read_commands_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/runReadCommands"
     path_format_arguments = {
@@ -528,7 +746,7 @@ def build_bare_metal_machines_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/start"
     path_format_arguments = {
@@ -550,7 +768,7 @@ def build_bare_metal_machines_uncordon_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/bareMetalMachines/{bareMetalMachineName}/uncordon"
     path_format_arguments = {
@@ -573,7 +791,7 @@ def build_cloud_services_networks_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -608,7 +826,7 @@ def build_cloud_services_networks_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -651,7 +869,7 @@ def build_cloud_services_networks_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -693,7 +911,7 @@ def build_cloud_services_networks_delete_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/cloudServicesNetworks/{cloudServicesNetworkName}"
     path_format_arguments = {
@@ -729,7 +947,7 @@ def build_cloud_services_networks_list_by_resource_group_request(  # pylint: dis
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -760,7 +978,7 @@ def build_cloud_services_networks_list_by_subscription_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -790,7 +1008,7 @@ def build_cluster_managers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -825,7 +1043,7 @@ def build_cluster_managers_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -868,7 +1086,7 @@ def build_cluster_managers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -910,7 +1128,7 @@ def build_cluster_managers_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusterManagers/{clusterManagerName}"
     path_format_arguments = {
@@ -946,7 +1164,7 @@ def build_cluster_managers_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -977,7 +1195,7 @@ def build_cluster_managers_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1001,13 +1219,41 @@ def build_cluster_managers_list_by_subscription_request(  # pylint: disable=name
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_cluster_managers_update_relay_private_endpoint_connection_request(  # pylint: disable=name-too-long
+    resource_group_name: str, cluster_manager_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusterManagers/{clusterManagerName}/updateRelayPrivateEndpointConnection"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterManagerName": _SERIALIZER.url("cluster_manager_name", cluster_manager_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_clusters_get_request(
     resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1042,7 +1288,7 @@ def build_clusters_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1085,7 +1331,7 @@ def build_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1127,7 +1373,7 @@ def build_clusters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}"
     path_format_arguments = {
@@ -1163,7 +1409,7 @@ def build_clusters_list_by_resource_group_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1196,7 +1442,7 @@ def build_clusters_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1227,7 +1473,7 @@ def build_clusters_continue_update_version_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/continueUpdateVersion"
     path_format_arguments = {
@@ -1255,9 +1501,65 @@ def build_clusters_deploy_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/deploy"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_clusters_inspect_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/inspect"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "clusterName": _SERIALIZER.url("cluster_name", cluster_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_clusters_rotate_credential_request(
+    resource_group_name: str, cluster_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/rotateCredential"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -1283,7 +1585,7 @@ def build_clusters_scan_runtime_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/scanRuntime"
     path_format_arguments = {
@@ -1311,7 +1613,7 @@ def build_clusters_update_version_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/updateVersion"
     path_format_arguments = {
@@ -1338,7 +1640,7 @@ def build_kubernetes_clusters_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1373,7 +1675,7 @@ def build_kubernetes_clusters_create_or_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1416,7 +1718,7 @@ def build_kubernetes_clusters_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1458,7 +1760,7 @@ def build_kubernetes_clusters_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}"
     path_format_arguments = {
@@ -1494,7 +1796,7 @@ def build_kubernetes_clusters_list_by_resource_group_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1525,7 +1827,7 @@ def build_kubernetes_clusters_list_by_subscription_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1556,7 +1858,7 @@ def build_kubernetes_clusters_restart_node_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/restartNode"
     path_format_arguments = {
@@ -1577,13 +1879,230 @@ def build_kubernetes_clusters_restart_node_request(  # pylint: disable=name-too-
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_kubernetes_versions_get_request(
+    resource_group_name: str, kubernetes_version_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesVersions/{kubernetesVersionName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "kubernetesVersionName": _SERIALIZER.url("kubernetes_version_name", kubernetes_version_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_kubernetes_versions_create_or_update_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    kubernetes_version_name: str,
+    subscription_id: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesVersions/{kubernetesVersionName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "kubernetesVersionName": _SERIALIZER.url("kubernetes_version_name", kubernetes_version_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_kubernetes_versions_update_request(
+    resource_group_name: str,
+    kubernetes_version_name: str,
+    subscription_id: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesVersions/{kubernetesVersionName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "kubernetesVersionName": _SERIALIZER.url("kubernetes_version_name", kubernetes_version_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_kubernetes_versions_delete_request(
+    resource_group_name: str,
+    kubernetes_version_name: str,
+    subscription_id: str,
+    *,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesVersions/{kubernetesVersionName}"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "kubernetesVersionName": _SERIALIZER.url("kubernetes_version_name", kubernetes_version_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if_match = prep_if_match(etag, match_condition)
+    if if_match is not None:
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+    if_none_match = prep_if_none_match(etag, match_condition)
+    if if_none_match is not None:
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_kubernetes_versions_list_by_resource_group_request(  # pylint: disable=name-too-long
+    resource_group_name: str,
+    subscription_id: str,
+    *,
+    top: Optional[int] = None,
+    skip_token: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesVersions"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_kubernetes_versions_list_by_subscription_request(  # pylint: disable=name-too-long
+    subscription_id: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.NetworkCloud/kubernetesVersions"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if top is not None:
+        _params["$top"] = _SERIALIZER.query("top", top, "int")
+    if skip_token is not None:
+        _params["$skipToken"] = _SERIALIZER.query("skip_token", skip_token, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_l2_networks_get_request(
     resource_group_name: str, l2_network_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1618,7 +2137,7 @@ def build_l2_networks_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1661,7 +2180,7 @@ def build_l2_networks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1703,7 +2222,7 @@ def build_l2_networks_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/l2Networks/{l2NetworkName}"
     path_format_arguments = {
@@ -1739,7 +2258,7 @@ def build_l2_networks_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1772,7 +2291,7 @@ def build_l2_networks_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1802,7 +2321,7 @@ def build_l3_networks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1837,7 +2356,7 @@ def build_l3_networks_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1880,7 +2399,7 @@ def build_l3_networks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1922,7 +2441,7 @@ def build_l3_networks_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/l3Networks/{l3NetworkName}"
     path_format_arguments = {
@@ -1958,7 +2477,7 @@ def build_l3_networks_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1991,7 +2510,7 @@ def build_l3_networks_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2019,7 +2538,7 @@ def build_rack_skus_get_request(rack_sku_name: str, subscription_id: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2046,7 +2565,7 @@ def build_rack_skus_list_by_subscription_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2072,7 +2591,7 @@ def build_racks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2107,7 +2626,7 @@ def build_racks_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2150,7 +2669,7 @@ def build_racks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2192,7 +2711,7 @@ def build_racks_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/racks/{rackName}"
     path_format_arguments = {
@@ -2228,7 +2747,7 @@ def build_racks_list_by_resource_group_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2259,7 +2778,7 @@ def build_racks_list_by_subscription_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2289,7 +2808,7 @@ def build_storage_appliances_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2324,7 +2843,7 @@ def build_storage_appliances_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2367,7 +2886,7 @@ def build_storage_appliances_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2409,7 +2928,7 @@ def build_storage_appliances_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}"
     path_format_arguments = {
@@ -2445,7 +2964,7 @@ def build_storage_appliances_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2476,7 +2995,7 @@ def build_storage_appliances_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2505,7 +3024,7 @@ def build_storage_appliances_disable_remote_vendor_management_request(  # pylint
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/disableRemoteVendorManagement"
     path_format_arguments = {
@@ -2529,7 +3048,7 @@ def build_storage_appliances_enable_remote_vendor_management_request(  # pylint:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/enableRemoteVendorManagement"
     path_format_arguments = {
@@ -2557,7 +3076,7 @@ def build_storage_appliances_run_read_commands_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/storageAppliances/{storageApplianceName}/runReadCommands"
     path_format_arguments = {
@@ -2584,7 +3103,7 @@ def build_trunked_networks_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2619,7 +3138,7 @@ def build_trunked_networks_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2662,7 +3181,7 @@ def build_trunked_networks_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2704,7 +3223,7 @@ def build_trunked_networks_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/trunkedNetworks/{trunkedNetworkName}"
     path_format_arguments = {
@@ -2740,7 +3259,7 @@ def build_trunked_networks_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2771,7 +3290,7 @@ def build_trunked_networks_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2801,7 +3320,7 @@ def build_virtual_machines_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2836,7 +3355,7 @@ def build_virtual_machines_create_or_update_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2879,7 +3398,7 @@ def build_virtual_machines_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2921,7 +3440,7 @@ def build_virtual_machines_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}"
     path_format_arguments = {
@@ -2957,7 +3476,7 @@ def build_virtual_machines_list_by_resource_group_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2988,7 +3507,7 @@ def build_virtual_machines_list_by_subscription_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3019,7 +3538,7 @@ def build_virtual_machines_assign_relay_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/assignRelay"
     path_format_arguments = {
@@ -3047,7 +3566,7 @@ def build_virtual_machines_power_off_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/powerOff"
     path_format_arguments = {
@@ -3073,7 +3592,7 @@ def build_virtual_machines_reimage_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/reimage"
     path_format_arguments = {
@@ -3095,7 +3614,7 @@ def build_virtual_machines_restart_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/restart"
     path_format_arguments = {
@@ -3117,7 +3636,7 @@ def build_virtual_machines_start_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/start"
     path_format_arguments = {
@@ -3140,7 +3659,7 @@ def build_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3175,7 +3694,7 @@ def build_volumes_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3218,7 +3737,7 @@ def build_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3260,7 +3779,7 @@ def build_volumes_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/volumes/{volumeName}"
     path_format_arguments = {
@@ -3296,7 +3815,7 @@ def build_volumes_list_by_resource_group_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3327,7 +3846,7 @@ def build_volumes_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3361,7 +3880,7 @@ def build_bare_metal_machine_key_sets_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3400,7 +3919,7 @@ def build_bare_metal_machine_key_sets_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3447,7 +3966,7 @@ def build_bare_metal_machine_key_sets_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3493,7 +4012,7 @@ def build_bare_metal_machine_key_sets_delete_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/bareMetalMachineKeySets/{bareMetalMachineKeySetName}"
     path_format_arguments = {
@@ -3533,7 +4052,7 @@ def build_bare_metal_machine_key_sets_list_by_cluster_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3565,7 +4084,7 @@ def build_bmc_key_sets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3602,7 +4121,7 @@ def build_bmc_key_sets_create_or_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3647,7 +4166,7 @@ def build_bmc_key_sets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3691,7 +4210,7 @@ def build_bmc_key_sets_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/bmcKeySets/{bmcKeySetName}"
     path_format_arguments = {
@@ -3729,7 +4248,7 @@ def build_bmc_key_sets_list_by_cluster_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3761,7 +4280,7 @@ def build_agent_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3798,7 +4317,7 @@ def build_agent_pools_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3843,7 +4362,7 @@ def build_agent_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3887,7 +4406,7 @@ def build_agent_pools_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/agentPools/{agentPoolName}"
     path_format_arguments = {
@@ -3925,7 +4444,7 @@ def build_agent_pools_list_by_kubernetes_cluster_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3957,7 +4476,7 @@ def build_kubernetes_cluster_features_get_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3994,7 +4513,7 @@ def build_kubernetes_cluster_features_create_or_update_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4039,7 +4558,7 @@ def build_kubernetes_cluster_features_update_request(  # pylint: disable=name-to
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4083,7 +4602,7 @@ def build_kubernetes_cluster_features_delete_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/kubernetesClusters/{kubernetesClusterName}/features/{featureName}"
     path_format_arguments = {
@@ -4121,7 +4640,7 @@ def build_kubernetes_cluster_features_list_by_kubernetes_cluster_request(  # pyl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4153,7 +4672,7 @@ def build_consoles_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4190,7 +4709,7 @@ def build_consoles_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4235,7 +4754,7 @@ def build_consoles_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4279,7 +4798,7 @@ def build_consoles_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/virtualMachines/{virtualMachineName}/consoles/{consoleName}"
     path_format_arguments = {
@@ -4317,7 +4836,7 @@ def build_consoles_list_by_virtual_machine_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4349,7 +4868,7 @@ def build_metrics_configurations_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4386,7 +4905,7 @@ def build_metrics_configurations_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4431,7 +4950,7 @@ def build_metrics_configurations_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4475,7 +4994,7 @@ def build_metrics_configurations_delete_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetworkCloud/clusters/{clusterName}/metricsConfigurations/{metricsConfigurationName}"
     path_format_arguments = {
@@ -4513,7 +5032,7 @@ def build_metrics_configurations_list_by_cluster_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-07-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -4621,6 +5140,1124 @@ class Operations:
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
                 List[_models.Operation],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+
+class AccessBridgesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networkcloud.NetworkCloudMgmtClient`'s
+        :attr:`access_bridges` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def get(
+        self, resource_group_name: str, access_bridge_name: Union[str, _models.AccessBridgeAllowedName], **kwargs: Any
+    ) -> _models.AccessBridge:
+        """Get the properties of the provided access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :return: AccessBridge. The AccessBridge is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networkcloud.models.AccessBridge
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
+
+        _request = build_access_bridges_get_request(
+            resource_group_name=resource_group_name,
+            access_bridge_name=access_bridge_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AccessBridge, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge: Union[_models.AccessBridge, _types.AccessBridge, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(access_bridge, (IOBase, bytes)):
+            _content = access_bridge
+        else:
+            _content = json.dumps(access_bridge, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_access_bridges_create_or_update_request(
+            resource_group_name=resource_group_name,
+            access_bridge_name=access_bridge_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge: _models.AccessBridge,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Create a new access bridge or update the properties of the existing access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge: The access bridge configuration. Required.
+        :type access_bridge: ~azure.mgmt.networkcloud.models.AccessBridge
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge: _types.AccessBridge,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Create a new access bridge or update the properties of the existing access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge: The access bridge configuration. Required.
+        :type access_bridge: ~azure.mgmt.networkcloud.types.AccessBridge
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Create a new access bridge or update the properties of the existing access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge: The access bridge configuration. Required.
+        :type access_bridge: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge: Union[_models.AccessBridge, _types.AccessBridge, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Create a new access bridge or update the properties of the existing access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge: The access bridge configuration. Is either a AccessBridge type or a
+         IO[bytes] type. Required.
+        :type access_bridge: ~azure.mgmt.networkcloud.models.AccessBridge or
+         ~azure.mgmt.networkcloud.types.AccessBridge or IO[bytes]
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                access_bridge_name=access_bridge_name,
+                access_bridge=access_bridge,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AccessBridge, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AccessBridge].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AccessBridge](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge_update_parameters: Optional[
+            Union[_models.AccessBridgePatchParameters, _types.AccessBridgePatchParameters, IO[bytes]]
+        ] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if access_bridge_update_parameters else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if access_bridge_update_parameters else None
+        _content = None
+        if isinstance(access_bridge_update_parameters, (IOBase, bytes)):
+            _content = access_bridge_update_parameters
+        else:
+            if access_bridge_update_parameters is not None:
+                _content = json.dumps(access_bridge_update_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_access_bridges_update_request(
+            resource_group_name=resource_group_name,
+            access_bridge_name=access_bridge_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge_update_parameters: Optional[_models.AccessBridgePatchParameters] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Update properties of the provided access bridge, or update tags associated with the access
+        bridge. Properties and tag updates can be done independently.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge_update_parameters: The request body. Default value is None.
+        :type access_bridge_update_parameters:
+         ~azure.mgmt.networkcloud.models.AccessBridgePatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge_update_parameters: Optional[_types.AccessBridgePatchParameters] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Update properties of the provided access bridge, or update tags associated with the access
+        bridge. Properties and tag updates can be done independently.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge_update_parameters: The request body. Default value is None.
+        :type access_bridge_update_parameters:
+         ~azure.mgmt.networkcloud.types.AccessBridgePatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge_update_parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Update properties of the provided access bridge, or update tags associated with the access
+        bridge. Properties and tag updates can be done independently.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge_update_parameters: The request body. Default value is None.
+        :type access_bridge_update_parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        access_bridge_update_parameters: Optional[
+            Union[_models.AccessBridgePatchParameters, _types.AccessBridgePatchParameters, IO[bytes]]
+        ] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.AccessBridge]:
+        """Update properties of the provided access bridge, or update tags associated with the access
+        bridge. Properties and tag updates can be done independently.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :param access_bridge_update_parameters: The request body. Is either a
+         AccessBridgePatchParameters type or a IO[bytes] type. Default value is None.
+        :type access_bridge_update_parameters:
+         ~azure.mgmt.networkcloud.models.AccessBridgePatchParameters or
+         ~azure.mgmt.networkcloud.types.AccessBridgePatchParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns AccessBridge. The AccessBridge is compatible
+         with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if access_bridge_update_parameters else None
+        cls: ClsType[_models.AccessBridge] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                access_bridge_name=access_bridge_name,
+                access_bridge_update_parameters=access_bridge_update_parameters,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.AccessBridge, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.AccessBridge].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.AccessBridge](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _delete_initial(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_access_bridges_delete_request(
+            resource_group_name=resource_group_name,
+            access_bridge_name=access_bridge_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "access_bridge_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        access_bridge_name: Union[str, _models.AccessBridgeAllowedName],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Delete the specified access bridge.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param access_bridge_name: The name of the access bridge. Known values are: "Bastion",
+         "PrivateVault", and "StorageDashboard". Required.
+        :type access_bridge_name: str or ~azure.mgmt.networkcloud.models.AccessBridgeAllowedName
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                access_bridge_name=access_bridge_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.AccessBridge"]:
+        """Get a list of access bridges in the provided resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of AccessBridge
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AccessBridge]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_access_bridges_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AccessBridge],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.AccessBridge"]:
+        """Get a list of access bridges in the provided subscription.
+
+        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of AccessBridge
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.networkcloud.models.AccessBridge]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AccessBridge]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_access_bridges_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AccessBridge],
                 deserialized.get("value", []),
             )
             if cls:
@@ -6185,8 +7822,27 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "bare_metal_machine_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+    )
     def _reimage_initial(
-        self, resource_group_name: str, bare_metal_machine_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        bare_metal_machine_name: str,
+        body: Optional[
+            Union[_models.BareMetalMachineReimageParameters, _types.BareMetalMachineReimageParameters, IO[bytes]]
+        ] = None,
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -6196,16 +7852,30 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if body else None
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            if body is not None:
+                _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
 
         _request = build_bare_metal_machines_reimage_request(
             resource_group_name=resource_group_name,
             bare_metal_machine_name=bare_metal_machine_name,
             subscription_id=self._config.subscription_id,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -6245,9 +7915,15 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
 
         return deserialized  # type: ignore
 
-    @distributed_trace
+    @overload
     def begin_reimage(
-        self, resource_group_name: str, bare_metal_machine_name: str, **kwargs: Any
+        self,
+        resource_group_name: str,
+        bare_metal_machine_name: str,
+        body: Optional[_models.BareMetalMachineReimageParameters] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.OperationStatusResult]:
         """Reimage the provided bare metal machine.
 
@@ -6256,14 +7932,117 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param bare_metal_machine_name: The name of the bare metal machine. Required.
         :type bare_metal_machine_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.networkcloud.models.BareMetalMachineReimageParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    def begin_reimage(
+        self,
+        resource_group_name: str,
+        bare_metal_machine_name: str,
+        body: Optional[_types.BareMetalMachineReimageParameters] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Reimage the provided bare metal machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param bare_metal_machine_name: The name of the bare metal machine. Required.
+        :type bare_metal_machine_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: ~azure.mgmt.networkcloud.types.BareMetalMachineReimageParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_reimage(
+        self,
+        resource_group_name: str,
+        bare_metal_machine_name: str,
+        body: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Reimage the provided bare metal machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param bare_metal_machine_name: The name of the bare metal machine. Required.
+        :type bare_metal_machine_name: str
+        :param body: The content of the action request. Default value is None.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "bare_metal_machine_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_reimage(
+        self,
+        resource_group_name: str,
+        bare_metal_machine_name: str,
+        body: Optional[
+            Union[_models.BareMetalMachineReimageParameters, _types.BareMetalMachineReimageParameters, IO[bytes]]
+        ] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Reimage the provided bare metal machine.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param bare_metal_machine_name: The name of the bare metal machine. Required.
+        :type bare_metal_machine_name: str
+        :param body: The content of the action request. Is either a BareMetalMachineReimageParameters
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.networkcloud.models.BareMetalMachineReimageParameters or
+         ~azure.mgmt.networkcloud.types.BareMetalMachineReimageParameters or IO[bytes]
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if body else None
         cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -6272,6 +8051,8 @@ class BareMetalMachinesOperations:  # pylint: disable=too-many-public-methods
             raw_result = self._reimage_initial(
                 resource_group_name=resource_group_name,
                 bare_metal_machine_name=bare_metal_machine_name,
+                body=body,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -9961,8 +11742,313 @@ class ClusterManagersOperations:
 
         return ItemPaged(get_next, extract_data)
 
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_manager_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _update_relay_private_endpoint_connection_initial(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        cluster_manager_name: str,
+        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
+            Union[
+                _models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters,
+                _types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters,
+                IO[bytes],
+            ]
+        ] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
-class ClustersOperations:
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if cluster_manager_update_relay_private_endpoint_connection_parameters else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = (
+            content_type or "application/json"
+            if cluster_manager_update_relay_private_endpoint_connection_parameters
+            else None
+        )
+        _content = None
+        if isinstance(cluster_manager_update_relay_private_endpoint_connection_parameters, (IOBase, bytes)):
+            _content = cluster_manager_update_relay_private_endpoint_connection_parameters
+        else:
+            if cluster_manager_update_relay_private_endpoint_connection_parameters is not None:
+                _content = json.dumps(cluster_manager_update_relay_private_endpoint_connection_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_cluster_managers_update_relay_private_endpoint_connection_request(
+            resource_group_name=resource_group_name,
+            cluster_manager_name=cluster_manager_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        cluster_manager_name: str,
+        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
+            _models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
+        ] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
+        cluster manager. Use this operation to approve or reject a pending private endpoint connection
+        request for the relay namespace managed by the cluster manager.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_manager_name: The name of the cluster manager. Required.
+        :type cluster_manager_name: str
+        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
+         Default value is None.
+        :type cluster_manager_update_relay_private_endpoint_connection_parameters:
+         ~azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        cluster_manager_name: str,
+        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
+            _types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
+        ] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
+        cluster manager. Use this operation to approve or reject a pending private endpoint connection
+        request for the relay namespace managed by the cluster manager.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_manager_name: The name of the cluster manager. Required.
+        :type cluster_manager_name: str
+        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
+         Default value is None.
+        :type cluster_manager_update_relay_private_endpoint_connection_parameters:
+         ~azure.mgmt.networkcloud.types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        cluster_manager_name: str,
+        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
+        cluster manager. Use this operation to approve or reject a pending private endpoint connection
+        request for the relay namespace managed by the cluster manager.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_manager_name: The name of the cluster manager. Required.
+        :type cluster_manager_name: str
+        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
+         Default value is None.
+        :type cluster_manager_update_relay_private_endpoint_connection_parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_manager_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_update_relay_private_endpoint_connection(  # pylint: disable=name-too-long
+        self,
+        resource_group_name: str,
+        cluster_manager_name: str,
+        cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[
+            Union[
+                _models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters,
+                _types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters,
+                IO[bytes],
+            ]
+        ] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Update the private endpoint connection for the Azure Relay namespace managed by the specified
+        cluster manager. Use this operation to approve or reject a pending private endpoint connection
+        request for the relay namespace managed by the cluster manager.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_manager_name: The name of the cluster manager. Required.
+        :type cluster_manager_name: str
+        :param cluster_manager_update_relay_private_endpoint_connection_parameters: The request body.
+         Is either a ClusterManagerUpdateRelayPrivateEndpointConnectionParameters type or a IO[bytes]
+         type. Default value is None.
+        :type cluster_manager_update_relay_private_endpoint_connection_parameters:
+         ~azure.mgmt.networkcloud.models.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters or
+         ~azure.mgmt.networkcloud.types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters or
+         IO[bytes]
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if cluster_manager_update_relay_private_endpoint_connection_parameters else None
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_relay_private_endpoint_connection_initial(
+                resource_group_name=resource_group_name,
+                cluster_manager_name=cluster_manager_name,
+                cluster_manager_update_relay_private_endpoint_connection_parameters=cluster_manager_update_relay_private_endpoint_connection_parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+
+class ClustersOperations:  # pylint: disable=too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11439,6 +13525,547 @@ class ClustersOperations:
                 resource_group_name=resource_group_name,
                 cluster_name=cluster_name,
                 cluster_deploy_parameters=cluster_deploy_parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _inspect_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        cluster_inspect_parameters: Optional[
+            Union[_models.ClusterInspectParameters, _types.ClusterInspectParameters, IO[bytes]]
+        ] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if cluster_inspect_parameters else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if cluster_inspect_parameters else None
+        _content = None
+        if isinstance(cluster_inspect_parameters, (IOBase, bytes)):
+            _content = cluster_inspect_parameters
+        else:
+            if cluster_inspect_parameters is not None:
+                _content = json.dumps(cluster_inspect_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_clusters_inspect_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_inspect(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        cluster_inspect_parameters: Optional[_models.ClusterInspectParameters] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Trigger an inspection of the cluster to perform validation and optional corrective actions
+        based on the supplied additional actions and filters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param cluster_inspect_parameters: The request body. Default value is None.
+        :type cluster_inspect_parameters: ~azure.mgmt.networkcloud.models.ClusterInspectParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_inspect(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        cluster_inspect_parameters: Optional[_types.ClusterInspectParameters] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Trigger an inspection of the cluster to perform validation and optional corrective actions
+        based on the supplied additional actions and filters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param cluster_inspect_parameters: The request body. Default value is None.
+        :type cluster_inspect_parameters: ~azure.mgmt.networkcloud.types.ClusterInspectParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_inspect(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        cluster_inspect_parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Trigger an inspection of the cluster to perform validation and optional corrective actions
+        based on the supplied additional actions and filters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param cluster_inspect_parameters: The request body. Default value is None.
+        :type cluster_inspect_parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_inspect(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        cluster_inspect_parameters: Optional[
+            Union[_models.ClusterInspectParameters, _types.ClusterInspectParameters, IO[bytes]]
+        ] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Trigger an inspection of the cluster to perform validation and optional corrective actions
+        based on the supplied additional actions and filters.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param cluster_inspect_parameters: The request body. Is either a ClusterInspectParameters type
+         or a IO[bytes] type. Default value is None.
+        :type cluster_inspect_parameters: ~azure.mgmt.networkcloud.models.ClusterInspectParameters or
+         ~azure.mgmt.networkcloud.types.ClusterInspectParameters or IO[bytes]
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if cluster_inspect_parameters else None
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._inspect_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                cluster_inspect_parameters=cluster_inspect_parameters,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+    )
+    def _rotate_credential_initial(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Union[_models.ClusterRotateCredentialParameters, _types.ClusterRotateCredentialParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_clusters_rotate_credential_request(
+            resource_group_name=resource_group_name,
+            cluster_name=cluster_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+        response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_rotate_credential(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: _models.ClusterRotateCredentialParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Rotate the specified cluster credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.networkcloud.models.ClusterRotateCredentialParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_rotate_credential(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: _types.ClusterRotateCredentialParameters,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Rotate the specified cluster credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.networkcloud.types.ClusterRotateCredentialParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_rotate_credential(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Rotate the specified cluster credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "cluster_name",
+                "content_type",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_rotate_credential(
+        self,
+        resource_group_name: str,
+        cluster_name: str,
+        body: Union[_models.ClusterRotateCredentialParameters, _types.ClusterRotateCredentialParameters, IO[bytes]],
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Rotate the specified cluster credential.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param cluster_name: The name of the cluster. Required.
+        :type cluster_name: str
+        :param body: The content of the action request. Is either a ClusterRotateCredentialParameters
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.networkcloud.models.ClusterRotateCredentialParameters or
+         ~azure.mgmt.networkcloud.types.ClusterRotateCredentialParameters or IO[bytes]
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._rotate_credential_initial(
+                resource_group_name=resource_group_name,
+                cluster_name=cluster_name,
+                body=body,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -13253,6 +15880,1163 @@ class KubernetesClustersOperations:
         return LROPoller[_models.OperationStatusResult](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
+
+
+class KubernetesVersionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.networkcloud.NetworkCloudMgmtClient`'s
+        :attr:`kubernetes_versions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: NetworkCloudMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def get(self, resource_group_name: str, kubernetes_version_name: str, **kwargs: Any) -> _models.KubernetesVersion:
+        """Retrieve the Kubernetes version resource that describes the available Kubernetes versions for
+        deployment.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :return: KubernetesVersion. The KubernetesVersion is compatible with MutableMapping
+        :rtype: ~azure.mgmt.networkcloud.models.KubernetesVersion
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
+
+        _request = build_kubernetes_versions_get_request(
+            resource_group_name=resource_group_name,
+            kubernetes_version_name=kubernetes_version_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.KubernetesVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _create_or_update_initial(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_parameters: Union[_models.KubernetesVersion, _types.KubernetesVersion, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(kubernetes_version_parameters, (IOBase, bytes)):
+            _content = kubernetes_version_parameters
+        else:
+            _content = json.dumps(kubernetes_version_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_kubernetes_versions_create_or_update_request(
+            resource_group_name=resource_group_name,
+            kubernetes_version_name=kubernetes_version_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 201:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_parameters: _models.KubernetesVersion,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Create the Kubernetes version resource or update its tags. This resource is system managed and
+        should only be created with the name "default".
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_parameters: The request body. Required.
+        :type kubernetes_version_parameters: ~azure.mgmt.networkcloud.models.KubernetesVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_parameters: _types.KubernetesVersion,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Create the Kubernetes version resource or update its tags. This resource is system managed and
+        should only be created with the name "default".
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_parameters: The request body. Required.
+        :type kubernetes_version_parameters: ~azure.mgmt.networkcloud.types.KubernetesVersion
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_parameters: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Create the Kubernetes version resource or update its tags. This resource is system managed and
+        should only be created with the name "default".
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_parameters: The request body. Required.
+        :type kubernetes_version_parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_create_or_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_parameters: Union[_models.KubernetesVersion, _types.KubernetesVersion, IO[bytes]],
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Create the Kubernetes version resource or update its tags. This resource is system managed and
+        should only be created with the name "default".
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_parameters: The request body. Is either a KubernetesVersion type or a
+         IO[bytes] type. Required.
+        :type kubernetes_version_parameters: ~azure.mgmt.networkcloud.models.KubernetesVersion or
+         ~azure.mgmt.networkcloud.types.KubernetesVersion or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._create_or_update_initial(
+                resource_group_name=resource_group_name,
+                kubernetes_version_name=kubernetes_version_name,
+                kubernetes_version_parameters=kubernetes_version_parameters,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.KubernetesVersion, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.KubernetesVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.KubernetesVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _update_initial(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_patch_parameters: Optional[
+            Union[_models.KubernetesVersionPatchParameters, _types.KubernetesVersionPatchParameters, IO[bytes]]
+        ] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if kubernetes_version_patch_parameters else None
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json" if kubernetes_version_patch_parameters else None
+        _content = None
+        if isinstance(kubernetes_version_patch_parameters, (IOBase, bytes)):
+            _content = kubernetes_version_patch_parameters
+        else:
+            if kubernetes_version_patch_parameters is not None:
+                _content = json.dumps(kubernetes_version_patch_parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            else:
+                _content = None
+
+        _request = build_kubernetes_versions_update_request(
+            resource_group_name=resource_group_name,
+            kubernetes_version_name=kubernetes_version_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 202]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_patch_parameters: Optional[_models.KubernetesVersionPatchParameters] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Update tags associated with the Kubernetes version resource. No other properties are supported
+        for update.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_patch_parameters: The request body. Default value is None.
+        :type kubernetes_version_patch_parameters:
+         ~azure.mgmt.networkcloud.models.KubernetesVersionPatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_patch_parameters: Optional[_types.KubernetesVersionPatchParameters] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Update tags associated with the Kubernetes version resource. No other properties are supported
+        for update.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_patch_parameters: The request body. Default value is None.
+        :type kubernetes_version_patch_parameters:
+         ~azure.mgmt.networkcloud.types.KubernetesVersionPatchParameters
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def begin_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_patch_parameters: Optional[IO[bytes]] = None,
+        *,
+        content_type: str = "application/json",
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Update tags associated with the Kubernetes version resource. No other properties are supported
+        for update.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_patch_parameters: The request body. Default value is None.
+        :type kubernetes_version_patch_parameters: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "content_type",
+                "accept",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_update(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        kubernetes_version_patch_parameters: Optional[
+            Union[_models.KubernetesVersionPatchParameters, _types.KubernetesVersionPatchParameters, IO[bytes]]
+        ] = None,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.KubernetesVersion]:
+        """Update tags associated with the Kubernetes version resource. No other properties are supported
+        for update.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :param kubernetes_version_patch_parameters: The request body. Is either a
+         KubernetesVersionPatchParameters type or a IO[bytes] type. Default value is None.
+        :type kubernetes_version_patch_parameters:
+         ~azure.mgmt.networkcloud.models.KubernetesVersionPatchParameters or
+         ~azure.mgmt.networkcloud.types.KubernetesVersionPatchParameters or IO[bytes]
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns KubernetesVersion. The KubernetesVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        content_type = content_type if kubernetes_version_patch_parameters else None
+        cls: ClsType[_models.KubernetesVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._update_initial(
+                resource_group_name=resource_group_name,
+                kubernetes_version_name=kubernetes_version_name,
+                kubernetes_version_patch_parameters=kubernetes_version_patch_parameters,
+                etag=etag,
+                match_condition=match_condition,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.KubernetesVersion, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.KubernetesVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.KubernetesVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def _delete_initial(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> Iterator[bytes]:
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        if match_condition == MatchConditions.IfNotModified:
+            error_map[412] = ResourceModifiedError
+        elif match_condition == MatchConditions.IfPresent:
+            error_map[412] = ResourceNotFoundError
+        elif match_condition == MatchConditions.IfMissing:
+            error_map[412] = ResourceExistsError
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_kubernetes_versions_delete_request(
+            resource_group_name=resource_group_name,
+            kubernetes_version_name=kubernetes_version_name,
+            subscription_id=self._config.subscription_id,
+            etag=etag,
+            match_condition=match_condition,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202, 204]:
+            try:
+                response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        response_headers = {}
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "kubernetes_version_name",
+                "etag",
+                "match_condition",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def begin_delete(
+        self,
+        resource_group_name: str,
+        kubernetes_version_name: str,
+        *,
+        etag: Optional[str] = None,
+        match_condition: Optional[MatchConditions] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.OperationStatusResult]:
+        """Delete the specified Kubernetes version resource.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param kubernetes_version_name: The name of the Kubernetes version resource. Required.
+        :type kubernetes_version_name: str
+        :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
+         None.
+        :paramtype etag: str
+        :keyword match_condition: The match condition to use upon the etag. Default value is None.
+        :paramtype match_condition: ~azure.core.MatchConditions
+        :return: An instance of LROPoller that returns OperationStatusResult. The OperationStatusResult
+         is compatible with MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.networkcloud.models.OperationStatusResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.OperationStatusResult] = kwargs.pop("cls", None)
+        polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = self._delete_initial(
+                resource_group_name=resource_group_name,
+                kubernetes_version_name=kubernetes_version_name,
+                etag=etag,
+                match_condition=match_condition,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.OperationStatusResult, response.json())
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller[_models.OperationStatusResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller[_models.OperationStatusResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={
+            "2026-01-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "top",
+                "skip_token",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def list_by_resource_group(
+        self, resource_group_name: str, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.KubernetesVersion"]:
+        """Get a list of Kubernetes version resources in the provided resource group.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of KubernetesVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.KubernetesVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_kubernetes_versions_list_by_resource_group_request(
+                    resource_group_name=resource_group_name,
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.KubernetesVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-01-01-preview",
+        params_added_on={"2026-01-01-preview": ["api_version", "subscription_id", "top", "skip_token", "accept"]},
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview", "2026-07-01"],
+    )
+    def list_by_subscription(
+        self, *, top: Optional[int] = None, skip_token: Optional[str] = None, **kwargs: Any
+    ) -> ItemPaged["_models.KubernetesVersion"]:
+        """Get a list of Kubernetes version resources in the provided subscription.
+
+        :keyword top: The maximum number of resources to return from the operation. Example: '$top=10'.
+         Default value is None.
+        :paramtype top: int
+        :keyword skip_token: The opaque token that the server returns to indicate where to continue
+         listing resources from. This is used for paging through large result sets. Default value is
+         None.
+        :paramtype skip_token: str
+        :return: An iterator like instance of KubernetesVersion
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.networkcloud.models.KubernetesVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.KubernetesVersion]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_kubernetes_versions_list_by_subscription_request(
+                    subscription_id=self._config.subscription_id,
+                    top=top,
+                    skip_token=skip_token,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.KubernetesVersion],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, iter(list_of_elem)
+
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
 
 class L2NetworksOperations:
