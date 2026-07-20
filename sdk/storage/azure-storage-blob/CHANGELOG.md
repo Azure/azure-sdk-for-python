@@ -18,6 +18,11 @@ properties are now populated on the downloaded blob's `properties`.
 `upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
 provided with the request.
 
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
+
 ## 12.30.0 (2026-06-08)
 
 ### Features Added
