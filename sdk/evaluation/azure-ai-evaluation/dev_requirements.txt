@@ -7,7 +7,7 @@ pytest-cov
 pytest-mock
 pytest-xdist
 azure-ai-inference>=1.0.0b4
-azure-ai-projects<=1.0.0b10
+azure-ai-projects>=2.0.0b1
 aiohttp
 filelock
 promptflow-core>=1.17.1
