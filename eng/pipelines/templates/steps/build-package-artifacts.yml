@@ -152,7 +152,15 @@ steps:
       New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
       $nuget = (Get-Command nuget).Source
       & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download python $version"
+        exit 1
+      }
       & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download pythonarm64 $version"
+        exit 1
+      }
       Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
     displayName: 'Pre-provision CPython for cibuildwheel'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
