@@ -2,13 +2,9 @@
 
 ## 1.0.0 (2026-07-20)
 
-### Features Added
-
-  - Added TypedDict request body types `azure.mgmt.resource.subscriptions.types.CheckZonePeersRequest` and `azure.mgmt.resource.subscriptions.types.ResourceName`
-
 ### Other Changes
 
-  - First stable release of the Azure Resource Subscriptions Management client library.
+  - First GA
 
 ## 1.0.0b2 (2026-05-21)
 
