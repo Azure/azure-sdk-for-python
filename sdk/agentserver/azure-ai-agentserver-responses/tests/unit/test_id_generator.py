@@ -100,14 +100,26 @@ def test_id_generator__convenience_method_uses_caresp_prefix() -> None:
 def test_id_generator__new_item_id_dispatches_by_wire_type() -> None:
     item_message = {"type": "message"}
     item_compaction = {"type": "compaction"}
+    item_memory_search = {"type": "memory_search_call"}
+    item_tool_search = {"type": "tool_search_call"}
+    item_workflow_action = {"type": "workflow_action"}
     item_reference = {"type": "item_reference", "id": "item_1"}
 
     generated_id = IdGenerator.new_item_id(item_message)
     compaction_id = IdGenerator.new_item_id(item_compaction)
+    memory_search_id = IdGenerator.new_item_id(item_memory_search)
+    tool_search_id = IdGenerator.new_item_id(item_tool_search)
+    workflow_action_id = IdGenerator.new_item_id(item_workflow_action)
 
     assert generated_id is not None
     assert generated_id.startswith("msg_")
     assert compaction_id is not None
     assert compaction_id.startswith("cmp_")
+    assert memory_search_id is not None
+    assert memory_search_id.startswith("mem_")
+    assert tool_search_id is not None
+    assert tool_search_id.startswith("ts_")
+    assert workflow_action_id is not None
+    assert workflow_action_id.startswith("wfa_")
     assert IdGenerator.new_item_id(item_reference) is None
     assert IdGenerator.new_item_id(object()) is None

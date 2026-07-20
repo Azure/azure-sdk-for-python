@@ -2,6 +2,10 @@
 # Licensed under the MIT license.
 """Canonical non-generated model types for the response server."""
 
+from enum import Enum
+
+from azure.core import CaseInsensitiveEnumMeta
+
 from ._generated import *  # type: ignore # noqa: F401,F403 # pylint: disable=unused-wildcard-import
 from ._generated import _unions as _generated_unions
 from ._generated import types as _generated_types
@@ -25,6 +29,7 @@ _TYPE_EXPORT_EXCLUDES = {
     "TYPE_CHECKING",
     "TypedDict",
     "Union",
+    "builtins",
 }
 _generated_all = [
     name
@@ -33,7 +38,18 @@ _generated_all = [
     if not name.startswith("_") and name not in _TYPE_EXPORT_EXCLUDES
 ]
 
+
+class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason a response finished as incomplete."""
+
+    MAX_OUTPUT_TOKENS = "max_output_tokens"
+    """The response was cut short because the maximum output token limit was reached."""
+    CONTENT_FILTER = "content_filter"
+    """The response was cut short because of a content filter."""
+
+
 __all__ = [
+    "ResponseIncompleteReason",
     "ResponseStatus",
     "TerminalResponseStatus",
     "get_content_expanded",

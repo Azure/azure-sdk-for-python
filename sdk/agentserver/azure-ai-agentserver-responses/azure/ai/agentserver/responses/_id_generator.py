@@ -40,7 +40,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         if len(prefix) == 0:
             raise ValueError("Prefix must not be empty.")
 
-        extracted, partition_key = IdGenerator._try_extract_partition_key_raw(partition_key_hint)
+        extracted, partition_key = IdGenerator._try_extract_partition_key_raw(
+            partition_key_hint
+        )
         if extracted:
             if len(partition_key) == IdGenerator._LEGACY_PARTITION_KEY_LENGTH:
                 partition_key = partition_key + IdGenerator._PARTITION_KEY_SUFFIX
@@ -249,7 +251,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("lsh", partition_key_hint)
 
     @staticmethod
-    def new_function_shell_call_output_item_id(partition_key_hint: str | None = "") -> str:
+    def new_function_shell_call_output_item_id(
+        partition_key_hint: str | None = "",
+    ) -> str:
         """Generate a new function shell call output item ID with the ``lsho`` prefix.
 
         :param partition_key_hint: An existing ID to extract the partition key from for co-location.
@@ -348,7 +352,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("om", partition_key_hint)
 
     @staticmethod
-    def new_item_id(item: Mapping[str, Any], partition_key_hint: str | None = "") -> str | None:
+    def new_item_id(
+        item: Mapping[str, Any], partition_key_hint: str | None = ""
+    ) -> str | None:
         """Generate a type-specific ID for an item wire payload.
 
         Dispatches to the appropriate ``new_*_item_id`` factory method based on
@@ -390,6 +396,48 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             "compaction": IdGenerator.new_compaction_item_id,
             "compaction_summary": IdGenerator.new_compaction_item_id,
             "structured_outputs": IdGenerator.new_structured_output_item_id,
+            "tool_search_call": lambda hint: IdGenerator.new_id("ts", hint),
+            "tool_search_output": lambda hint: IdGenerator.new_id("tso", hint),
+            "additional_tools": lambda hint: IdGenerator.new_id("adt", hint),
+            "oauth_consent_request": lambda hint: IdGenerator.new_id("oauth", hint),
+            "memory_search_call": lambda hint: IdGenerator.new_id("mem", hint),
+            "workflow_action": IdGenerator.new_workflow_action_item_id,
+            "a2a_preview_call": lambda hint: IdGenerator.new_id("a2a", hint),
+            "a2a_preview_call_output": lambda hint: IdGenerator.new_id("a2ao", hint),
+            "bing_grounding_call": lambda hint: IdGenerator.new_id("bg", hint),
+            "bing_grounding_call_output": lambda hint: IdGenerator.new_id("bgo", hint),
+            "sharepoint_grounding_preview_call": lambda hint: IdGenerator.new_id(
+                "sp", hint
+            ),
+            "sharepoint_grounding_preview_call_output": lambda hint: IdGenerator.new_id(
+                "spo", hint
+            ),
+            "azure_ai_search_call": lambda hint: IdGenerator.new_id("ais", hint),
+            "azure_ai_search_call_output": lambda hint: IdGenerator.new_id(
+                "aiso", hint
+            ),
+            "bing_custom_search_preview_call": lambda hint: IdGenerator.new_id(
+                "bcs", hint
+            ),
+            "bing_custom_search_preview_call_output": lambda hint: IdGenerator.new_id(
+                "bcso", hint
+            ),
+            "openapi_call": lambda hint: IdGenerator.new_id("oa", hint),
+            "openapi_call_output": lambda hint: IdGenerator.new_id("oao", hint),
+            "browser_automation_preview_call": lambda hint: IdGenerator.new_id(
+                "ba", hint
+            ),
+            "browser_automation_preview_call_output": lambda hint: IdGenerator.new_id(
+                "bao", hint
+            ),
+            "fabric_dataagent_preview_call": lambda hint: IdGenerator.new_id(
+                "fda", hint
+            ),
+            "fabric_dataagent_preview_call_output": lambda hint: IdGenerator.new_id(
+                "fdao", hint
+            ),
+            "azure_function_call": lambda hint: IdGenerator.new_id("azf", hint),
+            "azure_function_call_output": lambda hint: IdGenerator.new_id("azfo", hint),
         }
         if not isinstance(item, Mapping):
             return None
@@ -421,7 +469,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         raise ValueError(f"ID '{id_value}' has unexpected body length.")
 
     @staticmethod
-    def is_valid(id_value: str | None, allowed_prefixes: Sequence[str] | None = None) -> tuple[bool, str | None]:
+    def is_valid(
+        id_value: str | None, allowed_prefixes: Sequence[str] | None = None
+    ) -> tuple[bool, str | None]:
         """Validate whether an ID string conforms to the expected format.
 
         :param id_value: The ID string to validate.
@@ -444,7 +494,10 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             return False, "ID has an empty prefix."
 
         body = id_value[delimiter_index + 1 :]
-        if len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH and len(body) != IdGenerator._LEGACY_BODY_LENGTH:
+        if (
+            len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH
+            and len(body) != IdGenerator._LEGACY_BODY_LENGTH
+        ):
             return (
                 False,
                 f"ID '{id_value}' has unexpected body length {len(body)}"
@@ -453,7 +506,10 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             )
 
         if allowed_prefixes is not None and prefix not in allowed_prefixes:
-            return False, f"ID prefix '{prefix}' is not in the allowed set [{', '.join(allowed_prefixes)}]."
+            return (
+                False,
+                f"ID prefix '{prefix}' is not in the allowed set [{', '.join(allowed_prefixes)}].",
+            )
 
         return True, None
 

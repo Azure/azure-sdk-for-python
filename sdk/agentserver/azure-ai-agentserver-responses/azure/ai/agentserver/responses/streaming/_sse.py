@@ -85,6 +85,7 @@ def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
         raise ValueError("SSE event must include a non-empty 'type'")
 
     payload.pop("type", None)
+    payload.pop("_saved_at", None)
     return str(event_type), payload
 
 

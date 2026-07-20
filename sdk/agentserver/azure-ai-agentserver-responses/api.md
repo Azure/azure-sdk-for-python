@@ -4416,6 +4416,11 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[incomplete]
 
 
+    class azure.ai.agentserver.responses.models.ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CONTENT_FILTER = "content_filter"
+        MAX_OUTPUT_TOKENS = "max_output_tokens"
+
+
     class azure.ai.agentserver.responses.models.ResponseLogProb(TypedDict, total=False):
         key "logprob": Required[float]
         key "token": Required[str]
