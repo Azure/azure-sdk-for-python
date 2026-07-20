@@ -52,8 +52,6 @@ network:
     - dev.azure.com
     - aka.ms
 
-# Only the base-branch `eng/` tree is needed to install the azsdk CLI. No PR code is checked
-# out or executed; the analysis works entirely off the PR/build data fetched by the tool.
 checkout:
   sparse-checkout: |
     eng
