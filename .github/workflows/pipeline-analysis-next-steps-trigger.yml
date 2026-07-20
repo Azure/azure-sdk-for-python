@@ -3,24 +3,24 @@
 # Plain GitHub Actions workflow that watches for a pull request's Azure DevOps CI to finish
 # in a failure state, then dispatches the agentic workflow `pipeline-analysis-next-steps.md`
 # (compiled to `pipeline-analysis-next-steps.lock.yml`) to analyze the failure and post a
-# "Next Steps to Merge" comment.
+# "Pipeline Analysis Next Steps" comment.
 #
-# Why a separate trigger workflow (mirrors azure-sdk-for-net's mgmt-review-trigger.yml):
-#   * `check_suite` is not a pull_request event, so the agentic workflow cannot resolve the
+# Why a separate trigger workflow (mirrors azure-sdk-for-net's mgmt-review):
+#   * `check_run` is not a pull_request event, so the agentic workflow cannot resolve the
 #     target PR on its own. This job extracts the PR number and passes it as an explicit
 #     workflow_dispatch input (and `aw_context`) so the agent comments on the right PR.
 #   * Keeps the privileged Copilot run (copilot-requests) isolated in the agentic workflow;
 #     this dispatcher only needs `actions: write` to start it.
 #
-# azure-sdk-tools CI note: unlike azure-sdk-for-net (one `net - pullrequest` check), this repo
-# has many path-triggered Azure DevOps pipelines. They all report under a SINGLE
-# `azure-pipelines` GitHub App check suite per commit, so we trigger on `check_suite` and gate
-# on that app + a failing conclusion. Gating on the app also prevents this workflow (a
-# github-actions check suite) from re-triggering itself.
+# CI note: azure-sdk-for-python's PR builds roll up into a single Azure Pipelines check run
+# named `python - pullrequest` per commit (its per-stage jobs are `python - pullrequest (...)`,
+# which do NOT end in `- pullrequest`). We trigger on `check_run` and gate on the name ending
+# in `- pullrequest` plus a failing conclusion, so the analysis fires once per failing PR CI
+# run and ignores unrelated checks. This mirrors azure-sdk-for-net's `net - pullrequest` gate.
 name: Pipeline Analysis - Next Steps Trigger
 
 on:
-  check_suite:
+  check_run:
     types: [completed]
   workflow_dispatch:
     inputs:
@@ -36,13 +36,13 @@ permissions:
 
 jobs:
   dispatch-next-steps:
-    # Only react to the Azure DevOps check suite finishing in a failure state; ignore every
-    # other check suite (github-actions, policy service, and this workflow's own runs). Manual
-    # dispatch always runs.
+    # Only react to a failing Azure DevOps PR-CI check run whose name ends in `- pullrequest`;
+    # ignore every other check run (github-actions, policy service, SDL sub-jobs, and this
+    # workflow's own runs). Manual dispatch always runs.
     if: >
-      github.event_name != 'check_suite' ||
-      (github.event.check_suite.app.slug == 'azure-pipelines' &&
-       github.event.check_suite.conclusion == 'failure')
+      github.event_name != 'check_run' ||
+      (endsWith(github.event.check_run.name, '- pullrequest') &&
+       github.event.check_run.conclusion == 'failure')
     runs-on: ubuntu-latest
     steps:
       - name: Dispatch pipeline next-steps analysis
@@ -50,14 +50,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY: ${{ github.repository }}
           DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          PR_NUMBER: ${{ github.event.check_suite.pull_requests[0].number }}
-          CHECK_SUITE_CONCLUSION: ${{ github.event.check_suite.conclusion }}
-          CHECK_SUITE_HEAD_SHA: ${{ github.event.check_suite.head_sha }}
+          PR_NUMBER: ${{ github.event.check_run.pull_requests[0].number }}
+          CI_CONCLUSION: ${{ github.event.check_run.conclusion }}
+          CI_HEAD_SHA: ${{ github.event.check_run.head_sha }}
           MANUAL_PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
 
-          # Fork PRs do not populate check_suite.pull_requests; fall back to matching an open
+          # Fork PRs do not populate check_run.pull_requests; fall back to matching an open
           # PR by head SHA (same-repo branches only).
           find_open_pr_for_head_sha() {
             local head_sha="$1"
@@ -74,7 +74,7 @@ jobs:
             local head_sha="$3"
 
             if [ -z "$pr_number" ]; then
-              echo "No pull request associated with this check suite; nothing to do."
+              echo "No pull request associated with this check run; nothing to do."
               return 0
             fi
 
@@ -83,12 +83,12 @@ jobs:
               return 0
             fi
 
-            # Do not analyze a superseded commit: if the completed suite's SHA no longer matches
-            # the PR head, the author has already pushed newer code.
+            # Do not analyze a superseded commit: if the completed check run's SHA no longer
+            # matches the PR head, the author has already pushed newer code.
             local current_head_sha
             current_head_sha="$(gh pr view "$pr_number" --repo "$REPOSITORY" --json headRefOid --jq '.headRefOid')"
             if [ -n "$head_sha" ] && [ "$head_sha" != "$current_head_sha" ]; then
-              echo "Skipping PR #$pr_number; check suite SHA $head_sha no longer matches head $current_head_sha."
+              echo "Skipping PR #$pr_number; check run SHA $head_sha no longer matches head $current_head_sha."
               return 0
             fi
 
@@ -100,16 +100,16 @@ jobs:
               --ref "$DEFAULT_BRANCH" \
               -f aw_context="$aw_context" \
               -f pr_number="$pr_number" \
-              -f check_suite_conclusion="$conclusion" \
-              -f check_suite_head_sha="$head_sha"
+              -f ci_conclusion="$conclusion" \
+              -f ci_head_sha="$head_sha"
             echo "Dispatched pipeline next-steps analysis for PR #$pr_number."
           }
 
-          if [ "$GITHUB_EVENT_NAME" = "check_suite" ]; then
+          if [ "$GITHUB_EVENT_NAME" = "check_run" ]; then
             if [ -z "$PR_NUMBER" ]; then
-              PR_NUMBER="$(find_open_pr_for_head_sha "$CHECK_SUITE_HEAD_SHA")"
+              PR_NUMBER="$(find_open_pr_for_head_sha "$CI_HEAD_SHA")"
             fi
-            dispatch_next_steps "$PR_NUMBER" "$CHECK_SUITE_CONCLUSION" "$CHECK_SUITE_HEAD_SHA"
+            dispatch_next_steps "$PR_NUMBER" "$CI_CONCLUSION" "$CI_HEAD_SHA"
             exit 0
           fi
 
