@@ -433,7 +433,7 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     checker.report_changes.return_value = ""
     checker.breaking_changes = []
 
-    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client), mock.patch.object(
+    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client) as pypi_client_cls, mock.patch.object(
         detect_breaking_changes, "build_report_from_apistub", return_value={}
     ) as build_report, mock.patch.object(
         detect_breaking_changes, "compare_report_dicts", return_value=checker
@@ -453,6 +453,11 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
         )
 
     assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
+
+    # The resolver must force the public PyPI backend: in CI PIP_INDEX_URL points
+    # at the curated Azure Artifacts feed, which is not a full mirror of PyPI.
+    # Reverting force_pypi=True would restore the original CI failure, so pin it.
+    pypi_client_cls.assert_called_once_with(force_pypi=True)
 
     calls_by_label = {call.kwargs["label"]: call for call in build_report.call_args_list}
     assert set(calls_by_label) == {"current", "stable"}
