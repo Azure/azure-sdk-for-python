@@ -22,7 +22,7 @@
 | 17 | azure-mgmt-resource-databoundaries | 2024-08-01 | 1.0.0b2 | [#47043](https://github.com/Azure/azure-sdk-for-python/pull/47043) | 2026-05-21 | Done | [48023](https://github.com/Azure/azure-sdk-for-python/pull/48023) |
 | 18 | azure-mgmt-resource-deployments | 2025-04-01 | 1.0.0b2 | [#47044](https://github.com/Azure/azure-sdk-for-python/pull/47044) | 2026-05-21 | Doing | [48144](https://github.com/Azure/azure-sdk-for-python/pull/48144) |
 | 19 | azure-mgmt-resource-subscriptions | 2022-12-01 | 1.0.0b2 | [#47042](https://github.com/Azure/azure-sdk-for-python/pull/47042) | 2026-05-21 | Doing | [48145](https://github.com/Azure/azure-sdk-for-python/pull/48145) |
-| 20 | azure-mgmt-hybridkubernetes | 2026-05-01 | 2.0.0b1 | [#47018](https://github.com/Azure/azure-sdk-for-python/pull/47018) | 2026-05-20 | Not Started |  |
+| 20 | azure-mgmt-hybridkubernetes | 2026-05-01 | 2.0.0b1 | [#47018](https://github.com/Azure/azure-sdk-for-python/pull/47018) | 2026-05-20 | Doing | [48150](https://github.com/Azure/azure-sdk-for-python/pull/48150) |
 | 21 | azure-mgmt-certificateregistration | 2024-11-01 | 1.0.0b1 | [#46569](https://github.com/Azure/azure-sdk-for-python/pull/46569) | 2026-04-28 | Done | [47764](https://github.com/Azure/azure-sdk-for-python/pull/47764) |
 | 22 | azure-mgmt-domainregistration | 2024-11-01 | 1.0.0b1 | [#46570](https://github.com/Azure/azure-sdk-for-python/pull/46570) | 2026-04-28 | Done | [47668](https://github.com/Azure/azure-sdk-for-python/pull/47668) |
 | 23 | azure-mgmt-recoveryservicessiterecovery | 2025-08-01 | 2.0.0b1 | [#46275](https://github.com/Azure/azure-sdk-for-python/pull/46275) | 2026-04-27 | Done | [47667](https://github.com/Azure/azure-sdk-for-python/pull/47667) |
