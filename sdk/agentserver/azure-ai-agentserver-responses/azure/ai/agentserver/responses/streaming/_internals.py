@@ -20,12 +20,12 @@ from azure.ai.agentserver.responses.models import AgentReference
 # Only these events should carry id/response_id/object/agent_reference/model.
 _RESPONSE_SNAPSHOT_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        response_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
-        response_models.ResponseStreamEventType.RESPONSE_CREATED.value,
-        response_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
-        response_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-        response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-        response_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+        "response.queued",
+        "response.created",
+        "response.in_progress",
+        "response.completed",
+        "response.failed",
+        "response.incomplete",
     }
 )
 
@@ -207,7 +207,7 @@ def track_completed_output_item(
     :type event: ResponseStreamEvent
     :rtype: None
     """
-    if event.get("type") != response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
+    if event.get("type") != "response.output_item.done":
         return
 
     output_index = event.get("output_index")

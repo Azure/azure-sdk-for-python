@@ -68,7 +68,7 @@ class ReasoningSummaryPartBuilder:
             response_models.ResponseReasoningSummaryPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
+                    "type": "response.reasoning_summary_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -89,7 +89,7 @@ class ReasoningSummaryPartBuilder:
             response_models.ResponseReasoningSummaryTextDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
+                    "type": "response.reasoning_summary_text.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -111,7 +111,7 @@ class ReasoningSummaryPartBuilder:
             response_models.ResponseReasoningSummaryTextDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
+                    "type": "response.reasoning_summary_text.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -134,7 +134,7 @@ class ReasoningSummaryPartBuilder:
             response_models.ResponseReasoningSummaryPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
+                    "type": "response.reasoning_summary_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,

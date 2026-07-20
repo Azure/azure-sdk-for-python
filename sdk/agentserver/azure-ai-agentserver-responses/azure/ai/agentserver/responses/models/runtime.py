@@ -13,7 +13,6 @@ from azure.ai.agentserver.responses.models import (
     AgentReference,
     OutputItem,
     ResponseStreamEvent,
-    ResponseStreamEventType,
 )
 
 if TYPE_CHECKING:
@@ -57,9 +56,9 @@ class StreamEventRecord:
         :rtype: bool
         """
         return self.event_type in {
-            ResponseStreamEventType.RESPONSE_COMPLETED.value,
-            ResponseStreamEventType.RESPONSE_FAILED.value,
-            ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+            "response.completed",
+            "response.failed",
+            "response.incomplete",
         }
 
     @classmethod
@@ -246,14 +245,14 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        elif event_type == "response.output_item.added":
             item = normalized.get("item")
             if item is not None and self.response is not None:
                 if isinstance(item, dict):
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
                         output.append(deepcopy(item))
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
+        elif event_type == "response.output_item.done":
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:

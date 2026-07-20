@@ -91,7 +91,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             response_models.ResponseFunctionCallArgumentsDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
+                    "type": "response.function_call_arguments.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "delta": delta,
@@ -112,7 +112,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             response_models.ResponseFunctionCallArgumentsDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
+                    "type": "response.function_call_arguments.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "name": self._name,

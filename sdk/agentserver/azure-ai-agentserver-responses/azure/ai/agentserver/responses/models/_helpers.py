@@ -15,7 +15,6 @@ from azure.ai.agentserver.responses.models import (
     ItemMessage,
     MessageContent,
     MessageContentInputTextContent,
-    MessageRole,
     OutputItem,
     ResponseObject,
 )
@@ -111,7 +110,7 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
                 Item,
                 {
                 "type": "message",
-                "role": MessageRole.USER,
+                "role": "user",
                 "content": [{"type": "input_text", "text": inp}],
                 },
             )
@@ -230,7 +229,7 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
         return [
             {
                 "type": "message",
-                "role": MessageRole.DEVELOPER,
+                "role": "developer",
                 "content": [{"type": "input_text", "text": instr}],
             }
         ]

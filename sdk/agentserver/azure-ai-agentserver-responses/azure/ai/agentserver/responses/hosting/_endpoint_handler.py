@@ -40,7 +40,6 @@ from azure.ai.agentserver.responses.models import (
     AgentReference,
     CreateResponse,
     ResponseObject,
-    ResponseStreamEventType,
 )
 
 from .._id_generator import IdGenerator
@@ -305,8 +304,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _normalize_lifecycle_events(
             response_id="resp_validation",
             events=[
-                {"type": ResponseStreamEventType.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
-                {"type": ResponseStreamEventType.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
+                {"type": "response.created", "response": {"status": "in_progress"}},
+                {"type": "response.completed", "response": {"status": "completed"}},
             ],
         )
 

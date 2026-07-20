@@ -5293,9 +5293,6 @@ namespace azure.ai.agentserver.responses.models.runtime
             ) -> None: ...
 
 
-    class azure.ai.agentserver.responses.models.runtime.ResponseStreamEventType(TypedDict):
-
-
     class azure.ai.agentserver.responses.models.runtime.StreamEventRecord:
         property terminal: bool    # Read-only
 

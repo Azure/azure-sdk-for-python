@@ -167,8 +167,8 @@ async def _iter_with_winddown(
 
 _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
-        response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
+        "response.output_item.added",
+        "response.output_item.done",
     }
 )
 
@@ -176,11 +176,11 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
 # Used by FR-008a output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
-        response_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
-        response_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-        response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-        response_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
-        response_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
+        "response.in_progress",
+        "response.completed",
+        "response.failed",
+        "response.incomplete",
+        "response.queued",
     }
 )
 
@@ -373,8 +373,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     await asyncio.sleep(0)
                 else:
                     # Track output_item.added events for FR-008a
-                    _item_added = response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
-                    if normalized.get("type") == _item_added.value:
+                    if normalized.get("type") == "response.output_item.added":
                         output_item_count += 1
 
                     # FR-008a: detect direct Output manipulation on response.* events
@@ -666,9 +665,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
     _TERMINAL_SSE_TYPES: frozenset[str] = frozenset(
         {
-            response_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-            response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-            response_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+            "response.completed",
+            "response.failed",
+            "response.incomplete",
         }
     )
 
@@ -778,7 +777,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         cancel_event: dict[str, Any] = {
-            "type": response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
@@ -799,7 +798,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         failed_event: dict[str, Any] = {
-            "type": response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": {
                 "id": ctx.response_id,
                 "object": "response",
@@ -834,7 +833,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             error_message=_STORAGE_ERROR_MESSAGE,
         )
         replacement_event: dict[str, Any] = {
-            "type": response_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": storage_error_response,
         }
 
@@ -1273,7 +1272,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # appended to the state machine before we emit response.failed.
                 _pre_coerced = _coerce_handler_event(raw)
                 _pre_type = _pre_coerced.get("type", "")
-                if _pre_type == response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                if _pre_type == "response.output_item.added":
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
                     _pre_response_raw = _pre_coerced.get("response")

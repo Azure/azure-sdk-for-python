@@ -120,7 +120,7 @@ class BaseOutputItemBuilder:
             response_models.ResponseOutputItemAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
+                    "type": "response.output_item.added",
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }
@@ -142,7 +142,7 @@ class BaseOutputItemBuilder:
             response_models.ResponseOutputItemDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
+                    "type": "response.output_item.done",
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }

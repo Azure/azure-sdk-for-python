@@ -7,7 +7,7 @@ from __future__ import annotations
 import base64
 import secrets
 from collections.abc import Mapping
-from typing import Any, Sequence
+from typing import Any, Callable, Sequence
 
 
 class IdGenerator:  # pylint: disable=too-many-public-methods
@@ -369,7 +369,7 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         :returns: A new unique ID string, or None if the item type is a reference or unrecognized.
         :rtype: str | None
         """
-        discriminator_dispatch = {
+        discriminator_dispatch: dict[str, Callable[[str | None], str]] = {
             "message": IdGenerator.new_message_item_id,
             "output_message": IdGenerator.new_output_message_item_id,
             "function_call": IdGenerator.new_function_call_item_id,

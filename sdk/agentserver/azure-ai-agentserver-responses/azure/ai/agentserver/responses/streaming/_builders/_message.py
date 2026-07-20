@@ -87,7 +87,7 @@ class TextContentBuilder:
             response_models.ResponseContentPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "type": "response.content_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -104,7 +104,7 @@ class TextContentBuilder:
             response_models.ResponseTextDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA.value,
+                    "type": "response.output_text.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -139,7 +139,7 @@ class TextContentBuilder:
             response_models.ResponseTextDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE.value,
+                    "type": "response.output_text.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -167,7 +167,7 @@ class TextContentBuilder:
             response_models.ResponseContentPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "type": "response.content_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -199,7 +199,7 @@ class TextContentBuilder:
             response_models.ResponseOutputTextAnnotationAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
+                    "type": "response.output_text.annotation.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -269,7 +269,7 @@ class RefusalContentBuilder:
             response_models.ResponseContentPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "type": "response.content_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -290,7 +290,7 @@ class RefusalContentBuilder:
             response_models.ResponseRefusalDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REFUSAL_DELTA.value,
+                    "type": "response.refusal.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -320,7 +320,7 @@ class RefusalContentBuilder:
             response_models.ResponseRefusalDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_REFUSAL_DONE.value,
+                    "type": "response.refusal.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -347,7 +347,7 @@ class RefusalContentBuilder:
             response_models.ResponseContentPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": response_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "type": "response.content_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
