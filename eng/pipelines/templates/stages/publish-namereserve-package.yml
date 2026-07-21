@@ -19,7 +19,7 @@ extends:
   parameters:
     stages:
     - stage: Build
-      displayName: 'Build ${{ parameters.NameForReservation }}==0.0.0'
+      displayName: 'Build ${{ parameters.NameForReservation }}==0.0.0b1'
       jobs:
         - template: ../jobs/build-namereserve-package.yml
           parameters:

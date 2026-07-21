@@ -27,7 +27,7 @@ jobs:
         - pwsh: |
             python eng/scripts/discover_unpublished_packages.py `
               --output-dir "$(Build.ArtifactStagingDirectory)" `
-              --version "0.0.0"
+              --version "0.0.0b1"
           name: generatePackages
           displayName: Discover and Generate Name Reservation Packages
 
@@ -38,7 +38,7 @@ jobs:
             $PSNativeCommandUseErrorActionPreference = $true
 
             generate_namereserve_package `
-              --package_version "0.0.0" `
+              --package_version "0.0.0b1" `
               --output_dir "$(Build.ArtifactStagingDirectory)" `
               "${{ parameters.NameForReservation }}"
           name: generatePackages
