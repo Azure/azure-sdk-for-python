@@ -195,6 +195,19 @@ class TestEntraAuthMode:
             kwargs = self._run(env)
         assert "azure_monitor_exporter_credential" not in kwargs
 
+    def test_entra_auth_disables_azure_monitor_when_credential_unavailable(self) -> None:
+        # Entra explicitly requested but azure-identity is missing: Azure Monitor
+        # must NOT be enabled (avoid silent instrumentation-key fallback), while
+        # other exporters remain unaffected.
+        with mock.patch(
+            "azure.ai.agentserver.core._tracing._create_managed_identity_credential",
+            return_value=None,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+        assert "enable_azure_monitor" not in kwargs
+        assert "azure_monitor_connection_string" not in kwargs
+        assert "azure_monitor_exporter_credential" not in kwargs
+
     def test_managed_identity_credential_has_no_client_id(self) -> None:
         from azure.ai.agentserver.core import _tracing
         with mock.patch("azure.identity.ManagedIdentityCredential") as mock_cred:

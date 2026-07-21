@@ -243,15 +243,26 @@ def _setup_distro_export(
     # Azure Monitor export is off by default in the distro — enable it
     # when a connection string is available.
     if connection_string:
-        kwargs["enable_azure_monitor"] = True
-        kwargs["azure_monitor_connection_string"] = connection_string
-
         # When Entra-based auth is requested, export to Azure Monitor using a
         # system-assigned managed identity (no client id) rather than the
         # connection string's instrumentation key alone.
         auth_mode = os.environ.get("APPLICATIONINSIGHTS_AUTH_MODE", "")
-        if auth_mode.strip().lower() == "entra":
-            credential = _create_managed_identity_credential()
+        entra_auth = auth_mode.strip().lower() == "entra"
+        credential = _create_managed_identity_credential() if entra_auth else None
+
+        if entra_auth and credential is None:
+            # Entra was explicitly requested but no credential is available
+            # (azure-identity missing). Do NOT enable Azure Monitor, since the
+            # distro would otherwise silently fall back to instrumentation-key
+            # auth and bypass the requested Entra-only mode. Other exporters
+            # (A365, OTLP) below are unaffected.
+            logger.warning(
+                "APPLICATIONINSIGHTS_AUTH_MODE=Entra requested but no managed identity "
+                "credential is available — Azure Monitor export disabled."
+            )
+        else:
+            kwargs["enable_azure_monitor"] = True
+            kwargs["azure_monitor_connection_string"] = connection_string
             if credential is not None:
                 kwargs["azure_monitor_exporter_credential"] = credential
 
