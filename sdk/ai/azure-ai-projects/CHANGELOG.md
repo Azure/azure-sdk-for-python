@@ -44,7 +44,7 @@ all derived from `ToolboxTool`, have been defined.
   * `sample_optimization_job_basic.py` demonstrating how to create an optimization job, poll it to completion, and read the results.
   * `sample_optimization_job_cancel.py` demonstrating how to create and immediately cancel an optimization job.
   * `sample_optimization_job_list_get_delete.py` demonstrating how to list optimization jobs with filters, get a job by ID, and delete a job.
-* Added `sample_routines_with_github_issue_trigger.py` to demonstrate triggering a routine when a GitHub issue is opened.
+* Added `sample_routines_crud.py` to demonstrate routines CRUD operations.
 * Added `sample_routines_with_timer_trigger.py` to demonstrate triggering a routine with a timer.
 * Added `sample_routines_with_schedule_trigger.py` to demonstrate triggering a routine on a recurring Cron schedule via `ScheduleRoutineTrigger`.
 * Added `sample_routines_with_dispatch.py` to demonstrate manually firing a routine on demand via `routines.dispatch(...)` using a `CustomRoutineTrigger`.
