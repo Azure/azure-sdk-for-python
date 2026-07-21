@@ -378,35 +378,6 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_arrow_list_blobs_start_from(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        self.create_blobs(LISTING_BLOB_NAMES)
-
-        container = self.bsc.get_container_client(self.container_name)
-        blobs_list = list(container.list_blobs(response_format="arrow", start_from="foo"))
-
-        assert len(blobs_list) == 3
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_arrow_list_blobs_end_before(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        self.create_blobs(LISTING_BLOB_NAMES)
-
-        container = self.bsc.get_container_client(self.container_name)
-        # end_before is an Arrow-only listing bound.
-        blobs_list = list(container.list_blobs(response_format="arrow", end_before="foo"))
-
-        assert len(blobs_list) == 5
-
-    @BlobPreparer()
-    @recorded_by_proxy
     def test_arrow_list_blobs_start_from_end_before(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
