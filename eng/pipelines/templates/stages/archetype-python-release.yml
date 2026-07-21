@@ -179,23 +179,21 @@ stages:
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                         displayName: Install Release Dependencies
 
-                      # Live PyPI publication via ESRP is intentionally disabled.
-                      # Keep the non-PyPI/PublicFeed and DevFeed publication paths below.
-                      # - ${{ if eq(parameters.PublicFeed, 'PyPi') }}:
-                      #   - pwsh: |
-                      #       $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
-                      #       New-Item -ItemType Directory -Force -Path $esrpDirectory
-                      #
-                      #       Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
-                      #         | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
-                      #         | Copy-Item -Destination $esrpDirectory
-                      #
-                      #       Get-ChildItem $esrpDirectory
-                      #     displayName: Isolate files for ESRP Publish
-                      #
-                      #   - template: /eng/pipelines/templates/steps/esrp-publish.yml
-                      #     parameters:
-                      #       targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
+                      - ${{ if eq(parameters.PublicFeed, 'PyPi') }}:
+                        - pwsh: |
+                            $esrpDirectory = "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
+                            New-Item -ItemType Directory -Force -Path $esrpDirectory
+
+                            Get-ChildItem -Path "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}" `
+                              | Where-Object { ($_.Name -like "*.tar.gz" -or $_.Name -like "*.whl") } `
+                              | Copy-Item -Destination $esrpDirectory
+
+                            Get-ChildItem $esrpDirectory
+                          displayName: Isolate files for ESRP Publish
+
+                        - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                          parameters:
+                            targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
