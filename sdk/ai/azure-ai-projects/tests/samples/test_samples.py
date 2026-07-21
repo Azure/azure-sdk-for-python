@@ -299,6 +299,10 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_session_log_stream.py",  # Specified through AdditionalSampleTestDetail
                 "sample_sessions_crud.py",  # Specified through AdditionalSampleTestDetail
                 "sample_sessions_files_upload_download.py",  # Specified through AdditionalSampleTestDetail
+                "sample_routines_with_dispatch.py",  # 500
+                "sample_routines_with_schedule_trigger.py",  # 500
+                "sample_routines_with_timer_trigger.py",  # Timer is used causing request response not matched
+                "sample_routines_with_github_issue_trigger.py",  # Cannot run without interact on Github
             ],
         ),
     )
@@ -358,38 +362,6 @@ class TestSamples(AzureRecordedTestCase):
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_toolboxes_samples(self, sample_path: str, **kwargs) -> None:
-        env_vars = get_sample_env_vars(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
-        executor.execute()
-        executor.validate_print_calls_by_llm()
-
-    @servicePreparer()
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail(
-    #             test_id="sample_routines_with_schedule_trigger",
-    #             sample_filename="sample_routines_with_schedule_trigger.py",
-    #             env_vars={
-    #                 "POLL_INTERVAL_SECONDS": "300",
-    #             },
-    #         ),
-    #     ]
-    # )
-    @pytest.mark.parametrize(
-        "sample_path",
-        get_sample_paths(
-            "routines",
-            samples_to_skip=[
-                "sample_routines_with_schedule_trigger.py",  # Specify through AdditionalSampleTestDetail
-                "sample_routines_crud.py",  # Skipped due to service serialization issues
-                "sample_routines_with_timer_trigger.py",  # Skipped due to service serialization issues
-                "sample_routines_with_dispatch.py",  # 403: test identity lacks routines/dispatch data-action
-            ],
-        ),
-    )
-    @SamplePathPasser()
-    @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    def test_routines_samples(self, sample_path: str, **kwargs) -> None:
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
