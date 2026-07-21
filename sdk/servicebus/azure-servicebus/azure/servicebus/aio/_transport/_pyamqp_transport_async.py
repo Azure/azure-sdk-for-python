@@ -238,8 +238,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             try:
                 message = await receiver._inner_anext(wait_time=max_wait_time)
                 links = get_receive_links(message)
+                # Close the receive span before yielding so its HTTP instrumentation
+                # suppression does not leak into the caller's message processing.
                 with receive_trace_context_manager(receiver, links=links):
-                    yield message
+                    pass
+                yield message
             except StopAsyncIteration:
                 break
 
