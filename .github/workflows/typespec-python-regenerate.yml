@@ -71,14 +71,13 @@ jobs:
             HEAD_SHA=$(echo "$PR_JSON" | jq -r '.headRefOid')
             HEAD_OWNER=$(echo "$PR_JSON" | jq -r '.headRepositoryOwner.login')
             HEAD_REPO_NAME=$(echo "$PR_JSON" | jq -r '.headRepository.name')
-            # Reject fork PRs: head branch must be in microsoft/typespec itself
-            if [ "$HEAD_OWNER/$HEAD_REPO_NAME" != "microsoft/typespec" ]; then
-              echo "::error::Only PRs with head branches in microsoft/typespec are accepted. Fork PRs are not supported (got ${HEAD_OWNER}/${HEAD_REPO_NAME})."
+            if [ "$HEAD_SHA" = "null" ] || [ "$HEAD_OWNER" = "null" ] || [ "$HEAD_REPO_NAME" = "null" ]; then
+              echo "::error::Unable to resolve the head repository for microsoft/typespec PR #${PR_NUMBER}. The fork may be deleted or inaccessible."
               exit 1
             fi
             REPO="${HEAD_OWNER}/${HEAD_REPO_NAME}"
             REF="${HEAD_SHA}"
-            DISPLAY_REF="PR #${PR_NUMBER} @ ${HEAD_SHA:0:7}"
+            DISPLAY_REF="PR #${PR_NUMBER} from ${REPO} @ ${HEAD_SHA:0:7}"
             REF_URL="${INPUT}"
           elif [ "$INPUT" != "main" ]; then
             echo "::error::typespec_ref must be 'main' or a microsoft/typespec pull request URL (got: ${INPUT})."
