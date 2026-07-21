@@ -1,5 +1,7 @@
 -e ../../../eng/tools/azure-sdk-tools
 -e ../azure-ai-agentserver-core
+../../monitor/azure-monitor-query
+../../identity/azure-identity
 httpx
 hypercorn
 openai

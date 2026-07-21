@@ -55,10 +55,17 @@ def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
 def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[str, str]:
     from pypi_tools.pypi import PyPIClient
 
+    SDK_VERSIONS_WITH_CHANGELOG_ISSUE = {}
+    SKIP_SDK_VERSIONS = {"azure-mgmt-datatransfer": "1.0.0b1"}  # could be removed after new SDK version released
+
     try:
-        client = PyPIClient()
-        # Ignore 0.0.0 when it appears on PyPI as a placeholder or name-reservation version.
-        ordered_versions = [v for v in client.get_ordered_versions(package_name) if v.base_version != "0.0.0"]
+        client = PyPIClient(force_pypi=True)
+        # Ignore 0.0.0 placeholder releases, including prereleases like 0.0.0b1 via base_version.
+        ordered_versions = [
+            v
+            for v in client.get_ordered_versions(package_name)
+            if v.base_version != "0.0.0" and str(v) != SKIP_SDK_VERSIONS.get(package_name)
+        ]
         if not ordered_versions:
             return "", ""
         last_release = ordered_versions[-1]
@@ -72,10 +79,9 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
         # temporary logic to always get latest version from pypi for specific packages whose latest stable version
         # is not updated for a long time and has some issue in changelog generation.
         # This is a workaround before we have a better solution to determine the version for changelog generation.
-        sdks_with_changelog_issue = {}
-        if package_name in sdks_with_changelog_issue and (
-            last_version == sdks_with_changelog_issue[package_name]
-            or last_stable_version == sdks_with_changelog_issue[package_name]
+        if package_name in SDK_VERSIONS_WITH_CHANGELOG_ISSUE and (
+            last_version == SDK_VERSIONS_WITH_CHANGELOG_ISSUE[package_name]
+            or last_stable_version == SDK_VERSIONS_WITH_CHANGELOG_ISSUE[package_name]
         ):
             _LOGGER.info(
                 f"Package {package_name} has changelog generation issue with version {last_version}, fallback to get latest version from pypi"

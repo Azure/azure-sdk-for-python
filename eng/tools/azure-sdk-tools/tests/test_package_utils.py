@@ -107,3 +107,14 @@ def test_get_version_info_does_not_filter_0_0_0_1():
         result = pu.get_version_info("azure-some-package", tag_is_stable=False)
 
     assert result == ("0.0.0.1", "0.0.0.1")
+
+
+def test_get_version_info_skips_package_specific_version():
+    with patch("pypi_tools.pypi.PyPIClient") as MockClient:
+        mock_client = MagicMock()
+        MockClient.return_value = mock_client
+        mock_client.get_ordered_versions.return_value = [Version("0.9.0"), Version("1.0.0b1")]
+
+        result = pu.get_version_info("azure-mgmt-datatransfer", tag_is_stable=False)
+
+    assert result == ("0.9.0", "0.9.0")

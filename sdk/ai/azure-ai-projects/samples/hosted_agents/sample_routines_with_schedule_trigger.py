@@ -10,11 +10,14 @@ DESCRIPTION:
     recurring cron schedule, then record the resulting runs by polling
     `list_runs(...)` using the synchronous AIProjectClient.
 
-    The routine is bound to an existing hosted agent and scheduled with a
+    The sample uploads the basic hosted-agent code from `assets/basic-agent/`
+    as a temporary hosted-agent version, routes the configured hosted agent
+    name to that version, and schedules the routine with a
     `ScheduleRoutineTrigger` using a 5-field cron expression. The service
     enforces a minimum interval of five minutes, so the sample polls the
     run history for up to ~6 minutes to catch the first fire, prints each
-    observed phase transition, then deletes the routine.
+    observed phase transition, then deletes the routine and hosted-agent
+    version.
 
     Routines are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.routines`.
@@ -29,15 +32,19 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent to invoke
-       when the routine schedule fires.
-    3) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between run-history polls.
-       Defaults to 15.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model used by the
+        temporary hosted agent.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`.
+    4) POLL_INTERVAL_SECONDS - Optional. Seconds to sleep between run-history polls.
+    Defaults to 15.
 """
 
 import json
 import os
+import sys
 import time
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -46,23 +53,55 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    CodeConfiguration,
+    HostedAgentDefinition,
     InvokeAgentResponsesApiRoutineAction,
+    ProtocolVersionRecord,
     RoutineRun,
     RoutineRunPhase,
     ScheduleRoutineTrigger,
 )
 
+_HOSTED_AGENTS_DIR = Path(__file__).resolve().parent
+if str(_HOSTED_AGENTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_HOSTED_AGENTS_DIR))
+
+from hosted_agents_util import create_version_from_code, select_basic_agent_code_zip
+
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+model_name = os.environ["FOUNDRY_MODEL_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "15"))
+dependency_resolution, code_zip_stream = select_basic_agent_code_zip(True)
 
 
 def main() -> None:
     with (
+        code_zip_stream as code_stream,
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+        create_version_from_code(
+            project_client=project_client,
+            agent_name=agent_name,
+            description="Routines schedule hosted agent uploaded from assets/basic-agent.",
+            definition=HostedAgentDefinition(
+                cpu="0.5",
+                memory="1Gi",
+                code_configuration=CodeConfiguration(
+                    runtime="python_3_14",
+                    entry_point=["python", "main.py"],
+                    dependency_resolution=dependency_resolution,
+                ),
+                environment_variables={
+                    "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                    "FOUNDRY_MODEL_NAME": model_name,
+                },
+                protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+            ),
+            code=code_stream,
+        ),
     ):
         routine_name = "sample-routine-schedule"
 

@@ -22,6 +22,10 @@ keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b7",
+    # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
+    # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
+    # (<4.0.0 still admits 4.0.0a1 under PEP 440).
+    "aiohttp>=3.10.0,<4.0.0a0",
 ]
 
 [dependency-groups]
