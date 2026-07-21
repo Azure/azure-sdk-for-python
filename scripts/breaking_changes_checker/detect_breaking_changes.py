@@ -735,12 +735,18 @@ def _resolve_pypi_version(package_name: str, latest_pypi_version: bool) -> str:
     """
     from pypi_tools.pypi import PyPIClient
 
-    client = PyPIClient()
+    # Force the public PyPI backend: in CI ``PIP_INDEX_URL`` points at the curated
+    # Azure Artifacts feed, which is not a full mirror of PyPI. A package can be
+    # released on public PyPI while absent from that feed, so query pypi.org
+    # directly to resolve the version to compare against.
+    client = PyPIClient(force_pypi=True)
     try:
         if latest_pypi_version:
             return str(client.get_ordered_versions(package_name)[-1])
         return str(client.get_relevant_versions(package_name)[1])
-    except IndexError:
+    except (IndexError, KeyError):
+        # IndexError: the package exists but has no relevant/previous version.
+        # KeyError: the package is brand new and not published on PyPI yet.
         _LOGGER.warning(f"No relevant version for {package_name} on PyPi. Exiting...")
         exit(0)
 

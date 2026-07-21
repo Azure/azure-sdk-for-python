@@ -81,6 +81,9 @@ parameters:
   - name: oneESTemplateTag
     type: string
     default: release
+  - name: EnableCompiledCodeql
+    type: boolean
+    default: false
   - name: EnvVars
     type: object
     default: {}
@@ -89,6 +92,7 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     oneESTemplateTag: ${{ parameters.oneESTemplateTag }}
+    EnableCompiledCodeql: ${{ parameters.EnableCompiledCodeql }}
     stages:
       - ${{ if and(eq(parameters.SkipPrValidation, true), eq(variables['Build.Reason'], 'Manual')) }}:
         - stage: NoOp
