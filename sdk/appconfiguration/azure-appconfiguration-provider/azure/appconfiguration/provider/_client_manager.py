@@ -7,7 +7,7 @@ from logging import getLogger
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Optional, Mapping
+from typing import Tuple, Union, List, Optional, Mapping
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -101,7 +101,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         )
 
     def _check_configuration_setting(
-        self, key: str, label: str, etag: Optional[str], headers: Dict[str, str], **kwargs
+        self, key: str, label: str, etag: Optional[str], headers: Mapping[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
@@ -109,7 +109,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :param str key: key to check for changes
         :param str label: label to check for changes
         :param Optional[str] etag: etag to check for changes
-        :param Dict[str, str] headers: headers to use for the request
+        :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
         :rtype: Tuple[bool, Union[ConfigurationSetting, None]]
@@ -284,13 +284,13 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def get_updated_watched_settings(
-        self, watched_settings: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
+        self, watched_settings: Mapping[Tuple[str, str], Optional[str]], headers: Mapping[str, str], **kwargs
     ) -> Mapping[Tuple[str, str], Optional[str]]:
         """
         Checks if any of the watch keys have changed, and updates them if they have.
 
         :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
-        :param Dict[str, str] headers: The headers to use for the request
+        :param Mapping[str, str] headers: The headers to use for the request
 
         :return: Updated value of the configuration watched settings. Empty if no change was detected.
         :rtype: Mapping[Tuple[str, str], Optional[str]]
