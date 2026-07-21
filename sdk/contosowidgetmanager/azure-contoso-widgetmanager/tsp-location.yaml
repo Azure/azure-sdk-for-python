@@ -1,5 +1,5 @@
 directory: specification/contosowidgetmanager/Contoso.WidgetManager
-commit: 1566a98e9251bc95d205802c2379a01b5779e9c8
+commit: f424df09b6cb4874f4c9dfcd0b9debf352a29b77
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
 - specification/contosowidgetmanager/Contoso.WidgetManager.Shared
