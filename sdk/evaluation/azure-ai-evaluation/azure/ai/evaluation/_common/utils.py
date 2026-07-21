@@ -1626,6 +1626,8 @@ def _normalize_function_call_types(messages):
             t = item.get("type")
             if t == "function_call":
                 item["type"] = "tool_call"
+                if "function_call" in item:
+                    item["tool_call"] = item.pop("function_call")
             elif t == "function_call_output":
                 item["type"] = "tool_result"
                 if "function_call_output" in item:
