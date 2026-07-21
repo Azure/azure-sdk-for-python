@@ -133,7 +133,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
             if self._on_link_state_change is not None:
                 self._on_link_state_change(previous_state, new_state)
         except Exception as e:  # pylint: disable=broad-except
-            _LOGGER.error("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
+            _LOGGER.debug("Link state change callback failed: '%r'", e, extra=self.network_trace_params)
 
     def _on_session_state_change(self) -> None:
         if self._session.state == SessionState.MAPPED:
@@ -190,7 +190,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
                     frame[6] = Target(*frame[6])
                 self._on_attach(AttachFrame(*frame))
             except Exception as e:  # pylint: disable=broad-except
-                _LOGGER.warning("Callback for link attach raised error: %r", e, extra=self.network_trace_params)
+                _LOGGER.debug("Callback for link attach raised error: %r", e, extra=self.network_trace_params)
 
     def _outgoing_flow(self, **kwargs: Any) -> None:
         flow_frame = {
@@ -268,7 +268,7 @@ class Link:  # pylint: disable=too-many-instance-attributes
                 self._outgoing_detach(close=close, error=error)
                 self._set_state(LinkState.DETACH_SENT)
         except Exception as exc:  # pylint: disable=broad-except
-            _LOGGER.info("An error occurred when detaching the link: %r", exc, extra=self.network_trace_params)
+            _LOGGER.debug("An error occurred when detaching the link: %r", exc, extra=self.network_trace_params)
             self._set_state(LinkState.DETACHED)
 
     def flow(self, *, link_credit: Optional[int] = None, **kwargs: Any) -> None:

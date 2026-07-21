@@ -17,6 +17,7 @@
 ### Other Changes
 
 - When using the async `AmqpOverWebsocket` transport on Python 3.10 or later, `aiohttp>=3.14.0` is now recommended. Earlier `aiohttp` versions have a WebSocket heartbeat bug ([aio-libs/aiohttp#12030](https://github.com/aio-libs/aiohttp/pull/12030)) that can cause the connection to be dropped during long message processing, surfacing as a `SocketError` ("Cannot write to closing transport"). Python 3.9 users must upgrade Python to install an `aiohttp` release containing this fix. ([#44028](https://github.com/Azure/azure-sdk-for-python/issues/44028))
+- Changed vendored `_pyamqp` logs that contain exception details to the debug level. This keeps the `_pyamqp` copy identical to the copy in `azure-eventhub` (pylint rules C4766 and C4762). Log levels are the only change.
 
 ## 7.14.3 (2025-11-11)
 
