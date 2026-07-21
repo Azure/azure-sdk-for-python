@@ -127,8 +127,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 next_marker = raw_marker.decode("utf-8") if isinstance(raw_marker, bytes) else raw_marker
                 next_marker = next_marker or None
 
-        field_names = [field.name for field in schema.fields]
-        field_types = [field.type for field in schema.fields]
+        fields = [(field.name, field.type) for field in schema.fields]
 
         for batch in reader:
             num_rows = len(batch)
@@ -137,7 +136,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
             cols = {}
             for i in range(batch.n_children):
                 child = batch.child(i)
-                if field_types[i] == Type.MAP:
+                if fields[i][1] == Type.MAP:
                     offsets = list(child.buffer(1))
                     entries = child.child(0)
                     keys = entries.child(0).to_pylist()
@@ -145,14 +144,14 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                     values = [
                         {keys[j]: map_values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
                     ]
-                elif field_types[i] == Type.TIMESTAMP:
+                elif fields[i][1] == Type.TIMESTAMP:
                     values = [
                         v.replace(tzinfo=timezone.utc) if isinstance(v, datetime) and v.tzinfo is None else v
                         for v in child.to_pylist()
                     ]
                 else:
                     values = child.to_pylist()
-                cols[field_names[i]] = values
+                cols[fields[i][0]] = values
 
             for row in range(num_rows):
 
