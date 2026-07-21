@@ -69,8 +69,8 @@ from azure.ai.projects.models import (
     JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
-    TestingCriterionAzureAIEvaluator,
 )
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 

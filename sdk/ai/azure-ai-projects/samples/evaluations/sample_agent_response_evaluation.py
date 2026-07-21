@@ -36,11 +36,11 @@ from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
+from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.types import (
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
     TestingCriterionAzureAIEvaluator,
-    PromptAgentDefinition,
     ResponseRetrievalItemGenerationParams,
 )
 

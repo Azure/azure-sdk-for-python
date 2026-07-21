@@ -41,13 +41,15 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAIDataSourceConfig,
-    TestingCriterionAzureAIEvaluator,
     PromptAgentDefinition,
     EvaluationRule,
     ContinuousEvaluationRuleAction,
     EvaluationRuleFilter,
     EvaluationRuleEventType,
+)
+from azure.ai.projects.types import (
+    AzureAIDataSourceConfig,
+    TestingCriterionAzureAIEvaluator,
 )
 
 load_dotenv()

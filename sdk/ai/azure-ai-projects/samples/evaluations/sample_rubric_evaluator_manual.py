@@ -64,8 +64,8 @@ from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
     RubricBasedEvaluatorDefinition,
-    TestingCriterionAzureAIEvaluator,
 )
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 

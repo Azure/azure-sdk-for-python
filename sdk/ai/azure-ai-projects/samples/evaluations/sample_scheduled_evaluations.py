@@ -41,23 +41,23 @@ from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
     AgentVersionDetails,
-    AzureAIDataSourceConfig,
     EvaluationTaxonomy,
-    AzureAIAgentTarget,
     AgentTaxonomyInput,
-    TestingCriterionAzureAIEvaluator,
-    RedTeamEvalRunDataSource,
     Schedule,
     RecurrenceTrigger,
     DailyRecurrenceSchedule,
     EvaluationScheduleTask,
     RiskCategory,
 )
+from azure.ai.projects.types import (
+    AzureAIDataSourceConfig,
+    AzureAIAgentTarget,
+    TestingCriterionAzureAIEvaluator,
+    RedTeamEvalRunDataSource,
+)
 from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEvalJSONLRunDataSourceParam, SourceFileID
 from openai.types.eval_create_params import DataSourceConfigCustom
-from azure.ai.projects.models import (
-    DatasetVersion,
-)
+from azure.ai.projects.models import DatasetVersion
 import json
 import time
 

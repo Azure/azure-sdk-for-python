@@ -40,13 +40,15 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    PromptAgentDefinition,
+    Tool,
+    FunctionTool,
+)
+from azure.ai.projects.types import (
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
     TestingCriterionAzureAIEvaluator,
-    PromptAgentDefinition,
     ResponseRetrievalItemGenerationParams,
-    Tool,
-    FunctionTool,
 )
 
 load_dotenv()

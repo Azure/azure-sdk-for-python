@@ -31,13 +31,15 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentVersionDetails,
-    AzureAIDataSourceConfig,
     EvaluationTaxonomy,
-    AzureAIAgentTarget,
     AgentTaxonomyInput,
+    RiskCategory,
+)
+from azure.ai.projects.types import (
+    AzureAIDataSourceConfig,
+    AzureAIAgentTarget,
     TestingCriterionAzureAIEvaluator,
     RedTeamEvalRunDataSource,
-    RiskCategory,
 )
 import json
 import time

@@ -39,12 +39,12 @@ from azure.mgmt.authorization import AuthorizationManagementClient
 from azure.mgmt.resource.resources import ResourceManagementClient
 import uuid
 from azure.ai.projects.models import (
-    TestingCriterionAzureAIEvaluator,
     Schedule,
     RecurrenceTrigger,
     DailyRecurrenceSchedule,
     EvaluationScheduleTask,
 )
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 import time
 
 

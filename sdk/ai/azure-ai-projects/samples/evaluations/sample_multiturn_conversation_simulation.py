@@ -45,7 +45,8 @@ from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import TestingCriterionAzureAIEvaluator, PromptAgentDefinition
+from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
