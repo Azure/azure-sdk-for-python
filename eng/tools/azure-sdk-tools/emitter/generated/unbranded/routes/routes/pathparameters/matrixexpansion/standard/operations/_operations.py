@@ -66,7 +66,7 @@ def build_path_parameters_matrix_expansion_standard_record_request(  # pylint: d
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class PathParametersMatrixExpansionStandardOperations:  # pylint: disable=name-too-long
+class PathParametersMatrixExpansionStandardOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .. import _unions, models as _models
 
 
-class ModelV1(_Model):
+class ModelV1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelV1.
 
     :ivar prop: Required.
@@ -51,7 +51,7 @@ class ModelV1(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelV2(_Model):
+class ModelV2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelV2.
 
     :ivar prop: Required.

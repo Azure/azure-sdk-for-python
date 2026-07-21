@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MethodSubscriptionIdClient:
+class MethodSubscriptionIdClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test for ARM method level subscription ID parameter placement.
 
     :ivar two_subscription_resources_method_level: TwoSubscriptionResourcesMethodLevelOperations

@@ -13,7 +13,7 @@ from ...explode.aio.operations._operations import QueryParametersQueryExpansionE
 from ...standard.aio.operations._operations import QueryParametersQueryExpansionStandardOperations
 
 
-class QueryParametersQueryExpansionOperations:
+class QueryParametersQueryExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

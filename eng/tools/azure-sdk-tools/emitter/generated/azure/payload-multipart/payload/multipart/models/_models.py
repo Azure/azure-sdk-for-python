@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Address(_Model):
+class Address(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Address.
 
     :ivar city: Required.
@@ -44,7 +44,7 @@ class Address(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AnonymousModelRequest(_Model):
+class AnonymousModelRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AnonymousModelRequest.
 
     :ivar profile_image: Required.
@@ -74,7 +74,7 @@ class AnonymousModelRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BinaryArrayPartsRequest(_Model):
+class BinaryArrayPartsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BinaryArrayPartsRequest.
 
     :ivar id: Required.
@@ -109,7 +109,7 @@ class BinaryArrayPartsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComplexHttpPartsModelRequest(_Model):
+class ComplexHttpPartsModelRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ComplexHttpPartsModelRequest.
 
     :ivar id: Required.
@@ -163,7 +163,7 @@ class ComplexHttpPartsModelRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComplexPartsRequest(_Model):
+class ComplexPartsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ComplexPartsRequest.
 
     :ivar id: Required.
@@ -210,7 +210,9 @@ class ComplexPartsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FileWithHttpPartOptionalContentTypeRequest(_Model):  # pylint: disable=name-too-long
+class FileWithHttpPartOptionalContentTypeRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """FileWithHttpPartOptionalContentTypeRequest.
 
     :ivar profile_image: Required.
@@ -240,7 +242,9 @@ class FileWithHttpPartOptionalContentTypeRequest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class FileWithHttpPartRequiredContentTypeRequest(_Model):  # pylint: disable=name-too-long
+class FileWithHttpPartRequiredContentTypeRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """FileWithHttpPartRequiredContentTypeRequest.
 
     :ivar profile_image: Required.
@@ -270,7 +274,9 @@ class FileWithHttpPartRequiredContentTypeRequest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class FileWithHttpPartSpecificContentTypeRequest(_Model):  # pylint: disable=name-too-long
+class FileWithHttpPartSpecificContentTypeRequest(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """FileWithHttpPartSpecificContentTypeRequest.
 
     :ivar profile_image: Required.
@@ -300,7 +306,7 @@ class FileWithHttpPartSpecificContentTypeRequest(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class FloatRequest(_Model):
+class FloatRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FloatRequest.
 
     :ivar temperature: Required.
@@ -328,7 +334,7 @@ class FloatRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JsonPartRequest(_Model):
+class JsonPartRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JsonPartRequest.
 
     :ivar address: Required.
@@ -363,7 +369,7 @@ class JsonPartRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiBinaryPartsRequest(_Model):
+class MultiBinaryPartsRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MultiBinaryPartsRequest.
 
     :ivar profile_image: Required.
@@ -399,7 +405,7 @@ class MultiBinaryPartsRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiPartOptionalRequest(_Model):
+class MultiPartOptionalRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MultiPartOptionalRequest.
 
     :ivar id:
@@ -432,7 +438,7 @@ class MultiPartOptionalRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiPartRequest(_Model):
+class MultiPartRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MultiPartRequest.
 
     :ivar id: Required.
@@ -467,7 +473,7 @@ class MultiPartRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultiPartRequestWithWireName(_Model):
+class MultiPartRequestWithWireName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MultiPartRequestWithWireName.
 
     :ivar identifier: Required.
@@ -502,7 +508,7 @@ class MultiPartRequestWithWireName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadFileArrayRequest(_Model):
+class UploadFileArrayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileArrayRequest.
 
     :ivar files: Required.
@@ -532,7 +538,7 @@ class UploadFileArrayRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadFileRequiredFilenameRequest(_Model):
+class UploadFileRequiredFilenameRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileRequiredFilenameRequest.
 
     :ivar file: Required.
@@ -562,7 +568,7 @@ class UploadFileRequiredFilenameRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadFileSpecificContentTypeRequest(_Model):
+class UploadFileSpecificContentTypeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileSpecificContentTypeRequest.
 
     :ivar file: Required.

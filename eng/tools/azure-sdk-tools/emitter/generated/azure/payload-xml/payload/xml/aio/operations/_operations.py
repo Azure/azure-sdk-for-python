@@ -87,7 +87,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class SimpleModelValueOperations:
+class SimpleModelValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -216,7 +216,7 @@ class SimpleModelValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedPropertyValueOperations:
+class ModelWithRenamedPropertyValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -346,7 +346,7 @@ class ModelWithRenamedPropertyValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedFieldsValueOperations:
+class ModelWithRenamedFieldsValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -475,7 +475,7 @@ class ModelWithRenamedFieldsValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithNestedModelValueOperations:
+class ModelWithNestedModelValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -604,7 +604,7 @@ class ModelWithNestedModelValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedNestedModelValueOperations:  # pylint: disable=name-too-long
+class ModelWithRenamedNestedModelValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -734,7 +734,7 @@ class ModelWithRenamedNestedModelValueOperations:  # pylint: disable=name-too-lo
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithSimpleArraysValueOperations:
+class ModelWithSimpleArraysValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -863,7 +863,7 @@ class ModelWithSimpleArraysValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithUnwrappedArrayValueOperations:
+class ModelWithUnwrappedArrayValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -992,7 +992,7 @@ class ModelWithUnwrappedArrayValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedArraysValueOperations:
+class ModelWithRenamedArraysValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1121,7 +1121,7 @@ class ModelWithRenamedArraysValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithWrappedPrimitiveCustomItemNamesValueOperations:  # pylint: disable=name-too-long
+class ModelWithWrappedPrimitiveCustomItemNamesValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1251,7 +1251,7 @@ class ModelWithWrappedPrimitiveCustomItemNamesValueOperations:  # pylint: disabl
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithArrayOfModelValueOperations:
+class ModelWithArrayOfModelValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1380,7 +1380,7 @@ class ModelWithArrayOfModelValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithUnwrappedModelArrayValueOperations:  # pylint: disable=name-too-long
+class ModelWithUnwrappedModelArrayValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1510,7 +1510,7 @@ class ModelWithUnwrappedModelArrayValueOperations:  # pylint: disable=name-too-l
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedWrappedModelArrayValueOperations:  # pylint: disable=name-too-long
+class ModelWithRenamedWrappedModelArrayValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1640,7 +1640,7 @@ class ModelWithRenamedWrappedModelArrayValueOperations:  # pylint: disable=name-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedUnwrappedModelArrayValueOperations:  # pylint: disable=name-too-long
+class ModelWithRenamedUnwrappedModelArrayValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1770,7 +1770,7 @@ class ModelWithRenamedUnwrappedModelArrayValueOperations:  # pylint: disable=nam
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedWrappedAndItemModelArrayValueOperations:  # pylint: disable=name-too-long
+class ModelWithRenamedWrappedAndItemModelArrayValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1900,7 +1900,7 @@ class ModelWithRenamedWrappedAndItemModelArrayValueOperations:  # pylint: disabl
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithAttributesValueOperations:
+class ModelWithAttributesValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2029,7 +2029,7 @@ class ModelWithAttributesValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithRenamedAttributeValueOperations:
+class ModelWithRenamedAttributeValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2159,7 +2159,7 @@ class ModelWithRenamedAttributeValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithNamespaceValueOperations:
+class ModelWithNamespaceValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2288,7 +2288,7 @@ class ModelWithNamespaceValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithNamespaceOnPropertiesValueOperations:  # pylint: disable=name-too-long
+class ModelWithNamespaceOnPropertiesValueOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2418,7 +2418,7 @@ class ModelWithNamespaceOnPropertiesValueOperations:  # pylint: disable=name-too
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithTextValueOperations:
+class ModelWithTextValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2547,7 +2547,7 @@ class ModelWithTextValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithOptionalFieldValueOperations:
+class ModelWithOptionalFieldValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2676,7 +2676,7 @@ class ModelWithOptionalFieldValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithEmptyArrayValueOperations:
+class ModelWithEmptyArrayValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2805,7 +2805,7 @@ class ModelWithEmptyArrayValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithDictionaryValueOperations:
+class ModelWithDictionaryValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2934,7 +2934,7 @@ class ModelWithDictionaryValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithEncodedNamesValueOperations:
+class ModelWithEncodedNamesValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3063,7 +3063,7 @@ class ModelWithEncodedNamesValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithEnumValueOperations:
+class ModelWithEnumValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3192,7 +3192,7 @@ class ModelWithEnumValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelWithDatetimeValueOperations:
+class ModelWithDatetimeValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3321,7 +3321,7 @@ class ModelWithDatetimeValueOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class XmlErrorValueOperations:
+class XmlErrorValueOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Element(_Model):
+class Element(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """element.
 
     :ivar extension:
@@ -44,7 +44,7 @@ class Element(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Extension(Element):
+class Extension(Element):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """extension.
 
     :ivar extension:

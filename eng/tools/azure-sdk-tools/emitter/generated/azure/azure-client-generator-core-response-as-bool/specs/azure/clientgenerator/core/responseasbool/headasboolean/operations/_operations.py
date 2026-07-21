@@ -45,7 +45,7 @@ def build_head_as_boolean_not_exists_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="HEAD", url=_url, **kwargs)
 
 
-class HeadAsBooleanOperations:
+class HeadAsBooleanOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

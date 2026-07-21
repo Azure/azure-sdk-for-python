@@ -248,7 +248,7 @@ def build_decimal128_verify_verify_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class StringOperations:
+class StringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -371,7 +371,7 @@ class StringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BooleanOperations:
+class BooleanOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -494,7 +494,7 @@ class BooleanOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UnknownOperations:
+class UnknownOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -617,7 +617,7 @@ class UnknownOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DecimalTypeOperations:
+class DecimalTypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -788,7 +788,7 @@ class DecimalTypeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class Decimal128TypeOperations:
+class Decimal128TypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -959,7 +959,7 @@ class Decimal128TypeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DecimalVerifyOperations:
+class DecimalVerifyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1079,7 +1079,7 @@ class DecimalVerifyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class Decimal128VerifyOperations:
+class Decimal128VerifyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -15,7 +15,9 @@ if TYPE_CHECKING:
     from .... import models as _models3
 
 
-class RequestHeaderNestedResponseBodyResponseNestedItems(_Model):  # pylint: disable=name-too-long
+class RequestHeaderNestedResponseBodyResponseNestedItems(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RequestHeaderNestedResponseBodyResponseNestedItems.
 
     :ivar pets: Required.
@@ -43,7 +45,9 @@ class RequestHeaderNestedResponseBodyResponseNestedItems(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class RequestHeaderNestedResponseBodyResponseNestedNext(_Model):  # pylint: disable=name-too-long
+class RequestHeaderNestedResponseBodyResponseNestedNext(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RequestHeaderNestedResponseBodyResponseNestedNext.
 
     :ivar next_token:
@@ -70,7 +74,9 @@ class RequestHeaderNestedResponseBodyResponseNestedNext(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class RequestQueryNestedResponseBodyResponseNestedItems(_Model):  # pylint: disable=name-too-long
+class RequestQueryNestedResponseBodyResponseNestedItems(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RequestQueryNestedResponseBodyResponseNestedItems.
 
     :ivar pets: Required.
@@ -98,7 +104,9 @@ class RequestQueryNestedResponseBodyResponseNestedItems(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class RequestQueryNestedResponseBodyResponseNestedNext(_Model):  # pylint: disable=name-too-long
+class RequestQueryNestedResponseBodyResponseNestedNext(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """RequestQueryNestedResponseBodyResponseNestedNext.
 
     :ivar next_token:

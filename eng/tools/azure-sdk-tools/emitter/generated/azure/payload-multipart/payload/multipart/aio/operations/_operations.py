@@ -51,7 +51,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class FormDataOperations:
+class FormDataOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -761,7 +761,7 @@ class FormDataOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FormDataHttpPartsOperations:
+class FormDataHttpPartsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -863,7 +863,7 @@ class FormDataHttpPartsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FormDataFileOperations:
+class FormDataFileOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1124,7 +1124,7 @@ class FormDataFileOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FormDataHttpPartsContentTypeOperations:
+class FormDataHttpPartsContentTypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1400,7 +1400,7 @@ class FormDataHttpPartsContentTypeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FormDataHttpPartsNonStringOperations:
+class FormDataHttpPartsNonStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

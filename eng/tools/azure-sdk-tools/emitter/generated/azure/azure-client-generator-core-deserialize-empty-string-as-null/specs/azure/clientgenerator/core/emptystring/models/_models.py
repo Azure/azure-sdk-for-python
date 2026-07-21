@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class ResponseModel(_Model):
+class ResponseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is a Model contains a string-like property of type url.
 
     :ivar sample_url: Required.

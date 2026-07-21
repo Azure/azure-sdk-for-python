@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BulletPointsModel(_Model):
+class BulletPointsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This tests:
 
     * Simple bullet point. This bullet point is going to be very long to test how text wrapping is

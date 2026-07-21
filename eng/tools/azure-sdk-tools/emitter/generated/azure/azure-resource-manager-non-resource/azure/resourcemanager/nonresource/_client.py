@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class NonResourceClient:
+class NonResourceClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Resource Provider management API.
 
     :ivar non_resource_operations: NonResourceOperationsOperations operations

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ChildFlattenModel(_Model):
+class ChildFlattenModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the child model to be flattened. And it has flattened property as well.
 
     :ivar summary: Required.
@@ -68,7 +68,7 @@ class ChildFlattenModel(_Model):
             super().__setattr__(key, value)
 
 
-class ChildModel(_Model):
+class ChildModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the child model to be flattened.
 
     :ivar description: Required.
@@ -101,7 +101,7 @@ class ChildModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FlattenModel(_Model):
+class FlattenModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the model with one level of flattening.
 
     :ivar name: Required.
@@ -154,7 +154,7 @@ class FlattenModel(_Model):
             super().__setattr__(key, value)
 
 
-class FlattenUnknownModel(_Model):
+class FlattenUnknownModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the model with unknown type properties to be flattened.
 
     :ivar name: Required.
@@ -206,7 +206,7 @@ class FlattenUnknownModel(_Model):
             super().__setattr__(key, value)
 
 
-class NestedFlattenModel(_Model):
+class NestedFlattenModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the model with two levels of flattening.
 
     :ivar name: Required.
@@ -239,7 +239,7 @@ class NestedFlattenModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Solution(_Model):
+class Solution(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is the model with flattened properties that are all read-only.
 
     :ivar name: Required.

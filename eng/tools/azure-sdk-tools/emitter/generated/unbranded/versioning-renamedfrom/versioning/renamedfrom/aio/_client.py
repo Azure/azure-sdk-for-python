@@ -17,7 +17,9 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class RenamedFromClient(_RenamedFromClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class RenamedFromClient(
+    _RenamedFromClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """Test for the ``@renamedFrom`` decorator.
 
     :ivar new_interface: NewInterfaceOperations operations

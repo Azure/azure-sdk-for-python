@@ -88,7 +88,7 @@ def build_different_body_get_avatar_as_json_request(**kwargs: Any) -> HttpReques
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class SameBodyOperations:
+class SameBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -224,7 +224,7 @@ class SameBodyOperations:
         return deserialized  # type: ignore
 
 
-class DifferentBodyOperations:
+class DifferentBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

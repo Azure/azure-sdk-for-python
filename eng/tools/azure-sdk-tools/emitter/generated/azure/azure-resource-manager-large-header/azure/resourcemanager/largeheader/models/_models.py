@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CancelResult(_Model):
+class CancelResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CancelResult.
 
     :ivar succeeded: Required.
@@ -87,7 +87,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.

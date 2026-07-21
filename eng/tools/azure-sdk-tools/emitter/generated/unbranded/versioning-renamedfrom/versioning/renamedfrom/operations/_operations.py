@@ -70,7 +70,7 @@ def build_renamed_from_new_op_request(*, new_query: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class NewInterfaceOperations:
+class NewInterfaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

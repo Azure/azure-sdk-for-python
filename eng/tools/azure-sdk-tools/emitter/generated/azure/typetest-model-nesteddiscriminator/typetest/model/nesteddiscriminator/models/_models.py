@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Fish(_Model):
+class Fish(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is base model for polymorphic multiple levels inheritance with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -53,7 +53,7 @@ class Fish(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Shark(Fish, discriminator="shark"):
+class Shark(Fish, discriminator="shark"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic multiple levels inheritance and it defines a new
     discriminator.
 
@@ -94,7 +94,7 @@ class Shark(Fish, discriminator="shark"):
         self.kind = "shark"  # type: ignore
 
 
-class GoblinShark(Shark, discriminator="goblin"):
+class GoblinShark(Shark, discriminator="goblin"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The third level model GoblinShark in polymorphic multiple levels inheritance.
 
     :ivar age: Required.
@@ -128,7 +128,7 @@ class GoblinShark(Shark, discriminator="goblin"):
         self.sharktype = "goblin"  # type: ignore
 
 
-class Salmon(Fish, discriminator="salmon"):
+class Salmon(Fish, discriminator="salmon"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic multiple levels inheritance which contains references to
     other polymorphic instances.
 
@@ -172,7 +172,7 @@ class Salmon(Fish, discriminator="salmon"):
         self.kind = "salmon"  # type: ignore
 
 
-class SawShark(Shark, discriminator="saw"):
+class SawShark(Shark, discriminator="saw"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The third level model SawShark in polymorphic multiple levels inheritance.
 
     :ivar age: Required.

@@ -431,7 +431,7 @@ def build_collections_string_patch_null_request(**kwargs: Any) -> HttpRequest:  
     return HttpRequest(method="PATCH", url=_url, headers=_headers, **kwargs)
 
 
-class StringOperations:
+class StringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -775,7 +775,7 @@ class StringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BytesOperations:
+class BytesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1119,7 +1119,7 @@ class BytesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatetimeOperations:
+class DatetimeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1463,7 +1463,7 @@ class DatetimeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DurationOperations:
+class DurationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1807,7 +1807,7 @@ class DurationOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CollectionsByteOperations:
+class CollectionsByteOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2159,7 +2159,7 @@ class CollectionsByteOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CollectionsModelOperations:
+class CollectionsModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2521,7 +2521,7 @@ class CollectionsModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CollectionsStringOperations:
+class CollectionsStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

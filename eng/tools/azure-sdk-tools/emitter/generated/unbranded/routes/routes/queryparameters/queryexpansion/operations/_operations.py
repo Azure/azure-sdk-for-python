@@ -7,7 +7,7 @@ from ..explode.operations._operations import QueryParametersQueryExpansionExplod
 from ..standard.operations._operations import QueryParametersQueryExpansionStandardOperations
 
 
-class QueryParametersQueryExpansionOperations:
+class QueryParametersQueryExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

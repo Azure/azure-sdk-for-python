@@ -17,7 +17,9 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class AddedClient(_AddedClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class AddedClient(
+    _AddedClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """Test for the ``@added`` decorator.
 
     :ivar interface_v2: InterfaceV2Operations operations

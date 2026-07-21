@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AbstractModel(_Model):
+class AbstractModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in internal operations, should be generated but not exported.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -53,7 +53,7 @@ class AbstractModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BaseModel(_Model):
+class BaseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in internal operations, should be generated but not exported.
 
     :ivar name: Required.
@@ -81,7 +81,7 @@ class BaseModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerModel(_Model):
+class InnerModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in internal operations, should be generated but not exported.
 
     :ivar name: Required.
@@ -109,7 +109,7 @@ class InnerModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InternalDecoratorModelInInternal(_Model):
+class InternalDecoratorModelInInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in an internal operation, should be generated but not exported.
 
     :ivar name: Required.
@@ -137,7 +137,7 @@ class InternalDecoratorModelInInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoDecoratorModelInInternal(_Model):
+class NoDecoratorModelInInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in an internal operation, should be generated but not exported.
 
     :ivar name: Required.
@@ -165,7 +165,7 @@ class NoDecoratorModelInInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NoDecoratorModelInPublic(_Model):
+class NoDecoratorModelInPublic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in a public operation, should be generated and exported.
 
     :ivar name: Required.
@@ -193,7 +193,7 @@ class NoDecoratorModelInPublic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OuterModel(BaseModel):
+class OuterModel(BaseModel):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in internal operations, should be generated but not exported.
 
     :ivar name: Required.
@@ -224,7 +224,7 @@ class OuterModel(BaseModel):
         super().__init__(*args, **kwargs)
 
 
-class PublicDecoratorModelInInternal(_Model):
+class PublicDecoratorModelInInternal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in an internal operation but with public decorator, should be generated and exported.
 
     :ivar name: Required.
@@ -252,7 +252,7 @@ class PublicDecoratorModelInInternal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PublicDecoratorModelInPublic(_Model):
+class PublicDecoratorModelInPublic(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in a public operation, should be generated and exported.
 
     :ivar name: Required.
@@ -280,7 +280,7 @@ class PublicDecoratorModelInPublic(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RealModel(AbstractModel, discriminator="real"):
+class RealModel(AbstractModel, discriminator="real"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used in internal operations, should be generated but not exported.
 
     :ivar name: Required.
@@ -311,7 +311,7 @@ class RealModel(AbstractModel, discriminator="real"):
         self.kind = "real"  # type: ignore
 
 
-class SharedModel(_Model):
+class SharedModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Used by both public and internal operation. It should be generated and exported.
 
     :ivar name: Required.

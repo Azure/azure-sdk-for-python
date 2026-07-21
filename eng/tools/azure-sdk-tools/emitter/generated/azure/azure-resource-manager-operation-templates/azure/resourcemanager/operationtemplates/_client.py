@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class OperationTemplatesClient:
+class OperationTemplatesClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Resource Provider management API.
 
     :ivar operations: Operations operations

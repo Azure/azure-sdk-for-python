@@ -52,7 +52,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class IndividuallyParentNestedWithPathClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithPathClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -222,7 +222,7 @@ class IndividuallyParentNestedWithPathClientOperations:  # pylint: disable=name-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IndividuallyParentNestedWithQueryClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithQueryClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -392,7 +392,7 @@ class IndividuallyParentNestedWithQueryClientOperations:  # pylint: disable=name
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IndividuallyParentNestedWithHeaderClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithHeaderClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -548,7 +548,7 @@ class IndividuallyParentNestedWithHeaderClientOperations:  # pylint: disable=nam
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IndividuallyParentNestedWithMultipleClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithMultipleClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -707,7 +707,7 @@ class IndividuallyParentNestedWithMultipleClientOperations:  # pylint: disable=n
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IndividuallyParentNestedWithMixedClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithMixedClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -872,7 +872,7 @@ class IndividuallyParentNestedWithMixedClientOperations:  # pylint: disable=name
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IndividuallyParentNestedWithParamAliasClientOperations:  # pylint: disable=name-too-long
+class IndividuallyParentNestedWithParamAliasClientOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

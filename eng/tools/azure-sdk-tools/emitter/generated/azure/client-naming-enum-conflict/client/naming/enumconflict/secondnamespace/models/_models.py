@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class SecondModel(_Model):
+class SecondModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecondModel.
 
     :ivar status: Status from second namespace. Required. Known values are: "running" and

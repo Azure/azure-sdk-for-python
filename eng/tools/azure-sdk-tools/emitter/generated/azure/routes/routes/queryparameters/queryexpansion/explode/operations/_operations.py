@@ -89,7 +89,7 @@ def build_query_parameters_query_expansion_explode_model_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryParametersQueryExpansionExplodeOperations:  # pylint: disable=name-too-long
+class QueryParametersQueryExpansionExplodeOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

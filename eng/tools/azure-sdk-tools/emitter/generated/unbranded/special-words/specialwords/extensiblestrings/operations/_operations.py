@@ -48,7 +48,7 @@ def build_extensible_strings_put_extensible_string_value_request(  # pylint: dis
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class ExtensibleStringsOperations:
+class ExtensibleStringsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

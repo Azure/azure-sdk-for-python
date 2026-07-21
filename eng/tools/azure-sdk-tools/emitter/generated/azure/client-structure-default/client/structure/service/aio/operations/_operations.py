@@ -41,7 +41,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class BazOperations:
+class BazOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -61,7 +61,7 @@ class BazOperations:
         self.foo = BazFooOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class QuxOperations:
+class QuxOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -126,7 +126,7 @@ class QuxOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FooOperations:
+class FooOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -234,7 +234,7 @@ class FooOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BarOperations:
+class BarOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -437,7 +437,7 @@ class _ServiceClientOperationsMixin(
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BazFooOperations:
+class BazFooOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -500,7 +500,7 @@ class BazFooOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class QuxBarOperations:
+class QuxBarOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

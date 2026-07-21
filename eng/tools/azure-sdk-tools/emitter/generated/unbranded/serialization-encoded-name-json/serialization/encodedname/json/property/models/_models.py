@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from ..._utils.model_base import Model as _Model, rest_field
 
 
-class JsonEncodedNameModel(_Model):
+class JsonEncodedNameModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """JsonEncodedNameModel.
 
     :ivar default_name: Pass in true. Required.

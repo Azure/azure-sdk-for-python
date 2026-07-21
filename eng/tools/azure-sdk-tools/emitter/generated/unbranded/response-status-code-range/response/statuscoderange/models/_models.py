@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class DefaultError(_Model):
+class DefaultError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultError.
 
     :ivar code: Required.
@@ -34,7 +34,7 @@ class DefaultError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ErrorInRange(_Model):
+class ErrorInRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ErrorInRange.
 
     :ivar code: Required.
@@ -67,7 +67,7 @@ class ErrorInRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotFoundError(_Model):
+class NotFoundError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NotFoundError.
 
     :ivar code: Required.
@@ -100,7 +100,7 @@ class NotFoundError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Standard4XXError(_Model):
+class Standard4XXError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Standard4XXError.
 
     :ivar code: Required.

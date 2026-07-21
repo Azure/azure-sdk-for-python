@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from ..._utils.model_base import Model as _Model, rest_field
 
 
-class PngImageAsJson(_Model):
+class PngImageAsJson(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PngImageAsJson.
 
     :ivar content: Required.

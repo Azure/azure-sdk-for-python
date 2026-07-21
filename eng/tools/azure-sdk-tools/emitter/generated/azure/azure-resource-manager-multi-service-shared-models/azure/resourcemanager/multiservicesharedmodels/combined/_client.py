@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CombinedClient:  # pylint: disable=client-accepts-api-version-keyword
+class CombinedClient:  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """CombinedClient.
 
     :ivar virtual_machines: VirtualMachinesOperations operations

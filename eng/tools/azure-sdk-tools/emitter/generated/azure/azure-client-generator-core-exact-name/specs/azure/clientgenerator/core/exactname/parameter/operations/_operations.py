@@ -44,7 +44,7 @@ def build_parameter_send_request(*, myParam: str, **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class ParameterOperations:
+class ParameterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

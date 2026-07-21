@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class InputOutputRecord(_Model):
+class InputOutputRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record used both as operation parameter and return type.
 
     :ivar required_prop: Required.
@@ -34,7 +34,7 @@ class InputOutputRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InputRecord(_Model):
+class InputRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record used in operation parameters.
 
     :ivar required_prop: Required.
@@ -62,7 +62,7 @@ class InputRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OutputRecord(_Model):
+class OutputRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Record used in operation return type.
 
     :ivar required_prop: Required.

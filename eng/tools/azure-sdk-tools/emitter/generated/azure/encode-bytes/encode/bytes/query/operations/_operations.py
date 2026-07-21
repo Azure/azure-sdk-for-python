@@ -80,7 +80,7 @@ def build_query_base64_url_array_request(*, value: list[bytes], **kwargs: Any) -
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

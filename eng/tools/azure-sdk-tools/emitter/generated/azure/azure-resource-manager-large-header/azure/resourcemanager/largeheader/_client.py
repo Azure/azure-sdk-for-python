@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LargeHeaderClient:
+class LargeHeaderClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Resource Provider management API.
 
     :ivar large_headers: LargeHeadersOperations operations

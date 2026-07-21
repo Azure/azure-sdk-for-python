@@ -110,7 +110,7 @@ def build_azure_location_scalar_query_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-class AzureLocationScalarOperations:
+class AzureLocationScalarOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -62,7 +62,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -90,7 +90,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -223,7 +223,7 @@ class ProxyResource(Resource):
     """
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -267,7 +267,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGroupResource(TrackedResource):
+class ResourceGroupResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -316,7 +316,7 @@ class ResourceGroupResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ResourceGroupResourceProperties(_Model):
+class ResourceGroupResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of resource group resource.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -355,7 +355,7 @@ class ResourceGroupResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResource(ProxyResource):
+class SubscriptionResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -398,7 +398,7 @@ class SubscriptionResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResource1(ProxyResource):
+class SubscriptionResource1(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -441,7 +441,7 @@ class SubscriptionResource1(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResource1Properties(_Model):
+class SubscriptionResource1Properties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of subscription resource 1.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -478,7 +478,7 @@ class SubscriptionResource1Properties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResource2(ProxyResource):
+class SubscriptionResource2(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -521,7 +521,7 @@ class SubscriptionResource2(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResource2Properties(_Model):
+class SubscriptionResource2Properties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of subscription resource 2.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -560,7 +560,7 @@ class SubscriptionResource2Properties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SubscriptionResourceProperties(_Model):
+class SubscriptionResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of subscription resource.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -599,7 +599,7 @@ class SubscriptionResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

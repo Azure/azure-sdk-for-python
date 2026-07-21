@@ -45,7 +45,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -89,7 +89,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Disk(TrackedResource):
+class Disk(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Disk resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -195,7 +195,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -223,7 +223,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -292,7 +292,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachine(TrackedResource):
+class VirtualMachine(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a Virtual Machine.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -

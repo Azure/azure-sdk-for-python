@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +14,7 @@ from azure.core.pipeline import policies
 from .._version import VERSION
 
 
-class ResiliencyServiceDrivenClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long
+class ResiliencyServiceDrivenClientConfiguration:  # pylint: disable=too-many-instance-attributes,name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for ResiliencyServiceDrivenClient.
 
     Note that all parameters used to create this instance are saved as instance

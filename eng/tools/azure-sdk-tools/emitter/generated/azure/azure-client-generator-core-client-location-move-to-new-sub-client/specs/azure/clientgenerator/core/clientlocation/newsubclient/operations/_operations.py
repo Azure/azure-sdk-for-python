@@ -45,7 +45,7 @@ def build_archive_operations_archive_product_request(**kwargs: Any) -> HttpReque
     return HttpRequest(method="POST", url=_url, **kwargs)
 
 
-class ProductOperationsOperations:
+class ProductOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -107,7 +107,7 @@ class ProductOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ArchiveOperationsOperations:
+class ArchiveOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

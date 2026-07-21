@@ -14,7 +14,7 @@ import geojson
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Geometry(_Model):
+class Geometry(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Geometry.
 
     :ivar type: Required.
@@ -47,7 +47,7 @@ class Geometry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithFeatureProperty(_Model):
+class ModelWithFeatureProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelWithFeatureProperty.
 
     :ivar feature: Required.

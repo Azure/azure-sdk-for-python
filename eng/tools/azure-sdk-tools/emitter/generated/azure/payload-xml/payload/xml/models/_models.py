@@ -28,7 +28,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Author(_Model):
+class Author(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Author model with a custom XML name.
 
     :ivar name: Required.
@@ -62,7 +62,7 @@ class Author(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Book(_Model):
+class Book(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Book model with a custom XML name.
 
     :ivar title: Required.
@@ -96,7 +96,7 @@ class Book(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithArrayOfModel(_Model):
+class ModelWithArrayOfModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§4.1 — Contains an array of models.
 
     :ivar items_property: Required.
@@ -131,7 +131,7 @@ class ModelWithArrayOfModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithAttributes(_Model):
+class ModelWithAttributes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§5.1 — Contains fields that are XML attributes.
 
     :ivar id1: Required.
@@ -183,7 +183,7 @@ class ModelWithAttributes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithDatetime(_Model):
+class ModelWithDatetime(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains datetime properties with different encodings.
 
     :ivar rfc3339: DateTime value with rfc3339 encoding. Required.
@@ -228,7 +228,7 @@ class ModelWithDatetime(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithDictionary(_Model):
+class ModelWithDictionary(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains a dictionary of key value pairs.
 
     :ivar metadata: Required.
@@ -261,7 +261,7 @@ class ModelWithDictionary(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithEmptyArray(_Model):
+class ModelWithEmptyArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains an array of models that's supposed to be sent/received as an empty XML element.
 
     :ivar items_property: Required.
@@ -296,7 +296,7 @@ class ModelWithEmptyArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithEncodedNames(_Model):
+class ModelWithEncodedNames(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Uses encodedName instead of Xml.Name which is functionally equivalent.
 
     :ivar model_data: Required.
@@ -338,7 +338,7 @@ class ModelWithEncodedNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithEnum(_Model):
+class ModelWithEnum(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains a single property with an enum value.
 
     :ivar status: Required. Known values are: "pending", "success", and "error".
@@ -372,7 +372,7 @@ class ModelWithEnum(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithNamespace(_Model):
+class ModelWithNamespace(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§6.1, §7.1 — Contains fields with XML namespace on the model.
 
     :ivar id: Required.
@@ -422,7 +422,7 @@ class ModelWithNamespace(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithNamespaceOnProperties(_Model):
+class ModelWithNamespaceOnProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§6.2, §7.2 — Contains fields with different XML namespaces on individual properties.
 
     :ivar id: Required.
@@ -495,7 +495,7 @@ class ModelWithNamespaceOnProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithNestedModel(_Model):
+class ModelWithNestedModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§2.1 — Contains a property that references another model.
 
     :ivar nested: Required.
@@ -528,7 +528,7 @@ class ModelWithNestedModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithOptionalField(_Model):
+class ModelWithOptionalField(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains an optional field.
 
     :ivar item: Required.
@@ -570,7 +570,7 @@ class ModelWithOptionalField(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedArrays(_Model):
+class ModelWithRenamedArrays(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§3.3, §3.4 — Contains fields of wrapped and unwrapped arrays of primitive types that have
     different XML representations.
 
@@ -612,7 +612,7 @@ class ModelWithRenamedArrays(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedAttribute(_Model):
+class ModelWithRenamedAttribute(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§5.2 — Contains a renamed XML attribute.
 
     :ivar id: Required.
@@ -664,7 +664,7 @@ class ModelWithRenamedAttribute(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedFields(_Model):
+class ModelWithRenamedFields(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§1.3, §2.3 — Contains fields of the same type that have different XML representation.
 
     :ivar input_data: Required.
@@ -707,7 +707,7 @@ class ModelWithRenamedFields(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedNestedModel(_Model):
+class ModelWithRenamedNestedModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§2.2 — Contains a property whose type has.
 
     :ivar author: Required.
@@ -740,7 +740,7 @@ class ModelWithRenamedNestedModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedProperty(_Model):
+class ModelWithRenamedProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§1.2 — Contains a scalar property with a custom XML name.
 
     :ivar title: Required.
@@ -783,7 +783,7 @@ class ModelWithRenamedProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedUnwrappedModelArray(_Model):
+class ModelWithRenamedUnwrappedModelArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§4.4 — Contains an unwrapped array of models with a custom item name.
 
     :ivar items_property: Required.
@@ -818,7 +818,7 @@ class ModelWithRenamedUnwrappedModelArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedWrappedAndItemModelArray(_Model):
+class ModelWithRenamedWrappedAndItemModelArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§4.5 — Contains a wrapped array of models with custom wrapper and item names.
 
     :ivar books: Required.
@@ -851,7 +851,7 @@ class ModelWithRenamedWrappedAndItemModelArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithRenamedWrappedModelArray(_Model):
+class ModelWithRenamedWrappedModelArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§4.3 — Contains a wrapped array of models with a custom wrapper name.
 
     :ivar items_property: Required.
@@ -886,7 +886,7 @@ class ModelWithRenamedWrappedModelArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithSimpleArrays(_Model):
+class ModelWithSimpleArrays(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§3.1 — Contains fields of arrays of primitive types.
 
     :ivar colors: Required.
@@ -927,7 +927,7 @@ class ModelWithSimpleArrays(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithText(_Model):
+class ModelWithText(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§8.1 — Contains an attribute and text.
 
     :ivar language: Required.
@@ -970,7 +970,7 @@ class ModelWithText(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithUnwrappedArray(_Model):
+class ModelWithUnwrappedArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§3.2 — Contains fields of wrapped and unwrapped arrays of primitive types.
 
     :ivar colors: Required.
@@ -1011,7 +1011,7 @@ class ModelWithUnwrappedArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithUnwrappedModelArray(_Model):
+class ModelWithUnwrappedModelArray(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§4.2 — Contains an unwrapped array of models.
 
     :ivar items_property: Required.
@@ -1046,7 +1046,7 @@ class ModelWithUnwrappedModelArray(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithWrappedPrimitiveCustomItemNames(_Model):
+class ModelWithWrappedPrimitiveCustomItemNames(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§3.5 — Contains a wrapped primitive array with custom wrapper and item names.
 
     :ivar tags: Required.
@@ -1079,7 +1079,7 @@ class ModelWithWrappedPrimitiveCustomItemNames(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SimpleModel(_Model):
+class SimpleModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """§1.1 — Contains fields of primitive types.
 
     :ivar name: Required.
@@ -1122,7 +1122,7 @@ class SimpleModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class XmlErrorBody(_Model):
+class XmlErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The body of an XML error response.
 
     :ivar message: Required.

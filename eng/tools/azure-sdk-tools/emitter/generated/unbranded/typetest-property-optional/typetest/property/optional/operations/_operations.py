@@ -932,7 +932,7 @@ def build_required_and_optional_put_required_only_request(  # pylint: disable=na
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class StringOperations:
+class StringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1258,7 +1258,7 @@ class StringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BytesOperations:
+class BytesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1582,7 +1582,7 @@ class BytesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DatetimeOperations:
+class DatetimeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1908,7 +1908,7 @@ class DatetimeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class DurationOperations:
+class DurationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2234,7 +2234,7 @@ class DurationOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class PlainDateOperations:
+class PlainDateOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2562,7 +2562,7 @@ class PlainDateOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class PlainTimeOperations:
+class PlainTimeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2890,7 +2890,7 @@ class PlainTimeOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CollectionsByteOperations:
+class CollectionsByteOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3220,7 +3220,7 @@ class CollectionsByteOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class CollectionsModelOperations:
+class CollectionsModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3552,7 +3552,7 @@ class CollectionsModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StringLiteralOperations:
+class StringLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3882,7 +3882,7 @@ class StringLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IntLiteralOperations:
+class IntLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4212,7 +4212,7 @@ class IntLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FloatLiteralOperations:
+class FloatLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4542,7 +4542,7 @@ class FloatLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class BooleanLiteralOperations:
+class BooleanLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4872,7 +4872,7 @@ class BooleanLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UnionStringLiteralOperations:
+class UnionStringLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5208,7 +5208,7 @@ class UnionStringLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UnionIntLiteralOperations:
+class UnionIntLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5538,7 +5538,7 @@ class UnionIntLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UnionFloatLiteralOperations:
+class UnionFloatLiteralOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5870,7 +5870,7 @@ class UnionFloatLiteralOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class RequiredAndOptionalOperations:
+class RequiredAndOptionalOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import _unions, models as _models
 
 
-class NewModel(_Model):
+class NewModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NewModel.
 
     :ivar new_prop: Required.

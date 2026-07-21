@@ -99,7 +99,7 @@ def build_non_resource_operations_create_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class NonResourceOperationsOperations:
+class NonResourceOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

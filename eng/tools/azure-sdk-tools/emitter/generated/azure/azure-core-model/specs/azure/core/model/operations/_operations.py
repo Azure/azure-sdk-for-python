@@ -83,7 +83,7 @@ def build_azure_core_embedding_vector_post_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class AzureCoreEmbeddingVectorOperations:
+class AzureCoreEmbeddingVectorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

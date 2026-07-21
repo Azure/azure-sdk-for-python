@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ManagementGroupClient:
+class ManagementGroupClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Resource Provider management API.
 
     :ivar management_group_child_resources: ManagementGroupChildResourcesOperations operations

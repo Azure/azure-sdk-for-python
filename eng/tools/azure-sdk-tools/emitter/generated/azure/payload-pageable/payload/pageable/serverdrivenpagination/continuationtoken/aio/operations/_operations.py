@@ -39,7 +39,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class ServerDrivenPaginationContinuationTokenOperations:  # pylint: disable=name-too-long
+class ServerDrivenPaginationContinuationTokenOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

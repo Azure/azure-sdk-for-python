@@ -19,7 +19,7 @@ else:
 
 class TypeChangedFromClient(
     _TypeChangedFromClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword
+):  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """Test for the ``@typeChangedFrom`` decorator.
 
     :param endpoint: Need to be set as '`http://localhost:3000 <http://localhost:3000>`_' in

@@ -50,7 +50,7 @@ def build_special_char_dollar_sign_request(*, filter: str, **kwargs: Any) -> Htt
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class ConstantOperations:
+class ConstantOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -111,7 +111,7 @@ class ConstantOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpecialCharOperations:
+class SpecialCharOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

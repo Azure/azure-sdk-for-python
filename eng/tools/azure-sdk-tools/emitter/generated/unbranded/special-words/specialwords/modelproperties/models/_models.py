@@ -8,7 +8,7 @@ from ..._utils.model_base import Model as _Model, rest_field
 List = list
 
 
-class DictMethods(_Model):
+class DictMethods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DictMethods.
 
     :ivar keys_property: Required.
@@ -101,7 +101,7 @@ class DictMethods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithList(_Model):
+class ModelWithList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelWithList.
 
     :ivar list: Required.
@@ -129,7 +129,7 @@ class ModelWithList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SameAsModel(_Model):
+class SameAsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SameAsModel.
 
     :ivar same_as_model: Required.

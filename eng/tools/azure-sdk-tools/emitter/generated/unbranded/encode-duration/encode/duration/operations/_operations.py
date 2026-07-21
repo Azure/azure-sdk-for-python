@@ -50,7 +50,7 @@ def build_lossy_int_milliseconds_request(*, input: datetime.timedelta, **kwargs:
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class LossyOperations:
+class LossyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

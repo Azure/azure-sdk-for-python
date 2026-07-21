@@ -83,7 +83,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -759,7 +759,7 @@ class QueryOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class PropertyOperations:
+class PropertyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2593,7 +2593,7 @@ class PropertyOperations:
         return deserialized  # type: ignore
 
 
-class HeaderOperations:
+class HeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3269,7 +3269,7 @@ class HeaderOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class LossyOperations:
+class LossyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

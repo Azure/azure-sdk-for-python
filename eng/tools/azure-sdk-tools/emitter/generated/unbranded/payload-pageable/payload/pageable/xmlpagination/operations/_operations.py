@@ -64,7 +64,7 @@ def build_xml_pagination_list_with_next_link_request(**kwargs: Any) -> HttpReque
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class XmlPaginationOperations:
+class XmlPaginationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -6,7 +6,7 @@ from typing import Any, Mapping, Optional, overload
 from ..._utils.model_base import Model as _Model, rest_field
 
 
-class SafeintAsStringProperty(_Model):
+class SafeintAsStringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SafeintAsStringProperty.
 
     :ivar value: Required.
@@ -34,7 +34,7 @@ class SafeintAsStringProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Uint32AsStringProperty(_Model):
+class Uint32AsStringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Uint32AsStringProperty.
 
     :ivar value:
@@ -61,7 +61,7 @@ class Uint32AsStringProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Uint8AsStringProperty(_Model):
+class Uint8AsStringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Uint8AsStringProperty.
 
     :ivar value: Required.

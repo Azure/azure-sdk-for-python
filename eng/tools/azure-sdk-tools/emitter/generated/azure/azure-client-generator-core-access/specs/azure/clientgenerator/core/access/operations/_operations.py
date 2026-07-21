@@ -216,7 +216,7 @@ def build_relative_model_in_operation_discriminator_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class PublicOperationOperations:
+class PublicOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -356,7 +356,7 @@ class PublicOperationOperations:
         return deserialized  # type: ignore
 
 
-class InternalOperationOperations:
+class InternalOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -564,7 +564,7 @@ class InternalOperationOperations:
         return deserialized  # type: ignore
 
 
-class SharedModelInOperationOperations:
+class SharedModelInOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -702,7 +702,7 @@ class SharedModelInOperationOperations:
         return deserialized  # type: ignore
 
 
-class RelativeModelInOperationOperations:
+class RelativeModelInOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

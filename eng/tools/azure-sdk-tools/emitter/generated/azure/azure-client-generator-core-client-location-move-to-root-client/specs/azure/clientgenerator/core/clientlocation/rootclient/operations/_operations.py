@@ -46,7 +46,7 @@ def build_move_to_root_get_health_status_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class ResourceOperationsOperations:
+class ResourceOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class ExportedUser(_Model):
+class ExportedUser(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The exported user data.
 
     :ivar name: The name of user. Required.
@@ -45,7 +45,7 @@ class ExportedUser(_Model):
         super().__init__(*args, **kwargs)
 
 
-class User(_Model):
+class User(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a user.
 
     :ivar name: The name of user. Required.

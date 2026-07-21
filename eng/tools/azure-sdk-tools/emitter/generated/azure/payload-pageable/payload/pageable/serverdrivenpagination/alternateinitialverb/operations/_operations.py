@@ -57,7 +57,7 @@ def build_server_driven_pagination_alternate_initial_verb_post_request(  # pylin
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class ServerDrivenPaginationAlternateInitialVerbOperations:  # pylint: disable=name-too-long
+class ServerDrivenPaginationAlternateInitialVerbOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

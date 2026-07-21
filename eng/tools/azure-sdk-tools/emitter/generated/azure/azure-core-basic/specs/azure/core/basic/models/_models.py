@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class User(_Model):
+class User(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a user.
 
     :ivar id: The user's id. Required.
@@ -56,7 +56,7 @@ class User(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserList(_Model):
+class UserList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserList.
 
     :ivar users: Required.
@@ -84,7 +84,7 @@ class UserList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserOrder(_Model):
+class UserOrder(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserOrder for testing list with expand.
 
     :ivar id: The user's id. Required.

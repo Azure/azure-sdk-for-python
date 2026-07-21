@@ -53,7 +53,7 @@ def build_same_body_get_avatar_as_jpeg_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class SameBodyOperations:
+class SameBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
