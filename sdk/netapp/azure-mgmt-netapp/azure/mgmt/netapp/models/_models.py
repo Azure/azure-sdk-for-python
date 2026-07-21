@@ -7073,7 +7073,6 @@ class Volume(TrackedResource):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
-        "breakthrough_mode_old",
         "breakthrough_mode",
     ]
 
@@ -7563,7 +7562,6 @@ class VolumeGroupVolumeProperties(_Model):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
-        "breakthrough_mode_old",
         "breakthrough_mode",
     ]
 
@@ -8157,9 +8155,6 @@ class VolumeProperties(_Model):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
-    :ivar breakthrough_mode_old: Specifies whether the volume operates in Breakthrough Mode. Known
-     values are: "Enabled" and "Disabled".
-    :vartype breakthrough_mode_old: str or ~azure.mgmt.netapp.models.BreakthroughMode
     :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
      values are: "Enabled" and "Disabled".
     :vartype breakthrough_mode: str or ~azure.mgmt.netapp.models.BreakthroughMode
@@ -8398,11 +8393,6 @@ class VolumeProperties(_Model):
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
     """Space shared by short term clone volume with parent volume in bytes."""
-    breakthrough_mode_old: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
-        name="breakthroughModeOld", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
-     \"Disabled\"."""
     breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
         name="breakthroughMode", visibility=["read", "create"]
     )
@@ -8454,7 +8444,6 @@ class VolumeProperties(_Model):
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
-        breakthrough_mode_old: Optional[Union[str, "_models.BreakthroughMode"]] = None,
         breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = None,
     ) -> None: ...
 

@@ -6261,7 +6261,6 @@ namespace azure.mgmt.netapp.models
         backup_id: Optional[str]
         baremetal_tenant_id: Optional[str]
         breakthrough_mode: Optional[Union[str, BreakthroughMode]]
-        breakthrough_mode_old: Optional[Union[str, BreakthroughMode]]
         capacity_pool_resource_id: Optional[str]
         clone_progress: Optional[int]
         cool_access: Optional[bool]
@@ -6324,7 +6323,6 @@ namespace azure.mgmt.netapp.models
                 avs_data_store: Optional[Union[str, AvsDataStore]] = ..., 
                 backup_id: Optional[str] = ..., 
                 breakthrough_mode: Optional[Union[str, BreakthroughMode]] = ..., 
-                breakthrough_mode_old: Optional[Union[str, BreakthroughMode]] = ..., 
                 capacity_pool_resource_id: Optional[str] = ..., 
                 cool_access: Optional[bool] = ..., 
                 cool_access_retrieval_policy: Optional[Union[str, CoolAccessRetrievalPolicy]] = ..., 
@@ -10604,7 +10602,6 @@ namespace azure.mgmt.netapp.types
         key "backupId": Optional[str]
         key "baremetalTenantId": str
         key "breakthroughMode": Union[str, BreakthroughMode]
-        key "breakthroughModeOld": Union[str, BreakthroughMode]
         key "capacityPoolResourceId": str
         key "cloneProgress": Optional[int]
         key "coolAccess": bool
@@ -10660,7 +10657,6 @@ namespace azure.mgmt.netapp.types
         backup_id: str
         baremetal_tenant_id: str
         breakthrough_mode: Union[str, BreakthroughMode]
-        breakthrough_mode_old: Union[str, BreakthroughMode]
         capacity_pool_resource_id: str
         clone_progress: int
         cool_access: bool

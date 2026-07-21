@@ -62,7 +62,6 @@ class TestNetAppManagementVolumeGroupsOperations(AzureMgmtRecordedTestCase):
                                 "backupId": "str",
                                 "baremetalTenantId": "str",
                                 "breakthroughMode": "str",
-                                "breakthroughModeOld": "str",
                                 "capacityPoolResourceId": "str",
                                 "cloneProgress": 0,
                                 "coolAccess": bool,

@@ -3248,9 +3248,6 @@ class VolumeProperties(TypedDict, total=False):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
-    :ivar breakthrough_mode_old: Specifies whether the volume operates in Breakthrough Mode. Known
-     values are: "Enabled" and "Disabled".
-    :vartype breakthrough_mode_old: Union[str, "BreakthroughMode"]
     :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
      values are: "Enabled" and "Disabled".
     :vartype breakthrough_mode: Union[str, "BreakthroughMode"]
@@ -3421,9 +3418,6 @@ class VolumeProperties(TypedDict, total=False):
     """Id of the snapshot or backup that the volume is restored from."""
     inheritedSizeInBytes: Optional[int]
     """Space shared by short term clone volume with parent volume in bytes."""
-    breakthroughModeOld: Union[str, "BreakthroughMode"]
-    """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
-     \"Disabled\"."""
     breakthroughMode: Union[str, "BreakthroughMode"]
     """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
      \"Disabled\"."""
