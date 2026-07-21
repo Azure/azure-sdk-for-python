@@ -1,6 +1,0 @@
-{
-  "apispec": {
-    "required": false,
-    "reason": "The task adds an internal engineering CLI subcommand (azpysdk ci), not a shipped REST/RPC/SDK contract or schema; the relevant CLI invocation contract is captured in specs/functional.md."
-  }
-}

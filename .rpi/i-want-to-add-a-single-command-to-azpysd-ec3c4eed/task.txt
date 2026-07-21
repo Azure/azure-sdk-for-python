@@ -1,1 +1,0 @@
-i want to add a single command to azpysdk like `azpysdk ci` that could run all ci checks that would run for my changes, e.g. verify links, other azpysdk linting like black, etc.
