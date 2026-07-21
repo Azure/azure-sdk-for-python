@@ -13,61 +13,6 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileID,
 )
 
-# *********************************************************************************************
-# BEGIN - These are duplicates of full classes implementation in _models.py.
-# *********************************************************************************************
-
-class ModelSamplingConfig(TypedDict, total=False):
-    """Represents a set of parameters used to control the sampling behavior of a language model
-    during text generation.
-    """
-
-    temperature: float
-    """The temperature parameter for sampling. Required."""
-    top_p: float
-    """The top-p parameter for nucleus sampling. Required."""
-    seed: int
-    """The random seed for reproducibility. Required."""
-    max_completion_tokens: int
-    """The maximum number of tokens allowed in the completion. Required."""
-
-
-class ToolDescription(TypedDict, total=False):
-    """Description of a tool that can be used by an agent."""
-
-    name: str
-    """The name of the tool."""
-    description: str
-    """A brief description of the tool's purpose."""
-
-
-class AzureAIAgentTarget(TypedDict, total=False):
-    """Represents a target specifying an Azure AI agent."""
-
-    type: Required[Literal["azure_ai_agent"]]
-    """The type of target, always ``azure_ai_agent``. Required. Default value is \"azure_ai_agent\"."""
-    name: Required[str]
-    """The unique identifier of the Azure AI agent. Required."""
-    version: str
-    """The version of the Azure AI agent."""
-    tool_descriptions: List[ToolDescription]
-    """The parameters used to control the sampling behavior of the agent during text generation."""
-
-
-class AzureAIModelTarget(TypedDict, total=False):
-    """Represents a target specifying an Azure AI model for operations requiring model selection."""
-
-    type: Required[Literal["azure_ai_model"]]
-    """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
-    model: str
-    """The unique identifier of the Azure AI model."""
-    sampling_params: ModelSamplingConfig
-    """The parameters used to control the sampling behavior of the model during text generation."""
-
-# *************************************************************************************************
-# END - Typed re-definitions
-# *************************************************************************************************
-
 class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
     """Represents the parameters for response retrieval item generation."""
 
@@ -217,18 +162,14 @@ class TracesPreviewEvalRunDataSource(TypedDict, total=False):
 
 
 __all__ = [
-    "AzureAIAgentTarget",
     "AzureAIBenchmarkPreviewEvalRunDataSource",
     "AzureAIDataSourceConfig",
-    "AzureAIModelTarget",
     "AzureAIResponsesEvalRunDataSource",
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
     "TestingCriterionAzureAIEvaluator",
-    "ModelSamplingConfig",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
-    "ToolDescription",
     "TracesPreviewEvalRunDataSource",
 ]
