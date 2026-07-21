@@ -9,12 +9,15 @@
 - Fixed `DeploymentTemplate.creation_context` always being `None` when retrieved via `get()` or `list()`. The created/modified timestamps and identity returned by the service (as `createdTime` / `modifiedTime` / `createdBy`) are now populated on `creation_context`, making `DeploymentTemplate` consistent with `Model` and `Environment`.
 - Fixed `deployment_templates.list(name=...)` raising `AttributeError: 'str' object has no attribute 'request_timeout'`. In the list response, `requestSettings` / `livenessProbe` / `readinessProbe` arrive as stringified dicts nested under `properties`; these are now parsed before conversion, giving `list()` parity with `models.list()` / `environments.list()`.
 - Fixed `deployment_templates.get(name)` failing with a 404 (`DeploymentTemplate {name}:latest not found`) when no version was supplied, because the literal string `"latest"` was sent as the version. The latest version is now resolved client-side (the service exposes no `latest` label and no server-side ordering), and `get()` accepts a `label` keyword (`label="latest"` resolves to the latest version) mirroring `models.get()`. `delete(name)` resolves the latest version the same way.
+- Fixed `models.get(name, label="latest")` returning a `Model` whose `default_deployment_template` / `allowed_deployment_templates` references had `asset_id=None`. Label resolution goes through the version list endpoint (`top=1`), whose items omit the deployment-template references; for registry models the resolved version is now re-fetched through the get endpoint, so the label path hydrates these references identically to the explicit `version=` path.
 
 ### Other Changes
 
-## 1.34.1 (unreleased)
+## 1.34.1 (2026-07-15)
 
-### Bugs Fixed
+### Bugs Fixed 
+
+- Fixed `datastore create` failing with `TypeError: Object of type Datastore is not JSON serializable`. The datastore operation was migrated to the TypeSpec client while the datastore entity still produced a legacy msrest model; the request body is now serialized to its wire form before being sent, keeping the on-the-wire request unchanged.
 - Fixed `BatchEndpoint` defaults serialization regression where `deployment_name` was sent to the service as snake_case instead of camelCase (`deploymentName`), causing `begin_create_or_update` to fail with "Could not find member 'deployment_name' on object of type 'BatchEndpointDefaults'". Serialization now emits the correct camelCase wire format, while `BatchEndpoint.defaults` returned from `get()` continues to expose an object that supports attribute access (e.g. `endpoint.defaults.deployment_name`), preserving backward compatibility with existing code and samples.
 
 ## 1.34.0 (2026-06-11)
@@ -23,8 +26,6 @@
 
 ### Bugs Fixed
 
-
-- Fixed `datastore create` failing with `TypeError: Object of type Datastore is not JSON serializable`. The datastore operation was migrated to the TypeSpec client while the datastore entity still produced a legacy msrest model; the request body is now serialized to its wire form before being sent, keeping the on-the-wire request unchanged.
 - Fixed cross-tenant registry endpoint resolution for deployment template operations by using the registry discovery API instead of ARM calls.
 - Fixed deployment template update failing with immutable field errors by ensuring `allowedInstanceType` and `allowedEnvironmentVariableOverrides` are properly round-tripped during serialization.
 

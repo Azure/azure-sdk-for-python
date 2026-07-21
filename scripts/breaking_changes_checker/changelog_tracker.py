@@ -22,6 +22,7 @@ class ChangeType(str, Enum):
     ADDED_ENUM_MEMBER = "AddedEnumMember"
     ADDED_FUNCTION_PARAMETER = "AddedFunctionParameter"
     ADDED_OPERATION_GROUP = "AddedOperationGroup"
+    ADDED_OPERATION_GROUP_CLASS = "AddedOperationGroupClass"
 
 class ChangelogTracker(BreakingChangesTracker):
     ADDED_CLIENT_MSG = \
@@ -46,6 +47,8 @@ class ChangelogTracker(BreakingChangesTracker):
         "Enum `{}` added member `{}`"
     ADDED_OPERATION_GROUP_MSG = \
         "Client `{}` added operation group `{}`"
+    ADDED_OPERATION_GROUP_CLASS_MSG = \
+        "Added operation group `{}`"
 
 
     def __init__(self, stable: Dict, current: Dict, package_name: str, **kwargs: Any) -> None:
@@ -84,6 +87,14 @@ class ChangelogTracker(BreakingChangesTracker):
                         fa = (
                             self.ADDED_ENUM_MSG,
                             ChangeType.ADDED_ENUM,
+                            self.module_name, class_name
+                        )
+                        self.features_added.append(fa)
+                    elif self.is_operation_group(self.module_name, self.class_name):
+                        # This is a new operation group class
+                        fa = (
+                            self.ADDED_OPERATION_GROUP_CLASS_MSG,
+                            ChangeType.ADDED_OPERATION_GROUP_CLASS,
                             self.module_name, class_name
                         )
                         self.features_added.append(fa)

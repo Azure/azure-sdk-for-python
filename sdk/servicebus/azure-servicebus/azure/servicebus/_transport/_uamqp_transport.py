@@ -848,6 +848,15 @@ try:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
+        @staticmethod
+        def drain_and_release_messages(handler: "ReceiveClient") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default). uamqp is deprecated.
+            :param ~uamqp.ReceiveClient handler: The handler.
+            :rtype: None
+            """
+
         # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
         @staticmethod

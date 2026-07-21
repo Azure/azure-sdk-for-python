@@ -14,6 +14,9 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
+  - name: VariableGroups
+    type: object
+    default: []
   - name: MaxParallel
     type: number
     default: 0
@@ -108,6 +111,9 @@ extends:
           - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
             - stage:
               displayName: ${{ format('{0} {1} {2}', cloud.key, parameters.JobName, package) }}
+              variables:
+                - ${{ each group in parameters.VariableGroups }}:
+                  - group: ${{ group }}
               dependsOn: []
               jobs:
                 - template: /eng/common/pipelines/templates/jobs/generate-job-matrix.yml

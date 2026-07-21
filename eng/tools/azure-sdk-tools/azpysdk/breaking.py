@@ -128,8 +128,15 @@ class breaking(Check):
             )
             logger.info(f"Processing {package_name} for breaking check...")
 
-            # install dependencies
-            self.install_dev_reqs(executable, args, package_dir)
+            use_apistub = getattr(args, "use_apistub", False)
+
+            # The apistub path builds the code report via static analysis (apistub generates
+            # api.md and it is converted to a report); the target package is never imported.
+            # So installing dev requirements and building/installing the package sdist is only
+            # needed for the default (import-based) path. Skip both in apistub mode.
+            if not use_apistub:
+                # install dependencies
+                self.install_dev_reqs(executable, args, package_dir)
 
             try:
                 install_into_venv(
@@ -144,17 +151,18 @@ class breaking(Check):
                 results.append(1)
                 continue
 
-            create_package_and_install(
-                distribution_directory=staging_directory,
-                target_setup=package_dir,
-                skip_install=False,
-                cache_dir=None,
-                work_dir=staging_directory,
-                force_create=False,
-                package_type="sdist",
-                pre_download_disabled=False,
-                python_executable=executable,
-            )
+            if not use_apistub:
+                create_package_and_install(
+                    distribution_directory=staging_directory,
+                    target_setup=package_dir,
+                    skip_install=False,
+                    cache_dir=None,
+                    work_dir=staging_directory,
+                    force_create=False,
+                    package_type="sdist",
+                    pre_download_disabled=False,
+                    python_executable=executable,
+                )
 
             try:
                 cmd = [
