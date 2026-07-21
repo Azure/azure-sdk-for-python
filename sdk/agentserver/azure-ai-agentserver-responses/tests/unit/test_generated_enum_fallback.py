@@ -13,4 +13,4 @@ def test_generated_enum_fallback_rejects_unknown_members() -> None:
     assert _enums.AnnotationType.FILECITATION.value == "file_citation"
 
     with pytest.raises(AttributeError):
-        _enums.AnnotationType.FILECIATION
+        _enums.AnnotationType.UNKNOWN_MEMBER
