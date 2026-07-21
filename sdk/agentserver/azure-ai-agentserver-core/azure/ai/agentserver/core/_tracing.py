@@ -243,29 +243,18 @@ def _setup_distro_export(
     # Azure Monitor export is off by default in the distro — enable it
     # when a connection string is available.
     if connection_string:
+        kwargs["enable_azure_monitor"] = True
+        kwargs["azure_monitor_connection_string"] = connection_string
+
         # When Entra-based auth is requested, export to Azure Monitor using a
         # system-assigned managed identity (no client id) rather than the
-        # connection string's instrumentation key alone.
+        # connection string's instrumentation key alone. azure-identity is
+        # always available transitively via microsoft-opentelemetry.
         auth_mode = os.environ.get("APPLICATIONINSIGHTS_AUTH_MODE", "")
-        entra_auth = auth_mode.strip().lower() == "entra"
-        credential = _create_managed_identity_credential() if entra_auth else None
+        if auth_mode.strip().lower() == "entra":
+            from azure.identity import ManagedIdentityCredential
 
-        if entra_auth and credential is None:
-            # Entra was explicitly requested but no credential is available
-            # (azure-identity missing). Do NOT enable Azure Monitor, since the
-            # distro would otherwise silently fall back to instrumentation-key
-            # auth and bypass the requested Entra-only mode. Other exporters
-            # (A365, OTLP) below are unaffected.
-            logger.warning(
-                "APPLICATIONINSIGHTS_AUTH_MODE=Entra requested but no managed identity "
-                "credential is available (ensure azure-identity is installed) — "
-                "Azure Monitor export disabled."
-            )
-        else:
-            kwargs["enable_azure_monitor"] = True
-            kwargs["azure_monitor_connection_string"] = connection_string
-            if credential is not None:
-                kwargs["azure_monitor_exporter_credential"] = credential
+            kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
     if (
@@ -278,25 +267,6 @@ def _setup_distro_export(
         kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
-
-
-def _create_managed_identity_credential() -> Optional[Any]:
-    """Create a system-assigned :class:`ManagedIdentityCredential`.
-
-    Instantiated without a ``client_id`` so the platform-assigned (system)
-    managed identity is used for Entra-based Azure Monitor export.  Returns
-    ``None`` quietly when ``azure-identity`` is not installed; the caller is
-    responsible for emitting a single actionable warning and disabling Azure
-    Monitor export on that path.
-
-    :return: A managed identity credential, or ``None`` if unavailable.
-    :rtype: Any or None
-    """
-    try:
-        from azure.identity import ManagedIdentityCredential
-    except ImportError:
-        return None
-    return ManagedIdentityCredential()
 
 
 # ======================================================================
