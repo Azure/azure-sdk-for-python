@@ -79,6 +79,7 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 _OTLP_HTTP_PROTOBUF = "http/protobuf"
 _OTLP_GRPC = "grpc"
+_OTLP_GRPC_EXTRA = "azure-ai-agentserver-core[otlp-grpc]"
 _OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _OTLP_PROTOCOL = "OTEL_EXPORTER_OTLP_PROTOCOL"
 _OTLP_TRACES_ENDPOINT = "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"
@@ -312,18 +313,26 @@ def _append_grpc_otlp_components(
     if not _is_otlp_enabled() or _resolve_otlp_protocol() != _OTLP_GRPC:
         return False
 
-    from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
-        OTLPLogExporter as GrpcLogExporter,
-    )
-    from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
-        OTLPMetricExporter as GrpcMetricExporter,
-    )
-    from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
-        OTLPSpanExporter as GrpcSpanExporter,
-    )
-    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
-    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
-    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    try:
+        from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
+            OTLPLogExporter as GrpcLogExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+            OTLPMetricExporter as GrpcMetricExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+            OTLPSpanExporter as GrpcSpanExporter,
+        )
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+        from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+    except ImportError:
+        logger.warning(
+            "OTLP/gRPC export was requested, but the optional gRPC exporter "
+            "dependencies are not installed. Install %s to enable OTLP/gRPC export.",
+            _OTLP_GRPC_EXTRA,
+        )
+        return True
 
     span_processors.append(BatchSpanProcessor(GrpcSpanExporter()))
     metric_readers.append(PeriodicExportingMetricReader(GrpcMetricExporter()))

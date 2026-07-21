@@ -144,10 +144,11 @@ python my_agent.py
 ```
 
 OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
-is the default protocol; set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` to use an
-OTLP/gRPC collector:
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
 
 ```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
 export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
 export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
 python my_agent.py

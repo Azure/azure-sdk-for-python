@@ -147,6 +147,32 @@ class TestSetupDistroExport:
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] is None
 
+    def test_grpc_protocol_without_optional_extra_logs_warning(self, caplog) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        original_import = __import__
+
+        def import_without_grpc_exporter(name, *args, **kwargs):
+            if name.startswith("opentelemetry.exporter.otlp.proto.grpc"):
+                raise ImportError(name)
+            return original_import(name, *args, **kwargs)
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                },
+            ),
+            mock.patch("builtins.__import__", side_effect=import_without_grpc_exporter),
+            caplog.at_level("WARNING", logger="azure.ai.agentserver"),
+        ):
+            suppress_distro_otlp = _tracing._append_grpc_otlp_components([], [], [])
+
+        assert suppress_distro_otlp is True
+        assert "azure-ai-agentserver-core[otlp-grpc]" in caplog.text
+
 
 # ------------------------------------------------------------------ #
 # Constructor passes / skips connection string
