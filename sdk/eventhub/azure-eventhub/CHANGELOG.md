@@ -1,5 +1,11 @@
 # Release History
 
+## 5.15.2 (Unreleased)
+
+### Other Changes
+
+- Changed logs that contain exception details to the debug level. This follows the Azure SDK guidelines for sensitive data in logs (pylint rules C4766 and C4762). ([#40743](https://github.com/Azure/azure-sdk-for-python/issues/40743))
+
 ## 5.15.1 (2025-11-11)
 
 ### Bugs Fixed
