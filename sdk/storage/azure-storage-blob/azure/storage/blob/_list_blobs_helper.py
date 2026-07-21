@@ -50,7 +50,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
     :returns: A tuple of next marker and a list of BlobProperties.
     :rtype: Tuple[Optional[str], List[~azure.storage.blob.BlobProperties]]
     """
-    from nanoarrow import ArrayStream  # pylint: disable=import-outside-toplevel
+    from nanoarrow import ArrayStream, Type  # pylint: disable=import-outside-toplevel
     from nanoarrow.ipc import InputStream  # pylint: disable=import-outside-toplevel
 
     # Declarative mapping: Arrow column name -> (BlobProperties attr, default value).
@@ -128,6 +128,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 next_marker = next_marker or None
 
         field_names = [field.name for field in schema.fields]
+        field_types = [field.type for field in schema.fields]
 
         for batch in reader:
             num_rows = len(batch)
@@ -136,9 +137,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
             cols = {}
             for i in range(batch.n_children):
                 child = batch.child(i)
-                try:
-                    values = child.to_pylist()
-                except KeyError:
+                if field_types[i] == Type.MAP:
                     offsets = list(child.buffer(1))
                     entries = child.child(0)
                     keys = entries.child(0).to_pylist()
@@ -146,12 +145,13 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                     values = [
                         {keys[j]: map_values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
                     ]
+                elif field_types[i] == Type.TIMESTAMP:
+                    values = [
+                        v.replace(tzinfo=timezone.utc) if isinstance(v, datetime) and v.tzinfo is None else v
+                        for v in child.to_pylist()
+                    ]
                 else:
-                    if any(isinstance(v, datetime) and v.tzinfo is None for v in values):
-                        values = [
-                            v.replace(tzinfo=timezone.utc) if isinstance(v, datetime) and v.tzinfo is None else v
-                            for v in values
-                        ]
+                    values = child.to_pylist()
                 cols[field_names[i]] = values
 
             for row in range(num_rows):
