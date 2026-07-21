@@ -245,3 +245,6 @@ def test_otlp_protocol_exports_all_signals(
         f"{protocol} receiver got {sorted(receiver.signals)} instead of "
         f"{sorted(_SIGNALS)}.\nsubprocess stderr:\n{result.stderr}"
     )
+    if protocol == "grpc":
+        assert "otlp-test-span" not in result.stdout
+        assert "otlp-test-log" not in result.stdout

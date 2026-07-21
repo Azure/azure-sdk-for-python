@@ -168,10 +168,80 @@ class TestSetupDistroExport:
             mock.patch("builtins.__import__", side_effect=import_without_grpc_exporter),
             caplog.at_level("WARNING", logger="azure.ai.agentserver"),
         ):
-            suppress_distro_otlp = _tracing._append_grpc_otlp_components([], [], [])
+            suppress_distro_otlp = _tracing._append_managed_otlp_components([], [], [])
 
         assert suppress_distro_otlp is True
         assert "azure-ai-agentserver-core[otlp-grpc]" in caplog.text
+
+    def test_signal_specific_otlp_protocol_overrides_global(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+                "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "grpc",
+            },
+        ):
+            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_TRACES_PROTOCOL") == "grpc"
+            assert _tracing._resolve_otlp_protocol("OTEL_EXPORTER_OTLP_METRICS_PROTOCOL") == "http/protobuf"
+
+    def test_managed_otlp_handles_mixed_signal_protocols(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "http/protobuf",
+                "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "grpc",
+            },
+        ):
+            span_processors = []
+            metric_readers = []
+            log_record_processors = []
+            suppress_distro_otlp = _tracing._append_managed_otlp_components(
+                span_processors,
+                metric_readers,
+                log_record_processors,
+            )
+
+        try:
+            assert suppress_distro_otlp is True
+            assert len(span_processors) == 1
+            assert len(metric_readers) == 1
+            assert len(log_record_processors) == 1
+            assert span_processors[0].span_exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.grpc"
+            )
+            assert metric_readers[0]._exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.http"
+            )
+            assert log_record_processors[0]._batch_processor._exporter.__module__.startswith(
+                "opentelemetry.exporter.otlp.proto.http"
+            )
+        finally:
+            for processor in span_processors + log_record_processors:
+                processor.shutdown()
+            for reader in metric_readers:
+                reader.shutdown()
+
+    def test_suppressing_distro_otlp_leaves_env_visible(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+
+        with mock.patch.dict(
+            os.environ,
+            {
+                "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+            },
+        ):
+            with _tracing._suppress_distro_otlp_components():
+                import microsoft.opentelemetry as microsoft_opentelemetry
+
+                distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+                assert distro_globals["is_otlp_enabled"]()
+                assert os.environ["OTEL_EXPORTER_OTLP_PROTOCOL"] == "grpc"
 
 
 # ------------------------------------------------------------------ #

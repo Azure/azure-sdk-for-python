@@ -83,14 +83,20 @@ _OTLP_GRPC_EXTRA = "azure-ai-agentserver-core[otlp-grpc]"
 _OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _OTLP_PROTOCOL = "OTEL_EXPORTER_OTLP_PROTOCOL"
 _OTLP_TRACES_ENDPOINT = "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"
+_OTLP_TRACES_PROTOCOL = "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL"
 _OTLP_METRICS_ENDPOINT = "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT"
+_OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
 _OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
+_OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
 _OTLP_ENV_VARS = (
     _OTLP_ENDPOINT,
     _OTLP_PROTOCOL,
     _OTLP_TRACES_ENDPOINT,
+    _OTLP_TRACES_PROTOCOL,
     _OTLP_METRICS_ENDPOINT,
+    _OTLP_METRICS_PROTOCOL,
     _OTLP_LOGS_ENDPOINT,
+    _OTLP_LOGS_PROTOCOL,
 )
 
 
@@ -213,14 +219,14 @@ def _configure_tracing(
         ),
     ]
     metric_readers: list[Any] = []
-    suppress_distro_otlp = _append_grpc_otlp_components(
+    suppress_distro_otlp = _append_managed_otlp_components(
         resolved_span_processors,
         metric_readers,
         log_record_processors,
     )
 
     try:
-        context = _without_otlp_env() if suppress_distro_otlp else nullcontext()
+        context = _suppress_distro_otlp_components() if suppress_distro_otlp else nullcontext()
         with context:
             _setup_distro_export(
                 resource=resource,
@@ -288,31 +294,41 @@ def _setup_distro_export(
     use_microsoft_opentelemetry(**kwargs)
 
 
-def _append_grpc_otlp_components(
+def _append_managed_otlp_components(
     span_processors: list[Any],
     metric_readers: list[Any],
     log_record_processors: list[Any],
 ) -> bool:
-    """Append SDK-managed OTLP/gRPC exporters when requested by env vars.
+    """Append SDK-managed OTLP exporters when any signal requests gRPC.
 
     The Microsoft OpenTelemetry distro currently owns the normal OTLP path but
     only bundles the HTTP/protobuf exporter. Agent Server handles the gRPC
-    protocol here so customers only need to set OTLP environment variables.
-    Returns True when OTLP environment variables should be hidden from the
-    distro call so it does not also create HTTP/protobuf exporters.
+    protocol here so customers only need to set OTLP environment variables. If
+    any signal uses gRPC, Agent Server also creates HTTP/protobuf exporters for
+    non-gRPC OTLP signals so mixed signal-specific protocol settings work.
+    Returns True when the distro OTLP appender should be suppressed so it does
+    not also create HTTP/protobuf exporters.
 
-    :param span_processors: Span processors to append gRPC trace export to.
+    :param span_processors: Span processors to append trace export to.
     :type span_processors: list[~typing.Any]
-    :param metric_readers: Metric readers to append gRPC metric export to.
+    :param metric_readers: Metric readers to append metric export to.
     :type metric_readers: list[~typing.Any]
-    :param log_record_processors: Log record processors to append gRPC log export to.
+    :param log_record_processors: Log record processors to append log export to.
     :type log_record_processors: list[~typing.Any]
-    :return: Whether OTLP environment variables should be hidden from the distro call.
+    :return: Whether distro OTLP exporters should be suppressed.
     :rtype: bool
     """
-    if not _is_otlp_enabled() or _resolve_otlp_protocol() != _OTLP_GRPC:
+    if not _is_otlp_enabled():
         return False
 
+    trace_protocol = _resolve_otlp_protocol(_OTLP_TRACES_PROTOCOL)
+    metric_protocol = _resolve_otlp_protocol(_OTLP_METRICS_PROTOCOL)
+    log_protocol = _resolve_otlp_protocol(_OTLP_LOGS_PROTOCOL)
+    protocols = (trace_protocol, metric_protocol, log_protocol)
+    if _OTLP_GRPC not in protocols:
+        return False
+
+    grpc_exporters: Optional[tuple[Any, Any, Any]] = None
     try:
         from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
             OTLPLogExporter as GrpcLogExporter,
@@ -326,19 +342,59 @@ def _append_grpc_otlp_components(
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
         from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        grpc_exporters = (GrpcSpanExporter, GrpcMetricExporter, GrpcLogExporter)
     except ImportError:
         logger.warning(
             "OTLP/gRPC export was requested, but the optional gRPC exporter "
             "dependencies are not installed. Install %s to enable OTLP/gRPC export.",
             _OTLP_GRPC_EXTRA,
         )
-        return True
 
-    span_processors.append(BatchSpanProcessor(GrpcSpanExporter()))
-    metric_readers.append(PeriodicExportingMetricReader(GrpcMetricExporter()))
-    log_record_processors.append(BatchLogRecordProcessor(GrpcLogExporter()))
+    from opentelemetry.exporter.otlp.proto.http._log_exporter import (
+        OTLPLogExporter as HttpLogExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
+        OTLPMetricExporter as HttpMetricExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+        OTLPSpanExporter as HttpSpanExporter,
+    )
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+    if trace_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            span_processors.append(BatchSpanProcessor(grpc_exporters[0]()))
+    else:
+        span_processors.append(BatchSpanProcessor(HttpSpanExporter()))
+
+    if metric_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            metric_readers.append(PeriodicExportingMetricReader(grpc_exporters[1]()))
+    else:
+        metric_readers.append(PeriodicExportingMetricReader(HttpMetricExporter()))
+
+    if log_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            log_record_processors.append(BatchLogRecordProcessor(grpc_exporters[2]()))
+    else:
+        log_record_processors.append(BatchLogRecordProcessor(HttpLogExporter()))
 
     return True
+
+
+def _append_grpc_otlp_components(
+    span_processors: list[Any],
+    metric_readers: list[Any],
+    log_record_processors: list[Any],
+) -> bool:
+    return _append_managed_otlp_components(
+        span_processors,
+        metric_readers,
+        log_record_processors,
+    )
 
 
 def _is_otlp_enabled() -> bool:
@@ -353,8 +409,9 @@ def _is_otlp_enabled() -> bool:
     )
 
 
-def _resolve_otlp_protocol() -> str:
-    protocol = os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
+def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
+    protocol = os.environ.get(signal_protocol_env) if signal_protocol_env else None
+    protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
     normalized = protocol.strip().lower()
     if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
         raise ValueError(
@@ -365,16 +422,20 @@ def _resolve_otlp_protocol() -> str:
 
 
 @contextmanager
-def _without_otlp_env() -> Any:
-    saved = {
-        env_var: os.environ.pop(env_var)
-        for env_var in _OTLP_ENV_VARS
-        if env_var in os.environ
-    }
+def _suppress_distro_otlp_components() -> Any:
+    import microsoft.opentelemetry as microsoft_opentelemetry
+
+    distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+    original_append_otlp_components = distro_globals["_append_otlp_components"]
+
+    def _skip_otlp_components(_otel_kwargs: dict[str, Any]) -> None:
+        return None
+
+    distro_globals["_append_otlp_components"] = _skip_otlp_components
     try:
         yield
     finally:
-        os.environ.update(saved)
+        distro_globals["_append_otlp_components"] = original_append_otlp_components
 
 
 # ======================================================================
