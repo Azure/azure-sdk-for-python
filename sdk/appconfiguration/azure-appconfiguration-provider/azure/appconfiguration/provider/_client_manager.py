@@ -490,11 +490,6 @@ class ConfigurationClientManager(ConfigurationClientManagerBase):  # pylint:disa
             self._next_update_time = time.time() + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
             return
 
-        if len(failover_endpoints) == 0:
-            # No failover endpoints in SRV record.
-            self._next_update_time = time.time() + MINIMAL_CLIENT_REFRESH_INTERVAL
-            return
-
         discovered_clients = []
         for failover_endpoint in failover_endpoints:
             found_client = False

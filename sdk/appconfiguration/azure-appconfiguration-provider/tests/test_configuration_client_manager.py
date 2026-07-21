@@ -348,6 +348,36 @@ class TestConfigurationClientManager(unittest.TestCase):
         )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_empty_removes_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # Discover a replica
+        replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        mock_client.return_value = replica
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        manager.refresh_clients()
+        assert len(manager._replica_clients) == 2
+
+        # A subsequent successful discovery with no replicas (e.g. the last replica was deleted)
+        # closes and removes the discovered client, leaving only the original.
+        replica.close = Mock()
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        manager.refresh_clients()
+        replica.close.assert_called_once()
+        assert len(manager._replica_clients) == 1
+        assert manager._replica_clients[0] is manager._original_client
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     def test_calculate_backoff(self, mock_update_failover_endpoints):
         endpoint = "https://fake.endpoint"
         mock_update_failover_endpoints.return_value = []
