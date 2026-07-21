@@ -40,6 +40,7 @@ Protocol packages (e.g. `azure-ai-agentserver-invocations`) subclass `AgentServe
 | `FOUNDRY_PROJECT_ARM_ID` | Foundry project ARM resource ID (used in tracing) | `""` |
 | `FOUNDRY_AGENT_SESSION_ID` | Default session ID when not provided per-request | `""` |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Azure Monitor connection string | — |
+| `APPLICATIONINSIGHTS_AUTH_MODE` | Azure Monitor authentication mode. Set to `Entra` to authenticate with a system-assigned managed identity instead of the connection string's instrumentation key. Requires `azure-identity`. | — |
 | `OTEL_EXPORTER_OTLP_ENDPOINT` | OTLP collector endpoint | — |
 
 ## Examples
@@ -175,6 +176,25 @@ Or via environment variable:
 export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
+
+#### Entra-based authentication
+
+By default the Azure Monitor exporter authenticates with the instrumentation key
+embedded in the connection string. To authenticate with Microsoft Entra ID
+instead, set `APPLICATIONINSIGHTS_AUTH_MODE` to `Entra`. In this mode the exporter
+uses a **system-assigned managed identity** (no client ID) to obtain tokens:
+
+```bash
+export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
+export APPLICATIONINSIGHTS_AUTH_MODE="Entra"
+python my_agent.py
+```
+
+Entra mode requires the [`azure-identity`](https://pypi.org/project/azure-identity/)
+package. It is normally present transitively, but if it is unavailable the Azure
+Monitor exporter is disabled (after a warning) rather than silently falling back
+to instrumentation-key authentication. Other exporters (OTLP, Agent 365) are
+unaffected.
 
 ## Troubleshooting
 

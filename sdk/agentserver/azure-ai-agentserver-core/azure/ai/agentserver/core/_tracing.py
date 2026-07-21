@@ -258,7 +258,8 @@ def _setup_distro_export(
             # (A365, OTLP) below are unaffected.
             logger.warning(
                 "APPLICATIONINSIGHTS_AUTH_MODE=Entra requested but no managed identity "
-                "credential is available — Azure Monitor export disabled."
+                "credential is available (ensure azure-identity is installed) — "
+                "Azure Monitor export disabled."
             )
         else:
             kwargs["enable_azure_monitor"] = True
@@ -284,8 +285,9 @@ def _create_managed_identity_credential() -> Optional[Any]:
 
     Instantiated without a ``client_id`` so the platform-assigned (system)
     managed identity is used for Entra-based Azure Monitor export.  Returns
-    ``None`` when ``azure-identity`` is not installed so tracing setup can
-    continue without export credentials.
+    ``None`` quietly when ``azure-identity`` is not installed; the caller is
+    responsible for emitting a single actionable warning and disabling Azure
+    Monitor export on that path.
 
     :return: A managed identity credential, or ``None`` if unavailable.
     :rtype: Any or None
@@ -293,10 +295,6 @@ def _create_managed_identity_credential() -> Optional[Any]:
     try:
         from azure.identity import ManagedIdentityCredential
     except ImportError:
-        logger.warning(
-            "APPLICATIONINSIGHTS_AUTH_MODE=Entra requires azure-identity, "
-            "which is not installed — Azure Monitor export credential disabled."
-        )
         return None
     return ManagedIdentityCredential()
 
