@@ -1,7 +1,7 @@
 [project]
-name = "azure-ai-agentserver-invocations"
+name = "azure-ai-agentserver-activity"
 dynamic = ["version", "readme"]
-description = "Invocations protocol for Azure AI Hosted Agents"
+description = "Activity protocol host for Azure AI Hosted Agents"
 requires-python = ">=3.10"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
@@ -18,27 +18,30 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "activity"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b7",
-    # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
-    # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
-    # (<4.0.0 still admits 4.0.0a1 under PEP 440).
+    "opentelemetry-api>=1.43.0",
     "aiohttp>=3.10.0,<4.0.0a0",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
 ]
 
 [dependency-groups]
 # keep in sync with dev_requirements.txt
 dev = [
-    "azure-identity",
-    "azure-monitor-query",
     "azure-sdk-tools",
-    "httpx",
-    "opentelemetry-api>=1.40.0",
-    "opentelemetry-sdk>=1.40.0",
+    "opentelemetry-sdk>=1.43.0",
     "pytest-asyncio",
     "pytest",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
+    "azure-monitor-query",
 ]
 
 [project.urls]
@@ -59,11 +62,11 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "azure.ai.agentserver.invocations._version.VERSION" }
+version = { attr = "azure.ai.agentserver.activity._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
-"azure.ai.agentserver.invocations" = ["py.typed"]
+"azure.ai.agentserver.activity" = ["py.typed"]
 
 [tool.azure-sdk-build]
 analyze_python_version = "3.11"
@@ -78,6 +81,4 @@ type_check_samples = false
 
 [tool.uv.sources]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
-azure-identity = { path = "../../identity/azure-identity" }
-azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
