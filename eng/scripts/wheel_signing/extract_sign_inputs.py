@@ -134,18 +134,20 @@ def main() -> None:
         print(f"[EXTRACT] wheel={wheel_path.name} signable_count={len(signable_files)}")
         for signable_file in signable_files:
             relative_path = signable_file.relative_to(unpacked_wheel_dir).as_posix()
-            payload_name = f"{payload_index:05d}__{signable_file.name}"
+            payload_subdir = f"{payload_index:05d}"
             payload_index += 1
 
-            payload_path = payload_dir / payload_name
-            shutil.copy2(signable_file, payload_path)
+            payload_path = f"{payload_subdir}/{signable_file.name}"
+            payload_file = payload_dir / payload_subdir / signable_file.name
+            payload_file.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(signable_file, payload_file)
             print(
                 "[MAP_EXTRACT] "
-                f"payload={payload_name} "
+                f"payload={payload_path} "
                 f"source_wheel={wheel_path.name} "
                 f"source_relative_path={relative_path} "
                 f"source_file={signable_file} "
-                f"payload_file={payload_path}"
+                f"payload_file={payload_file}"
             )
 
             manifest["entries"].append(
@@ -153,7 +155,7 @@ def main() -> None:
                     "wheel_filename": wheel_path.name,
                     "unpack_dir": unpack_dir_name,
                     "relative_path": relative_path,
-                    "payload_name": payload_name,
+                    "payload_path": payload_path,
                 }
             )
 

@@ -150,9 +150,9 @@ def main() -> None:
             wheel_filename = entry["wheel_filename"]
             unpack_dir = entry["unpack_dir"]
             relative_path = entry["relative_path"]
-            payload_name = entry["payload_name"]
+            payload_path = entry["payload_path"]
 
-            source_signed_binary = signed_payload_dir / payload_name
+            source_signed_binary = signed_payload_dir / payload_path
             target_binary = unpack_root / unpack_dir / relative_path
 
             if not source_signed_binary.is_file():
@@ -163,7 +163,7 @@ def main() -> None:
             shutil.copy2(source_signed_binary, target_binary)
             print(
                 "[MAP_REPACKAGE] "
-                f"payload={payload_name} "
+                f"payload={payload_path} "
                 f"target_wheel={wheel_filename} "
                 f"target_relative_path={relative_path} "
                 f"signed_source={source_signed_binary} "
