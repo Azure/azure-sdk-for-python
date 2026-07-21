@@ -160,7 +160,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             assert blob.lease.state == "available"
             assert blob.lease.status == "unlocked"
             assert blob.content_settings.content_type == "application/octet-stream"
-            assert isinstance(blob.content_settings.content_md5, (bytes, bytearray))
+            assert isinstance(blob.content_settings.content_md5, bytearray)
 
     def verify_all_fields(self, blob: BlobProperties):
         # Verifies the properties produced by _rich_blob_xml were fully deserialized.
