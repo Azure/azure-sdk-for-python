@@ -1,6 +1,6 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.31.0b1 (2026-07-21)
 
 ### Features Added
 - Added support for service version 2026-10-06.
@@ -17,6 +17,11 @@ properties are now populated on the downloaded blob's `properties`.
 `upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
 `upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
 provided with the request.
+
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
 
 ## 12.30.0 (2026-06-08)
 

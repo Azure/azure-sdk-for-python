@@ -455,6 +455,62 @@ namespace azure.storage.fileshare
         def values(self): ...
 
 
+    class azure.storage.fileshare.FileRange(DictMixin):
+        cleared: bool
+        end: int
+        start: int
+
+        def __contains__(self, key): ...
+
+        def __delitem__(self, key): ...
+
+        def __eq__(self, other): ...
+
+        def __getitem__(self, key): ...
+
+        def __init__(
+                self, 
+                start: int, 
+                end: int, 
+                *, 
+                cleared: bool = False
+            ) -> None: ...
+
+        def __len__(self): ...
+
+        def __ne__(self, other): ...
+
+        def __repr__(self): ...
+
+        def __setitem__(
+                self, 
+                key, 
+                item
+            ): ...
+
+        def __str__(self): ...
+
+        def get(
+                self, 
+                key, 
+                default = None
+            ): ...
+
+        def has_key(self, k): ...
+
+        def items(self): ...
+
+        def keys(self): ...
+
+        def update(
+                self, 
+                *args, 
+                **kwargs
+            ): ...
+
+        def values(self): ...
+
+
     class azure.storage.fileshare.FileSasPermissions:
         create: bool = False
         delete: bool = False
@@ -1509,6 +1565,32 @@ namespace azure.storage.fileshare
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[Handle]: ...
+
+        @distributed_trace
+        def list_ranges(
+                self, 
+                *, 
+                lease: Union[ShareLeaseClient, str] = ..., 
+                length: Optional[int] = ..., 
+                offset: Optional[int] = ..., 
+                results_per_page: Optional[int] = ..., 
+                timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[FileRange]: ...
+
+        @distributed_trace
+        def list_ranges_diff(
+                self, 
+                previous_sharesnapshot: Union[str, Dict[str, Any]], 
+                *, 
+                include_renames: Optional[bool] = ..., 
+                lease: Union[ShareLeaseClient, str] = ..., 
+                length: Optional[int] = ..., 
+                offset: Optional[int] = ..., 
+                results_per_page: Optional[int] = ..., 
+                timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ItemPaged[FileRange]: ...
 
         @distributed_trace
         def rename_file(
@@ -3066,6 +3148,32 @@ namespace azure.storage.fileshare.aio
                 timeout: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[Handle]: ...
+
+        @distributed_trace
+        def list_ranges(
+                self, 
+                *, 
+                lease: Union[ShareLeaseClient, str] = ..., 
+                length: Optional[int] = ..., 
+                offset: Optional[int] = ..., 
+                results_per_page: Optional[int] = ..., 
+                timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[FileRange]: ...
+
+        @distributed_trace
+        def list_ranges_diff(
+                self, 
+                previous_sharesnapshot: Union[str, Dict[str, Any]], 
+                *, 
+                include_renames: Optional[bool] = ..., 
+                lease: Union[ShareLeaseClient, str] = ..., 
+                length: Optional[int] = ..., 
+                offset: Optional[int] = ..., 
+                results_per_page: Optional[int] = ..., 
+                timeout: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> AsyncItemPaged[FileRange]: ...
 
         @distributed_trace_async
         async def rename_file(

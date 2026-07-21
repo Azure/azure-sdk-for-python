@@ -1,8 +1,12 @@
 # Release History
 
-## 12.18.0b1 (Unreleased)
+## 12.18.0b1 (2026-07-21)
 
 ### Features Added
+- Added support for service version 2026-10-06.
+
+### Other Changes
+- Migrated generated code to use the new TypeSpec generator.
 
 ## 12.17.0 (2026-06-08)
 
