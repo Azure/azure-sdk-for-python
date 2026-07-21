@@ -13,17 +13,17 @@ authors = [
 description = "Microsoft Azure Relay Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 keywords = [
     "azure",
     "azure sdk",
@@ -79,10 +79,10 @@ package_name = "azure-mgmt-relay"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Relay"
 package_doc_id = "relay"
-is_stable = true
+is_stable = false
 is_arm = true
 sample_link = ""
-title = "RelayAPI"
+title = "RelayAPIMgmtClient"
 need_msrestazure = false
 need_azuremgmtcore = true
 exclude_folders = ""

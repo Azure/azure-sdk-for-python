@@ -1,5 +1,38 @@
 # Release History
 
+## 4.0.0b1 (2026-07-06)
+
+### Features Added
+
+  - Client `DataBoxManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataBoxManagementClient` added method `send_request`
+  - Model `DeviceErasureDetails` added property `secure_erasure_certificate_sas_key`
+  - Added enum `CreatedByType`
+  - Added model `OperationProperties`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AddressValidationOutput` moved instance variable `validation_type`, `error`, `validation_status` and `alternate_addresses` under property `properties` whose type is `AddressValidationProperties`
+  - Model `JobResource` moved instance variable `transfer_type`, `is_cancellable`, `is_deletable`, `is_shipping_address_editable`, `reverse_shipping_details_update`, `reverse_transport_preference_update`, `is_prepare_to_ship_enabled`, `status`, `delayed_stage`, `start_time`, `error`, `details`, `cancellation_reason`, `delivery_type`, `delivery_info`, `is_cancellable_without_fee` and `all_devices_lost` under property `properties` whose type is `JobProperties`
+  - Model `JobResourceUpdateParameter` moved instance variable `details` under property `properties` whose type is `UpdateJobProperties`
+  - Model `Resource` moved instance variable `location` and `tags` under model `TrackedResource`
+  - Model `JobResource` moved instance variable `sku` and `identity` from base model `Resource` to `JobResource`
+  - Model `SkuInformation` moved instance variable `data_location_to_service_location_map`, `capacity`, `costs`, `api_versions`, `disabled_reason`, `disabled_reason_message`, `required_feature` and `countries_within_commerce_boundary` under property `properties` whose type is `SkuProperties`
+  - Model `ValidationResponse` moved instance variable `status` and `individual_response_details` under property `properties` whose type is `ValidationResponseProperties`
+  - Method `JobsOperations.begin_update` replaced positional_or_keyword parameter `if_match` to keyword_only parameters `etag`/`match_condition`
+  - Method `JobsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `JobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `JobsOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `AvailableSkusResult`/`JobResourceList`/`OperationList`/`UnencryptedCredentialsList` which actually were not used by SDK users
+  - Deleted model `ArmBaseObject` which actually was not used by SDK users
+  - Operation group `DataBoxManagementClientOperationsMixin` renamed to `_DataBoxManagementClientOperationsMixin`
+
 ## 3.1.0 (2025-03-18)
 
 ### Features Added

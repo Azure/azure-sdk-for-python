@@ -4,7 +4,7 @@ parameters:
     default: 'auto'
   - name: VersionForReservation
     type: string
-    default: '0.0.0'
+    default: '0.0.0b1'
 
 jobs:
   - job: generate_namereserve_package
@@ -17,6 +17,10 @@ jobs:
       - task: UsePythonVersion@0
         inputs:
           versionSpec: '3.13'
+
+      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+        parameters:
+          EnableTwineAuth: false
 
       - pwsh: |
           python -m pip install -r eng/ci_tools.txt

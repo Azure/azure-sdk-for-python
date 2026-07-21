@@ -1,5 +1,26 @@
 # Release History
 
+## 38.2.0 (2026-07-15)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added operation group `shared_gallery_invites`
+  - Client `ComputeManagementClient` added operation group `tenant_level_shared_gallery_invites`
+  - Model `DiskRestorePointProperties` added property `snapshot_access_state`
+  - Model `DiskSecurityProfile` added property `confidential_vm_version`
+  - Enum `RollingUpgradeStatusCode` added member `ROLLING_BACK`
+  - Model `SnapshotProperties` added property `immutability_policy`
+  - Enum `UpgradeState` added member `ROLLING_BACK`
+  - Added enum `ConfidentialVMVersion`
+  - Added model `ImmutabilityPolicy`
+  - Added model `ImmutabilityPolicyData`
+  - Added model `ImmutabilityPolicyLockData`
+  - Added enum `ImmutabilityPolicyType`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy_lock`
+  - Added operation group `SharedGalleryInvitesOperations`
+  - Added operation group `TenantLevelSharedGalleryInvitesOperations`
+
 ## 38.1.0 (2026-06-17)
 
 ### Features Added

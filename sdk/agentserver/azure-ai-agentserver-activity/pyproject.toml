@@ -1,0 +1,84 @@
+[project]
+name = "azure-ai-agentserver-activity"
+dynamic = ["version", "readme"]
+description = "Activity protocol host for Azure AI Hosted Agents"
+requires-python = ">=3.10"
+authors = [
+  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+]
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "activity"]
+
+dependencies = [
+    "azure-ai-agentserver-core>=2.0.0b7",
+    "opentelemetry-api>=1.43.0",
+    "aiohttp>=3.10.0,<4.0.0a0",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
+]
+
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "azure-sdk-tools",
+    "opentelemetry-sdk>=1.43.0",
+    "pytest-asyncio",
+    "pytest",
+    "microsoft-agents-hosting-core>=1.0.0",
+    "microsoft-agents-authentication-msal>=1.0.0",
+    "microsoft-agents-activity>=1.0.0",
+    "azure-identity>=1.25.3",
+    "azure-monitor-query",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+    "azure.ai.agentserver",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.agentserver.activity._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.setuptools.package-data]
+"azure.ai.agentserver.activity" = ["py.typed"]
+
+[tool.azure-sdk-build]
+analyze_python_version = "3.11"
+breaking = false
+mypy = true
+pyright = true
+verifytypes = false
+latestdependency = false
+mindependency = false
+pylint = true
+type_check_samples = false
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }

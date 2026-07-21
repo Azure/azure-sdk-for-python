@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.authentication_settings.get(
-        resource_group_name="my-resource-group",
-        health_model_name="my-health-model",
-        authentication_setting_name="my-auth-setting",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        authentication_setting_name="default-auth",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_Get.json
+# x-ms-original-file: 2026-05-01-preview/AuthenticationSettings_Get.json
 if __name__ == "__main__":
     main()
