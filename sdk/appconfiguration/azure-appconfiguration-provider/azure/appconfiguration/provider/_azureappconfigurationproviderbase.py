@@ -266,20 +266,17 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             return self._dict[key]
 
     def __iter__(self) -> Iterator[str]:
-        with self._update_lock:
-            return self._dict.__iter__()
+        return self._dict.__iter__()
 
     def __len__(self) -> int:
-        with self._update_lock:
-            return len(self._dict)
+        return len(self._dict)
 
     def __contains__(self, __x: object) -> bool:
         # pylint:disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
         """
         Returns True if the configuration settings contains the specified key.
         """
-        with self._update_lock:
-            return self._dict.__contains__(__x)
+        return self._dict.__contains__(__x)
 
     def keys(self) -> KeysView[str]:
         """
