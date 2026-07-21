@@ -430,7 +430,7 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_arrow_list_blobs_deleted(self, **kwargs):
+    async def test_arrow_list_blobs_soft_deleted(self, **kwargs):
         soft_delete_storage_account_name = kwargs.pop("soft_delete_storage_account_name")
         soft_delete_storage_account_key = kwargs.pop("soft_delete_storage_account_key")
 
