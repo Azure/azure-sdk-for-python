@@ -198,3 +198,13 @@ class TestDiscovery:
         assert result[1] == "https://fake2.appconfig.io"
         mock_find_origin.assert_called_once_with("https://fake1.appconfig.io")
         mock_find_replicas.assert_called_once_with("fake.appconfig.io")
+
+        # A timeout while resolving replicas is surfaced as a TimeoutError
+        mock_find_origin.reset_mock()
+        mock_find_replicas.reset_mock()
+        mock_find_origin.return_value = FakeAnswer(1, 99, 5000, "fake.appconfig.io")
+        mock_find_replicas.return_value = None
+        with pytest.raises(TimeoutError):
+            find_auto_failover_endpoints(endpoint, True)
+        mock_find_origin.assert_called_once_with(endpoint)
+        mock_find_replicas.assert_called_once_with("fake.appconfig.io")

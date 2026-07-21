@@ -3,10 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import time
 import unittest
 from unittest.mock import patch, call, Mock, MagicMock
 import pytest
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper
+from azure.appconfiguration.provider._client_manager_base import (
+    FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
+    MINIMAL_CLIENT_REFRESH_INTERVAL,
+)
 from azure.appconfiguration.provider._models import SettingSelector
 
 
@@ -304,6 +309,43 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_timeout_uses_fallback_interval(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+
+        mock_client.return_value = MockClient("https://fake.endpoint", "", "fake-credential", 0, 0)
+        mock_update_failover_endpoints.return_value = []
+        manager = ConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_client.reset_mock()
+
+        # A timeout while resolving replicas falls back to the longer refresh interval
+        mock_update_failover_endpoints.side_effect = TimeoutError
+        manager._next_update_time = 0
+        before = time.time()
+        manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        # No new clients should have been created on a timeout
+        mock_client.assert_not_called()
+        assert manager._next_update_time >= before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+
+        mock_update_failover_endpoints.reset_mock()
+        mock_update_failover_endpoints.side_effect = None
+
+        # An empty result (no timeout) refreshes at the normal minimal interval
+        mock_update_failover_endpoints.return_value = []
+        manager._next_update_time = 0
+        before = time.time()
+        manager.refresh_clients()
+        mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
+        assert (
+            before + MINIMAL_CLIENT_REFRESH_INTERVAL
+            <= manager._next_update_time
+            < before + FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL
+        )
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     def test_calculate_backoff(self, mock_update_failover_endpoints):
