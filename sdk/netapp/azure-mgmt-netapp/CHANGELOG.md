@@ -1,11 +1,20 @@
 # Release History
 
-## 17.1.0 (2026-07-21)
+## 18.0.0 (2026-07-21)
 
 ### Features Added
 
   - Model `VolumeProperties` added property `breakthrough_mode`
   - Added enum `BreakthroughMode`
+  - Deleted or renamed model `ElasticAccountsOperations`
+  - Deleted or renamed model `ElasticCapacityPoolsOperations`
+  - Deleted or renamed model `ElasticVolumesOperations`
+  - Deleted or renamed model `ElasticSnapshotsOperations`
+  - Deleted or renamed model `ElasticSnapshotPoliciesOperation`
+  - Deleted or renamed model `ElasticBackupVaultsOperations`
+  - Deleted or renamed model `ElasticBackupPoliciesOperations`
+  - Deleted or renamed model `ElasticBackupsOperations`
+  - Deleted or renamed model `ActiveDirectoryConfigsOperations`
 
 ## 18.0.0b1 (2026-06-29)
 
