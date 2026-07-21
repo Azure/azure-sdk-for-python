@@ -321,7 +321,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         :param str key: The key of the configuration setting
         :param str label: The label of the configuration setting
-        :return: The configuration setting, or None if not found
+        :return: The configuration setting, or None when the supplied ETag has not been modified.
         :rtype: Optional[ConfigurationSetting]
         """
         return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
