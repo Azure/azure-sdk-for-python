@@ -35,7 +35,7 @@ USAGE:
        temporary hosted agent.
     3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The hosted agent name to route to
        the temporary uploaded version. Defaults to `MyHostedAgent`.
-    4) GITHUB_CONNECTION_NAME - The Foundry GitHub RemoteTool connection name. 
+    4) GITHUB_CONNECTION_NAME - The Foundry GitHub RemoteTool connection name.
        The connection must be GitHub-compatible and use PAT or OAuth2 credentials.
     5) GITHUB_USERNAME - The GitHub owner or organization name.
     6) GITHUB_REPOSITORY - The GitHub repository name in the format of https://github.com/xxx/xxx.git.
