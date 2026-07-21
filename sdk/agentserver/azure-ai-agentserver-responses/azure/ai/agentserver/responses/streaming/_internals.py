@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from collections.abc import MutableMapping
 from copy import deepcopy
+from datetime import datetime
 from types import GeneratorType
 from typing import Any, cast
 
@@ -119,6 +120,8 @@ def materialize_wire_payload(value: Any) -> Any:
         return [materialize_wire_payload(item) for item in value]
     if isinstance(value, GeneratorType):
         return [materialize_wire_payload(item) for item in value]
+    if isinstance(value, datetime):
+        return int(value.timestamp())
     return value
 
 

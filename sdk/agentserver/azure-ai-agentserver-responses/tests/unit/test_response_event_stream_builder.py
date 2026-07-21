@@ -145,6 +145,7 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     assert completed["type"] == "response.completed"
     assert completed["response"]["status"] == "completed"
     assert completed["response"]["usage"]["total_tokens"] == 3
+    assert isinstance(completed["response"]["completed_at"], int)
     assert completed["response"]["completed_at"] is not None
 
 
