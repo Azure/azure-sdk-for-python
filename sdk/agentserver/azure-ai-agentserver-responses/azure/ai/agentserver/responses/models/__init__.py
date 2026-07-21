@@ -24,8 +24,13 @@ from .runtime import (  # pylint: disable=unused-import
 
 _TYPE_EXPORT_EXCLUDES = {
     "Any",
+    "ItemOutputMessage",
     "Literal",
     "Optional",
+    "OutputItemOutputMessage",
+    "OutputMessageContent",
+    "OutputMessageContentOutputTextContent",
+    "OutputMessageContentRefusalContent",
     "Required",
     "TYPE_CHECKING",
     "TypedDict",

@@ -2908,21 +2908,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[message]
 
 
-    class azure.ai.agentserver.responses.models.ItemOutputMessage(TypedDict, total=False):
-        key "content": Required[list[OutputMessageContent]]
-        key "id": Required[str]
-        key "phase": Optional[Literal["commentary", "final_answer"]]
-        key "role": Required[Literal["assistant"]]
-        key "status": Required[Literal["in_progress", "completed", "incomplete"]]
-        key "type": Required[Literal["output_message"]]
-        content: list[OutputMessageContent]
-        id: str
-        phase: MessagePhase
-        role: Literal[assistant]
-        status: Literal[in_progress, completed, incomplete]
-        type: Literal[output_message]
-
-
     class azure.ai.agentserver.responses.models.ItemReasoningItem(TypedDict, total=False):
         key "encrypted_content": Optional[str]
         key "id": Required[str]
@@ -3749,25 +3734,6 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[message]
 
 
-    class azure.ai.agentserver.responses.models.OutputItemOutputMessage(TypedDict, total=False):
-        key "agent_reference": ForwardRef('AgentReference', module='types')
-        key "content": Required[list[OutputMessageContent]]
-        key "id": Required[str]
-        key "phase": Optional[Literal["commentary", "final_answer"]]
-        key "response_id": str
-        key "role": Required[Literal["assistant"]]
-        key "status": Required[Literal["in_progress", "completed", "incomplete"]]
-        key "type": Required[Literal["output_message"]]
-        agent_reference: AgentReference
-        content: list[OutputMessageContent]
-        id: str
-        phase: MessagePhase
-        response_id: str
-        role: Literal[assistant]
-        status: Literal[in_progress, completed, incomplete]
-        type: Literal[output_message]
-
-
     class azure.ai.agentserver.responses.models.OutputItemReasoningItem(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "encrypted_content": Optional[str]
@@ -3841,24 +3807,6 @@ namespace azure.ai.agentserver.responses.models
         response_id: str
         status: Literal[in_progress, searching, completed, failed, incomplete]
         type: Literal[web_search_call]
-
-
-    class azure.ai.agentserver.responses.models.OutputMessageContentOutputTextContent(TypedDict, total=False):
-        key "annotations": Required[list[Annotation]]
-        key "logprobs": Required[list[LogProb]]
-        key "text": Required[str]
-        key "type": Required[Literal["output_text"]]
-        annotations: list[Annotation]
-        logprobs: list[LogProb]
-        text: str
-        type: Literal[output_text]
-
-
-    class azure.ai.agentserver.responses.models.OutputMessageContentRefusalContent(TypedDict, total=False):
-        key "refusal": Required[str]
-        key "type": Required[Literal["refusal"]]
-        refusal: str
-        type: Literal[refusal]
 
 
     class azure.ai.agentserver.responses.models.Prompt(TypedDict, total=False):
