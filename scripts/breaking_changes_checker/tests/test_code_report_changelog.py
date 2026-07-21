@@ -278,6 +278,7 @@ def _compare_code_reports_to_changelog(
             )
 
 
+@pytest.mark.slow(reason="external package code report generation creates venvs and may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_peering():
     """Generate azure-mgmt-peering 2.0.0b1 code report."""
     _generate_and_compare_code_report(
@@ -288,6 +289,7 @@ def test_generate_old_code_report_for_azure_mgmt_peering():
     )
 
 
+@pytest.mark.slow(reason="external package code report generation creates venvs and may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_peering():
     """Generate azure-mgmt-peering 2.0.0b2 code report."""
     _generate_and_compare_code_report(
@@ -340,6 +342,7 @@ def test_compare_code_reports_for_azure_mgmt_apimanagement():
     )
 
 
+@pytest.mark.slow(reason="external package apistub code report generation creates venvs and may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_peering_apistub():
     """Generate azure-mgmt-peering 2.0.0b1 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -351,6 +354,7 @@ def test_generate_old_code_report_for_azure_mgmt_peering_apistub():
     )
 
 
+@pytest.mark.slow(reason="external package apistub code report generation creates venvs and may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_peering_apistub():
     """Generate azure-mgmt-peering 2.0.0b2 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -373,6 +377,7 @@ def test_compare_code_reports_for_azure_mgmt_peering_apistub():
     )
 
 
+@pytest.mark.slow(reason="azure-mgmt-apimanagement apistub code report generation may take several minutes")
 def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
     """Generate azure-mgmt-apimanagement 5.0.0 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -385,6 +390,7 @@ def test_generate_old_code_report_for_azure_mgmt_apimanagement_apistub():
     )
 
 
+@pytest.mark.slow(reason="azure-mgmt-apimanagement apistub code report generation may take several minutes")
 def test_generate_new_code_report_for_azure_mgmt_apimanagement_apistub():
     """Generate azure-mgmt-apimanagement 6.0.0b1 code report using --use-apistub."""
     _generate_and_compare_code_report(
@@ -427,7 +433,7 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
     checker.report_changes.return_value = ""
     checker.breaking_changes = []
 
-    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client), mock.patch.object(
+    with mock.patch("pypi_tools.pypi.PyPIClient", return_value=pypi_client) as pypi_client_cls, mock.patch.object(
         detect_breaking_changes, "build_report_from_apistub", return_value={}
     ) as build_report, mock.patch.object(
         detect_breaking_changes, "compare_report_dicts", return_value=checker
@@ -447,6 +453,11 @@ def test_use_apistub_changelog_resolves_stable_from_pypi_and_current_from_local(
         )
 
     assert build_report.call_count == 2, "Expected separate apistub reports for current and stable"
+
+    # The resolver must force the public PyPI backend: in CI PIP_INDEX_URL points
+    # at the curated Azure Artifacts feed, which is not a full mirror of PyPI.
+    # Reverting force_pypi=True would restore the original CI failure, so pin it.
+    pypi_client_cls.assert_called_once_with(force_pypi=True)
 
     calls_by_label = {call.kwargs["label"]: call for call in build_report.call_args_list}
     assert set(calls_by_label) == {"current", "stable"}

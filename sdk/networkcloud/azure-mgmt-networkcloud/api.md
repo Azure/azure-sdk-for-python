@@ -123,7 +123,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 access_bridge_name: Union[str, AccessBridgeAllowedName], 
-                access_bridge: JSON, 
+                access_bridge: AccessBridge, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -141,7 +141,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncLROPoller[AccessBridge]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -170,7 +170,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 access_bridge_name: Union[str, AccessBridgeAllowedName], 
-                access_bridge_update_parameters: Optional[JSON] = None, 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -192,7 +192,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncLROPoller[AccessBridge]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -201,7 +201,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AccessBridge: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -212,7 +212,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncItemPaged[AccessBridge]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_subscription(
                 self, 
                 *, 
@@ -250,7 +250,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 agent_pool_name: str, 
-                agent_pool_parameters: JSON, 
+                agent_pool_parameters: AgentPool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -304,7 +304,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 agent_pool_name: str, 
-                agent_pool_update_parameters: Optional[JSON] = None, 
+                agent_pool_update_parameters: Optional[AgentPoolPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -375,7 +375,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bare_metal_machine_key_set_name: str, 
-                bare_metal_machine_key_set_parameters: JSON, 
+                bare_metal_machine_key_set_parameters: BareMetalMachineKeySet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -429,7 +429,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bare_metal_machine_key_set_name: str, 
-                bare_metal_machine_key_set_update_parameters: Optional[JSON] = None, 
+                bare_metal_machine_key_set_update_parameters: Optional[BareMetalMachineKeySetPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -496,7 +496,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_cordon_parameters: Optional[JSON] = None, 
+                bare_metal_machine_cordon_parameters: Optional[BareMetalMachineCordonParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -531,7 +531,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_parameters: JSON, 
+                bare_metal_machine_parameters: BareMetalMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -579,7 +579,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_power_off_parameters: Optional[JSON] = None, 
+                bare_metal_machine_power_off_parameters: Optional[BareMetalMachinePowerOffParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -612,7 +612,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -645,7 +645,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_replace_parameters: Optional[JSON] = None, 
+                bare_metal_machine_replace_parameters: Optional[BareMetalMachineReplaceParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -686,7 +686,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_command_parameters: JSON, 
+                bare_metal_machine_run_command_parameters: BareMetalMachineRunCommandParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -719,7 +719,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_data_extracts_parameters: JSON, 
+                bare_metal_machine_run_data_extracts_parameters: BareMetalMachineRunDataExtractsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -752,7 +752,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_data_extracts_restricted_parameters: JSON, 
+                bare_metal_machine_run_data_extracts_restricted_parameters: BareMetalMachineRunDataExtractsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -785,7 +785,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_read_commands_parameters: JSON, 
+                bare_metal_machine_run_read_commands_parameters: BareMetalMachineRunReadCommandsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -836,7 +836,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_update_parameters: Optional[JSON] = None, 
+                bare_metal_machine_update_parameters: Optional[BareMetalMachinePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -913,7 +913,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bmc_key_set_name: str, 
-                bmc_key_set_parameters: JSON, 
+                bmc_key_set_parameters: BmcKeySet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -967,7 +967,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bmc_key_set_name: str, 
-                bmc_key_set_update_parameters: Optional[JSON] = None, 
+                bmc_key_set_update_parameters: Optional[BmcKeySetPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1036,7 +1036,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_services_network_name: str, 
-                cloud_services_network_parameters: JSON, 
+                cloud_services_network_parameters: CloudServicesNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1086,7 +1086,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cloud_services_network_name: str, 
-                cloud_services_network_update_parameters: Optional[JSON] = None, 
+                cloud_services_network_update_parameters: Optional[CloudServicesNetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1161,7 +1161,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_parameters: JSON, 
+                cluster_manager_parameters: ClusterManager, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1209,7 +1209,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[JSON] = None, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1271,7 +1271,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_update_parameters: Optional[JSON] = None, 
+                cluster_manager_update_parameters: Optional[ClusterManagerPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1317,7 +1317,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_continue_update_version_parameters: JSON, 
+                cluster_continue_update_version_parameters: ClusterContinueUpdateVersionParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1352,7 +1352,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_parameters: JSON, 
+                cluster_parameters: Cluster, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1400,7 +1400,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_deploy_parameters: Optional[JSON] = None, 
+                cluster_deploy_parameters: Optional[ClusterDeployParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1433,7 +1433,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_inspect_parameters: Optional[JSON] = None, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1466,7 +1466,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                body: JSON, 
+                body: ClusterRotateCredentialParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1499,7 +1499,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_scan_runtime_parameters: Optional[JSON] = None, 
+                cluster_scan_runtime_parameters: Optional[ClusterScanRuntimeParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1534,7 +1534,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_update_parameters: Optional[JSON] = None, 
+                cluster_update_parameters: Optional[ClusterPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1571,7 +1571,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_update_version_parameters: JSON, 
+                cluster_update_version_parameters: ClusterUpdateVersionParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1644,7 +1644,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 virtual_machine_name: str, 
                 console_name: str, 
-                console_parameters: JSON, 
+                console_parameters: Console, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1698,7 +1698,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 virtual_machine_name: str, 
                 console_name: str, 
-                console_update_parameters: Optional[JSON] = None, 
+                console_update_parameters: Optional[ConsolePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1769,7 +1769,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 feature_name: str, 
-                kubernetes_cluster_feature_parameters: JSON, 
+                kubernetes_cluster_feature_parameters: KubernetesClusterFeature, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1823,7 +1823,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 feature_name: str, 
-                kubernetes_cluster_feature_update_parameters: Optional[JSON] = None, 
+                kubernetes_cluster_feature_update_parameters: Optional[KubernetesClusterFeaturePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1892,7 +1892,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_parameters: JSON, 
+                kubernetes_cluster_parameters: KubernetesCluster, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -1940,7 +1940,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_restart_node_parameters: JSON, 
+                kubernetes_cluster_restart_node_parameters: KubernetesClusterRestartNodeParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1975,7 +1975,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_update_parameters: Optional[JSON] = None, 
+                kubernetes_cluster_update_parameters: Optional[KubernetesClusterPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2050,7 +2050,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_version_name: str, 
-                kubernetes_version_parameters: JSON, 
+                kubernetes_version_parameters: KubernetesVersion, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2072,7 +2072,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncLROPoller[KubernetesVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2101,7 +2101,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_version_name: str, 
-                kubernetes_version_patch_parameters: Optional[JSON] = None, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2123,7 +2123,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncLROPoller[KubernetesVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2132,7 +2132,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> KubernetesVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -2143,7 +2143,7 @@ namespace azure.mgmt.networkcloud.aio.operations
             ) -> AsyncItemPaged[KubernetesVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_subscription(
                 self, 
                 *, 
@@ -2179,7 +2179,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 l2_network_name: str, 
-                l2_network_parameters: JSON, 
+                l2_network_parameters: L2Network, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2256,7 +2256,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 l2_network_name: str, 
-                l2_network_update_parameters: Optional[JSON] = None, 
+                l2_network_update_parameters: Optional[L2NetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2304,7 +2304,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 l3_network_name: str, 
-                l3_network_parameters: JSON, 
+                l3_network_parameters: L3Network, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2381,7 +2381,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 l3_network_name: str, 
-                l3_network_update_parameters: Optional[JSON] = None, 
+                l3_network_update_parameters: Optional[L3NetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2431,7 +2431,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 metrics_configuration_name: str, 
-                metrics_configuration_parameters: JSON, 
+                metrics_configuration_parameters: ClusterMetricsConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2485,7 +2485,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 metrics_configuration_name: str, 
-                metrics_configuration_update_parameters: Optional[JSON] = None, 
+                metrics_configuration_update_parameters: Optional[ClusterMetricsConfigurationPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2585,7 +2585,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 rack_name: str, 
-                rack_parameters: JSON, 
+                rack_parameters: Rack, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2635,7 +2635,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 rack_name: str, 
-                rack_update_parameters: Optional[JSON] = None, 
+                rack_update_parameters: Optional[RackPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2710,7 +2710,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_parameters: JSON, 
+                storage_appliance_parameters: StorageAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2766,7 +2766,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_enable_remote_vendor_management_parameters: Optional[JSON] = None, 
+                storage_appliance_enable_remote_vendor_management_parameters: Optional[StorageApplianceEnableRemoteVendorManagementParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2799,7 +2799,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_run_read_commands_parameters: JSON, 
+                storage_appliance_run_read_commands_parameters: StorageApplianceRunReadCommandsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2834,7 +2834,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_update_parameters: Optional[JSON] = None, 
+                storage_appliance_update_parameters: Optional[StorageAppliancePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2909,7 +2909,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 trunked_network_name: str, 
-                trunked_network_parameters: JSON, 
+                trunked_network_parameters: TrunkedNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -2986,7 +2986,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 trunked_network_name: str, 
-                trunked_network_update_parameters: Optional[JSON] = None, 
+                trunked_network_update_parameters: Optional[TrunkedNetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -3032,7 +3032,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_assign_relay_parameters: Optional[JSON] = None, 
+                virtual_machine_assign_relay_parameters: Optional[VirtualMachineAssignRelayParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3067,7 +3067,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_parameters: JSON, 
+                virtual_machine_parameters: VirtualMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -3115,7 +3115,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_power_off_parameters: Optional[JSON] = None, 
+                virtual_machine_power_off_parameters: Optional[VirtualMachinePowerOffParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3174,7 +3174,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_update_parameters: Optional[JSON] = None, 
+                virtual_machine_update_parameters: Optional[VirtualMachinePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -3249,7 +3249,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 volume_name: str, 
-                volume_parameters: JSON, 
+                volume_parameters: Volume, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -3326,7 +3326,7 @@ namespace azure.mgmt.networkcloud.aio.operations
                 self, 
                 resource_group_name: str, 
                 volume_name: str, 
-                volume_update_parameters: Optional[JSON] = None, 
+                volume_update_parameters: Optional[VolumePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -3531,6 +3531,22 @@ namespace azure.mgmt.networkcloud.models
                 *, 
                 password: str, 
                 username: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.AdministrativeCredentialsPatch(_Model):
+        password: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                password: Optional[str] = ..., 
+                username: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -3859,6 +3875,33 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.BareMetalMachineConfigurationDataPatch(_Model):
+        bmc_connection_string: Optional[str]
+        bmc_credentials: Optional[AdministrativeCredentialsPatch]
+        bmc_mac_address: Optional[str]
+        boot_mac_address: Optional[str]
+        machine_details: Optional[str]
+        machine_name: Optional[str]
+        rack_slot: Optional[int]
+        serial_number: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                bmc_credentials: Optional[AdministrativeCredentialsPatch] = ..., 
+                bmc_mac_address: Optional[str] = ..., 
+                boot_mac_address: Optional[str] = ..., 
+                machine_details: Optional[str] = ..., 
+                machine_name: Optional[str] = ..., 
+                rack_slot: Optional[int] = ..., 
+                serial_number: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.BareMetalMachineCordonParameters(_Model):
         evacuate: Optional[Union[str, BareMetalMachineEvacuate]]
 
@@ -4029,30 +4072,30 @@ namespace azure.mgmt.networkcloud.models
         INVALID = "Invalid"
 
 
-    class azure.mgmt.networkcloud.models.BareMetalMachineMetricsConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEFAULT = "Default"
-        NEXUS = "Nexus"
-
-
-    class azure.mgmt.networkcloud.models.BareMetalMachineMetricsConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEFAULT = "Default"
-        NEXUS = "Nexus"
-
-
     class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatus(_Model):
-        log_level: Optional[Union[str, BareMetalMachineMetricsConfigurationStatusLogLevel]]
-        metrics_level: Optional[Union[str, BareMetalMachineMetricsConfigurationStatusMetricsLevel]]
+        log_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]]
+        metrics_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                log_level: Optional[Union[str, BareMetalMachineMetricsConfigurationStatusLogLevel]] = ..., 
-                metrics_level: Optional[Union[str, BareMetalMachineMetricsConfigurationStatusMetricsLevel]] = ...
+                log_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]] = ..., 
+                metrics_level: Optional[Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
+
+
+    class azure.mgmt.networkcloud.models.BareMetalMachineMonitoringConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
 
 
     class azure.mgmt.networkcloud.models.BareMetalMachinePatchParameters(_Model):
@@ -5077,34 +5120,34 @@ namespace azure.mgmt.networkcloud.models
 
 
     class azure.mgmt.networkcloud.models.ClusterPatchProperties(_Model):
-        aggregator_or_single_rack_definition: Optional[RackDefinition]
+        aggregator_or_single_rack_definition: Optional[RackDefinitionPatch]
         analytics_output_settings: Optional[AnalyticsOutputSettings]
         cluster_location: Optional[str]
-        cluster_service_principal: Optional[ServicePrincipalInformation]
+        cluster_service_principal: Optional[ServicePrincipalInformationPatch]
         command_output_settings: Optional[CommandOutputSettings]
-        compute_deployment_threshold: Optional[ValidationThreshold]
-        compute_rack_definitions: Optional[list[RackDefinition]]
-        runtime_protection_configuration: Optional[RuntimeProtectionConfiguration]
-        secret_archive: Optional[ClusterSecretArchive]
+        compute_deployment_threshold: Optional[ValidationThresholdPatch]
+        compute_rack_definitions: Optional[list[RackDefinitionPatch]]
+        runtime_protection_configuration: Optional[RuntimeProtectionConfigurationPatch]
+        secret_archive: Optional[ClusterSecretArchivePatch]
         secret_archive_settings: Optional[SecretArchiveSettings]
-        update_strategy: Optional[ClusterUpdateStrategy]
+        update_strategy: Optional[ClusterUpdateStrategyPatch]
         vulnerability_scanning_settings: Optional[VulnerabilityScanningSettingsPatch]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                aggregator_or_single_rack_definition: Optional[RackDefinition] = ..., 
+                aggregator_or_single_rack_definition: Optional[RackDefinitionPatch] = ..., 
                 analytics_output_settings: Optional[AnalyticsOutputSettings] = ..., 
                 cluster_location: Optional[str] = ..., 
-                cluster_service_principal: Optional[ServicePrincipalInformation] = ..., 
+                cluster_service_principal: Optional[ServicePrincipalInformationPatch] = ..., 
                 command_output_settings: Optional[CommandOutputSettings] = ..., 
-                compute_deployment_threshold: Optional[ValidationThreshold] = ..., 
-                compute_rack_definitions: Optional[list[RackDefinition]] = ..., 
-                runtime_protection_configuration: Optional[RuntimeProtectionConfiguration] = ..., 
-                secret_archive: Optional[ClusterSecretArchive] = ..., 
+                compute_deployment_threshold: Optional[ValidationThresholdPatch] = ..., 
+                compute_rack_definitions: Optional[list[RackDefinitionPatch]] = ..., 
+                runtime_protection_configuration: Optional[RuntimeProtectionConfigurationPatch] = ..., 
+                secret_archive: Optional[ClusterSecretArchivePatch] = ..., 
                 secret_archive_settings: Optional[SecretArchiveSettings] = ..., 
-                update_strategy: Optional[ClusterUpdateStrategy] = ..., 
+                update_strategy: Optional[ClusterUpdateStrategyPatch] = ..., 
                 vulnerability_scanning_settings: Optional[VulnerabilityScanningSettingsPatch] = ...
             ) -> None: ...
 
@@ -5237,6 +5280,22 @@ namespace azure.mgmt.networkcloud.models
         TRUE = "True"
 
 
+    class azure.mgmt.networkcloud.models.ClusterSecretArchivePatch(_Model):
+        key_vault_id: Optional[str]
+        use_key_vault: Optional[Union[str, ClusterSecretArchiveEnabled]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_vault_id: Optional[str] = ..., 
+                use_key_vault: Optional[Union[str, ClusterSecretArchiveEnabled]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ClusterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         MULTI_RACK = "MultiRack"
         SINGLE_RACK = "SingleRack"
@@ -5257,6 +5316,28 @@ namespace azure.mgmt.networkcloud.models
                 strategy_type: Union[str, ClusterUpdateStrategyType], 
                 threshold_type: Union[str, ValidationThresholdType], 
                 threshold_value: int, 
+                wait_time_minutes: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ClusterUpdateStrategyPatch(_Model):
+        max_unavailable: Optional[int]
+        strategy_type: Optional[Union[str, ClusterUpdateStrategyType]]
+        threshold_type: Optional[Union[str, ValidationThresholdType]]
+        threshold_value: Optional[int]
+        wait_time_minutes: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_unavailable: Optional[int] = ..., 
+                strategy_type: Optional[Union[str, ClusterUpdateStrategyType]] = ..., 
+                threshold_type: Optional[Union[str, ValidationThresholdType]] = ..., 
+                threshold_value: Optional[int] = ..., 
                 wait_time_minutes: Optional[int] = ...
             ) -> None: ...
 
@@ -5405,7 +5486,7 @@ namespace azure.mgmt.networkcloud.models
     class azure.mgmt.networkcloud.models.ConsolePatchProperties(_Model):
         enabled: Optional[Union[str, ConsoleEnabled]]
         expiration: Optional[datetime]
-        ssh_public_key: Optional[SshPublicKey]
+        ssh_public_key: Optional[SshPublicKeyPatch]
 
         @overload
         def __init__(
@@ -5413,7 +5494,7 @@ namespace azure.mgmt.networkcloud.models
                 *, 
                 enabled: Optional[Union[str, ConsoleEnabled]] = ..., 
                 expiration: Optional[datetime] = ..., 
-                ssh_public_key: Optional[SshPublicKey] = ...
+                ssh_public_key: Optional[SshPublicKeyPatch] = ...
             ) -> None: ...
 
         @overload
@@ -5694,6 +5775,24 @@ namespace azure.mgmt.networkcloud.models
                 password: str, 
                 registry_url: str, 
                 username: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.ImageRepositoryCredentialsPatch(_Model):
+        password: Optional[str]
+        registry_url: Optional[str]
+        username: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                password: Optional[str] = ..., 
+                registry_url: Optional[str] = ..., 
+                username: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6757,6 +6856,32 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.RackDefinitionPatch(_Model):
+        availability_zone: Optional[str]
+        bare_metal_machine_configuration_data: Optional[list[BareMetalMachineConfigurationDataPatch]]
+        network_rack_id: Optional[str]
+        rack_location: Optional[str]
+        rack_serial_number: Optional[str]
+        rack_sku_id: Optional[str]
+        storage_appliance_configuration_data: Optional[list[StorageApplianceConfigurationDataPatch]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                availability_zone: Optional[str] = ..., 
+                bare_metal_machine_configuration_data: Optional[list[BareMetalMachineConfigurationDataPatch]] = ..., 
+                network_rack_id: Optional[str] = ..., 
+                rack_location: Optional[str] = ..., 
+                rack_serial_number: Optional[str] = ..., 
+                rack_sku_id: Optional[str] = ..., 
+                storage_appliance_configuration_data: Optional[list[StorageApplianceConfigurationDataPatch]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.RackDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABLE = "Available"
         ERROR = "Error"
@@ -6939,6 +7064,22 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.RuntimeProtectionConfigurationPatch(_Model):
+        definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]]
+        enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                definition_update_mode: Optional[Union[str, RuntimeProtectionDefinitionUpdateMode]] = ..., 
+                enforcement_level: Optional[Union[str, RuntimeProtectionEnforcementLevel]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.RuntimeProtectionDefinitionUpdateMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AUTOMATIC = "Automatic"
         NONE = "None"
@@ -7053,6 +7194,26 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.ServicePrincipalInformationPatch(_Model):
+        application_id: Optional[str]
+        password: Optional[str]
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                application_id: Optional[str] = ..., 
+                password: Optional[str] = ..., 
+                principal_id: Optional[str] = ..., 
+                tenant_id: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.SkipShutdown(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FALSE = "False"
         TRUE = "True"
@@ -7066,6 +7227,20 @@ namespace azure.mgmt.networkcloud.models
                 self, 
                 *, 
                 key_data: str
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.SshPublicKeyPatch(_Model):
+        key_data: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                key_data: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -7156,6 +7331,26 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.networkcloud.models.StorageApplianceConfigurationDataPatch(_Model):
+        admin_credentials: Optional[AdministrativeCredentialsPatch]
+        rack_slot: Optional[int]
+        serial_number: Optional[str]
+        storage_appliance_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                admin_credentials: Optional[AdministrativeCredentialsPatch] = ..., 
+                rack_slot: Optional[int] = ..., 
+                serial_number: Optional[str] = ..., 
+                storage_appliance_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.StorageApplianceDetailedStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABLE = "Available"
         DEGRADED = "Degraded"
@@ -7193,30 +7388,30 @@ namespace azure.mgmt.networkcloud.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.networkcloud.models.StorageApplianceMetricsConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEFAULT = "Default"
-        NEXUS = "Nexus"
-
-
-    class azure.mgmt.networkcloud.models.StorageApplianceMetricsConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DEFAULT = "Default"
-        NEXUS = "Nexus"
-
-
     class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatus(_Model):
-        log_level: Optional[Union[str, StorageApplianceMetricsConfigurationStatusLogLevel]]
-        metrics_level: Optional[Union[str, StorageApplianceMetricsConfigurationStatusMetricsLevel]]
+        log_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]]
+        metrics_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                log_level: Optional[Union[str, StorageApplianceMetricsConfigurationStatusLogLevel]] = ..., 
-                metrics_level: Optional[Union[str, StorageApplianceMetricsConfigurationStatusMetricsLevel]] = ...
+                log_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]] = ..., 
+                metrics_level: Optional[Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusLogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
+
+
+    class azure.mgmt.networkcloud.models.StorageApplianceMonitoringConfigurationStatusMetricsLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        DEFAULT = "Default"
+        NEXUS = "Nexus"
 
 
     class azure.mgmt.networkcloud.models.StorageAppliancePatchParameters(_Model):
@@ -7560,6 +7755,24 @@ namespace azure.mgmt.networkcloud.models
         PER_RACK = "PerRack"
 
 
+    class azure.mgmt.networkcloud.models.ValidationThresholdPatch(_Model):
+        grouping: Optional[Union[str, ValidationThresholdGrouping]]
+        type: Optional[Union[str, ValidationThresholdType]]
+        value: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                grouping: Optional[Union[str, ValidationThresholdGrouping]] = ..., 
+                type: Optional[Union[str, ValidationThresholdType]] = ..., 
+                value: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.networkcloud.models.ValidationThresholdType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         COUNT_SUCCESS = "CountSuccess"
         PERCENT_SUCCESS = "PercentSuccess"
@@ -7676,13 +7889,13 @@ namespace azure.mgmt.networkcloud.models
 
 
     class azure.mgmt.networkcloud.models.VirtualMachinePatchProperties(_Model):
-        vm_image_repository_credentials: Optional[ImageRepositoryCredentials]
+        vm_image_repository_credentials: Optional[ImageRepositoryCredentialsPatch]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                vm_image_repository_credentials: Optional[ImageRepositoryCredentials] = ...
+                vm_image_repository_credentials: Optional[ImageRepositoryCredentialsPatch] = ...
             ) -> None: ...
 
         @overload
@@ -7963,7 +8176,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 access_bridge_name: Union[str, AccessBridgeAllowedName], 
-                access_bridge: JSON, 
+                access_bridge: AccessBridge, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -7981,7 +8194,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> LROPoller[AccessBridge]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8010,7 +8223,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 access_bridge_name: Union[str, AccessBridgeAllowedName], 
-                access_bridge_update_parameters: Optional[JSON] = None, 
+                access_bridge_update_parameters: Optional[AccessBridgePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8032,7 +8245,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> LROPoller[AccessBridge]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'access_bridge_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8041,7 +8254,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> AccessBridge: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -8052,7 +8265,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> ItemPaged[AccessBridge]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_subscription(
                 self, 
                 *, 
@@ -8090,7 +8303,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 agent_pool_name: str, 
-                agent_pool_parameters: JSON, 
+                agent_pool_parameters: AgentPool, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8144,7 +8357,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 agent_pool_name: str, 
-                agent_pool_update_parameters: Optional[JSON] = None, 
+                agent_pool_update_parameters: Optional[AgentPoolPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8215,7 +8428,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bare_metal_machine_key_set_name: str, 
-                bare_metal_machine_key_set_parameters: JSON, 
+                bare_metal_machine_key_set_parameters: BareMetalMachineKeySet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8269,7 +8482,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bare_metal_machine_key_set_name: str, 
-                bare_metal_machine_key_set_update_parameters: Optional[JSON] = None, 
+                bare_metal_machine_key_set_update_parameters: Optional[BareMetalMachineKeySetPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8336,7 +8549,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_cordon_parameters: Optional[JSON] = None, 
+                bare_metal_machine_cordon_parameters: Optional[BareMetalMachineCordonParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8371,7 +8584,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_parameters: JSON, 
+                bare_metal_machine_parameters: BareMetalMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8419,7 +8632,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_power_off_parameters: Optional[JSON] = None, 
+                bare_metal_machine_power_off_parameters: Optional[BareMetalMachinePowerOffParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8452,7 +8665,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                body: Optional[JSON] = None, 
+                body: Optional[BareMetalMachineReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8485,7 +8698,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_replace_parameters: Optional[JSON] = None, 
+                bare_metal_machine_replace_parameters: Optional[BareMetalMachineReplaceParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8526,7 +8739,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_command_parameters: JSON, 
+                bare_metal_machine_run_command_parameters: BareMetalMachineRunCommandParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8559,7 +8772,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_data_extracts_parameters: JSON, 
+                bare_metal_machine_run_data_extracts_parameters: BareMetalMachineRunDataExtractsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8592,7 +8805,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_data_extracts_restricted_parameters: JSON, 
+                bare_metal_machine_run_data_extracts_restricted_parameters: BareMetalMachineRunDataExtractsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8625,7 +8838,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_run_read_commands_parameters: JSON, 
+                bare_metal_machine_run_read_commands_parameters: BareMetalMachineRunReadCommandsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -8676,7 +8889,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 bare_metal_machine_name: str, 
-                bare_metal_machine_update_parameters: Optional[JSON] = None, 
+                bare_metal_machine_update_parameters: Optional[BareMetalMachinePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8753,7 +8966,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bmc_key_set_name: str, 
-                bmc_key_set_parameters: JSON, 
+                bmc_key_set_parameters: BmcKeySet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8807,7 +9020,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 bmc_key_set_name: str, 
-                bmc_key_set_update_parameters: Optional[JSON] = None, 
+                bmc_key_set_update_parameters: Optional[BmcKeySetPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8876,7 +9089,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cloud_services_network_name: str, 
-                cloud_services_network_parameters: JSON, 
+                cloud_services_network_parameters: CloudServicesNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -8926,7 +9139,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cloud_services_network_name: str, 
-                cloud_services_network_update_parameters: Optional[JSON] = None, 
+                cloud_services_network_update_parameters: Optional[CloudServicesNetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9001,7 +9214,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_parameters: JSON, 
+                cluster_manager_parameters: ClusterManager, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9049,7 +9262,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[JSON] = None, 
+                cluster_manager_update_relay_private_endpoint_connection_parameters: Optional[ClusterManagerUpdateRelayPrivateEndpointConnectionParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9111,7 +9324,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_manager_name: str, 
-                cluster_manager_update_parameters: Optional[JSON] = None, 
+                cluster_manager_update_parameters: Optional[ClusterManagerPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9157,7 +9370,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_continue_update_version_parameters: JSON, 
+                cluster_continue_update_version_parameters: ClusterContinueUpdateVersionParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9192,7 +9405,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_parameters: JSON, 
+                cluster_parameters: Cluster, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9240,7 +9453,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_deploy_parameters: Optional[JSON] = None, 
+                cluster_deploy_parameters: Optional[ClusterDeployParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9273,7 +9486,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_inspect_parameters: Optional[JSON] = None, 
+                cluster_inspect_parameters: Optional[ClusterInspectParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9306,7 +9519,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                body: JSON, 
+                body: ClusterRotateCredentialParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9339,7 +9552,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_scan_runtime_parameters: Optional[JSON] = None, 
+                cluster_scan_runtime_parameters: Optional[ClusterScanRuntimeParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9374,7 +9587,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_update_parameters: Optional[JSON] = None, 
+                cluster_update_parameters: Optional[ClusterPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9411,7 +9624,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 cluster_name: str, 
-                cluster_update_version_parameters: JSON, 
+                cluster_update_version_parameters: ClusterUpdateVersionParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9484,7 +9697,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 virtual_machine_name: str, 
                 console_name: str, 
-                console_parameters: JSON, 
+                console_parameters: Console, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9538,7 +9751,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 virtual_machine_name: str, 
                 console_name: str, 
-                console_update_parameters: Optional[JSON] = None, 
+                console_update_parameters: Optional[ConsolePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9609,7 +9822,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 feature_name: str, 
-                kubernetes_cluster_feature_parameters: JSON, 
+                kubernetes_cluster_feature_parameters: KubernetesClusterFeature, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9663,7 +9876,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
                 feature_name: str, 
-                kubernetes_cluster_feature_update_parameters: Optional[JSON] = None, 
+                kubernetes_cluster_feature_update_parameters: Optional[KubernetesClusterFeaturePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9732,7 +9945,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_parameters: JSON, 
+                kubernetes_cluster_parameters: KubernetesCluster, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9780,7 +9993,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_restart_node_parameters: JSON, 
+                kubernetes_cluster_restart_node_parameters: KubernetesClusterRestartNodeParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -9815,7 +10028,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_cluster_name: str, 
-                kubernetes_cluster_update_parameters: Optional[JSON] = None, 
+                kubernetes_cluster_update_parameters: Optional[KubernetesClusterPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9890,7 +10103,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_version_name: str, 
-                kubernetes_version_parameters: JSON, 
+                kubernetes_version_parameters: KubernetesVersion, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9912,7 +10125,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> LROPoller[KubernetesVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'etag', 'match_condition']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -9941,7 +10154,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 kubernetes_version_name: str, 
-                kubernetes_version_patch_parameters: Optional[JSON] = None, 
+                kubernetes_version_patch_parameters: Optional[KubernetesVersionPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -9963,7 +10176,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> LROPoller[KubernetesVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'kubernetes_version_name', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -9972,7 +10185,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> KubernetesVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_resource_group(
                 self, 
                 resource_group_name: str, 
@@ -9983,7 +10196,7 @@ namespace azure.mgmt.networkcloud.operations
             ) -> ItemPaged[KubernetesVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview'])
+        @api_version_validation(method_added_on='2026-01-01-preview', params_added_on={'2026-01-01-preview': ['api_version', 'subscription_id', 'top', 'skip_token', 'accept']}, api_versions_list=['2026-01-01-preview', '2026-05-01-preview', '2026-07-01'])
         def list_by_subscription(
                 self, 
                 *, 
@@ -10019,7 +10232,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 l2_network_name: str, 
-                l2_network_parameters: JSON, 
+                l2_network_parameters: L2Network, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10096,7 +10309,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 l2_network_name: str, 
-                l2_network_update_parameters: Optional[JSON] = None, 
+                l2_network_update_parameters: Optional[L2NetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10144,7 +10357,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 l3_network_name: str, 
-                l3_network_parameters: JSON, 
+                l3_network_parameters: L3Network, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10221,7 +10434,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 l3_network_name: str, 
-                l3_network_update_parameters: Optional[JSON] = None, 
+                l3_network_update_parameters: Optional[L3NetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10271,7 +10484,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 metrics_configuration_name: str, 
-                metrics_configuration_parameters: JSON, 
+                metrics_configuration_parameters: ClusterMetricsConfiguration, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10325,7 +10538,7 @@ namespace azure.mgmt.networkcloud.operations
                 resource_group_name: str, 
                 cluster_name: str, 
                 metrics_configuration_name: str, 
-                metrics_configuration_update_parameters: Optional[JSON] = None, 
+                metrics_configuration_update_parameters: Optional[ClusterMetricsConfigurationPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10425,7 +10638,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 rack_name: str, 
-                rack_parameters: JSON, 
+                rack_parameters: Rack, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10475,7 +10688,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 rack_name: str, 
-                rack_update_parameters: Optional[JSON] = None, 
+                rack_update_parameters: Optional[RackPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10550,7 +10763,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_parameters: JSON, 
+                storage_appliance_parameters: StorageAppliance, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10606,7 +10819,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_enable_remote_vendor_management_parameters: Optional[JSON] = None, 
+                storage_appliance_enable_remote_vendor_management_parameters: Optional[StorageApplianceEnableRemoteVendorManagementParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10639,7 +10852,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_run_read_commands_parameters: JSON, 
+                storage_appliance_run_read_commands_parameters: StorageApplianceRunReadCommandsParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10674,7 +10887,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 storage_appliance_name: str, 
-                storage_appliance_update_parameters: Optional[JSON] = None, 
+                storage_appliance_update_parameters: Optional[StorageAppliancePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10749,7 +10962,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 trunked_network_name: str, 
-                trunked_network_parameters: JSON, 
+                trunked_network_parameters: TrunkedNetwork, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10826,7 +11039,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 trunked_network_name: str, 
-                trunked_network_update_parameters: Optional[JSON] = None, 
+                trunked_network_update_parameters: Optional[TrunkedNetworkPatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10872,7 +11085,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_assign_relay_parameters: Optional[JSON] = None, 
+                virtual_machine_assign_relay_parameters: Optional[VirtualMachineAssignRelayParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -10907,7 +11120,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_parameters: JSON, 
+                virtual_machine_parameters: VirtualMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -10955,7 +11168,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_power_off_parameters: Optional[JSON] = None, 
+                virtual_machine_power_off_parameters: Optional[VirtualMachinePowerOffParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -11014,7 +11227,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 virtual_machine_name: str, 
-                virtual_machine_update_parameters: Optional[JSON] = None, 
+                virtual_machine_update_parameters: Optional[VirtualMachinePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -11089,7 +11302,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 volume_name: str, 
-                volume_parameters: JSON, 
+                volume_parameters: Volume, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -11166,7 +11379,7 @@ namespace azure.mgmt.networkcloud.operations
                 self, 
                 resource_group_name: str, 
                 volume_name: str, 
-                volume_update_parameters: Optional[JSON] = None, 
+                volume_update_parameters: Optional[VolumePatchParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -11186,6 +11399,2348 @@ namespace azure.mgmt.networkcloud.operations
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
             ) -> Volume: ...
+
+
+namespace azure.mgmt.networkcloud.types
+
+    class azure.mgmt.networkcloud.types.AadConfiguration(TypedDict, total=False):
+        key "adminGroupObjectIds": Required[list[str]]
+        admin_group_object_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridge(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[AccessBridgeProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: AccessBridgeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeEndpoint(TypedDict, total=False):
+        key "fqdn": str
+        key "ipv4Address": str
+        key "ipv6Address": str
+        key "name": str
+        fqdn: str
+        ipv4_address: str
+        ipv6_address: str
+        name: str
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('AccessBridgePatchProperties', module='types')
+        properties: AccessBridgePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgePatchProperties(TypedDict, total=False):
+        securityRules: list[AccessBridgeSecurityRule]
+        security_rules: list[AccessBridgeSecurityRule]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeProperties(TypedDict, total=False):
+        key "detailedStatus": Union[str, AccessBridgeDetailedStatus]
+        key "detailedStatusMessage": str
+        key "ipv4ConnectedPrefix": str
+        key "ipv6ConnectedPrefix": str
+        key "networkId": Required[str]
+        key "protocol": Union[str, TransportProtocol]
+        key "provisioningState": Union[str, AccessBridgeProvisioningState]
+        detailed_status: Union[str, AccessBridgeDetailedStatus]
+        detailed_status_message: str
+        endpoints: list[AccessBridgeEndpoint]
+        ipv4_connected_prefix: str
+        ipv6_connected_prefix: str
+        network_id: str
+        protocol: Union[str, TransportProtocol]
+        provisioning_state: Union[str, AccessBridgeProvisioningState]
+        securityRules: list[AccessBridgeSecurityRule]
+        security_rules: list[AccessBridgeSecurityRule]
+
+
+    class azure.mgmt.networkcloud.types.AccessBridgeSecurityRule(TypedDict, total=False):
+        key "description": str
+        key "direction": Required[Union[str, SecurityRuleDirection]]
+        key "port": Required[str]
+        description: str
+        direction: Union[str, SecurityRuleDirection]
+        ipv4Addresses: list[str]
+        ipv4_addresses: list[str]
+        ipv6Addresses: list[str]
+        ipv6_addresses: list[str]
+        port: str
+
+
+    class azure.mgmt.networkcloud.types.ActionState(TypedDict, total=False):
+        key "actionType": str
+        key "correlationId": str
+        key "endTime": str
+        key "message": str
+        key "startTime": str
+        key "status": Union[str, ActionStateStatus]
+        action_type: str
+        correlation_id: str
+        end_time: str
+        message: str
+        start_time: str
+        status: Union[str, ActionStateStatus]
+        stepStates: list[StepState]
+        step_states: list[StepState]
+
+
+    class azure.mgmt.networkcloud.types.AdministrativeCredentials(TypedDict, total=False):
+        key "password": Required[str]
+        key "username": Required[str]
+        password: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.AdministrativeCredentialsPatch(TypedDict, total=False):
+        key "password": str
+        key "username": str
+        password: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.AdministratorConfiguration(TypedDict, total=False):
+        key "adminUsername": str
+        admin_username: str
+        sshPublicKeys: list[SshPublicKey]
+        ssh_public_keys: list[SshPublicKey]
+
+
+    class azure.mgmt.networkcloud.types.AdministratorConfigurationPatch(TypedDict, total=False):
+        sshPublicKeys: list[SshPublicKey]
+        ssh_public_keys: list[SshPublicKey]
+
+
+    class azure.mgmt.networkcloud.types.AgentOptions(TypedDict, total=False):
+        key "hugepagesCount": Required[int]
+        key "hugepagesSize": Union[str, HugepagesSize]
+        hugepages_count: int
+        hugepages_size: Union[str, HugepagesSize]
+
+
+    class azure.mgmt.networkcloud.types.AgentPool(TrackedResource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[AgentPoolProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: AgentPoolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.AgentPoolPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('AgentPoolPatchProperties', module='types')
+        properties: AgentPoolPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.AgentPoolPatchProperties(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('NodePoolAdministratorConfigurationPatch', module='types')
+        key "count": int
+        key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
+        administrator_configuration: NodePoolAdministratorConfigurationPatch
+        count: int
+        upgrade_settings: AgentPoolUpgradeSettings
+
+
+    class azure.mgmt.networkcloud.types.AgentPoolProperties(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('AdministratorConfiguration', module='types')
+        key "agentOptions": ForwardRef('AgentOptions', module='types')
+        key "attachedNetworkConfiguration": ForwardRef('AttachedNetworkConfiguration', module='types')
+        key "count": Required[int]
+        key "detailedStatus": Union[str, AgentPoolDetailedStatus]
+        key "detailedStatusMessage": str
+        key "kubernetesVersion": str
+        key "mode": Required[Union[str, AgentPoolMode]]
+        key "provisioningState": Union[str, AgentPoolProvisioningState]
+        key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
+        key "vmSkuName": Required[str]
+        administrator_configuration: AdministratorConfiguration
+        agent_options: AgentOptions
+        attached_network_configuration: AttachedNetworkConfiguration
+        availabilityZones: list[str]
+        availability_zones: list[str]
+        count: int
+        detailed_status: Union[str, AgentPoolDetailedStatus]
+        detailed_status_message: str
+        kubernetes_version: str
+        labels: list[KubernetesLabel]
+        mode: Union[str, AgentPoolMode]
+        provisioning_state: Union[str, AgentPoolProvisioningState]
+        taints: list[KubernetesLabel]
+        upgrade_settings: AgentPoolUpgradeSettings
+        vm_sku_name: str
+
+
+    class azure.mgmt.networkcloud.types.AgentPoolUpgradeSettings(TypedDict, total=False):
+        key "drainTimeout": int
+        key "maxSurge": str
+        key "maxUnavailable": str
+        drain_timeout: int
+        max_surge: str
+        max_unavailable: str
+
+
+    class azure.mgmt.networkcloud.types.AnalyticsOutputSettings(TypedDict, total=False):
+        key "analyticsWorkspaceId": str
+        key "associatedIdentity": ForwardRef('IdentitySelector', module='types')
+        analytics_workspace_id: str
+        associated_identity: IdentitySelector
+
+
+    class azure.mgmt.networkcloud.types.AttachedNetworkConfiguration(TypedDict, total=False):
+        l2Networks: list[L2NetworkAttachmentConfiguration]
+        l2_networks: list[L2NetworkAttachmentConfiguration]
+        l3Networks: list[L3NetworkAttachmentConfiguration]
+        l3_networks: list[L3NetworkAttachmentConfiguration]
+        trunkedNetworks: list[TrunkedNetworkAttachmentConfiguration]
+        trunked_networks: list[TrunkedNetworkAttachmentConfiguration]
+
+
+    class azure.mgmt.networkcloud.types.AvailableUpgrade(TypedDict, total=False):
+        key "availabilityLifecycle": Union[str, AvailabilityLifecycle]
+        key "version": str
+        availability_lifecycle: Union[str, AvailabilityLifecycle]
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachine(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[BareMetalMachineProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: BareMetalMachineProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineCommandSpecification(TypedDict, total=False):
+        key "command": Required[str]
+        arguments: list[str]
+        command: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineConfigurationData(TypedDict, total=False):
+        key "bmcConnectionString": str
+        key "bmcCredentials": Required[AdministrativeCredentials]
+        key "bmcMacAddress": Required[str]
+        key "bootMacAddress": Required[str]
+        key "machineDetails": str
+        key "machineName": str
+        key "rackSlot": Required[int]
+        key "serialNumber": Required[str]
+        bmc_connection_string: str
+        bmc_credentials: AdministrativeCredentials
+        bmc_mac_address: str
+        boot_mac_address: str
+        machine_details: str
+        machine_name: str
+        rack_slot: int
+        serial_number: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineConfigurationDataPatch(TypedDict, total=False):
+        key "bmcConnectionString": str
+        key "bmcCredentials": ForwardRef('AdministrativeCredentialsPatch', module='types')
+        key "bmcMacAddress": str
+        key "bootMacAddress": str
+        key "machineDetails": str
+        key "machineName": str
+        key "rackSlot": int
+        key "serialNumber": str
+        bmc_connection_string: str
+        bmc_credentials: AdministrativeCredentialsPatch
+        bmc_mac_address: str
+        boot_mac_address: str
+        machine_details: str
+        machine_name: str
+        rack_slot: int
+        serial_number: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineCordonParameters(TypedDict, total=False):
+        key "evacuate": Union[str, BareMetalMachineEvacuate]
+        evacuate: Union[str, BareMetalMachineEvacuate]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineKeySet(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[BareMetalMachineKeySetProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: BareMetalMachineKeySetProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineKeySetPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('BareMetalMachineKeySetPatchProperties', module='types')
+        properties: BareMetalMachineKeySetPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineKeySetPatchProperties(TypedDict, total=False):
+        key "expiration": str
+        expiration: str
+        jumpHostsAllowed: list[str]
+        jump_hosts_allowed: list[str]
+        userList: list[KeySetUser]
+        user_list: list[KeySetUser]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineKeySetProperties(TypedDict, total=False):
+        key "azureGroupId": Required[str]
+        key "detailedStatus": Union[str, BareMetalMachineKeySetDetailedStatus]
+        key "detailedStatusMessage": str
+        key "expiration": Required[str]
+        key "jumpHostsAllowed": Required[list[str]]
+        key "lastValidation": str
+        key "osGroupName": str
+        key "privilegeLevel": Required[Union[str, BareMetalMachineKeySetPrivilegeLevel]]
+        key "privilegeLevelName": str
+        key "provisioningState": Union[str, BareMetalMachineKeySetProvisioningState]
+        key "userList": Required[list[KeySetUser]]
+        azure_group_id: str
+        detailed_status: Union[str, BareMetalMachineKeySetDetailedStatus]
+        detailed_status_message: str
+        expiration: str
+        jump_hosts_allowed: list[str]
+        last_validation: str
+        os_group_name: str
+        privilege_level: Union[str, BareMetalMachineKeySetPrivilegeLevel]
+        privilege_level_name: str
+        provisioning_state: Union[str, BareMetalMachineKeySetProvisioningState]
+        userListStatus: list[KeySetUserStatus]
+        user_list: list[KeySetUser]
+        user_list_status: list[KeySetUserStatus]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineMonitoringConfigurationStatus(TypedDict, total=False):
+        key "logLevel": Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]
+        key "metricsLevel": Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]
+        log_level: Union[str, BareMetalMachineMonitoringConfigurationStatusLogLevel]
+        metrics_level: Union[str, BareMetalMachineMonitoringConfigurationStatusMetricsLevel]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachinePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('BareMetalMachinePatchProperties', module='types')
+        properties: BareMetalMachinePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachinePatchProperties(TypedDict, total=False):
+        key "machineDetails": str
+        machine_details: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachinePowerOffParameters(TypedDict, total=False):
+        key "skipShutdown": Union[str, BareMetalMachineSkipShutdown]
+        skip_shutdown: Union[str, BareMetalMachineSkipShutdown]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineProperties(TypedDict, total=False):
+        key "bmcConnectionString": Required[str]
+        key "bmcCredentials": Required[AdministrativeCredentials]
+        key "bmcIpv4Address": str
+        key "bmcIpv6Address": str
+        key "bmcMacAddress": Required[str]
+        key "bootMacAddress": Required[str]
+        key "caCertificate": ForwardRef('CertificateInfo', module='types')
+        key "clusterId": str
+        key "cordonStatus": Union[str, BareMetalMachineCordonStatus]
+        key "detailedStatus": Union[str, BareMetalMachineDetailedStatus]
+        key "detailedStatusMessage": str
+        key "hardwareInventory": ForwardRef('HardwareInventory', module='types')
+        key "hardwareValidationStatus": ForwardRef('HardwareValidationStatus', module='types')
+        key "kubernetesNodeName": str
+        key "kubernetesVersion": str
+        key "machineClusterVersion": str
+        key "machineDetails": Required[str]
+        key "machineName": Required[str]
+        key "machineSkuId": Required[str]
+        key "monitoringConfigurationStatus": ForwardRef('BareMetalMachineMonitoringConfigurationStatus', module='types')
+        key "oamIpv4Address": str
+        key "oamIpv6Address": str
+        key "osImage": str
+        key "powerState": Union[str, BareMetalMachinePowerState]
+        key "provisioningState": Union[str, BareMetalMachineProvisioningState]
+        key "rackId": Required[str]
+        key "rackSlot": Required[int]
+        key "readyState": Union[str, BareMetalMachineReadyState]
+        key "runtimeProtectionStatus": ForwardRef('RuntimeProtectionStatus', module='types')
+        key "serialNumber": Required[str]
+        key "serviceTag": str
+        actionStates: list[ActionState]
+        action_states: list[ActionState]
+        associatedResourceIds: list[str]
+        associated_resource_ids: list[str]
+        bmc_connection_string: str
+        bmc_credentials: AdministrativeCredentials
+        bmc_ipv4_address: str
+        bmc_ipv6_address: str
+        bmc_mac_address: str
+        boot_mac_address: str
+        ca_certificate: CertificateInfo
+        cluster_id: str
+        cordon_status: Union[str, BareMetalMachineCordonStatus]
+        detailed_status: Union[str, BareMetalMachineDetailedStatus]
+        detailed_status_message: str
+        hardware_inventory: HardwareInventory
+        hardware_validation_status: HardwareValidationStatus
+        hybridAksClustersAssociatedIds: list[str]
+        hybrid_aks_clusters_associated_ids: list[str]
+        kubernetes_node_name: str
+        kubernetes_version: str
+        machineRoles: list[str]
+        machine_cluster_version: str
+        machine_details: str
+        machine_name: str
+        machine_roles: list[str]
+        machine_sku_id: str
+        monitoring_configuration_status: BareMetalMachineMonitoringConfigurationStatus
+        oam_ipv4_address: str
+        oam_ipv6_address: str
+        os_image: str
+        power_state: Union[str, BareMetalMachinePowerState]
+        provisioning_state: Union[str, BareMetalMachineProvisioningState]
+        rack_id: str
+        rack_slot: int
+        ready_state: Union[str, BareMetalMachineReadyState]
+        runtime_protection_status: RuntimeProtectionStatus
+        secretRotationStatus: list[SecretRotationStatus]
+        secret_rotation_status: list[SecretRotationStatus]
+        serial_number: str
+        service_tag: str
+        virtualMachinesAssociatedIds: list[str]
+        virtual_machines_associated_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineReimageParameters(TypedDict, total=False):
+        key "safeguardMode": Union[str, BareMetalMachineReimageSafeguardMode]
+        safeguard_mode: Union[str, BareMetalMachineReimageSafeguardMode]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineReplaceParameters(TypedDict, total=False):
+        key "bmcCredentials": ForwardRef('AdministrativeCredentials', module='types')
+        key "bmcMacAddress": str
+        key "bootMacAddress": str
+        key "machineName": str
+        key "safeguardMode": Union[str, BareMetalMachineReplaceSafeguardMode]
+        key "serialNumber": str
+        key "storagePolicy": Union[str, BareMetalMachineReplaceStoragePolicy]
+        bmc_credentials: AdministrativeCredentials
+        bmc_mac_address: str
+        boot_mac_address: str
+        machine_name: str
+        safeguard_mode: Union[str, BareMetalMachineReplaceSafeguardMode]
+        serial_number: str
+        storage_policy: Union[str, BareMetalMachineReplaceStoragePolicy]
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineRunCommandParameters(TypedDict, total=False):
+        key "limitTimeSeconds": Required[int]
+        key "script": Required[str]
+        arguments: list[str]
+        limit_time_seconds: int
+        script: str
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineRunDataExtractsParameters(TypedDict, total=False):
+        key "commands": Required[list[BareMetalMachineCommandSpecification]]
+        key "limitTimeSeconds": Required[int]
+        commands: list[BareMetalMachineCommandSpecification]
+        limit_time_seconds: int
+
+
+    class azure.mgmt.networkcloud.types.BareMetalMachineRunReadCommandsParameters(TypedDict, total=False):
+        key "commands": Required[list[BareMetalMachineCommandSpecification]]
+        key "limitTimeSeconds": Required[int]
+        commands: list[BareMetalMachineCommandSpecification]
+        limit_time_seconds: int
+
+
+    class azure.mgmt.networkcloud.types.BgpAdvertisement(TypedDict, total=False):
+        key "advertiseToFabric": Union[str, AdvertiseToFabric]
+        key "ipAddressPools": Required[list[str]]
+        advertise_to_fabric: Union[str, AdvertiseToFabric]
+        communities: list[str]
+        ip_address_pools: list[str]
+        peers: list[str]
+
+
+    class azure.mgmt.networkcloud.types.BgpServiceLoadBalancerConfiguration(TypedDict, total=False):
+        key "fabricPeeringEnabled": Union[str, FabricPeeringEnabled]
+        bgpAdvertisements: list[BgpAdvertisement]
+        bgpPeers: list[ServiceLoadBalancerBgpPeer]
+        bgp_advertisements: list[BgpAdvertisement]
+        bgp_peers: list[ServiceLoadBalancerBgpPeer]
+        fabric_peering_enabled: Union[str, FabricPeeringEnabled]
+        ipAddressPools: list[IpAddressPool]
+        ip_address_pools: list[IpAddressPool]
+
+
+    class azure.mgmt.networkcloud.types.BmcKeySet(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[BmcKeySetProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: BmcKeySetProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.BmcKeySetPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('BmcKeySetPatchProperties', module='types')
+        properties: BmcKeySetPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.BmcKeySetPatchProperties(TypedDict, total=False):
+        key "expiration": str
+        expiration: str
+        userList: list[KeySetUser]
+        user_list: list[KeySetUser]
+
+
+    class azure.mgmt.networkcloud.types.BmcKeySetProperties(TypedDict, total=False):
+        key "azureGroupId": Required[str]
+        key "detailedStatus": Union[str, BmcKeySetDetailedStatus]
+        key "detailedStatusMessage": str
+        key "expiration": Required[str]
+        key "lastValidation": str
+        key "privilegeLevel": Required[Union[str, BmcKeySetPrivilegeLevel]]
+        key "provisioningState": Union[str, BmcKeySetProvisioningState]
+        key "userList": Required[list[KeySetUser]]
+        azure_group_id: str
+        detailed_status: Union[str, BmcKeySetDetailedStatus]
+        detailed_status_message: str
+        expiration: str
+        last_validation: str
+        privilege_level: Union[str, BmcKeySetPrivilegeLevel]
+        provisioning_state: Union[str, BmcKeySetProvisioningState]
+        userListStatus: list[KeySetUserStatus]
+        user_list: list[KeySetUser]
+        user_list_status: list[KeySetUserStatus]
+
+
+    class azure.mgmt.networkcloud.types.CertificateInfo(TypedDict, total=False):
+        key "hash": str
+        key "value": str
+        hash: str
+        value: str
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetwork(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('CloudServicesNetworkProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: CloudServicesNetworkProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('CloudServicesNetworkPatchProperties', module='types')
+        properties: CloudServicesNetworkPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkPatchProperties(TypedDict, total=False):
+        key "enableDefaultEgressEndpoints": Union[str, CloudServicesNetworkEnableDefaultEgressEndpoints]
+        key "storageOptions": ForwardRef('CloudServicesNetworkStorageOptionsPatch', module='types')
+        additionalEgressEndpoints: list[EgressEndpoint]
+        additional_egress_endpoints: list[EgressEndpoint]
+        enable_default_egress_endpoints: Union[str, CloudServicesNetworkEnableDefaultEgressEndpoints]
+        storage_options: CloudServicesNetworkStorageOptionsPatch
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkProperties(TypedDict, total=False):
+        key "clusterId": str
+        key "detailedStatus": Union[str, CloudServicesNetworkDetailedStatus]
+        key "detailedStatusMessage": str
+        key "enableDefaultEgressEndpoints": Union[str, CloudServicesNetworkEnableDefaultEgressEndpoints]
+        key "interfaceName": str
+        key "provisioningState": Union[str, CloudServicesNetworkProvisioningState]
+        key "storageOptions": ForwardRef('CloudServicesNetworkStorageOptions', module='types')
+        key "storageStatus": ForwardRef('CloudServicesNetworkStorageStatus', module='types')
+        additionalEgressEndpoints: list[EgressEndpoint]
+        additional_egress_endpoints: list[EgressEndpoint]
+        associatedResourceIds: list[str]
+        associated_resource_ids: list[str]
+        cluster_id: str
+        detailed_status: Union[str, CloudServicesNetworkDetailedStatus]
+        detailed_status_message: str
+        enable_default_egress_endpoints: Union[str, CloudServicesNetworkEnableDefaultEgressEndpoints]
+        enabledEgressEndpoints: list[EgressEndpoint]
+        enabled_egress_endpoints: list[EgressEndpoint]
+        hybridAksClustersAssociatedIds: list[str]
+        hybrid_aks_clusters_associated_ids: list[str]
+        interface_name: str
+        provisioning_state: Union[str, CloudServicesNetworkProvisioningState]
+        storage_options: CloudServicesNetworkStorageOptions
+        storage_status: CloudServicesNetworkStorageStatus
+        virtualMachinesAssociatedIds: list[str]
+        virtual_machines_associated_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkStorageOptions(TypedDict, total=False):
+        key "mode": Union[str, CloudServicesNetworkStorageMode]
+        key "sizeMiB": int
+        key "storageApplianceId": str
+        mode: Union[str, CloudServicesNetworkStorageMode]
+        size_mi_b: int
+        storage_appliance_id: str
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkStorageOptionsPatch(TypedDict, total=False):
+        key "mode": Union[str, CloudServicesNetworkStorageMode]
+        key "sizeMiB": int
+        key "storageApplianceId": str
+        mode: Union[str, CloudServicesNetworkStorageMode]
+        size_mi_b: int
+        storage_appliance_id: str
+
+
+    class azure.mgmt.networkcloud.types.CloudServicesNetworkStorageStatus(TypedDict, total=False):
+        key "mode": Union[str, CloudServicesNetworkStorageMode]
+        key "sizeMiB": int
+        key "status": Union[str, CloudServicesNetworkStorageStatusStatus]
+        key "statusMessage": str
+        key "volumeId": str
+        mode: Union[str, CloudServicesNetworkStorageMode]
+        size_mi_b: int
+        status: Union[str, CloudServicesNetworkStorageStatusStatus]
+        status_message: str
+        volume_id: str
+
+
+    class azure.mgmt.networkcloud.types.Cluster(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "kind": Union[str, DeploymentType]
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[ClusterProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        identity: ManagedServiceIdentity
+        kind: Union[str, DeploymentType]
+        location: str
+        name: str
+        properties: ClusterProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterAvailableUpgradeVersion(TypedDict, total=False):
+        key "controlImpact": Union[str, ControlImpact]
+        key "expectedDuration": str
+        key "impactDescription": str
+        key "supportExpiryDate": str
+        key "targetClusterVersion": str
+        key "workloadImpact": Union[str, WorkloadImpact]
+        control_impact: Union[str, ControlImpact]
+        expected_duration: str
+        impact_description: str
+        support_expiry_date: str
+        target_cluster_version: str
+        workload_impact: Union[str, WorkloadImpact]
+
+
+    class azure.mgmt.networkcloud.types.ClusterAvailableVersion(TypedDict, total=False):
+        key "supportExpiryDate": str
+        key "targetClusterVersion": str
+        support_expiry_date: str
+        target_cluster_version: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterCapacity(TypedDict, total=False):
+        key "availableApplianceStorageGB": int
+        key "availableCoreCount": int
+        key "availableHostStorageGB": int
+        key "availableMemoryGB": int
+        key "totalApplianceStorageGB": int
+        key "totalCoreCount": int
+        key "totalHostStorageGB": int
+        key "totalMemoryGB": int
+        available_appliance_storage_gb: int
+        available_core_count: int
+        available_host_storage_gb: int
+        available_memory_gb: int
+        total_appliance_storage_gb: int
+        total_core_count: int
+        total_host_storage_gb: int
+        total_memory_gb: int
+
+
+    class azure.mgmt.networkcloud.types.ClusterContinueUpdateVersionParameters(TypedDict, total=False):
+        key "machineGroupTargetingMode": Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]
+        key "safeguardMode": Union[str, ClusterContinueUpdateVersionSafeguardMode]
+        machine_group_targeting_mode: Union[str, ClusterContinueUpdateVersionMachineGroupTargetingMode]
+        safeguard_mode: Union[str, ClusterContinueUpdateVersionSafeguardMode]
+
+
+    class azure.mgmt.networkcloud.types.ClusterDeployParameters(TypedDict, total=False):
+        skipValidationsForMachines: list[str]
+        skip_validations_for_machines: list[str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterInspectParameters(TypedDict, total=False):
+        key "filterDevices": ForwardRef('FilterDevices', module='types')
+        additionalActions: list[Union[str, ClusterInspectAdditionalAction]]
+        additional_actions: list[Union[str, ClusterInspectAdditionalAction]]
+        filter_devices: FilterDevices
+
+
+    class azure.mgmt.networkcloud.types.ClusterManager(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "kind": Union[str, DeploymentType]
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[ClusterManagerProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: ManagedServiceIdentity
+        kind: Union[str, DeploymentType]
+        location: str
+        name: str
+        properties: ClusterManagerProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerPatchParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        identity: ManagedServiceIdentity
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerProperties(TypedDict, total=False):
+        key "analyticsWorkspaceId": str
+        key "detailedStatus": Union[str, ClusterManagerDetailedStatus]
+        key "detailedStatusMessage": str
+        key "fabricControllerId": Required[str]
+        key "managedResourceGroupConfiguration": ForwardRef('ManagedResourceGroupConfiguration', module='types')
+        key "managerExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "provisioningState": Union[str, ClusterManagerProvisioningState]
+        key "relayConfiguration": ForwardRef('ClusterManagerRelayConfiguration', module='types')
+        key "vmSize": str
+        analytics_workspace_id: str
+        availabilityZones: list[str]
+        availability_zones: list[str]
+        clusterVersions: list[ClusterAvailableVersion]
+        cluster_versions: list[ClusterAvailableVersion]
+        detailed_status: Union[str, ClusterManagerDetailedStatus]
+        detailed_status_message: str
+        fabric_controller_id: str
+        managed_resource_group_configuration: ManagedResourceGroupConfiguration
+        manager_extended_location: ExtendedLocation
+        provisioning_state: Union[str, ClusterManagerProvisioningState]
+        relay_configuration: ClusterManagerRelayConfiguration
+        vm_size: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerRelayConfiguration(TypedDict, total=False):
+        key "relayNamespaceId": str
+        relay_namespace_id: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterManagerUpdateRelayPrivateEndpointConnectionParameters(TypedDict, total=False):
+        key "connectionState": Required[Union[str, RelayPrivateEndpointConnectionState]]
+        key "description": str
+        key "privateEndpointResourceId": Required[str]
+        connection_state: Union[str, RelayPrivateEndpointConnectionState]
+        description: str
+        private_endpoint_resource_id: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterMetricsConfiguration(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[ClusterMetricsConfigurationProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: ClusterMetricsConfigurationProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.ClusterMetricsConfigurationPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('ClusterMetricsConfigurationPatchProperties', module='types')
+        properties: ClusterMetricsConfigurationPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterMetricsConfigurationPatchProperties(TypedDict, total=False):
+        key "collectionInterval": int
+        collection_interval: int
+        enabledMetrics: list[str]
+        enabled_metrics: list[str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterMetricsConfigurationProperties(TypedDict, total=False):
+        key "collectionInterval": Required[int]
+        key "detailedStatus": Union[str, ClusterMetricsConfigurationDetailedStatus]
+        key "detailedStatusMessage": str
+        key "provisioningState": Union[str, ClusterMetricsConfigurationProvisioningState]
+        collection_interval: int
+        detailed_status: Union[str, ClusterMetricsConfigurationDetailedStatus]
+        detailed_status_message: str
+        disabledMetrics: list[str]
+        disabled_metrics: list[str]
+        enabledMetrics: list[str]
+        enabled_metrics: list[str]
+        provisioning_state: Union[str, ClusterMetricsConfigurationProvisioningState]
+
+
+    class azure.mgmt.networkcloud.types.ClusterPatchParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('ClusterPatchProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: ClusterPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterPatchProperties(TypedDict, total=False):
+        key "aggregatorOrSingleRackDefinition": ForwardRef('RackDefinitionPatch', module='types')
+        key "analyticsOutputSettings": ForwardRef('AnalyticsOutputSettings', module='types')
+        key "clusterLocation": str
+        key "clusterServicePrincipal": ForwardRef('ServicePrincipalInformationPatch', module='types')
+        key "commandOutputSettings": ForwardRef('CommandOutputSettings', module='types')
+        key "computeDeploymentThreshold": ForwardRef('ValidationThresholdPatch', module='types')
+        key "runtimeProtectionConfiguration": ForwardRef('RuntimeProtectionConfigurationPatch', module='types')
+        key "secretArchive": ForwardRef('ClusterSecretArchivePatch', module='types')
+        key "secretArchiveSettings": ForwardRef('SecretArchiveSettings', module='types')
+        key "updateStrategy": ForwardRef('ClusterUpdateStrategyPatch', module='types')
+        key "vulnerabilityScanningSettings": ForwardRef('VulnerabilityScanningSettingsPatch', module='types')
+        aggregator_or_single_rack_definition: RackDefinitionPatch
+        analytics_output_settings: AnalyticsOutputSettings
+        cluster_location: str
+        cluster_service_principal: ServicePrincipalInformationPatch
+        command_output_settings: CommandOutputSettings
+        computeRackDefinitions: list[RackDefinitionPatch]
+        compute_deployment_threshold: ValidationThresholdPatch
+        compute_rack_definitions: list[RackDefinitionPatch]
+        runtime_protection_configuration: RuntimeProtectionConfigurationPatch
+        secret_archive: ClusterSecretArchivePatch
+        secret_archive_settings: SecretArchiveSettings
+        update_strategy: ClusterUpdateStrategyPatch
+        vulnerability_scanning_settings: VulnerabilityScanningSettingsPatch
+
+
+    class azure.mgmt.networkcloud.types.ClusterProperties(TypedDict, total=False):
+        key "aggregatorOrSingleRackDefinition": Required[RackDefinition]
+        key "analyticsOutputSettings": ForwardRef('AnalyticsOutputSettings', module='types')
+        key "analyticsWorkspaceId": str
+        key "clusterCapacity": ForwardRef('ClusterCapacity', module='types')
+        key "clusterConnectionStatus": Union[str, ClusterConnectionStatus]
+        key "clusterExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "clusterLocation": str
+        key "clusterManagerConnectionStatus": Union[str, ClusterManagerConnectionStatus]
+        key "clusterManagerId": str
+        key "clusterServicePrincipal": ForwardRef('ServicePrincipalInformation', module='types')
+        key "clusterType": Required[Union[str, ClusterType]]
+        key "clusterVersion": Required[str]
+        key "commandOutputSettings": ForwardRef('CommandOutputSettings', module='types')
+        key "computeDeploymentThreshold": ForwardRef('ValidationThreshold', module='types')
+        key "detailedStatus": Union[str, ClusterDetailedStatus]
+        key "detailedStatusMessage": str
+        key "hybridAksExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "lastSuccessfulVersionUpdateTime": str
+        key "managedResourceGroupConfiguration": ForwardRef('ManagedResourceGroupConfiguration', module='types')
+        key "manualActionCount": int
+        key "networkFabricId": Required[str]
+        key "provisioningState": Union[str, ClusterProvisioningState]
+        key "runtimeProtectionConfiguration": ForwardRef('RuntimeProtectionConfiguration', module='types')
+        key "secretArchive": ForwardRef('ClusterSecretArchive', module='types')
+        key "secretArchiveSettings": ForwardRef('SecretArchiveSettings', module='types')
+        key "supportExpiryDate": str
+        key "updateStrategy": ForwardRef('ClusterUpdateStrategy', module='types')
+        key "vulnerabilityScanningSettings": ForwardRef('VulnerabilityScanningSettings', module='types')
+        actionStates: list[ActionState]
+        action_states: list[ActionState]
+        aggregator_or_single_rack_definition: RackDefinition
+        analytics_output_settings: AnalyticsOutputSettings
+        analytics_workspace_id: str
+        availableUpgradeVersions: list[ClusterAvailableUpgradeVersion]
+        available_upgrade_versions: list[ClusterAvailableUpgradeVersion]
+        cluster_capacity: ClusterCapacity
+        cluster_connection_status: Union[str, ClusterConnectionStatus]
+        cluster_extended_location: ExtendedLocation
+        cluster_location: str
+        cluster_manager_connection_status: Union[str, ClusterManagerConnectionStatus]
+        cluster_manager_id: str
+        cluster_service_principal: ServicePrincipalInformation
+        cluster_type: Union[str, ClusterType]
+        cluster_version: str
+        command_output_settings: CommandOutputSettings
+        computeRackDefinitions: list[RackDefinition]
+        compute_deployment_threshold: ValidationThreshold
+        compute_rack_definitions: list[RackDefinition]
+        detailed_status: Union[str, ClusterDetailedStatus]
+        detailed_status_message: str
+        hybrid_aks_extended_location: ExtendedLocation
+        last_successful_version_update_time: str
+        managedCredentials: list[str]
+        managed_credentials: list[str]
+        managed_resource_group_configuration: ManagedResourceGroupConfiguration
+        manual_action_count: int
+        network_fabric_id: str
+        provisioning_state: Union[str, ClusterProvisioningState]
+        runtime_protection_configuration: RuntimeProtectionConfiguration
+        secret_archive: ClusterSecretArchive
+        secret_archive_settings: SecretArchiveSettings
+        support_expiry_date: str
+        update_strategy: ClusterUpdateStrategy
+        vulnerability_scanning_settings: VulnerabilityScanningSettings
+        workloadResourceIds: list[str]
+        workload_resource_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterRotateCredentialParameters(TypedDict, total=False):
+        key "credentials": Required[list[str]]
+        credentials: list[str]
+
+
+    class azure.mgmt.networkcloud.types.ClusterScanRuntimeParameters(TypedDict, total=False):
+        key "scanActivity": Union[str, ClusterScanRuntimeParametersScanActivity]
+        scan_activity: Union[str, ClusterScanRuntimeParametersScanActivity]
+
+
+    class azure.mgmt.networkcloud.types.ClusterSecretArchive(TypedDict, total=False):
+        key "keyVaultId": Required[str]
+        key "useKeyVault": Union[str, ClusterSecretArchiveEnabled]
+        key_vault_id: str
+        use_key_vault: Union[str, ClusterSecretArchiveEnabled]
+
+
+    class azure.mgmt.networkcloud.types.ClusterSecretArchivePatch(TypedDict, total=False):
+        key "keyVaultId": str
+        key "useKeyVault": Union[str, ClusterSecretArchiveEnabled]
+        key_vault_id: str
+        use_key_vault: Union[str, ClusterSecretArchiveEnabled]
+
+
+    class azure.mgmt.networkcloud.types.ClusterUpdateStrategy(TypedDict, total=False):
+        key "maxUnavailable": int
+        key "strategyType": Required[Union[str, ClusterUpdateStrategyType]]
+        key "thresholdType": Required[Union[str, ValidationThresholdType]]
+        key "thresholdValue": Required[int]
+        key "waitTimeMinutes": int
+        max_unavailable: int
+        strategy_type: Union[str, ClusterUpdateStrategyType]
+        threshold_type: Union[str, ValidationThresholdType]
+        threshold_value: int
+        wait_time_minutes: int
+
+
+    class azure.mgmt.networkcloud.types.ClusterUpdateStrategyPatch(TypedDict, total=False):
+        key "maxUnavailable": int
+        key "strategyType": Union[str, ClusterUpdateStrategyType]
+        key "thresholdType": Union[str, ValidationThresholdType]
+        key "thresholdValue": int
+        key "waitTimeMinutes": int
+        max_unavailable: int
+        strategy_type: Union[str, ClusterUpdateStrategyType]
+        threshold_type: Union[str, ValidationThresholdType]
+        threshold_value: int
+        wait_time_minutes: int
+
+
+    class azure.mgmt.networkcloud.types.ClusterUpdateVersionParameters(TypedDict, total=False):
+        key "safeguardMode": Union[str, ClusterUpdateVersionSafeguardMode]
+        key "targetClusterVersion": Required[str]
+        safeguard_mode: Union[str, ClusterUpdateVersionSafeguardMode]
+        target_cluster_version: str
+
+
+    class azure.mgmt.networkcloud.types.CommandOutputOverride(TypedDict, total=False):
+        key "associatedIdentity": ForwardRef('IdentitySelector', module='types')
+        key "commandOutputType": Union[str, CommandOutputType]
+        key "containerUrl": str
+        associated_identity: IdentitySelector
+        command_output_type: Union[str, CommandOutputType]
+        container_url: str
+
+
+    class azure.mgmt.networkcloud.types.CommandOutputSettings(TypedDict, total=False):
+        key "associatedIdentity": ForwardRef('IdentitySelector', module='types')
+        key "containerUrl": str
+        associated_identity: IdentitySelector
+        container_url: str
+        overrides: list[CommandOutputOverride]
+
+
+    class azure.mgmt.networkcloud.types.Console(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[ConsoleProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: ConsoleProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.ConsolePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('ConsolePatchProperties', module='types')
+        properties: ConsolePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.ConsolePatchProperties(TypedDict, total=False):
+        key "enabled": Union[str, ConsoleEnabled]
+        key "expiration": str
+        key "sshPublicKey": ForwardRef('SshPublicKeyPatch', module='types')
+        enabled: Union[str, ConsoleEnabled]
+        expiration: str
+        ssh_public_key: SshPublicKeyPatch
+
+
+    class azure.mgmt.networkcloud.types.ConsoleProperties(TypedDict, total=False):
+        key "detailedStatus": Union[str, ConsoleDetailedStatus]
+        key "detailedStatusMessage": str
+        key "enabled": Required[Union[str, ConsoleEnabled]]
+        key "expiration": str
+        key "privateLinkServiceId": str
+        key "provisioningState": Union[str, ConsoleProvisioningState]
+        key "sshPublicKey": Required[SshPublicKey]
+        key "virtualMachineAccessId": str
+        detailed_status: Union[str, ConsoleDetailedStatus]
+        detailed_status_message: str
+        enabled: Union[str, ConsoleEnabled]
+        expiration: str
+        private_link_service_id: str
+        provisioning_state: Union[str, ConsoleProvisioningState]
+        ssh_public_key: SshPublicKey
+        virtual_machine_access_id: str
+
+
+    class azure.mgmt.networkcloud.types.ControlPlaneNodeConfiguration(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('AdministratorConfiguration', module='types')
+        key "count": Required[int]
+        key "vmSkuName": Required[str]
+        administrator_configuration: AdministratorConfiguration
+        availabilityZones: list[str]
+        availability_zones: list[str]
+        count: int
+        vm_sku_name: str
+
+
+    class azure.mgmt.networkcloud.types.ControlPlaneNodePatchConfiguration(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('AdministratorConfigurationPatch', module='types')
+        key "count": int
+        administrator_configuration: AdministratorConfigurationPatch
+        count: int
+
+
+    class azure.mgmt.networkcloud.types.EgressEndpoint(TypedDict, total=False):
+        key "category": Required[str]
+        key "endpoints": Required[list[EndpointDependency]]
+        category: str
+        endpoints: list[EndpointDependency]
+
+
+    class azure.mgmt.networkcloud.types.EndpointDependency(TypedDict, total=False):
+        key "domainName": Required[str]
+        key "port": int
+        domain_name: str
+        port: int
+
+
+    class azure.mgmt.networkcloud.types.ExtendedLocation(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Union[str, ExtendedLocationType]]
+        name: str
+        type: Union[str, ExtendedLocationType]
+
+
+    class azure.mgmt.networkcloud.types.FeatureStatus(TypedDict, total=False):
+        key "detailedStatus": Union[str, FeatureDetailedStatus]
+        key "detailedStatusMessage": str
+        key "name": str
+        key "version": str
+        detailed_status: Union[str, FeatureDetailedStatus]
+        detailed_status_message: str
+        name: str
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.FilterDevices(TypedDict, total=False):
+        bareMetalMachineNames: list[str]
+        bare_metal_machine_names: list[str]
+        rackNames: list[str]
+        rack_names: list[str]
+
+
+    class azure.mgmt.networkcloud.types.HardwareInventory(TypedDict, total=False):
+        key "additionalHostInformation": str
+        additional_host_information: str
+        interfaces: list[HardwareInventoryNetworkInterface]
+        nics: list[Nic]
+
+
+    class azure.mgmt.networkcloud.types.HardwareInventoryNetworkInterface(TypedDict, total=False):
+        key "linkStatus": str
+        key "macAddress": str
+        key "name": str
+        key "networkInterfaceId": str
+        link_status: str
+        mac_address: str
+        name: str
+        network_interface_id: str
+
+
+    class azure.mgmt.networkcloud.types.HardwareValidationStatus(TypedDict, total=False):
+        key "lastValidationTime": str
+        key "result": Union[str, BareMetalMachineHardwareValidationResult]
+        last_validation_time: str
+        result: Union[str, BareMetalMachineHardwareValidationResult]
+
+
+    class azure.mgmt.networkcloud.types.IdentitySelector(TypedDict, total=False):
+        key "identityType": Union[str, ManagedServiceIdentitySelectorType]
+        key "userAssignedIdentityResourceId": str
+        identity_type: Union[str, ManagedServiceIdentitySelectorType]
+        user_assigned_identity_resource_id: str
+
+
+    class azure.mgmt.networkcloud.types.ImageRepositoryCredentials(TypedDict, total=False):
+        key "password": Required[str]
+        key "registryUrl": Required[str]
+        key "username": Required[str]
+        password: str
+        registry_url: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.ImageRepositoryCredentialsPatch(TypedDict, total=False):
+        key "password": str
+        key "registryUrl": str
+        key "username": str
+        password: str
+        registry_url: str
+        username: str
+
+
+    class azure.mgmt.networkcloud.types.InitialAgentPoolConfiguration(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('AdministratorConfiguration', module='types')
+        key "agentOptions": ForwardRef('AgentOptions', module='types')
+        key "attachedNetworkConfiguration": ForwardRef('AttachedNetworkConfiguration', module='types')
+        key "count": Required[int]
+        key "mode": Required[Union[str, AgentPoolMode]]
+        key "name": Required[str]
+        key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
+        key "vmSkuName": Required[str]
+        administrator_configuration: AdministratorConfiguration
+        agent_options: AgentOptions
+        attached_network_configuration: AttachedNetworkConfiguration
+        availabilityZones: list[str]
+        availability_zones: list[str]
+        count: int
+        labels: list[KubernetesLabel]
+        mode: Union[str, AgentPoolMode]
+        name: str
+        taints: list[KubernetesLabel]
+        upgrade_settings: AgentPoolUpgradeSettings
+        vm_sku_name: str
+
+
+    class azure.mgmt.networkcloud.types.IpAddressPool(TypedDict, total=False):
+        key "addresses": Required[list[str]]
+        key "autoAssign": Union[str, BfdEnabled]
+        key "name": Required[str]
+        key "onlyUseHostIps": Union[str, BfdEnabled]
+        addresses: list[str]
+        auto_assign: Union[str, BfdEnabled]
+        name: str
+        only_use_host_ips: Union[str, BfdEnabled]
+
+
+    class azure.mgmt.networkcloud.types.KeySetUser(TypedDict, total=False):
+        key "azureUserName": Required[str]
+        key "description": str
+        key "sshPublicKey": Required[SshPublicKey]
+        key "userPrincipalName": str
+        azure_user_name: str
+        description: str
+        ssh_public_key: SshPublicKey
+        user_principal_name: str
+
+
+    class azure.mgmt.networkcloud.types.KeySetUserStatus(TypedDict, total=False):
+        key "azureUserName": str
+        key "status": Union[str, BareMetalMachineKeySetUserSetupStatus]
+        key "statusMessage": str
+        azure_user_name: str
+        status: Union[str, BareMetalMachineKeySetUserSetupStatus]
+        status_message: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesCluster(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[KubernetesClusterProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: KubernetesClusterProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterFeature(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('KubernetesClusterFeatureProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        location: str
+        name: str
+        properties: KubernetesClusterFeatureProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterFeaturePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('KubernetesClusterFeaturePatchProperties', module='types')
+        properties: KubernetesClusterFeaturePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterFeaturePatchProperties(TypedDict, total=False):
+        options: list[StringKeyValuePair]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterFeatureProperties(TypedDict, total=False):
+        key "availabilityLifecycle": Union[str, KubernetesClusterFeatureAvailabilityLifecycle]
+        key "detailedStatus": Union[str, KubernetesClusterFeatureDetailedStatus]
+        key "detailedStatusMessage": str
+        key "provisioningState": Union[str, KubernetesClusterFeatureProvisioningState]
+        key "required": Union[str, KubernetesClusterFeatureRequired]
+        key "version": str
+        availability_lifecycle: Union[str, KubernetesClusterFeatureAvailabilityLifecycle]
+        detailed_status: Union[str, KubernetesClusterFeatureDetailedStatus]
+        detailed_status_message: str
+        options: list[StringKeyValuePair]
+        provisioning_state: Union[str, KubernetesClusterFeatureProvisioningState]
+        required: Union[str, KubernetesClusterFeatureRequired]
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterNode(TypedDict, total=False):
+        key "agentPoolId": str
+        key "availabilityZone": str
+        key "bareMetalMachineId": str
+        key "cpuCores": int
+        key "detailedStatus": Union[str, KubernetesClusterNodeDetailedStatus]
+        key "detailedStatusMessage": str
+        key "diskSizeGB": int
+        key "image": str
+        key "kubernetesVersion": str
+        key "memorySizeGB": int
+        key "mode": Union[str, AgentPoolMode]
+        key "name": str
+        key "powerState": Union[str, KubernetesNodePowerState]
+        key "role": Union[str, KubernetesNodeRole]
+        key "vmSkuName": str
+        agent_pool_id: str
+        availability_zone: str
+        bare_metal_machine_id: str
+        cpu_cores: int
+        detailed_status: Union[str, KubernetesClusterNodeDetailedStatus]
+        detailed_status_message: str
+        disk_size_gb: int
+        image: str
+        kubernetes_version: str
+        labels: list[KubernetesLabel]
+        memory_size_gb: int
+        mode: Union[str, AgentPoolMode]
+        name: str
+        networkAttachments: list[NetworkAttachment]
+        network_attachments: list[NetworkAttachment]
+        power_state: Union[str, KubernetesNodePowerState]
+        role: Union[str, KubernetesNodeRole]
+        taints: list[KubernetesLabel]
+        vm_sku_name: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('KubernetesClusterPatchProperties', module='types')
+        properties: KubernetesClusterPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterPatchProperties(TypedDict, total=False):
+        key "administratorConfiguration": ForwardRef('AdministratorConfigurationPatch', module='types')
+        key "controlPlaneNodeConfiguration": ForwardRef('ControlPlaneNodePatchConfiguration', module='types')
+        key "kubernetesVersion": str
+        administrator_configuration: AdministratorConfigurationPatch
+        control_plane_node_configuration: ControlPlaneNodePatchConfiguration
+        kubernetes_version: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterProperties(TypedDict, total=False):
+        key "aadConfiguration": ForwardRef('AadConfiguration', module='types')
+        key "administratorConfiguration": ForwardRef('AdministratorConfiguration', module='types')
+        key "clusterId": str
+        key "connectedClusterId": str
+        key "controlPlaneKubernetesVersion": str
+        key "controlPlaneNodeConfiguration": Required[ControlPlaneNodeConfiguration]
+        key "detailedStatus": Union[str, KubernetesClusterDetailedStatus]
+        key "detailedStatusMessage": str
+        key "initialAgentPoolConfigurations": Required[list[InitialAgentPoolConfiguration]]
+        key "kubernetesVersion": Required[str]
+        key "managedResourceGroupConfiguration": ForwardRef('ManagedResourceGroupConfiguration', module='types')
+        key "networkConfiguration": Required[NetworkConfiguration]
+        key "provisioningState": Union[str, KubernetesClusterProvisioningState]
+        aad_configuration: AadConfiguration
+        administrator_configuration: AdministratorConfiguration
+        attachedNetworkIds: list[str]
+        attached_network_ids: list[str]
+        availableUpgrades: list[AvailableUpgrade]
+        available_upgrades: list[AvailableUpgrade]
+        cluster_id: str
+        connected_cluster_id: str
+        control_plane_kubernetes_version: str
+        control_plane_node_configuration: ControlPlaneNodeConfiguration
+        detailed_status: Union[str, KubernetesClusterDetailedStatus]
+        detailed_status_message: str
+        featureStatuses: list[FeatureStatus]
+        feature_statuses: list[FeatureStatus]
+        initial_agent_pool_configurations: list[InitialAgentPoolConfiguration]
+        kubernetes_version: str
+        managed_resource_group_configuration: ManagedResourceGroupConfiguration
+        network_configuration: NetworkConfiguration
+        nodes: list[KubernetesClusterNode]
+        provisioning_state: Union[str, KubernetesClusterProvisioningState]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesClusterRestartNodeParameters(TypedDict, total=False):
+        key "nodeName": Required[str]
+        node_name: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesLabel(TypedDict, total=False):
+        key "key": Required[str]
+        key "value": Required[str]
+        key: str
+        value: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersion(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[KubernetesVersionProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: KubernetesVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionPatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, KubernetesVersionProvisioningState]
+        provisioning_state: Union[str, KubernetesVersionProvisioningState]
+        values: list[KubernetesVersionValue]
+        values_property: list[KubernetesVersionValue]
+
+
+    class azure.mgmt.networkcloud.types.KubernetesVersionValue(TypedDict, total=False):
+        key "description": str
+        key "version": str
+        description: str
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.L2Network(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[L2NetworkProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: L2NetworkProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.L2NetworkAttachmentConfiguration(TypedDict, total=False):
+        key "networkId": Required[str]
+        key "pluginType": Union[str, KubernetesPluginType]
+        network_id: str
+        plugin_type: Union[str, KubernetesPluginType]
+
+
+    class azure.mgmt.networkcloud.types.L2NetworkPatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.L2NetworkProperties(TypedDict, total=False):
+        key "clusterId": str
+        key "detailedStatus": Union[str, L2NetworkDetailedStatus]
+        key "detailedStatusMessage": str
+        key "hybridAksPluginType": Union[str, HybridAksPluginType]
+        key "interfaceName": str
+        key "l2IsolationDomainId": Required[str]
+        key "provisioningState": Union[str, L2NetworkProvisioningState]
+        associatedResourceIds: list[str]
+        associated_resource_ids: list[str]
+        cluster_id: str
+        detailed_status: Union[str, L2NetworkDetailedStatus]
+        detailed_status_message: str
+        hybridAksClustersAssociatedIds: list[str]
+        hybrid_aks_clusters_associated_ids: list[str]
+        hybrid_aks_plugin_type: Union[str, HybridAksPluginType]
+        interface_name: str
+        l2_isolation_domain_id: str
+        provisioning_state: Union[str, L2NetworkProvisioningState]
+        virtualMachinesAssociatedIds: list[str]
+        virtual_machines_associated_ids: list[str]
+
+
+    class azure.mgmt.networkcloud.types.L2ServiceLoadBalancerConfiguration(TypedDict, total=False):
+        ipAddressPools: list[IpAddressPool]
+        ip_address_pools: list[IpAddressPool]
+
+
+    class azure.mgmt.networkcloud.types.L3Network(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[L3NetworkProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: L3NetworkProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.L3NetworkAttachmentConfiguration(TypedDict, total=False):
+        key "ipamEnabled": Union[str, L3NetworkConfigurationIpamEnabled]
+        key "networkId": Required[str]
+        key "pluginType": Union[str, KubernetesPluginType]
+        ipam_enabled: Union[str, L3NetworkConfigurationIpamEnabled]
+        network_id: str
+        plugin_type: Union[str, KubernetesPluginType]
+
+
+    class azure.mgmt.networkcloud.types.L3NetworkPatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.L3NetworkProperties(TypedDict, total=False):
+        key "clusterId": str
+        key "detailedStatus": Union[str, L3NetworkDetailedStatus]
+        key "detailedStatusMessage": str
+        key "hybridAksIpamEnabled": Union[str, HybridAksIpamEnabled]
+        key "hybridAksPluginType": Union[str, HybridAksPluginType]
+        key "interfaceName": str
+        key "ipAllocationType": Union[str, IpAllocationType]
+        key "ipv4ConnectedPrefix": str
+        key "ipv6ConnectedPrefix": str
+        key "l3IsolationDomainId": Required[str]
+        key "provisioningState": Union[str, L3NetworkProvisioningState]
+        key "vlan": Required[int]
+        associatedResourceIds: list[str]
+        associated_resource_ids: list[str]
+        cluster_id: str
+        detailed_status: Union[str, L3NetworkDetailedStatus]
+        detailed_status_message: str
+        hybridAksClustersAssociatedIds: list[str]
+        hybrid_aks_clusters_associated_ids: list[str]
+        hybrid_aks_ipam_enabled: Union[str, HybridAksIpamEnabled]
+        hybrid_aks_plugin_type: Union[str, HybridAksPluginType]
+        interface_name: str
+        ip_allocation_type: Union[str, IpAllocationType]
+        ipv4_connected_prefix: str
+        ipv6_connected_prefix: str
+        l3_isolation_domain_id: str
+        provisioning_state: Union[str, L3NetworkProvisioningState]
+        virtualMachinesAssociatedIds: list[str]
+        virtual_machines_associated_ids: list[str]
+        vlan: int
+
+
+    class azure.mgmt.networkcloud.types.LldpNeighbor(TypedDict, total=False):
+        key "portDescription": str
+        key "portName": str
+        key "systemDescription": str
+        key "systemName": str
+        port_description: str
+        port_name: str
+        system_description: str
+        system_name: str
+
+
+    class azure.mgmt.networkcloud.types.ManagedResourceGroupConfiguration(TypedDict, total=False):
+        key "location": str
+        key "name": str
+        location: str
+        name: str
+
+
+    class azure.mgmt.networkcloud.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+        user_assigned_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.networkcloud.types.NetworkAttachment(TypedDict, total=False):
+        key "attachedNetworkId": Required[str]
+        key "defaultGateway": Union[str, DefaultGateway]
+        key "ipAllocationMethod": Required[Union[str, VirtualMachineIPAllocationMethod]]
+        key "ipv4Address": str
+        key "ipv6Address": str
+        key "macAddress": str
+        key "networkAttachmentName": str
+        attached_network_id: str
+        default_gateway: Union[str, DefaultGateway]
+        ip_allocation_method: Union[str, VirtualMachineIPAllocationMethod]
+        ipv4_address: str
+        ipv6_address: str
+        mac_address: str
+        network_attachment_name: str
+
+
+    class azure.mgmt.networkcloud.types.NetworkConfiguration(TypedDict, total=False):
+        key "attachedNetworkConfiguration": ForwardRef('AttachedNetworkConfiguration', module='types')
+        key "bgpServiceLoadBalancerConfiguration": ForwardRef('BgpServiceLoadBalancerConfiguration', module='types')
+        key "cloudServicesNetworkId": Required[str]
+        key "cniNetworkId": Required[str]
+        key "dnsServiceIp": str
+        key "l2ServiceLoadBalancerConfiguration": ForwardRef('L2ServiceLoadBalancerConfiguration', module='types')
+        attached_network_configuration: AttachedNetworkConfiguration
+        bgp_service_load_balancer_configuration: BgpServiceLoadBalancerConfiguration
+        cloud_services_network_id: str
+        cni_network_id: str
+        dns_service_ip: str
+        l2_service_load_balancer_configuration: L2ServiceLoadBalancerConfiguration
+        podCidrs: list[str]
+        pod_cidrs: list[str]
+        serviceCidrs: list[str]
+        service_cidrs: list[str]
+
+
+    class azure.mgmt.networkcloud.types.Nic(TypedDict, total=False):
+        key "lldpNeighbor": ForwardRef('LldpNeighbor', module='types')
+        key "macAddress": str
+        key "name": str
+        lldp_neighbor: LldpNeighbor
+        mac_address: str
+        name: str
+
+
+    class azure.mgmt.networkcloud.types.NodePoolAdministratorConfigurationPatch(TypedDict, total=False):
+        sshPublicKeys: list[SshPublicKey]
+        ssh_public_keys: list[SshPublicKey]
+
+
+    class azure.mgmt.networkcloud.types.OsDisk(TypedDict, total=False):
+        key "createOption": Union[str, OsDiskCreateOption]
+        key "deleteOption": Union[str, OsDiskDeleteOption]
+        key "diskSizeGB": Required[int]
+        create_option: Union[str, OsDiskCreateOption]
+        delete_option: Union[str, OsDiskDeleteOption]
+        disk_size_gb: int
+
+
+    class azure.mgmt.networkcloud.types.Rack(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[RackProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: RackProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.RackDefinition(TypedDict, total=False):
+        key "availabilityZone": str
+        key "networkRackId": Required[str]
+        key "rackLocation": str
+        key "rackSerialNumber": Required[str]
+        key "rackSkuId": Required[str]
+        availability_zone: str
+        bareMetalMachineConfigurationData: list[BareMetalMachineConfigurationData]
+        bare_metal_machine_configuration_data: list[BareMetalMachineConfigurationData]
+        network_rack_id: str
+        rack_location: str
+        rack_serial_number: str
+        rack_sku_id: str
+        storageApplianceConfigurationData: list[StorageApplianceConfigurationData]
+        storage_appliance_configuration_data: list[StorageApplianceConfigurationData]
+
+
+    class azure.mgmt.networkcloud.types.RackDefinitionPatch(TypedDict, total=False):
+        key "availabilityZone": str
+        key "networkRackId": str
+        key "rackLocation": str
+        key "rackSerialNumber": str
+        key "rackSkuId": str
+        availability_zone: str
+        bareMetalMachineConfigurationData: list[BareMetalMachineConfigurationDataPatch]
+        bare_metal_machine_configuration_data: list[BareMetalMachineConfigurationDataPatch]
+        network_rack_id: str
+        rack_location: str
+        rack_serial_number: str
+        rack_sku_id: str
+        storageApplianceConfigurationData: list[StorageApplianceConfigurationDataPatch]
+        storage_appliance_configuration_data: list[StorageApplianceConfigurationDataPatch]
+
+
+    class azure.mgmt.networkcloud.types.RackPatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('RacksPatchProperties', module='types')
+        properties: RacksPatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.RackProperties(TypedDict, total=False):
+        key "availabilityZone": Required[str]
+        key "clusterId": str
+        key "detailedStatus": Union[str, RackDetailedStatus]
+        key "detailedStatusMessage": str
+        key "provisioningState": Union[str, RackProvisioningState]
+        key "rackLocation": Required[str]
+        key "rackSerialNumber": Required[str]
+        key "rackSkuId": Required[str]
+        availability_zone: str
+        cluster_id: str
+        detailed_status: Union[str, RackDetailedStatus]
+        detailed_status_message: str
+        provisioning_state: Union[str, RackProvisioningState]
+        rack_location: str
+        rack_serial_number: str
+        rack_sku_id: str
+
+
+    class azure.mgmt.networkcloud.types.RacksPatchProperties(TypedDict, total=False):
+        key "rackLocation": str
+        key "rackSerialNumber": str
+        rack_location: str
+        rack_serial_number: str
+
+
+    class azure.mgmt.networkcloud.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.RuntimeProtectionConfiguration(TypedDict, total=False):
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
+        key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
+        enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
+
+
+    class azure.mgmt.networkcloud.types.RuntimeProtectionConfigurationPatch(TypedDict, total=False):
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
+        key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
+        enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
+
+
+    class azure.mgmt.networkcloud.types.RuntimeProtectionStatus(TypedDict, total=False):
+        key "agentHealthStatus": Union[str, RuntimeProtectionAgentHealthStatus]
+        key "agentLicenseStatus": Union[str, RuntimeProtectionAgentLicenseStatus]
+        key "definitionUpdateMode": Union[str, RuntimeProtectionDefinitionUpdateMode]
+        key "definitionsLastUpdated": str
+        key "definitionsVersion": str
+        key "enforcementLevel": Union[str, RuntimeProtectionEnforcementLevel]
+        key "scanCompletedTime": str
+        key "scanScheduledTime": str
+        key "scanStartedTime": str
+        agentHealthStatusIssues: list[str]
+        agent_health_status: Union[str, RuntimeProtectionAgentHealthStatus]
+        agent_health_status_issues: list[str]
+        agent_license_status: Union[str, RuntimeProtectionAgentLicenseStatus]
+        definition_update_mode: Union[str, RuntimeProtectionDefinitionUpdateMode]
+        definitions_last_updated: str
+        definitions_version: str
+        enforcement_level: Union[str, RuntimeProtectionEnforcementLevel]
+        scan_completed_time: str
+        scan_scheduled_time: str
+        scan_started_time: str
+
+
+    class azure.mgmt.networkcloud.types.SecretArchiveReference(TypedDict, total=False):
+        key "keyVaultId": str
+        key "keyVaultUri": str
+        key "secretName": str
+        key "secretVersion": str
+        key_vault_id: str
+        key_vault_uri: str
+        secret_name: str
+        secret_version: str
+
+
+    class azure.mgmt.networkcloud.types.SecretArchiveSettings(TypedDict, total=False):
+        key "associatedIdentity": ForwardRef('IdentitySelector', module='types')
+        key "vaultUri": str
+        associated_identity: IdentitySelector
+        vault_uri: str
+
+
+    class azure.mgmt.networkcloud.types.SecretRotationStatus(TypedDict, total=False):
+        key "expirePeriodDays": int
+        key "lastRotationTime": str
+        key "rotationPeriodDays": int
+        key "secretArchiveReference": ForwardRef('SecretArchiveReference', module='types')
+        key "secretType": str
+        expire_period_days: int
+        last_rotation_time: str
+        rotation_period_days: int
+        secret_archive_reference: SecretArchiveReference
+        secret_type: str
+
+
+    class azure.mgmt.networkcloud.types.ServiceLoadBalancerBgpPeer(TypedDict, total=False):
+        key "bfdEnabled": Union[str, BfdEnabled]
+        key "bgpMultiHop": Union[str, BgpMultiHop]
+        key "holdTime": str
+        key "keepAliveTime": str
+        key "myAsn": int
+        key "name": Required[str]
+        key "password": str
+        key "peerAddress": Required[str]
+        key "peerAsn": Required[int]
+        key "peerPort": int
+        bfd_enabled: Union[str, BfdEnabled]
+        bgp_multi_hop: Union[str, BgpMultiHop]
+        hold_time: str
+        keep_alive_time: str
+        my_asn: int
+        name: str
+        password: str
+        peer_address: str
+        peer_asn: int
+        peer_port: int
+
+
+    class azure.mgmt.networkcloud.types.ServicePrincipalInformation(TypedDict, total=False):
+        key "applicationId": Required[str]
+        key "password": Required[str]
+        key "principalId": Required[str]
+        key "tenantId": Required[str]
+        application_id: str
+        password: str
+        principal_id: str
+        tenant_id: str
+
+
+    class azure.mgmt.networkcloud.types.ServicePrincipalInformationPatch(TypedDict, total=False):
+        key "applicationId": str
+        key "password": str
+        key "principalId": str
+        key "tenantId": str
+        application_id: str
+        password: str
+        principal_id: str
+        tenant_id: str
+
+
+    class azure.mgmt.networkcloud.types.SshPublicKey(TypedDict, total=False):
+        key "keyData": Required[str]
+        key_data: str
+
+
+    class azure.mgmt.networkcloud.types.SshPublicKeyPatch(TypedDict, total=False):
+        key "keyData": str
+        key_data: str
+
+
+    class azure.mgmt.networkcloud.types.StepState(TypedDict, total=False):
+        key "endTime": str
+        key "message": str
+        key "startTime": str
+        key "status": Union[str, StepStateStatus]
+        key "stepName": str
+        end_time: str
+        message: str
+        start_time: str
+        status: Union[str, StepStateStatus]
+        step_name: str
+
+
+    class azure.mgmt.networkcloud.types.StorageAppliance(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[StorageApplianceProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: StorageApplianceProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceCommandSpecification(TypedDict, total=False):
+        key "command": Required[str]
+        arguments: list[str]
+        command: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceConfigurationData(TypedDict, total=False):
+        key "adminCredentials": Required[AdministrativeCredentials]
+        key "rackSlot": Required[int]
+        key "serialNumber": Required[str]
+        key "storageApplianceName": str
+        admin_credentials: AdministrativeCredentials
+        rack_slot: int
+        serial_number: str
+        storage_appliance_name: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceConfigurationDataPatch(TypedDict, total=False):
+        key "adminCredentials": ForwardRef('AdministrativeCredentialsPatch', module='types')
+        key "rackSlot": int
+        key "serialNumber": str
+        key "storageApplianceName": str
+        admin_credentials: AdministrativeCredentialsPatch
+        rack_slot: int
+        serial_number: str
+        storage_appliance_name: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceEnableRemoteVendorManagementParameters(TypedDict, total=False):
+        supportEndpoints: list[str]
+        support_endpoints: list[str]
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceExpansionShelf(TypedDict, total=False):
+        key "model": str
+        key "version": str
+        model: str
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceMonitoringConfigurationStatus(TypedDict, total=False):
+        key "logLevel": Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]
+        key "metricsLevel": Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]
+        log_level: Union[str, StorageApplianceMonitoringConfigurationStatusLogLevel]
+        metrics_level: Union[str, StorageApplianceMonitoringConfigurationStatusMetricsLevel]
+
+
+    class azure.mgmt.networkcloud.types.StorageAppliancePatchParameters(TypedDict, total=False):
+        key "properties": ForwardRef('StorageAppliancePatchProperties', module='types')
+        properties: StorageAppliancePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.StorageAppliancePatchProperties(TypedDict, total=False):
+        key "serialNumber": str
+        serial_number: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceProperties(TypedDict, total=False):
+        key "administratorCredentials": Required[AdministrativeCredentials]
+        key "caCertificate": ForwardRef('CertificateInfo', module='types')
+        key "capacity": int
+        key "capacityUsed": int
+        key "clusterId": str
+        key "detailedStatus": Union[str, StorageApplianceDetailedStatus]
+        key "detailedStatusMessage": str
+        key "managementIpv4Address": str
+        key "manufacturer": str
+        key "model": str
+        key "monitoringConfigurationStatus": ForwardRef('StorageApplianceMonitoringConfigurationStatus', module='types')
+        key "provisioningState": Union[str, StorageApplianceProvisioningState]
+        key "rackId": Required[str]
+        key "rackSlot": Required[int]
+        key "remoteVendorManagementFeature": Union[str, RemoteVendorManagementFeature]
+        key "remoteVendorManagementStatus": Union[str, RemoteVendorManagementStatus]
+        key "serialNumber": Required[str]
+        key "storageApplianceSkuId": Required[str]
+        key "version": str
+        administrator_credentials: AdministrativeCredentials
+        ca_certificate: CertificateInfo
+        capacity: int
+        capacity_used: int
+        cluster_id: str
+        detailed_status: Union[str, StorageApplianceDetailedStatus]
+        detailed_status_message: str
+        expansionShelves: list[StorageApplianceExpansionShelf]
+        expansion_shelves: list[StorageApplianceExpansionShelf]
+        management_ipv4_address: str
+        manufacturer: str
+        model: str
+        monitoring_configuration_status: StorageApplianceMonitoringConfigurationStatus
+        provisioning_state: Union[str, StorageApplianceProvisioningState]
+        rack_id: str
+        rack_slot: int
+        remote_vendor_management_feature: Union[str, RemoteVendorManagementFeature]
+        remote_vendor_management_status: Union[str, RemoteVendorManagementStatus]
+        secretRotationStatus: list[SecretRotationStatus]
+        secret_rotation_status: list[SecretRotationStatus]
+        serial_number: str
+        storage_appliance_sku_id: str
+        version: str
+
+
+    class azure.mgmt.networkcloud.types.StorageApplianceRunReadCommandsParameters(TypedDict, total=False):
+        key "commands": Required[list[StorageApplianceCommandSpecification]]
+        key "limitTimeSeconds": Required[int]
+        commands: list[StorageApplianceCommandSpecification]
+        limit_time_seconds: int
+
+
+    class azure.mgmt.networkcloud.types.StorageProfile(TypedDict, total=False):
+        key "osDisk": Required[OsDisk]
+        os_disk: OsDisk
+        volumeAttachments: list[str]
+        volume_attachments: list[str]
+
+
+    class azure.mgmt.networkcloud.types.StringKeyValuePair(TypedDict, total=False):
+        key "key": Required[str]
+        key "value": Required[str]
+        key: str
+        value: str
+
+
+    class azure.mgmt.networkcloud.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.networkcloud.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.TrunkedNetwork(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[TrunkedNetworkProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: TrunkedNetworkProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.TrunkedNetworkAttachmentConfiguration(TypedDict, total=False):
+        key "networkId": Required[str]
+        key "pluginType": Union[str, KubernetesPluginType]
+        network_id: str
+        plugin_type: Union[str, KubernetesPluginType]
+
+
+    class azure.mgmt.networkcloud.types.TrunkedNetworkPatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.TrunkedNetworkProperties(TypedDict, total=False):
+        key "clusterId": str
+        key "detailedStatus": Union[str, TrunkedNetworkDetailedStatus]
+        key "detailedStatusMessage": str
+        key "hybridAksPluginType": Union[str, HybridAksPluginType]
+        key "interfaceName": str
+        key "isolationDomainIds": Required[list[str]]
+        key "provisioningState": Union[str, TrunkedNetworkProvisioningState]
+        key "vlans": Required[list[int]]
+        associatedResourceIds: list[str]
+        associated_resource_ids: list[str]
+        cluster_id: str
+        detailed_status: Union[str, TrunkedNetworkDetailedStatus]
+        detailed_status_message: str
+        hybridAksClustersAssociatedIds: list[str]
+        hybrid_aks_clusters_associated_ids: list[str]
+        hybrid_aks_plugin_type: Union[str, HybridAksPluginType]
+        interface_name: str
+        isolation_domain_ids: list[str]
+        provisioning_state: Union[str, TrunkedNetworkProvisioningState]
+        virtualMachinesAssociatedIds: list[str]
+        virtual_machines_associated_ids: list[str]
+        vlans: list[int]
+
+
+    class azure.mgmt.networkcloud.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
+
+
+    class azure.mgmt.networkcloud.types.ValidationThreshold(TypedDict, total=False):
+        key "grouping": Required[Union[str, ValidationThresholdGrouping]]
+        key "type": Required[Union[str, ValidationThresholdType]]
+        key "value": Required[int]
+        grouping: Union[str, ValidationThresholdGrouping]
+        type: Union[str, ValidationThresholdType]
+        value: int
+
+
+    class azure.mgmt.networkcloud.types.ValidationThresholdPatch(TypedDict, total=False):
+        key "grouping": Union[str, ValidationThresholdGrouping]
+        key "type": Union[str, ValidationThresholdType]
+        key "value": int
+        grouping: Union[str, ValidationThresholdGrouping]
+        type: Union[str, ValidationThresholdType]
+        value: int
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachine(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[VirtualMachineProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        identity: ManagedServiceIdentity
+        location: str
+        name: str
+        properties: VirtualMachineProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachineAssignRelayParameters(TypedDict, total=False):
+        key "machineId": Required[str]
+        key "relayType": Union[str, RelayType]
+        machine_id: str
+        relay_type: Union[str, RelayType]
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachinePatchParameters(TypedDict, total=False):
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
+        key "properties": ForwardRef('VirtualMachinePatchProperties', module='types')
+        identity: ManagedServiceIdentity
+        properties: VirtualMachinePatchProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachinePatchProperties(TypedDict, total=False):
+        key "vmImageRepositoryCredentials": ForwardRef('ImageRepositoryCredentialsPatch', module='types')
+        vm_image_repository_credentials: ImageRepositoryCredentialsPatch
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachinePlacementHint(TypedDict, total=False):
+        key "hintType": Required[Union[str, VirtualMachinePlacementHintType]]
+        key "resourceId": Required[str]
+        key "schedulingExecution": Required[Union[str, VirtualMachineSchedulingExecution]]
+        key "scope": Required[Union[str, VirtualMachinePlacementHintPodAffinityScope]]
+        hint_type: Union[str, VirtualMachinePlacementHintType]
+        resource_id: str
+        scheduling_execution: Union[str, VirtualMachineSchedulingExecution]
+        scope: Union[str, VirtualMachinePlacementHintPodAffinityScope]
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachinePowerOffParameters(TypedDict, total=False):
+        key "skipShutdown": Union[str, SkipShutdown]
+        skip_shutdown: Union[str, SkipShutdown]
+
+
+    class azure.mgmt.networkcloud.types.VirtualMachineProperties(TypedDict, total=False):
+        key "adminUsername": Required[str]
+        key "availabilityZone": str
+        key "bareMetalMachineId": str
+        key "bootMethod": Union[str, VirtualMachineBootMethod]
+        key "cloudServicesNetworkAttachment": Required[NetworkAttachment]
+        key "clusterId": str
+        key "consoleExtendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "cpuCores": Required[int]
+        key "detailedStatus": Union[str, VirtualMachineDetailedStatus]
+        key "detailedStatusMessage": str
+        key "isolateEmulatorThread": Union[str, VirtualMachineIsolateEmulatorThread]
+        key "memorySizeGB": Required[int]
+        key "networkData": str
+        key "networkDataContent": str
+        key "powerState": Union[str, VirtualMachinePowerState]
+        key "provisioningState": Union[str, VirtualMachineProvisioningState]
+        key "storageProfile": Required[StorageProfile]
+        key "userData": str
+        key "userDataContent": str
+        key "virtioInterface": Union[str, VirtualMachineVirtioInterfaceType]
+        key "vmDeviceModel": Union[str, VirtualMachineDeviceModelType]
+        key "vmImage": Required[str]
+        key "vmImageRepositoryCredentials": ForwardRef('ImageRepositoryCredentials', module='types')
+        admin_username: str
+        availability_zone: str
+        bare_metal_machine_id: str
+        boot_method: Union[str, VirtualMachineBootMethod]
+        cloud_services_network_attachment: NetworkAttachment
+        cluster_id: str
+        console_extended_location: ExtendedLocation
+        cpu_cores: int
+        detailed_status: Union[str, VirtualMachineDetailedStatus]
+        detailed_status_message: str
+        isolate_emulator_thread: Union[str, VirtualMachineIsolateEmulatorThread]
+        memory_size_gb: int
+        networkAttachments: list[NetworkAttachment]
+        network_attachments: list[NetworkAttachment]
+        network_data: str
+        network_data_content: str
+        placementHints: list[VirtualMachinePlacementHint]
+        placement_hints: list[VirtualMachinePlacementHint]
+        power_state: Union[str, VirtualMachinePowerState]
+        provisioning_state: Union[str, VirtualMachineProvisioningState]
+        sshPublicKeys: list[SshPublicKey]
+        ssh_public_keys: list[SshPublicKey]
+        storage_profile: StorageProfile
+        user_data: str
+        user_data_content: str
+        virtio_interface: Union[str, VirtualMachineVirtioInterfaceType]
+        vm_device_model: Union[str, VirtualMachineDeviceModelType]
+        vm_image: str
+        vm_image_repository_credentials: ImageRepositoryCredentials
+        volumes: list[str]
+
+
+    class azure.mgmt.networkcloud.types.Volume(TrackedResource):
+        key "etag": str
+        key "extendedLocation": Required[ExtendedLocation]
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": Required[VolumeProperties]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: VolumeProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.networkcloud.types.VolumePatchParameters(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.networkcloud.types.VolumeProperties(TypedDict, total=False):
+        key "allocatedSizeMiB": int
+        key "assignedStorageApplianceId": str
+        key "detailedStatus": Union[str, VolumeDetailedStatus]
+        key "detailedStatusMessage": str
+        key "provisioningState": Union[str, VolumeProvisioningState]
+        key "serialNumber": str
+        key "sizeMiB": Required[int]
+        key "storageApplianceId": str
+        allocated_size_mi_b: int
+        assigned_storage_appliance_id: str
+        attachedTo: list[str]
+        attached_to: list[str]
+        detailed_status: Union[str, VolumeDetailedStatus]
+        detailed_status_message: str
+        provisioning_state: Union[str, VolumeProvisioningState]
+        serial_number: str
+        size_mi_b: int
+        storage_appliance_id: str
+
+
+    class azure.mgmt.networkcloud.types.VulnerabilityScanningSettings(TypedDict, total=False):
+        key "containerScan": Union[str, VulnerabilityScanningSettingsContainerScan]
+        container_scan: Union[str, VulnerabilityScanningSettingsContainerScan]
+
+
+    class azure.mgmt.networkcloud.types.VulnerabilityScanningSettingsPatch(TypedDict, total=False):
+        key "containerScan": Union[str, VulnerabilityScanningSettingsContainerScan]
+        container_scan: Union[str, VulnerabilityScanningSettingsContainerScan]
 
 
 ```
