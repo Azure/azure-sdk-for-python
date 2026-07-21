@@ -59,7 +59,7 @@ def get_version_info(package_name: str, tag_is_stable: bool = False) -> Tuple[st
     SKIP_SDK_VERSIONS = {"azure-mgmt-datatransfer": "1.0.0b1"}  # could be removed after new SDK version released
 
     try:
-        client = PyPIClient()
+        client = PyPIClient(force_pypi=True)
         # Ignore 0.0.0 placeholder releases, including prereleases like 0.0.0b1 via base_version.
         ordered_versions = [
             v
