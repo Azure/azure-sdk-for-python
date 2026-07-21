@@ -6,6 +6,7 @@
 
 - Updated type annotations in `BlobCheckpointStore`.
 - Bumped `aiohttp` min dependency version to 3.11.0.
+- Changed logs that contain exception details to the debug level. This follows the Azure SDK guidelines for sensitive data in logs (pylint rules C4766 and C4762). ([#39287](https://github.com/Azure/azure-sdk-for-python/issues/39287))
 
 ## 1.2.0 (2025-02-13)
 

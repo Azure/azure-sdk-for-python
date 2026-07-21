@@ -137,7 +137,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             try:
                 self._error_handler(partition_context, err)
             except Exception as err_again:  # pylint:disable=broad-except
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                     "An error occurred while running on_error. The exception is %r.",
                     self._id,
@@ -168,7 +168,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             try:
                 self._partition_initialize_handler(self._partition_contexts[partition_id])
             except Exception as err:  # pylint:disable=broad-except
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                     "An error occurred while running on_partition_initialize. The exception is %r.",
                     self._id,
@@ -288,13 +288,13 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
                 _LOGGER.warning(
                     "EventProcessor instance %r of eventhub %r consumer group %r. "
                     "An error occurred while load-balancing and claiming ownership. "
-                    "The exception is %r. Retrying after %r seconds",
+                    "Retrying after %r seconds",
                     self._id,
                     self._eventhub_name,
                     self._consumer_group,
-                    err,
                     load_balancing_interval,
                 )
+                _LOGGER.debug("Load-balancing failed with exception: %r", err)
                 self._process_error(None, err)  # type: ignore
 
             time.sleep(load_balancing_interval)
@@ -318,7 +318,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
             try:
                 self._partition_close_handler(self._partition_contexts[partition_id], reason)
             except Exception as err:  # pylint:disable=broad-except
-                _LOGGER.warning(
+                _LOGGER.debug(
                     "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                     "An error occurred while running on_partition_close. The exception is %r.",
                     self._id,
@@ -340,7 +340,7 @@ class EventProcessor(EventProcessorMixin):  # pylint:disable=too-many-instance-a
         try:
             consumer.receive(self._batch, self._max_batch_size, self._max_wait_time)
         except Exception as error:  # pylint:disable=broad-except
-            _LOGGER.warning(
+            _LOGGER.debug(
                 "EventProcessor instance %r of eventhub %r partition %r consumer group %r. "
                 "An error occurred while receiving. The exception is %r.",
                 self._id,

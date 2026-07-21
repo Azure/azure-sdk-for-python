@@ -199,15 +199,14 @@ class BlobCheckpointStore(CheckpointStore):
             logger.warning(
                 "An exception occurred when EventProcessor instance %r claim_ownership for "
                 "namespace %r eventhub %r consumer group %r partition %r. "
-                "The ownership is now lost. Exception "
-                "is %r",
+                "The ownership is now lost.",
                 updated_ownership["owner_id"],
                 updated_ownership["fully_qualified_namespace"],
                 updated_ownership["eventhub_name"],
                 updated_ownership["consumer_group"],
                 updated_ownership["partition_id"],
-                error,
             )
+            logger.debug("Claim ownership failed with exception: %r", error)
             return updated_ownership  # Keep the ownership if an unexpected error happens
 
     def list_ownership(
@@ -252,15 +251,13 @@ class BlobCheckpointStore(CheckpointStore):
                 }
                 result.append(ownership)
             return result
-        except Exception as error:
+        except Exception:
             logger.warning(
                 "An exception occurred during list_ownership for "
-                "namespace %r eventhub %r consumer group %r. "
-                "Exception is %r",
+                "namespace %r eventhub %r consumer group %r.",
                 fully_qualified_namespace,
                 eventhub_name,
                 consumer_group,
-                error,
             )
             raise
 

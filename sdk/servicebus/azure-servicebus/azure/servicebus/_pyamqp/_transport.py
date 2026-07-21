@@ -203,8 +203,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
             self.connected = True
-        except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Transport connection failed: %r", e, extra=self.network_trace_params)
+        except (OSError, IOError, SSLError):
             # if not fully connected, close socket, and reraise error
             if self.sock and not self.connected:
                 self.sock.close()
@@ -695,8 +694,7 @@ class WebSocketTransport(_AbstractTransport):
         except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:  # type: ignore
             self.close()
             raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
-        except (OSError, IOError, SSLError) as e:
-            _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
+        except (OSError, IOError, SSLError):
             self.close()
             raise
 

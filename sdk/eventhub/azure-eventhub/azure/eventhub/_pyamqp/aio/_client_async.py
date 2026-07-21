@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 # TODO: Check types of kwargs (issue exists for this)
-import asyncio # pylint:disable=do-not-import-asyncio
+import asyncio  # pylint:disable=do-not-import-asyncio
 import logging
 import time
 import queue
@@ -152,7 +152,7 @@ class AMQPClientAsync(AMQPClientSync):
                     start_time = current_time
                 await asyncio.sleep(1)
         except Exception as e:  # pylint: disable=broad-except
-            _logger.info(
+            _logger.debug(
                 "Connection keep-alive for %r failed: %r.", self.__class__.__name__, e, extra=self._network_trace_params
             )
 
