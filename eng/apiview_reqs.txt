@@ -15,5 +15,5 @@ tomli==2.2.1
 tomlkit==0.13.2
 typing_extensions==4.15.0
 wrapt==1.17.2
-apiview-stub-generator @ git+https://github.com/Azure/azure-sdk-tools.git@56c4cb1886d80b967d32e7dab8ee5aba1cd0b2d5#subdirectory=packages/python-packages/apiview-stub-generator
+apiview-stub-generator @ git+https://github.com/Azure/azure-sdk-tools.git@e25431e11a56b91cd6cf1f5024f549231de970a6#subdirectory=packages/python-packages/apiview-stub-generator
 pip==24.0
