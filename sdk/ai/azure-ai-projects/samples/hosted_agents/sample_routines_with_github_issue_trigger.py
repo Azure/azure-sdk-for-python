@@ -122,7 +122,7 @@ def main() -> None:
             enabled=True,
             triggers={
                 "on-issue": GitHubIssueRoutineTrigger(
-                    connection_id=github_connection_name, # currently it accept connection name
+                    connection_id=github_connection_name,  # Currently accepts a connection name.
                     owner=github_owner,
                     repository=github_repository,
                     issue_event=GitHubIssueEvent.OPENED,
