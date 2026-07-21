@@ -541,7 +541,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         stamped: list[ResponseStreamEvent] = []
         for ev in events:
             copy = dict(deepcopy(ev))
-            copy.setdefault("_saved_at", now)
+            copy["_saved_at"] = now
             stamped.append(cast(ResponseStreamEvent, copy))
         async with self._locked():
             self._stream_events[response_id] = stamped

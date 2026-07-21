@@ -10,6 +10,7 @@ and conversation_id, and defensive-copy platform context.
 from __future__ import annotations
 
 import asyncio
+from datetime import datetime, timedelta, timezone
 from typing import Any, cast
 
 import pytest
@@ -142,6 +143,21 @@ def test_get_items__missing_ids_return_none() -> None:
     provider = InMemoryResponseProvider()
     result = asyncio.run(provider.get_items(["no_such_item"]))
     assert result == [None]
+
+
+def test_save_stream_events__overwrites_internal_saved_at() -> None:
+    provider = InMemoryResponseProvider()
+    future_saved_at = datetime.now(timezone.utc) + timedelta(days=365)
+    event = cast(
+        Any,
+        {"type": "response.created", "sequence_number": 0, "_saved_at": future_saved_at},
+    )
+
+    asyncio.run(provider.save_stream_events("resp_stream", [event]))
+    stored = asyncio.run(provider.get_stream_events("resp_stream"))
+
+    assert stored is not None
+    assert stored[0]["_saved_at"] != future_saved_at
 
 
 # ===========================================================================

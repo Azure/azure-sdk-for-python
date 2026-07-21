@@ -17,6 +17,23 @@ from azure.ai.agentserver.responses.models import (
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
+def _assert_required_response_shape(response: dict) -> None:
+    for field_name in (
+        "id",
+        "object",
+        "status",
+        "created_at",
+        "error",
+        "incomplete_details",
+        "output",
+        "instructions",
+        "parallel_tool_calls",
+        "agent_reference",
+        "response_id",
+    ):
+        assert field_name in response
+
+
 def test_event_stream_builder__builds_lifecycle_events() -> None:
     stream = ResponseEventStream(
         response_id="resp_builder_12345",
@@ -42,6 +59,8 @@ def test_event_stream_builder__builds_lifecycle_events() -> None:
     assert [event["sequence_number"] for event in events] == [0, 1, 2]
     assert all(event["response"]["response_id"] == "resp_builder_12345" for event in events)
     assert all(event["response"]["agent_reference"]["name"] == "unit-agent" for event in events)
+    for event in events:
+        _assert_required_response_shape(event["response"])
 
 
 def test_event_stream_builder__builds_output_item_events() -> None:

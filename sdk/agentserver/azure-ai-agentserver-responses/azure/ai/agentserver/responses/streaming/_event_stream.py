@@ -134,6 +134,10 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             payload["id"] = self._response_id
             payload.setdefault("object", "response")
             payload.setdefault("output", [])
+            payload.setdefault("error", None)
+            payload.setdefault("incomplete_details", None)
+            payload.setdefault("instructions", None)
+            payload.setdefault("parallel_tool_calls", False)
             self._response = payload
         else:
             self._response = _MutableResponseDict(
@@ -142,6 +146,10 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                     "object": "response",
                     "output": [],
                     "created_at": datetime.now(timezone.utc),
+                    "error": None,
+                    "incomplete_details": None,
+                    "instructions": None,
+                    "parallel_tool_calls": False,
                 }
             )
             if request_mapping is not None:
