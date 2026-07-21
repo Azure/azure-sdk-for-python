@@ -50,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -71,7 +71,7 @@ def build_bookshelves_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -100,7 +100,7 @@ def build_bookshelves_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -131,7 +131,7 @@ def build_bookshelves_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +160,7 @@ def build_bookshelves_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/bookshelves/{bookshelfName}"
     path_format_arguments = {
@@ -183,7 +183,7 @@ def build_bookshelves_list_by_resource_group_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +212,7 @@ def build_bookshelves_list_by_subscription_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -242,7 +242,7 @@ def build_bookshelf_private_endpoint_connections_get_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -278,7 +278,7 @@ def build_bookshelf_private_endpoint_connections_create_or_update_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -314,7 +314,7 @@ def build_bookshelf_private_endpoint_connections_delete_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/bookshelves/{bookshelfName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -340,7 +340,7 @@ def build_bookshelf_private_endpoint_connections_list_by_bookshelf_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -368,7 +368,7 @@ def build_bookshelf_private_link_resources_get_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -397,7 +397,7 @@ def build_bookshelf_private_link_resources_list_by_bookshelf_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -425,7 +425,7 @@ def build_tools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -454,7 +454,7 @@ def build_tools_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -485,7 +485,7 @@ def build_tools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -514,7 +514,7 @@ def build_tools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/tools/{toolName}"
     path_format_arguments = {
@@ -537,7 +537,7 @@ def build_tools_list_by_resource_group_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -562,7 +562,7 @@ def build_tools_list_by_subscription_request(subscription_id: str, **kwargs: Any
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -588,7 +588,7 @@ def build_projects_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -618,7 +618,7 @@ def build_projects_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -650,7 +650,7 @@ def build_projects_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -680,7 +680,7 @@ def build_projects_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/workspaces/{workspaceName}/projects/{projectName}"
     path_format_arguments = {
@@ -704,7 +704,7 @@ def build_projects_list_by_workspace_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -732,7 +732,7 @@ def build_workspaces_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -761,7 +761,7 @@ def build_workspaces_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -792,7 +792,7 @@ def build_workspaces_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -821,7 +821,7 @@ def build_workspaces_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/workspaces/{workspaceName}"
     path_format_arguments = {
@@ -844,7 +844,7 @@ def build_workspaces_list_by_resource_group_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -871,7 +871,7 @@ def build_workspaces_list_by_subscription_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -901,7 +901,7 @@ def build_workspace_private_endpoint_connections_get_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -937,7 +937,7 @@ def build_workspace_private_endpoint_connections_create_or_update_request(  # py
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -973,7 +973,7 @@ def build_workspace_private_endpoint_connections_delete_request(  # pylint: disa
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/workspaces/{workspaceName}/privateEndpointConnections/{privateEndpointConnectionName}"
     path_format_arguments = {
@@ -999,7 +999,7 @@ def build_workspace_private_endpoint_connections_list_by_workspace_request(  # p
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1027,7 +1027,7 @@ def build_chat_model_deployments_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1057,7 +1057,7 @@ def build_chat_model_deployments_create_or_update_request(  # pylint: disable=na
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1089,7 +1089,7 @@ def build_chat_model_deployments_update_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1119,7 +1119,7 @@ def build_chat_model_deployments_delete_request(  # pylint: disable=name-too-lon
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/workspaces/{workspaceName}/chatModelDeployments/{chatModelDeploymentName}"
     path_format_arguments = {
@@ -1143,7 +1143,7 @@ def build_chat_model_deployments_list_by_workspace_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1171,7 +1171,7 @@ def build_workspace_private_link_resources_get_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1200,7 +1200,7 @@ def build_workspace_private_link_resources_list_by_workspace_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1228,7 +1228,7 @@ def build_node_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1258,7 +1258,7 @@ def build_node_pools_create_or_update_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1290,7 +1290,7 @@ def build_node_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1320,7 +1320,7 @@ def build_node_pools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/supercomputers/{supercomputerName}/nodePools/{nodePoolName}"
     path_format_arguments = {
@@ -1344,7 +1344,7 @@ def build_node_pools_list_by_supercomputer_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1372,7 +1372,7 @@ def build_supercomputers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1401,7 +1401,7 @@ def build_supercomputers_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1432,7 +1432,7 @@ def build_supercomputers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1461,7 +1461,7 @@ def build_supercomputers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/supercomputers/{supercomputerName}"
     path_format_arguments = {
@@ -1484,7 +1484,7 @@ def build_supercomputers_list_by_resource_group_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1511,7 +1511,7 @@ def build_supercomputers_list_by_subscription_request(  # pylint: disable=name-t
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1537,7 +1537,7 @@ def build_storage_assets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1567,7 +1567,7 @@ def build_storage_assets_create_or_update_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1599,7 +1599,7 @@ def build_storage_assets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1629,7 +1629,7 @@ def build_storage_assets_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/storageContainers/{storageContainerName}/storageAssets/{storageAssetName}"
     path_format_arguments = {
@@ -1653,7 +1653,7 @@ def build_storage_assets_list_by_storage_container_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1681,7 +1681,7 @@ def build_storage_containers_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1710,7 +1710,7 @@ def build_storage_containers_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1741,7 +1741,7 @@ def build_storage_containers_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1770,7 +1770,7 @@ def build_storage_containers_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Discovery/storageContainers/{storageContainerName}"
     path_format_arguments = {
@@ -1793,7 +1793,7 @@ def build_storage_containers_list_by_resource_group_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1820,7 +1820,7 @@ def build_storage_containers_list_by_subscription_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1904,7 +1904,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2672,7 +2675,10 @@ class BookshelvesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2762,7 +2768,10 @@ class BookshelvesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3342,7 +3351,10 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3536,7 +3548,10 @@ class BookshelfPrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4280,7 +4295,10 @@ class ToolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4370,7 +4388,10 @@ class ToolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5184,7 +5205,10 @@ class ProjectsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5952,7 +5976,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6042,7 +6069,10 @@ class WorkspacesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6622,7 +6652,10 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7438,7 +7471,10 @@ class ChatModelDeploymentsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7632,7 +7668,10 @@ class WorkspacePrivateLinkResourcesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8448,7 +8487,10 @@ class NodePoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9216,7 +9258,10 @@ class SupercomputersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9306,7 +9351,10 @@ class SupercomputersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10122,7 +10170,10 @@ class StorageAssetsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10890,7 +10941,10 @@ class StorageContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10980,7 +11034,10 @@ class StorageContainersOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
