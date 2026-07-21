@@ -83,6 +83,30 @@ class OpenAIModelConfiguration(TypedDict):
     extra_headers: NotRequired[Dict[str, str]]
 
 
+class _BYOModelConfiguration(TypedDict):
+    """Internal shape of an admin-connected (bring-your-own / BYO) model configuration.
+
+    This is service-internal plumbing, not a caller-facing type. BYO configs are constructed
+    server-side by the Foundry platform (the evaluation data plane resolves an admin-connected
+    ``ModelGateway`` / ``ApiManagement`` connection and stamps these markers), then routed through
+    the Foundry project Responses API where the platform owns connection resolution and auth. It is
+    intentionally not exported from ``azure.ai.evaluation``; the public model-config union will be
+    widened to advertise BYO once the feature reaches GA.
+
+    :param byo_model: The admin-connected model reference, ``"connection-name/deployment-name"``.
+    :type byo_model: str
+    :param project_endpoint: The Foundry project endpoint,
+        ``https://<account>.services.ai.azure.com/api/projects/<project>``.
+    :type project_endpoint: str
+    :param extra_headers: Additional HTTP headers to include in every request. Optional.
+    :type extra_headers: NotRequired[Dict[str, str]]
+    """
+
+    byo_model: str
+    project_endpoint: str
+    extra_headers: NotRequired[Dict[str, str]]
+
+
 class AzureAIProject(TypedDict):
     """Information about the Azure AI project
 

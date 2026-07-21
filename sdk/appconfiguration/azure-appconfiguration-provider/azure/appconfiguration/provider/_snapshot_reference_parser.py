@@ -20,7 +20,8 @@ class SnapshotReferenceParser:
         """
         Parse a snapshot reference from a configuration setting containing snapshot reference JSON.
 
-        :param Optional[ConfigurationSetting] setting: The configuration setting containing the snapshot reference JSON
+        :param setting: The configuration setting containing the snapshot reference JSON
+        :type setting: Optional[ConfigurationSetting]
         :return: The snapshot name extracted from the reference
         :rtype: str
         :raises ValueError: When the setting is None
@@ -63,13 +64,15 @@ class SnapshotReferenceParser:
                     f"property must be a string value, but found {type(snapshot_name).__name__}."
                 )
 
-            if not snapshot_name.strip():
+            snapshot_name = snapshot_name.strip()
+
+            if not snapshot_name:
                 raise ValueError(
                     f"Invalid snapshot reference format for key '{setting.key}' "
                     f"(label: '{setting.label}'). Snapshot name cannot be empty or whitespace."
                 )
 
-            return snapshot_name.strip()
+            return snapshot_name
 
         except json.JSONDecodeError as json_ex:
             raise ValueError(
