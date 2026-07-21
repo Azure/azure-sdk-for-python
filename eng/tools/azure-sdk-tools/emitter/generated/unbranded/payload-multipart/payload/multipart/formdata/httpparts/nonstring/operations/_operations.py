@@ -37,7 +37,7 @@ def build_form_data_http_parts_non_string_float_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class FormDataHttpPartsNonStringOperations:
+class FormDataHttpPartsNonStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -916,7 +916,7 @@ def build_spread_record_non_discriminated_union3_put_request(  # pylint: disable
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class ExtendsUnknownOperations:
+class ExtendsUnknownOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1097,7 +1097,7 @@ class ExtendsUnknownOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsUnknownDerivedOperations:
+class ExtendsUnknownDerivedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1294,7 +1294,7 @@ class ExtendsUnknownDerivedOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsUnknownDiscriminatedOperations:
+class ExtendsUnknownDiscriminatedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1492,7 +1492,7 @@ class ExtendsUnknownDiscriminatedOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsUnknownOperations:
+class IsUnknownOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1672,7 +1672,7 @@ class IsUnknownOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsUnknownDerivedOperations:
+class IsUnknownDerivedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1863,7 +1863,7 @@ class IsUnknownDerivedOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsUnknownDiscriminatedOperations:
+class IsUnknownDiscriminatedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2060,7 +2060,7 @@ class IsUnknownDiscriminatedOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsStringOperations:
+class ExtendsStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2240,7 +2240,7 @@ class ExtendsStringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsStringOperations:
+class IsStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2419,7 +2419,7 @@ class IsStringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadStringOperations:
+class SpreadStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2591,7 +2591,7 @@ class SpreadStringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsFloatOperations:
+class ExtendsFloatOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2771,7 +2771,7 @@ class ExtendsFloatOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsFloatOperations:
+class IsFloatOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2950,7 +2950,7 @@ class IsFloatOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadFloatOperations:
+class SpreadFloatOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3122,7 +3122,7 @@ class SpreadFloatOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsModelOperations:
+class ExtendsModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3302,7 +3302,7 @@ class ExtendsModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsModelOperations:
+class IsModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3481,7 +3481,7 @@ class IsModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadModelOperations:
+class SpreadModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3653,7 +3653,7 @@ class SpreadModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsModelArrayOperations:
+class ExtendsModelArrayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3846,7 +3846,7 @@ class ExtendsModelArrayOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IsModelArrayOperations:
+class IsModelArrayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4026,7 +4026,7 @@ class IsModelArrayOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadModelArrayOperations:
+class SpreadModelArrayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4202,7 +4202,7 @@ class SpreadModelArrayOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadDifferentStringOperations:
+class SpreadDifferentStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4381,7 +4381,7 @@ class SpreadDifferentStringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadDifferentFloatOperations:
+class SpreadDifferentFloatOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4560,7 +4560,7 @@ class SpreadDifferentFloatOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadDifferentModelOperations:
+class SpreadDifferentModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4739,7 +4739,7 @@ class SpreadDifferentModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadDifferentModelArrayOperations:
+class SpreadDifferentModelArrayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4919,7 +4919,7 @@ class SpreadDifferentModelArrayOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsDifferentSpreadStringOperations:
+class ExtendsDifferentSpreadStringOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5098,7 +5098,7 @@ class ExtendsDifferentSpreadStringOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsDifferentSpreadFloatOperations:
+class ExtendsDifferentSpreadFloatOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5277,7 +5277,7 @@ class ExtendsDifferentSpreadFloatOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsDifferentSpreadModelOperations:
+class ExtendsDifferentSpreadModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5456,7 +5456,7 @@ class ExtendsDifferentSpreadModelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtendsDifferentSpreadModelArrayOperations:  # pylint: disable=name-too-long
+class ExtendsDifferentSpreadModelArrayOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5636,7 +5636,7 @@ class ExtendsDifferentSpreadModelArrayOperations:  # pylint: disable=name-too-lo
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MultipleSpreadOperations:
+class MultipleSpreadOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5808,7 +5808,7 @@ class MultipleSpreadOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadRecordUnionOperations:
+class SpreadRecordUnionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5980,7 +5980,7 @@ class SpreadRecordUnionOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadRecordNonDiscriminatedUnionOperations:  # pylint: disable=name-too-long
+class SpreadRecordNonDiscriminatedUnionOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6171,7 +6171,7 @@ class SpreadRecordNonDiscriminatedUnionOperations:  # pylint: disable=name-too-l
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadRecordNonDiscriminatedUnion2Operations:  # pylint: disable=name-too-long
+class SpreadRecordNonDiscriminatedUnion2Operations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -6364,7 +6364,7 @@ class SpreadRecordNonDiscriminatedUnion2Operations:  # pylint: disable=name-too-
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class SpreadRecordNonDiscriminatedUnion3Operations:  # pylint: disable=name-too-long
+class SpreadRecordNonDiscriminatedUnion3Operations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

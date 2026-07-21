@@ -7,7 +7,7 @@ from corehttp.runtime import policies
 from ._version import VERSION
 
 
-class MultipleClientConfiguration:
+class MultipleClientConfiguration:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for MultipleClient.
 
     Note that all parameters used to create this instance are saved as instance

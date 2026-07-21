@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Plant(_Model):
+class Plant(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A plant in the garden. This model is used to represent a plant in the client SDK.
 
     :ivar name: The name of the plant. Required.

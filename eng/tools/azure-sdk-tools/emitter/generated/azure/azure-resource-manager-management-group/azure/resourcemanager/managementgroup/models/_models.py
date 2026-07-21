@@ -62,7 +62,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -135,7 +135,7 @@ class ExtensionResource(Resource):
     """
 
 
-class ManagementGroupChildResource(ExtensionResource):
+class ManagementGroupChildResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete extension resource types can be created by aliasing this type using a specific
     property type.
 
@@ -178,7 +178,7 @@ class ManagementGroupChildResource(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ManagementGroupChildResourceProperties(_Model):
+class ManagementGroupChildResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ManagementGroupChildResource properties.
 
     :ivar description: The description of the resource.
@@ -215,7 +215,7 @@ class ManagementGroupChildResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

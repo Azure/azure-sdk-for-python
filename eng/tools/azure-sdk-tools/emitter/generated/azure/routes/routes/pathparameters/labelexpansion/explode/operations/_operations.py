@@ -73,7 +73,7 @@ def build_path_parameters_label_expansion_explode_record_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class PathParametersLabelExpansionExplodeOperations:  # pylint: disable=name-too-long
+class PathParametersLabelExpansionExplodeOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

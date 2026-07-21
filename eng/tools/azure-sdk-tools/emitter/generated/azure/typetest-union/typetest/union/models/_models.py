@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Cat(_Model):
+class Cat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cat.
 
     :ivar name: Required.
@@ -43,7 +43,7 @@ class Cat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dog(_Model):
+class Dog(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dog.
 
     :ivar bark: Required.
@@ -71,7 +71,7 @@ class Dog(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EnumsOnlyCases(_Model):
+class EnumsOnlyCases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EnumsOnlyCases.
 
     :ivar lr: This should be receive/send the left variant. Required. Is one of the following
@@ -108,7 +108,7 @@ class EnumsOnlyCases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse(_Model):
+class GetResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse.
 
     :ivar prop: Required. Is one of the following types: Literal["a"], Literal["b"], Literal["c"]
@@ -136,7 +136,7 @@ class GetResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse1(_Model):
+class GetResponse1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse1.
 
     :ivar prop: Required. Is one of the following types: Literal["b"], Literal["c"], str
@@ -166,7 +166,7 @@ class GetResponse1(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse2(_Model):
+class GetResponse2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse2.
 
     :ivar prop: Required. Known values are: "b" and "c".
@@ -196,7 +196,7 @@ class GetResponse2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse3(_Model):
+class GetResponse3(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse3.
 
     :ivar prop: Required. Is one of the following types: Literal[1], Literal[2], Literal[3]
@@ -224,7 +224,7 @@ class GetResponse3(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse4(_Model):
+class GetResponse4(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse4.
 
     :ivar prop: Required. Is one of the following types: float
@@ -252,7 +252,7 @@ class GetResponse4(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse5(_Model):
+class GetResponse5(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse5.
 
     :ivar prop: Required. Is either a Cat type or a Dog type.
@@ -280,7 +280,7 @@ class GetResponse5(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse6(_Model):
+class GetResponse6(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse6.
 
     :ivar prop: Required.
@@ -308,7 +308,7 @@ class GetResponse6(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse7(_Model):
+class GetResponse7(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse7.
 
     :ivar prop: Required.
@@ -336,7 +336,7 @@ class GetResponse7(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse8(_Model):
+class GetResponse8(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse8.
 
     :ivar prop: Required.
@@ -364,7 +364,7 @@ class GetResponse8(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GetResponse9(_Model):
+class GetResponse9(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GetResponse9.
 
     :ivar prop: Required.
@@ -392,7 +392,7 @@ class GetResponse9(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MixedLiteralsCases(_Model):
+class MixedLiteralsCases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MixedLiteralsCases.
 
     :ivar string_literal: This should be receive/send the "a" variant. Required. Is one of the
@@ -451,7 +451,7 @@ class MixedLiteralsCases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MixedTypesCases(_Model):
+class MixedTypesCases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MixedTypesCases.
 
     :ivar model: This should be receive/send the Cat variant. Required. Is one of the following
@@ -517,7 +517,7 @@ class MixedTypesCases(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringAndArrayCases(_Model):
+class StringAndArrayCases(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """StringAndArrayCases.
 
     :ivar string: This should be receive/send the string variant. Required. Is either a str type or

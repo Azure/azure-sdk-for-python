@@ -21,7 +21,7 @@ class ReadOnlyModel(_Model):
     """Optional readonly string dictionary."""
 
 
-class VisibilityModel(_Model):
+class VisibilityModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Output model with visibility properties.
 
     :ivar read_prop: Required string, illustrating a readonly property. Required.

@@ -93,7 +93,7 @@ def build_remove_optional_parameter_remove_optional_request(  # pylint: disable=
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class ReorderParametersOperations:
+class ReorderParametersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -163,7 +163,7 @@ class ReorderParametersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class GroupParametersOperations:
+class GroupParametersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -233,7 +233,7 @@ class GroupParametersOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class RequireOptionalParameterOperations:
+class RequireOptionalParameterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -303,7 +303,7 @@ class RequireOptionalParameterOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class RemoveOptionalParameterOperations:
+class RemoveOptionalParameterOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

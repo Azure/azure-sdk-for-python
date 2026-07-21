@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ... import models as _models2
 
 
-class NestedLinkResponseNestedItems(_Model):
+class NestedLinkResponseNestedItems(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NestedLinkResponseNestedItems.
 
     :ivar pets: Required.
@@ -43,7 +43,7 @@ class NestedLinkResponseNestedItems(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NestedLinkResponseNestedNext(_Model):
+class NestedLinkResponseNestedNext(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NestedLinkResponseNestedNext.
 
     :ivar next:

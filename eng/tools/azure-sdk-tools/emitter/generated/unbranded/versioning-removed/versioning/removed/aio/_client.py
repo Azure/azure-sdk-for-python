@@ -17,7 +17,9 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class RemovedClient(_RemovedClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class RemovedClient(
+    _RemovedClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """Test for the ``@removed`` decorator.
 
     :param endpoint: Need to be set as '`http://localhost:3000 <http://localhost:3000>`_' in

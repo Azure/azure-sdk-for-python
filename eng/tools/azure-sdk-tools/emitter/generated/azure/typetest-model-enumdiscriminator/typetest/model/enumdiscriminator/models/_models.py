@@ -14,7 +14,7 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import DogKind, SnakeKind
 
 
-class Snake(_Model):
+class Snake(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test fixed enum type for discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -51,7 +51,7 @@ class Snake(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cobra(Snake, discriminator="cobra"):
+class Cobra(Snake, discriminator="cobra"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cobra model.
 
     :ivar length: Length of the snake. Required.
@@ -82,7 +82,7 @@ class Cobra(Snake, discriminator="cobra"):
         self.kind = SnakeKind.COBRA  # type: ignore
 
 
-class Dog(_Model):
+class Dog(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test extensible enum type for discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -119,7 +119,7 @@ class Dog(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Golden(Dog, discriminator="golden"):
+class Golden(Dog, discriminator="golden"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Golden dog model.
 
     :ivar weight: Weight of the dog. Required.

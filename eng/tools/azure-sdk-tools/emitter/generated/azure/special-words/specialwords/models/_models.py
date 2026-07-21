@@ -15,7 +15,7 @@ from .._utils.model_base import Model as _Model, rest_field
 List = list
 
 
-class AndModel(_Model):
+class AndModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AndModel.
 
     :ivar name: Required.
@@ -43,7 +43,7 @@ class AndModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsModel(_Model):
+class AsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AsModel.
 
     :ivar name: Required.
@@ -71,7 +71,7 @@ class AsModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AssertModel(_Model):
+class AssertModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AssertModel.
 
     :ivar name: Required.
@@ -99,7 +99,7 @@ class AssertModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AsyncModel(_Model):
+class AsyncModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AsyncModel.
 
     :ivar name: Required.
@@ -127,7 +127,7 @@ class AsyncModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AwaitModel(_Model):
+class AwaitModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AwaitModel.
 
     :ivar name: Required.
@@ -155,7 +155,7 @@ class AwaitModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BreakModel(_Model):
+class BreakModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BreakModel.
 
     :ivar name: Required.
@@ -183,7 +183,7 @@ class BreakModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClassModel(_Model):
+class ClassModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClassModel.
 
     :ivar name: Required.
@@ -211,7 +211,7 @@ class ClassModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Constructor(_Model):
+class Constructor(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Constructor.
 
     :ivar name: Required.
@@ -239,7 +239,7 @@ class Constructor(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContinueModel(_Model):
+class ContinueModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ContinueModel.
 
     :ivar name: Required.
@@ -267,7 +267,7 @@ class ContinueModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefModel(_Model):
+class DefModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefModel.
 
     :ivar name: Required.
@@ -295,7 +295,7 @@ class DefModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelModel(_Model):
+class DelModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DelModel.
 
     :ivar name: Required.
@@ -323,7 +323,7 @@ class DelModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DictMethods(_Model):
+class DictMethods(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DictMethods.
 
     :ivar keys_property: Required.
@@ -416,7 +416,7 @@ class DictMethods(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElifModel(_Model):
+class ElifModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ElifModel.
 
     :ivar name: Required.
@@ -444,7 +444,7 @@ class ElifModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ElseModel(_Model):
+class ElseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ElseModel.
 
     :ivar name: Required.
@@ -472,7 +472,7 @@ class ElseModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExceptModel(_Model):
+class ExceptModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExceptModel.
 
     :ivar name: Required.
@@ -500,7 +500,7 @@ class ExceptModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExecModel(_Model):
+class ExecModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExecModel.
 
     :ivar name: Required.
@@ -528,7 +528,7 @@ class ExecModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FinallyModel(_Model):
+class FinallyModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FinallyModel.
 
     :ivar name: Required.
@@ -556,7 +556,7 @@ class FinallyModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ForModel(_Model):
+class ForModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ForModel.
 
     :ivar name: Required.
@@ -584,7 +584,7 @@ class ForModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FromModel(_Model):
+class FromModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FromModel.
 
     :ivar name: Required.
@@ -612,7 +612,7 @@ class FromModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GlobalModel(_Model):
+class GlobalModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GlobalModel.
 
     :ivar name: Required.
@@ -640,7 +640,7 @@ class GlobalModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IfModel(_Model):
+class IfModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IfModel.
 
     :ivar name: Required.
@@ -668,7 +668,7 @@ class IfModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImportModel(_Model):
+class ImportModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ImportModel.
 
     :ivar name: Required.
@@ -696,7 +696,7 @@ class ImportModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InModel(_Model):
+class InModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """InModel.
 
     :ivar name: Required.
@@ -724,7 +724,7 @@ class InModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsModel(_Model):
+class IsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IsModel.
 
     :ivar name: Required.
@@ -752,7 +752,7 @@ class IsModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LambdaModel(_Model):
+class LambdaModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LambdaModel.
 
     :ivar name: Required.
@@ -780,7 +780,7 @@ class LambdaModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelWithList(_Model):
+class ModelWithList(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ModelWithList.
 
     :ivar list: Required.
@@ -808,7 +808,7 @@ class ModelWithList(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotModel(_Model):
+class NotModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NotModel.
 
     :ivar name: Required.
@@ -836,7 +836,7 @@ class NotModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OrModel(_Model):
+class OrModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OrModel.
 
     :ivar name: Required.
@@ -864,7 +864,7 @@ class OrModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PassModel(_Model):
+class PassModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PassModel.
 
     :ivar name: Required.
@@ -892,7 +892,7 @@ class PassModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RaiseModel(_Model):
+class RaiseModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """RaiseModel.
 
     :ivar name: Required.
@@ -920,7 +920,7 @@ class RaiseModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReturnModel(_Model):
+class ReturnModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ReturnModel.
 
     :ivar name: Required.
@@ -948,7 +948,7 @@ class ReturnModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SameAsModel(_Model):
+class SameAsModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SameAsModel.
 
     :ivar same_as_model: Required.
@@ -976,7 +976,7 @@ class SameAsModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TryModel(_Model):
+class TryModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """TryModel.
 
     :ivar name: Required.
@@ -1004,7 +1004,7 @@ class TryModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WhileModel(_Model):
+class WhileModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WhileModel.
 
     :ivar name: Required.
@@ -1032,7 +1032,7 @@ class WhileModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WithModel(_Model):
+class WithModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WithModel.
 
     :ivar name: Required.
@@ -1060,7 +1060,7 @@ class WithModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class YieldModel(_Model):
+class YieldModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """YieldModel.
 
     :ivar name: Required.

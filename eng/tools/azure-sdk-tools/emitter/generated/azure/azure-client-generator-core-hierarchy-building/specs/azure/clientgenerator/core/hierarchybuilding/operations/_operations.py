@@ -123,7 +123,7 @@ def build_dog_operations_update_dog_as_dog_request(**kwargs: Any) -> HttpRequest
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class AnimalOperationsOperations:
+class AnimalOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -381,7 +381,7 @@ class AnimalOperationsOperations:
         return deserialized  # type: ignore
 
 
-class PetOperationsOperations:
+class PetOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -635,7 +635,7 @@ class PetOperationsOperations:
         return deserialized  # type: ignore
 
 
-class DogOperationsOperations:
+class DogOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

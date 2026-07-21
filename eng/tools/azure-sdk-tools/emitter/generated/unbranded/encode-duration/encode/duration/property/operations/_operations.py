@@ -274,7 +274,7 @@ def build_property_float_milliseconds_larger_unit_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class PropertyOperations:
+class PropertyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

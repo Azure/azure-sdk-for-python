@@ -43,7 +43,7 @@ def build_explicit_body_simple_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class ExplicitBodyOperations:
+class ExplicitBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

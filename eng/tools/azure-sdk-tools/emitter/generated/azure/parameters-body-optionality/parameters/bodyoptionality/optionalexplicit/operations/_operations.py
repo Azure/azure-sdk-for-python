@@ -64,7 +64,7 @@ def build_optional_explicit_omit_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class OptionalExplicitOperations:
+class OptionalExplicitOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

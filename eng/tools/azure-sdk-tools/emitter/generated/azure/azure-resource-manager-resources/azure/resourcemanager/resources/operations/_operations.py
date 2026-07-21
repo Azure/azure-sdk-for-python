@@ -802,7 +802,7 @@ def build_location_resources_list_by_location_request(  # pylint: disable=name-t
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class TopLevelOperations:
+class TopLevelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1844,7 +1844,7 @@ class TopLevelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NestedOperations:
+class NestedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2686,7 +2686,7 @@ class NestedOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class SingletonOperations:
+class SingletonOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3250,7 +3250,7 @@ class SingletonOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ExtensionsResourcesOperations:
+class ExtensionsResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3902,7 +3902,7 @@ class ExtensionsResourcesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LocationResourcesOperations:
+class LocationResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

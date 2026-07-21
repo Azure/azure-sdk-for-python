@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BytesProperty(_Model):
+class BytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template type for testing models with nullable property. Pass in the type of the property you
     are looking for.
 
@@ -54,7 +54,7 @@ class BytesProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CollectionsByteProperty(_Model):
+class CollectionsByteProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with collection bytes properties.
 
     :ivar required_property: Required property. Required.
@@ -91,7 +91,7 @@ class CollectionsByteProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CollectionsModelProperty(_Model):
+class CollectionsModelProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with collection models properties.
 
     :ivar required_property: Required property. Required.
@@ -128,7 +128,7 @@ class CollectionsModelProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CollectionsStringProperty(_Model):
+class CollectionsStringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with collection string properties.
 
     :ivar required_property: Required property. Required.
@@ -165,7 +165,7 @@ class CollectionsStringProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatetimeProperty(_Model):
+class DatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a datetime property.
 
     :ivar required_property: Required property. Required.
@@ -202,7 +202,7 @@ class DatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DurationProperty(_Model):
+class DurationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a duration property.
 
     :ivar required_property: Required property. Required.
@@ -239,7 +239,7 @@ class DurationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerModel(_Model):
+class InnerModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Inner model used in collections model property.
 
     :ivar property: Inner model property. Required.
@@ -267,7 +267,7 @@ class InnerModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringProperty(_Model):
+class StringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template type for testing models with nullable property. Pass in the type of the property you
     are looking for.
 

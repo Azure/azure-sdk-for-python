@@ -41,7 +41,7 @@ def build_form_data_http_parts_json_array_and_file_array_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class FormDataHttpPartsOperations:
+class FormDataHttpPartsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

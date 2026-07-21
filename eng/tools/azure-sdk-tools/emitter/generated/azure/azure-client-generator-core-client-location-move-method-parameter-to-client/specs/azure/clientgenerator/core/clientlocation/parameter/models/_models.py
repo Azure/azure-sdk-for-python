@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Blob(_Model):
+class Blob(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Blob.
 
     :ivar id: Required.

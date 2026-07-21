@@ -7,7 +7,7 @@ from ...._utils.model_base import Model as _Model, rest_field
 from ...._utils.utils import FileType
 
 
-class UploadFileArrayRequest(_Model):
+class UploadFileArrayRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileArrayRequest.
 
     :ivar files: Required.
@@ -37,7 +37,7 @@ class UploadFileArrayRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadFileRequiredFilenameRequest(_Model):
+class UploadFileRequiredFilenameRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileRequiredFilenameRequest.
 
     :ivar file: Required.
@@ -67,7 +67,7 @@ class UploadFileRequiredFilenameRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UploadFileSpecificContentTypeRequest(_Model):
+class UploadFileSpecificContentTypeRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UploadFileSpecificContentTypeRequest.
 
     :ivar file: Required.

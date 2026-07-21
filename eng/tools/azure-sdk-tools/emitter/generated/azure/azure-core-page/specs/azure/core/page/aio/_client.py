@@ -24,7 +24,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class PageClient(_PageClientOperationsMixin):
+class PageClient(_PageClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Illustrates bodies templated with Azure Core with paging support.
 
     :ivar two_models_as_page_item: TwoModelsAsPageItemOperations operations

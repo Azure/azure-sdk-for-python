@@ -145,7 +145,7 @@ JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 
 
-class ModelsOperations:  # pylint: disable=too-many-public-methods
+class ModelsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3480,7 +3480,7 @@ class ModelsOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelPropertiesOperations:
+class ModelPropertiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3811,7 +3811,7 @@ class ModelPropertiesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ReservedOperationBodyParamsOperations:
+class ReservedOperationBodyParamsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3942,7 +3942,7 @@ class ReservedOperationBodyParamsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ExtensibleStringsOperations:
+class ExtensibleStringsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4032,7 +4032,7 @@ class ExtensibleStringsOperations:
         return deserialized  # type: ignore
 
 
-class Operations:  # pylint: disable=too-many-public-methods
+class Operations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -5502,7 +5502,7 @@ class Operations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ParametersOperations:  # pylint: disable=too-many-public-methods
+class ParametersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.

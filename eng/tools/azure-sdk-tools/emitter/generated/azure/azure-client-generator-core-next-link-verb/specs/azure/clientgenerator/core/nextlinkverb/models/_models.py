@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Test(_Model):
+class Test(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test model.
 
     :ivar id: The id of the test. Required.

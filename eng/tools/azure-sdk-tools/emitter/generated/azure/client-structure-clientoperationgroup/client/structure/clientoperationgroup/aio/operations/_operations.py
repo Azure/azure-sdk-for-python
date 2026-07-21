@@ -38,7 +38,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class Group3Operations:
+class Group3Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -146,7 +146,7 @@ class Group3Operations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class Group4Operations:
+class Group4Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -259,7 +259,7 @@ class _FirstClientOperationsMixin(
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class Group5Operations:
+class Group5Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

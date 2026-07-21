@@ -7,7 +7,7 @@ from ..._utils.model_base import Model as _Model, rest_field
 from ..._utils.utils import FileType
 
 
-class AnonymousModelRequest(_Model):
+class AnonymousModelRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AnonymousModelRequest.
 
     :ivar profile_image: Required.

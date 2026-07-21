@@ -24,7 +24,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class TraitsClient(_TraitsClientOperationsMixin):
+class TraitsClient(_TraitsClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Illustrates Azure Core operation customizations by traits.
 
     :keyword endpoint: Service host. Default value is "http://localhost:3000".

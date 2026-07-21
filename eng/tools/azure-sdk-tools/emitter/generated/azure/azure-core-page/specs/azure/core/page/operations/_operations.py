@@ -181,7 +181,7 @@ def build_page_with_relative_next_link_request(**kwargs: Any) -> HttpRequest:  #
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class TwoModelsAsPageItemOperations:
+class TwoModelsAsPageItemOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

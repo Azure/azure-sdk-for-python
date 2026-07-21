@@ -17,7 +17,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class MultipleClient(_MultipleClientOperationsMixin):
+class MultipleClient(_MultipleClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """MultipleClient.
 
     :param endpoint: Pass in `http://localhost:3000 <http://localhost:3000>`_ for endpoint.

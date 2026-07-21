@@ -74,7 +74,7 @@ def build_query_parameters_query_continuation_explode_record_request(  # pylint:
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryParametersQueryContinuationExplodeOperations:  # pylint: disable=name-too-long
+class QueryParametersQueryContinuationExplodeOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

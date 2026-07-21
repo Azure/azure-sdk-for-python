@@ -86,7 +86,7 @@ def build_query_unix_timestamp_array_request(*, value: list[datetime.datetime], 
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

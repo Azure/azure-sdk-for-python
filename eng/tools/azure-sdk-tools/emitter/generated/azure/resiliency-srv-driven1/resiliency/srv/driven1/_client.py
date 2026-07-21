@@ -24,7 +24,9 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class ResiliencyServiceDrivenClient(_ResiliencyServiceDrivenClientOperationsMixin):
+class ResiliencyServiceDrivenClient(
+    _ResiliencyServiceDrivenClientOperationsMixin
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Test that we can grow up a service spec and service deployment into a multi-versioned service
     with full client support.
 

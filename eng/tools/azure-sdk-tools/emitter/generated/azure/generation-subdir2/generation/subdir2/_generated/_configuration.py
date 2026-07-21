@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +14,7 @@ from azure.core.pipeline import policies
 from ._version import VERSION
 
 
-class AddedClientConfiguration:  # pylint: disable=too-many-instance-attributes
+class AddedClientConfiguration:  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """Configuration for AddedClient.
 
     Note that all parameters used to create this instance are saved as instance

@@ -25,7 +25,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class ServiceAClient:
+class ServiceAClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """First service definition in a multiple-services package with versioning. Without explicit
     ``@client``, this should create a separate root client (``ServiceAClient``).
 

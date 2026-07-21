@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class InnerModel(_Model):
+class InnerModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dictionary inner model.
 
     :ivar property: Required string property. Required.

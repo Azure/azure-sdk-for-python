@@ -39,7 +39,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class SameBodyOperations:
+class SameBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -175,7 +175,7 @@ class SameBodyOperations:
         return deserialized  # type: ignore
 
 
-class DifferentBodyOperations:
+class DifferentBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

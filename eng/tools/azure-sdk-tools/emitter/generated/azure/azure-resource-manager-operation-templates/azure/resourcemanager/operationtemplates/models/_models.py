@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActionRequest(_Model):
+class ActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ActionRequest.
 
     :ivar action_type: The action type to perform.
@@ -52,7 +52,7 @@ class ActionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionResult(_Model):
+class ActionResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ActionResult.
 
     :ivar result: The result of the action. Required.
@@ -80,7 +80,7 @@ class ActionResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChangeAllowanceRequest(_Model):
+class ChangeAllowanceRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ChangeAllowanceRequest.
 
     :ivar total_allowed: The new total allowed widgets.
@@ -115,7 +115,7 @@ class ChangeAllowanceRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ChangeAllowanceResult(_Model):
+class ChangeAllowanceResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ChangeAllowanceResult.
 
     :ivar total_allowed: The new total allowed widgets. Required.
@@ -148,7 +148,7 @@ class ChangeAllowanceResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityRequest(_Model):
+class CheckNameAvailabilityRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability request body.
 
     :ivar name: The name of the resource for which availability needs to be checked.
@@ -181,7 +181,7 @@ class CheckNameAvailabilityRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityResponse(_Model):
+class CheckNameAvailabilityResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The check availability result.
 
     :ivar name_available: Indicates if the resource name is available.
@@ -271,7 +271,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -299,7 +299,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportRequest(_Model):
+class ExportRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExportRequest.
 
     :ivar format: Format of the exported order. Required.
@@ -327,7 +327,7 @@ class ExportRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExportResult(_Model):
+class ExportResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExportResult.
 
     :ivar content: Content of the exported order. Required.
@@ -355,7 +355,7 @@ class ExportResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -471,7 +471,7 @@ class Resource(_Model):
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -515,7 +515,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class Order(TrackedResource):
+class Order(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -563,7 +563,7 @@ class Order(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class OrderProperties(_Model):
+class OrderProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OrderProperties.
 
     :ivar product_id: The product ID of the order. Required.
@@ -600,7 +600,7 @@ class OrderProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Product(TrackedResource):
+class Product(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -648,7 +648,7 @@ class Product(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class ProductProperties(_Model):
+class ProductProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ProductProperties.
 
     :ivar product_id: The product ID.
@@ -680,7 +680,7 @@ class ProductProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -748,7 +748,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Widget(TrackedResource):
+class Widget(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -796,7 +796,7 @@ class Widget(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class WidgetProperties(_Model):
+class WidgetProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WidgetProperties.
 
     :ivar name: The name of the widget.

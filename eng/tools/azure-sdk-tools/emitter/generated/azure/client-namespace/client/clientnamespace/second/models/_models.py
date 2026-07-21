@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ..sub import models as _sub_models2
 
 
-class SecondClientResult(_Model):
+class SecondClientResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SecondClientResult.
 
     :ivar type: Required. "second"

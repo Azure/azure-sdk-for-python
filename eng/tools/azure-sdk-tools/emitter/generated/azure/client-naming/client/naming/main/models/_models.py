@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class ClientModel(_Model):
+class ClientModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClientModel.
 
     :ivar default_name: Pass in true. Required.
@@ -40,7 +40,7 @@ class ClientModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientNameAndJsonEncodedNameModel(_Model):
+class ClientNameAndJsonEncodedNameModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClientNameAndJsonEncodedNameModel.
 
     :ivar client_name: Pass in true. Required.
@@ -68,7 +68,7 @@ class ClientNameAndJsonEncodedNameModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ClientNameModel(_Model):
+class ClientNameModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ClientNameModel.
 
     :ivar client_name: Pass in true. Required.
@@ -96,7 +96,7 @@ class ClientNameModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LanguageClientNameModel(_Model):
+class LanguageClientNameModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """LanguageClientNameModel.
 
     :ivar python_name: Pass in true. Required.
@@ -124,7 +124,7 @@ class LanguageClientNameModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PythonModel(_Model):
+class PythonModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PythonModel.
 
     :ivar default_name: Pass in true. Required.

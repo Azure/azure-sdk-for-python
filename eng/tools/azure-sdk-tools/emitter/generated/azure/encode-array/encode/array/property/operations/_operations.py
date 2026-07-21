@@ -251,7 +251,7 @@ def build_property_extensible_enum_newline_delimited_request(  # pylint: disable
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class PropertyOperations:
+class PropertyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

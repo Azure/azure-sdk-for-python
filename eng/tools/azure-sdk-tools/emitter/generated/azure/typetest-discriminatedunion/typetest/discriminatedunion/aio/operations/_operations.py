@@ -46,7 +46,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class EnvelopeOperations:
+class EnvelopeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -66,7 +66,7 @@ class EnvelopeOperations:
         self.object = EnvelopeObjectOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
-class NoEnvelopeOperations:
+class NoEnvelopeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -89,7 +89,7 @@ class NoEnvelopeOperations:
         )
 
 
-class EnvelopeObjectOperations:
+class EnvelopeObjectOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -112,7 +112,7 @@ class EnvelopeObjectOperations:
         )
 
 
-class NoEnvelopeDefaultOperations:
+class NoEnvelopeDefaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -287,7 +287,7 @@ class NoEnvelopeDefaultOperations:
         return deserialized  # type: ignore
 
 
-class NoEnvelopeCustomDiscriminatorOperations:
+class NoEnvelopeCustomDiscriminatorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -464,7 +464,7 @@ class NoEnvelopeCustomDiscriminatorOperations:
         return deserialized  # type: ignore
 
 
-class EnvelopeObjectDefaultOperations:
+class EnvelopeObjectDefaultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -639,7 +639,7 @@ class EnvelopeObjectDefaultOperations:
         return deserialized  # type: ignore
 
 
-class EnvelopeObjectCustomPropertiesOperations:
+class EnvelopeObjectCustomPropertiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

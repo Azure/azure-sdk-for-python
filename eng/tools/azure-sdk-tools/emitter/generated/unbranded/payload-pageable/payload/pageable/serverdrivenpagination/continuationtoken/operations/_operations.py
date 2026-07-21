@@ -179,7 +179,7 @@ def build_server_driven_pagination_continuation_token_request_header_nested_resp
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ServerDrivenPaginationContinuationTokenOperations:  # pylint: disable=name-too-long
+class ServerDrivenPaginationContinuationTokenOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -7,7 +7,7 @@ from ..explode.operations._operations import PathParametersSimpleExpansionExplod
 from ..standard.operations._operations import PathParametersSimpleExpansionStandardOperations
 
 
-class PathParametersSimpleExpansionOperations:
+class PathParametersSimpleExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

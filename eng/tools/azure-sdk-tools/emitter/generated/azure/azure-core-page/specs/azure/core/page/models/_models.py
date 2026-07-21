@@ -26,7 +26,7 @@ class FirstItem(_Model):
     """The id of the item. Required."""
 
 
-class ListItemInputBody(_Model):
+class ListItemInputBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The body of the input.
 
     :ivar input_name: The name of the input. Required.
@@ -65,7 +65,7 @@ class SecondItem(_Model):
     """The name of the item. Required."""
 
 
-class User(_Model):
+class User(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a user.
 
     :ivar id: The user's id. Required.
@@ -106,7 +106,7 @@ class User(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserOrder(_Model):
+class UserOrder(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UserOrder for testing list with expand.
 
     :ivar id: The user's id. Required.

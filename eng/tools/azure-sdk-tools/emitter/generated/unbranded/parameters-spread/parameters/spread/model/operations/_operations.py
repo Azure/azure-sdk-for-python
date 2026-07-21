@@ -125,7 +125,7 @@ def build_model_spread_composite_request_mix_request(  # pylint: disable=name-to
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class ModelOperations:
+class ModelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

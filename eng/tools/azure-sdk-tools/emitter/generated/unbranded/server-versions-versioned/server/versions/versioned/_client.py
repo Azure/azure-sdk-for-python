@@ -17,7 +17,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class VersionedClient(_VersionedClientOperationsMixin):
+class VersionedClient(_VersionedClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Illustrates versioned server.
 
     :param endpoint: Need to be set as '`http://localhost:3000 <http://localhost:3000>`_' in

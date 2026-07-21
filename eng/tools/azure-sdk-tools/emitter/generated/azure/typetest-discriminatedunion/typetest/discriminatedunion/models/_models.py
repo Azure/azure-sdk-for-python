@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Cat(_Model):
+class Cat(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cat.
 
     :ivar name: Required.
@@ -45,7 +45,7 @@ class Cat(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dog(_Model):
+class Dog(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dog.
 
     :ivar name: Required.

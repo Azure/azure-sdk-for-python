@@ -73,7 +73,7 @@ def build_header_base64_url_array_request(*, value: list[bytes], **kwargs: Any) 
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class HeaderOperations:
+class HeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

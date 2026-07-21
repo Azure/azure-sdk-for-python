@@ -7,7 +7,7 @@ from corehttp.runtime import policies
 from .._version import VERSION
 
 
-class MadeOptionalClientConfiguration:
+class MadeOptionalClientConfiguration:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for MadeOptionalClient.
 
     Note that all parameters used to create this instance are saved as instance

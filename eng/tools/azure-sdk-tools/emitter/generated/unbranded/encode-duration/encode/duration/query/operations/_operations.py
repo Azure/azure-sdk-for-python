@@ -204,7 +204,7 @@ def build_query_int32_milliseconds_array_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

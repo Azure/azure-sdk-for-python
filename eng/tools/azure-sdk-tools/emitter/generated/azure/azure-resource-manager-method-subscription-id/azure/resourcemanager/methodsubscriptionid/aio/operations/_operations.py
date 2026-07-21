@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -56,7 +56,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class TwoSubscriptionResourcesMethodLevelOperations:  # pylint: disable=name-too-long
+class TwoSubscriptionResourcesMethodLevelOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -87,7 +87,7 @@ class TwoSubscriptionResourcesMethodLevelOperations:  # pylint: disable=name-too
         )
 
 
-class MixedSubscriptionPlacementOperations:
+class MixedSubscriptionPlacementOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -114,7 +114,7 @@ class MixedSubscriptionPlacementOperations:
         )
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -227,7 +227,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperations:  # pylint: disable=name-too-long
+class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -538,7 +538,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource1OperationsOperatio
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperations:  # pylint: disable=name-too-long
+class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -849,7 +849,7 @@ class TwoSubscriptionResourcesMethodLevelSubscriptionResource2OperationsOperatio
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pylint: disable=name-too-long
+class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1160,7 +1160,7 @@ class MixedSubscriptionPlacementSubscriptionResourceOperationsOperations:  # pyl
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # pylint: disable=name-too-long
+class MixedSubscriptionPlacementResourceGroupResourceOperationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

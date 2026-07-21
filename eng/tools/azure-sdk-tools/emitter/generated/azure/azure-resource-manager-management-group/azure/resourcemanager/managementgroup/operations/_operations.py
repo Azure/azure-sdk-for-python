@@ -186,7 +186,7 @@ def build_management_group_child_resources_list_by_management_group_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ManagementGroupChildResourcesOperations:
+class ManagementGroupChildResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

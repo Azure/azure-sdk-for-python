@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class AzureEmbeddingModel(_Model):
+class AzureEmbeddingModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AzureEmbeddingModel.
 
     :ivar embedding: Required.

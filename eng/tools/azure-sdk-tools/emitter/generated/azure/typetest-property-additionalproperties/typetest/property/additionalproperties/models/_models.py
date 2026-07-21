@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class DifferentSpreadFloatRecord(_Model):
+class DifferentSpreadFloatRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<float32> with the different known property type.
 
     :ivar name: The id property. Required.
@@ -45,7 +45,9 @@ class DifferentSpreadFloatRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadFloatDerived(DifferentSpreadFloatRecord):
+class DifferentSpreadFloatDerived(
+    DifferentSpreadFloatRecord
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from a model that spread Record<float32> with the different known property
     type.
 
@@ -77,7 +79,7 @@ class DifferentSpreadFloatDerived(DifferentSpreadFloatRecord):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadModelArrayRecord(_Model):
+class DifferentSpreadModelArrayRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<ModelForRecord[]> with the different known property type.
 
     :ivar known_prop: Required.
@@ -105,7 +107,9 @@ class DifferentSpreadModelArrayRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadModelArrayDerived(DifferentSpreadModelArrayRecord):
+class DifferentSpreadModelArrayDerived(
+    DifferentSpreadModelArrayRecord
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from a model that spread Record<ModelForRecord[]> with the different known
     property type.
 
@@ -139,7 +143,7 @@ class DifferentSpreadModelArrayDerived(DifferentSpreadModelArrayRecord):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadModelRecord(_Model):
+class DifferentSpreadModelRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<ModelForRecord> with the different known property type.
 
     :ivar known_prop: Required.
@@ -167,7 +171,9 @@ class DifferentSpreadModelRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadModelDerived(DifferentSpreadModelRecord):
+class DifferentSpreadModelDerived(
+    DifferentSpreadModelRecord
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from a model that spread Record<ModelForRecord> with the different known
     property type.
 
@@ -201,7 +207,7 @@ class DifferentSpreadModelDerived(DifferentSpreadModelRecord):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadStringRecord(_Model):
+class DifferentSpreadStringRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<string> with the different known property type.
 
     :ivar id: The name property. Required.
@@ -229,7 +235,9 @@ class DifferentSpreadStringRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DifferentSpreadStringDerived(DifferentSpreadStringRecord):
+class DifferentSpreadStringDerived(
+    DifferentSpreadStringRecord
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from a model that spread Record<string> with the different known property
     type.
 
@@ -261,7 +269,7 @@ class DifferentSpreadStringDerived(DifferentSpreadStringRecord):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsFloatAdditionalProperties(_Model):
+class ExtendsFloatAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from Record<float32> type.
 
     :ivar id: The id property. Required.
@@ -289,7 +297,7 @@ class ExtendsFloatAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsModelAdditionalProperties(_Model):
+class ExtendsModelAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from Record<ModelForRecord> type.
 
     :ivar known_prop: Required.
@@ -319,7 +327,7 @@ class ExtendsModelAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsModelArrayAdditionalProperties(_Model):
+class ExtendsModelArrayAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from Record<ModelForRecord[]> type.
 
     :ivar known_prop: Required.
@@ -349,7 +357,7 @@ class ExtendsModelArrayAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsStringAdditionalProperties(_Model):
+class ExtendsStringAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from Record<string> type.
 
     :ivar name: The name property. Required.
@@ -377,7 +385,7 @@ class ExtendsStringAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsUnknownAdditionalProperties(_Model):
+class ExtendsUnknownAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from Record<unknown> type.
 
     :ivar name: The name property. Required.
@@ -405,7 +413,9 @@ class ExtendsUnknownAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendsUnknownAdditionalPropertiesDerived(ExtendsUnknownAdditionalProperties):  # pylint: disable=name-too-long
+class ExtendsUnknownAdditionalPropertiesDerived(
+    ExtendsUnknownAdditionalProperties
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The model extends from a type that extends from Record<unknown>.
 
     :ivar name: The name property. Required.
@@ -441,7 +451,9 @@ class ExtendsUnknownAdditionalPropertiesDerived(ExtendsUnknownAdditionalProperti
         super().__init__(*args, **kwargs)
 
 
-class ExtendsUnknownAdditionalPropertiesDiscriminated(_Model):  # pylint: disable=name-too-long
+class ExtendsUnknownAdditionalPropertiesDiscriminated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The model extends from Record<unknown> with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -480,7 +492,7 @@ class ExtendsUnknownAdditionalPropertiesDiscriminated(_Model):  # pylint: disabl
 
 class ExtendsUnknownAdditionalPropertiesDiscriminatedDerived(
     ExtendsUnknownAdditionalPropertiesDiscriminated, discriminator="derived"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The derived discriminated type.
 
     :ivar name: The name property. Required.
@@ -521,7 +533,7 @@ class ExtendsUnknownAdditionalPropertiesDiscriminatedDerived(
         self.kind = "derived"  # type: ignore
 
 
-class IsFloatAdditionalProperties(_Model):
+class IsFloatAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model is from Record<float32> type.
 
     :ivar id: The id property. Required.
@@ -549,7 +561,7 @@ class IsFloatAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsModelAdditionalProperties(_Model):
+class IsModelAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model is from Record<ModelForRecord> type.
 
     :ivar known_prop: Required.
@@ -579,7 +591,7 @@ class IsModelAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsModelArrayAdditionalProperties(_Model):
+class IsModelArrayAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model is from Record<ModelForRecord[]> type.
 
     :ivar known_prop: Required.
@@ -609,7 +621,7 @@ class IsModelArrayAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsStringAdditionalProperties(_Model):
+class IsStringAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model is from Record<string> type.
 
     :ivar name: The name property. Required.
@@ -637,7 +649,7 @@ class IsStringAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsUnknownAdditionalProperties(_Model):
+class IsUnknownAdditionalProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model is from Record<unknown> type.
 
     :ivar name: The name property. Required.
@@ -665,7 +677,9 @@ class IsUnknownAdditionalProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IsUnknownAdditionalPropertiesDerived(IsUnknownAdditionalProperties):
+class IsUnknownAdditionalPropertiesDerived(
+    IsUnknownAdditionalProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model extends from a type that is Record<unknown> type.
 
     :ivar name: The name property. Required.
@@ -701,7 +715,9 @@ class IsUnknownAdditionalPropertiesDerived(IsUnknownAdditionalProperties):
         super().__init__(*args, **kwargs)
 
 
-class IsUnknownAdditionalPropertiesDiscriminated(_Model):  # pylint: disable=name-too-long
+class IsUnknownAdditionalPropertiesDiscriminated(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The model is Record<unknown> with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -740,7 +756,7 @@ class IsUnknownAdditionalPropertiesDiscriminated(_Model):  # pylint: disable=nam
 
 class IsUnknownAdditionalPropertiesDiscriminatedDerived(
     IsUnknownAdditionalPropertiesDiscriminated, discriminator="derived"
-):  # pylint: disable=name-too-long
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The derived discriminated type.
 
     :ivar name: The name property. Required.
@@ -781,7 +797,7 @@ class IsUnknownAdditionalPropertiesDiscriminatedDerived(
         self.kind = "derived"  # type: ignore
 
 
-class ModelForRecord(_Model):
+class ModelForRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """model for record.
 
     :ivar state: The state property. Required.
@@ -809,7 +825,7 @@ class ModelForRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MultipleSpreadRecord(_Model):
+class MultipleSpreadRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<string> and Record<float32>.
 
     :ivar flag: The name property. Required.
@@ -837,7 +853,7 @@ class MultipleSpreadRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadFloatRecord(_Model):
+class SpreadFloatRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<float32> with the same known property type.
 
     :ivar id: The id property. Required.
@@ -865,7 +881,7 @@ class SpreadFloatRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadModelArrayRecord(_Model):
+class SpreadModelArrayRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpreadModelArrayRecord.
 
     :ivar known_prop: Required.
@@ -895,7 +911,7 @@ class SpreadModelArrayRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadModelRecord(_Model):
+class SpreadModelRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<ModelForRecord> with the same known property type.
 
     :ivar known_prop: Required.
@@ -925,7 +941,7 @@ class SpreadModelRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadRecordForNonDiscriminatedUnion(_Model):
+class SpreadRecordForNonDiscriminatedUnion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<WidgetData0 | WidgetData1>.
 
     :ivar name: The name property. Required.
@@ -953,7 +969,7 @@ class SpreadRecordForNonDiscriminatedUnion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadRecordForNonDiscriminatedUnion2(_Model):
+class SpreadRecordForNonDiscriminatedUnion2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<WidgetData2 | WidgetData1>.
 
     :ivar name: The name property. Required.
@@ -981,7 +997,7 @@ class SpreadRecordForNonDiscriminatedUnion2(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadRecordForNonDiscriminatedUnion3(_Model):
+class SpreadRecordForNonDiscriminatedUnion3(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<WidgetData2[] | WidgetData1>.
 
     :ivar name: The name property. Required.
@@ -1009,7 +1025,7 @@ class SpreadRecordForNonDiscriminatedUnion3(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadRecordForUnion(_Model):
+class SpreadRecordForUnion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<string | float32>.
 
     :ivar flag: The name property. Required.
@@ -1037,7 +1053,7 @@ class SpreadRecordForUnion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpreadStringRecord(_Model):
+class SpreadStringRecord(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The model spread Record<string> with the same known property type.
 
     :ivar name: The name property. Required.
@@ -1065,7 +1081,7 @@ class SpreadStringRecord(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WidgetData0(_Model):
+class WidgetData0(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WidgetData0.
 
     :ivar kind: Required. Default value is "kind0".
@@ -1098,7 +1114,7 @@ class WidgetData0(_Model):
         self.kind: Literal["kind0"] = "kind0"
 
 
-class WidgetData1(_Model):
+class WidgetData1(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WidgetData1.
 
     :ivar kind: Required. Default value is "kind1".
@@ -1137,7 +1153,7 @@ class WidgetData1(_Model):
         self.kind: Literal["kind1"] = "kind1"
 
 
-class WidgetData2(_Model):
+class WidgetData2(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WidgetData2.
 
     :ivar kind: Required. Default value is "kind1".

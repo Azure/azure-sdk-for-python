@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, _xml_deser_str, rest_field
 
 
-class Pet(_Model):
+class Pet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pet.
 
     :ivar id: Required.
@@ -45,7 +45,7 @@ class Pet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class XmlPet(_Model):
+class XmlPet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """An XML pet item.
 
     :ivar id: Required.

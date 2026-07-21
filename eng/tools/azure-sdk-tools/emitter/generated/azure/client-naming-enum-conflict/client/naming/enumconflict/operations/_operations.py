@@ -73,7 +73,7 @@ def build_second_operations_second_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class FirstOperationsOperations:
+class FirstOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -213,7 +213,7 @@ class FirstOperationsOperations:
         return deserialized  # type: ignore
 
 
-class SecondOperationsOperations:
+class SecondOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

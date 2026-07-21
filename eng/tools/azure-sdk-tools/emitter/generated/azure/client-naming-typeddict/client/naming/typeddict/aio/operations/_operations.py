@@ -48,7 +48,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class PropertyOperations:
+class PropertyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -385,7 +385,7 @@ class PropertyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class HeaderOperations:
+class HeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -497,7 +497,7 @@ class HeaderOperations:
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
 
-class ModelClientOperations:
+class ModelClientOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -717,7 +717,7 @@ class ModelClientOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UnionEnumOperations:
+class UnionEnumOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

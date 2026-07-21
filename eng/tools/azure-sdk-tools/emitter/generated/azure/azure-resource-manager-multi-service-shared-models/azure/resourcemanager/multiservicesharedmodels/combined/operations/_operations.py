@@ -160,7 +160,7 @@ def build_storage_accounts_create_or_update_request(  # pylint: disable=name-too
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class VirtualMachinesOperations:
+class VirtualMachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -497,7 +497,7 @@ class VirtualMachinesOperations:
         )
 
 
-class StorageAccountsOperations:
+class StorageAccountsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -46,7 +46,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class ManagedIdentityOperations:
+class ManagedIdentityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -487,7 +487,7 @@ class ManagedIdentityOperations:
         return deserialized  # type: ignore
 
 
-class ErrorOperations:
+class ErrorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -748,7 +748,7 @@ class ErrorOperations:
         return deserialized  # type: ignore
 
 
-class ArmResourceIdentifiersOperations:
+class ArmResourceIdentifiersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

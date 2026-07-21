@@ -71,7 +71,7 @@ def build_model_properties_with_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class ModelPropertiesOperations:
+class ModelPropertiesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -24,7 +24,9 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class QueryClient(_QueryClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
+class QueryClient(
+    _QueryClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,docstring-keyword-should-match-keyword-only
     """QueryClient.
 
     :keyword endpoint: Service host. Default value is "http://localhost:3000".

@@ -314,7 +314,7 @@ def build_mixed_types_send_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class StringsOnlyOperations:
+class StringsOnlyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -496,7 +496,7 @@ class StringsOnlyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StringExtensibleOperations:
+class StringExtensibleOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -678,7 +678,7 @@ class StringExtensibleOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StringExtensibleNamedOperations:
+class StringExtensibleNamedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -864,7 +864,7 @@ class StringExtensibleNamedOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class IntsOnlyOperations:
+class IntsOnlyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1044,7 +1044,7 @@ class IntsOnlyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class FloatsOnlyOperations:
+class FloatsOnlyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1220,7 +1220,7 @@ class FloatsOnlyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ModelsOnlyOperations:
+class ModelsOnlyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1402,7 +1402,7 @@ class ModelsOnlyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class EnumsOnlyOperations:
+class EnumsOnlyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1582,7 +1582,7 @@ class EnumsOnlyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class StringAndArrayOperations:
+class StringAndArrayOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1762,7 +1762,7 @@ class StringAndArrayOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MixedLiteralsOperations:
+class MixedLiteralsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1942,7 +1942,7 @@ class MixedLiteralsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class MixedTypesOperations:
+class MixedTypesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

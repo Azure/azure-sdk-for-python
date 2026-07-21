@@ -13,7 +13,7 @@ from ...explode.aio.operations._operations import PathParametersSimpleExpansionE
 from ...standard.aio.operations._operations import PathParametersSimpleExpansionStandardOperations
 
 
-class PathParametersSimpleExpansionOperations:
+class PathParametersSimpleExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

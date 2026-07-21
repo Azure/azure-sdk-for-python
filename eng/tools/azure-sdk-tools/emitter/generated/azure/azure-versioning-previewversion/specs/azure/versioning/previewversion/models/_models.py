@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ListWidgetsResponse(_Model):
+class ListWidgetsResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ListWidgetsResponse.
 
     :ivar widgets: Required.
@@ -43,7 +43,7 @@ class ListWidgetsResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UpdateWidgetColorRequest(_Model):
+class UpdateWidgetColorRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Update widget color request.
 
     :ivar color: New color for the widget. Required.
@@ -71,7 +71,7 @@ class UpdateWidgetColorRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Widget(_Model):
+class Widget(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A simple model for testing.
 
     :ivar id: Widget identifier. Required.
