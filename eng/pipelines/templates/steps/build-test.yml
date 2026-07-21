@@ -94,7 +94,8 @@ steps:
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
           --checks="${{ parameters.CheckEnv }}"
-          --injected-packages="${{ parameters.InjectedPackages }}";
+          --injected-packages="${{ parameters.InjectedPackages }}"
+          --max-parallel=1;
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
 
@@ -116,7 +117,8 @@ steps:
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
           --checks="${{ parameters.CheckEnv }}" `
-          --injected-packages="${{ parameters.InjectedPackages }}";
+          --injected-packages="${{ parameters.InjectedPackages }}" `
+          --max-parallel=1;
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
       displayName: Run Tests
