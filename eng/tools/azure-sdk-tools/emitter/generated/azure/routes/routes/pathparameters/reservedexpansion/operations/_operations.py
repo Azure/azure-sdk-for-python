@@ -59,7 +59,7 @@ def build_path_parameters_reserved_expansion_annotation_request(  # pylint: disa
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class PathParametersReservedExpansionOperations:  # pylint: disable=name-too-long
+class PathParametersReservedExpansionOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class GenerationOptions(_Model):
+class GenerationOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Options for the generation.
 
     :ivar prompt: Prompt. Required.
@@ -40,7 +40,7 @@ class GenerationOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GenerationResult(_Model):
+class GenerationResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Result of the generation.
 
     :ivar data: The data. Required.

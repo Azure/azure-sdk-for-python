@@ -7,7 +7,7 @@ from corehttp.runtime import policies
 from ._version import VERSION
 
 
-class RenamedFromClientConfiguration:
+class RenamedFromClientConfiguration:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for RenamedFromClient.
 
     Note that all parameters used to create this instance are saved as instance

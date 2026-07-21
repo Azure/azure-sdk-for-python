@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ResourcesClient:
+class ResourcesClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Resource Provider management API.
 
     :ivar top_level: TopLevelOperations operations

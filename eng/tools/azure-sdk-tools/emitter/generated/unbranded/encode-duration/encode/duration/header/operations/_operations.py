@@ -206,7 +206,7 @@ def build_header_int32_milliseconds_array_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class HeaderOperations:
+class HeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

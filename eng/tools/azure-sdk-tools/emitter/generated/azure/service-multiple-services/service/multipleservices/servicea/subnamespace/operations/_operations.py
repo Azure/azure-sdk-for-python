@@ -45,7 +45,7 @@ def build_sub_namespace_sub_op_a_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class SubNamespaceOperations:
+class SubNamespaceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

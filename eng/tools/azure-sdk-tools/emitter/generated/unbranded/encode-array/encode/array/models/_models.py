@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class CommaDelimitedArrayProperty(_Model):
+class CommaDelimitedArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CommaDelimitedArrayProperty.
 
     :ivar value: Required.
@@ -37,7 +37,7 @@ class CommaDelimitedArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommaDelimitedEnumArrayProperty(_Model):
+class CommaDelimitedEnumArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """CommaDelimitedEnumArrayProperty.
 
     :ivar value: Required.
@@ -67,7 +67,9 @@ class CommaDelimitedEnumArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CommaDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=name-too-long
+class CommaDelimitedExtensibleEnumArrayProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """CommaDelimitedExtensibleEnumArrayProperty.
 
     :ivar value: Required.
@@ -97,7 +99,7 @@ class CommaDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class NewlineDelimitedArrayProperty(_Model):
+class NewlineDelimitedArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NewlineDelimitedArrayProperty.
 
     :ivar value: Required.
@@ -125,7 +127,7 @@ class NewlineDelimitedArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NewlineDelimitedEnumArrayProperty(_Model):
+class NewlineDelimitedEnumArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NewlineDelimitedEnumArrayProperty.
 
     :ivar value: Required.
@@ -155,7 +157,9 @@ class NewlineDelimitedEnumArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NewlineDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=name-too-long
+class NewlineDelimitedExtensibleEnumArrayProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """NewlineDelimitedExtensibleEnumArrayProperty.
 
     :ivar value: Required.
@@ -185,7 +189,7 @@ class NewlineDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class PipeDelimitedArrayProperty(_Model):
+class PipeDelimitedArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PipeDelimitedArrayProperty.
 
     :ivar value: Required.
@@ -213,7 +217,7 @@ class PipeDelimitedArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipeDelimitedEnumArrayProperty(_Model):
+class PipeDelimitedEnumArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PipeDelimitedEnumArrayProperty.
 
     :ivar value: Required.
@@ -243,7 +247,7 @@ class PipeDelimitedEnumArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PipeDelimitedExtensibleEnumArrayProperty(_Model):
+class PipeDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """PipeDelimitedExtensibleEnumArrayProperty.
 
     :ivar value: Required.
@@ -273,7 +277,7 @@ class PipeDelimitedExtensibleEnumArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpaceDelimitedArrayProperty(_Model):
+class SpaceDelimitedArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpaceDelimitedArrayProperty.
 
     :ivar value: Required.
@@ -301,7 +305,7 @@ class SpaceDelimitedArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpaceDelimitedEnumArrayProperty(_Model):
+class SpaceDelimitedEnumArrayProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SpaceDelimitedEnumArrayProperty.
 
     :ivar value: Required.
@@ -331,7 +335,9 @@ class SpaceDelimitedEnumArrayProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SpaceDelimitedExtensibleEnumArrayProperty(_Model):  # pylint: disable=name-too-long
+class SpaceDelimitedExtensibleEnumArrayProperty(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """SpaceDelimitedExtensibleEnumArrayProperty.
 
     :ivar value: Required.

@@ -13,7 +13,7 @@ from ..explode.operations._operations import PathParametersLabelExpansionExplode
 from ..standard.operations._operations import PathParametersLabelExpansionStandardOperations
 
 
-class PathParametersLabelExpansionOperations:
+class PathParametersLabelExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -32,7 +32,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class ProductOperationsOperations:
+class ProductOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -94,7 +94,7 @@ class ProductOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ArchiveOperationsOperations:
+class ArchiveOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

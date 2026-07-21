@@ -381,7 +381,7 @@ def build_optional_body_provider_post_request(  # pylint: disable=name-too-long
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -492,7 +492,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class CheckNameAvailabilityOperations:
+class CheckNameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -796,7 +796,7 @@ class CheckNameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class LroOperations:
+class LroOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1591,7 +1591,7 @@ class LroOperations:
         )
 
 
-class LroPagingOperations:
+class LroPagingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1816,7 +1816,7 @@ class LroPagingOperations:
         )
 
 
-class OptionalBodyOperations:
+class OptionalBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

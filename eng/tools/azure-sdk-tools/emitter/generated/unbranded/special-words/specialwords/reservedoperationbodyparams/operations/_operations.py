@@ -47,7 +47,7 @@ def build_reserved_operation_body_params_with_items_request(  # pylint: disable=
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class ReservedOperationBodyParamsOperations:
+class ReservedOperationBodyParamsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

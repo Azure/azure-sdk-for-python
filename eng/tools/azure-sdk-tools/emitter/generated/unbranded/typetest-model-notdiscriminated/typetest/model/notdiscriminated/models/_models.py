@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Pet(_Model):
+class Pet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is base model for not-discriminated normal multiple levels inheritance.
 
     :ivar name: Required.
@@ -34,7 +34,7 @@ class Pet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Cat(Pet):
+class Cat(Pet):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in the normal multiple levels inheritance.
 
     :ivar name: Required.
@@ -65,7 +65,7 @@ class Cat(Pet):
         super().__init__(*args, **kwargs)
 
 
-class Siamese(Cat):
+class Siamese(Cat):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The third level model in the normal multiple levels inheritance.
 
     :ivar name: Required.

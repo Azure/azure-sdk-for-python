@@ -61,7 +61,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -134,7 +134,7 @@ class ExtensionResource(Resource):
     """
 
 
-class ExtensionsResource(ExtensionResource):
+class ExtensionsResource(ExtensionResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete extension resource types can be created by aliasing this type using a specific
     property type.
 
@@ -176,7 +176,7 @@ class ExtensionsResource(ExtensionResource):
         super().__init__(*args, **kwargs)
 
 
-class ExtensionsResourceProperties(_Model):
+class ExtensionsResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ExtensionsResource properties.
 
     :ivar description: The description of the resource.
@@ -229,7 +229,7 @@ class ProxyResource(Resource):
     """
 
 
-class LocationResource(ProxyResource):
+class LocationResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -271,7 +271,7 @@ class LocationResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class LocationResourceProperties(_Model):
+class LocationResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Location resource properties.
 
     :ivar description: The description of the resource.
@@ -307,7 +307,7 @@ class LocationResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NestedProxyResource(ProxyResource):
+class NestedProxyResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nested child of Top Level Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -348,7 +348,7 @@ class NestedProxyResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NestedProxyResourceProperties(_Model):
+class NestedProxyResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nested Proxy Resource Properties.
 
     :ivar provisioning_state: Provisioning State of the nested child Resource. Known values are:
@@ -384,7 +384,7 @@ class NestedProxyResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NotificationDetails(_Model):
+class NotificationDetails(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The details of a user notification.
 
     :ivar message: The notification message. Required.
@@ -417,7 +417,7 @@ class NotificationDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -461,7 +461,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SingletonTrackedResource(TrackedResource):
+class SingletonTrackedResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -509,7 +509,7 @@ class SingletonTrackedResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class SingletonTrackedResourceProperties(_Model):
+class SingletonTrackedResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Singleton Arm Resource Properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
@@ -545,7 +545,7 @@ class SingletonTrackedResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -612,7 +612,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TopLevelTrackedResource(TrackedResource):
+class TopLevelTrackedResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete tracked resource types can be created by aliasing this type using a specific property
     type.
 
@@ -660,7 +660,7 @@ class TopLevelTrackedResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class TopLevelTrackedResourceProperties(_Model):
+class TopLevelTrackedResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Top Level Arm Resource Properties.
 
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",

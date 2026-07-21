@@ -59,7 +59,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -87,7 +87,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NonResource(_Model):
+class NonResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Though this model has ``id``, ``name``, ``type`` properties, it is not a resource as it doesn't
     extends ``Resource``.
 

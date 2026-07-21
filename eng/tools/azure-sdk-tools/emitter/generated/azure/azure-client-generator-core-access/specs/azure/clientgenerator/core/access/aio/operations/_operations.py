@@ -43,7 +43,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class PublicOperationOperations:
+class PublicOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -183,7 +183,7 @@ class PublicOperationOperations:
         return deserialized  # type: ignore
 
 
-class InternalOperationOperations:
+class InternalOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -395,7 +395,7 @@ class InternalOperationOperations:
         return deserialized  # type: ignore
 
 
-class SharedModelInOperationOperations:
+class SharedModelInOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -533,7 +533,7 @@ class SharedModelInOperationOperations:
         return deserialized  # type: ignore
 
 
-class RelativeModelInOperationOperations:
+class RelativeModelInOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -58,7 +58,7 @@ def build_blob_operations_get_blob_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class BlobOperationsOperations:
+class BlobOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

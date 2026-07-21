@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class ActionRequest(_Model):
+class ActionRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ActionRequest.
 
     :ivar string_property: Required.
@@ -61,7 +61,7 @@ class ActionRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ActionResponse(_Model):
+class ActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """ActionResponse.
 
     :ivar string_property: Required.
@@ -107,7 +107,7 @@ class ActionResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Model(_Model):
+class Model(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model.
 
     :ivar int32_property:

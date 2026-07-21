@@ -61,7 +61,7 @@ def build_form_data_http_parts_content_type_optional_content_type_request(  # py
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class FormDataHttpPartsContentTypeOperations:
+class FormDataHttpPartsContentTypeOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

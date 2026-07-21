@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class ExpandParameters(_Model):
+class ExpandParameters(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A named model used to verify explode expansion of a model-valued query parameter.
 
     :ivar field: Required.

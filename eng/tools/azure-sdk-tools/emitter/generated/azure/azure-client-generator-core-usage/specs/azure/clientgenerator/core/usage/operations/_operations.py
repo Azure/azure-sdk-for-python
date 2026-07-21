@@ -119,7 +119,7 @@ def build_namespace_usage_namespace_model_serializable_request(  # pylint: disab
     return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
 
 
-class ModelInOperationOperations:
+class ModelInOperationOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -579,7 +579,7 @@ class ModelInOperationOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NamespaceUsageOperations:
+class NamespaceUsageOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

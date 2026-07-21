@@ -13,7 +13,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class BlobProperties(_Model):
+class BlobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a blob.
 
     :ivar name: Required.

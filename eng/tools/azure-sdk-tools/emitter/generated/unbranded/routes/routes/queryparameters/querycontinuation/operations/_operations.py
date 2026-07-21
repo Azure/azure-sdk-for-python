@@ -7,7 +7,7 @@ from ..explode.operations._operations import QueryParametersQueryContinuationExp
 from ..standard.operations._operations import QueryParametersQueryContinuationStandardOperations
 
 
-class QueryParametersQueryContinuationOperations:  # pylint: disable=name-too-long
+class QueryParametersQueryContinuationOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -258,7 +258,7 @@ def build_arm_resource_identifiers_create_or_replace_request(  # pylint: disable
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ManagedIdentityOperations:
+class ManagedIdentityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -699,7 +699,7 @@ class ManagedIdentityOperations:
         return deserialized  # type: ignore
 
 
-class ErrorOperations:
+class ErrorOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -960,7 +960,7 @@ class ErrorOperations:
         return deserialized  # type: ignore
 
 
-class ArmResourceIdentifiersOperations:
+class ArmResourceIdentifiersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

@@ -52,7 +52,7 @@ def build_response_header_unix_timestamp_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class ResponseHeaderOperations:
+class ResponseHeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

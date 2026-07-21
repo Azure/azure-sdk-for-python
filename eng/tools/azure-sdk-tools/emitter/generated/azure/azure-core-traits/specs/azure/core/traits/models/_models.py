@@ -12,7 +12,7 @@ from typing import Any, Mapping, Optional, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class User(_Model):
+class User(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sample Model.
 
     :ivar id: The user's id. Required.
@@ -44,7 +44,7 @@ class User(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserActionParam(_Model):
+class UserActionParam(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User action param.
 
     :ivar user_action_value: User action value. Required.
@@ -74,7 +74,7 @@ class UserActionParam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserActionResponse(_Model):
+class UserActionResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """User action response.
 
     :ivar user_action_result: User action result. Required.

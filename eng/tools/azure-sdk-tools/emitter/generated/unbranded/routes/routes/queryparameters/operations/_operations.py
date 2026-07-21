@@ -67,7 +67,7 @@ def build_query_parameters_annotation_only_request(  # pylint: disable=name-too-
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryParametersOperations:
+class QueryParametersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

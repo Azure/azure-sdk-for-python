@@ -74,7 +74,7 @@ def build_renamed_operation_renamed_five_request(**kwargs: Any) -> HttpRequest: 
     return HttpRequest(method="POST", url=_url, **kwargs)
 
 
-class GroupOperations:
+class GroupOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

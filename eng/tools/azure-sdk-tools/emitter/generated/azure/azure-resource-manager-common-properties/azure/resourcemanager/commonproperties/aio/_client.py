@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class CommonPropertiesClient:
+class CommonPropertiesClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Arm Managed Identity Provider management API.
 
     :ivar managed_identity: ManagedIdentityOperations operations

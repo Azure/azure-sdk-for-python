@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from ....._utils.model_base import Model as _Model, rest_field
 
 
-class FloatRequest(_Model):
+class FloatRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FloatRequest.
 
     :ivar temperature: Required.

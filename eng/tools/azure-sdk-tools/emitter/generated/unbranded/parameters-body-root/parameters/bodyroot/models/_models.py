@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BodyRootModel(_Model):
+class BodyRootModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """BodyRootModel.
 
     :ivar category:
@@ -46,7 +46,7 @@ class BodyRootModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NestedParameterBody(_Model):
+class NestedParameterBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NestedParameterBody.
 
     :ivar body_root_parameters: Required.

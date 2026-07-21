@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class InnerModel(_Model):
+class InnerModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """It is the model used by Resource model.
 
     :ivar name:
@@ -46,7 +46,7 @@ class InnerModel(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
+class Resource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a resource.
 
     :ivar name: Required.
@@ -110,7 +110,7 @@ class Resource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourcePatch(_Model):
+class ResourcePatch(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a resource for patch operation.
 
     :ivar description:

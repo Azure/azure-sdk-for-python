@@ -57,7 +57,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -168,7 +168,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class CheckNameAvailabilityOperations:
+class CheckNameAvailabilityOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -472,7 +472,7 @@ class CheckNameAvailabilityOperations:
         return deserialized  # type: ignore
 
 
-class LroOperations:
+class LroOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1271,7 +1271,7 @@ class LroOperations:
         )
 
 
-class LroPagingOperations:
+class LroPagingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1498,7 +1498,7 @@ class LroPagingOperations:
         )
 
 
-class OptionalBodyOperations:
+class OptionalBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

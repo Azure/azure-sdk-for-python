@@ -492,7 +492,7 @@ def build_models_with_yield_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class ModelsOperations:  # pylint: disable=too-many-public-methods
+class ModelsOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.

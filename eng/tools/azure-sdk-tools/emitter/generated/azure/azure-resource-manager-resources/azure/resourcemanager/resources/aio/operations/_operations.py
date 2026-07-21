@@ -70,7 +70,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class TopLevelOperations:
+class TopLevelOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1112,7 +1112,7 @@ class TopLevelOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class NestedOperations:
+class NestedOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1954,7 +1954,7 @@ class NestedOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SingletonOperations:
+class SingletonOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2518,7 +2518,7 @@ class SingletonOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class ExtensionsResourcesOperations:
+class ExtensionsResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3168,7 +3168,7 @@ class ExtensionsResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class LocationResourcesOperations:
+class LocationResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

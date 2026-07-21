@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class EndpointConfig(_Model):
+class EndpointConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """EndpointConfig.
 
     :ivar protocol: Required. Known values are: "activity", "responses", "a2a", and "mcp".

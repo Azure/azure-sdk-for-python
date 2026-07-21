@@ -73,7 +73,7 @@ def build_group2_six_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, **kwargs)
 
 
-class Group1Operations:
+class Group1Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -226,7 +226,7 @@ class Group1Operations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class Group2Operations:
+class Group2Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

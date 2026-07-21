@@ -73,7 +73,7 @@ def build_query_csv_request(*, colors: list[str], **kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, **kwargs)
 
 
-class QueryOperations:
+class QueryOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

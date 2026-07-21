@@ -88,7 +88,7 @@ def build_header_unix_timestamp_array_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, headers=_headers, **kwargs)
 
 
-class HeaderOperations:
+class HeaderOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

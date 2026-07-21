@@ -52,7 +52,7 @@ def build_user_operations_get_user_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class AdminOperationsOperations:
+class AdminOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -158,7 +158,7 @@ class AdminOperationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class UserOperationsOperations:
+class UserOperationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

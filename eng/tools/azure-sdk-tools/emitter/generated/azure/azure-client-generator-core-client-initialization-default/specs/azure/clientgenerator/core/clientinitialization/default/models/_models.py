@@ -13,7 +13,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class BlobProperties(_Model):
+class BlobProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a blob.
 
     :ivar name: Required.
@@ -58,7 +58,7 @@ class BlobProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Input(_Model):
+class Input(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input.
 
     :ivar name: Required.
@@ -86,7 +86,7 @@ class Input(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WithBodyRequest(_Model):
+class WithBodyRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """WithBodyRequest.
 
     :ivar name: Required.

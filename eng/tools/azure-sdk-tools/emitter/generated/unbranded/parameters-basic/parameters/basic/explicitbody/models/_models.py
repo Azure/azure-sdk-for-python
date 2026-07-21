@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from ..._utils.model_base import Model as _Model, rest_field
 
 
-class User(_Model):
+class User(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is a simple model.
 
     :ivar name: Required.

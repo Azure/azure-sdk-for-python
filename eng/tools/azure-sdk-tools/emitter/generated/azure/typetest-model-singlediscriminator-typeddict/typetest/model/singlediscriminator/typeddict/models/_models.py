@@ -16,7 +16,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class Bird(_Model):
+class Bird(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """This is base model for polymorphic single level inheritance with a discriminator.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -53,7 +53,7 @@ class Bird(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Dinosaur(_Model):
+class Dinosaur(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Define a base class in the legacy way. Discriminator property is not explicitly defined in the
     model.
 
@@ -91,7 +91,7 @@ class Dinosaur(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Eagle(Bird, discriminator="eagle"):
+class Eagle(Bird, discriminator="eagle"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic single levels inheritance which contains references to
     other polymorphic instances.
 
@@ -135,7 +135,7 @@ class Eagle(Bird, discriminator="eagle"):
         self.kind = "eagle"  # type: ignore
 
 
-class Fish(_Model):
+class Fish(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A discriminated model with no defined subtypes. The discriminator is declared but no models
     extend it.
 
@@ -168,7 +168,7 @@ class Fish(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Goose(Bird, discriminator="goose"):
+class Goose(Bird, discriminator="goose"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic single level inheritance.
 
     :ivar wingspan: Required.
@@ -199,7 +199,7 @@ class Goose(Bird, discriminator="goose"):
         self.kind = "goose"  # type: ignore
 
 
-class SeaGull(Bird, discriminator="seagull"):
+class SeaGull(Bird, discriminator="seagull"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic single level inheritance.
 
     :ivar wingspan: Required.
@@ -230,7 +230,7 @@ class SeaGull(Bird, discriminator="seagull"):
         self.kind = "seagull"  # type: ignore
 
 
-class Sparrow(Bird, discriminator="sparrow"):
+class Sparrow(Bird, discriminator="sparrow"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level model in polymorphic single level inheritance.
 
     :ivar wingspan: Required.
@@ -261,7 +261,7 @@ class Sparrow(Bird, discriminator="sparrow"):
         self.kind = "sparrow"  # type: ignore
 
 
-class TRex(Dinosaur, discriminator="t-rex"):
+class TRex(Dinosaur, discriminator="t-rex"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The second level legacy model in polymorphic single level inheritance.
 
     :ivar size: Required.

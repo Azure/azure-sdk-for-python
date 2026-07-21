@@ -134,7 +134,7 @@ def build_alias_spread_parameter_with_inner_alias_request(  # pylint: disable=na
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-class AliasOperations:
+class AliasOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

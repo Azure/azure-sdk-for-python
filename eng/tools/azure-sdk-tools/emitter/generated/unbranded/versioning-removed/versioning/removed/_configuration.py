@@ -7,7 +7,7 @@ from corehttp.runtime import policies
 from ._version import VERSION
 
 
-class RemovedClientConfiguration:
+class RemovedClientConfiguration:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for RemovedClient.
 
     Note that all parameters used to create this instance are saved as instance

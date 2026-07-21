@@ -7,7 +7,7 @@ from ...explode.aio.operations._operations import PathParametersLabelExpansionEx
 from ...standard.aio.operations._operations import PathParametersLabelExpansionStandardOperations
 
 
-class PathParametersLabelExpansionOperations:
+class PathParametersLabelExpansionOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

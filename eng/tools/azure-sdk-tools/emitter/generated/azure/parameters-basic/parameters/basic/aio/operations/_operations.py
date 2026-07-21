@@ -36,7 +36,7 @@ JSON = MutableMapping[str, Any]
 _Unset: Any = object()
 
 
-class ExplicitBodyOperations:
+class ExplicitBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -152,7 +152,7 @@ class ExplicitBodyOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class ImplicitBodyOperations:
+class ImplicitBodyOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

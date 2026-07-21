@@ -13,7 +13,7 @@ from typing import Any, Literal, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 
 
-class Animal(_Model):
+class Animal(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Animal.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -50,7 +50,7 @@ class Animal(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Pet(Animal, discriminator="pet"):
+class Pet(Animal, discriminator="pet"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Pet.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -90,7 +90,7 @@ class Pet(Animal, discriminator="pet"):
         self.kind = "pet"  # type: ignore
 
 
-class Dog(Pet, discriminator="dog"):
+class Dog(Pet, discriminator="dog"):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Dog.
 
     :ivar name: Name of the animal. Required.

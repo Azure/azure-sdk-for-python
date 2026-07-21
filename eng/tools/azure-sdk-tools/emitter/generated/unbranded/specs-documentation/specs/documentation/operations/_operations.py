@@ -80,7 +80,7 @@ def build_text_formatting_combined_formatting_request(**kwargs: Any) -> HttpRequ
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class ListsOperations:
+class ListsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -313,7 +313,7 @@ class ListsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class TextFormattingOperations:
+class TextFormattingOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

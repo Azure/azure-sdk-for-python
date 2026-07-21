@@ -33,7 +33,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 
 
-class PathParametersMatrixExpansionStandardOperations:  # pylint: disable=name-too-long
+class PathParametersMatrixExpansionStandardOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.

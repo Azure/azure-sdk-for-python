@@ -6,7 +6,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class Base64BytesProperty(_Model):
+class Base64BytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base64BytesProperty.
 
     :ivar value: Required.
@@ -34,7 +34,7 @@ class Base64BytesProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Base64urlArrayBytesProperty(_Model):
+class Base64urlArrayBytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base64urlArrayBytesProperty.
 
     :ivar value: Required.
@@ -62,7 +62,7 @@ class Base64urlArrayBytesProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Base64urlBytesProperty(_Model):
+class Base64urlBytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Base64urlBytesProperty.
 
     :ivar value: Required.
@@ -90,7 +90,7 @@ class Base64urlBytesProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefaultBytesProperty(_Model):
+class DefaultBytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultBytesProperty.
 
     :ivar value: Required.

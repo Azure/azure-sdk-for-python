@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class FirstModel(_Model):
+class FirstModel(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """FirstModel.
 
     :ivar status: Status from first namespace. Required. Known values are: "active" and "inactive".

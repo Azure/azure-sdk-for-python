@@ -24,7 +24,7 @@ else:
     from typing_extensions import Self  # type: ignore
 
 
-class StandardClient(_StandardClientOperationsMixin):
+class StandardClient(_StandardClientOperationsMixin):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Illustrates bodies templated with Azure Core with long-running operation.
 
     :keyword endpoint: Service host. Default value is "http://localhost:3000".

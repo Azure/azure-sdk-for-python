@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BooleanLiteralProperty(_Model):
+class BooleanLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with boolean literal property.
 
     :ivar property: Property. Default value is True.
@@ -38,7 +38,7 @@ class BooleanLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BytesProperty(_Model):
+class BytesProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template type for testing models with optional property. Pass in the type of the property you
     are looking for.
 
@@ -67,7 +67,7 @@ class BytesProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CollectionsByteProperty(_Model):
+class CollectionsByteProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with collection bytes properties.
 
     :ivar property: Property.
@@ -97,7 +97,7 @@ class CollectionsByteProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CollectionsModelProperty(_Model):
+class CollectionsModelProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with collection models properties.
 
     :ivar property: Property.
@@ -127,7 +127,7 @@ class CollectionsModelProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DatetimeProperty(_Model):
+class DatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a datetime property.
 
     :ivar property: Property.
@@ -157,7 +157,7 @@ class DatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DurationProperty(_Model):
+class DurationProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a duration property.
 
     :ivar property: Property.
@@ -185,7 +185,7 @@ class DurationProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FloatLiteralProperty(_Model):
+class FloatLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with float literal property.
 
     :ivar property: Property. Default value is 1.25.
@@ -213,7 +213,7 @@ class FloatLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IntLiteralProperty(_Model):
+class IntLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with int literal property.
 
     :ivar property: Property. Default value is 1.
@@ -241,7 +241,7 @@ class IntLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlainDateProperty(_Model):
+class PlainDateProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a plainDate property.
 
     :ivar property: Property.
@@ -269,7 +269,7 @@ class PlainDateProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PlainTimeProperty(_Model):
+class PlainTimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with a plainTime property.
 
     :ivar property: Property.
@@ -297,7 +297,7 @@ class PlainTimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RequiredAndOptionalProperty(_Model):
+class RequiredAndOptionalProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with required and optional properties.
 
     :ivar optional_property: optional string property.
@@ -334,7 +334,7 @@ class RequiredAndOptionalProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringLiteralProperty(_Model):
+class StringLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with string literal property.
 
     :ivar property: Property. Default value is "hello".
@@ -362,7 +362,7 @@ class StringLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class StringProperty(_Model):
+class StringProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Template type for testing models with optional property. Pass in the type of the property you
     are looking for.
 
@@ -391,7 +391,7 @@ class StringProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnionFloatLiteralProperty(_Model):
+class UnionFloatLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with union of float literal property.
 
     :ivar property: Property. Is one of the following types: float
@@ -419,7 +419,7 @@ class UnionFloatLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnionIntLiteralProperty(_Model):
+class UnionIntLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with union of int literal property.
 
     :ivar property: Property. Is either a Literal[1] type or a Literal[2] type.
@@ -447,7 +447,7 @@ class UnionIntLiteralProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnionStringLiteralProperty(_Model):
+class UnionStringLiteralProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with union of string literal property.
 
     :ivar property: Property. Is either a Literal["hello"] type or a Literal["world"] type.

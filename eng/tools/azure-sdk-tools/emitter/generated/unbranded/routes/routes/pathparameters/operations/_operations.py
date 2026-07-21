@@ -69,7 +69,7 @@ def build_path_parameters_annotation_only_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, **kwargs)
 
 
-class PathParametersOperations:
+class PathParametersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

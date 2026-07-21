@@ -13,7 +13,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class DefaultDatetimeProperty(_Model):
+class DefaultDatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """DefaultDatetimeProperty.
 
     :ivar value: Required.
@@ -41,7 +41,7 @@ class DefaultDatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Rfc3339DatetimeProperty(_Model):
+class Rfc3339DatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rfc3339DatetimeProperty.
 
     :ivar value: Required.
@@ -69,7 +69,7 @@ class Rfc3339DatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Rfc7231DatetimeProperty(_Model):
+class Rfc7231DatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Rfc7231DatetimeProperty.
 
     :ivar value: Required.
@@ -97,7 +97,7 @@ class Rfc7231DatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnixTimestampArrayDatetimeProperty(_Model):
+class UnixTimestampArrayDatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UnixTimestampArrayDatetimeProperty.
 
     :ivar value: Required.
@@ -127,7 +127,7 @@ class UnixTimestampArrayDatetimeProperty(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UnixTimestampDatetimeProperty(_Model):
+class UnixTimestampDatetimeProperty(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """UnixTimestampDatetimeProperty.
 
     :ivar value: Required.

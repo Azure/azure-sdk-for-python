@@ -12,7 +12,7 @@ from typing import Any, Mapping, overload
 from .._utils.model_base import Model as _Model, rest_field
 
 
-class ModelWithDefaultValues(_Model):
+class ModelWithDefaultValues(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Model with client default values on properties.
 
     :ivar name: Name property with no default value. Required.
