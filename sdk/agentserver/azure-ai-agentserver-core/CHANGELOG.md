@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b8 (2026-07-22)
+
+### Bugs Fixed
+
+- Fixed span attribute enrichment under `opentelemetry-sdk` >= 1.43.0, where `span._attributes` became a `BoundedAttributes` (backed by `._dict`) that no longer supports item assignment. Enrichment now resolves the backing store so agent identity attributes are written on both older and newer OpenTelemetry SDKs.
+
 ## 2.0.0b7 (2026-06-28)
 
 ### Features Added
