@@ -2,7 +2,245 @@
 
 ## 1.0.0b2 (2026-07-22)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Client `ComputeBulkActionsMgmtClient` added parameter `polling_interval` in method `__init__`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `bulk_create_custom`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `launch_bulk_instances_operation`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `occurrence_extension`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `occurrences`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `scheduled_action_extension`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `scheduled_action_operation_status`
+  - Client `ComputeBulkActionsMgmtClient` added operation group `scheduled_actions`
+  - Model `ExecuteDeallocateContent` added property `resources_with_context`
+  - Model `ExecuteDeleteContent` added property `resources_with_context`
+  - Model `ExecuteHibernateContent` added property `resources_with_context`
+  - Model `ExecuteStartContent` added property `resources_with_context`
+  - Model `ExecutionParameters` added property `optimization_preference`
+  - Model `ExecutionParameters` added property `verify_vm_agent_health`
+  - Model `ResourceOperation` added property `virtual_machine_info`
+  - Model `ResourceOperationDetails` added property `resource_notification_details`
+  - Enum `ResourceOperationType` added member `GET_INSTANCE_VIEW`
+  - Added enum `AcceleratorManufacturer`
+  - Added enum `AcceleratorType`
+  - Added model `AcknowledgeBulkOperationErrorsRequest`
+  - Added model `AcknowledgeBulkOperationErrorsResponse`
+  - Added model `AdditionalCapabilities`
+  - Added model `AdditionalUnattendContent`
+  - Added model `AllInstancesDown`
+  - Added enum `AllocationStrategy`
+  - Added model `ApiEntityReference`
+  - Added model `ApiError`
+  - Added model `ApiErrorBase`
+  - Added model `ApplicationProfile`
+  - Added enum `ArchitectureType`
+  - Added model `BootDiagnostics`
+  - Added model `BulkActionVmExtensionProperties`
+  - Added enum `BulkCreateCustomAllocationStrategy`
+  - Added enum `BulkCreateCustomDistributionStrategy`
+  - Added model `BulkCreateCustomOverride`
+  - Added model `BulkCreateCustomOverrideBase`
+  - Added model `BulkCreateCustomOverridesProfile`
+  - Added model `BulkCreateCustomPriorityProfile`
+  - Added model `BulkCreateCustomProperties`
+  - Added model `BulkCreateCustomVmSizeProfile`
+  - Added model `BulkCreateCustomZoneAllocationPolicy`
+  - Added model `BulkInstancesInnerError`
+  - Added model `BulkactionVMExtension`
+  - Added model `BulkactionVMProperties`
+  - Added enum `CachingTypes`
+  - Added model `CancelOccurrenceRequest`
+  - Added model `CapacityReservationProfile`
+  - Added enum `CapacityType`
+  - Added model `ComputeProfile`
+  - Added enum `CpuManufacturer`
+  - Added model `CreateResourceOperationResponse`
+  - Added enum `CreatedByType`
+  - Added model `DataDisk`
+  - Added model `DelayRequest`
+  - Added enum `DeleteOptions`
+  - Added model `DiagnosticsProfile`
+  - Added enum `DiffDiskOptions`
+  - Added enum `DiffDiskPlacement`
+  - Added model `DiffDiskSettings`
+  - Added enum `DiskControllerTypes`
+  - Added enum `DiskCreateOptionTypes`
+  - Added enum `DiskDeleteOptionTypes`
+  - Added enum `DiskDetachOptionTypes`
+  - Added model `DiskEncryptionSetParametersContent`
+  - Added model `DiskEncryptionSettings`
+  - Added enum `DistributionStrategy`
+  - Added enum `DomainNameLabelScopeTypes`
+  - Added model `EncryptionIdentity`
+  - Added model `EventGridAndResourceGraph`
+  - Added enum `EvictionPolicy`
+  - Added model `ExecuteCreateContent`
+  - Added model `ExecuteReimageRequest`
+  - Added model `ExecuteVdiCreateRequest`
+  - Added model `ExtensionResource`
+  - Added model `FlexProperties`
+  - Added model `HardwareProfile`
+  - Added model `HostEndpointSettings`
+  - Added enum `HyperVGeneration`
+  - Added enum `IPVersions`
+  - Added model `ImageReference`
+  - Added model `KeyVaultKeyReference`
+  - Added model `KeyVaultSecretReference`
+  - Added enum `Language`
+  - Added model `LaunchBulkInstancesOperationProperties`
+  - Added model `LinuxConfiguration`
+  - Added enum `LinuxPatchAssessmentMode`
+  - Added model `LinuxPatchSettings`
+  - Added enum `LinuxVMGuestPatchAutomaticByPlatformRebootSetting`
+  - Added model `LinuxVMGuestPatchAutomaticByPlatformSettings`
+  - Added enum `LinuxVMGuestPatchMode`
+  - Added enum `LocalStorageDiskType`
+  - Added model `LocationBasedBulkCreateCustom`
+  - Added model `LocationBasedLaunchBulkInstancesOperation`
+  - Added model `ManagedDiskParametersContent`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added enum `Mode`
+  - Added enum `Modes`
+  - Added enum `Month`
+  - Added enum `NetworkApiVersion`
+  - Added enum `NetworkInterfaceAuxiliaryMode`
+  - Added enum `NetworkInterfaceAuxiliarySku`
+  - Added model `NetworkInterfaceReference`
+  - Added model `NetworkInterfaceReferenceProperties`
+  - Added model `NetworkProfile`
+  - Added model `NotificationProperties`
+  - Added enum `NotificationType`
+  - Added model `OSDisk`
+  - Added model `OSImageNotificationProfile`
+  - Added model `OSProfile`
+  - Added model `OSProfileProvisioningData`
+  - Added model `Occurrence`
+  - Added model `OccurrenceExtensionProperties`
+  - Added model `OccurrenceExtensionResource`
+  - Added model `OccurrenceProperties`
+  - Added model `OccurrenceResource`
+  - Added model `OccurrenceResultSummary`
+  - Added enum `OccurrenceState`
+  - Added enum `OperatingSystemTypes`
+  - Added model `OperationStatusResult`
+  - Added enum `OptimizationPreference`
+  - Added enum `OsType`
+  - Added model `PatchSettings`
+  - Added model `Plan`
+  - Added model `PriorityProfile`
+  - Added enum `PriorityType`
+  - Added enum `ProtocolTypes`
+  - Added enum `ProvisioningState`
+  - Added model `ProxyAgentSettings`
+  - Added model `ProxyResource`
+  - Added model `PublicIPAddressSku`
+  - Added enum `PublicIPAddressSkuName`
+  - Added enum `PublicIPAddressSkuTier`
+  - Added enum `PublicIPAllocationMethod`
+  - Added enum `RecurringScheduledActionsDeadlineType`
+  - Added model `RecurringScheduledActionsExecutionParameters`
+  - Added enum `RecurringScheduledActionsProvisioningState`
+  - Added enum `RecurringScheduledActionsResourceOperationType`
+  - Added model `RecurringScheduledActionsRetryPolicy`
+  - Added model `ReimagePayload`
+  - Added model `ReimageResourceOperationResponse`
+  - Added model `ReimageResourceOverride`
+  - Added model `Resource`
+  - Added model `ResourceAttachRequest`
+  - Added model `ResourceDetachRequest`
+  - Added enum `ResourceIdentityType`
+  - Added model `ResourceNotificationDetails`
+  - Added model `ResourceOperationResponse`
+  - Added enum `ResourceOperationStatus`
+  - Added model `ResourcePatchRequest`
+  - Added model `ResourceProvisionPayload`
+  - Added model `ResourceProvisionVdiPayload`
+  - Added enum `ResourceProvisioningState`
+  - Added model `ResourceResultSummary`
+  - Added model `ResourceStatus`
+  - Added enum `ResourceType`
+  - Added model `ResourceWithContext`
+  - Added model `ResourcesWithContext`
+  - Added model `ScheduledAction`
+  - Added model `ScheduledActionProperties`
+  - Added model `ScheduledActionResource`
+  - Added model `ScheduledActionResourceInput`
+  - Added model `ScheduledActionResources`
+  - Added enum `ScheduledActionType`
+  - Added model `ScheduledActionUpdate`
+  - Added model `ScheduledActionUpdateProperties`
+  - Added model `ScheduledActionsExtensionProperties`
+  - Added model `ScheduledActionsSchedule`
+  - Added model `ScheduledActionsScheduleUpdate`
+  - Added model `ScheduledEventsAdditionalPublishingTargets`
+  - Added model `ScheduledEventsPolicy`
+  - Added model `ScheduledEventsProfile`
+  - Added enum `SecurityEncryptionTypes`
+  - Added model `SecurityProfile`
+  - Added enum `SecurityTypes`
+  - Added enum `SettingNames`
+  - Added model `SshConfiguration`
+  - Added model `SshPublicKey`
+  - Added enum `StorageAccountTypes`
+  - Added model `StorageProfile`
+  - Added model `SubResource`
+  - Added model `SystemData`
+  - Added model `TerminateNotificationProfile`
+  - Added model `TrackedResource`
+  - Added model `UefiSettings`
+  - Added model `UserAssignedIdentitiesValue`
+  - Added model `UserAssignedIdentity`
+  - Added model `UserInitiatedReboot`
+  - Added model `UserInitiatedRedeploy`
+  - Added model `VMAttributeMinMaxDouble`
+  - Added model `VMAttributeMinMaxInteger`
+  - Added enum `VMAttributeSupport`
+  - Added model `VMAttributes`
+  - Added enum `VMCategory`
+  - Added model `VMDiskSecurityProfile`
+  - Added model `VMGalleryApplication`
+  - Added enum `VMOperationStatus`
+  - Added model `VaultCertificate`
+  - Added model `VaultSecretGroup`
+  - Added model `VirtualHardDisk`
+  - Added model `VirtualMachine`
+  - Added model `VirtualMachineIdentity`
+  - Added model `VirtualMachineInfo`
+  - Added model `VirtualMachineIpTag`
+  - Added model `VirtualMachineNetworkInterfaceConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceConfigurationProperties`
+  - Added model `VirtualMachineNetworkInterfaceDnsSettingsConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceIPConfiguration`
+  - Added model `VirtualMachineNetworkInterfaceIPConfigurationProperties`
+  - Added model `VirtualMachinePublicIPAddressConfiguration`
+  - Added model `VirtualMachinePublicIPAddressConfigurationProperties`
+  - Added model `VirtualMachinePublicIPAddressDnsSettingsConfiguration`
+  - Added model `VirtualMachineReimageParameters`
+  - Added model `VmSizeProfile`
+  - Added model `VmSizeProperties`
+  - Added enum `WeekDay`
+  - Added model `WinRMConfiguration`
+  - Added model `WinRMListener`
+  - Added model `WindowsConfiguration`
+  - Added enum `WindowsPatchAssessmentMode`
+  - Added enum `WindowsVMGuestPatchAutomaticByPlatformRebootSetting`
+  - Added model `WindowsVMGuestPatchAutomaticByPlatformSettings`
+  - Added enum `WindowsVMGuestPatchMode`
+  - Added model `ZoneAllocationPolicy`
+  - Added model `ZonePreference`
+  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_acknowledge_operation_errors`
+  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_create_operation`
+  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_list_operation_errors`
+  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_reimage_operation`
+  - Operation group `VirtualMachineBulkOperationsOperations` added method `bulk_vdi_flex_create_operation`
+  - Added operation group `BulkCreateCustomOperations`
+  - Added operation group `LaunchBulkInstancesOperationOperations`
+  - Added operation group `OccurrenceExtensionOperations`
+  - Added operation group `OccurrencesOperations`
+  - Added operation group `ScheduledActionExtensionOperations`
+  - Added operation group `ScheduledActionOperationStatusOperations`
+  - Added operation group `ScheduledActionsOperations`
 
 ## 1.0.0b1 (2026-07-21)
 
