@@ -230,7 +230,7 @@ extends:
                 - template: pipelines/steps/azd-cli-win-signing.yml@azure-sdk-build-tools
                   parameters:
                     WinPath: "$(Build.ArtifactStagingDirectory)/win-sign-input"
-                    WinPattern: '*.pyd'
+                    WinPattern: '**/*.pyd'
 
                 - pwsh: |
                     python eng/scripts/wheel_signing/repackage_signed_wheels.py `
