@@ -539,7 +539,7 @@ class SingleDocumentTranslationClientOperationsMixin(
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["document", "glossary"]
         _data_fields: List[str] = []
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_single_document_translation_translate_request(
             target_language=target_language,
@@ -550,7 +550,6 @@ class SingleDocumentTranslationClientOperationsMixin(
             translate_text_within_image=translate_text_within_image,
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
