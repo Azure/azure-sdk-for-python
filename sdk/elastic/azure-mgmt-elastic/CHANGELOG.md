@@ -1,5 +1,31 @@
 # Release History
 
+## 3.0.0b1 (2026-07-07)
+
+### Features Added
+
+  - Model `MonitoredSubscriptionProperties` added property `system_data`
+  - Model `OpenAIIntegrationRPModel` added property `system_data`
+  - Added model `ProxyResource`
+  - Added model `Resource`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Renamed client `MicrosoftElastic` to `ElasticMgmtClient`
+  - Method `AssociateTrafficFilterOperations.begin_associate` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociateIPFilterOperations.begin_create` changed its parameter `ips`/`name` from `positional_or_keyword` to `keyword_only`
+  - Method `CreateAndAssociatePLFilterOperations.begin_create` changed its parameter `name`/`private_endpoint_guid`/`private_endpoint_name` from `positional_or_keyword` to `keyword_only`
+  - Method `DetachAndDeleteTrafficFilterOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `DetachTrafficFilterOperations.begin_update` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+  - Method `ElasticVersionsOperations.list` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `TrafficFiltersOperations.delete` changed its parameter `ruleset_id` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `ConnectedPartnerResourcesListResponse`/`ElasticMonitorResourceListResponse`/`ElasticVersionsListResponse`/`MonitoredResourceListResponse`/`MonitoredSubscriptionPropertiesList`/`MonitoringTagRulesListResponse`/`OpenAIIntegrationRPModelListResponse`/`OperationListResult`/`VMHostListResponse` which actually were not used by SDK users
+
 ## 2.0.0 (2025-11-17)
 
 ### Features Added

@@ -1,0 +1,11 @@
+# keep in sync with pyproject.toml#dependency-groups.dev
+-e ../../../eng/tools/azure-sdk-tools
+-e ../azure-ai-agentserver-core
+pytest
+pytest-asyncio
+opentelemetry-sdk>=1.43.0
+microsoft-agents-hosting-core>=1.0.0
+microsoft-agents-authentication-msal>=1.0.0
+microsoft-agents-activity>=1.0.0
+../../monitor/azure-monitor-query
+../../identity/azure-identity

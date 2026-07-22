@@ -160,6 +160,41 @@ class TestAsyncCleanupPerformance:
         assert "aio" not in changes[0][2]
 
 
+class TestShadowTypesModuleCheckerPerformance:
+    """Test performance of the ShadowTypesModuleChecker post-processing step."""
+
+    def test_shadow_types_cleanup_performance_large(self):
+        """Benchmark shadow-types cleanup with a large number of changes.
+
+        A naive O(n^2) implementation that rescans the whole change list for every `types`
+        entry would be very slow for large diffs. The set-based O(n) approach should handle
+        this in well under a second.
+        """
+        from breaking_changes_checker.checkers.shadow_types_module_checker import ShadowTypesModuleChecker
+
+        n = 10000  # 5,000 models entries + 5,000 shadow types duplicates
+        features_added = []
+        for i in range(n // 2):
+            features_added.append(
+                ("Added model `{}`", "AddedClass", "azure.mgmt.network.models", f"Model{i}")
+            )
+            features_added.append(
+                ("Added model `{}`", "AddedClass", "azure.mgmt.network.types", f"Model{i}")
+            )
+
+        checker = ShadowTypesModuleChecker()
+        start = time.perf_counter()
+        _, fa_out = checker.run_check(
+            [], features_added, diff={}, stable_nodes={}, current_nodes={}
+        )
+        elapsed = time.perf_counter() - start
+
+        assert elapsed < 1.0, f"shadow types cleanup took {elapsed:.3f}s for {n} changes (expected < 1s)"
+        # All `types` duplicates removed, only the `models` entries remain.
+        assert len(fa_out) == n // 2
+        assert all(fa[2] == "azure.mgmt.network.models" for fa in fa_out)
+
+
 class TestReportableChangesPerformance:
     """Test performance of the optimized get_reportable_changes method."""
 

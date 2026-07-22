@@ -36,6 +36,7 @@ from .models import StorageConfiguration
 from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageHeadersPolicy,
     StorageHosts,
     StorageRequestHook,
@@ -160,6 +161,7 @@ class AsyncStorageAccountHostsMixin(object):
         hosts = self._hosts
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             AsyncContentValidationPolicy(),

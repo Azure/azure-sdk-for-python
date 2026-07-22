@@ -31,12 +31,12 @@ def main():
     )
 
     response = client.health_models.list_by_resource_group(
-        resource_group_name="rgopenapi",
+        resource_group_name="online-store-rg",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/HealthModels_ListByResourceGroup.json
+# x-ms-original-file: 2026-05-01-preview/HealthModels_ListByResourceGroup.json
 if __name__ == "__main__":
     main()

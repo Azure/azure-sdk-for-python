@@ -1,5 +1,25 @@
 # Release History
 
+## 2.0.0b9 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 2.0.0b8 (2026-07-22)
+
+### Features Added
+
+- Added `azure.ai.agentserver.core.storage`, the protocol-neutral Foundry durable state-store layer. `FoundryStateStore.get_or_create(name, ...)` is the primary entry point -- an async classmethod that resolves (or creates, on first use) the store in one call. Store-level operations act on the bound store: `get()` (its descriptor), `update(...)` (its mutable `description` / `tags`), and `delete()` (the whole store, cascade-deleting every item). Item operations are explicit and consistently named: `create_item`, `set_item`, `get_item`, `delete_item`, `list_keys`. Store names are path-encoded with base64url on the wire, store-level `item_ttl_seconds` is configured once at create, optional `user_isolation` is declared at store create, and trusted callers may delegate end-user partitioning with `user_id` (`x-ms-user-id`). Response bodies (`StateStore`, `StateStoreItem`, `StateStoreItemRef`, `DeletedStateStore`, `DeletedStateStoreItem`, `StateStoreItemKey`) are typed model classes generated from a formal TypeSpec contract, not hand-written dataclasses. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md).
+
+### Bugs Fixed
+
+- Fixed span attribute enrichment under `opentelemetry-sdk` >= 1.43.0, where `span._attributes` became a `BoundedAttributes` (backed by `._dict`) that no longer supports item assignment. Enrichment now resolves the backing store so agent identity attributes are written on both older and newer OpenTelemetry SDKs.
+
 ## 2.0.0b7 (2026-06-28)
 
 ### Features Added
@@ -18,7 +38,6 @@
 
 - Populated agent metadata when operation IDs are zeroed so agent metadata remains available for telemetry and downstream processing.
 - Suppressed noisy observability/exporter INFO logs by default in tracing setup while preserving DEBUG visibility when explicitly enabled.
-
 ## 2.0.0b5 (2026-05-25)
 
 ### Bugs Fixed
