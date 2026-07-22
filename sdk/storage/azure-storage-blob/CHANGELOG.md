@@ -5,7 +5,7 @@
 ### Features Added
 - Added support for service version 2026-10-06.
 - Added support for parsing List Blobs responses in Apache Arrow format by passing
-`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs` and `walk_blobs` APIs
+`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs`, `walk_blobs`, and `list_blob_names` APIs
 (`response_format` defaults to `"auto"`, and `"auto"` currently means `"xml"`).
 The use of `"response_format=arrow"` requires `nanoarrow` to be installed.
 This change also enables the new `end_before` keyword for range-based listing.

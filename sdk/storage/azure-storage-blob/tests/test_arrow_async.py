@@ -10,7 +10,7 @@ from unittest.mock import patch
 import pytest
 
 from azure.core.credentials import AzureNamedKeyCredential
-from azure.core.exceptions import ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobProperties, BlobType
 from azure.storage.blob.aio import BlobServiceClient, ContainerClient
 
@@ -20,6 +20,7 @@ from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 TEST_DATA = b"abc123"
+LISTING_BLOB_NAMES = ["foo", "bar", "baz", "foo/foo", "foo/bar", "baz/foo", "baz/foo/bar", "baz/bar/foo"]
 # ------------------------------------------------------------------------------
 
 
@@ -151,16 +152,16 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
             assert blob.blob_type == BlobType.BLOCKBLOB
             assert blob.size == len(TEST_DATA)
             assert blob.etag is not None
-            assert blob.last_modified is not None
-            assert blob.creation_time is not None
-            assert blob.last_accessed_on is not None
+            assert blob.last_modified is not None and blob.last_modified.tzinfo is not None
+            assert blob.creation_time is not None and blob.creation_time.tzinfo is not None
+            assert blob.last_accessed_on is not None and blob.last_accessed_on.tzinfo is not None
             assert blob.server_encrypted is True
             assert blob.blob_tier is not None
             assert blob.blob_tier_inferred is not None
             assert blob.lease.state == "available"
             assert blob.lease.status == "unlocked"
             assert blob.content_settings.content_type == "application/octet-stream"
-            assert blob.content_settings.content_md5 is not None
+            assert isinstance(blob.content_settings.content_md5, bytearray)
 
     def verify_all_fields(self, blob: BlobProperties):
         # Verifies the properties produced by _rich_blob_xml were fully deserialized.
@@ -184,6 +185,11 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         assert blob.lease.state == "available"
         assert blob.metadata == {"color": "blue", "size": "large"}
         assert blob.tags == {"env": "prod"}
+
+    def _assert_blob_is_soft_deleted(self, blob: BlobProperties):
+        assert blob.deleted
+        assert blob.deleted_time is not None
+        assert blob.remaining_retention_days is not None
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -232,6 +238,217 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         blob = blobs_list[0]
         assert blob.metadata == metadata
         assert blob.tags == tags
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_page_blob_sequence_number(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "pageblob1")
+        await blob_client.create_page_blob(size=512, sequence_number=7)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+
+        assert len(blobs_list) == 1
+        blob = blobs_list[0]
+        assert blob.name == "pageblob1"
+        assert blob.blob_type == BlobType.PAGEBLOB
+        # x-ms-blob-sequence-number is returned only for page blobs; it must parse from Arrow.
+        assert blob.page_blob_sequence_number == 7
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_encoded_name(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        # U+FFFF is a valid blob name character but invalid in XML, so the XML path percent-encodes
+        # it. Arrow is binary and needs no such encoding; the name must round-trip verbatim.
+        blob_name = "dir1/dir2/file\uffff.blob"
+        blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+
+        self.verify_blobs(blobs_list, [blob_name])
+        assert blobs_list[0].name == blob_name
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blob_names(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_names = ["blob1", "blob2", "blob3", "blob4"]
+        await self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        name_pages = container.list_blob_names(response_format="arrow", results_per_page=2).by_page()
+        first_page = [name async for name in await name_pages.__anext__()]
+        second_page = [name async for name in await name_pages.__anext__()]
+
+        assert all(isinstance(name, str) for name in first_page + second_page)
+        assert first_page == blob_names[:2]
+        assert second_page == blob_names[2:]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        snapshot = await blob_client.create_snapshot()
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["snapshots"])]
+
+        assert len(blobs_list) == 2
+        # The snapshot must be deserialized from Arrow onto exactly one of the listed entries.
+        assert any(blob.snapshot == snapshot["snapshot"] for blob in blobs_list)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_include_versions(self, **kwargs):
+        versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
+        versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
+
+        await self._setup(versioned_storage_account_name, versioned_storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        create_resp = await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        await blob_client.set_blob_metadata({"key": "value"})
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["versions"])]
+
+        assert len(blobs_list) == 1
+        assert not blobs_list[0].is_current_version
+        assert blobs_list[0].version_id == create_resp["version_id"]
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_uncommitted(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.stage_block("MDAwMDA=", TEST_DATA)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [
+            blob async for blob in container.list_blobs(response_format="arrow", include=["uncommittedblobs"])
+        ]
+
+        assert len(blobs_list) == 1
+        assert blobs_list[0].name == "blob1"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_empty_metadata(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(["blob1"])
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["metadata"])]
+
+        assert len(blobs_list) == 1
+        # A blob with no metadata must deserialize to an empty dict, not None.
+        assert blobs_list[0].metadata == {}
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_prefix(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(name_starts_with="foo", response_format="arrow")]
+
+        assert len(blobs_list) == 3
+        assert all(blob.name.startswith("foo") for blob in blobs_list)
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_start_from_end_before(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        await self.create_blobs(LISTING_BLOB_NAMES)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [
+            blob async for blob in container.list_blobs(response_format="arrow", start_from="foo", end_before="foo/foo")
+        ]
+
+        assert len(blobs_list) == 2
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_preserves_whitespace(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob_names = ["  prefix", "suffix  ", "  "]
+        await self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+
+        found = {blob.name for blob in blobs_list}
+        for blob_name in blob_names:
+            assert blob_name in found
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_error(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name + "missing")
+
+        with pytest.raises(ResourceNotFoundError) as exc:
+            [blob async for blob in container.list_blobs(response_format="arrow")]
+        assert exc.value.error_code == "ContainerNotFound"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_arrow_list_blobs_soft_deleted(self, **kwargs):
+        soft_delete_storage_account_name = kwargs.pop("soft_delete_storage_account_name")
+        soft_delete_storage_account_key = kwargs.pop("soft_delete_storage_account_key")
+
+        await self._setup(soft_delete_storage_account_name, soft_delete_storage_account_key)
+        blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
+        await blob_client.upload_blob(TEST_DATA, overwrite=True)
+        await blob_client.delete_blob()
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["deleted"])]
+
+        assert len(blobs_list) == 1
+        assert blobs_list[0].name == "blob1"
+        self._assert_blob_is_soft_deleted(blobs_list[0])
+
+        # Without include=deleted, soft-deleted blobs are not listed.
+        blobs_list = [blob async for blob in container.list_blobs(response_format="arrow")]
+        assert len(blobs_list) == 0
 
     @BlobPreparer()
     @recorded_by_proxy_async
