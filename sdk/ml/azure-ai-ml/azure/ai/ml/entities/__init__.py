@@ -12,8 +12,6 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 import logging
 from typing import Any, Optional
 
-module_logger = logging.getLogger(__name__)
-
 from azure.ai.ml._restclient.arm_ml_service.models import CreatedByType
 from azure.ai.ml._restclient.arm_ml_service.models import UsageUnit
 
@@ -253,6 +251,8 @@ from ._workspace.private_endpoint import EndpointConnection, PrivateEndpoint
 from ._workspace.serverless_compute import ServerlessComputeSettings
 from ._workspace.workspace import Workspace
 from ._workspace.workspace_keys import ContainerRegistryCredential, NotebookAccessKeys, WorkspaceKeys
+
+module_logger = logging.getLogger(__name__)
 
 __all__ = [
     "Resource",
