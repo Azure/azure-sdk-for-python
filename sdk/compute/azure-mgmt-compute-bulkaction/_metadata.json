@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Compute": "2026-07-06-preview"
   },
-  "commit": "ca5ea58d8bf4015faf36588f4fec098be58a47a1",
+  "commit": "f4b4cd52ac5d40b9eef60d18ba9b3a8911e92edc",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/compute/resource-manager/Microsoft.Compute/Bulkactions",
   "emitterVersion": "0.63.3",
