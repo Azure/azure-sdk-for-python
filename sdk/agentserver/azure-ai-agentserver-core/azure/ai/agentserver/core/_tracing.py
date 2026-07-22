@@ -41,6 +41,7 @@ from typing import Any, Optional, Union
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
+from ._constants import Constants
 
 _Content = Union[str, bytes, memoryview]
 
@@ -251,7 +252,7 @@ def _setup_distro_export(
         # connection string's instrumentation key alone. azure-identity is
         # normally available transitively via microsoft-opentelemetry; if it
         # is missing we log and continue rather than failing tracing setup.
-        auth_mode = os.environ.get("APPLICATIONINSIGHTS_AUTH_MODE", "")
+        auth_mode = os.environ.get(Constants.APPLICATIONINSIGHTS_AUTH_MODE, "")
         if auth_mode.strip().lower() == "entra":
             try:
                 from azure.identity import ManagedIdentityCredential
