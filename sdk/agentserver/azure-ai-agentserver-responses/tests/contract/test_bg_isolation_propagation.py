@@ -26,8 +26,8 @@ from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvide
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ─── Recording provider ───────────────────────────────────
+
 
 class _RecordingProvider:
     """Wraps InMemoryResponseProvider and records context kwargs on every call."""
@@ -86,14 +86,13 @@ class _RecordingProvider:
         *,
         context: Any = None,
     ) -> list[str]:
-        return await self._inner.get_history_item_ids(
-            previous_response_id, conversation_id, limit, context=context
-        )
+        return await self._inner.get_history_item_ids(previous_response_id, conversation_id, limit, context=context)
 
 
 # ─── Handler ──────────────────────────────────────────────
 
-def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+
+async def _simple_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that emits created → completed."""
 
     async def _events():
@@ -105,6 +104,7 @@ def _simple_handler(request: Any, context: Any, cancellation_signal: Any) -> Any
 
 
 # ─── Helpers ──────────────────────────────────────────────
+
 
 def _build_client(provider: _RecordingProvider) -> TestClient:
     app = ResponsesAgentServerHost(store=provider)
@@ -134,6 +134,7 @@ def _wait_for_terminal(client: TestClient, response_id: str, headers: dict[str, 
 
 
 # ─── Tests ────────────────────────────────────────────────
+
 
 class TestBgNonStreamIsolationPropagation:
     """Verify that the platform context reaches update_response during bg non-stream finalization."""

@@ -14,7 +14,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
-def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -30,7 +30,7 @@ def _build_client() -> TestClient:
     return TestClient(app)
 
 
-def _throwing_before_yield_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _throwing_before_yield_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that raises before yielding any event.
 
     Used to test pre-creation error handling in SSE streaming mode.
@@ -44,7 +44,7 @@ def _throwing_before_yield_handler(request: Any, context: Any, cancellation_sign
     return _events()
 
 
-def _throwing_after_created_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _throwing_after_created_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then raises.
 
     Used to test post-creation error handling in SSE streaming mode.
@@ -202,7 +202,7 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
 
 
 def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None:
-    def _fail_after_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _fail_after_first_event_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {
                 "type": "response.created",

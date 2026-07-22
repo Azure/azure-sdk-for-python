@@ -160,7 +160,7 @@ def _make_delaying_handler():
     started = asyncio.Event()
     gate = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             started.set()
             await gate.wait()
@@ -181,7 +181,7 @@ def _make_delaying_handler():
 def _make_simple_handler():
     """Handler that emits created + completed immediately."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -302,7 +302,7 @@ async def test_bg_mode_response_accessible_during_and_after_handler() -> None:
     started = asyncio.Event()
     release = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
@@ -378,7 +378,7 @@ async def test_non_bg_not_accessible_until_terminal() -> None:
     started = asyncio.Event()
     release = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,

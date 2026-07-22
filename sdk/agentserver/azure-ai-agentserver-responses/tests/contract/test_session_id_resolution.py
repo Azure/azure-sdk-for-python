@@ -29,7 +29,7 @@ from tests._helpers import poll_until
 # ════════════════════════════════════════════════════════════
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler — emits no events (framework auto-completes)."""
 
     async def _events():
@@ -39,7 +39,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_text_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + completed."""
 
     async def _events():

@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
+from collections.abc import AsyncIterable, MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator, Sequence, cast
@@ -14,6 +14,7 @@ from ..models import _generated as generated_models
 from ..models._generated import AgentReference
 from ..models._generated.sdk.models._utils.model_base import Model as _Model
 from . import _internals
+from ._checkpoint import ResponseCheckpointEvent
 from ._builders import (
     OutputItemBuilder,
     OutputItemCodeInterpreterCallBuilder,
@@ -62,7 +63,9 @@ def _resolve_conversation_param(raw: Any) -> str | None:
     return None
 
 
-def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
+def _as_dict(
+    obj: _Model | dict[str, Any],
+) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Convert a model or dict-like object to a plain dictionary."""
     if isinstance(obj, _Model):
         return obj.as_dict()
@@ -153,7 +156,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._agent_reference, self._model = _internals.extract_response_fields(self._response)
         self._events: list[generated_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
-        self._output_index = 0
+
+        # Recovery contract: when seeded with a `response=` payload that
+        # already carries output items (e.g. on a recovered entry), the
+        # output_index allocator must continue past those items so the
+        # next `add_output_item_*` doesn't collide with an existing slot.
+        seeded_output = self._response.get("output") if self._response is not None else None
+        self._output_index = len(seeded_output) if isinstance(seeded_output, list) else 0
 
     @property
     def response(self) -> generated_models.ResponseObject:
@@ -163,6 +172,57 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseObject
         """
         return self._response
+
+    @property
+    def internal_metadata(self) -> "MutableMapping[str, Any]":
+        """Live, mutable response-level framework-internal metadata.
+
+        A convenience proxy for ``self.response.internal_metadata`` — read /
+        write / delete in place (``stream.internal_metadata["phase"] = 3``).
+        Backed by a reserved key inside the response's public ``metadata`` map
+        and stripped from every client-facing payload. Persisted at the next
+        ``yield stream.checkpoint()`` (and at terminal). Values may be any
+        JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return self._response.internal_metadata  # type: ignore[attr-defined,no-any-return]
+
+    def checkpoint(self) -> "ResponseCheckpointEvent":
+        """Return a checkpoint event to ``yield`` for persistence.
+
+        Usage (inside a resilient background response handler)::
+
+            yield stream.checkpoint()
+
+        Yielding the event persists the current ``stream.response``
+        snapshot via the storage provider. It is processed by the orchestrator
+        and is NOT forwarded to the SSE wire (internal control signal).
+
+        Semantics (enforced by the orchestrator):
+
+        - **Deterministic + developer-driven** — only where the handler yields
+          one; there are no periodic / implicit checkpoints.
+        - **Backpressure** — because the orchestrator fully processes the event
+          (awaiting the provider write) before requesting the next event, the
+          handler is suspended at the yield until the persist completes.
+        - **Resilient background only** — persists only when the deployment has
+          ``resilient_background=True`` and the request is ``background=True``
+          (⇒ ``store=True``); a no-op otherwise.
+        - **Idempotent** — a snapshot byte-identical to the last persisted one
+          is skipped.
+        - **Failures swallowed** — provider errors are logged, never raised into
+          the handler; recovery falls back to the previously-persisted snapshot.
+        - **After terminal** — a checkpoint yielded after a terminal event is
+          dropped.
+
+        Persists the response with whatever ``status`` it currently has — the
+        checkpoint never overrides it.
+
+        :returns: The checkpoint event to yield.
+        :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
+        """
+        return ResponseCheckpointEvent(self._response)
 
     def emit_queued(self) -> generated_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
@@ -443,38 +503,23 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         item_id = IdGenerator.new_image_gen_call_item_id(self._response_id)
         return OutputItemImageGenCallBuilder(self, output_index=output_index, item_id=item_id)
 
-    def add_output_item_mcp_call(
-        self,
-        server_label: str,
-        name: str,
-        *,
-        item_id: str | None = None,
-    ) -> OutputItemMcpCallBuilder:
+    def add_output_item_mcp_call(self, server_label: str, name: str) -> OutputItemMcpCallBuilder:
         """Add an MCP tool call output item and return its scoped builder.
 
         :param server_label: Label identifying the MCP server.
         :type server_label: str
         :param name: Name of the MCP tool being called.
         :type name: str
-        :keyword item_id: Optional caller-supplied output item identifier.
-        :keyword type item_id: str | None
         :returns: A builder for emitting MCP call argument deltas and lifecycle events.
         :rtype: OutputItemMcpCallBuilder
         """
         output_index = self._output_index
         self._output_index += 1
-        if item_id is None:
-            resolved_item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
-        else:
-            if not isinstance(item_id, str):
-                raise TypeError("item_id must be a string")
-            resolved_item_id = item_id.strip()
-            if not resolved_item_id:
-                raise ValueError("item_id must be a non-empty string")
+        item_id = IdGenerator.new_mcp_call_item_id(self._response_id)
         return OutputItemMcpCallBuilder(
             self,
             output_index=output_index,
-            item_id=resolved_item_id,
+            item_id=item_id,
             server_label=server_label,
             name=name,
         )

@@ -47,7 +47,7 @@ def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
     return events
 
 
-def _handler_with_output(request: Any, context: Any, cancellation_signal: Any):
+async def _handler_with_output(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits a single message output item using the builder."""
 
     async def _events():
@@ -69,7 +69,7 @@ def _handler_with_output(request: Any, context: Any, cancellation_signal: Any):
 def _handler_with_custom_response_id(custom_id: str):
     """Handler that creates output items and overrides response_id on them."""
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -92,7 +92,7 @@ def _handler_with_custom_response_id(custom_id: str):
     return handler
 
 
-def _handler_with_multiple_outputs(request: Any, context: Any, cancellation_signal: Any):
+async def _handler_with_multiple_outputs(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits two message output items."""
 
     async def _events():
@@ -122,7 +122,7 @@ def _handler_with_multiple_outputs(request: Any, context: Any, cancellation_sign
     return _events()
 
 
-def _direct_yield_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _direct_yield_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that directly yields events without using builders.
 
     Does NOT set response_id on output items. Layer 2 (event consumption loop)

@@ -100,7 +100,15 @@ class CreateResponse(CreateResponseGenerated):
 
 class ResponseObject(ResponseObjectGenerated):
     """Override generated ``ResponseObject`` to correct temperature/top_p types
-    and fix Sphinx docstring warnings."""
+    and fix Sphinx docstring warnings.
+
+    Also exposes :attr:`internal_metadata` — a live, mutable
+    ``MutableMapping[str, Any]`` for response-level framework-internal
+    watermarks, backed by a reserved ``"_internal_metadata"`` key inside the
+    public ``metadata`` map and stripped from every client-facing payload. The
+    property is attached in :func:`patch_sdk` (shared with the generated
+    ``OutputItem`` base).
+    """
 
     temperature: Optional[float] = rest_field(visibility=_VISIBILITY)  # pyright: ignore[reportIncompatibleVariableOverride]
     """Sampling temperature.  Float between 0 and 2."""
@@ -223,3 +231,11 @@ def patch_sdk():
         original = cls.__doc__ or ""
         if "`Learn more about" in original:
             cls.__doc__ = original.replace("`_.", "`__.")
+
+    # Attach the internal_metadata surface. The property is added to the
+    # *generated* OutputItem base so every concrete output-item subtype
+    # inherits it, and to the patched ResponseObject (response-level backing).
+    from ._internal_metadata import apply_internal_metadata
+    from ._models import OutputItem as _OutputItemBase
+
+    apply_internal_metadata(_OutputItemBase, ResponseObject)

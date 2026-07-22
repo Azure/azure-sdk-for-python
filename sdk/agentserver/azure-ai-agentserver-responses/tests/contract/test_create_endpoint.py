@@ -12,7 +12,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from tests._helpers import poll_until
 
 
-def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -211,7 +211,7 @@ def test_create__background_mode_returns_immediate_then_reaches_terminal_state()
 def test_create__non_stream_returns_completed_response_with_output_items() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _output_producing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -260,7 +260,7 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
 def test_create__background_non_stream_get_eventually_returns_output_items() -> None:
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _output_producing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -519,7 +519,7 @@ def test_sync_handler_exception_returns_500() -> None:
     B8 / B13 for sync mode: any handler exception surfaces as HTTP 500.
     """
 
-    def _raising_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _raising_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             raise RuntimeError("Simulated handler failure")
             if False:  # pragma: no cover
@@ -555,7 +555,7 @@ def test_sync_no_terminal_event_still_completes() -> None:
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    def _no_terminal_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _no_terminal_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
@@ -596,7 +596,7 @@ def test_s007_wrong_first_event_sync() -> None:
     the orchestrator's _check_first_event_contract is the authority under test.
     """
 
-    def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             # Raw dict bypasses ResponseEventStream validation so _check_first_event_contract runs
             yield {
@@ -630,7 +630,7 @@ def test_s007_wrong_first_event_stream() -> None:
     Uses a raw dict to bypass ResponseEventStream internal ordering validation.
     """
 
-    def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {
                 "type": "response.in_progress",
@@ -684,7 +684,7 @@ def test_s008_mismatched_id_stream() -> None:
     FR-006b: The id in response.created MUST equal the library-assigned response_id.
     """
 
-    def _mismatched_id_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _mismatched_id_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             # Emit response.created with a deliberately wrong id
             yield {
@@ -738,7 +738,7 @@ def test_s009_terminal_status_on_created_stream() -> None:
     FR-007: The status in response.created MUST be non-terminal (queued or in_progress).
     """
 
-    def _terminal_on_created_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _terminal_on_created_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {
                 "type": "response.created",
@@ -790,7 +790,7 @@ def test_s007_valid_handler_not_affected() -> None:
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-    def _compliant_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _compliant_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()

@@ -1,0 +1,6 @@
+# azure-ai-agentserver-{core,invocations,responses} wheels are installed
+# from /tmp/wheels/ at docker-build time (see Dockerfile). The wheels are
+# staged into ./wheels/ by ../../build.sh from the central
+# sdk/agentserver/wheels/ directory.
+azure-ai-projects==2.0.1
+azure-identity==1.25.3

@@ -1,0 +1,14 @@
+# azd environment
+.azure/*/state/
+.azure/*/*.env.bak
+
+# Demo client runtime
+.demo-session
+
+# Docker-build staging dir — populated by ./build.sh which copies
+# the checked-in wheels from sdk/agentserver/wheels/ into here. Never
+# committed: source of truth is the central wheels directory.
+src/resilient-responses-agent-demo/wheels/
+
+# Battery run artifacts (transient test output — never committed)
+battery/runs/

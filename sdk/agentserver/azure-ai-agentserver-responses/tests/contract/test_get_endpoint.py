@@ -13,7 +13,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 
-def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_response_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler used to wire the hosting surface in contract tests."""
 
     async def _events():
@@ -416,7 +416,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     gate_started: list[bool] = []
 
-    def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
             gate_started.append(True)
@@ -489,7 +489,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that blocks until cancelled — keeps bg response in_progress."""
 
     async def _events():

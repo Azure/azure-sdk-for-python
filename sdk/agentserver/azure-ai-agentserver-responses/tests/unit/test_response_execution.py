@@ -102,8 +102,14 @@ def test_replay_enabled_false_for_non_bg() -> None:
 
 
 def test_visible_via_get_store_true() -> None:
+    # (Spec 024 Phase 2) Non-bg non-stream stored responses are visible
+    # via GET only after reaching a terminal status (B16 enforcement).
+    # In-flight (in_progress) returns False; terminal returns True.
     execution = _make_execution(mode_flags=ResponseModeFlags(stream=False, store=True, background=False))
-    assert execution.visible_via_get is True
+    assert execution.visible_via_get is False, "B16: non-bg non-stream in-flight is not visible"
+    execution.transition_to("in_progress")
+    execution.transition_to("completed")
+    assert execution.visible_via_get is True, "B16: terminal non-bg non-stream is visible"
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,4 @@
+# Local-run artifacts — never commit these
+.venv/
+.agentserver/
+out/

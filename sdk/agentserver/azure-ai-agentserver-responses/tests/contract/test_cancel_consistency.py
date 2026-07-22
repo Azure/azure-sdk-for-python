@@ -141,7 +141,7 @@ def _make_cancellable_bg_handler():
     started = asyncio.Event()
     release = asyncio.Event()
 
-    def handler(request: Any, context: Any, cancellation_signal: Any):
+    async def handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,

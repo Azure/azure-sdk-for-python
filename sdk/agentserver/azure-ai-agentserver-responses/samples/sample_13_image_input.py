@@ -47,14 +47,23 @@ Usage::
         }'
 """
 
+import asyncio
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
 )
-from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputImageContent
+from azure.ai.agentserver.responses._data_url import (
+    get_media_type,
+    is_data_url,
+    try_decode_bytes,
+)
+from azure.ai.agentserver.responses.models import (
+    ItemMessage,
+    MessageContentInputImageContent,
+)
 
 app = ResponsesAgentServerHost()
 
@@ -71,9 +80,11 @@ def _extract_images(items):
     return images
 
 
-# ── Handler 1: Image URL ────────────────────────────────────────────────
-@app.create("image_input.url")
-async def url_handler(request: CreateResponse, context: ResponseContext):
+# ── Handler 1: Image URL (the registered handler) ───────────────────────
+# One host has exactly one ``@app.response_handler``. Handlers 2 and 3 below
+# are undecorated reference implementations — swap the decorator to run them.
+@app.response_handler
+async def url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo back the image URL received from the caller."""
     items = await context.get_input_items()
     images = _extract_images(items)
@@ -83,8 +94,7 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
 
 
 # ── Handler 2: Base64 data URL ──────────────────────────────────────────
-@app.create("image_input.base64")
-async def base64_handler(request: CreateResponse, context: ResponseContext):
+async def base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Decode inline base64 image data and report media type + size."""
     items = await context.get_input_items()
     images = _extract_images(items)
@@ -100,14 +110,17 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
 
 
 # ── Handler 3: File ID ──────────────────────────────────────────────────
-@app.create("image_input.file_id")
-async def file_id_handler(request: CreateResponse, context: ResponseContext):
+async def file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo back the file_id received from the caller."""
     items = await context.get_input_items()
     images = _extract_images(items)
 
     file_ids = [img.file_id for img in images if img.file_id]
-    return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
+    return TextResponse(
+        context,
+        request,
+        text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}",
+    )
 
 
 if __name__ == "__main__":

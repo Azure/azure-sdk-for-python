@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/microsoft/AgentSchema/refs/heads/main/schemas/v1.0/ContainerAgent.yaml
+
+kind: hosted
+name: resilient-responses-agent-demo
+description: |
+    Minimal Hello World agent using the Responses protocol with a bring-your-own approach. Calls a Foundry model via the Responses API and returns the response.
+metadata:
+    tags:
+        - AI Agent Hosting
+        - Responses Protocol
+        - Bring Your Own
+        - Python
+protocols:
+    - protocol: responses
+      version: 2.0.0
+resources:
+    cpu: "1"
+    memory: 2Gi
+environment_variables:
+    - name: AZURE_AI_MODEL_DEPLOYMENT_NAME
+      value: gpt-5.4-nano
+    # Long-running demo: per-phase ≈ 12s LLM + 3×30s intra + 30s inter ≈ 132s,
+    # × 15 phases ≈ 33 min total — runs ~2x past the platform's 15-min
+    # sandbox-eviction window so each run exercises the resilient-task lease
+    # keep-alive path. Local main.py defaults (10/20s, ~15 min) apply when
+    # running outside the hosted container for fast iteration.
+    - name: INTRA_PHASE_COOLDOWN_SEC
+      value: "3"
+    - name: INTER_PHASE_COOLDOWN_SEC
+      value: "3"
+    - name: TARGET_OUTPUT_TOKENS
+      value: "150"

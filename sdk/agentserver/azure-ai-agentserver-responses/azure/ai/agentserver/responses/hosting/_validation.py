@@ -8,7 +8,7 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core.platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
     MAX_ERROR_DETAIL_LENGTH,

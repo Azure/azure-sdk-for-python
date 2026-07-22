@@ -17,7 +17,7 @@ from azure.ai.agentserver.responses._options import ResponsesServerOptions
 def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     """Factory for a handler that yields events with a configurable delay between them."""
 
-    def _handler(request: Any, context: Any, cancellation_signal: Any):
+    async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
         async def _events():
             for i in range(event_count):
                 if i > 0:
@@ -34,7 +34,7 @@ def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
     return _handler
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Minimal handler producing an empty stream."""
 
     async def _events():
