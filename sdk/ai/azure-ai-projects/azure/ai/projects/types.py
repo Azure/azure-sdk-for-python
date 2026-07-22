@@ -72,6 +72,7 @@ if TYPE_CHECKING:
         FoundryModelSourceType,
         FoundryModelWarningCode,
         FoundryModelWeightType,
+        GenerationWarningType,
         GitHubIssueEvent,
         GrammarSyntax1,
         ImageGenAction,
@@ -80,7 +81,11 @@ if TYPE_CHECKING:
         MemoryItemKind,
         OperationState,
         RankerVersionType,
+        ReasoningEffort,
         RiskCategory,
+        RubricGenerationInputQualityWarningCode,
+        RubricGenerationInputQualityWarningSeverity,
+        RubricGenerationInputQualityWarningSource,
         ScheduleProvisioningStatus,
         SearchContentType,
         SearchContextSize,
@@ -2560,6 +2565,11 @@ class EvaluatorGenerationJob(TypedDict, total=False):
     :vartype finished_at: int
     :ivar usage: Token consumption summary. Populated when the job reaches a terminal state.
     :vartype usage: "EvaluatorGenerationTokenUsage"
+    :ivar input_quality_warnings: Non-fatal input-quality advisories produced by the generation
+     pipeline. Read-only; service-generated; populated only on terminal jobs when advisories fired.
+     Omitted when generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories.
+    :vartype input_quality_warnings: list["RubricGenerationInputQualityWarning"]
     """
 
     id: Required[str]
@@ -2580,6 +2590,11 @@ class EvaluatorGenerationJob(TypedDict, total=False):
     """The timestamp when the job finished, represented in Unix time (seconds since January 1, 1970)."""
     usage: "EvaluatorGenerationTokenUsage"
     """Token consumption summary. Populated when the job reaches a terminal state."""
+    input_quality_warnings: list["RubricGenerationInputQualityWarning"]
+    """Non-fatal input-quality advisories produced by the generation pipeline. Read-only;
+     service-generated; populated only on terminal jobs when advisories fired. Omitted when
+     generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories."""
 
 
 class EvaluatorGenerationTokenUsage(TypedDict, total=False):
@@ -2660,6 +2675,16 @@ class EvaluatorVersion(TypedDict, total=False):
      present only on evaluator versions created via an EvaluatorGenerationJob. Each artifact
      resolves to a versioned Foundry Dataset.
     :vartype generation_artifacts: "EvaluatorGenerationArtifacts"
+    :ivar generation_job_id: Read-only provenance link back to the EvaluatorGenerationJob that
+     produced this version. Present only on evaluator versions created via the generation pipeline;
+     absent for manually-created versions and unaffected by subsequent ``PATCH`` calls.
+    :vartype generation_job_id: str
+    :ivar warnings: Categories of warnings surfaced on this generated evaluator version. Present
+     only on versions created via an EvaluatorGenerationJob when the paired job produced non-empty
+     warnings. Absent (treat as no warnings) when the version is not from generation, when the
+     paired job was clean, or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's
+     advisories. Follow ``generation_job_id`` to fetch the detailed warning payloads.
+    :vartype warnings: list[Union[str, "GenerationWarningType"]]
     :ivar created_by: Creator of the evaluator. Required.
     :vartype created_by: str
     :ivar created_at: Creation date/time of the evaluator. Required.
@@ -2698,6 +2723,16 @@ class EvaluatorVersion(TypedDict, total=False):
     """Provenance artifacts from the generation pipeline. Read-only; present only on evaluator
      versions created via an EvaluatorGenerationJob. Each artifact resolves to a versioned Foundry
      Dataset."""
+    generation_job_id: str
+    """Read-only provenance link back to the EvaluatorGenerationJob that produced this version.
+     Present only on evaluator versions created via the generation pipeline; absent for
+     manually-created versions and unaffected by subsequent ``PATCH`` calls."""
+    warnings: list[Union[str, "GenerationWarningType"]]
+    """Categories of warnings surfaced on this generated evaluator version. Present only on versions
+     created via an EvaluatorGenerationJob when the paired job produced non-empty warnings. Absent
+     (treat as no warnings) when the version is not from generation, when the paired job was clean,
+     or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's advisories. Follow
+     ``generation_job_id`` to fetch the detailed warning payloads."""
     created_by: Required[str]
     """Creator of the evaluator. Required."""
     created_at: Required[str]
@@ -4968,6 +5003,14 @@ class OptimizationOptions(TypedDict, total=False):
      'conversation' for per-conversation multi-turn simulation scoring. Known values are: "turn" and
      "conversation".
     :vartype evaluation_level: Union[str, "EvaluationLevel"]
+    :ivar max_stalls: Maximum number of consecutive reflective minibatch rejections before stopping
+     early. A 'stall' occurs when the optimizer proposes a prompt change, evaluates it on a small
+     subset, and the score does not improve — so no full validation-set evaluation is triggered. The
+     counter resets whenever a minibatch passes and its full-validation score beats the current
+     best. Only a sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the
+     stop. The service defaults to 5 if a value is not specified by the caller. Must be >= 1 when
+     set.
+    :vartype max_stalls: int
     """
 
     max_candidates: int
@@ -4984,6 +5027,13 @@ class OptimizationOptions(TypedDict, total=False):
     """Evaluation granularity. Null/omitted means per-item single-turn. Set to 'conversation' for
      per-conversation multi-turn simulation scoring. Known values are: \"turn\" and
      \"conversation\"."""
+    max_stalls: int
+    """Maximum number of consecutive reflective minibatch rejections before stopping early. A 'stall'
+     occurs when the optimizer proposes a prompt change, evaluates it on a small subset, and the
+     score does not improve — so no full validation-set evaluation is triggered. The counter resets
+     whenever a minibatch passes and its full-validation score beats the current best. Only a
+     sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the stop. The
+     service defaults to 5 if a value is not specified by the caller. Must be >= 1 when set."""
 
 
 class OptimizationReferenceDatasetInput(TypedDict, total=False):
@@ -5330,9 +5380,8 @@ class RankingOptions(TypedDict, total=False):
 class Reasoning(TypedDict, total=False):
     """Reasoning.
 
-    :ivar effort: Is one of the following types: Literal["none"], Literal["minimal"],
-     Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
-    :vartype effort: Literal["none", "minimal", "low", "medium", "high", "xhigh"]
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype effort: Union[str, "ReasoningEffort"]
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype summary: Literal["auto", "concise", "detailed"]
@@ -5344,9 +5393,8 @@ class Reasoning(TypedDict, total=False):
     :vartype generate_summary: Literal["auto", "concise", "detailed"]
     """
 
-    effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]]
-    """Is one of the following types: Literal[\"none\"], Literal[\"minimal\"], Literal[\"low\"],
-     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
+    effort: Optional[Union[str, "ReasoningEffort"]]
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
     summary: Optional[Literal["auto", "concise", "detailed"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
     context: Optional[Literal["auto", "current_turn", "all_turns"]]
@@ -5526,6 +5574,49 @@ class RubricBasedEvaluatorDefinition(TypedDict, total=False):
      emitted ``score``. When the runtime weighted average meets or exceeds this value, the result is
      ``pass``. Defaults to 0.5 (equivalent to a raw 1-5 weighted average of 3.0). The 'any dimension
      scored 1 → fail' rule still applies regardless of this threshold."""
+
+
+class RubricGenerationInputQualityWarning(TypedDict, total=False):
+    """A non-fatal advisory produced during rubric evaluator generation when resolved inputs are
+    technically valid but likely too weak to produce a high-quality rubric. Read-only;
+    service-generated. Persisted with the terminal EvaluatorGenerationJob.
+
+    :ivar code: Stable searchable machine-readable warning code. Required. Known values are:
+     "empty_prompt", "short_prompt", "empty_agent_instructions", "short_agent_instructions",
+     "empty_dataset_content", "short_dataset_content", "low_trace_count", and
+     "insufficient_total_input".
+    :vartype code: Union[str, "RubricGenerationInputQualityWarningCode"]
+    :ivar severity: Advisory severity. Initial values: ``warning``. Required. "warning"
+    :vartype severity: Union[str, "RubricGenerationInputQualityWarningSeverity"]
+    :ivar message: Human-readable message suitable for direct SDK/CLI/UI display. Must not include
+     raw prompt, instruction, dataset, or trace text. Required.
+    :vartype message: str
+    :ivar source: Which source category the warning applies to. ``aggregate`` is used only for
+     cross-source warnings. Required. Known values are: "prompt", "agent", "dataset", and
+     "aggregate".
+    :vartype source: Union[str, "RubricGenerationInputQualityWarningSource"]
+    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the
+     warning applies to a specific source. Omitted for aggregate warnings and for warnings not tied
+     to one source.
+    :vartype source_index: int
+    """
+
+    code: Required[Union[str, "RubricGenerationInputQualityWarningCode"]]
+    """Stable searchable machine-readable warning code. Required. Known values are: \"empty_prompt\",
+     \"short_prompt\", \"empty_agent_instructions\", \"short_agent_instructions\",
+     \"empty_dataset_content\", \"short_dataset_content\", \"low_trace_count\", and
+     \"insufficient_total_input\"."""
+    severity: Required[Union[str, "RubricGenerationInputQualityWarningSeverity"]]
+    """Advisory severity. Initial values: ``warning``. Required. \"warning\""""
+    message: Required[str]
+    """Human-readable message suitable for direct SDK/CLI/UI display. Must not include raw prompt,
+     instruction, dataset, or trace text. Required."""
+    source: Required[Union[str, "RubricGenerationInputQualityWarningSource"]]
+    """Which source category the warning applies to. ``aggregate`` is used only for cross-source
+     warnings. Required. Known values are: \"prompt\", \"agent\", \"dataset\", and \"aggregate\"."""
+    source_index: int
+    """Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the warning applies to a
+     specific source. Omitted for aggregate warnings and for warnings not tied to one source."""
 
 
 class Schedule(TypedDict, total=False):
@@ -6227,6 +6318,33 @@ class ToolProjectConnection(TypedDict, total=False):
     """A project connection in a ToolProjectConnectionList attached to this tool. Required."""
 
 
+class ToolSearchToolboxTool(TypedDict, total=False):
+    """A toolbox search tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, "ToolConfig"]
+    :ivar type: The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH.
+    :vartype type: Literal[ToolboxToolType.TOOLBOX_SEARCH]
+    """
+
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
+     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
+     runtime."""
+    type: Required[Literal[ToolboxToolType.TOOLBOX_SEARCH]]
+    """The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH."""
+
+
 class ToolSearchToolParam(TypedDict, total=False):
     """Tool search tool.
 
@@ -6451,6 +6569,84 @@ class VersionSelector(TypedDict, total=False):
 
     version_selection_rules: Required[list["VersionSelectionRule"]]
     """Required."""
+
+
+class WebIQPreviewTool(TypedDict, total=False):
+    """A WebIQ server-side tool.
+
+    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
+    :vartype type: Literal[ToolType.WEB_IQ_PREVIEW]
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
+     connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. Default
+     is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    type: Required[Literal[ToolType.WEB_IQ_PREVIEW]]
+    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the WebIQ project connection. Required."""
+    server_label: str
+    """The label of the WebIQ MCP server to connect to."""
+    server_url: str
+    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
+     used."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """Whether the agent requires approval before executing actions. Default is always. Is either a
+     MCPToolRequireApproval type or a str type."""
+
+
+class WebIQPreviewToolboxTool(TypedDict, total=False):
+    """A WebIQ tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, "ToolConfig"]
+    :ivar type: Required. WEB_IQ_PREVIEW.
+    :vartype type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
+     connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. Default
+     is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: Union["MCPToolRequireApproval", str]
+    """
+
+    name: str
+    """Optional user-defined name for this tool or configuration."""
+    description: str
+    """Optional user-defined description for this tool or configuration."""
+    tool_configs: dict[str, "ToolConfig"]
+    """Per-tool configuration map. Keys are tool names or ``*`` (catch-all default). Resolution order:
+     exact tool name match takes priority over ``*``. Unknown tool names are silently ignored at
+     runtime."""
+    type: Required[Literal[ToolboxToolType.WEB_IQ_PREVIEW]]
+    """Required. WEB_IQ_PREVIEW."""
+    project_connection_id: Required[str]
+    """The ID of the WebIQ project connection. Required."""
+    server_label: str
+    """The label of the WebIQ MCP server to connect to."""
+    server_url: str
+    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
+     used."""
+    require_approval: Optional[Union["MCPToolRequireApproval", str]]
+    """Whether the agent requires approval before executing actions. Default is always. Is either a
+     MCPToolRequireApproval type or a str type."""
 
 
 class WebSearchApproximateLocation(TypedDict, total=False):
@@ -7099,6 +7295,7 @@ Tool = Union[
     SharepointPreviewTool,
     FunctionShellToolParam,
     ToolSearchToolParam,
+    WebIQPreviewTool,
     WebSearchTool,
     WebSearchPreviewTool,
     WorkIQPreviewTool,
@@ -7113,7 +7310,9 @@ ToolboxTool = Union[
     MCPToolboxTool,
     OpenApiToolboxTool,
     ReminderPreviewToolboxTool,
+    ToolSearchToolboxTool,
     ToolboxSearchPreviewToolboxTool,
+    WebIQPreviewToolboxTool,
     WebSearchToolboxTool,
     WorkIQPreviewToolboxTool,
 ]
