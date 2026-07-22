@@ -31,6 +31,7 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from ..._utils.utils import prepare_multipart_form_data
+from ..._validation import api_version_validation
 from ... import models as _models
 from ..._utils import model_base as _model_base
 
@@ -375,6 +376,10 @@ class SingleDocumentTranslationClientOperationsMixin(
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-03-01": ["deployment_name"], "2024-11-01-preview": ["translate_text_within_image"]},
+        api_versions_list=["2024-05-01", "2024-11-01-preview", "2025-12-01-preview", "2026-03-01"],
+    )
     async def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],

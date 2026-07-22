@@ -47,6 +47,7 @@ from ._operations import (
 )
 
 from .._utils.utils import prepare_multipart_form_data
+from .._validation import api_version_validation
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -464,6 +465,10 @@ class SingleDocumentTranslationClientOperationsMixin(
         """
 
     @distributed_trace
+    @api_version_validation(
+        params_added_on={"2026-03-01": ["deployment_name"], "2024-11-01-preview": ["translate_text_within_image"]},
+        api_versions_list=["2024-05-01", "2024-11-01-preview", "2025-12-01-preview", "2026-03-01"],
+    )
     def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
