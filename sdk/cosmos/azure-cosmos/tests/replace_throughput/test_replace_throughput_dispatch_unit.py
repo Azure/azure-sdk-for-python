@@ -3,7 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""Unit coverage for replace_throughput dispatch (Rust route vs fallback)."""
+"""Unit coverage for replace_throughput dispatch (Rust route vs fallback).
+
+These lock in the throughput-dispatch behavior: the public ``ContainerProxy.replace_throughput``
+holds no engine logic. It delegates to the throughput coordinator, which routes the
+read-modify-write (read the offer, then replace it) to the rust backend when the call
+is eligible, and otherwise falls back to the legacy ``QueryOffers`` / ``ReplaceOffer``
+calls -- all without the public method knowing which engine ran. No network: the
+backend and the client connection are test doubles.
+"""
 from __future__ import annotations
 
 from types import SimpleNamespace
@@ -26,14 +34,30 @@ def _offer(throughput: int = 400) -> Dict[str, Any]:
 
 
 def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Rust route (sync): when the eligibility gate says yes, both read_offer and
+    replace_offer run through the backend and the legacy QueryOffers/ReplaceOffer
+    are never called. Also checks the end-to-end timeout is lifted into options and
+    no stray kwargs reach the gate. Without this, a regression could quietly keep
+    throughput writes on the legacy path or drop the timeout.
+    """
     container = SyncContainerProxy.__new__(SyncContainerProxy)
     container.container_link = "dbs/db/colls/coll"
     container._get_properties = lambda: {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
 
     gate_inputs: Dict[str, Any] = {}
-    rust_read_options: Dict[str, Any] = {}
     query_offers_called = False
     replace_offer_called = False
+
+    class _Backend:
+        def __init__(self) -> None:
+            self.calls: List[str] = []
+
+        def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+            assert rust_eligible is True
+            self.calls.append(legacy_operation.op)
+            return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
+
+    backend = _Backend()
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> List[Dict[str, Any]]:
         nonlocal query_offers_called
@@ -46,7 +70,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
         return _offer(500)
 
     container.client_connection = SimpleNamespace(
-        _backend=object(),
+        _backend=backend,
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
         last_response_headers={},
@@ -58,16 +82,7 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
         gate_inputs["kwargs"] = dict(kwargs)
         return True
 
-    def _read_rust(*, options: Dict[str, Any], **_kwargs: Any) -> List[Dict[str, Any]]:
-        rust_read_options.update(options)
-        return [_offer()]
-
-    def _replace_rust(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
-        return _offer(500)
-
-    monkeypatch.setattr("azure.cosmos.container.can_use_rust_backend_for_replace_throughput", _gate)
-    monkeypatch.setattr("azure.cosmos.container.try_read_offer_with_rust_backend", _read_rust)
-    monkeypatch.setattr("azure.cosmos.container.try_replace_offer_with_rust_backend", _replace_rust)
+    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
 
     result = container.replace_throughput(500, timeout=9)
 
@@ -76,10 +91,15 @@ def test_sync_replace_throughput_routes_to_rust_when_supported(monkeypatch: pyte
     assert replace_offer_called is False
     assert gate_inputs["kwargs"] == {}
     assert gate_inputs["options"][Constants.Kwargs.TIMEOUT] == 9
-    assert rust_read_options[Constants.Kwargs.TIMEOUT] == 9
+    assert backend.calls == ["read_offer", "replace_offer"]
 
 
 def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Legacy fallback (sync): an unsupported knob (``read_timeout``) makes the call
+    rust-ineligible, so the coordinator runs the legacy operation and still returns
+    the updated offer. Guards against silently dropping an option the rust engine
+    cannot honor yet.
+    """
     container = SyncContainerProxy.__new__(SyncContainerProxy)
     container.container_link = "dbs/db/colls/coll"
     container._get_properties = lambda: {"_self": "dbs/db/colls/coll", "_rid": "collRid"}
@@ -94,20 +114,16 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
         replaced["offer"] = kwargs["offer"]
         return kwargs["offer"]
 
+    class _Backend:
+        def run_operation(self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any) -> Any:
+            assert rust_eligible is False
+            return legacy_operation.invoke()
+
     container.client_connection = SimpleNamespace(
-        _backend=object(),
+        _backend=_Backend(),
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
         last_response_headers={},
-    )
-
-    monkeypatch.setattr(
-        "azure.cosmos.container.try_read_offer_with_rust_backend",
-        lambda **_kwargs: pytest.fail("Rust read should not run when read_timeout is set"),
-    )
-    monkeypatch.setattr(
-        "azure.cosmos.container.try_replace_offer_with_rust_backend",
-        lambda **_kwargs: pytest.fail("Rust replace should not run when read_timeout is set"),
     )
 
     result = container.replace_throughput(500, read_timeout=2)
@@ -120,6 +136,10 @@ def test_sync_replace_throughput_falls_back_on_read_timeout(monkeypatch: pytest.
 async def test_async_replace_throughput_routes_to_rust_when_supported(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Async twin of the rust-route test: same guarantee on the async proxy -- both
+    offer operations go through the backend, legacy is untouched, timeout is lifted,
+    and no stray kwargs reach the gate.
+    """
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.container_link = "dbs/db/colls/coll"
 
@@ -129,9 +149,21 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     container._get_properties = _get_properties
 
     gate_inputs: Dict[str, Any] = {}
-    rust_read_options: Dict[str, Any] = {}
     query_offers_called = False
     replace_offer_called = False
+
+    class _Backend:
+        def __init__(self) -> None:
+            self.calls: List[str] = []
+
+        async def run_operation(
+            self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
+        ) -> Any:
+            assert rust_eligible is True
+            self.calls.append(legacy_operation.op)
+            return [_offer()] if legacy_operation.op == "read_offer" else _offer(500)
+
+    backend = _Backend()
 
     def _query_offers(*_args: Any, **_kwargs: Any) -> Any:
         nonlocal query_offers_called
@@ -152,7 +184,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
         return _offer(500)
 
     container.client_connection = SimpleNamespace(
-        _backend=object(),
+        _backend=backend,
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
         last_response_headers={},
@@ -164,16 +196,7 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
         gate_inputs["kwargs"] = dict(kwargs)
         return True
 
-    async def _read_rust(*, options: Dict[str, Any], **_kwargs: Any) -> List[Dict[str, Any]]:
-        rust_read_options.update(options)
-        return [_offer()]
-
-    async def _replace_rust(*_args: Any, **_kwargs: Any) -> Dict[str, Any]:
-        return _offer(500)
-
-    monkeypatch.setattr("azure.cosmos.aio._container.can_use_rust_backend_for_replace_throughput", _gate)
-    monkeypatch.setattr("azure.cosmos.aio._container.try_read_offer_with_rust_backend_async", _read_rust)
-    monkeypatch.setattr("azure.cosmos.aio._container.try_replace_offer_with_rust_backend_async", _replace_rust)
+    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper.can_use_rust_backend_for_replace_throughput", _gate)
 
     result = await container.replace_throughput(500, timeout=11)
 
@@ -182,13 +205,16 @@ async def test_async_replace_throughput_routes_to_rust_when_supported(
     assert replace_offer_called is False
     assert gate_inputs["kwargs"] == {}
     assert gate_inputs["options"][Constants.Kwargs.TIMEOUT] == 11
-    assert rust_read_options[Constants.Kwargs.TIMEOUT] == 11
+    assert backend.calls == ["read_offer", "replace_offer"]
 
 
 @pytest.mark.asyncio
 async def test_async_replace_throughput_falls_back_on_read_timeout(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    """Async twin of the fallback test: an unsupported knob forces the legacy
+    operation on the async proxy and still returns the updated offer.
+    """
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     container.container_link = "dbs/db/colls/coll"
     source_offer = _offer()
@@ -219,23 +245,18 @@ async def test_async_replace_throughput_falls_back_on_read_timeout(
         return kwargs["offer"]
 
     container._get_properties = _get_properties
+    class _Backend:
+        async def run_operation(
+            self, *, legacy_operation: Any, rust_eligible: bool, **_kwargs: Any
+        ) -> Any:
+            assert rust_eligible is False
+            return await legacy_operation.invoke()
+
     container.client_connection = SimpleNamespace(
-        _backend=object(),
+        _backend=_Backend(),
         QueryOffers=_query_offers,
         ReplaceOffer=_replace_offer,
         last_response_headers={},
-    )
-
-    async def _unexpected_rust_call(**_kwargs: Any) -> None:
-        pytest.fail("Rust path should not run when read_timeout is set")
-
-    monkeypatch.setattr(
-        "azure.cosmos.aio._container.try_read_offer_with_rust_backend_async",
-        _unexpected_rust_call,
-    )
-    monkeypatch.setattr(
-        "azure.cosmos.aio._container.try_replace_offer_with_rust_backend_async",
-        _unexpected_rust_call,
     )
 
     result = await container.replace_throughput(500, read_timeout=2)

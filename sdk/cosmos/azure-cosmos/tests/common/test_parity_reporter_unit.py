@@ -56,7 +56,7 @@ def _make_block(token: str, **overrides) -> str:
         "surface": "sync",
         "op": "read_item",
         "ordinal": 0,
-        "plugin_version": "v2",
+        "plugin_version": "v3",
         "status": "ok",
         "test_doc": "Verify something.",
         "request": {"args": [], "kwargs": {"item": "id1", "partition_key": "pk1"}},
@@ -85,6 +85,10 @@ def _make_block(token: str, **overrides) -> str:
         "exception": None,
     }
     payload.update(overrides)
+    if "executed_engine" not in overrides:
+        payload["executed_engine"] = payload["backend"]
+    if "rust_operation_delta" not in overrides:
+        payload["rust_operation_delta"] = 1 if payload["backend"] == "rust" else 0
     sentinel_start = f"===PARITY-CAPTURE-{token}-START==="
     sentinel_end = f"===PARITY-CAPTURE-{token}-END==="
     return (
@@ -113,7 +117,9 @@ class ReporterParserTests(unittest.TestCase):
 
     def test_parses_v2_tokenised_sentinels(self):
         """v2 sentinels (per-session 8-hex token) must round-trip."""
-        path = self._write_temp(_make_block(token="a1b2c3d4"))
+        path = self._write_temp(
+            _make_block(token="a1b2c3d4", plugin_version="v2")
+        )
         blocks = self.reporter.parse_captures(path)
         self.assertEqual(len(blocks), 1)
         self.assertEqual(blocks[0].nodeid, "tests/somefile.py::TestX::test_y")
@@ -191,6 +197,18 @@ class ReporterParserTests(unittest.TestCase):
             sys.stderr = old_stderr
         # The malformed block is dropped; the good block survives.
         self.assertEqual(len(blocks), 1)
+
+    def test_unmatched_start_does_not_hide_later_valid_capture(self):
+        """A truncated early block must not stop parsing the rest of the file."""
+        text = (
+            "===PARITY-CAPTURE-deadbeef-START===\n"
+            "truncated payload\n"
+            + _make_block(token="11112222")
+        )
+        path = self._write_temp(text)
+        blocks = self.reporter.parse_captures(path)
+        self.assertEqual(len(blocks), 1)
+        self.assertEqual(blocks[0].nodeid, "tests/somefile.py::TestX::test_y")
 
     def test_parse_transcript_disambiguates_same_class_method_by_file(self):
         """Rows with the same class::method in different files must not collide."""
@@ -311,6 +329,16 @@ class ReporterRenderingTests(unittest.TestCase):
         # ``_parity_helpers`` the running test process is using.
         self.reporter._load_parity_helpers()  # noqa: SLF001
 
+    def _block(self, **overrides):
+        text = _make_block(token="feedface", **overrides)
+        path = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".txt", delete=False, encoding="utf-8"
+        )
+        path.write(text)
+        path.close()
+        self.addCleanup(os.unlink, path.name)
+        return self.reporter.parse_captures(path.name)[0]
+
     def test_emit_markdown_includes_verdict_categories_and_fallback_labels(self):
         """Bug 5 fix: the 'How to read this report' section must
         list BOTH the four primary verdicts and the fallback labels."""
@@ -328,11 +356,13 @@ class ReporterRenderingTests(unittest.TestCase):
                 "--corepy", cp_path,
                 "--rust", rs_path,
                 "--out", out_path,
+                "--expected-count", "1",
                 "--account-host", "https://test.documents.azure.com/",
             ])
-            self.assertEqual(rc, 0)
+            self.assertEqual(rc, 1)
             with open(out_path, "r", encoding="utf-8") as fh:
                 md = fh.read()
+        self.assertIn("INVALID OR INCOMPLETE INPUT", md)
         for s in (
             "FULL PARITY",
             "FUNCTIONAL PARITY, HEADER GAP",
@@ -344,6 +374,268 @@ class ReporterRenderingTests(unittest.TestCase):
             "UNPAIRED",
         ):
             self.assertIn(s, md, f"expected {s!r} in audit markdown")
+
+    def test_main_returns_zero_only_for_valid_matching_evidence(self):
+        """A complete v3 core/Rust pair with matching calls is a successful check."""
+        with tempfile.TemporaryDirectory() as td:
+            cp_path = os.path.join(td, "cp.txt")
+            rs_path = os.path.join(td, "rs.txt")
+            out_path = os.path.join(td, "audit.md")
+            result_line = (
+                "tests/somefile.py::TestX::test_y PASSED [100%]\n"
+            )
+            with open(cp_path, "w", encoding="utf-8") as fh:
+                fh.write(
+                    result_line
+                    + _make_block("11111111", backend="core-python")
+                    + "================ 1 passed in 0.10s ================\n"
+                )
+            with open(rs_path, "w", encoding="utf-8") as fh:
+                fh.write(
+                    result_line
+                    + _make_block("22222222", backend="rust")
+                    + "================ 1 passed in 0.10s ================\n"
+                )
+
+            rc = self.reporter.main([
+                "--op", "read_item",
+                "--corepy", cp_path,
+                "--rust", rs_path,
+                "--out", out_path,
+                "--expected-count", "1",
+            ])
+
+            self.assertEqual(rc, 0)
+
+    def test_main_returns_nonzero_for_functional_difference(self):
+        """A response difference must produce a failing process exit code."""
+        with tempfile.TemporaryDirectory() as td:
+            cp_path = os.path.join(td, "cp.txt")
+            rs_path = os.path.join(td, "rs.txt")
+            out_path = os.path.join(td, "audit.md")
+            result_line = (
+                "tests/somefile.py::TestX::test_y PASSED [100%]\n"
+            )
+            with open(cp_path, "w", encoding="utf-8") as fh:
+                fh.write(
+                    result_line
+                    + _make_block(
+                        "11111111",
+                        backend="core-python",
+                        return_value={"value": 1},
+                    )
+                    + "================ 1 passed in 0.10s ================\n"
+                )
+            with open(rs_path, "w", encoding="utf-8") as fh:
+                fh.write(
+                    result_line
+                    + _make_block(
+                        "22222222", backend="rust", return_value={"value": 2}
+                    )
+                    + "================ 1 passed in 0.10s ================\n"
+                )
+
+            rc = self.reporter.main([
+                "--op", "read_item",
+                "--corepy", cp_path,
+                "--rust", rs_path,
+                "--out", out_path,
+                "--expected-count", "1",
+            ])
+
+            self.assertEqual(rc, 1)
+
+    def test_second_call_divergence_controls_scoreboard_verdict(self):
+        """A multi-call test must not be labelled from only its first call."""
+        cp_first = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="core-python",
+            surface="sync",
+            op="read_item",
+            ordinal=0,
+            status="ok",
+            return_value={"value": 1},
+        )
+        rs_first = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="rust",
+            surface="sync",
+            op="read_item",
+            ordinal=0,
+            status="ok",
+            return_value={"value": 1},
+        )
+        cp_second = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="core-python",
+            surface="sync",
+            op="read_item",
+            ordinal=1,
+            status="ok",
+            return_value={"value": 2},
+        )
+        rs_second = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="rust",
+            surface="sync",
+            op="read_item",
+            ordinal=1,
+            status="ok",
+            return_value={"value": 999},
+        )
+        result = self.reporter.TestResult(
+            surface="sync",
+            file_key="test_x",
+            class_name="TestX",
+            method_name="test_y",
+            outcome="PASSED",
+            raw_path="tests/test_x.py",
+        )
+        key = ("sync", "test_x", "TestX", "test_y")
+        md = self.reporter.emit_markdown(
+            op="read_item",
+            pairs=[(result, result)],
+            corepy_path="core.txt",
+            rust_path="rust.txt",
+            account_host="https://example",
+            corepy_captures={key: [cp_first, cp_second]},
+            rust_captures={key: [rs_first, rs_second]},
+        )
+        scoreboard = md.split("## Per-test PARITY CALL blocks", 1)[0]
+        self.assertIn("**FUNCTIONAL DIVERGENCE**", scoreboard)
+
+    def test_failed_pytest_outcome_cannot_be_overridden_by_matching_capture(self):
+        """A Rust test failure must remain a regression even if its SDK call matched."""
+        cp = self.reporter.TestResult(
+            "sync", "test_x", "TestX", "test_y", "PASSED", "tests/test_x.py"
+        )
+        rs = self.reporter.TestResult(
+            "sync", "test_x", "TestX", "test_y", "FAILED", "tests/test_x.py"
+        )
+        cp_block = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="core-python",
+            surface="sync",
+            op="read_item",
+            ordinal=0,
+            status="ok",
+            return_value={"value": 1},
+        )
+        rs_block = self.reporter.CaptureBlock(
+            nodeid="tests/test_x.py::TestX::test_y",
+            backend="rust",
+            surface="sync",
+            op="read_item",
+            ordinal=0,
+            status="ok",
+            return_value={"value": 1},
+        )
+        key = ("sync", "test_x", "TestX", "test_y")
+        md = self.reporter.emit_markdown(
+            op="read_item",
+            pairs=[(cp, rs)],
+            corepy_path="core.txt",
+            rust_path="rust.txt",
+            account_host="https://example",
+            corepy_captures={key: [cp_block]},
+            rust_captures={key: [rs_block]},
+        )
+        scoreboard = md.split("## Per-test PARITY CALL blocks", 1)[0]
+        self.assertIn("**RUST REGRESSION**", scoreboard)
+
+    def test_request_difference_is_a_functional_difference(self):
+        """Missing or differently typed operation arguments must be compared."""
+        cp = self._block(
+            backend="core-python",
+            request={"args": [], "kwargs": {"partition_key": "pk"}},
+        )
+        rs = self._block(
+            backend="rust",
+            request={"args": [], "kwargs": {}},
+        )
+        comparison = self.reporter._build_comparison(
+            "TestX", "test_y", cp, rs
+        )
+        self.assertTrue(
+            any(diff.startswith("request:") for diff in comparison.diffs)
+        )
+
+    def test_request_scalar_difference_is_not_hidden(self):
+        """Different item ids or partition keys must not normalize to the same type."""
+        cp = self._block(
+            backend="core-python",
+            request={"args": [], "kwargs": {"item": "alpha"}},
+        )
+        rs = self._block(
+            backend="rust",
+            request={"args": [], "kwargs": {"item": "bravo"}},
+        )
+        comparison = self.reporter._build_comparison(
+            "TestX", "test_y", cp, rs
+        )
+        self.assertTrue(
+            any(diff.startswith("request:") for diff in comparison.diffs)
+        )
+
+    def test_validation_rejects_wrong_backend_label(self):
+        """A rust-vs-rust transcript pair must never be accepted as parity."""
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        cp = self._block(backend="rust")
+        rs = self._block(backend="rust")
+        errors = self.reporter._validate_audit_inputs(
+            op="read_item",
+            corepy=[result],
+            rust=[result],
+            corepy_blocks=[cp],
+            rust_blocks=[rs],
+        )
+        self.assertTrue(any("core-python transcript captured backend" in e for e in errors))
+
+    def test_validation_rejects_rust_selected_call_that_fell_back(self):
+        """A Rust client running the legacy engine is not Rust execution evidence."""
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        cp = self._block(backend="core-python")
+        rs = self._block(
+            backend="rust",
+            executed_engine="core-python",
+            rust_operation_delta=0,
+        )
+        errors = self.reporter._validate_audit_inputs(
+            op="read_item",
+            corepy=[result],
+            rust=[result],
+            corepy_blocks=[cp],
+            rust_blocks=[rs],
+        )
+        self.assertTrue(any("actually executed 'core-python'" in e for e in errors))
+
+    def test_validation_rejects_unmaterialized_query_capture(self):
+        """A pager repr is not evidence that query iteration matched."""
+        result = self.reporter.TestResult(
+            "sync", "somefile", "TestX", "test_y", "PASSED", "tests/somefile.py"
+        )
+        cp = self._block(
+            backend="core-python",
+            op="query_items",
+            return_value="<azure.core.paging.ItemPaged object>",
+        )
+        rs = self._block(
+            backend="rust",
+            op="query_items",
+            return_value="<azure.core.paging.ItemPaged object>",
+        )
+        errors = self.reporter._validate_audit_inputs(
+            op="query_items",
+            corepy=[result],
+            rust=[result],
+            corepy_blocks=[cp],
+            rust_blocks=[rs],
+        )
+        self.assertTrue(any("lazy pager object" in e for e in errors))
 
 
 if __name__ == "__main__":

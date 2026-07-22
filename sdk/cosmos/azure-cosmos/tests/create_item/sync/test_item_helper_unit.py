@@ -7,8 +7,10 @@
 
 The create helper sits between the public create call and the backend. On
 each call it finds the container's resource id, builds the request, and
-then either lets the backend handle it or, when no backend is set, calls
-the existing client. These tests check each of those steps on its own.
+then drives it through the configured backend: the real (or a rust-shaped
+test) backend builds+sends+parses a prepared request, while ``None``
+(core-python) runs the existing client via the explicit ``LegacyBackend``.
+These tests check each of those steps on its own.
 
 The async version is covered in
 ``tests/create_item/aio/test_item_helper_async_unit.py``. Which backend a
@@ -18,7 +20,7 @@ import logging
 import unittest
 from unittest.mock import MagicMock
 
-from azure.cosmos._backend.base import BackendResponse
+from azure.cosmos._backend.base import BackendResponse, CosmosBackend
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers.item_helper import ItemHelper
 
@@ -45,17 +47,26 @@ def _make_cc_with_cache_hit(rid="rid-cached"):
     return cc
 
 
-def _fall_through_backend(name):
-    """Build a fake backend that does nothing and returns ``None``.
+def _capturing_backend(response):
+    """Build a real ``CosmosBackend`` that captures the prepared request it
+    receives and returns ``response`` from ``execute``.
 
-    Returning ``None`` tells the helper to use the existing client
-    instead. These tests use it to check what the helper passes to that
-    client.
+    Inheriting from ``CosmosBackend`` (rather than a bare ``MagicMock``) means
+    ``run_operation`` is the genuine default implementation -- build the
+    request, call ``execute``, parse the reply -- so these tests exercise the
+    real dispatch template, not a mocked stand-in for it.
     """
-    backend = MagicMock()
-    backend.name = name
-    backend.execute = MagicMock(return_value=None)
-    return backend
+    class _CapturingBackend(CosmosBackend):
+        name = "rust"
+
+        def __init__(self) -> None:
+            self.prepared = None
+
+        def execute(self, prepared):
+            self.prepared = prepared
+            return response
+
+    return _CapturingBackend()
 
 
 # ---------------------------------------------------------------------------
@@ -63,39 +74,23 @@ def _fall_through_backend(name):
 # ---------------------------------------------------------------------------
 
 class TestItemHelperFallThrough(unittest.TestCase):
-    """When the backend does nothing, the helper calls the existing client.
+    """When ``backend`` is ``None`` (core-python), the helper calls the
+    existing client via the explicit ``LegacyBackend``.
 
-    These tests check the call the helper makes: the request it builds,
-    the id-generation and indexing options, and the container resource id
-    (both when it is already cached and when it has to be refreshed).
+    These tests check the call the helper makes: the id-generation and
+    indexing options, and the container resource id (both when it is
+    already cached and when it has to be refreshed). The request the
+    helper builds *for a backend* is checked separately in
+    ``test_backend_execute_offered_a_prepared_request`` below, which uses a
+    real (non-``None``) backend.
     """
-
-    def test_backend_execute_offered_a_prepared_request(self):
-        """The helper builds a request and offers it to the backend, even
-        when the backend does nothing with it. This checks the request
-        carries the right operation, container, and body.
-        """
-        cc = _make_cc_with_cache_hit()
-        cc.CreateItem = MagicMock(return_value="ok")
-        backend = _fall_through_backend("core-python")
-
-        ItemHelper(backend, cc).create_item(
-            container_link="dbs/db/colls/c",
-            body={"id": "x"},
-        )
-
-        backend.execute.assert_called_once()
-        prepared = backend.execute.call_args.args[0]
-        self.assertEqual(prepared.op, "create_item")
-        self.assertEqual(prepared.container_link, "dbs/db/colls/c")
-        self.assertEqual(prepared.body_bytes, b'{"id":"x"}')
 
     def test_disable_automatic_id_generation_lands_in_options(self):
         """Turning off automatic id generation sets the matching option."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(_fall_through_backend("core-python"), cc).create_item(
+        ItemHelper(None, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=False,
@@ -108,7 +103,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(_fall_through_backend("core-python"), cc).create_item(
+        ItemHelper(None, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             enable_automatic_id_generation=True,
@@ -121,7 +116,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(_fall_through_backend("core-python"), cc).create_item(
+        ItemHelper(None, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
             indexing_directive=1,
@@ -135,7 +130,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         cc = _make_cc_with_cache_hit(rid="rid-from-cache")
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(_fall_through_backend("core-python"), cc).create_item(
+        ItemHelper(None, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -158,7 +153,7 @@ class TestItemHelperFallThrough(unittest.TestCase):
         )
         cc.CreateItem = MagicMock(return_value="ok")
 
-        ItemHelper(_fall_through_backend("core-python"), cc).create_item(
+        ItemHelper(None, cc).create_item(
             container_link="dbs/db/colls/c",
             body={"id": "x"},
         )
@@ -178,15 +173,39 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
     expects and does not call the existing client.
     """
 
+    def test_backend_offered_a_well_formed_prepared_request(self):
+        """The helper builds a request and offers it to the backend. This
+        checks the request carries the right operation, container, and body.
+        """
+        cc = _make_cc_with_cache_hit()
+        cc.CreateItem = MagicMock(side_effect=AssertionError("legacy must not run"))
+        backend = _capturing_backend(BackendResponse(
+            status_code=201,
+            sub_status=0,
+            headers=None,
+            body=b'{"id":"x"}',
+            diagnostics=None,
+        ))
+
+        ItemHelper(backend, cc).create_item(
+            container_link="dbs/db/colls/c",
+            body={"id": "x"},
+        )
+
+        cc.CreateItem.assert_not_called()
+        prepared = backend.prepared
+        self.assertIsNotNone(prepared)
+        self.assertEqual(prepared.op, "create_item")
+        self.assertEqual(prepared.container_link, "dbs/db/colls/c")
+        self.assertEqual(prepared.body_bytes, b'{"id":"x"}')
+
     def test_real_backend_response_parsed_into_cosmos_dict(self):
         """A successful backend response is returned to the caller as a
         dict; the existing client is not called."""
         cc = _make_cc_with_cache_hit()
         cc.CreateItem = MagicMock(side_effect=AssertionError("legacy must not run"))
 
-        backend = MagicMock()
-        backend.name = "rust"
-        backend.execute = MagicMock(return_value=BackendResponse(
+        backend = _capturing_backend(BackendResponse(
             status_code=201,
             sub_status=0,
             headers=None,
@@ -199,7 +218,7 @@ class TestItemHelperConfiguredBackend(unittest.TestCase):
             body={"id": "x"},
         )
 
-        backend.execute.assert_called_once()
+        self.assertIsNotNone(backend.prepared)
         cc.CreateItem.assert_not_called()
         # The result is a dict, so the caller reads fields by key.
         self.assertEqual(result["id"], "x")

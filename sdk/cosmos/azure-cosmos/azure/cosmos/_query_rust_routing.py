@@ -26,8 +26,8 @@ Python HTTP path, and that packages the request and the response so a Rust-serve
 page looks exactly like a legacy one. Both the sync and async client connections
 import from here, so the two paths share one source of truth and cannot drift.
 It has three jobs: decide if a page is safe for Rust (the ``can_use_*`` gates),
-build the request the binding reads (``build_query_items_prepared_request`` /
-``build_read_all_items_prepared_request``), and finish the response to match
+build the page request (``build_query_items_prepared_query`` /
+``build_read_all_items_prepared_query``), and finish the response to match
 legacy (``finalize_rust_query_page_response``).
 Without this file the query fast paths in the client would have nothing to call
 and every query page would stay on the Python HTTP path.
@@ -37,67 +37,32 @@ that case lands on Rust, and the gates go away once the Rust path reaches full p
 """
 from __future__ import annotations
 
-import re
-from typing import Any, Callable, Mapping, Optional, Union, cast
+from typing import Any, AsyncIterator, Callable, Iterator, Mapping, Optional, Union, cast
 
 from azure.core.utils import CaseInsensitiveDict
 
 from . import _base as base
 from . import _utils
 from . import http_constants
-from ._backend.base import OP_QUERY_ITEMS, OP_READ_ALL_ITEMS, PreparedRequest
+from ._backend.base import (
+    OP_QUERY_ITEMS,
+    OP_READ_ALL_ITEMS,
+    BackendResponse,
+    PreparedQuery,
+    QueryNotSupportedByBackendError,
+    QueryPage,
+)
 from ._constants import _Constants as Constants
-from ._helpers._body_wire import serialize_body_to_bytes
 from ._helpers._pk_wire import serialize_partition_key_to_wire
 from ._query_advisor import get_query_advice_info
 from .partition_key import _build_partition_key_from_properties
 
-
-# Operations the Rust driver cannot run across partitions today: they need work
-# that combines results from every partition (sorting, grouping, de-duplicating,
-# counting/summing, cutting to N rows, full-text/hybrid ranking). A cross-partition
-# query that uses any of these must stay on the legacy path, which does that
-# combining itself. Single-partition queries are unaffected.
-_UNSUPPORTED_CROSS_PARTITION_QUERY_PATTERNS = (
-    re.compile(r"\bORDER\s+BY\b", re.IGNORECASE),
-    re.compile(r"\bGROUP\s+BY\b", re.IGNORECASE),
-    re.compile(r"\bDISTINCT\b", re.IGNORECASE),
-    re.compile(r"\bTOP\s+\d+\b", re.IGNORECASE),
-    re.compile(r"\bOFFSET\b", re.IGNORECASE),
-    re.compile(r"\bLIMIT\b", re.IGNORECASE),
-    re.compile(r"\b(COUNT|SUM|AVG|MIN|MAX|COUNTIF|DCOUNT)\s*\(", re.IGNORECASE),
-    re.compile(r"\b(FULLTEXTCONTAINS|FULLTEXTSCORE|RRF|WEIGHTEDRANKFUSION)\s*\(", re.IGNORECASE),
-)
+_RUST_QUERY_FALLBACK_COUNT = 0
 
 
-def _extract_query_text(query_payload: Union[str, dict[str, Any]]) -> Optional[str]:
-    """Pull the SQL text out of the query payload (a plain string or a {"query": ...} dict).
-
-    Returns None when there is no query string; the shape check needs the raw text to scan it.
-    """
-    if isinstance(query_payload, str):
-        return query_payload
-    if isinstance(query_payload, dict):
-        query_text = query_payload.get("query")
-        if isinstance(query_text, str):
-            return query_text
-    return None
-
-
-def _is_rust_supported_cross_partition_query_shape(query_payload: Union[str, dict[str, Any]]) -> bool:
-    """True only when the query text uses none of the operations listed in
-    ``_UNSUPPORTED_CROSS_PARTITION_QUERY_PATTERNS``.
-
-    Without this, a cross-partition query that needs the server to combine results across
-    partitions could route to Rust and return wrong or partial results.
-    """
-    query_text = _extract_query_text(query_payload)
-    if not isinstance(query_text, str):
-        return False
-    for pattern in _UNSUPPORTED_CROSS_PARTITION_QUERY_PATTERNS:
-        if pattern.search(query_text):
-            return False
-    return True
+def rust_query_fallback_count() -> int:
+    """Return Rust query attempts rejected through typed capability fallback."""
+    return _RUST_QUERY_FALLBACK_COUNT
 
 
 def can_use_rust_backend_for_query_page(
@@ -114,17 +79,34 @@ def can_use_rust_backend_for_query_page(
 
     This is the gate for query_items. It says no (keep the page on the Python HTTP
     path) whenever anything does not fit: no Rust backend, no query, the query-plan
-    step, a non-document query, or the caller used a feed_range, a prefix partition
-    key, a custom read timeout, an availability strategy, full-text score scope, or
-    query advice. If those pass, it looks at the partition key: a real partition_key
-    means a single-partition query (allowed), while an empty key means a
-    cross-partition query, which is allowed only when the caller did not turn
-    cross-partition off and the query text uses none of the operations the Rust
-    driver cannot run across partitions.
+    step, a non-document query, the internal read_items query leg (a confirmed
+    driver panic -- see the ``Constants.ReadItemsQueryLeg`` check below), or the
+    caller used a feed_range, a prefix partition key, a custom read timeout, an
+    availability strategy, full-text score scope, or query advice -- none of which
+    ``PreparedQuery`` has a field for, so the Rust path cannot represent them yet.
+
+    Unlike those, the query *text* is deliberately not inspected here. This gate
+    used to regex-scan the SQL for clauses (``ORDER BY`` / ``GROUP BY`` / ...) the
+    Rust driver could not run across partitions and route those queries around it;
+    that made Python's regex the thing deciding what the driver could do, which is
+    fragile (a clause could appear in a string literal, or an unsupported shape the
+    patterns never anticipated could slip through) and duplicates a decision the
+    driver is the actual authority on. The query shape is instead always handed to
+    the driver once the structural checks below pass. If its query plan requires
+    an unsupported merge operation, the binding returns a typed capability error
+    and this module falls back before exposing an error to the caller.
     """
     if backend is None or query_payload is None or is_query_plan:
         return False
     if resource_type != http_constants.ResourceType.Document:
+        return False
+    # read_items builds an internal per-partition "id IN (...)" query for each
+    # chunk of its batch and marks those queries with this flag. The rust query
+    # path cannot serve that shape yet (it panics resolving the partition
+    # topology for it), so keep read_items' query legs on legacy while its
+    # point-read legs still use rust. Normal query_items calls never set this.
+    # This is a confirmed-crash gate (not a capability guess), so it stays.
+    if options.get(Constants.ReadItemsQueryLeg):
         return False
     if "feed_range" in kwargs:
         return False
@@ -153,10 +135,11 @@ def can_use_rust_backend_for_query_page(
     if partition_key_wire == "[]":
         # Honor explicit "cross partition disabled" requests by keeping them on
         # the legacy path, which raises the same BAD_REQUEST the service returns
-        # today for unsupported cross-partition execution.
+        # today for unsupported cross-partition execution. This is a plain
+        # request-shape flag, not a parse of the query text.
         if options.get("enableCrossPartitionQuery") is False:
             return False
-        return _is_rust_supported_cross_partition_query_shape(query_payload)
+        return True
 
     if container_properties is None:
         return False
@@ -234,14 +217,14 @@ def _extract_container_link_from_docs_path(path: str) -> str:
     return normalized_path[: -len("/docs")] if normalized_path.endswith("/docs") else normalized_path
 
 
-def build_query_items_prepared_request(
+def build_query_items_prepared_query(
     *,
     path: str,
     query_payload: Union[str, dict[str, Any]],
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedRequest:
-    """Build the PreparedRequest for one query-items page dispatch.
+) -> PreparedQuery:
+    """Build the PreparedQuery for one query-items page dispatch.
 
     Assembles the request object the binding reads: it copies the request headers,
     carries the excluded-locations and timeout values, works out the container link
@@ -258,45 +241,83 @@ def build_query_items_prepared_request(
         options=options,
         req_headers=req_headers,
     )
-    return PreparedRequest(
+    query_text = query_payload if isinstance(query_payload, str) else query_payload.get("query")
+    parameters = () if isinstance(query_payload, str) else tuple(query_payload.get("parameters") or ())
+    return PreparedQuery(
         op=OP_QUERY_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
-        body_bytes=serialize_body_to_bytes(query_payload),
+        query=query_text,
+        parameters=parameters,
         partition_key_header=partition_key_header,
+        max_item_count=options.get("maxItemCount"),
+        continuation=options.get("continuation"),
         headers=prepared_headers,
-        item_id=None,
     )
 
 
-def build_read_all_items_prepared_request(
+def build_read_all_items_prepared_query(
     *,
     path: str,
     options: Mapping[str, Any],
     req_headers: Mapping[str, Any],
-) -> PreparedRequest:
-    """Build the PreparedRequest for one read_all_items page dispatch.
+) -> PreparedQuery:
+    """Build the PreparedQuery for one read_all_items page dispatch.
 
-    Builds the native read-feed request the Rust side reads for partition-targeted
-    read_all_items. Note the binding currently only reaches this for a partition-
-    targeted scope (a PartitionKey header present); whole-container read_all_items is
-    served through the query-page path instead, because the driver does not yet
-    support cross-partition read-feed fan-out. Preserves parity-sensitive request
-    metadata (partition key targeting, timeout, excluded locations, forwarded headers).
+    The scope is carried without choosing an execution strategy in Python. The
+    shared driver uses native read-feed for a logical partition and its internal
+    query planner for a whole-container read.
     """
-    return PreparedRequest(
+    return PreparedQuery(
         op=OP_READ_ALL_ITEMS,
         container_link=_extract_container_link_from_docs_path(path),
-        body_bytes=b"",
         partition_key_header=_resolve_partition_key_header_for_feed_dispatch(
             options=options,
             req_headers=req_headers,
         ),
+        max_item_count=options.get("maxItemCount"),
+        continuation=options.get("continuation"),
         headers=_build_prepared_headers_for_rust_feed_dispatch(
             options=options,
             req_headers=req_headers,
         ),
-        item_id=None,
     )
+
+
+def query_page_to_backend_response(page: QueryPage) -> BackendResponse:
+    """Adapt a page reply for the existing response/error parser."""
+    return BackendResponse(
+        status_code=page.status_code,
+        sub_status=page.sub_status,
+        headers=page.headers,
+        body=page.body,
+        diagnostics=page.diagnostics,
+    )
+
+
+def run_query_page_on_rust_backend(backend: Any, prepared: PreparedQuery) -> Optional[QueryPage]:
+    """Fetch one page through the sync page boundary."""
+    try:
+        pages: Iterator[QueryPage] = backend.execute_pages(prepared)
+        return next(pages, None)
+    except QueryNotSupportedByBackendError:
+        global _RUST_QUERY_FALLBACK_COUNT  # pylint: disable=global-statement
+        _RUST_QUERY_FALLBACK_COUNT += 1
+        return None
+
+
+async def run_query_page_on_rust_backend_async(
+    backend: Any, prepared: PreparedQuery
+) -> Optional[QueryPage]:
+    """Fetch one page through the async page boundary."""
+    try:
+        pages: AsyncIterator[QueryPage] = backend.execute_pages(prepared)
+        return await pages.__anext__()
+    except StopAsyncIteration:
+        return None
+    except QueryNotSupportedByBackendError:
+        global _RUST_QUERY_FALLBACK_COUNT  # pylint: disable=global-statement
+        _RUST_QUERY_FALLBACK_COUNT += 1
+        return None
 
 
 def finalize_rust_query_page_response(

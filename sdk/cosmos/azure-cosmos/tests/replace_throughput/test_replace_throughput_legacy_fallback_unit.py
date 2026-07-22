@@ -30,6 +30,11 @@ def _make_offer() -> Dict[str, Any]:
 
 
 def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
+    """Legacy path (sync, ``_backend=None``): ReplaceOffer must receive the mutated
+    offer copy that _replace_throughput produced, and the original queried offer must
+    stay untouched. A marker set only on the mutated copy proves the right object was
+    sent; without this a fallback regression could PUT back the old throughput.
+    """
     container = SyncContainerProxy.__new__(SyncContainerProxy)
     source_offer = _make_offer()
     captured: Dict[str, Any] = {}
@@ -56,7 +61,7 @@ def test_sync_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 
-    monkeypatch.setattr("azure.cosmos.container._replace_throughput", _mark_only_mutated_copy)
+    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper._replace_throughput", _mark_only_mutated_copy)
 
     container.replace_throughput(500)
 
@@ -82,6 +87,9 @@ class _AsyncIterable:
 
 @pytest.mark.asyncio
 async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatch):
+    """Async twin: the async legacy fallback also PUTs the mutated offer copy, not the
+    source object.
+    """
     container = AsyncContainerProxy.__new__(AsyncContainerProxy)
     source_offer = _make_offer()
     captured: Dict[str, Any] = {}
@@ -111,7 +119,7 @@ async def test_async_fallback_replace_offer_uses_mutated_offer_object(monkeypatc
         del throughput
         new_throughput_properties["__mutated_marker__"] = True
 
-    monkeypatch.setattr("azure.cosmos.aio._container._replace_throughput", _mark_only_mutated_copy)
+    monkeypatch.setattr("azure.cosmos._helpers.throughput_helper._replace_throughput", _mark_only_mutated_copy)
 
     await container.replace_throughput(500)
 

@@ -108,6 +108,18 @@ def driver_transport_error_type(rust_module: Optional[Any]) -> type:
     return _UnmatchableDriverError
 
 
+def driver_unsupported_query_error_type(rust_module: Optional[Any]) -> type:
+    """Return the binding error used when the driver rejects a query plan."""
+    exc = (
+        getattr(rust_module, "UnsupportedQueryFeatureError", None)
+        if rust_module is not None
+        else None
+    )
+    if isinstance(exc, type) and issubclass(exc, BaseException):
+        return exc
+    return _UnmatchableDriverError
+
+
 def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
     """Stop our async-credential bridge on close, and never raise.
 

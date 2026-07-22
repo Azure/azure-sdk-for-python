@@ -22,7 +22,7 @@ from unittest.mock import MagicMock, patch
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
-from azure.cosmos._backend.base import BackendResponse, OP_PATCH_ITEM
+from azure.cosmos._backend.base import BackendResponse, CosmosBackend, OP_PATCH_ITEM
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos.container import ContainerProxy
 
@@ -187,7 +187,7 @@ class TestContainerPatchItemPreservesLegacyBehaviour(unittest.TestCase):
         lock_use_recorder.__enter__.assert_called()
 
 
-class _CapturingBackend:
+class _CapturingBackend(CosmosBackend):
     """A fake backend that records the request it was given."""
 
     name = "rust"

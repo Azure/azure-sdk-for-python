@@ -11,9 +11,8 @@ behaviour is already pinned by the sync tests in
 ``tests/upsert_item/sync/``. This file covers only the async-specific
 touchpoints upsert adds:
 
-1. ``UpsertItem`` is awaited on the fall-through path (the core-python
-   path, exercised here with a fake backend whose ``execute`` returns
-   ``None``).
+1. ``UpsertItem`` is awaited on the core-python path (``backend=None``,
+   routed through the explicit ``AsyncLegacyBackend``).
 2. The partition key is awaited out of the body (write-with-body), and
    ``etag`` / ``match_condition`` still reach the legacy options as the
    ``accessCondition`` an upsert honours.
@@ -29,17 +28,6 @@ from azure.core import MatchConditions
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
-def _async_fall_through_backend():
-    """An async backend whose ``execute`` returns ``None`` (the documented
-    "caller runs the legacy path" signal -- the core-python / no-backend
-    case; the real rust backend now dispatches upsert to its own binding
-    entry point)."""
-    backend = MagicMock()
-    backend.name = "core-python"
-    backend.execute = AsyncMock(return_value=None)
-    return backend
-
-
 def _connection_with_cache(rid="rid"):
     cc = MagicMock()
     cc._container_properties_cache = {"dbs/db/colls/c": {"_rid": rid}}
@@ -52,17 +40,17 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncUpsertItem(unittest.TestCase):
-    """The async fall-through path is the core-python upsert path."""
+    """The core-python (``backend=None``) path is the async fall-through upsert path."""
 
     def test_async_dispatch_falls_through_to_upsert_item(self):
-        """Async fall-through awaits ``UpsertItem`` and returns its value;
-        the body and link are forwarded unchanged and id generation is
-        disabled (an upsert never mints an id)."""
+        """Core-python (``backend=None``) awaits ``UpsertItem`` and returns
+        its value; the body and link are forwarded unchanged and id
+        generation is disabled (an upsert never mints an id)."""
         cc = _connection_with_cache()
         body = {"id": "order-42", "pk": "customerA"}
 
         async def _run():
-            return await AsyncItemHelper(_async_fall_through_backend(), cc).upsert_item(
+            return await AsyncItemHelper(None, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body=body,
             )
@@ -82,7 +70,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(_async_fall_through_backend(), cc).upsert_item(
+            await AsyncItemHelper(None, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "customerA"},
                 match_condition=MatchConditions.IfMissing,
@@ -109,7 +97,7 @@ class TestAsyncUpsertItem(unittest.TestCase):
         cc.UpsertItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(_async_fall_through_backend(), cc).upsert_item(
+            await AsyncItemHelper(None, cc).upsert_item(
                 container_link="dbs/db/colls/c",
                 body={"id": "x", "pk": "a"},
             )

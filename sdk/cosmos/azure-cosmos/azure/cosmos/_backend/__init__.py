@@ -20,15 +20,22 @@ every ``list_*`` / ``query_*`` (and read-many) is an ``execute_pages`` feed; and
 a transactional batch is ``execute_batch``. Adding an operation is a new
 operation-kind value and a branch, not a new method.
 
-Today only ``execute`` is wired, and only for the point item operations;
-``execute_pages`` and ``execute_batch`` are defined but raise
-``NotImplementedError`` until the feed and batch operations are added.
+``execute`` is wired for the point item operations and the feed-range / offer
+operations; ``execute_pages`` is wired for ``query_items`` / ``read_all_items``.
+``execute_batch`` is defined but raises ``NotImplementedError`` until the batch
+operation is added.
 
 Two backends exist. The rust backend forwards each operation to the compiled
 Rust driver; it is the path going forward and the only one meant for production.
-The core-python choice is represented by having no backend at all: the factory
-returns ``None`` and the SDK runs its legacy in-place code instead, kept only for
-testing and comparison.
+The core-python choice runs the SDK's legacy in-place code, kept for testing and
+comparison. It is now an explicit backend -- ``LegacyBackend`` (see
+``azure.cosmos._backend.legacy``) -- so every family coordinator (the item
+helper, and the throughput / feed-range coordinators) holds one backend by
+interface and never reads ``None`` as "call legacy": both backends run through
+``CosmosBackend.run_operation`` and the legacy one just runs the original call.
+The stored client selection is still ``Optional`` (the factory returns ``None``
+for core-python); each coordinator coerces that ``None`` to ``LegacyBackend`` at
+its own boundary (see ``azure.cosmos._backend.legacy.coerce_backend``).
 
 The async versions of all of this live in ``azure.cosmos.aio._backend``.
 """

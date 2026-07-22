@@ -216,6 +216,11 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
         "DriverTransportError",
         m.py().get_type_bound::<wire::DriverTransportError>(),
     )?;
+    m.add(
+        "UnsupportedQueryFeatureError",
+        m.py()
+            .get_type_bound::<wire::UnsupportedQueryFeatureError>(),
+    )?;
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     Ok(())
 }

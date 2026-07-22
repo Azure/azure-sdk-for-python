@@ -461,14 +461,15 @@ class TestFlattenOptionsToHeaders(unittest.TestCase):
         self.assertEqual(headers["preTriggerInclude"], "t1,t2")
         self.assertEqual(headers["postTriggerInclude"], "p1")
 
-    def test_initial_headers_flattened(self):
-        """``initialHeaders`` is spread out into individual entries; the nested key is dropped."""
+    def test_initial_headers_kept_nested(self):
+        """``initialHeaders`` is kept as a nested dict so the binding forwards each
+        entry verbatim; it is not flattened into individual top-level entries."""
         headers = flatten_options_to_headers(
             {"initialHeaders": {"x-ms-foo": "bar", "x-ms-baz": "qux"}}
         )
-        self.assertEqual(headers["x-ms-foo"], "bar")
-        self.assertEqual(headers["x-ms-baz"], "qux")
-        self.assertNotIn("initialHeaders", headers)
+        self.assertEqual(headers["initialHeaders"], {"x-ms-foo": "bar", "x-ms-baz": "qux"})
+        self.assertNotIn("x-ms-foo", headers)
+        self.assertNotIn("x-ms-baz", headers)
 
     def test_access_condition_becomes_if_match(self):
         """``accessCondition`` IfMatch becomes an ``If-Match`` header; the raw key is dropped."""

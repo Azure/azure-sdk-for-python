@@ -7,22 +7,26 @@
 
 Same as the sync ``CosmosBackend``, except ``execute`` is a coroutine so the
 async container can ``await`` it without bridging threads. ``execute_pages``
-and ``execute_batch`` are reserved here too and raise ``NotImplementedError``
-until the query and batch operations are added.
+is implemented for ``query_items`` / ``read_all_items`` (see
+:class:`~azure.cosmos.aio._backend.rust.AsyncRustBackend`) as an async iterator;
+``execute_batch`` is reserved here too and raises ``NotImplementedError`` until
+the batch operation is added.
 
-``PreparedRequest`` / ``BackendResponse`` and the reserved ``PreparedQuery`` /
-``QueryPage`` / ``PreparedBatch`` / ``BatchResponse`` are defined on the sync
-side (they carry pure data with no I/O) and re-exported here.
+``PreparedRequest`` / ``BackendResponse`` and ``PreparedQuery`` / ``QueryPage`` /
+the reserved ``PreparedBatch`` / ``BatchResponse`` and :class:`LegacyOperation`
+are defined on the sync side (they carry pure data with no I/O) and re-exported
+here.
 """
 from __future__ import annotations
 
 import abc
-from typing import AsyncIterator, Optional
+from typing import Any, AsyncIterator, Awaitable, Callable, Optional
 
 from azure.cosmos._backend.base import (
     BackendReply,
     BackendResponse,
     BatchResponse,
+    LegacyOperation,
     PreparedBatch,
     PreparedQuery,
     PreparedRequest,
@@ -34,6 +38,7 @@ __all__ = [
     "BackendReply",
     "BackendResponse",
     "BatchResponse",
+    "LegacyOperation",
     "PreparedBatch",
     "PreparedQuery",
     "PreparedRequest",
@@ -44,17 +49,23 @@ __all__ = [
 class AsyncCosmosBackend(abc.ABC):
     """Abstract dispatch target for any Cosmos operation (async).
 
-    The async helper holds one of these by interface and awaits ``execute``
-    on it without knowing which concrete backend it has. The operation kind
-    is on ``prepared.op``; the backend branches on it.
+    A per-family async coordinator (``AsyncItemHelper``, ``AsyncThroughputHelper``,
+    ``AsyncFeedRangeHelper``) holds one of these by interface and drives its
+    operations through :meth:`run_operation` without knowing which concrete
+    backend it has. Engine selection and legacy fallback happen behind this
+    interface: a rust-backed client holds an :class:`AsyncRustBackend` and a
+    core-python client holds an
+    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend`, and every
+    coordinator treats both the same -- none of them branch on ``None``, on
+    which concrete backend they hold, or on ``execute`` returning ``None``. The
+    operation kind is on ``prepared.op``; the backend branches on it.
 
-    The helper already builds the ``PreparedRequest`` before awaiting ``execute``
-    and parses the returned ``BackendResponse`` with ``parse_backend_response`` --
-    it does this for every operation -- so a backend only has to send the
-    request and report the reply. ``execute`` may still return ``None`` as a
-    fallback, which tells the helper to run the legacy in-place
-    core-python implementation; that path is kept only for testing, not
-    production.
+    ``execute`` is the wire-level primitive (send one prepared request, return
+    the raw reply) that the rust path uses; the async query/feed-range/offer
+    routing helpers await it directly. The core-python
+    :class:`~azure.cosmos.aio._backend.legacy.AsyncLegacyBackend` is **not**
+    ``PreparedRequest``-driven, so it does not implement ``execute`` and instead
+    overrides :meth:`run_operation` to await the legacy operation.
     """
 
     #: Short identifier surfaced in the startup INFO log and the
@@ -64,15 +75,66 @@ class AsyncCosmosBackend(abc.ABC):
 
     @abc.abstractmethod
     async def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Issue a single async Cosmos operation.
+        """Issue a single async Cosmos operation on the wire and return the raw reply.
 
-        Dispatch on ``prepared.op``. Return ``None`` to let the caller
-        run the legacy implementation, or a ``BackendResponse`` to have
-        the caller parse the result.
+        Dispatch on ``prepared.op`` and return a ``BackendResponse`` for the
+        caller to parse. This is the rust wire primitive; a backend that does
+        not send prepared requests (the core-python legacy backend) does not
+        implement it.
         """
         ...
 
-    # --- Reserved methods for the query and batch operations ---------------
+    async def run_operation(
+        self,
+        *,
+        build_prepared: Callable[[], Awaitable[PreparedRequest]],
+        legacy_operation: LegacyOperation,
+        parse_response: Callable[[BackendResponse], Any],
+        rust_eligible: bool = True,
+        fallback_exceptions: tuple[type[BaseException], ...] = (),
+    ) -> Any:
+        """Run one engine-selected operation end to end and return the final result.
+
+        The async twin of
+        :meth:`azure.cosmos._backend.base.CosmosBackend.run_operation`: the
+        single entry point every async family coordinator uses so none of them
+        ever interpret ``None`` from selection or ``execute`` to decide the
+        legacy path.
+
+        The default is the engine (rust) flow: when the request is representable
+        by this engine (``rust_eligible``), await ``build_prepared`` to construct
+        the ``PreparedRequest`` lazily, await :meth:`execute`, then parse the
+        reply (``parse_response`` is synchronous, matching the legacy path);
+        otherwise await the supplied legacy operation. ``AsyncLegacyBackend``
+        overrides this to always await the legacy operation.
+
+        :keyword build_prepared: Awaitable builder for the rust ``PreparedRequest``
+            (invoked only on the rust path).
+        :keyword legacy_operation: Typed port to the legacy call; see
+            :class:`~azure.cosmos._backend.base.LegacyOperation`. Its ``invoke``
+            returns an awaitable of the final result.
+        :keyword parse_response: Synchronous parser from ``BackendResponse`` to
+            the final result.
+        :keyword rust_eligible: ``False`` when this specific request cannot be
+            represented on the rust path, which forces the legacy operation even on
+            a rust-backed client.
+        :keyword fallback_exceptions: Narrow, operation-specific compatibility
+            failures that should retry through the supplied legacy operation.
+        :returns: The final result the public method returns to the caller.
+        :rtype: Any
+        """
+        if not rust_eligible:
+            return await legacy_operation.invoke()
+        try:
+            prepared = await build_prepared()
+            response = await self.execute(prepared)
+            assert response is not None  # execute() only returns None for a None prepared request
+            return parse_response(response)
+        except fallback_exceptions:
+            return await legacy_operation.invoke()
+
+    # --- execute_pages is implemented by AsyncRustBackend; execute_batch is
+    # reserved for the not-yet-built batch operation ----------------------
     #
     # Concrete (not abstract) so today's async backends stay valid without
     # implementing them. A backend adds query or batch support by overriding
@@ -81,13 +143,12 @@ class AsyncCosmosBackend(abc.ABC):
     def execute_pages(self, prepared: PreparedQuery) -> AsyncIterator[QueryPage]:
         """Return a query (or read-many) result one ``QueryPage`` at a time.
 
-        Reserved: the query operations are not implemented yet, so this raises.
-        A backend that supports them overrides it as an async iterator of
-        ``QueryPage`` (using ``QUERY_TO_BINDING_METHOD``).
+        The default here raises; ``AsyncRustBackend`` overrides it (using
+        ``QUERY_TO_BINDING_METHOD``) as an async iterator of ``QueryPage`` that
+        dispatches ``query_items`` / ``read_all_items``.
         """
         raise NotImplementedError(
-            "execute_pages is reserved for the query and read-many operations "
-            "and is not implemented yet."
+            "execute_pages is not implemented by this backend."
         )
 
     async def execute_batch(self, prepared: PreparedBatch) -> BatchResponse:
@@ -101,4 +162,3 @@ class AsyncCosmosBackend(abc.ABC):
             "execute_batch is reserved for the transactional-batch operation "
             "and is not implemented yet."
         )
-

@@ -133,7 +133,9 @@ import pytest
 #:         random token (see ``SENTINEL_TOKEN`` below); ``response_headers``
 #:         on the raised path is now guarded against the stale-headers
 #:         carry-over bug (Bug 3 of the principal-engineer review).
-PLUGIN_VERSION = "v2"
+#:   v3 -- records the Rust binding operation-count delta so backend selection
+#:         cannot be mistaken for actual Rust execution.
+PLUGIN_VERSION = "v3"
 
 
 # ---------------------------------------------------------------------------
@@ -324,6 +326,26 @@ def _aio_read_all_items_target() -> Tuple[Any, str, str]:
 
 
 _register_op("read_all_items", sync=_sync_read_all_items_target, aio=_aio_read_all_items_target)
+
+
+# read_items ------------------------------------------------------------------
+# Points the parity harness at the batched read-many call. read_items is a
+# client-side orchestration built from point reads and per-partition queries, so
+# the capture records the returned CosmosList (the merged result) for one call.
+# Without this registration the harness could not intercept read_items, so the
+# two-column read_items audit (core-python vs rust) could not be generated.
+
+def _sync_read_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import container as _sync_container_mod
+    return _sync_container_mod, "ContainerProxy", "read_items"
+
+
+def _aio_read_items_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _container as _aio_container_mod
+    return _aio_container_mod, "ContainerProxy", "read_items"
+
+
+_register_op("read_items", sync=_sync_read_items_target, aio=_aio_read_items_target)
 
 
 # read_feed_ranges -------------------------------------------------------------
@@ -542,6 +564,54 @@ def _snapshot_headers(container_self: Any) -> Dict[str, str]:
         return {}
 
 
+def _snapshot_result_headers(result: Any, container_self: Any) -> Dict[str, str]:
+    getter = getattr(result, "get_response_headers", None)
+    if callable(getter):
+        try:
+            return {str(k): str(v) for k, v in getter().items()}
+        except Exception:  # pylint: disable=broad-except
+            pass
+    return _snapshot_headers(container_self)
+
+
+def _rust_operation_count() -> Optional[int]:
+    try:
+        from azure.cosmos import _rust
+        counter = getattr(_rust, "operation_count", None)
+        if callable(counter):
+            return int(counter())
+    except (ImportError, TypeError, ValueError):
+        pass
+    return None
+
+
+def _rust_fallback_count() -> int:
+    from azure.cosmos._backend.base import rust_compatibility_fallback_count
+    from azure.cosmos._query_rust_routing import rust_query_fallback_count
+    return rust_compatibility_fallback_count() + rust_query_fallback_count()
+
+
+def _execution_evidence(before: Optional[int], fallback_before: int) -> Dict[str, Any]:
+    after = _rust_operation_count()
+    fallback_delta = max(0, _rust_fallback_count() - fallback_before)
+    if before is None or after is None:
+        return {
+            "executed_engine": "unknown",
+            "rust_operation_delta": None,
+            "rust_fallback_delta": fallback_delta,
+        }
+    delta = max(0, after - before)
+    return {
+        "executed_engine": (
+            "rust"
+            if delta > 0 and fallback_delta == 0
+            else "core-python"
+        ),
+        "rust_operation_delta": delta,
+        "rust_fallback_delta": fallback_delta,
+    }
+
+
 def _snapshot_headers_identity(container_self: Any) -> int:
     """Return the ``id()`` of the live ``last_response_headers`` dict.
 
@@ -622,6 +692,8 @@ def _build_sync_wrapper(op_name: str, surface: str,
         nodeid = _STATE.current_nodeid or "<unknown-nodeid>"
         ordinal = _STATE.next_ordinal(nodeid)
         backend = _infer_backend_label(self_container)
+        rust_count_before = _rust_operation_count()
+        fallback_count_before = _rust_fallback_count()
         test_doc = _STATE.current_test_doc
         request_view = {
             "args": [_coerce_json_safe(a) for a in args],
@@ -666,6 +738,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                             "response_headers": response_headers,
                             "exception": _serialise_exception(iter_exc),
                         }
+                        payload.update(_execution_evidence(rust_count_before, fallback_count_before))
                         _emit_block(payload)
                         raise
                     payload = {
@@ -682,6 +755,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                         "response_headers": _snapshot_headers(self_container),
                         "exception": None,
                     }
+                    payload.update(_execution_evidence(rust_count_before, fallback_count_before))
                     _emit_block(payload)
                     for item in materialized:
                         yield item
@@ -712,6 +786,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                             "response_headers": response_headers,
                             "exception": _serialise_exception(iter_exc),
                         }
+                        payload.update(_execution_evidence(rust_count_before, fallback_count_before))
                         _emit_block(payload)
                         raise
                     payload = {
@@ -728,6 +803,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                         "response_headers": _snapshot_headers(self_container),
                         "exception": None,
                     }
+                    payload.update(_execution_evidence(rust_count_before, fallback_count_before))
                     _emit_block(payload)
                     return iter(materialized)
 
@@ -744,9 +820,10 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 "test_doc": test_doc,
                 "request": request_view,
                 "return_value": _coerce_json_safe(result),
-                "response_headers": _snapshot_headers(self_container),
+                "response_headers": _snapshot_result_headers(result, self_container),
                 "exception": None,
             }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
             _emit_block(payload)
             return result
         except BaseException as exc:  # pylint: disable=broad-except
@@ -774,6 +851,7 @@ def _build_sync_wrapper(op_name: str, surface: str,
                 "response_headers": response_headers,
                 "exception": _serialise_exception(exc),
             }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
             _emit_block(payload)
             raise
 
@@ -788,6 +866,8 @@ def _build_aio_wrapper(op_name: str, surface: str,
         nodeid = _STATE.current_nodeid or "<unknown-nodeid>"
         ordinal = _STATE.next_ordinal(nodeid)
         backend = _infer_backend_label(self_container)
+        rust_count_before = _rust_operation_count()
+        fallback_count_before = _rust_fallback_count()
         test_doc = _STATE.current_test_doc
         request_view = {
             "args": [_coerce_json_safe(a) for a in args],
@@ -807,9 +887,10 @@ def _build_aio_wrapper(op_name: str, surface: str,
                 "test_doc": test_doc,
                 "request": request_view,
                 "return_value": _coerce_json_safe(result),
-                "response_headers": _snapshot_headers(self_container),
+                "response_headers": _snapshot_result_headers(result, self_container),
                 "exception": None,
             }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
             _emit_block(payload)
             return result
         except BaseException as exc:  # pylint: disable=broad-except
@@ -833,6 +914,7 @@ def _build_aio_wrapper(op_name: str, surface: str,
                 "response_headers": response_headers,
                 "exception": _serialise_exception(exc),
             }
+            payload.update(_execution_evidence(rust_count_before, fallback_count_before))
             _emit_block(payload)
             raise
 

@@ -10,16 +10,18 @@
 # Backend is selectable so the same probe runs both engines:
 #   ./run_phase0_probe.sh 480                         # core-python + rust (default)
 #   PHASE0_BACKENDS=rust ./run_phase0_probe.sh 480    # rust
+# Operations are selectable so a profiling run can isolate one call path:
+#   PHASE0_OPERATIONS=read PHASE0_BACKENDS=rust ./run_phase0_probe.sh 480
 # Results land in perfdb/perfresults tagged PERF_WORKLOAD_ID=lat0-<op>-<backend>-<stamp>;
 # read them back with phase0_report.py.
 set -uo pipefail
 cd "$(dirname "$0")"
 source ~/perf_secrets.env
-source ./perf_env.sh >/dev/null 2>&1
+source ./perf_env.sh >/dev/null 2>&1 || exit 1
 source ~/venvs/perfdrill/bin/activate
 
 DURATION="${1:-480}"
-OPERATIONS=(read create upsert replace delete patch)
+OPERATIONS=(${PHASE0_OPERATIONS:-read create upsert replace delete patch})
 BACKENDS=(${PHASE0_BACKENDS:-core-python rust})
 
 _ns="$(date +%N 2>/dev/null || echo 000000000)"
@@ -39,6 +41,7 @@ export WORKLOAD_ARRIVAL_RATE=0
 export WORKLOAD_USE_PROXY=false
 export COSMOS_REQUEST_TIMEOUT=30
 export PERF_REPORT_INTERVAL=60
+write_run_manifest "${LOG_DIR}" "${STAMP}" "phase0"
 
 echo "=== Phase 0: light-load latency probe (conc=1) ==="
 echo "    stamp=${STAMP} dur=${DURATION}s ops=${OPERATIONS[*]} backends=${BACKENDS[*]}"

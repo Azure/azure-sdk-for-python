@@ -40,7 +40,7 @@
 //! or settings are never used for another.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `documents.rs`): client = the `CosmosClient`; binding = this compiled `_rust`
+//! `documents/`): client = the `CosmosClient`; binding = this compiled `_rust`
 //! extension; rust driver / driver runtime / shared Tokio runtime as above;
 //! driver handle = the cache key string; credential = how the customer proves who
 //! they are.
@@ -334,7 +334,7 @@ fn runtime_context(
 }
 
 /// Read-only fetch of the process-wide `RuntimeContext` for the per-operation
-/// path (`wire.rs`), which needs the shared Tokio runtime to run a request but
+/// path (`wire/`), which needs the shared Tokio runtime to run a request but
 /// must not (re)build it. Raises a clear "init_client must be called before
 /// {op_name}" if no client has initialized the runtimes yet. Without it, an
 /// operation issued before `init_client` would fail deep down with an obscure

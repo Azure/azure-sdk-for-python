@@ -24,8 +24,12 @@ import asyncio # pylint: disable=C4763  # Used for Semaphore and gather, not for
 from typing import Tuple, Any, Sequence, Optional, TYPE_CHECKING, Mapping
 
 from azure.cosmos import _base, exceptions
+from azure.cosmos._constants import _Constants as Constants
 from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._query_builder import _QueryBuilder
+from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
+from azure.cosmos._helpers._item_dispatch import pick_backend
+from azure.cosmos.aio._backend.legacy import ASYNC_LEGACY_BACKEND
 from azure.cosmos.partition_key import _get_partition_key_from_partition_key_definition, PartitionKeyType
 from azure.cosmos import CosmosList
 
@@ -245,8 +249,40 @@ class ReadItemsHelperAsync:
         request_kwargs['response_hook'] = local_response_hook
         request_kwargs.pop("containerProperties", None)
 
+        # read_items is a read-many built from many small reads: items are grouped
+        # by partition, and a single-item group is read here as a point read (a
+        # multi-item group becomes a query in _execute_query). Route that point read
+        # through the shared AsyncItemHelper -- the same read path the async
+        # container.read_item uses -- so it runs on the rust backend when one is
+        # configured and falls back to the legacy ReadItem otherwise.
+        # point_read_options (this item's partition key plus the operation's options)
+        # is passed as request_options, so the request matches the one the legacy
+        # point read would send. The multi-item (query) legs deliberately stay on
+        # legacy (see _execute_query), so a read_items call runs its point reads on
+        # rust and its batched queries on legacy. The not-found case is caught here
+        # so a missing item is left out, as before.
+        request_kwargs["request_options"] = point_read_options
+        # read_timeout has no equivalent on the rust point-read path (the driver
+        # exposes no per-request read timeout), so honor it by keeping this leg on
+        # legacy -- the same choice the query gate makes (see _query_rust_routing).
+        # This keeps a read_items call's point legs and query legs consistent when
+        # the caller sets read_timeout. Any other call still routes to rust. Force
+        # legacy with the explicit ASYNC_LEGACY_BACKEND, never a None sentinel; the
+        # AsyncItemHelper holds one backend by interface either way.
+        backend = pick_backend(self.client)
+        if self.options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
+            backend = ASYNC_LEGACY_BACKEND
         try:
-            result = await self.client.ReadItem(doc_link, point_read_options, **request_kwargs)
+            result = await AsyncItemHelper(
+                backend,
+                self.client,
+                ensure_container_cached=None,
+            ).read_item(
+                container_link=self.collection_link,
+                document_link=doc_link,
+                item_id=item_id,
+                **request_kwargs,
+            )
             return result, CaseInsensitiveDict(captured_headers)
         except exceptions.CosmosResourceNotFoundError as e:
             captured_headers.update(e.headers)
@@ -289,8 +325,15 @@ class ReadItemsHelperAsync:
             query_obj = _QueryBuilder.build_parameterized_query_for_items(
                 partition_items_dict, self.partition_key_definition)
 
+        # Keep the batched "id IN (...)" chunk query on the legacy path: the rust
+        # query path cannot serve this internal read_items query shape yet (it
+        # panics resolving the partition topology). The point-read leg still uses
+        # rust. This marker is read by can_use_rust_backend_for_query_page and is
+        # scoped to this query call only (self.options is left untouched).
+        query_options = dict(self.options)
+        query_options[Constants.ReadItemsQueryLeg] = True
         page_iterator = self.client.QueryItems(
-            self.collection_link, query_obj, self.options, **request_kwargs).by_page()
+            self.collection_link, query_obj, query_options, **request_kwargs).by_page()
 
         chunk_indexed_results = []
         async for page in page_iterator:

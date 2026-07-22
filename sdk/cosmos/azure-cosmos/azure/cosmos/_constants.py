@@ -46,6 +46,15 @@ class _Constants:
     # x-ms-cosmos-intended-collection-rid header for container-recreate detection).
     ContainerRID: Literal["containerRID"] = "containerRID"
 
+    # Marks the per-partition "id IN (...)" query that read_items issues for a
+    # multi-item chunk. The query-routing gate (can_use_rust_backend_for_query_page)
+    # reads this flag and keeps such a query on the legacy path, because the Rust
+    # query path cannot serve that shape yet (it panics resolving the partition
+    # topology). read_items' single-item chunks still go through the Rust point
+    # read; only the batched-query legs are pinned to legacy. A leading underscore
+    # marks it as an internal, non-wire option flag.
+    ReadItemsQueryLeg: Literal["_read_items_query_leg"] = "_read_items_query_leg"
+
     # When the customer passes a ``timeout=<seconds>`` kwarg to an item
     # operation, the helper layer stashes the value in the prepared
     # request under this key so the Rust backend can pick it up. The

@@ -173,8 +173,8 @@ def test_prep_never_emits_if_match_or_if_none_match():
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """``initial_headers={'x-trace-id': 'abc'}`` shows up as a plain
-    ``x-trace-id`` entry so the binding forwards it as-is."""
+    """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
+    ``initialHeaders`` dict so the binding forwards each entry verbatim."""
     prepared = build_patch_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -183,8 +183,8 @@ def test_initial_headers_are_flattened_into_outer_headers():
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["x-trace-id"] == "abc-123"
-    assert "initialHeaders" not in prepared.headers
+    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
+    assert "x-trace-id" not in prepared.headers
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():

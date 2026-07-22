@@ -58,6 +58,7 @@ from __future__ import annotations
 
 from typing import Any, Dict, Mapping, Optional, Tuple
 
+from .._availability_strategy_config import DEFAULT_THRESHOLD_MS
 from .._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
@@ -91,6 +92,29 @@ _SEQUENCE_VALUED_OPTION_KEYS = frozenset({"preTriggerInclude", "postTriggerInclu
 # match v4. (``maxIntegratedCacheStaleness`` is also truthy-gated but keeps its
 # own wire-name branch in ``flatten_options_to_headers``.)
 _TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
+
+# Internal option-keys that live in the options dict for the legacy pipeline's
+# own use but are NOT wire headers, so ``flatten_options_to_headers`` must never
+# emit them. The legacy ``_base.GetHeaders`` path already ignores them (it reads
+# only the keys it knows); the Rust prep's catch-all would otherwise copy them
+# through as bogus headers (dropped by the binding in production, but a hard
+# error under ``COSMOS_WIRE_STRICT``). These reach a point-operation's options
+# only when a caller reuses a ``build_options``-processed / query options dict as
+# the request options -- e.g. ``read_items`` routes each single-item leg through
+# the point-read prep with the batch's query options. The normal point methods
+# build a minimal ``{"partitionKey": ...}`` options dict and never carry these.
+#   * ``operationStartTime`` -- pipeline timing bookkeeping (``_base.build_options``).
+#   * ``timeoutScope`` / ``timeout`` / ``read_timeout`` -- legacy timeout policy
+#     inputs; the Rust path takes the timeout via the ``__overall_timeout_seconds``
+#     sentinel header instead, set from the ``timeout`` kwarg.
+#   * ``enableCrossPartitionQuery`` -- a query knob with no meaning on a point read.
+_NON_WIRE_INTERNAL_OPTION_KEYS = frozenset({
+    Constants.OperationStartTime,
+    Constants.TimeoutScope,
+    Constants.Kwargs.TIMEOUT,
+    Constants.Kwargs.READ_TIMEOUT,
+    "enableCrossPartitionQuery",
+})
 
 # Option-keys that ``flatten_options_to_headers`` hands to the binding as their
 # raw camelCase form, expecting the RUST fast path to translate them to the
@@ -126,6 +150,11 @@ RUST_HANDLED_OPTION_KEYS = frozenset({
     "responsePayloadOnWriteDisabled",
     "excludedLocations",
     "sessionToken",
+    # Lifted to a typed driver field / forwarded verbatim by the binding
+    # (see extract_op_modifiers). availabilityStrategy -> cross-region hedging
+    # control; initialHeaders -> arbitrary customer headers forwarded as-is.
+    "availabilityStrategy",
+    "initialHeaders",
 })
 
 
@@ -149,6 +178,28 @@ def _normalize_option_value(option_key: str, value: Any) -> Any:
     return value
 
 
+def _availability_strategy_to_wire(value: Any) -> Optional[str]:
+    """Normalize a per-request ``availability_strategy`` into the compact string
+    the rust binding parses (see ``parse_availability_strategy`` in wire.rs).
+
+    The customer's value has already been validated into one of:
+      * ``False`` -> hedging explicitly disabled -> ``"disabled"``
+      * ``True`` -> hedging on with the SDK default threshold
+      * a ``CrossRegionHedgingStrategy`` (from a dict) -> hedging on with its
+        primary ``threshold_ms``
+    Returns ``None`` when there is nothing to send (unrecognized / no threshold),
+    leaving the driver on its default.
+    """
+    if value is False:
+        return "disabled"
+    if value is True:
+        return "enabled:{}".format(DEFAULT_THRESHOLD_MS)
+    threshold_ms = getattr(value, "threshold_ms", None)
+    if threshold_ms is not None:
+        return "enabled:{}".format(int(threshold_ms))
+    return None
+
+
 def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
     """Build the ``PreparedRequest.headers`` map from an internal options dict.
 
@@ -156,8 +207,15 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
     every point operation, so the six cannot drift on the bytes they emit.
     It mirrors the value handling of the legacy ``_base.GetHeaders`` path:
 
-    - ``initialHeaders`` is flattened so each inner header rides as its own
-      entry (the binding forwards ``x-ms-...`` / ``prefer`` / ``if-*`` verbatim).
+    - ``initialHeaders`` -- the customer's per-request headers -- is passed
+      through as a nested dict under the same key, so the binding forwards each
+      entry verbatim (including non-``x-ms-`` names). Keeping it nested (rather
+      than flattening into the top-level map) preserves its "these are customer
+      headers" provenance, so the binding never confuses them with option-keys.
+    - ``availabilityStrategy`` -- the per-request cross-region hedging control --
+      is normalized to the compact string the binding parses (``disabled`` /
+      ``enabled[:<ms>]``); ``availability_strategy=False`` ships ``disabled`` so
+      the caller's explicit disable reaches the driver.
     - ``accessCondition`` -- the ``{"type", "condition"}`` shape built from
       ``etag`` / ``match_condition`` -- becomes an ``If-Match`` /
       ``If-None-Match`` header (the rust path does not run the legacy header
@@ -175,6 +233,13 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
     - ``indexingDirective`` / ``throughputBucket`` are emitted **only when
       truthy** -- ``indexing_directive=Default(0)`` and ``throughput_bucket=0``
       ship no header, matching the legacy ``GetHeaders`` truthy gate.
+    - pipeline-internal keys that are not wire headers
+      (``_NON_WIRE_INTERNAL_OPTION_KEYS``: ``operationStartTime``,
+      ``timeoutScope``, ``timeout``, ``read_timeout``,
+      ``enableCrossPartitionQuery``) are skipped -- they only appear when a
+      caller reuses a query / ``build_options`` options dict for a point op
+      (e.g. ``read_items``' single-item legs), and the legacy path ignores them
+      too.
     - every other option-key is copied through unchanged.
 
     Does **not** stamp the container rid or the overall-timeout sentinel:
@@ -188,9 +253,28 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
     """
     headers: Dict[str, Any] = {}
     for option_key, option_value in options.items():
+        if option_key in _NON_WIRE_INTERNAL_OPTION_KEYS:
+            # Pipeline-internal bookkeeping that is not a wire header (see the
+            # constant's note). Skip so it never rides as a bogus header on the
+            # Rust path; the legacy path ignores it in GetHeaders regardless.
+            continue
         if option_key == "initialHeaders" and isinstance(option_value, dict):
-            for inner_name, inner_value in option_value.items():
-                headers[inner_name] = inner_value
+            # Keep customer headers as a nested dict so the binding can forward
+            # them verbatim -- including non-``x-ms-`` names it would otherwise
+            # drop -- without confusing them with internal option-keys (which
+            # keeps the COSMOS_WIRE_STRICT option-key guard meaningful). The
+            # legacy path handles initial_headers separately, and this helper is
+            # rust-prep-only, so only the rust point path is affected.
+            headers["initialHeaders"] = dict(option_value)
+            continue
+        if option_key == "availabilityStrategy":
+            # Normalize the per-request hedging control to the compact string the
+            # binding parses (``disabled`` / ``enabled[:<ms>]``). ``False`` (the
+            # customer explicitly disabling hedging) must reach the wire, so this
+            # is not truthy-gated.
+            wire_value = _availability_strategy_to_wire(option_value)
+            if wire_value is not None:
+                headers["availabilityStrategy"] = wire_value
             continue
         if option_key == "accessCondition" and isinstance(option_value, dict):
             condition = option_value.get("condition")

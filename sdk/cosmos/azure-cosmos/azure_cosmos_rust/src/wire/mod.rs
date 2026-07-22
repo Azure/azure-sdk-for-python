@@ -1,10 +1,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-//! The shared request/reply translation between Python and the rust driver: the
-//! machinery every point operation runs through. If `documents.rs` is the thin
-//! per-operation front counter (six doorways), this file is the engine room
-//! behind all of them. It does the full round trip in both directions:
+//! Shared request and response translation between Python and the Rust driver.
+//! Operation-specific execution lives in `items`, `query`, `feed_range`, and
+//! `offers`; this module owns the behavior all four families need:
 //!
 //!   * Request (down): look up the rust driver by handle, parse the container
 //!     link and partition key, sort the customer's headers into the fields the
@@ -16,19 +15,11 @@
 //!     the real `x-ms-...` wire names; and map a response-less failure to a typed
 //!     error the Python layer converts to `ServiceResponseError`.
 //!
-//! If this file did not exist, the six functions in `documents.rs` would each
-//! re-implement the driver call, the header sorting, the response-tuple building,
-//! and the error mapping -- the fiddly, correctness-critical details where bugs
-//! hide (wire header names, partition-key shapes, which failures are "transport"
-//! vs "the service said 404", whether `no_response` applies). Duplicated six ways
-//! they would drift, and the customer would see wrong response headers (broken
-//! `etag`/tracing), wrong exception types (their `except ServiceResponseError`
-//! and retry policies stop matching), or a request routed to the wrong partition.
-//! Defining it once keeps all of that correct and identical across every
-//! operation and across both the sync and async paths.
+//! Keeping this behavior here prevents operation families from implementing
+//! header mapping, error mapping, and response conversion differently.
 //!
 //! Terminology (consistent with `factory.py`, `rust.py`, `credential.rs`,
-//! `documents.rs`, `runtime.rs`): binding = this compiled `_rust` extension; rust
+//! `documents/`, `runtime.rs`): binding = this compiled `_rust` extension; rust
 //! driver = the `CosmosDriver` engine; shared Tokio runtime = the one process-wide
 //! Tokio thread pool that runs the driver's work; driver handle = the string
 //! naming which rust driver a client uses.
@@ -45,15 +36,15 @@ use pyo3::types::{PyBytes, PyDict, PyTuple};
 use azure_core::http::headers::{HeaderName, HeaderValue};
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
-    error::CosmosError,
+    error::{CosmosError, CosmosStatus},
     models::{
         ActivityId, CosmosOperation, CosmosResponse, FeedRange, ItemReference, PartitionKey,
         PartitionKeyDefinition, PartitionKeyKind, PartitionKeyValue, PartitionKeyVersion,
         ResponseBody, SessionToken,
     },
     options::{
-        ContentResponseOnWrite, EndToEndOperationLatencyPolicy, ExcludedRegions,
-        OperationOptionsBuilder,
+        AvailabilityStrategy, ContentResponseOnWrite, EndToEndOperationLatencyPolicy,
+        ExcludedRegions, HedgeThreshold, HedgingStrategy, OperationOptionsBuilder,
     },
 };
 use serde::{Deserialize, Serialize};
@@ -92,6 +83,17 @@ mod transport_error {
     );
 }
 pub use transport_error::DriverTransportError;
+
+#[allow(unexpected_cfgs)]
+mod unsupported_query_error {
+    pyo3::create_exception!(
+        azure_cosmos_rust,
+        UnsupportedQueryFeatureError,
+        pyo3::exceptions::PyRuntimeError,
+        "The Cosmos driver cannot execute this query plan."
+    );
+}
+pub use unsupported_query_error::UnsupportedQueryFeatureError;
 
 // ---------------------------------------------------------------------------
 // Binding-invocation counter (a check for the perf drill, not part of serving
@@ -167,67 +169,6 @@ pub(crate) fn retry_count() -> u64 {
 // Shared singleton-operation runner (sync + async)
 // ---------------------------------------------------------------------------
 
-/// Sync runner shared by all six point operations (`documents.rs` sync entries).
-/// Steps: bump the binding-invocation counter, look up the rust driver by handle,
-/// parse the container link and partition key, then -- with the GIL released --
-/// block the calling thread on the shared Tokio runtime until the driver resolves
-/// the container, builds and runs the operation, and returns. Turn the driver's
-/// `CosmosResponse` (or a `CosmosError` that still carries a wire response) into
-/// the `BackendResponse` tuple the Python parser reads. Only three things vary per
-/// op, so each entry point passes them in: the item id, whether `no_response`
-/// applies (writes only), and a closure that builds the operation from the
-/// resolved `ItemReference`. The async sibling below spawns this same future
-/// instead of blocking, so both paths run identical driver work.
-pub(crate) fn run_item_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    item_id: String,
-    op_name: &str,
-    honor_content_response: bool,
-    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
-) -> PyResult<Bound<'py, PyTuple>> {
-    // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Bumped on entry so it reflects every op routed into the
-    // binding on the sync path.
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key = parse_partition_key_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    // Sync path: block the calling thread on the shared runtime until the driver
-    // finishes. (The async sibling below spawns the very same future instead, so
-    // both paths run identical driver work.)
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_singleton_future(
-            driver,
-            database_name,
-            container_name,
-            partition_key,
-            item_id,
-            modifiers,
-            honor_content_response,
-            build_op,
-        ))
-    });
-
-    tuple_from_result(py, response_result)
-}
-
-/// Aborts the spawned driver task if this guard is dropped before the task has
-/// finished. The problem it solves: a Tokio `JoinHandle` does NOT own its task --
-/// dropping the handle *detaches* the task, leaving it to run to completion in the
-/// background (holding a connection, spending RU) with its result thrown away. So
-/// the async runner keeps this guard (built from the task's `abort_handle()`)
-/// alive for the lifetime of the bridged Python awaitable. When asyncio cancels
-/// the `await` (a client-side timeout, or the surrounding task being cancelled)
-/// `pyo3-async-runtimes` drops the bridging future, which drops this guard, which
-/// calls `abort()` -- so the in-flight driver operation is actually cancelled (its
-/// connection released, no further work or RU spent) instead of detached. On
-/// normal completion the task is already finished, so `abort()` is a harmless
 /// no-op.
 struct AbortOnDrop(tokio::task::AbortHandle);
 
@@ -235,565 +176,6 @@ impl Drop for AbortOnDrop {
     fn drop(&mut self) {
         self.0.abort();
     }
-}
-
-/// Async sibling of `run_item_operation`: same inputs and identical driver work,
-/// but instead of blocking a worker thread it spawns the driver future on the
-/// shared Tokio runtime (the same runtime the driver was built on, so its
-/// connection pool and timers stay put) and hands the asyncio event loop an
-/// awaitable that resolves to the `BackendResponse` tuple. Awaiting it uses no
-/// Python thread per in-flight call. The awaitable owns an `AbortOnDrop` guard
-/// (see above) so a cancelled `await` actually cancels the driver operation
-/// rather than detaching it.
-pub(crate) fn run_item_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    item_id: String,
-    op_name: &str,
-    honor_content_response: bool,
-    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send + 'static,
-) -> PyResult<Bound<'py, PyAny>> {
-    // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Bumped on entry, async path.
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    // Synchronous extraction (GIL held) -- identical to the sync path. Errors
-    // here surface when the coroutine is created, before it is awaited.
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key = parse_partition_key_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    // Spawn the driver work on the shared runtime; `join` is a cheap handle the
-    // bridge below awaits without holding the GIL or pinning a worker thread.
-    let join = runtime_ctx.tokio_rt.spawn(run_singleton_future(
-        driver,
-        database_name,
-        container_name,
-        partition_key,
-        item_id,
-        modifiers,
-        honor_content_response,
-        build_op,
-    ));
-
-    // Propagate Python-side cancellation to the driver. Without this, cancelling
-    // the awaitable would only drop the JoinHandle -- which *detaches* the Tokio
-    // task, letting the operation run to completion in the background (holding a
-    // connection, spending RU) with its result discarded. Holding this guard for
-    // the lifetime of the bridging future means a cancelled `await` drops the
-    // guard and aborts the task instead, so a client-side timeout actually stops
-    // the work.
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    // Bridge the Rust JoinHandle to a Python asyncio awaitable. The response
-    // tuple is built under the GIL after the future resolves, exactly like the
-    // sync path's `tuple_from_result`.
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        // Keep the abort guard alive for exactly as long as we await the task; if
-        // the Python future is cancelled, this block is dropped, dropping the
-        // guard and aborting the task (see AbortOnDrop).
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-// ---------------------------------------------------------------------------
-// Query page execution
-//
-// This is the engine that lets feed-style operations be fetched by the Rust
-// driver instead of by the Python HTTP path:
-//   * query_items (one SQL query page)
-//   * read_all_items (native read-feed, no synthetic SQL)
-// The rest of wire.rs handles single-document operations (create / read /
-// replace / delete / patch by id). The flow is: the Python wrapper hands us a
-// PreparedRequest, we work out scope (single logical partition vs full
-// container), ask the driver for one page, and turn the driver's reply back
-// into the exact shape the Python feed parser expects.
-// ---------------------------------------------------------------------------
-
-/// The scope of the query, worked out from `PreparedRequest.partition_key_header`.
-/// This is how we know whether the customer asked for one partition or the whole
-/// container.
-enum QueryTarget {
-    /// Search one logical partition (the customer passed a `partition_key`).
-    Partition(PartitionKey),
-    /// Search the full container (the customer used cross-partition query, or
-    /// this is a whole-container `read_all_items`).
-    CrossPartition,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-enum FeedRangePartitionKeySource {
-    Standard,
-    EmptySentinel,
-    ExplicitEmptySequence,
-}
-
-#[derive(Clone, Debug)]
-struct FeedRangePartitionKeyInput {
-    partition_key: PartitionKey,
-    source: FeedRangePartitionKeySource,
-}
-
-#[derive(Debug)]
-struct FeedRangeFromPartitionKeyPayload {
-    min: String,
-    max: String,
-    is_max_inclusive: bool,
-}
-
-#[derive(Debug)]
-enum FeedRangeFromPartitionKeyError {
-    Cosmos(CosmosError),
-    Validation(String),
-    LegacyAttribute(String),
-    LegacyType(String),
-}
-
-fn maybe_handle_feed_range_partition_key_special_case(
-    definition: &PartitionKeyDefinition,
-    source: FeedRangePartitionKeySource,
-) -> Result<Option<FeedRangeFromPartitionKeyPayload>, FeedRangeFromPartitionKeyError> {
-    match source {
-        FeedRangePartitionKeySource::Standard => Ok(None),
-        FeedRangePartitionKeySource::EmptySentinel => {
-            if definition.version() == PartitionKeyVersion::V1 {
-                return Err(FeedRangeFromPartitionKeyError::LegacyType(
-                    "Unexpected type for PK component: <class 'azure.cosmos.partition_key._Empty'>"
-                        .to_string(),
-                ));
-            }
-            let epk = "00000000000000000000000000000000".to_string();
-            Ok(Some(FeedRangeFromPartitionKeyPayload {
-                min: epk.clone(),
-                max: epk,
-                is_max_inclusive: true,
-            }))
-        }
-        FeedRangePartitionKeySource::ExplicitEmptySequence => {
-            if definition.kind() == PartitionKeyKind::MultiHash {
-                Ok(None)
-            } else {
-                Err(FeedRangeFromPartitionKeyError::LegacyAttribute(
-                    "'int' object has no attribute 'upper'".to_string(),
-                ))
-            }
-        }
-    }
-}
-
-/// Entry point the binding calls to run one query page and wait for it. Finds the
-/// driver for this client, splits the container link into database + container
-/// names, works out the query scope, then runs the driver work below and converts
-/// the reply into the tuple the Python parser reads. Mirrors `run_item_operation`
-/// but builds a `CosmosOperation::query_items` targeting either a logical partition
-/// (`["pk"]`) or the full container (`[]`).
-pub(crate) fn run_query_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_query_future(
-            driver,
-            database_name,
-            container_name,
-            query_target,
-            modifiers,
-            body_bytes,
-        ))
-    });
-
-    tuple_from_feed_result(py, response_result)
-}
-
-/// Async sibling of `run_query_operation`.
-pub(crate) fn run_query_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_query_future(
-        driver,
-        database_name,
-        container_name,
-        query_target,
-        modifiers,
-        body_bytes,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Entry point the binding calls to run one read_all_items feed page and wait for it.
-/// The partition-key header controls scope:
-///   * `[]` => full-container read (`read_all_items_cross_partition`)
-///   * non-empty array => logical-partition read (`read_all_items`)
-///
-/// NOTE: as of today the Python binding only dispatches here for the non-empty
-/// (partition-targeted) scope. Whole-container read_all_items is served through the
-/// query path on the binding side, because the driver does not yet support
-/// cross-partition read-feed fan-out, so the `[]` arm here is currently unreached
-/// in production and kept for when that support lands.
-pub(crate) fn run_read_all_items_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_read_all_items_future(
-            driver,
-            database_name,
-            container_name,
-            query_target,
-            modifiers,
-        ))
-    });
-
-    tuple_from_feed_result(py, response_result)
-}
-
-/// Async sibling of `run_read_all_items_operation`.
-pub(crate) fn run_read_all_items_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    modifiers: OpModifiers,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let query_target = parse_query_target_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_read_all_items_future(
-        driver,
-        database_name,
-        container_name,
-        query_target,
-        modifiers,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Entry point that enumerates every partition-key range for one container.
-/// The Python wrapper uses this to implement `ContainerProxy.read_feed_ranges`
-/// on the Rust path (sync version).
-pub(crate) fn run_read_feed_ranges_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    force_refresh: bool,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_read_feed_ranges_future(
-            driver,
-            database_name,
-            container_name,
-            force_refresh,
-        ))
-    });
-
-    tuple_from_partition_key_ranges_result(py, response_result)
-}
-
-/// Async sibling of `run_read_feed_ranges_operation`.
-pub(crate) fn run_read_feed_ranges_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    force_refresh: bool,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_read_feed_ranges_future(
-        driver,
-        database_name,
-        container_name,
-        force_refresh,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_partition_key_ranges_result(py, response_result)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Entry point that computes the feed-range envelope for one partition key.
-pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result = py.allow_threads(|| {
-        runtime_ctx
-            .tokio_rt
-            .block_on(run_feed_range_from_partition_key_future(
-                driver,
-                database_name,
-                container_name,
-                partition_key_input,
-            ))
-    });
-
-    tuple_from_feed_range_from_partition_key_result(py, response_result)
-}
-
-/// Async sibling of `run_feed_range_from_partition_key_operation`.
-pub(crate) fn run_feed_range_from_partition_key_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    container_link: &str,
-    partition_key_header: &str,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let (database_name, container_name) = parse_container_link(container_link)?;
-    let partition_key_input = parse_feed_range_partition_key_header(partition_key_header)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(run_feed_range_from_partition_key_future(
-            driver,
-            database_name,
-            container_name,
-            partition_key_input,
-        ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_feed_range_from_partition_key_result(py, response_result)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Entry point the binding calls to run one container's offer/throughput read and
-/// wait for it (sync). Offers are an account-level, non-partitioned resource, so --
-/// unlike `run_query_operation` -- there is no container to resolve and no partition
-/// to target: it builds `CosmosOperation::query_offers` against the account carrying
-/// the same offer query JSON the legacy path sends, and returns the page in the
-/// `{"Offers":[...]}` envelope the Python offer parser reads.
-pub(crate) fn run_read_offer_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<Option<CosmosResponse>, CosmosError> = py.allow_threads(|| {
-        runtime_ctx
-            .tokio_rt
-            .block_on(run_read_offer_future(driver, modifiers, body_bytes))
-    });
-
-    tuple_from_offer_feed_result(py, response_result)
-}
-
-/// Async sibling of `run_read_offer_operation`.
-pub(crate) fn run_read_offer_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(run_read_offer_future(driver, modifiers, body_bytes));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_offer_feed_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Entry point the binding calls to run one container's offer/throughput replace and
-/// wait for it (sync). Offers are account-level and non-partitioned, so -- like
-/// `run_read_offer_operation` -- there is no container to resolve: it builds
-/// `CosmosOperation::replace_offer` for the given offer RID carrying the mutated
-/// offer document, and returns the single updated offer via `tuple_from_result` (the
-/// single-document shape, not the offer-feed envelope the read uses).
-pub(crate) fn run_replace_offer_operation<'py>(
-    py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
-    offer_id: String,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let response_result: Result<CosmosResponse, CosmosError> = py.allow_threads(|| {
-        runtime_ctx.tokio_rt.block_on(run_replace_offer_future(
-            driver, modifiers, offer_id, body_bytes,
-        ))
-    });
-
-    tuple_from_result(py, response_result)
-}
-
-/// Async sibling of `run_replace_offer_operation`.
-pub(crate) fn run_replace_offer_operation_async<'py>(
-    py: Python<'py>,
-    handle: &str,
-    modifiers: OpModifiers,
-    offer_id: String,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let driver = lookup_driver(handle)?;
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx.tokio_rt.spawn(run_replace_offer_future(
-        driver, modifiers, offer_id, body_bytes,
-    ));
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let response_result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_result(py, response_result).map(|tuple| tuple.into_any().unbind())
-        })
-    })
 }
 
 /// Look up the cached driver for a client handle, or raise if `init_client`
@@ -808,302 +190,6 @@ fn lookup_driver(handle: &str) -> PyResult<Arc<CosmosDriver>> {
                 "no driver registered for handle {handle:?}; call init_client first"
             ))
         })
-}
-
-/// The driver work shared by both runners -- the sync runner
-/// (`run_item_operation`, which blocks on it) and the async runner
-/// (`run_item_operation_async`, which spawns it) -- so the two paths do identical
-/// work. Resolve the container, build the operation from the per-op closure, apply
-/// the typed activity-id / session-token / content-response / options, and execute
-/// it. Returns the raw driver result; the callers turn it into the Python tuple
-/// under the GIL.
-async fn run_singleton_future(
-    driver: Arc<CosmosDriver>,
-    database_name: String,
-    container_name: String,
-    partition_key: PartitionKey,
-    item_id: String,
-    modifiers: OpModifiers,
-    honor_content_response: bool,
-    build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
-) -> Result<CosmosResponse, CosmosError> {
-    let container = driver
-        .resolve_container(&database_name, &container_name)
-        .await?;
-    let item_ref = ItemReference::from_name(&container, partition_key, item_id);
-    let mut op = build_op(item_ref);
-
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        // Forward the correlation id verbatim. The legacy path forwards any
-        // x-ms-activity-id string; gating on UUID-parseability silently dropped
-        // non-UUID correlation ids (e.g. an application-supplied trace id), so
-        // server-side request correlation broke for exactly those requests --
-        // the moment a customer is trying to trace one. ActivityId accepts any
-        // string, and the service treats the header as opaque.
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
-    }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
-    }
-
-    // no_response=True only applies to writes; delete / read pass
-    // honor_content_response=false and keep the driver default.
-    let content_response = if honor_content_response {
-        Some(modifiers.content_response_on_write)
-    } else {
-        None
-    };
-    let options = build_operation_options(
-        content_response,
-        modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
-        modifiers.custom_headers,
-    );
-
-    driver.execute_singleton_operation(op, options).await
-}
-
-/// The actual driver work for one query page. Resolves the container, builds a
-/// `FeedRange` that limits the search to one partition or opens it to the whole
-/// container, then builds a `query_items` operation carrying the query JSON (from
-/// the request body) plus the session token, activity id, excluded regions,
-/// timeout, and any custom headers the wrapper attached. Returns one page.
-async fn run_query_future(
-    driver: Arc<CosmosDriver>,
-    database_name: String,
-    container_name: String,
-    query_target: QueryTarget,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-) -> Result<Option<CosmosResponse>, CosmosError> {
-    let container = driver
-        .resolve_container(&database_name, &container_name)
-        .await?;
-    let feed_range = match query_target {
-        QueryTarget::Partition(partition_key) => {
-            FeedRange::for_partition(partition_key, container.partition_key_definition())
-        }
-        QueryTarget::CrossPartition => FeedRange::full(),
-    };
-    let mut op = CosmosOperation::query_items(container, Some(feed_range)).with_body(body_bytes);
-
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
-    }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
-    }
-
-    let options = build_operation_options(
-        None,
-        modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
-        modifiers.custom_headers,
-    );
-    driver.execute_operation(op, options).await
-}
-
-/// Driver work for `read_all_items`: resolve the container and run a read-feed
-/// operation either in one logical partition (when a partition-key header was
-/// provided) or across the full container (`[]`).
-async fn run_read_all_items_future(
-    driver: Arc<CosmosDriver>,
-    database_name: String,
-    container_name: String,
-    query_target: QueryTarget,
-    modifiers: OpModifiers,
-) -> Result<Option<CosmosResponse>, CosmosError> {
-    let container = driver
-        .resolve_container(&database_name, &container_name)
-        .await?;
-    let mut op = match query_target {
-        // `read_all_items` today only ever produces a full-container (`[]`) target:
-        // its public Python API takes no partition_key, so `parse_query_target_header`
-        // always yields `CrossPartition` here. The `Partition` arm is shared query
-        // scaffolding kept so this stays a total match and so a future
-        // partition-scoped read_all API drops in without touching this dispatch.
-        QueryTarget::Partition(partition_key) => {
-            CosmosOperation::read_all_items(container, partition_key)
-        }
-        QueryTarget::CrossPartition => CosmosOperation::read_all_items_cross_partition(container),
-    };
-
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
-    }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
-    }
-
-    let options = build_operation_options(
-        None,
-        modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
-        modifiers.custom_headers,
-    );
-    driver.execute_operation(op, options).await
-}
-
-/// Driver work for an offer/throughput read. Offers live at the account level and
-/// are not partitioned, so this resolves no container and targets no partition: it
-/// builds `query_offers` against the account, attaches the offer query JSON from the
-/// request body, and -- because `query_offers` (unlike `query_items`) does not set
-/// them itself -- adds the query `Content-Type` and `x-ms-documentdb-isquery`
-/// markers the service needs to treat the body as a query. The container-recreate
-/// guard header (`x-ms-cosmos-intended-collection-rid`) the wrapper attached rides
-/// through the custom-header passthrough untouched. `entry(...).or_insert_with` is
-/// used so a caller-supplied value for either marker is never overwritten.
-async fn run_read_offer_future(
-    driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
-    body_bytes: Vec<u8>,
-) -> Result<Option<CosmosResponse>, CosmosError> {
-    let account = driver.account().clone();
-    let mut op = CosmosOperation::query_offers(account).with_body(body_bytes);
-
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
-    }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
-    }
-
-    let mut custom_headers = modifiers.custom_headers;
-    custom_headers
-        .entry(HeaderName::from_static("content-type"))
-        .or_insert_with(|| HeaderValue::from("application/query+json".to_string()));
-    custom_headers
-        .entry(HeaderName::from_static("x-ms-documentdb-isquery"))
-        .or_insert_with(|| HeaderValue::from("true".to_string()));
-
-    let options = build_operation_options(
-        None,
-        modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
-        custom_headers,
-    );
-    driver.execute_operation(op, options).await
-}
-
-/// Driver work for an offer/throughput replace. Like `run_read_offer_future`, offers
-/// are an account-level, non-partitioned resource, so this resolves no container and
-/// targets no partition: it builds `CosmosOperation::replace_offer(account, offer_id)`
-/// -- where `offer_id` is the offer's RID (the driver signs the request with the
-/// lowercased RID and PUTs to `/offers/{rid}`) -- and attaches the full, already
-/// mutated offer document as the body. Unlike the read path there is no query
-/// `Content-Type` to force: a replace carries a resource body, and the driver's
-/// transport defaults an absent `Content-Type` to `application/json`. The
-/// container-recreate guard header the wrapper attached rides through the
-/// custom-header passthrough untouched. This is a single-document write, so it uses
-/// `execute_singleton_operation` (returns one `CosmosResponse`), and the callers
-/// shape it with `tuple_from_result` -- not the offer-feed envelope the read uses.
-async fn run_replace_offer_future(
-    driver: Arc<CosmosDriver>,
-    modifiers: OpModifiers,
-    offer_id: String,
-    body_bytes: Vec<u8>,
-) -> Result<CosmosResponse, CosmosError> {
-    let account = driver.account().clone();
-    let mut op = CosmosOperation::replace_offer(account, offer_id).with_body(body_bytes);
-
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
-    }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
-    }
-
-    // Offers always require the full response body: the service does not honor
-    // "return=minimal" for offers, and the caller (`replace_throughput`) reads the
-    // applied RU/s back out of the returned offer. Force content-response Enabled
-    // (the Rust SDK's own offers client does the same) so the body is never
-    // suppressed -- independent of any `no_response`/`responsePayloadOnWriteDisabled`
-    // the caller may have set. Without this the driver could return an empty body and
-    // the caller's `data["content"]["offerThroughput"]` would fail.
-    let content_response = Some(ContentResponseOnWrite::Enabled);
-    let options = build_operation_options(
-        content_response,
-        modifiers.excluded_regions_value,
-        modifiers.end_to_end_timeout,
-        modifiers.custom_headers,
-    );
-    driver.execute_singleton_operation(op, options).await
-}
-
-/// Driver work for `read_feed_ranges`: resolve the container, ask the driver for
-/// all partition-key ranges (cached unless `force_refresh` is true), and return
-/// them in min-EPK order.
-async fn run_read_feed_ranges_future(
-    driver: Arc<CosmosDriver>,
-    database_name: String,
-    container_name: String,
-    force_refresh: bool,
-) -> Result<
-    Option<Vec<azure_data_cosmos_driver::models::partition_key_range::PartitionKeyRange>>,
-    CosmosError,
-> {
-    let container = driver
-        .resolve_container(&database_name, &container_name)
-        .await?;
-    Ok(driver
-        .resolve_all_partition_key_ranges(&container, force_refresh)
-        .await)
-}
-
-/// Driver work for `feed_range_from_partition_key`: resolve container metadata,
-/// compute the effective-partition-key envelope for the supplied partition key,
-/// and return it in the legacy Python feed-range shape.
-async fn run_feed_range_from_partition_key_future(
-    driver: Arc<CosmosDriver>,
-    database_name: String,
-    container_name: String,
-    partition_key_input: FeedRangePartitionKeyInput,
-) -> Result<FeedRangeFromPartitionKeyPayload, FeedRangeFromPartitionKeyError> {
-    let container = driver
-        .resolve_container(&database_name, &container_name)
-        .await
-        .map_err(FeedRangeFromPartitionKeyError::Cosmos)?;
-    let definition = container.partition_key_definition();
-    if let Some(payload) =
-        maybe_handle_feed_range_partition_key_special_case(definition, partition_key_input.source)?
-    {
-        return Ok(payload);
-    }
-    let partition_key = partition_key_input.partition_key;
-    let pk_len = partition_key.len();
-    let path_len = definition.paths().len();
-    if definition.kind() == PartitionKeyKind::MultiHash && pk_len > path_len {
-        return Err(FeedRangeFromPartitionKeyError::Validation(format!(
-            "{pk_len} partition key components provided. Expected less than {path_len} components (number of container partition key definition components)."
-        )));
-    }
-
-    let epk = FeedRange::for_partition(partition_key, definition)
-        .min_inclusive()
-        .as_str()
-        .to_owned();
-
-    let (max, is_max_inclusive) =
-        if definition.kind() == PartitionKeyKind::MultiHash && pk_len < path_len {
-            // Prefix key semantics on MultiHash match the legacy Python helper:
-            // normal prefix -> max = min + "FF"; MIN/ MAX sentinels keep their
-            // dedicated closed forms.
-            if epk.is_empty() {
-                (String::new(), false)
-            } else if epk == "FF" {
-                ("FF".to_string(), false)
-            } else {
-                (format!("{epk}FF"), false)
-            }
-        } else {
-            (epk.clone(), true)
-        };
-
-    Ok(FeedRangeFromPartitionKeyPayload {
-        min: epk,
-        max,
-        is_max_inclusive,
-    })
 }
 
 /// Turn the driver's `Result<CosmosResponse, CosmosError>` into the
@@ -1152,6 +238,11 @@ fn tuple_from_feed_result<'py>(
             backend_response_tuple(py, 200, 0, response_headers, br#"{"Documents":[]}"#, None)
         }
         Err(cosmos_error) => {
+            if cosmos_error.status() == CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE {
+                return Err(UnsupportedQueryFeatureError::new_err(
+                    cosmos_error.to_string(),
+                ));
+            }
             if let Some(raw_http_error) =
                 backend_response_tuple_from_cosmos_error_feed(py, &cosmos_error)?
             {
@@ -1311,6 +402,12 @@ pub(crate) struct OpModifiers {
     content_response_on_write: ContentResponseOnWrite,
     excluded_regions_value: Option<ExcludedRegions>,
     end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
+    // Per-request cross-region hedging control lifted from the
+    // ``availabilityStrategy`` option-key. ``Disabled`` turns hedging off for
+    // this request (the ``availability_strategy=False`` case); ``Hedging(..)``
+    // turns it on with the caller's threshold. ``None`` means the caller did
+    // not set it and the driver keeps its default.
+    availability_strategy: Option<AvailabilityStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 }
 
@@ -1341,6 +438,40 @@ fn wire_strict_enabled() -> bool {
         .unwrap_or(false)
 }
 
+/// Parse the compact ``availabilityStrategy`` wire value the Python prep emits
+/// into the driver's typed strategy. The Python side normalizes the customer's
+/// ``availability_strategy`` (bool or threshold dict) to one of:
+///   - ``"disabled"``            -> hedging off for this request
+///   - ``"enabled:<threshold_ms>"`` -> hedging on with that primary threshold
+/// A zero / unparseable threshold falls back to hedging with no explicit
+/// threshold (the driver's default). Returns ``None`` for an empty value.
+fn parse_availability_strategy(value: &str) -> Option<AvailabilityStrategy> {
+    let trimmed = value.trim();
+    if trimmed.is_empty() {
+        return None;
+    }
+    if trimmed.eq_ignore_ascii_case("disabled") {
+        return Some(AvailabilityStrategy::Disabled);
+    }
+    // "enabled" or "enabled:<threshold_ms>".
+    let threshold_ms = trimmed
+        .split_once(':')
+        .and_then(|(_, ms)| ms.trim().parse::<u64>().ok());
+    let hedging = match threshold_ms.and_then(|ms| HedgeThreshold::new(Duration::from_millis(ms))) {
+        Some(threshold) => HedgingStrategy::new(threshold),
+        // No usable threshold -> fall back to the driver's default threshold.
+        None => HedgingStrategy::new(
+            HedgeThreshold::new(Duration::from_millis(DEFAULT_HEDGE_THRESHOLD_MS))
+                .expect("default hedge threshold is positive"),
+        ),
+    };
+    Some(AvailabilityStrategy::Hedging(hedging))
+}
+
+/// Default primary hedge threshold, matching the Python SDK's
+/// ``DEFAULT_THRESHOLD_MS`` (see ``_availability_strategy_config``).
+const DEFAULT_HEDGE_THRESHOLD_MS: u64 = 500;
+
 fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifiers> {
     let mut activity_header: Option<String> = None;
     let mut session_header: Option<String> = None;
@@ -1360,6 +491,10 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
     // Sub-second values are clamped by the driver to its 1-second
     // minimum.
     let mut end_to_end_timeout: Option<EndToEndOperationLatencyPolicy> = None;
+    // ``availability_strategy`` kwarg -> typed cross-region hedging control on
+    // the driver. The Python helper writes a compact string under the
+    // ``availabilityStrategy`` option-key (see parse_availability_strategy).
+    let mut availability_strategy: Option<AvailabilityStrategy> = None;
     // Per-request headers the driver does not model as typed fields
     // (intended-collection-rid, indexing directive, pre/post triggers,
     // priority, throughput bucket, If-Match / If-None-Match) flow
@@ -1415,6 +550,42 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
                 end_to_end_timeout = Some(EndToEndOperationLatencyPolicy::new(
                     Duration::from_secs_f64(seconds),
                 ));
+            }
+            continue;
+        }
+        // ``availabilityStrategy`` -> typed cross-region hedging control.
+        if lower == "availabilitystrategy" {
+            let strategy_str: String = value.extract().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "availabilityStrategy must be a string ('disabled' or 'enabled[:<ms>]'): {e}"
+                ))
+            })?;
+            availability_strategy = parse_availability_strategy(&strategy_str);
+            continue;
+        }
+        // ``initialHeaders`` -> arbitrary customer headers forwarded verbatim.
+        // The Python prep hands these as a nested dict (rather than flattening
+        // them into the top-level headers map) so their provenance is explicit:
+        // every entry is a customer-supplied header and is forwarded as-is,
+        // including non-``x-ms-`` names the option-key translation below would
+        // otherwise drop. Keeping them separate from the option-key stream also
+        // means COSMOS_WIRE_STRICT still guards genuine option-key drift.
+        if lower == "initialheaders" {
+            let inner: &Bound<'_, PyDict> = value.downcast().map_err(|e| {
+                PyValueError::new_err(format!(
+                    "initialHeaders must be a dict of header name -> value: {e}"
+                ))
+            })?;
+            for (header_key, header_value) in inner.iter() {
+                let header_key_str: String = header_key.extract()?;
+                let header_value_str: String = match header_value.extract::<String>() {
+                    Ok(s) => s,
+                    Err(_) => header_value.str()?.to_string(),
+                };
+                custom_headers.insert(
+                    HeaderName::from(header_key_str.to_ascii_lowercase()),
+                    HeaderValue::from(header_value_str),
+                );
             }
             continue;
         }
@@ -1494,6 +665,7 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
         content_response_on_write,
         excluded_regions_value,
         end_to_end_timeout,
+        availability_strategy,
         custom_headers,
     })
 }
@@ -1506,6 +678,7 @@ fn build_operation_options(
     content_response: Option<ContentResponseOnWrite>,
     excluded_regions: Option<ExcludedRegions>,
     end_to_end_timeout: Option<EndToEndOperationLatencyPolicy>,
+    availability_strategy: Option<AvailabilityStrategy>,
     custom_headers: HashMap<HeaderName, HeaderValue>,
 ) -> azure_data_cosmos_driver::options::OperationOptions {
     let mut builder = OperationOptionsBuilder::new();
@@ -1517,6 +690,9 @@ fn build_operation_options(
     }
     if let Some(policy) = end_to_end_timeout {
         builder = builder.with_end_to_end_latency_policy(policy);
+    }
+    if let Some(strategy) = availability_strategy {
+        builder = builder.with_availability_strategy(strategy);
     }
     if !custom_headers.is_empty() {
         builder = builder.with_custom_headers(custom_headers);
@@ -1862,51 +1038,6 @@ fn tuple_from_is_feed_range_subset_result<'py>(
 /// Entry point that computes is_feed_range_subset (sync). This is a pure local
 /// computation, so unlike the network operations it needs no driver handle and
 /// does not touch the Tokio runtime.
-pub(crate) fn run_is_feed_range_subset_operation<'py>(
-    py: Python<'py>,
-    body_bytes: Vec<u8>,
-) -> PyResult<Bound<'py, PyTuple>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let result = compute_is_feed_range_subset(&body_bytes);
-    tuple_from_is_feed_range_subset_result(py, result)
-}
-
-/// Async sibling of `run_is_feed_range_subset_operation`. The work is still a
-/// pure local computation; it runs on the shared Tokio runtime only so the async
-/// caller gets a real awaitable, matching every other async entry point.
-pub(crate) fn run_is_feed_range_subset_operation_async<'py>(
-    py: Python<'py>,
-    body_bytes: Vec<u8>,
-    op_name: &str,
-) -> PyResult<Bound<'py, PyAny>> {
-    BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
-    let runtime_ctx = require_runtime_context(op_name)?;
-
-    let join = runtime_ctx
-        .tokio_rt
-        .spawn(async move { compute_is_feed_range_subset(&body_bytes) });
-    let abort_guard = AbortOnDrop(join.abort_handle());
-
-    pyo3_async_runtimes::tokio::future_into_py(py, async move {
-        let _abort_guard = abort_guard;
-        let result = join.await.map_err(|join_error| {
-            if join_error.is_cancelled() {
-                PyRuntimeError::new_err("cosmos async operation was cancelled before it completed")
-            } else {
-                PyRuntimeError::new_err(format!("cosmos async operation task failed: {join_error}"))
-            }
-        })?;
-        Python::with_gil(|py| {
-            tuple_from_is_feed_range_subset_result(py, result)
-                .map(|tuple| tuple.into_any().unbind())
-        })
-    })
-}
-
-/// Build a `BackendResponse` tuple from a driver `CosmosError` that
-/// carries a wire response.
-///
-/// Returns `Ok(None)` when the error has no wire response (transport
 /// failures, client validation, timeouts before any HTTP round-trip).
 /// The caller falls back to a generic `PyRuntimeError` in that case.
 fn backend_response_tuple_from_cosmos_error<'py>(
@@ -2337,19 +1468,26 @@ mod tests {
     use super::{
         extract_item_id, extract_op_modifiers, feed_range_to_response_body,
         is_intentionally_ignored_option_key, json_value_to_pk_component,
-        maybe_handle_feed_range_partition_key_special_case, parse_container_link,
-        parse_feed_range_partition_key_header, parse_partition_key_header,
+        maybe_handle_feed_range_partition_key_special_case, parse_availability_strategy,
+        parse_container_link, parse_feed_range_partition_key_header, parse_partition_key_header,
         parse_query_target_header, parse_read_feed_ranges_force_refresh, response_body_to_vec,
-        tuple_from_partition_key_ranges_result, write_response_headers,
+        tuple_from_feed_result, tuple_from_partition_key_ranges_result, write_response_headers,
         FeedRangeFromPartitionKeyPayload, FeedRangePartitionKeySource, QueryTarget,
+        UnsupportedQueryFeatureError, DEFAULT_HEDGE_THRESHOLD_MS,
     };
+    use azure_core::http::headers::{HeaderName, HeaderValue};
     use azure_core::Bytes;
+    use azure_data_cosmos_driver::error::{CosmosError, CosmosStatus};
     use azure_data_cosmos_driver::models::{
         partition_key_range::PartitionKeyRange, CosmosResponseHeaders, PartitionKeyDefinition,
         PartitionKeyKind, PartitionKeyVersion, ResponseBody,
     };
+    use azure_data_cosmos_driver::options::{
+        AvailabilityStrategy, HedgeThreshold, HedgingStrategy,
+    };
     use pyo3::prelude::*;
     use pyo3::types::PyDict;
+    use std::time::Duration;
 
     // Tests for the per-operation parsers: the container-link split, the
     // partition-key header parse, the body-id read, and the per-value
@@ -2358,6 +1496,21 @@ mod tests {
     // check that an error comes back.
 
     // ---- parse_container_link -------------------------------------------------
+
+    #[test]
+    fn unsupported_query_feature_uses_typed_binding_error() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let error = CosmosError::builder()
+                .with_status(CosmosStatus::CLIENT_UNSUPPORTED_QUERY_FEATURE)
+                .with_message("unsupported query feature: ORDER BY")
+                .build();
+
+            let py_error = tuple_from_feed_result(py, Err(error)).unwrap_err();
+
+            assert!(py_error.is_instance_of::<UnsupportedQueryFeatureError>(py));
+        });
+    }
 
     #[test]
     fn container_link_splits_db_and_collection() {
@@ -2724,6 +1877,88 @@ mod tests {
     }
 
     #[test]
+    fn parse_availability_strategy_maps_disabled_and_enabled() {
+        // False -> "disabled" on the Python side -> Disabled here.
+        assert_eq!(
+            parse_availability_strategy("disabled"),
+            Some(AvailabilityStrategy::Disabled)
+        );
+        // True -> "enabled:500" (the SDK default threshold).
+        assert_eq!(
+            parse_availability_strategy("enabled:500"),
+            Some(AvailabilityStrategy::Hedging(HedgingStrategy::new(
+                HedgeThreshold::new(Duration::from_millis(500)).unwrap()
+            )))
+        );
+        // A dict with a custom threshold.
+        assert_eq!(
+            parse_availability_strategy("enabled:250"),
+            Some(AvailabilityStrategy::Hedging(HedgingStrategy::new(
+                HedgeThreshold::new(Duration::from_millis(250)).unwrap()
+            )))
+        );
+    }
+
+    #[test]
+    fn parse_availability_strategy_falls_back_to_default_on_bad_threshold() {
+        // A zero / unparseable threshold still enables hedging, using the default.
+        let expected = Some(AvailabilityStrategy::Hedging(HedgingStrategy::new(
+            HedgeThreshold::new(Duration::from_millis(DEFAULT_HEDGE_THRESHOLD_MS)).unwrap(),
+        )));
+        assert_eq!(parse_availability_strategy("enabled:0"), expected);
+        assert_eq!(parse_availability_strategy("enabled"), expected);
+        assert_eq!(parse_availability_strategy("enabled:notanumber"), expected);
+        // An empty value means "not set".
+        assert_eq!(parse_availability_strategy(""), None);
+    }
+
+    #[test]
+    fn availability_strategy_header_lifts_to_typed_field() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let headers = PyDict::new_bound(py);
+            headers
+                .set_item("availabilityStrategy", "disabled")
+                .expect("header assignment must succeed");
+            let modifiers = extract_op_modifiers(&headers).expect("extraction must succeed");
+            assert_eq!(
+                modifiers.availability_strategy,
+                Some(AvailabilityStrategy::Disabled)
+            );
+            // It must NOT leak into custom headers.
+            assert!(modifiers.custom_headers.is_empty());
+        });
+    }
+
+    #[test]
+    fn initial_headers_forward_verbatim_including_non_x_ms() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let inner = PyDict::new_bound(py);
+            inner.set_item("x-trace-id", "abc-123").unwrap();
+            inner.set_item("x-ms-custom", "v1").unwrap();
+            let headers = PyDict::new_bound(py);
+            headers.set_item("initialHeaders", inner).unwrap();
+
+            let modifiers = extract_op_modifiers(&headers).expect("extraction must succeed");
+            // Both the non-x-ms customer header and the x-ms one are forwarded
+            // verbatim; neither is dropped nor lifted to a typed field.
+            assert_eq!(
+                modifiers
+                    .custom_headers
+                    .get(&HeaderName::from("x-trace-id".to_string())),
+                Some(&HeaderValue::from("abc-123".to_string()))
+            );
+            assert_eq!(
+                modifiers
+                    .custom_headers
+                    .get(&HeaderName::from("x-ms-custom".to_string())),
+                Some(&HeaderValue::from("v1".to_string()))
+            );
+        });
+    }
+
+    #[test]
     fn write_response_headers_maps_present_fields_and_skips_missing() {
         pyo3::prepare_freethreaded_python();
         Python::with_gil(|py| {
@@ -2804,3 +2039,31 @@ mod tests {
         );
     }
 }
+
+mod feed_range;
+mod items;
+mod offers;
+mod query;
+
+#[cfg(test)]
+use feed_range::maybe_handle_feed_range_partition_key_special_case;
+use feed_range::{
+    FeedRangeFromPartitionKeyError, FeedRangeFromPartitionKeyPayload, FeedRangePartitionKeyInput,
+    FeedRangePartitionKeySource,
+};
+use query::QueryTarget;
+
+pub(crate) use feed_range::{
+    run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
+    run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
+    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async,
+};
+pub(crate) use items::{run_item_operation, run_item_operation_async};
+pub(crate) use offers::{
+    run_read_offer_operation, run_read_offer_operation_async, run_replace_offer_operation,
+    run_replace_offer_operation_async,
+};
+pub(crate) use query::{
+    run_query_operation, run_query_operation_async, run_read_all_items_operation,
+    run_read_all_items_operation_async,
+};

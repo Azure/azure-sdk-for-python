@@ -169,6 +169,16 @@ class BackendComparison:
             assert getattr(core_exc, attr, None) == getattr(rust_exc, attr, None), (
                 "exception.{} differs: core-python {!r} / rust {!r}".format(
                     attr, getattr(core_exc, attr, None), getattr(rust_exc, attr, None)))
+        core_message = _normalize_exception_message(core_exc)
+        rust_message = _normalize_exception_message(rust_exc)
+        assert core_message == rust_message, (
+            "exception.message differs after normalization: core-python {!r} / "
+            "rust {!r}".format(core_message, rust_message)
+        )
+        exception_diffs = diff_outcomes(self.core_python, self.rust)
+        assert not exception_diffs, (
+            "Exception parity diffs:\n  - " + "\n  - ".join(exception_diffs)
+        )
 
     def format_report(self) -> str:
         """Return a side-by-side string dump of inputs + outputs."""
@@ -270,6 +280,11 @@ class BackendComparison:
         "container-identity headers parsed but pub(crate) in the driver "
         "— wont-fix (revisit only with a customer escalation)",
     )
+    _PUSHBACK_DIAGNOSTIC_HEADERS: ClassVar[Tuple[int, str]] = (
+        21,
+        "diagnostic/networking headers that differ by backend — low "
+        "customer impact, tracked for audit-signal cleanup",
+    )
     _HEADER_TO_PUSHBACK: ClassVar[Dict[str, Tuple[int, str]]] = {
         # #6 — HTTP framing headers azure-core surfaces but the rust
         # binding's typed projection drops.
@@ -287,6 +302,11 @@ class BackendComparison:
         # #8 — container-identity headers explicitly declined.
         "x-ms-alt-content-path": _PUSHBACK_CONTAINER_IDENTITY,
         "x-ms-content-path": _PUSHBACK_CONTAINER_IDENTITY,
+        # #21 — diagnostic/networking headers that differ by backend
+        # (one dropped by rust, two added only by rust). No body impact.
+        "x-ms-thinclient-route-via-proxy": _PUSHBACK_DIAGNOSTIC_HEADERS,
+        "x-ms-cosmos-internal-partition-id": _PUSHBACK_DIAGNOSTIC_HEADERS,
+        "x-ms-cosmos-sdk-diagnostics": _PUSHBACK_DIAGNOSTIC_HEADERS,
     }
 
     def _is_header_diff(self, line: str) -> bool:
@@ -608,6 +628,13 @@ def _filtered_headers(h: Optional[Dict[str, str]],
 def _filtered_body(b: Any, ignored: frozenset) -> Any:
     if isinstance(b, dict):
         return {k: v for k, v in b.items() if k not in ignored}
+    # List-returning operations (e.g. read_items) hand back a list of
+    # documents. Strip the same server-stamped / per-run fields from
+    # each element so the diff compares only the customer-authored
+    # content; otherwise every element's random ``id`` and server
+    # ``_rid``/``_ts``/``_etag`` would read as a false divergence.
+    if isinstance(b, list):
+        return [_filtered_body(item, ignored) for item in b]
     return b
 
 
@@ -644,14 +671,8 @@ _EXCEPTION_MESSAGE_NOISE = [
     # any UUID-shaped token. Covers both lowercase (azure-core default)
     # and uppercase variants the driver sometimes emits.
     (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "<uuid>"),
-    # Cosmos resource ids (base64-ish, often 8-22 chars with == padding)
-    # that appear inside diagnostics blobs and self-links.
-    (re.compile(r"\b[A-Za-z0-9+/]{8,}={0,2}\b"), "<rid>"),
     # ISO-8601 timestamps the driver embeds in diagnostics summaries.
     (re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"), "<ts>"),
-    # Numeric durations / counters that appear in diagnostics
-    # ("duration in milliseconds":1.9737, "Count":1, etc.).
-    (re.compile(r":\s*\d+(?:\.\d+)?"), ":<n>"),
     # Collapse any whitespace run -- including embedded newlines from
     # the driver's multi-line diagnostics dump -- to a single space so
     # platform line-endings don't matter.
@@ -677,8 +698,8 @@ def _normalize_exception_message(exc: BaseException) -> str:
     2. Run the remaining text through the per-request-noise scrubbers
        (UUIDs, RIDs, timestamps, numeric counters, whitespace).
 
-    Truncates after the first 240 characters so an arbitrarily long
-    pre-diagnostics message can't dominate the report.
+    The complete normalized message is compared. Rendering code may truncate
+    display text, but comparison must not discard a semantic suffix.
     """
     if exc is None:
         return ""
@@ -695,7 +716,7 @@ def _normalize_exception_message(exc: BaseException) -> str:
     for pattern, replacement in _EXCEPTION_MESSAGE_NOISE:
         text = pattern.sub(replacement, text)
     text = text.strip()
-    return text[:240]
+    return text
 
 
 def diff_outcomes(
@@ -748,14 +769,14 @@ def diff_outcomes(
             diffs.append(
                 "exception.message (normalised): core-python {!r} / rust {!r}".format(cm, rm)
             )
-        return diffs
+    else:
+        # 2. Both succeeded — diff filtered body.
+        cb = _filtered_body(core.return_value, ignored_body_fields)
+        rb = _filtered_body(rust.return_value, ignored_body_fields)
+        if cb != rb:
+            diffs.append("return_value: core-python {!r} / rust {!r}".format(cb, rb))
 
-    # 2. Both succeeded — diff filtered body and headers.
-    cb = _filtered_body(core.return_value, ignored_body_fields)
-    rb = _filtered_body(rust.return_value, ignored_body_fields)
-    if cb != rb:
-        diffs.append("return_value: core-python {!r} / rust {!r}".format(cb, rb))
-
+    # Response headers are customer-visible on both success and error paths.
     ch = _filtered_headers(core.response_headers, ignored_headers)
     rh = _filtered_headers(rust.response_headers, ignored_headers)
     if set(ch) != set(rh):
@@ -819,6 +840,97 @@ def _default_client_factory(backend_name: str):
     )
 
 
+def _observed_backend_name(client: Any) -> str:
+    """Return the backend the constructed client will actually use."""
+    connection = getattr(client, "client_connection", None)
+    if connection is None:
+        raise AssertionError("parity client has no client_connection")
+    backend = getattr(connection, "_backend", None)
+    if backend is None:
+        return "core-python"
+    name = getattr(backend, "name", None)
+    if name != "rust":
+        raise AssertionError(
+            "parity client has an unexpected backend object: {!r}".format(name)
+        )
+    return name
+
+
+def _assert_expected_backend(client: Any, expected: str) -> None:
+    observed = _observed_backend_name(client)
+    if observed != expected:
+        raise AssertionError(
+            "parity client factory requested {!r} but constructed {!r}".format(
+                expected, observed
+            )
+        )
+
+
+def _binding_operation_count() -> int:
+    try:
+        from azure.cosmos import _rust
+        counter = getattr(_rust, "operation_count", None)
+        if callable(counter):
+            return int(counter())
+    except (ImportError, TypeError, ValueError):
+        pass
+    raise AssertionError("Rust binding operation counter is unavailable")
+
+
+def _rust_fallback_count() -> int:
+    from azure.cosmos._backend.base import rust_compatibility_fallback_count
+    from azure.cosmos._query_rust_routing import rust_query_fallback_count
+    return rust_compatibility_fallback_count() + rust_query_fallback_count()
+
+
+def run_target_operation(
+    client: Any,
+    call: Callable[[], Any],
+    *,
+    expect_rust: bool = True,
+) -> Any:
+    """Run one target call and prove whether that exact call entered Rust."""
+    if _observed_backend_name(client) == "core-python":
+        return call()
+    before = _binding_operation_count()
+    fallback_before = _rust_fallback_count()
+    try:
+        return call()
+    finally:
+        delta = _binding_operation_count() - before
+        fallback_delta = _rust_fallback_count() - fallback_before
+        if expect_rust:
+            assert delta > 0, "target operation did not enter the Rust binding"
+            assert fallback_delta == 0, "target operation fell back to core-python"
+        else:
+            assert delta == 0, "target operation unexpectedly entered the Rust binding"
+            assert fallback_delta == 0, "target fallback unexpectedly attempted Rust first"
+
+
+async def run_target_operation_async(
+    client: Any,
+    call: Callable[[], Any],
+    *,
+    expect_rust: bool = True,
+) -> Any:
+    """Async twin of :func:`run_target_operation`."""
+    if _observed_backend_name(client) == "core-python":
+        return await call()
+    before = _binding_operation_count()
+    fallback_before = _rust_fallback_count()
+    try:
+        return await call()
+    finally:
+        delta = _binding_operation_count() - before
+        fallback_delta = _rust_fallback_count() - fallback_before
+        if expect_rust:
+            assert delta > 0, "target operation did not enter the Rust binding"
+            assert fallback_delta == 0, "target operation fell back to core-python"
+        else:
+            assert delta == 0, "target operation unexpectedly entered the Rust binding"
+            assert fallback_delta == 0, "target fallback unexpectedly attempted Rust first"
+
+
 def run_on_both_backends(
     call_fn: Callable[[Any], Any],
     *,
@@ -844,19 +956,18 @@ def run_on_both_backends(
     outcomes: Dict[str, CallOutcome] = {}
     for backend_name in ("core-python", "rust"):
         outcome = CallOutcome(backend=backend_name)
-        client = None
+        client = client_factory(backend_name)
+        _assert_expected_backend(client, backend_name)
         try:
-            client = client_factory(backend_name)
             outcome.return_value = call_fn(client)
             outcome.response_headers = dict(
                 client.client_connection.last_response_headers or {}
             )
-        except BaseException as exc:  # pylint: disable=broad-except
+        except Exception as exc:  # pylint: disable=broad-except
             outcome.raised = exc
-            if client is not None:
-                outcome.response_headers = dict(
-                    client.client_connection.last_response_headers or {}
-                )
+            outcome.response_headers = dict(
+                client.client_connection.last_response_headers or {}
+            )
         outcomes[backend_name] = outcome
 
     comparison = BackendComparison(
@@ -893,9 +1004,10 @@ async def run_on_both_backends_async(
         # warning attributed to the test.
         async with AioCosmosClient(os.environ[ENV_ENDPOINT], os.environ[ENV_KEY],
                                    _backend=backend_name) as client:  # type: ignore[arg-type]
+            _assert_expected_backend(client, backend_name)
             try:
                 outcome.return_value = await call_fn(client)
-            except BaseException as exc:  # pylint: disable=broad-except
+            except Exception as exc:  # pylint: disable=broad-except
                 outcome.raised = exc
             try:
                 outcome.response_headers = dict(client.client_connection.last_response_headers or {})
@@ -912,4 +1024,3 @@ async def run_on_both_backends_async(
     )
     comparison.diffs = diff_outcomes(comparison.core_python, comparison.rust)
     return comparison
-

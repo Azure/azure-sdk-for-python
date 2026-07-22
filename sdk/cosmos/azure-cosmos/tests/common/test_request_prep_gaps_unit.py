@@ -69,6 +69,47 @@ def test_consistency_level_reaches_wire_through_request_options_on_create():
 
 
 # ---------------------------------------------------------------------------
+# pipeline-internal option-keys must never become wire headers
+# ---------------------------------------------------------------------------
+
+
+def test_internal_option_keys_are_not_emitted_as_headers():
+    """Keys that ride in the options dict for the legacy pipeline's own use are
+    not wire headers and must be dropped, while real customer options survive.
+
+    This is the ``read_items`` shape: its single-item legs route through the
+    point-read prep with the batch's query / ``build_options`` options dict,
+    which carries pipeline-internal keys (``operationStartTime``,
+    ``timeoutScope``, ``timeout``, ``read_timeout``, ``enableCrossPartitionQuery``).
+    The Rust prep's catch-all would otherwise copy them through as bogus headers
+    (silently dropped by the binding in production, a hard error under
+    ``COSMOS_WIRE_STRICT``)."""
+    options = {
+        "operationStartTime": 1784323061.0,
+        "timeoutScope": "operation",
+        "timeout": 5,
+        "read_timeout": 3,
+        "enableCrossPartitionQuery": True,
+        # Real customer options that must still reach the wire.
+        "sessionToken": "0:-1#5",
+        "priorityLevel": "High",
+        "consistencyLevel": "Session",
+    }
+    headers = flatten_options_to_headers(options)
+    for internal_key in (
+        "operationStartTime",
+        "timeoutScope",
+        "timeout",
+        "read_timeout",
+        "enableCrossPartitionQuery",
+    ):
+        assert internal_key not in headers
+    assert headers["sessionToken"] == "0:-1#5"
+    assert headers["priorityLevel"] == "High"
+    assert headers[HttpHeaders.ConsistencyLevel] == "Session"
+
+
+# ---------------------------------------------------------------------------
 # apply_no_response_on_write_default helper
 # ---------------------------------------------------------------------------
 

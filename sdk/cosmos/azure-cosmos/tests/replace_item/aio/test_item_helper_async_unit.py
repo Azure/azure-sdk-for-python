@@ -11,10 +11,10 @@ behaviour is already pinned by the sync tests in
 ``tests/replace_item/sync/``. This file covers the async-specific
 touchpoints replace adds:
 
-1. ``ReplaceItem`` is awaited on the fall-through path (the core-python
-   path, exercised with a fake backend whose ``execute`` returns ``None``)
-   with the ``document_link`` the caller resolved from ``item`` and the
-   ``body`` forwarded unchanged.
+1. ``ReplaceItem`` is awaited on the core-python path (``backend=None``,
+   routed through the explicit ``AsyncLegacyBackend``) with the
+   ``document_link`` the caller resolved from ``item`` and the ``body``
+   forwarded unchanged.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict``
    and ``ReplaceItem`` is **not** awaited (the rust dispatch path).
 3. ``etag`` / ``match_condition`` still reach the legacy options as the
@@ -32,27 +32,23 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.base import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
-def _async_fall_through_backend():
-    """An async backend whose ``execute`` returns ``None`` (the documented
-    "caller runs the legacy path" signal -- the core-python / no-backend
-    case)."""
-    backend = MagicMock()
-    backend.name = "core-python"
-    backend.execute = AsyncMock(return_value=None)
-    return backend
-
-
 def _async_dispatch_backend(response):
-    """An async backend whose ``execute`` returns a real ``BackendResponse``
-    (the rust dispatch path -- the helper parses it instead of falling
-    through to ``ReplaceItem``)."""
-    backend = MagicMock()
-    backend.name = "rust"
-    backend.execute = AsyncMock(return_value=response)
-    return backend
+    """A real ``AsyncCosmosBackend`` whose ``execute`` returns ``response``
+    (the rust dispatch path -- the helper parses it instead of awaiting
+    the legacy ``ReplaceItem``). Inheriting from ``AsyncCosmosBackend``
+    gives ``run_operation`` its genuine default implementation."""
+
+    class _CapturingBackend(AsyncCosmosBackend):
+        name = "rust"
+
+        async def execute(self, prepared):
+            return response
+
+    return _CapturingBackend()
 
 
 def _connection_with_cache(rid="rid"):
@@ -67,17 +63,18 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncReplaceItem(unittest.TestCase):
-    """The async fall-through path is the core-python replace path."""
+    """The core-python (``backend=None``) path is the async fall-through replace path."""
 
     def test_async_dispatch_falls_through_to_replace_item(self):
-        """Async fall-through awaits ``ReplaceItem`` and returns its value;
-        the resolved ``document_link`` and the new ``body`` are forwarded
-        unchanged and id generation is disabled (a replace never mints)."""
+        """Core-python (``backend=None``) awaits ``ReplaceItem`` and returns
+        its value; the resolved ``document_link`` and the new ``body`` are
+        forwarded unchanged and id generation is disabled (a replace never
+        mints)."""
         cc = _connection_with_cache()
         body = {"id": "order-42", "pk": "customerA", "total": 129.0}
 
         async def _run():
-            return await AsyncItemHelper(_async_fall_through_backend(), cc).replace_item(
+            return await AsyncItemHelper(None, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -124,7 +121,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc = _connection_with_cache()
 
         async def _run():
-            await AsyncItemHelper(_async_fall_through_backend(), cc).replace_item(
+            await AsyncItemHelper(None, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/order-42",
                 item_id="order-42",
@@ -154,7 +151,7 @@ class TestAsyncReplaceItem(unittest.TestCase):
         cc.ReplaceItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(_async_fall_through_backend(), cc).replace_item(
+            await AsyncItemHelper(None, cc).replace_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",

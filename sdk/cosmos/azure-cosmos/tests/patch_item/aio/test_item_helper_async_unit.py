@@ -10,9 +10,10 @@ with the sync ``ItemHelper``, so the wire shape is already pinned by the sync
 tests in ``tests/patch_item/sync/``. This file covers the async-specific
 points:
 
-1. ``PatchItem`` is awaited on the fall-through path (a fake backend whose
-   ``execute`` returns ``None``), with the resolved ``document_link``, the
-   operations forwarded unchanged, and id generation disabled.
+1. ``PatchItem`` is awaited on the core-python path (``backend=None``,
+   routed through the explicit ``AsyncLegacyBackend``), with the resolved
+   ``document_link``, the operations forwarded unchanged, and id generation
+   disabled.
 2. A wired backend's ``BackendResponse`` is parsed into a ``CosmosDict`` and
    ``PatchItem`` is not awaited.
 3. A ``filter_predicate`` or ``etag`` / ``match_condition`` patch falls through
@@ -30,6 +31,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.base import BackendResponse
 from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._helpers.item_helper import AsyncItemHelper
 
 
@@ -39,24 +41,27 @@ _OPERATIONS = [
 ]
 
 
-def _async_fall_through_backend():
-    """An async backend whose ``execute`` returns ``None`` (the documented
-    "caller runs the legacy path" signal -- the core-python / no-backend
-    case)."""
-    backend = MagicMock()
-    backend.name = "core-python"
-    backend.execute = AsyncMock(return_value=None)
-    return backend
+class _CapturingBackend(AsyncCosmosBackend):
+    """A real ``AsyncCosmosBackend`` whose ``execute`` is a spy: it records
+    calls (so ``.execute_mock.assert_not_awaited()`` still works) and returns
+    ``response``. Inheriting from ``AsyncCosmosBackend`` gives
+    ``run_operation`` its genuine default implementation, so ``rust_eligible``
+    is honoured exactly as it is for the real rust backend."""
+
+    name = "rust"
+
+    def __init__(self, response):
+        self.execute_mock = AsyncMock(return_value=response)
+
+    async def execute(self, prepared):
+        return await self.execute_mock(prepared)
 
 
 def _async_dispatch_backend(response):
-    """An async backend whose ``execute`` returns a real ``BackendResponse``
+    """A real ``AsyncCosmosBackend`` whose ``execute`` returns ``response``
     (the rust dispatch path -- the helper parses it instead of falling
     through to ``PatchItem``)."""
-    backend = MagicMock()
-    backend.name = "rust"
-    backend.execute = AsyncMock(return_value=response)
-    return backend
+    return _CapturingBackend(response)
 
 
 def _connection_with_cache(rid="rid"):
@@ -67,16 +72,17 @@ def _connection_with_cache(rid="rid"):
 
 
 class TestAsyncPatchItem(unittest.TestCase):
-    """The async fall-through and dispatch paths for patch."""
+    """The core-python and rust-dispatch paths for async patch."""
 
     def test_async_dispatch_falls_through_to_patch_item(self):
-        """Async fall-through awaits ``PatchItem`` and returns its value; the
-        resolved ``document_link`` and the ``operations`` are forwarded
-        unchanged and id generation is disabled (a patch never mints)."""
+        """Core-python (``backend=None``) awaits ``PatchItem`` and returns
+        its value; the resolved ``document_link`` and the ``operations`` are
+        forwarded unchanged and id generation is disabled (a patch never
+        mints)."""
         cc = _connection_with_cache()
 
         async def _run():
-            return await AsyncItemHelper(_async_fall_through_backend(), cc).patch_item(
+            return await AsyncItemHelper(None, cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/patch_item",
                 item_id="patch_item",
@@ -138,7 +144,7 @@ class TestAsyncPatchItem(unittest.TestCase):
             )
 
         asyncio.run(_run())
-        backend.execute.assert_not_awaited()
+        backend.execute_mock.assert_not_awaited()
         cc.PatchItem.assert_awaited_once()
         self.assertEqual(
             cc.PatchItem.call_args.kwargs["options"]["filterPredicate"],
@@ -167,7 +173,7 @@ class TestAsyncPatchItem(unittest.TestCase):
             )
 
         asyncio.run(_run())
-        backend.execute.assert_not_awaited()
+        backend.execute_mock.assert_not_awaited()
         cc.PatchItem.assert_awaited_once()
         self.assertEqual(
             cc.PatchItem.call_args.kwargs["options"]["accessCondition"],
@@ -188,7 +194,7 @@ class TestAsyncPatchItem(unittest.TestCase):
         cc.PatchItem = AsyncMock(return_value="ok")
 
         async def _run():
-            await AsyncItemHelper(_async_fall_through_backend(), cc).patch_item(
+            await AsyncItemHelper(None, cc).patch_item(
                 container_link="dbs/db/colls/c",
                 document_link="dbs/db/colls/c/docs/x",
                 item_id="x",

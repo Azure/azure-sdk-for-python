@@ -27,6 +27,7 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey
 from common._parity_helpers import (
     run_on_both_backends,
+    run_target_operation,
     skip_unless_emulator,
     skip_unless_rust_binding,
 )
@@ -69,7 +70,10 @@ def test_read_all_items_baseline(container_for):
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids(list(container.read_all_items()), run_id)
+        observed_ids = run_target_operation(
+            client,
+            lambda: _collect_run_ids(list(container.read_all_items()), run_id),
+        )
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = run_on_both_backends(
@@ -89,7 +93,12 @@ def test_read_all_items_respects_max_item_count_paging(container_for):
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids(list(container.read_all_items(max_item_count=1)), run_id)
+        observed_ids = run_target_operation(
+            client,
+            lambda: _collect_run_ids(
+                list(container.read_all_items(max_item_count=1)), run_id
+            ),
+        )
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = run_on_both_backends(
@@ -111,9 +120,17 @@ def test_read_all_items_availability_strategy_fallback(container_for):
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids(
-            list(container.read_all_items(max_item_count=2, availability_strategy=False)),
-            run_id,
+        observed_ids = run_target_operation(
+            client,
+            lambda: _collect_run_ids(
+                list(
+                    container.read_all_items(
+                        max_item_count=2, availability_strategy=False
+                    )
+                ),
+                run_id,
+            ),
+            expect_rust=False,
         )
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
@@ -124,4 +141,3 @@ def test_read_all_items_availability_strategy_fallback(container_for):
     )
     comparison.print_report()
     comparison.assert_functional_parity()
-

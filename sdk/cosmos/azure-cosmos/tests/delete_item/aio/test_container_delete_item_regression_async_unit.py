@@ -15,6 +15,7 @@ from unittest.mock import AsyncMock, MagicMock
 from azure.core.utils import CaseInsensitiveDict
 
 from azure.cosmos._backend.base import BackendResponse, OP_DELETE_ITEM
+from azure.cosmos.aio._backend.base import AsyncCosmosBackend
 from azure.cosmos.aio._container import ContainerProxy
 
 
@@ -34,7 +35,7 @@ def _make_async_proxy(rid="rid-cached"):
     return proxy, cc
 
 
-class _CapturingAsyncBackend:
+class _CapturingAsyncBackend(AsyncCosmosBackend):
     """A fake async backend that records the request it was given."""
 
     name = "rust"

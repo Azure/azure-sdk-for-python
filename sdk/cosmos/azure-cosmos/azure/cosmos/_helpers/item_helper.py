@@ -8,15 +8,28 @@ upsert, replace, patch.
 
 A container method gathers its arguments and calls the matching method
 here. Each method builds the request options, looks up the container's
-resource id, then either sends the request through the configured backend
-and reads the reply, or calls the existing client when no backend is set.
+resource id, then drives the operation through the configured backend
+(rust, or the explicit core-python ``LegacyBackend``) via
+:meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`.
 """
 from __future__ import annotations
 
 import logging
 from typing import Any, Callable, Dict, Optional
 
-from .._backend.base import CosmosBackend
+from .._backend.base import (
+    BackendResponse,
+    CosmosBackend,
+    LegacyOperation,
+    OP_CREATE_ITEM,
+    OP_DELETE_ITEM,
+    OP_PATCH_ITEM,
+    OP_READ_ITEM,
+    OP_REPLACE_ITEM,
+    OP_UPSERT_ITEM,
+    PreparedRequest,
+)
+from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from ..partition_key import _Empty
 from ._item_dispatch import (
@@ -55,23 +68,79 @@ class ItemHelper:
     ) -> None:
         """Store the backend and connection this helper will use.
 
-        :param backend: The backend for this client, or ``None`` to use
-            the existing client path.
+        :param backend: The selected backend, or ``None`` for core-python.
+            Coerced to an explicit backend (never ``None``) via
+            :func:`~azure.cosmos._backend.legacy.coerce_backend`, so each op
+            below runs through one interface and never branches on ``None``.
         :type backend: Optional[CosmosBackend]
         :param client_connection: The connection used for the cache,
-            partition-key extraction, and the fallback path.
+            partition-key extraction, and the legacy path.
         :type client_connection: Any
         :param ensure_container_cached: Optional callable from the
             container that fills the cache under the container's lock.
         :type ensure_container_cached: Optional[Callable]
         """
-        self._backend = backend
+        self._backend = coerce_backend(backend)
         self.client_connection = client_connection
         # Reads the two container facts the request prep needs (the rid and the
         # partition-key definition) off one container read, instead of calling
         # the connection's ``_container_properties_cache`` / ``_AddPartitionKey``
         # directly.
         self._metadata = ContainerMetadataProvider(client_connection, ensure_container_cached)
+
+    def _run_item_operation(
+        self,
+        *,
+        op: str,
+        build_prepared: Callable[[], PreparedRequest],
+        run_legacy: Callable[[], Any],
+        response_hook: Optional[Callable[..., Any]],
+        discard_result: bool = False,
+        rust_eligible: bool = True,
+    ) -> Any:
+        """Drive one item op through the backend and return the final result.
+
+        Wraps :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`
+        with the one piece that is common to every op: turning a rust
+        ``BackendResponse`` into the value the public method returns. The rust
+        path is taken only when this backend is the rust engine and
+        ``rust_eligible`` is true; otherwise the legacy operation runs. Either
+        way this helper never inspects the backend type or a ``None`` sentinel.
+
+        ``run_legacy`` is wrapped in a :class:`~azure.cosmos._backend.base.LegacyOperation`
+        here -- a small, named, typed request/context, not a bare callable --
+        before it crosses into the backend; see that class for why a fully
+        generic reconstruction of the legacy call from wire-shaped fields alone
+        is not safe (the six legacy item calls take differently-shaped
+        arguments a ``PreparedRequest`` cannot carry).
+
+        :keyword op: One of the ``OP_*`` constants, naming this operation.
+        :keyword build_prepared: Builds the rust ``PreparedRequest`` (called
+            lazily, only on the rust path, so the legacy path does no extra work).
+        :keyword run_legacy: Runs the legacy ``client_connection.<Op>Item`` call.
+        :keyword response_hook: Per-call response hook, invoked once on the rust
+            path by ``parse_backend_response`` (the legacy path invokes its own).
+        :keyword discard_result: When ``True`` (delete), parse the rust response
+            for its side effects but return ``None``, matching the legacy delete.
+        :keyword rust_eligible: ``False`` forces the legacy call even on a rust
+            client (a filtered / guarded patch the rust prep cannot represent).
+        :returns: The value the public method returns to the caller.
+        :rtype: Any
+        """
+        def parse_response(response: BackendResponse) -> Any:
+            parsed = parse_backend_response(
+                response,
+                client_connection=self.client_connection,
+                response_hook=response_hook,
+            )
+            return None if discard_result else parsed
+
+        return self._backend.run_operation(
+            build_prepared=build_prepared,
+            legacy_operation=LegacyOperation(op=op, invoke=run_legacy),
+            parse_response=parse_response,
+            rust_eligible=rust_eligible,
+        )
 
     def _no_response_on_write_default(self) -> bool:
         """Read the client-level ``no_response_on_write`` setting.
@@ -146,7 +215,7 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        if self._backend is not None:
+        def build_prepared() -> Any:
             partition_key_value = self._extract_partition_key_value(
                 container_link, body, request_options
             )
@@ -160,20 +229,18 @@ class ItemHelper:
                 no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                return parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
+            return prepared
 
-        # No backend configured: use the existing client.
-        return self.client_connection.CreateItem(
-            database_or_container_link=container_link,
-            document=body,
-            options=request_options,
-            **kwargs,
+        return self._run_item_operation(
+            op=OP_CREATE_ITEM,
+            build_prepared=build_prepared,
+            run_legacy=lambda: self.client_connection.CreateItem(
+                database_or_container_link=container_link,
+                document=body,
+                options=request_options,
+                **kwargs,
+            ),
+            response_hook=kwargs.get("response_hook"),
         )
 
     def _extract_partition_key_value(
@@ -227,30 +294,24 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        if self._backend is not None:
-            prepared = build_delete_item_prepared(
+        return self._run_item_operation(
+            op=OP_DELETE_ITEM,
+            build_prepared=lambda: build_delete_item_prepared(
                 container_link=container_link,
                 item_id=item_id,
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 kwargs=kwargs_for_rust_prep,
-            )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                # Delete has no body. Run the response hook so the caller
-                # can read the response headers, then return nothing.
-                parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
-                return None
-
-        # No backend configured: use the existing client.
-        return self.client_connection.DeleteItem(
-            document_link=document_link,
-            options=request_options,
-            **kwargs,
+            ),
+            run_legacy=lambda: self.client_connection.DeleteItem(
+                document_link=document_link,
+                options=request_options,
+                **kwargs,
+            ),
+            response_hook=kwargs.get("response_hook"),
+            # Delete has no body. Parse the rust response for its side effects
+            # (response hook + last_response_headers) but return nothing.
+            discard_result=True,
         )
 
     def read_item(
@@ -285,30 +346,23 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        if self._backend is not None:
-            prepared = build_read_item_prepared(
+        return self._run_item_operation(
+            op=OP_READ_ITEM,
+            build_prepared=lambda: build_read_item_prepared(
                 container_link=container_link,
                 item_id=item_id,
                 partition_key_value=partition_key_value,
                 container_rid=container_rid,
                 kwargs=kwargs_for_rust_prep,
-            )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                # A 200 returns the item; a 304 returns an empty result
-                # that still carries the current version. The response
-                # hook runs once either way.
-                return parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
-
-        # No backend configured: use the existing client.
-        return self.client_connection.ReadItem(
-            document_link=document_link,
-            options=request_options,
-            **kwargs,
+            ),
+            run_legacy=lambda: self.client_connection.ReadItem(
+                document_link=document_link,
+                options=request_options,
+                **kwargs,
+            ),
+            # A 200 returns the item; a 304 returns an empty result that still
+            # carries the current version. The response hook runs once either way.
+            response_hook=kwargs.get("response_hook"),
         )
 
     def upsert_item(
@@ -335,11 +389,11 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        if self._backend is not None:
+        def build_prepared() -> Any:
             partition_key_value = self._extract_partition_key_value(
                 container_link, body, request_options
             )
-            prepared = build_upsert_item_prepared(
+            return build_upsert_item_prepared(
                 container_link=container_link,
                 body=body,
                 partition_key_value=partition_key_value,
@@ -348,20 +402,17 @@ class ItemHelper:
                 no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                return parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
 
-        # No backend configured: use the existing client.
-        return self.client_connection.UpsertItem(
-            database_or_container_link=container_link,
-            document=body,
-            options=request_options,
-            **kwargs,
+        return self._run_item_operation(
+            op=OP_UPSERT_ITEM,
+            build_prepared=build_prepared,
+            run_legacy=lambda: self.client_connection.UpsertItem(
+                database_or_container_link=container_link,
+                document=body,
+                options=request_options,
+                **kwargs,
+            ),
+            response_hook=kwargs.get("response_hook"),
         )
 
     def replace_item(
@@ -398,11 +449,11 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        if self._backend is not None:
+        def build_prepared() -> Any:
             partition_key_value = self._extract_partition_key_value(
                 container_link, body, request_options
             )
-            prepared = build_replace_item_prepared(
+            return build_replace_item_prepared(
                 container_link=container_link,
                 body=body,
                 item_id=item_id,
@@ -412,20 +463,17 @@ class ItemHelper:
                 no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
             )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                return parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
 
-        # No backend configured: use the existing client.
-        return self.client_connection.ReplaceItem(
-            document_link=document_link,
-            new_document=body,
-            options=request_options,
-            **kwargs,
+        return self._run_item_operation(
+            op=OP_REPLACE_ITEM,
+            build_prepared=build_prepared,
+            run_legacy=lambda: self.client_connection.ReplaceItem(
+                document_link=document_link,
+                new_document=body,
+                options=request_options,
+                **kwargs,
+            ),
+            response_hook=kwargs.get("response_hook"),
         )
 
     def patch_item(
@@ -468,15 +516,18 @@ class ItemHelper:
 
         container_rid = self._resolve_container_rid(container_link, request_options)
 
-        # Use the backend only for a plain patch. A filter or an
-        # etag / match-condition guard uses the existing client below.
-        backend_supports_patch = (
-            self._backend is not None
-            and filter_predicate is None
+        # Use the rust path only for a plain patch. A filter or an
+        # etag / match-condition guard cannot be represented by the rust prep,
+        # so those force the legacy client -- which is the only path that
+        # applies them -- even on a rust-backed client.
+        rust_eligible = (
+            filter_predicate is None
             and "accessCondition" not in request_options
         )
-        if backend_supports_patch:
-            prepared = build_patch_item_prepared(
+
+        return self._run_item_operation(
+            op=OP_PATCH_ITEM,
+            build_prepared=lambda: build_patch_item_prepared(
                 container_link=container_link,
                 item_id=item_id,
                 patch_operations=patch_operations,
@@ -484,21 +535,16 @@ class ItemHelper:
                 container_rid=container_rid,
                 no_response_on_write_default=self._no_response_on_write_default(),
                 kwargs=kwargs_for_rust_prep,
-            )
-            backend_response = self._backend.execute(prepared)
-            if backend_response is not None:
-                return parse_backend_response(
-                    backend_response,
-                    client_connection=self.client_connection,
-                    response_hook=kwargs.get("response_hook"),
-                )
-
-        # Existing client. This path also applies the filter and the
-        # etag / match-condition guard.
-        return self.client_connection.PatchItem(
-            document_link=document_link,
-            operations=patch_operations,
-            options=request_options,
-            **kwargs,
+            ),
+            # Existing client. This path also applies the filter and the
+            # etag / match-condition guard.
+            run_legacy=lambda: self.client_connection.PatchItem(
+                document_link=document_link,
+                operations=patch_operations,
+                options=request_options,
+                **kwargs,
+            ),
+            response_hook=kwargs.get("response_hook"),
+            rust_eligible=rust_eligible,
         )
 

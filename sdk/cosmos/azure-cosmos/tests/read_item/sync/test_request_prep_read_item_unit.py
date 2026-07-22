@@ -178,9 +178,9 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """A customer's ``initial_headers={'x-trace-id': 'abc'}`` must show up
-    as a plain ``x-trace-id`` entry in ``PreparedRequest.headers``, so the
-    binding forwards it as-is — the same shape create / delete prep use."""
+    """A customer's ``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
+    ``initialHeaders`` dict in ``PreparedRequest.headers`` so the binding forwards
+    each entry verbatim -- including non-``x-ms-`` names it would otherwise drop."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -188,11 +188,11 @@ def test_initial_headers_are_flattened_into_outer_headers():
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["x-trace-id"] == "abc-123"
-    # The grouping key itself must not survive as a header (it's the
-    # snake_case keyword-argument name, not a wire-header name).
+    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
+    # The customer header is not flattened to the top level, and the snake_case
+    # keyword-argument name never survives as a header.
+    assert "x-trace-id" not in prepared.headers
     assert "initial_headers" not in prepared.headers
-    assert "initialHeaders" not in prepared.headers
 
 
 # ---------------------------------------------------------------------------
@@ -215,6 +215,8 @@ def test_post_trigger_include_lands_as_option_key():
 
 
 def test_priority_high_lands_as_option_key():
+    """``priority="High"`` is stamped as the ``priorityLevel`` request header the
+    driver reads."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -226,6 +228,7 @@ def test_priority_high_lands_as_option_key():
 
 
 def test_throughput_bucket_lands_as_option_key():
+    """``throughput_bucket=1`` is stamped as the ``throughputBucket`` request header."""
     prepared = build_read_item_prepared(
         container_link="dbs/d/colls/c",
         item_id="x",
@@ -282,6 +285,8 @@ def test_merge_read_item_explicit_kwargs_omits_none_entries():
 
 
 def test_merge_read_item_explicit_kwargs_includes_cache_staleness_when_positive():
+    """A positive ``max_integrated_cache_staleness_in_ms`` is kept in the merged
+    kwargs (it is a real supplied value, unlike ``None``)."""
     kwargs: dict = {}
     merge_read_item_explicit_kwargs(
         kwargs,

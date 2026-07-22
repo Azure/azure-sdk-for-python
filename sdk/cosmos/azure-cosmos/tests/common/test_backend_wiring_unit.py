@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import asyncio
 import concurrent.futures
+import inspect
 import logging
 import re
 import threading
@@ -32,13 +33,18 @@ import pytest
 
 from azure.cosmos._backend.base import (
     BackendResponse,
+    CosmosBackend,
+    OP_TO_BINDING_METHOD,
     OP_FEED_RANGE_FROM_PARTITION_KEY,
     OP_QUERY_ITEMS,
     OP_READ_ALL_ITEMS,
     OP_READ_FEED_RANGES,
     OP_READ_OFFER,
     PreparedClientConfig,
+    PreparedQuery,
     PreparedRequest,
+    QUERY_TO_BINDING_METHOD,
+    QueryNotSupportedByBackendError,
 )
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
@@ -145,6 +151,38 @@ def _collect_import_lines():
 
 
 _IMPORT_LINE_CACHE = _collect_import_lines()
+
+
+@pytest.mark.parametrize(
+    "proxy_type,method_name",
+    [
+        (ContainerProxy, "get_throughput"),
+        (ContainerProxy, "replace_throughput"),
+        (ContainerProxy, "read_feed_ranges"),
+        (ContainerProxy, "feed_range_from_partition_key"),
+        (ContainerProxy, "is_feed_range_subset"),
+        (AsyncContainerProxy, "get_throughput"),
+        (AsyncContainerProxy, "replace_throughput"),
+        (AsyncContainerProxy, "read_feed_ranges"),
+        (AsyncContainerProxy, "feed_range_from_partition_key"),
+        (AsyncContainerProxy, "is_feed_range_subset"),
+    ],
+)
+def test_public_throughput_and_feed_range_methods_do_not_select_backends(
+    proxy_type, method_name
+):
+    """Public methods delegate to family helpers instead of selecting an engine."""
+    source = inspect.getsource(getattr(proxy_type, method_name))
+    forbidden = (
+        "_backend",
+        "can_use_rust",
+        "try_read_offer_with_rust",
+        "try_replace_offer_with_rust",
+        "try_read_feed_ranges_with_rust",
+        "try_feed_range_from_partition_key_with_rust",
+        "try_is_feed_range_subset_with_rust",
+    )
+    assert not [name for name in forbidden if name in source]
 
 
 @pytest.mark.parametrize("guarded_name,allowed_files", list(_ALLOWED.items()))
@@ -292,7 +330,7 @@ def test_rust_backend_dispatches_to_binding(monkeypatch):
 # wiring mistake -- a wrong op-to-binding name, or a dropped reply -- could send
 # these operations nowhere and no test would catch it.
 def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
-    """A query page prepared request routes to the binding's query_items entry point."""
+    """A prepared query routes through execute_pages to query_items."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
     fake_module.query_items.return_value = (
@@ -304,18 +342,64 @@ def test_rust_backend_dispatches_query_items_to_binding(monkeypatch):
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
-    prepared = PreparedRequest(
+    prepared = PreparedQuery(
         op=OP_QUERY_ITEMS,
         container_link="dbs/d/colls/c",
-        body_bytes=b'{"query":"SELECT * FROM c"}',
+        query="SELECT * FROM c",
         partition_key_header='["a"]',
         headers={},
     )
-    resp = backend.execute(prepared)
+    pages = list(backend.execute_pages(prepared))
 
-    fake_module.query_items.assert_called_once_with("handle-1", prepared)
-    assert resp.status_code == 200
-    assert resp.body == b'{"Documents":[{"id":"x"}]}'
+    binding_request = fake_module.query_items.call_args.args[1]
+    assert binding_request.op == OP_QUERY_ITEMS
+    assert binding_request.body_bytes == b'{"query":"SELECT * FROM c"}'
+    assert pages[0].status_code == 200
+    assert pages[0].continuation == "ct-1"
+    assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+
+def test_query_operations_are_not_single_response_operations():
+    """query_items/read_all_items are kept out of the single-reply
+    ``OP_TO_BINDING_METHOD`` and live only in ``QUERY_TO_BINDING_METHOD``, so a query
+    can never be dispatched through the single-reply ``execute`` path by accident.
+    """
+    assert OP_QUERY_ITEMS not in OP_TO_BINDING_METHOD
+    assert OP_READ_ALL_ITEMS not in OP_TO_BINDING_METHOD
+    assert QUERY_TO_BINDING_METHOD == {
+        OP_QUERY_ITEMS: "query_items",
+        OP_READ_ALL_ITEMS: "read_all_items",
+    }
+
+
+def test_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
+    """When the driver rejects a query feature it cannot run, the rust backend's
+    ``execute_pages`` turns that into ``QueryNotSupportedByBackendError`` so the caller
+    can fall back to the legacy path instead of surfacing a raw driver error.
+    """
+    class _UnsupportedQueryFeatureError(RuntimeError):
+        pass
+
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.query_items.side_effect = _UnsupportedQueryFeatureError(
+        "unsupported query feature"
+    )
+    monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos._backend.rust._UNSUPPORTED_QUERY_ERROR",
+        _UnsupportedQueryFeatureError,
+    )
+
+    backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
+    prepared = PreparedQuery(
+        op=OP_QUERY_ITEMS,
+        container_link="dbs/d/colls/c",
+        query="SELECT VALUE COUNT(1) FROM c",
+    )
+
+    with pytest.raises(QueryNotSupportedByBackendError):
+        list(backend.execute_pages(prepared))
 
 
 def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
@@ -331,18 +415,20 @@ def test_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
     monkeypatch.setattr("azure.cosmos._backend.rust._rust_module", fake_module)
 
     backend = RustBackend(endpoint="https://x.documents.azure.com", master_key="k")
-    prepared = PreparedRequest(
+    prepared = PreparedQuery(
         op=OP_READ_ALL_ITEMS,
         container_link="dbs/d/colls/c",
-        body_bytes=b"",
         partition_key_header="[]",
         headers={},
     )
-    resp = backend.execute(prepared)
+    pages = list(backend.execute_pages(prepared))
 
-    fake_module.read_all_items.assert_called_once_with("handle-1", prepared)
-    assert resp.status_code == 200
-    assert resp.body == b'{"Documents":[{"id":"x"}]}'
+    binding_request = fake_module.read_all_items.call_args.args[1]
+    assert binding_request.op == OP_READ_ALL_ITEMS
+    assert binding_request.body_bytes == b""
+    assert pages[0].status_code == 200
+    assert pages[0].continuation == "ct-read-all"
+    assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
 
 def test_rust_backend_dispatches_read_offer_to_binding(monkeypatch):
@@ -619,7 +705,7 @@ def test_async_rust_backend_dispatches_to_binding(monkeypatch):
 # Async twins of the two dispatch tests above: the same check for query_items_async
 # and read_feed_ranges_async, so the async path can't silently diverge from the sync one.
 def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
-    """Async query prepared requests route to the binding's query_items_async entry point."""
+    """Async prepared queries route through execute_pages to query_items_async."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "handle-1"
     fake_module.query_items_async = AsyncMock(
@@ -629,17 +715,20 @@ def test_async_rust_backend_dispatches_query_items_to_binding(monkeypatch):
 
     async def _run():
         backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
-        prepared = PreparedRequest(
+        prepared = PreparedQuery(
             op=OP_QUERY_ITEMS,
             container_link="dbs/d/colls/c",
-            body_bytes=b'{"query":"SELECT * FROM c"}',
+            query="SELECT * FROM c",
             partition_key_header='["a"]',
             headers={},
         )
-        resp = await backend.execute(prepared)
-        fake_module.query_items_async.assert_awaited_once_with("handle-1", prepared)
-        assert resp.status_code == 200
-        assert resp.body == b'{"Documents":[{"id":"x"}]}'
+        pages = [page async for page in backend.execute_pages(prepared)]
+        binding_request = fake_module.query_items_async.await_args.args[1]
+        assert binding_request.op == OP_QUERY_ITEMS
+        assert binding_request.body_bytes == b'{"query":"SELECT * FROM c"}'
+        assert pages[0].status_code == 200
+        assert pages[0].continuation == "ct-1"
+        assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
 
     asyncio.run(_run())
 
@@ -655,17 +744,52 @@ def test_async_rust_backend_dispatches_read_all_items_to_binding(monkeypatch):
 
     async def _run():
         backend = AsyncRustBackend(endpoint="https://x.documents.azure.com", master_key="k")
-        prepared = PreparedRequest(
+        prepared = PreparedQuery(
             op=OP_READ_ALL_ITEMS,
             container_link="dbs/d/colls/c",
-            body_bytes=b"",
             partition_key_header="[]",
             headers={},
         )
-        resp = await backend.execute(prepared)
-        fake_module.read_all_items_async.assert_awaited_once_with("handle-1", prepared)
-        assert resp.status_code == 200
-        assert resp.body == b'{"Documents":[{"id":"x"}]}'
+        pages = [page async for page in backend.execute_pages(prepared)]
+        binding_request = fake_module.read_all_items_async.await_args.args[1]
+        assert binding_request.op == OP_READ_ALL_ITEMS
+        assert binding_request.body_bytes == b""
+        assert pages[0].status_code == 200
+        assert pages[0].continuation == "ct-read-all-async"
+        assert pages[0].body == b'{"Documents":[{"id":"x"}]}'
+
+    asyncio.run(_run())
+
+
+def test_async_rust_backend_surfaces_driver_query_capability_rejection(monkeypatch):
+    """Async twin: the async rust backend also maps a driver query rejection to
+    ``QueryNotSupportedByBackendError`` for legacy fallback.
+    """
+    class _UnsupportedQueryFeatureError(RuntimeError):
+        pass
+
+    fake_module = MagicMock()
+    fake_module.init_client.return_value = "handle-1"
+    fake_module.query_items_async = AsyncMock(
+        side_effect=_UnsupportedQueryFeatureError("unsupported query feature")
+    )
+    monkeypatch.setattr("azure.cosmos.aio._backend.rust._rust_module", fake_module)
+    monkeypatch.setattr(
+        "azure.cosmos.aio._backend.rust._UNSUPPORTED_QUERY_ERROR",
+        _UnsupportedQueryFeatureError,
+    )
+
+    async def _run():
+        backend = AsyncRustBackend(
+            endpoint="https://x.documents.azure.com", master_key="k"
+        )
+        prepared = PreparedQuery(
+            op=OP_QUERY_ITEMS,
+            container_link="dbs/d/colls/c",
+            query="SELECT * FROM c ORDER BY c.ts",
+        )
+        with pytest.raises(QueryNotSupportedByBackendError):
+            [page async for page in backend.execute_pages(prepared)]
 
     asyncio.run(_run())
 
@@ -1096,19 +1220,35 @@ def test_async_backend_finalizer_does_not_block_event_loop(monkeypatch):
 def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
     """A successful backend response is turned into a dict the caller can read
     by key (like ``result["_etag"]``), the same shape the existing path
-    returns."""
+    returns.
 
-    backend = MagicMock()
-    backend.name = BACKEND_NAME_RUST
-    backend.execute.return_value = BackendResponse(
-        status_code=201,
-        sub_status=0,
-        headers=None,
-        body=(
-            b'{"id":"order-42","pk":"customerA","_etag":"\\"00000000-0000-0000-1234-567890abcdef\\"",'
-            b'"_rid":"abc==","_self":"dbs/x/colls/y/docs/order-42","_ts":1746700000}'
-        ),
-        diagnostics=None,
+    Uses a real ``CosmosBackend`` subclass (not a bare mock) so the helper runs
+    the genuine ``run_operation`` template: build the prepared request, call
+    ``execute``, then parse the reply into a ``CosmosDict``.
+    """
+
+    class _RustDispatchBackend(CosmosBackend):
+        name = BACKEND_NAME_RUST
+
+        def __init__(self, response):
+            self._response = response
+            self.captured = None
+
+        def execute(self, prepared):
+            self.captured = prepared
+            return self._response
+
+    backend = _RustDispatchBackend(
+        BackendResponse(
+            status_code=201,
+            sub_status=0,
+            headers=None,
+            body=(
+                b'{"id":"order-42","pk":"customerA","_etag":"\\"00000000-0000-0000-1234-567890abcdef\\"",'
+                b'"_rid":"abc==","_self":"dbs/x/colls/y/docs/order-42","_ts":1746700000}'
+            ),
+            diagnostics=None,
+        )
     )
 
     helper = ItemHelper(backend, client_connection=MagicMock())
@@ -1120,12 +1260,18 @@ def test_helper_parses_backend_response_into_cosmos_dict(monkeypatch):
     # The result is a dict, so the caller reads fields by key.
     assert result["_etag"] == '"00000000-0000-0000-1234-567890abcdef"'
     assert result["id"] == "order-42"
+    # The helper actually built and dispatched the prepared request to the backend.
+    assert backend.captured is not None
+    assert backend.captured.op == "create_item"
 
 
-# NOTE: An older test for a "core-python backend" was removed. There is no such
-# class now; "use the existing client" is signalled by no backend being set,
-# and the helper handles that. See the fall-through tests in
-# test_item_helper_unit.py.
+# NOTE: An older test for a "core-python backend" was removed when the core-python
+# choice was represented purely by ``None``. The explicit
+# ``LegacyBackend`` now exists again (see ``azure.cosmos._backend.legacy``): the
+# item helper coerces a ``None`` selection to it so "use the existing client" runs
+# through the same ``run_operation`` interface as rust. Its own behavior is
+# covered in test_legacy_backend_unit.py; the item-helper legacy path is covered
+# by the fall-through tests in test_item_helper_unit.py.
 
 
 def test_dataclasses_are_frozen():
@@ -1742,14 +1888,17 @@ class _AsyncContextManagerCredential:
 
 
 def test_resolve_credential_master_key_string():
+    """A plain string credential is read as a master key, with no token credential."""
     assert _resolve_credential("the-key") == ("the-key", None)
 
 
 def test_resolve_credential_master_key_dict():
+    """A ``{"masterKey": ...}`` dict is read as a master key, with no token credential."""
     assert _resolve_credential({"masterKey": "the-key"}) == ("the-key", None)
 
 
 def test_resolve_credential_sync_token_credential():
+    """A sync token credential passes through as the token credential (no master key)."""
     cred = _SyncTokenCredential()
     master_key, token_credential = _resolve_credential(cred)
     assert master_key is None
@@ -2021,6 +2170,8 @@ def test_resolve_credential_permission_feed_rejected_with_specific_message():
 
 
 def test_resolve_credential_none_rejected():
+    """No credential is rejected: the rust backend requires a master key or a token
+    credential."""
     with pytest.raises(ValueError, match="master-key credential"):
         _resolve_credential(None)
 
@@ -2439,6 +2590,8 @@ def test_container_feed_range_from_partition_key_routes_to_rust_backend(monkeypa
 
 
 def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+    """A malformed rust feed-range payload (missing the ``Range`` envelope) raises
+    rather than handing back a broken feed range."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key.return_value = (200, 0, {}, b'{"unexpected":{}}')
@@ -2450,6 +2603,9 @@ def test_container_feed_range_from_partition_key_rejects_malformed_rust_payload(
 
 
 def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+    """The empty-partition-key sentinel (``NonePartitionKeyValue``) routes to the rust
+    backend with a cross-partition header (``"[]"``) and returns the full-range feed
+    range the driver reports."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key.return_value = (
@@ -2478,6 +2634,8 @@ def test_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_b
 
 
 def test_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+    """An explicit empty partition-key sequence (``[]``) also routes to the rust
+    backend and returns the driver's feed range."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key.return_value = (
@@ -2545,6 +2703,7 @@ def test_async_container_feed_range_from_partition_key_routes_to_rust_backend(mo
 
 
 def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_payload(monkeypatch):
+    """Async twin: a malformed async rust feed-range payload raises."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key_async = AsyncMock(
@@ -2569,6 +2728,8 @@ def test_async_container_feed_range_from_partition_key_rejects_malformed_rust_pa
 
 
 def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_rust_backend(monkeypatch):
+    """Async twin: the empty-partition-key sentinel routes to the async rust backend
+    with a cross-partition header."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key_async = AsyncMock(
@@ -2608,6 +2769,8 @@ def test_async_container_feed_range_from_partition_key_empty_sentinel_routes_to_
 
 
 def test_async_container_feed_range_from_partition_key_empty_sequence_routes_to_rust_backend(monkeypatch):
+    """Async twin: an explicit empty partition-key sequence routes to the async rust
+    backend."""
     fake_module = MagicMock()
     fake_module.init_client.return_value = "h"
     fake_module.feed_range_from_partition_key_async = AsyncMock(
@@ -3106,7 +3269,7 @@ def test_strict_same_credential_and_config_shares():
 
 
 def test_strict_baseline_not_stale_after_first_engine_closes():
-    """Finding 1: the baseline must track live engines, not the first registrant.
+    """The strict-isolation baseline must track live engines, not the first registrant.
     With engines X and Y both live (default mode), closing X must not leave a later
     strict client compared against the gone X -- a client matching Y is fine, and only
     one matching neither raises."""
@@ -3126,7 +3289,7 @@ def test_strict_baseline_not_stale_after_first_engine_closes():
 
 
 def test_endpoint_canonicalization_coalesces_url_variants():
-    """Finding 3: trailing-slash and host-case variants of one account must share a
+    """Trailing-slash and host-case variants of one account must share a
     bucket, so the strict guard is not bypassed by a cosmetic URL difference."""
     base = "https://M16-Canon.documents.azure.com"
     variant = "https://m16-canon.documents.azure.com/"
@@ -3179,6 +3342,9 @@ def test_release_with_wrong_engine_is_noop():
 
 
 def test_async_second_client_different_config_strict_raises():
+    """Strict isolation (async): a second client to the same endpoint with a
+    different config raises ``StrictEngineIsolationError`` instead of silently sharing
+    the first client's engine."""
     url = "https://m16-async-strict-different.documents.azure.com"
     first = AsyncRustBackend(
         endpoint=url,
@@ -3198,6 +3364,8 @@ def test_async_second_client_different_config_strict_raises():
 
 
 def test_async_second_client_different_config_default_isolates(recwarn):
+    """Default (async): a second client with a different config gets its own isolated
+    engine and emits no warning -- there is no 'first client wins' sharing."""
     url = "https://m16-async-default-different.documents.azure.com"
     first = AsyncRustBackend(
         endpoint=url,

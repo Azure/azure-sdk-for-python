@@ -206,8 +206,8 @@ def test_etag_without_match_condition_raises_value_error_up_front():
 
 
 def test_initial_headers_are_flattened_into_outer_headers():
-    """``initial_headers={'x-trace-id': 'abc'}`` shows up as a plain
-    ``x-trace-id`` entry so the binding forwards it as-is."""
+    """``initial_headers={'x-trace-id': 'abc'}`` is kept as a nested
+    ``initialHeaders`` dict so the binding forwards each entry verbatim."""
     prepared = build_upsert_item_prepared(
         container_link="dbs/d/colls/c",
         body={"id": "x", "pk": "a"},
@@ -215,9 +215,9 @@ def test_initial_headers_are_flattened_into_outer_headers():
         container_rid=None,
         kwargs={"initial_headers": {"x-trace-id": "abc-123"}},
     )
-    assert prepared.headers["x-trace-id"] == "abc-123"
+    assert prepared.headers["initialHeaders"] == {"x-trace-id": "abc-123"}
+    assert "x-trace-id" not in prepared.headers
     assert "initial_headers" not in prepared.headers
-    assert "initialHeaders" not in prepared.headers
 
 
 def test_trigger_priority_bucket_no_response_land_as_option_keys():

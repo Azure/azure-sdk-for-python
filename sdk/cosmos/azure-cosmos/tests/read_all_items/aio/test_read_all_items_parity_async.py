@@ -26,6 +26,7 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey
 from common._parity_helpers import (
     run_on_both_backends_async,
+    run_target_operation_async,
     skip_unless_emulator,
     skip_unless_rust_binding,
 )
@@ -69,7 +70,12 @@ async def test_read_all_items_baseline_async(container_for):
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = await _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids([item async for item in container.read_all_items()], run_id)
+        async def _target():
+            return _collect_run_ids(
+                [item async for item in container.read_all_items()], run_id
+            )
+
+        observed_ids = await run_target_operation_async(client, _target)
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = await run_on_both_backends_async(
@@ -90,10 +96,16 @@ async def test_read_all_items_respects_max_item_count_paging_async(container_for
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = await _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids(
-            [item async for item in container.read_all_items(max_item_count=1)],
-            run_id,
-        )
+        async def _target():
+            return _collect_run_ids(
+                [
+                    item
+                    async for item in container.read_all_items(max_item_count=1)
+                ],
+                run_id,
+            )
+
+        observed_ids = await run_target_operation_async(client, _target)
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
     comparison = await run_on_both_backends_async(
@@ -116,9 +128,21 @@ async def test_read_all_items_availability_strategy_fallback_async(container_for
     async def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         expected_ids = await _seed_docs(container, run_id)
-        observed_ids = _collect_run_ids(
-            [item async for item in container.read_all_items(max_item_count=2, availability_strategy=False)],
-            run_id,
+        async def _target():
+            return _collect_run_ids(
+                [
+                    item
+                    async for item in container.read_all_items(
+                        max_item_count=2, availability_strategy=False
+                    )
+                ],
+                run_id,
+            )
+
+        observed_ids = await run_target_operation_async(
+            client,
+            _target,
+            expect_rust=False,
         )
         return {"expected_ids": expected_ids, "observed_ids": observed_ids}
 
@@ -129,4 +153,3 @@ async def test_read_all_items_availability_strategy_fallback_async(container_for
     )
     comparison.print_report()
     comparison.assert_functional_parity()
-

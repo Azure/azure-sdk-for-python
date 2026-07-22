@@ -174,6 +174,13 @@ def _pctile_ms(a, q):
     return a["hist"].get_value_at_percentile(q) / 1000.0
 
 
+def _mean_ms(a):
+    """Pooled arithmetic mean in ms from the merged histogram."""
+    if a["count"] <= 0:
+        return float("nan")
+    return a["hist"].get_mean_value() / 1000.0
+
+
 def _fmt_cell(op, backend, a):
     rps = a["count"] / a["window_s"] if a["window_s"] else 0.0
     ru = a["ru_weighted"] / a["ru_count"] if a["ru_count"] else 0.0
@@ -182,7 +189,8 @@ def _fmt_cell(op, backend, a):
     return (
         f"  {op:8s} {backend:11s} count={a['count']:>9d} err={a['errors']:>4d} "
         f"429={a['throttled_429']:>4d} rps={rps:>8.1f} "
-        f"p50={_pctile_ms(a,50):>6.2f} p90={_pctile_ms(a,90):>6.2f} "
+        f"mean={_mean_ms(a):>6.2f} p50={_pctile_ms(a,50):>6.2f} "
+        f"p90={_pctile_ms(a,90):>6.2f} "
         f"p99={_pctile_ms(a,99):>6.2f} p99.9={_pctile_ms(a,99.9):>7.2f} "
         f"RU/op={ru:>6.2f}{note}"
     )
@@ -222,13 +230,14 @@ def main():
                 print(_fmt_cell(op, backend, a))
         print()
 
-    # Side-by-side p50/p99/p99.9 when both engines are present, so a reader can
+    # Side-by-side mean/p50/p99/p99.9 when both engines are present, so a reader can
     # see per-request cost head to head. At conc=1 the engines are expected to be
     # close (latency is network-bound); a large gap on one op is worth a look.
     if "core-python" in backends and "rust" in backends:
-        print("-- core-python vs rust (pooled ms; d50 = python - rust) --")
+        print("-- core-python vs rust (pooled ms; deltas = python - rust) --")
         print(
-            f"  {'op':8s} {'p50_py':>7s} {'p50_ru':>7s} {'d50':>6s} "
+            f"  {'op':8s} {'mean_py':>7s} {'mean_ru':>7s} {'dmean':>6s} "
+            f"{'p50_py':>7s} {'p50_ru':>7s} {'d50':>6s} "
             f"{'p99_py':>7s} {'p99_ru':>7s} {'p999_py':>8s} {'p999_ru':>8s}"
         )
         for op in _OP_ORDER:
@@ -236,9 +245,11 @@ def main():
             ru = agg.get((op, "rust"))
             if not (py and ru):
                 continue
+            dmean = _mean_ms(py) - _mean_ms(ru)
             d50 = _pctile_ms(py, 50) - _pctile_ms(ru, 50)
             print(
-                f"  {op:8s} {_pctile_ms(py,50):>7.2f} {_pctile_ms(ru,50):>7.2f} "
+                f"  {op:8s} {_mean_ms(py):>7.2f} {_mean_ms(ru):>7.2f} {dmean:>6.2f} "
+                f"{_pctile_ms(py,50):>7.2f} {_pctile_ms(ru,50):>7.2f} "
                 f"{d50:>6.2f} {_pctile_ms(py,99):>7.2f} {_pctile_ms(ru,99):>7.2f} "
                 f"{_pctile_ms(py,99.9):>8.2f} {_pctile_ms(ru,99.9):>8.2f}"
             )

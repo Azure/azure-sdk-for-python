@@ -20,20 +20,29 @@ has been built, so the import is guarded; until then, operations raise
 """
 from __future__ import annotations
 
+import json
 import logging
-from typing import Any, Optional
+from typing import Any, Iterator, Optional
 
 from azure.core.exceptions import ServiceResponseError
 
 from .base import (
     OP_TO_BINDING_METHOD,
+    QUERY_TO_BINDING_METHOD,
     BackendResponse,
     CosmosBackend,
     PreparedClientConfig,
+    PreparedQuery,
     PreparedRequest,
+    QueryNotSupportedByBackendError,
+    QueryPage,
     build_backend_response,
 )
-from ._shared import RustBackendShared, driver_transport_error_type
+from ._shared import (
+    RustBackendShared,
+    driver_transport_error_type,
+    driver_unsupported_query_error_type,
+)
 from .constants import BACKEND_NAME_RUST
 
 _LOGGER = logging.getLogger(__name__)
@@ -53,6 +62,7 @@ except ImportError:
 # op that fails before any wire response raises this; we re-raise it as
 # azure-core's ServiceResponseError (see driver_transport_error_type).
 _DRIVER_TRANSPORT_ERROR = driver_transport_error_type(_rust_module)
+_UNSUPPORTED_QUERY_ERROR = driver_unsupported_query_error_type(_rust_module)
 
 
 # Look up the binding's function for an operation. Read live from ``_rust_module``
@@ -65,6 +75,39 @@ def _resolve_dispatch(op: str) -> Optional[Any]:
     if method is None or _rust_module is None:
         return None
     return getattr(_rust_module, method, None)
+
+
+def _resolve_page_dispatch(op: str) -> Optional[Any]:
+    """Return the binding function for a paged operation."""
+    method = QUERY_TO_BINDING_METHOD.get(op)
+    if method is None or _rust_module is None:
+        return None
+    return getattr(_rust_module, method, None)
+
+
+def _binding_request_from_query(prepared: PreparedQuery) -> PreparedRequest:
+    """Adapt the page contract to the binding's current request object."""
+    if prepared.op == "read_all_items":
+        body = b""
+    else:
+        if prepared.query is None:
+            raise ValueError("query_items requires PreparedQuery.query.")
+        payload: dict[str, Any] = {"query": prepared.query}
+        if prepared.parameters:
+            payload["parameters"] = list(prepared.parameters)
+        body = json.dumps(payload, separators=(",", ":")).encode("utf-8")
+    headers = dict(prepared.headers)
+    if prepared.continuation is not None:
+        headers.setdefault("x-ms-continuation", prepared.continuation)
+    if prepared.max_item_count is not None:
+        headers.setdefault("x-ms-max-item-count", str(prepared.max_item_count))
+    return PreparedRequest(
+        op=prepared.op,
+        container_link=prepared.container_link,
+        body_bytes=body,
+        partition_key_header=prepared.partition_key_header or "[]",
+        headers=headers,
+    )
 
 
 class RustBackend(RustBackendShared, CosmosBackend):
@@ -164,7 +207,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             pass
 
     def execute(self, prepared: Optional[PreparedRequest]) -> Optional[BackendResponse]:
-        """Send one prepared operation (point op, query page, or feed-range enumeration)."""
+        """Send one prepared single-response operation."""
         if prepared is None:
             return None
         if _rust_module is None:
@@ -200,3 +243,40 @@ class RustBackend(RustBackendShared, CosmosBackend):
         except _DRIVER_TRANSPORT_ERROR as exc:
             raise ServiceResponseError(message=str(exc)) from exc
         return build_backend_response(*raw_response)
+
+    def execute_pages(self, prepared: PreparedQuery) -> Iterator[QueryPage]:
+        """Yield the one page returned by a query/read-many binding call."""
+        if _rust_module is None:
+            raise NotImplementedError(
+                "RustBackend.execute_pages: the compiled azure.cosmos._rust "
+                "module is not present in this environment. Build it with "
+                "`maturin develop` from the repo root."
+            )
+        dispatch = _resolve_page_dispatch(prepared.op)
+        if dispatch is None:
+            raise NotImplementedError(
+                "RustBackend.execute_pages does not yet support op={!r}.".format(prepared.op)
+            )
+        handle = self._ensure_handle()
+        binding_request = _binding_request_from_query(prepared)
+        _LOGGER.debug(
+            "cosmos backend=%s op=%s dispatch=%s",
+            BACKEND_NAME_RUST,
+            prepared.op,
+            QUERY_TO_BINDING_METHOD.get(prepared.op),
+        )
+        try:
+            response = build_backend_response(*dispatch(handle, binding_request))
+        except _UNSUPPORTED_QUERY_ERROR as exc:
+            raise QueryNotSupportedByBackendError(str(exc)) from exc
+        except _DRIVER_TRANSPORT_ERROR as exc:
+            raise ServiceResponseError(message=str(exc)) from exc
+        continuation = response.headers.get("x-ms-continuation") if response.headers else None
+        yield QueryPage(
+            status_code=response.status_code,
+            continuation=continuation,
+            sub_status=response.sub_status,
+            headers=response.headers,
+            body=response.body,
+            diagnostics=response.diagnostics,
+        )

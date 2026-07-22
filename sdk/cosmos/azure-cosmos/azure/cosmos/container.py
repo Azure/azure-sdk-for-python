@@ -34,9 +34,8 @@ from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, vali
 
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
-from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
+from ._base import (_build_properties_cache, build_options,
                     GenerateGuidId, validate_cache_staleness_value)
-from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
 from ._cosmos_responses import CosmosDict, CosmosList, CosmosItemPaged
@@ -49,19 +48,14 @@ from ._helpers._item_dispatch import (
     pick_backend,
 )
 from ._helpers.item_helper import ItemHelper
-from ._feed_ranges_rust_routing import (
-    can_use_rust_backend_for_feed_range_from_partition_key,
-    can_use_rust_backend_for_is_feed_range_subset,
-    can_use_rust_backend_for_read_feed_ranges,
-    try_feed_range_from_partition_key_with_rust_backend,
-    try_is_feed_range_subset_with_rust_backend,
-    try_read_feed_ranges_with_rust_backend,
+from ._helpers.feed_range_helper import (
+    feed_range_from_partition_key as _feed_range_from_partition_key,
+    is_feed_range_subset as _is_feed_range_subset,
+    read_feed_ranges as _read_feed_ranges,
 )
-from ._offer_rust_routing import (
-    can_use_rust_backend_for_read_offer,
-    can_use_rust_backend_for_replace_throughput,
-    try_read_offer_with_rust_backend,
-    try_replace_offer_with_rust_backend,
+from ._helpers.throughput_helper import (
+    get_throughput as _get_throughput,
+    replace_throughput as _replace_container_throughput,
 )
 from ._routing.routing_range import Range
 from ._session_token_helpers import get_latest_session_token
@@ -387,7 +381,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :paramtype availability_strategy: Union[bool, dict[str, Any]]
         :raises ~azure.cosmos.exceptions.CosmosHttpResponseError: The read-many operation failed.
         :returns: A CosmosList containing the retrieved items. Items that were not found are omitted from the list.
-            The returned items have no guaranteed ordering.
+            The items that are returned preserve their relative order from the input ``items`` sequence. Because
+            missing items are omitted, the result may contain fewer entries than were requested, so callers should
+            not index the result positionally against the input; match on item id when some items may be missing.
         :rtype: ~azure.cosmos.CosmosList
         """
 
@@ -1828,44 +1824,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             the throughput properties could not be retrieved.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        throughput_properties: list[dict[str, Any]]
-        properties = self._get_properties()
-        container_self_link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": container_self_link}],
-        }
-        container_rid = properties["_rid"]
-        options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
-
-        # Read throughput on Rust when the client is Rust-backed with no extra kwargs;
-        # otherwise fall through to legacy QueryOffers. Both return the same offer records,
-        # so the caller sees the identical ThroughputProperties either way.
-        backend = getattr(self.client_connection, "_backend", None)
-        rust_offers: Optional[list[dict[str, Any]]] = None
-        if backend is not None:
-            rust_kwargs: Dict[str, Any] = dict(kwargs)
-            rust_options = build_options(rust_kwargs)
-            rust_options[Constants.ContainerRID] = container_rid
-            # build_options lifts timeout into options; keep the legacy kwargs shape mirrored.
-            rust_kwargs.pop("timeout", None)
-            if can_use_rust_backend_for_read_offer(backend=backend, options=rust_options, kwargs=rust_kwargs):
-                rust_offers = try_read_offer_with_rust_backend(
-                    client_connection=self.client_connection,
-                    container_link=self.container_link,
-                    offer_query=query_spec,
-                    options=rust_options,
-                )
-
-        if rust_offers is not None:
-            throughput_properties = rust_offers
-        else:
-            throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
-
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers, throughput_properties)
-
-        return _deserialize_throughput(throughput=throughput_properties)
+        return _get_throughput(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=self._get_properties,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
 
     @distributed_trace
     def replace_throughput(
@@ -1888,72 +1853,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             or the throughput properties could not be updated.
         :rtype: ~azure.cosmos.ThroughputProperties
         """
-        throughput_properties: list[dict[str, Any]]
-        properties = self._get_properties()
-        container_self_link = properties["_self"]
-        query_spec = {
-            "query": "SELECT * FROM root r WHERE r.resource=@link",
-            "parameters": [{"name": "@link", "value": container_self_link}],
-        }
-        container_rid = properties["_rid"]
-        options: Dict[str, Any] = {Constants.ContainerRID: container_rid}
-
-        # Replace throughput on Rust when the client is Rust-backed and the call
-        # carries no knob the Rust offer path can't honor yet. `timeout` (the
-        # end-to-end deadline) IS supported -- it is popped below and forwarded to
-        # the driver. The blockers are `read_timeout` (socket read timeout) and
-        # `availability_strategy` (cross-region hedging), both known driver-side
-        # gaps, plus any other extra kwarg -- those keep the whole call on the legacy
-        # QueryOffers + ReplaceOffer path below so nothing a customer passed is
-        # silently dropped. Either way the read-modify-write on the container's offer
-        # is the same, so the caller sees the identical ThroughputProperties.
-        backend = getattr(self.client_connection, "_backend", None)
-        if backend is not None:
-            rust_kwargs: Dict[str, Any] = dict(kwargs)
-            rust_options = build_options(rust_kwargs)
-            rust_options[Constants.ContainerRID] = container_rid
-            # build_options lifts `timeout` into options; drop it from the kwargs copy
-            # so the "no extra kwargs" gate doesn't treat the supported timeout as an
-            # unmirrored knob.
-            rust_kwargs.pop("timeout", None)
-            if can_use_rust_backend_for_replace_throughput(
-                backend=backend, options=rust_options, kwargs=rust_kwargs
-            ):
-                rust_offers = try_read_offer_with_rust_backend(
-                    client_connection=self.client_connection,
-                    container_link=self.container_link,
-                    offer_query=query_spec,
-                    options=rust_options,
-                )
-                if rust_offers:
-                    new_offer = rust_offers[0].copy()
-                    _replace_throughput(throughput=throughput, new_throughput_properties=new_offer)
-                    updated_offer = try_replace_offer_with_rust_backend(
-                        client_connection=self.client_connection,
-                        container_link=self.container_link,
-                        offer=new_offer,
-                        options=rust_options,
-                    )
-                    if updated_offer is not None:
-                        if response_hook:
-                            response_hook(self.client_connection.last_response_headers, updated_offer)
-                        return ThroughputProperties(
-                            offer_throughput=updated_offer["content"]["offerThroughput"], properties=updated_offer
-                        )
-
-        throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
-        new_throughput_properties = throughput_properties[0].copy()
-        _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
-        updated_offer = self.client_connection.ReplaceOffer(
-            offer_link=new_throughput_properties["_self"],
-            offer=new_throughput_properties,
+        return _replace_container_throughput(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=self._get_properties,
+            throughput=throughput,
             response_hook=response_hook,
-            **kwargs
-        )
-
-        return ThroughputProperties(
-            offer_throughput=updated_offer["content"]["offerThroughput"],
-            properties=updated_offer
+            kwargs=kwargs,
         )
 
     @distributed_trace
@@ -2182,60 +2088,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        # Choose the engine once, before paging starts. `backend` is the rust engine
-        # object this client uses, or None for core-python. `can_use_rust` is true only
-        # when this client uses rust and the caller passed no extra kwargs. It is
-        # temporary: it narrows as each kwarg is mirrored on rust and is removed once the
-        # surface is fully mirrored.
-        backend = getattr(self.client_connection, "_backend", None)
-        can_use_rust = can_use_rust_backend_for_read_feed_ranges(backend=backend, kwargs=kwargs)
-        # read_feed_ranges returns a finished list, not a stream, so run the work once and
-        # return the same list on repeat get_next calls.
-        cached_feed_ranges: Optional[list[dict[str, Any]]] = None
-
-        def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
-            nonlocal cached_feed_ranges
-            if cached_feed_ranges is not None:
-                return cached_feed_ranges
-
-            # Rust path. Ask the rust engine for the container's key-space slices, which
-            # it reads from the driver's cached partition map. It returns the same opaque
-            # dicts as the legacy path below, so the caller sees no difference.
-            if can_use_rust:
-                rust_feed_ranges = try_read_feed_ranges_with_rust_backend(
-                    client_connection=self.client_connection,
-                    container_link=self.container_link,
-                    force_refresh=force_refresh,
-                )
-                if rust_feed_ranges is not None:
-                    cached_feed_ranges = rust_feed_ranges
-                    return rust_feed_ranges
-
-            # Legacy path (core-python). Permanent, kept for as long as core-python is a
-            # shipped backend. It reads the slices from Python's own in-memory routing map.
-            if force_refresh is True:
-                self.client_connection.refresh_routing_map_provider()
-
-            # Ensure container properties cache is populated so we can get the container RID.
-            self._get_properties_with_options()
-            feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
-            partition_key_ranges = \
-                self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
-                    self.container_link,
-                    [Range("", "FF", True, False)],  # default to full range
-                    feed_options,
-                    **kwargs)
-
-            feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()
-                    for partitionKeyRange in partition_key_ranges]
-
-            cached_feed_ranges = feed_ranges
-            return feed_ranges
-
-        def extract_data(feed_ranges_response: list[dict[str, Any]]):
-            return None, iter(feed_ranges_response)
-
-        return ItemPaged(get_next, extract_data)
+        return _read_feed_ranges(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            get_properties=self._get_properties_with_options,
+            force_refresh=force_refresh,
+            kwargs=kwargs,
+        )
 
     def get_latest_session_token(
             self,
@@ -2275,25 +2134,14 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
         """
         partition_key_value = self._set_partition_key(partition_key)
-        backend = pick_backend(self.client_connection)
-        # The returned dict is an opaque label for the slice this key hashes into; customers save
-        # it, compare it against earlier-saved values and the read_feed_ranges slice list, and hand
-        # it to get_latest_session_token. Try Rust first, but it must return the value byte-for-byte
-        # identical to the legacy path below (see parse_feed_range_from_partition_key_payload), or
-        # those comparisons and session-token lookups silently break. Fall through to legacy on None.
-        if can_use_rust_backend_for_feed_range_from_partition_key(
-            backend=backend,
-        ):
-            rust_feed_range = try_feed_range_from_partition_key_with_rust_backend(
-                client_connection=self.client_connection,
-                container_link=self.container_link,
-                partition_key_value=partition_key_value,
-            )
-            if rust_feed_range is not None:
-                return rust_feed_range
-        container_properties = self._get_properties()
-        epk_range_for_partition_key = _get_epk_range_for_partition_key(container_properties, partition_key_value)
-        return FeedRangeInternalEpk(epk_range_for_partition_key).to_dict()
+        return _feed_range_from_partition_key(
+            client_connection=self.client_connection,
+            container_link=self.container_link,
+            partition_key_value=partition_key_value,
+            get_legacy_epk_range=lambda value: _get_epk_range_for_partition_key(
+                self._get_properties(), value
+            ),
+        )
 
     def is_feed_range_subset(self, parent_feed_range: dict[str, Any], child_feed_range: dict[str, Any]) -> bool:
         """ Checks if child feed range is a subset of parent feed range.
@@ -2309,24 +2157,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
           are present. It therefore should only be treated as an opaque value.
 
         """
-        backend = pick_backend(self.client_connection)
-        # This is a pure client-side subset check (no network call). Try Rust first: it
-        # normalizes both feed ranges to [min, max) bounds and compares them exactly as the
-        # legacy path below does, so the boolean answer is identical. Parsing the two feed-range
-        # dicts is left to whichever path handles the call -- Rust parses them itself, and the
-        # legacy fallback parses them below -- so the accepted case is not parsed twice. Rust
-        # returns None (and we fall through to legacy) when it can't handle the inputs.
-        if can_use_rust_backend_for_is_feed_range_subset(
-            backend=backend,
-        ):
-            rust_is_subset = try_is_feed_range_subset_with_rust_backend(
-                client_connection=self.client_connection,
-                parent_feed_range=parent_feed_range,
-                child_feed_range=child_feed_range,
-            )
-            if rust_is_subset is not None:
-                return rust_is_subset
-        parent_feed_range_epk = FeedRangeInternalEpk.from_json(parent_feed_range)
-        child_feed_range_epk = FeedRangeInternalEpk.from_json(child_feed_range)
-        return child_feed_range_epk.get_normalized_range().is_subset(
-            parent_feed_range_epk.get_normalized_range())
+        return _is_feed_range_subset(
+            client_connection=self.client_connection,
+            parent_feed_range=parent_feed_range,
+            child_feed_range=child_feed_range,
+        )

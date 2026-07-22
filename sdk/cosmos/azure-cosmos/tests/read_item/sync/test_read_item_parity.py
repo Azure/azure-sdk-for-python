@@ -516,10 +516,10 @@ def test_L4_conditional_etag_if_not_modified_match_returns_200_body(container_fo
 
 def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(container_for):
     """L4: stale ``etag`` + ``IfNotModified`` on a read — pin what actually
-    happens, not what the design doc hoped for.
+    happens on the wire, not the intuitive expectation.
 
-    The design doc says ``IfNotModified`` on a read should send
-    ``If-Match: <etag>`` and return ``412 CosmosAccessConditionFailedError``
+    The intuitive expectation is that ``IfNotModified`` on a read sends
+    ``If-Match: <etag>`` and returns ``412 CosmosAccessConditionFailedError``
     on a mismatch. In practice, against a live Cosmos account, both the
     rust driver and core-python return ``200 + the current body`` instead
     of ``412`` — the service does not enforce ``If-Match`` on a
@@ -527,12 +527,10 @@ def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(c
     enforced and returns 412 — see
     ``test_delete_item_parity::test_L5_stale_etag_if_not_modified_raises_412``.)
 
-    Until either the doc is corrected to say "``IfNotModified`` on a read
-    does nothing on the wire", or the SDK starts sending ``If-Match`` on
-    reads in a way the service honours, this test pins only what we can
-    observe: both backends must behave the same way. If one backend later
-    started raising while the other didn't, it would show up here as a
-    ``FUNCTIONAL DIVERGENCE`` verdict from ``assert_parity``.
+    This test pins only what we can observe: both backends must behave the
+    same way. If one backend later started raising while the other didn't,
+    it would show up here as a ``FUNCTIONAL DIVERGENCE`` verdict from
+    ``assert_parity``.
     """
     def _do(client):
         cont = client.get_database_client("parity_db").get_container_client(container_for.id)

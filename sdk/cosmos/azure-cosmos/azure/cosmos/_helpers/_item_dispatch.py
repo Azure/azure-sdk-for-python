@@ -67,17 +67,20 @@ def merge_create_item_explicit_kwargs(
 
 
 def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
-    """Return the wired backend, or ``None`` for the legacy path.
+    """Return the stored backend selection: a rust backend, or ``None``.
 
-    A ``None`` return is the signal for the helper to fall through to
-    the legacy client-connection method (``CreateItem`` / ``ReadItem``
-    / ``DeleteItem``); there is no "core-python backend" class. The
-    decision is made once at client construction and never reconsidered
-    per call.
+    ``None`` means core-python was selected. This is the raw, ``Optional``
+    selection stored at client construction. Every family coordinator (the item
+    helper, and the throughput / feed-range coordinators) no longer treats
+    ``None`` as "call legacy" directly: each coerces this selection to an
+    explicit :class:`~azure.cosmos._backend.legacy.LegacyBackend` (via
+    :func:`~azure.cosmos._backend.legacy.coerce_backend`) so it holds one
+    backend by interface. The selection is made once at construction and never
+    reconsidered per call.
 
     :param client_connection: The connection that owns the ``_backend``
         attribute. A missing attribute is tolerated.
-    :returns: The backend instance, or ``None``.
+    :returns: The rust backend instance, or ``None`` for core-python.
     """
     connection_dict = getattr(client_connection, "__dict__", None)
     if isinstance(connection_dict, dict):

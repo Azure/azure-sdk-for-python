@@ -19,6 +19,7 @@ import pytest
 from azure.cosmos import CosmosClient, PartitionKey
 from common._parity_helpers import (
     run_on_both_backends,
+    run_target_operation,
     skip_unless_emulator,
     skip_unless_rust_binding,
 )
@@ -50,14 +51,17 @@ def test_L0_partition_query_baseline(container_for):
         pk_value = "pk-" + uuid.uuid4().hex[:8]
         for i in range(3):
             container.create_item({"id": uuid.uuid4().hex, "pk": pk_value, "value": i})
-        result = list(
-            container.query_items(
-                query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']",
-                parameters=[{"name": "@pk", "value": pk_value}],
-                partition_key=pk_value,
-            )
+        return run_target_operation(
+            client,
+            lambda: [
+                doc["value"]
+                for doc in container.query_items(
+                    query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c['value']",
+                    parameters=[{"name": "@pk", "value": pk_value}],
+                    partition_key=pk_value,
+                )
+            ],
         )
-        return [doc["value"] for doc in result]
 
     comparison = run_on_both_backends(
         _do,
@@ -81,23 +85,25 @@ def test_L1_partition_query_continuation_replay(container_for):
         container.upsert_item({"id": first_id, "pk": pk_value, "value": 1})
         container.upsert_item({"id": second_id, "pk": pk_value, "value": 2})
 
-        query_iterable = container.query_items(
-            query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c.id",
-            parameters=[{"name": "@pk", "value": pk_value}],
-            partition_key=pk_value,
-            max_item_count=1,
-        )
-        pager = query_iterable.by_page()
-        list(pager.next())
-        continuation_token = pager.continuation_token
-        second_page = list(pager.next())
-        replay_page = list(query_iterable.by_page(continuation_token).next())
+        def _target():
+            query_iterable = container.query_items(
+                query="SELECT * FROM c WHERE c.pk = @pk ORDER BY c.id",
+                parameters=[{"name": "@pk", "value": pk_value}],
+                partition_key=pk_value,
+                max_item_count=1,
+            )
+            pager = query_iterable.by_page()
+            list(pager.next())
+            continuation_token = pager.continuation_token
+            second_page = list(pager.next())
+            replay_page = list(query_iterable.by_page(continuation_token).next())
+            return {
+                "token_present": continuation_token is not None,
+                "second_page_id": second_page[0]["id"],
+                "replay_page_id": replay_page[0]["id"],
+            }
 
-        return {
-            "token_present": continuation_token is not None,
-            "second_page_id": second_page[0]["id"],
-            "replay_page_id": replay_page[0]["id"],
-        }
+        return run_target_operation(client, _target)
 
     comparison = run_on_both_backends(
         _do,
@@ -116,14 +122,17 @@ def test_L2_cross_partition_query_fallback(container_for):
         run_id = "run-" + uuid.uuid4().hex
         container.create_item({"id": uuid.uuid4().hex, "pk": "a", "run_id": run_id})
         container.create_item({"id": uuid.uuid4().hex, "pk": "b", "run_id": run_id})
-        result = list(
-            container.query_items(
-                query="SELECT * FROM c WHERE c.run_id = @run_id",
-                parameters=[{"name": "@run_id", "value": run_id}],
-                enable_cross_partition_query=True,
-            )
+        return run_target_operation(
+            client,
+            lambda: sorted(
+                item["pk"]
+                for item in container.query_items(
+                    query="SELECT * FROM c WHERE c.run_id = @run_id",
+                    parameters=[{"name": "@run_id", "value": run_id}],
+                    enable_cross_partition_query=True,
+                )
+            ),
         )
-        return sorted(item["pk"] for item in result)
 
     comparison = run_on_both_backends(
         _do,
@@ -141,11 +150,14 @@ def test_L3_invalid_query_raises_same_type(container_for):
     def _do(client):
         container = client.get_database_client("parity_db").get_container_client(container_for.id)
         pk_value = "pk-" + uuid.uuid4().hex[:8]
-        return list(
-            container.query_items(
-                query="SELECT FROM c",
-                partition_key=pk_value,
-            )
+        return run_target_operation(
+            client,
+            lambda: list(
+                container.query_items(
+                    query="SELECT FROM c",
+                    partition_key=pk_value,
+                )
+            ),
         )
 
     comparison = run_on_both_backends(

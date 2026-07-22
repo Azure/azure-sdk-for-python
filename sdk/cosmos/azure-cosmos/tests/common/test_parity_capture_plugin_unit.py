@@ -124,6 +124,53 @@ class PluginRegistryTests(unittest.TestCase):
         normalized = self.plugin._coerce_json_safe(_Dummy())  # noqa: SLF001
         self.assertEqual(normalized, "<Dummy object>")
 
+    def test_execution_evidence_uses_binding_counter_delta(self):
+        """A Rust-selected client must prove that the binding counter moved."""
+        original = self.plugin._rust_operation_count  # noqa: SLF001
+        original_fallback = self.plugin._rust_fallback_count  # noqa: SLF001
+        try:
+            self.plugin._rust_operation_count = lambda: 12  # noqa: SLF001
+            self.plugin._rust_fallback_count = lambda: 0  # noqa: SLF001
+            evidence = self.plugin._execution_evidence(10, 0)  # noqa: SLF001
+        finally:
+            self.plugin._rust_operation_count = original  # noqa: SLF001
+            self.plugin._rust_fallback_count = original_fallback  # noqa: SLF001
+        self.assertEqual(evidence["executed_engine"], "rust")
+        self.assertEqual(evidence["rust_operation_delta"], 2)
+
+    def test_result_headers_prefer_public_aggregate(self):
+        """List/read-many captures must use the result's aggregate headers."""
+
+        class _Result:
+            def get_response_headers(self):
+                return {"x-ms-request-charge": "4.5"}
+
+        class _Container:
+            client_connection = type(
+                "_Connection",
+                (),
+                {"last_response_headers": {"x-ms-request-charge": "1.0"}},
+            )()
+
+        headers = self.plugin._snapshot_result_headers(  # noqa: SLF001
+            _Result(), _Container()
+        )
+        self.assertEqual(headers, {"x-ms-request-charge": "4.5"})
+
+    def test_execution_evidence_rejects_attempt_then_fallback(self):
+        """Entering Rust and then retrying in Python is not Rust execution parity."""
+        original_count = self.plugin._rust_operation_count  # noqa: SLF001
+        original_fallback = self.plugin._rust_fallback_count  # noqa: SLF001
+        try:
+            self.plugin._rust_operation_count = lambda: 12  # noqa: SLF001
+            self.plugin._rust_fallback_count = lambda: 4  # noqa: SLF001
+            evidence = self.plugin._execution_evidence(10, 3)  # noqa: SLF001
+        finally:
+            self.plugin._rust_operation_count = original_count  # noqa: SLF001
+            self.plugin._rust_fallback_count = original_fallback  # noqa: SLF001
+        self.assertEqual(evidence["executed_engine"], "core-python")
+        self.assertEqual(evidence["rust_fallback_delta"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

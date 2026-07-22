@@ -14,6 +14,7 @@ Usage::
         --op read_item \\
         --corepy docs/V5/_parity_runs/read_item_corepy_<ts>.txt \\
         --rust   docs/V5/_parity_runs/read_item_rust_<ts>.txt \\
+        --expected-count 12 \\
         --out    docs/V5/V5_PARITY_AUDIT_read_item_LEGACY.md
 
 The reporter does **no test execution** -- it only diffs the two
@@ -321,6 +322,9 @@ class CaptureBlock:
     # warn when the two transcripts being diffed came from different
     # plugin versions.
     plugin_version: str = "v1"
+    executed_engine: str = "unknown"
+    rust_operation_delta: Optional[int] = None
+    rust_fallback_delta: int = 0
 
     @property
     def class_name(self) -> str:
@@ -343,28 +347,31 @@ def _find_next_capture_block(text: str, pos: int) -> Optional[Tuple[int, int, in
     v1 sentinels are also accepted so old on-disk transcripts still
     parse. Returns ``None`` when no further block is found.
     """
-    # v2: regex-matched, per-session 8-hex token.
-    m = _CAPTURE_START_RE.search(text, pos)
-    v2_start = m.start() if m else -1
-    # v1: literal fallback.
-    v1_start = text.find(_CAPTURE_START_V1, pos)
-    if v2_start < 0 and v1_start < 0:
-        return None
-    # Pick whichever comes first.
-    if v2_start >= 0 and (v1_start < 0 or v2_start < v1_start):
-        token = m.group(1)  # type: ignore[union-attr]
-        end_marker = _CAPTURE_END_TEMPLATE.format(token=token)
-        end = text.find(end_marker, m.end())  # type: ignore[union-attr]
-        if end < 0:
+    search_pos = pos
+    while True:
+        m = _CAPTURE_START_RE.search(text, search_pos)
+        v2_start = m.start() if m else -1
+        v1_start = text.find(_CAPTURE_START_V1, search_pos)
+        if v2_start < 0 and v1_start < 0:
             return None
-        return (m.end(), end, end + len(end_marker))  # type: ignore[union-attr]
-    end = text.find(_CAPTURE_END_V1, v1_start + len(_CAPTURE_START_V1))
-    if end < 0:
-        return None
-    return (v1_start + len(_CAPTURE_START_V1), end, end + len(_CAPTURE_END_V1))
+        if v2_start >= 0 and (v1_start < 0 or v2_start < v1_start):
+            token = m.group(1)  # type: ignore[union-attr]
+            end_marker = _CAPTURE_END_TEMPLATE.format(token=token)
+            end = text.find(end_marker, m.end())  # type: ignore[union-attr]
+            if end >= 0:
+                return (m.end(), end, end + len(end_marker))  # type: ignore[union-attr]
+            search_pos = m.end()  # type: ignore[union-attr]
+            continue
+        payload_start = v1_start + len(_CAPTURE_START_V1)
+        end = text.find(_CAPTURE_END_V1, payload_start)
+        if end >= 0:
+            return (payload_start, end, end + len(_CAPTURE_END_V1))
+        search_pos = payload_start
 
 
-def parse_captures(path: str) -> List[CaptureBlock]:
+def parse_captures(
+    path: str, parse_errors: Optional[List[str]] = None
+) -> List[CaptureBlock]:
     """Extract every capture block from a pytest transcript.
 
     Tolerates BOM-prefixed UTF-16 (PowerShell Tee-Object default) and
@@ -376,6 +383,13 @@ def parse_captures(path: str) -> List[CaptureBlock]:
     encoding = _detect_encoding(path)
     with open(path, "r", encoding=encoding, errors="replace") as fh:
         text = fh.read()
+    if parse_errors is not None:
+        for match in _CAPTURE_START_RE.finditer(text):
+            end_marker = _CAPTURE_END_TEMPLATE.format(token=match.group(1))
+            if text.find(end_marker, match.end()) < 0:
+                parse_errors.append(
+                    f"truncated capture block at offset {match.start()} in {path}"
+                )
     pos = 0
     while True:
         found = _find_next_capture_block(text, pos)
@@ -391,6 +405,10 @@ def parse_captures(path: str) -> List[CaptureBlock]:
         try:
             payload = json.loads(payload_text)
         except json.JSONDecodeError as je:
+            if parse_errors is not None:
+                parse_errors.append(
+                    f"malformed capture block at offset {payload_start} in {path}: {je}"
+                )
             sys.stderr.write(
                 f"WARNING: malformed capture block at offset {payload_start} in {path}: {je}\n"
             )
@@ -410,14 +428,49 @@ def parse_captures(path: str) -> List[CaptureBlock]:
                 exception=payload.get("exception"),
                 test_doc=payload.get("test_doc"),
                 plugin_version=payload.get("plugin_version", "v1"),
+                executed_engine=payload.get("executed_engine", "unknown"),
+                rust_operation_delta=(
+                    int(payload["rust_operation_delta"])
+                    if payload.get("rust_operation_delta") is not None
+                    else None
+                ),
+                rust_fallback_delta=int(payload.get("rust_fallback_delta", 0)),
             )
         except (KeyError, TypeError, ValueError) as ve:
+            if parse_errors is not None:
+                parse_errors.append(
+                    f"malformed capture payload at offset {payload_start} in {path}: {ve}"
+                )
             sys.stderr.write(
                 f"WARNING: malformed capture payload at offset {payload_start} in {path}: {ve}\n"
             )
             continue
         captures.append(cb)
     return captures
+
+
+_PYTEST_SUMMARY_RE = re.compile(r"=+\s*(?P<body>.+?)\s+in\s+[\d.]+s\s*=+\s*$")
+_PYTEST_COUNT_RE = re.compile(
+    r"(?P<count>\d+)\s+"
+    r"(?P<kind>passed|failed|skipped|error|errors|xfailed|xpassed)"
+)
+
+
+def pytest_completion_count(path: str) -> Optional[int]:
+    """Return completed pytest outcomes from the terminal summary."""
+    encoding = _detect_encoding(path)
+    with open(path, "r", encoding=encoding, errors="replace") as fh:
+        lines = fh.readlines()
+    for raw_line in reversed(lines):
+        match = _PYTEST_SUMMARY_RE.search(raw_line.strip())
+        if not match:
+            continue
+        counts = [
+            int(item.group("count"))
+            for item in _PYTEST_COUNT_RE.finditer(match.group("body"))
+        ]
+        return sum(counts) if counts else None
+    return None
 
 
 def index_captures(blocks: List[CaptureBlock]) -> Dict[Tuple[str, str, str, str], List[CaptureBlock]]:
@@ -474,6 +527,13 @@ def _build_call_outcome(cb: Optional[CaptureBlock], backend: str):
     ph = _load_parity_helpers()
     if cb is None:
         return ph.CallOutcome(backend=backend, raised=RuntimeError("no capture recorded"))
+    if cb.status not in ("ok", "raised"):
+        return ph.CallOutcome(
+            backend=backend,
+            raised=RuntimeError(
+                "unusable parity capture status {!r}".format(cb.status)
+            ),
+        )
     if cb.status == "raised" and cb.exception:
         # Reconstruct an exception-shaped object that satisfies the
         # attribute access diff_outcomes() does on ``status_code`` /
@@ -502,6 +562,26 @@ def _build_call_outcome(cb: Optional[CaptureBlock], backend: str):
         return_value=cb.return_value,
         response_headers=dict(cb.response_headers),
     )
+
+
+_REQUEST_UUID_RE = re.compile(
+    r"(?i)\b(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-"
+    r"[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\b"
+)
+
+
+def _normalized_request(value: Any) -> Any:
+    """Preserve request values while removing only UUID-shaped run noise."""
+    if isinstance(value, dict):
+        return {
+            str(key): _normalized_request(item)
+            for key, item in sorted(value.items(), key=lambda pair: str(pair[0]))
+        }
+    if isinstance(value, list):
+        return [_normalized_request(item) for item in value]
+    if isinstance(value, str):
+        return _REQUEST_UUID_RE.sub("<uuid>", value)
+    return value
 
 
 # Module-level cache of synthesised exception classes keyed by the
@@ -566,6 +646,21 @@ def _build_comparison(
     )
     if cp_cb is not None and rs_cb is not None:
         cmp.diffs = ph.diff_outcomes(cp_oc, rs_oc)
+        cp_request = {
+            "args": _normalized_request(cp_cb.request_args),
+            "kwargs": _normalized_request(cp_cb.request_kwargs),
+        }
+        rs_request = {
+            "args": _normalized_request(rs_cb.request_args),
+            "kwargs": _normalized_request(rs_cb.request_kwargs),
+        }
+        if cp_request != rs_request:
+            cmp.diffs.insert(
+                0,
+                "request: core-python {!r} / rust {!r}".format(
+                    cp_request, rs_request
+                ),
+            )
     else:
         cmp.diffs = [
             "no capture on "
@@ -788,9 +883,25 @@ def emit_markdown(
     scope_notes: str = "",
     corepy_captures: Optional[Dict[Tuple[str, str, str, str], List[CaptureBlock]]] = None,
     rust_captures: Optional[Dict[Tuple[str, str, str, str], List[CaptureBlock]]] = None,
+    validation_errors: Optional[List[str]] = None,
 ) -> str:
     corepy_captures = corepy_captures or {}
     rust_captures = rust_captures or {}
+    validation_errors = validation_errors or []
+
+    verdict_priority = {
+        _FUNCTIONAL_DIVERGENCE_LABEL: 0,
+        _EXCEPTION_DIVERGENCE_LABEL: 1,
+        "RUST REGRESSION": 2,
+        "SHARED FAILURE": 3,
+        "OTHER": 4,
+        _HEADER_GAP_LABEL: 5,
+        "RUST SKIP ONLY": 6,
+        "CORE-PYTHON SKIP ONLY": 7,
+        "BOTH SKIPPED": 8,
+        "RUST FIX": 9,
+        _FULL_PARITY_LABEL: 10,
+    }
 
     # Resolve the per-row scoreboard verdict once, up front, so
     # sorting and rendering share a single source of truth. The
@@ -808,35 +919,32 @@ def emit_markdown(
         rs_key = (rs.surface, rs.file_key, rs.class_name, rs.method_name)
         cp_blocks = corepy_captures.get(cp_key, [])
         rs_blocks = rust_captures.get(rs_key, [])
+        if cp.outcome != "PASSED" or rs.outcome != "PASSED":
+            return verdict_for(cp, rs)
         if not cp_blocks or not rs_blocks:
             return verdict_for(cp, rs)
-        # Use the first paired ordinal as the row's representative
-        # verdict. Multi-call tests get one PARITY CALL block per
-        # ordinal in the per-test section, but the scoreboard
-        # condenses to a single label.
-        cmp = _build_comparison(cp.class_name, cp.method_name, cp_blocks[0], rs_blocks[0])
-        return _short_call_verdict(cmp)
+        call_verdicts: List[str] = []
+        for index in range(max(len(cp_blocks), len(rs_blocks))):
+            cp_block = cp_blocks[index] if index < len(cp_blocks) else None
+            rs_block = rs_blocks[index] if index < len(rs_blocks) else None
+            cmp = _build_comparison(
+                cp.class_name, cp.method_name, cp_block, rs_block
+            )
+            call_verdicts.append(_short_call_verdict(cmp))
+        return min(
+            call_verdicts,
+            key=lambda verdict: verdict_priority.get(
+                verdict.split(" (")[0], 4
+            ),
+        )
 
     # Sort by the *new* verdict so worst-first ordering still works
     # with the capture-derived labels.
     def _row_sort_key(pair):
         cp, rs = pair
         v = _row_verdict(cp, rs)
-        # Order: most actionable at the top.
-        priority = {
-            _FUNCTIONAL_DIVERGENCE_LABEL: 0,
-            _EXCEPTION_DIVERGENCE_LABEL: 1,
-            "RUST REGRESSION": 2,
-            "SHARED FAILURE": 3,
-            _HEADER_GAP_LABEL: 4,
-            "RUST SKIP ONLY": 5,
-            "CORE-PYTHON SKIP ONLY": 6,
-            "BOTH SKIPPED": 7,
-            "RUST FIX": 8,
-            _FULL_PARITY_LABEL: 9,
-        }
         base = v.split(" (")[0]
-        order = priority.get(base, priority.get(v, 99))
+        order = verdict_priority.get(base, verdict_priority.get(v, 99))
         any_r = rs or cp
         surface_order = 0 if any_r.surface == "sync" else 1
         label = f"{any_r.class_name}.{any_r.method_name}"
@@ -862,6 +970,22 @@ def emit_markdown(
         f"were diffed call-by-call to see whether the rust path still "
         f"honours the contracts the v4 SDK already shipped."
     )
+    lines.append("")
+    lines.append("## Trust status")
+    lines.append("")
+    if validation_errors:
+        lines.append(
+            "**INVALID OR INCOMPLETE INPUT:** this report must not be used as "
+            "parity evidence until these problems are fixed:"
+        )
+        lines.append("")
+        for error in validation_errors:
+            lines.append(f"* {error}")
+    else:
+        lines.append(
+            "**TRUSTED INPUT:** both transcripts contain paired test results and "
+            "operation captures from the expected backend."
+        )
     lines.append("")
     lines.append("## How to read this report")
     lines.append("")
@@ -1050,12 +1174,264 @@ def emit_markdown(
 # CLI
 # -----------------------------------------------------------------------------
 
+def _result_key(result: TestResult) -> Tuple[str, str, str, str]:
+    return (
+        result.surface,
+        result.file_key,
+        result.class_name,
+        result.method_name,
+    )
+
+
+def _capture_key(block: CaptureBlock) -> Tuple[str, str, str, str]:
+    return (
+        block.surface,
+        _file_key_of(block.nodeid.split("::", 1)[0]),
+        block.class_name,
+        block.method_name,
+    )
+
+
+def _validate_audit_inputs(
+    *,
+    op: str,
+    corepy: List[TestResult],
+    rust: List[TestResult],
+    corepy_blocks: List[CaptureBlock],
+    rust_blocks: List[CaptureBlock],
+) -> List[str]:
+    errors: List[str] = []
+    if not corepy:
+        errors.append("no core-python pytest result lines were parsed")
+    if not rust:
+        errors.append("no rust pytest result lines were parsed")
+    if not corepy_blocks:
+        errors.append("no core-python operation captures were parsed")
+    if not rust_blocks:
+        errors.append("no rust operation captures were parsed")
+
+    for label, blocks, expected_backend in (
+        ("core-python", corepy_blocks, "core-python"),
+        ("rust", rust_blocks, "rust"),
+    ):
+        versions = {block.plugin_version for block in blocks}
+        if len(versions) > 1:
+            errors.append(
+                "{} transcript mixes capture-plugin versions: {}".format(
+                    label, sorted(versions)
+                )
+            )
+        if versions and versions != {"v3"}:
+            errors.append(
+                "{} transcript uses capture-plugin version(s) {}; v3 execution evidence is required".format(
+                    label, sorted(versions)
+                )
+            )
+        for block in blocks:
+            if block.backend != expected_backend:
+                errors.append(
+                    "{} transcript captured backend {!r} for {}".format(
+                        label, block.backend, block.nodeid
+                    )
+                )
+            if block.op != op:
+                errors.append(
+                    "{} transcript captured op {!r}, expected {!r}, for {}".format(
+                        label, block.op, op, block.nodeid
+                    )
+                )
+            if block.executed_engine != expected_backend:
+                errors.append(
+                    "{} transcript selected {!r} but actually executed {!r} for {}".format(
+                        label, block.backend, block.executed_engine, block.nodeid
+                    )
+                )
+            if block.rust_operation_delta is None:
+                errors.append(
+                    "{} transcript has no Rust operation-count evidence for {}".format(
+                        label, block.nodeid
+                    )
+                )
+            if block.rust_fallback_delta != 0:
+                errors.append(
+                    "{} transcript recorded {} Rust fallback(s) for {}".format(
+                        label, block.rust_fallback_delta, block.nodeid
+                    )
+                )
+            elif (
+                block.rust_operation_delta is not None
+                and expected_backend == "core-python"
+                and block.rust_operation_delta != 0
+            ):
+                errors.append(
+                    "core-python transcript executed {} Rust operation(s) for {}".format(
+                        block.rust_operation_delta, block.nodeid
+                    )
+                )
+            elif (
+                block.rust_operation_delta is not None
+                and expected_backend == "rust"
+                and block.rust_operation_delta <= 0
+            ):
+                errors.append(
+                    "rust transcript executed no Rust operation for {}".format(
+                        block.nodeid
+                    )
+                )
+            if block.status not in ("ok", "raised"):
+                errors.append(
+                    "{} transcript has unusable capture status {!r} for {}".format(
+                        label, block.status, block.nodeid
+                    )
+                )
+            if block.status == "raised" and not block.exception:
+                errors.append(
+                    "{} transcript recorded a raised call without exception data for {}".format(
+                        label, block.nodeid
+                    )
+                )
+            expected_surface = _surface_of(
+                block.nodeid.split("::", 1)[0], block.method_name
+            )
+            if block.surface != expected_surface:
+                errors.append(
+                    "{} capture surface {!r} does not match nodeid surface {!r} for {}".format(
+                        label, block.surface, expected_surface, block.nodeid
+                    )
+                )
+            if op in ("query_items", "read_all_items") and isinstance(
+                block.return_value, str
+            ) and "ItemPaged" in block.return_value:
+                errors.append(
+                    "{} capture for {} observed only the lazy pager object, not iteration results".format(
+                        label, block.nodeid
+                    )
+                )
+
+    core_versions = {block.plugin_version for block in corepy_blocks}
+    rust_versions = {block.plugin_version for block in rust_blocks}
+    if core_versions and rust_versions and core_versions != rust_versions:
+        errors.append(
+            "capture-plugin versions differ: core-python={} rust={}".format(
+                sorted(core_versions), sorted(rust_versions)
+            )
+        )
+
+    core_results = {_result_key(result): result for result in corepy}
+    rust_results = {_result_key(result): result for result in rust}
+    if set(core_results) != set(rust_results):
+        missing_rust = sorted(set(core_results) - set(rust_results))
+        missing_core = sorted(set(rust_results) - set(core_results))
+        if missing_rust:
+            errors.append(
+                "tests missing from rust transcript: {!r}".format(missing_rust)
+            )
+        if missing_core:
+            errors.append(
+                "tests missing from core-python transcript: {!r}".format(missing_core)
+            )
+
+    core_index = index_captures(corepy_blocks)
+    rust_index = index_captures(rust_blocks)
+    known_result_keys = set(core_results) | set(rust_results)
+    for label, capture_index in (
+        ("core-python", core_index),
+        ("rust", rust_index),
+    ):
+        for key, blocks in capture_index.items():
+            if key not in known_result_keys:
+                errors.append(
+                    "{} capture has no matching pytest result: {!r}".format(
+                        label, key
+                    )
+                )
+            ordinals = [block.ordinal for block in blocks]
+            expected_ordinals = list(range(len(blocks)))
+            if ordinals != expected_ordinals:
+                errors.append(
+                    "{} capture ordinals for {!r} are {!r}, expected {!r}".format(
+                        label, key, ordinals, expected_ordinals
+                    )
+                )
+
+    for key in sorted(set(core_results) & set(rust_results)):
+        core_result = core_results[key]
+        rust_result = rust_results[key]
+        if core_result.outcome != "PASSED" or rust_result.outcome != "PASSED":
+            errors.append(
+                "test {!r} did not pass on both backends: {} vs {}".format(
+                    key, core_result.outcome, rust_result.outcome
+                )
+            )
+            continue
+        core_calls = core_index.get(key, [])
+        rust_calls = rust_index.get(key, [])
+        if not core_calls or not rust_calls:
+            errors.append(
+                "passed test {!r} has no captured {} call".format(
+                    key,
+                    "core-python" if not core_calls else "rust",
+                )
+            )
+        elif len(core_calls) != len(rust_calls):
+            errors.append(
+                "passed test {!r} captured {} core-python calls and {} rust calls".format(
+                    key, len(core_calls), len(rust_calls)
+                )
+            )
+    return list(dict.fromkeys(errors))
+
+
+def _comparison_failures(
+    pairs: List[Tuple[Optional[TestResult], Optional[TestResult]]],
+    corepy_captures: Dict[Tuple[str, str, str, str], List[CaptureBlock]],
+    rust_captures: Dict[Tuple[str, str, str, str], List[CaptureBlock]],
+) -> List[str]:
+    failures: List[str] = []
+    for core_result, rust_result in pairs:
+        if core_result is None or rust_result is None:
+            continue
+        if core_result.outcome != "PASSED" or rust_result.outcome != "PASSED":
+            continue
+        key = _result_key(core_result)
+        core_calls = corepy_captures.get(key, [])
+        rust_calls = rust_captures.get(key, [])
+        for index, (core_call, rust_call) in enumerate(
+            zip(core_calls, rust_calls)
+        ):
+            comparison = _build_comparison(
+                core_result.class_name,
+                core_result.method_name,
+                core_call,
+                rust_call,
+            )
+            non_header_diffs = [
+                diff
+                for diff in comparison.diffs
+                if not comparison._is_header_diff(diff)  # pylint: disable=protected-access
+            ]
+            if non_header_diffs:
+                failures.append(
+                    "{} call #{}: {}".format(
+                        "::".join(key),
+                        index + 1,
+                        "; ".join(non_header_diffs),
+                    )
+                )
+    return failures
+
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--op", required=True, help="Operation name, e.g. read_item")
     ap.add_argument("--corepy", required=True, help="Path to the core-python pytest -v transcript")
     ap.add_argument("--rust", required=True, help="Path to the rust pytest -v transcript")
     ap.add_argument("--out", required=True, help="Path to write the audit markdown")
+    ap.add_argument(
+        "--expected-count",
+        required=True,
+        type=int,
+        help="Exact number of tests that each transcript must complete",
+    )
     ap.add_argument(
         "--account-host",
         default=os.environ.get("ACCOUNT_HOST", "<ACCOUNT_HOST not captured>"),
@@ -1076,44 +1452,37 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     corepy = parse_transcript(args.corepy)
     rust = parse_transcript(args.rust)
-    corepy_blocks = parse_captures(args.corepy)
-    rust_blocks = parse_captures(args.rust)
-
-    if not corepy:
-        print(f"WARNING: no test result lines parsed from {args.corepy}", file=sys.stderr)
-    if not rust:
-        print(f"WARNING: no test result lines parsed from {args.rust}", file=sys.stderr)
-    if not corepy_blocks:
-        print(
-            f"WARNING: no PARITY-CAPTURE blocks parsed from {args.corepy} "
-            f"-- core-python column will render without per-call detail. "
-            f"Re-run pytest with COSMOS_PARITY_CAPTURE_OP={args.op} set "
-            f"and -s flag enabled.",
-            file=sys.stderr,
-        )
-    if not rust_blocks:
-        print(
-            f"WARNING: no PARITY-CAPTURE blocks parsed from {args.rust} "
-            f"-- rust column will render without per-call detail. Same fix.",
-            file=sys.stderr,
-        )
-
-    # Plugin-version drift check. Both transcripts should come from
-    # the same plugin protocol version; otherwise the JSON schema
-    # may have shifted between the two runs and a silent diff can
-    # produce misleading verdicts. Warn (don't fail) so a
-    # mid-migration regeneration still produces a doc the human can
-    # inspect, but make the mismatch loud.
-    corepy_versions = {b.plugin_version for b in corepy_blocks if b.plugin_version}
-    rust_versions = {b.plugin_version for b in rust_blocks if b.plugin_version}
-    if corepy_versions and rust_versions and corepy_versions != rust_versions:
-        print(
-            f"WARNING: capture-plugin version mismatch between transcripts: "
-            f"core-python={sorted(corepy_versions)} rust={sorted(rust_versions)}. "
-            f"Re-run both columns with the same plugin version before trusting "
-            f"this audit's verdicts.",
-            file=sys.stderr,
-        )
+    capture_parse_errors: List[str] = []
+    corepy_blocks = parse_captures(args.corepy, capture_parse_errors)
+    rust_blocks = parse_captures(args.rust, capture_parse_errors)
+    validation_errors = _validate_audit_inputs(
+        op=args.op,
+        corepy=corepy,
+        rust=rust,
+        corepy_blocks=corepy_blocks,
+        rust_blocks=rust_blocks,
+    )
+    validation_errors.extend(capture_parse_errors)
+    for label, path, results in (
+        ("core-python", args.corepy, corepy),
+        ("rust", args.rust, rust),
+    ):
+        completed = pytest_completion_count(path)
+        if completed is None:
+            validation_errors.append(
+                f"{label} transcript has no completed pytest terminal summary"
+            )
+        elif completed != args.expected_count:
+            validation_errors.append(
+                f"{label} pytest summary completed {completed} tests; "
+                f"expected {args.expected_count}"
+            )
+        if len(results) != args.expected_count:
+            validation_errors.append(
+                f"{label} transcript parsed {len(results)} unique test results; "
+                f"expected {args.expected_count}"
+            )
+    validation_errors = list(dict.fromkeys(validation_errors))
 
     scope_notes = ""
     if args.scope_notes:
@@ -1121,6 +1490,13 @@ def main(argv: Optional[List[str]] = None) -> int:
             scope_notes = fh.read()
 
     pairs = pair_results(corepy, rust)
+    corepy_capture_index = index_captures(corepy_blocks)
+    rust_capture_index = index_captures(rust_blocks)
+    comparison_failures = _comparison_failures(
+        pairs,
+        corepy_capture_index,
+        rust_capture_index,
+    )
     md = emit_markdown(
         op=args.op,
         pairs=pairs,
@@ -1128,8 +1504,9 @@ def main(argv: Optional[List[str]] = None) -> int:
         rust_path=args.rust.replace("\\", "/"),
         account_host=args.account_host,
         scope_notes=scope_notes,
-        corepy_captures=index_captures(corepy_blocks),
-        rust_captures=index_captures(rust_blocks),
+        corepy_captures=corepy_capture_index,
+        rust_captures=rust_capture_index,
+        validation_errors=validation_errors,
     )
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
@@ -1143,7 +1520,15 @@ def main(argv: Optional[List[str]] = None) -> int:
     print(f"  rust captures:              {len(rust_blocks)}")
     print(f"  paired:                     {sum(1 for p in pairs if p[0] and p[1])}")
     print(f"  unpaired:                   {sum(1 for p in pairs if not (p[0] and p[1]))}")
-    return 0
+    if validation_errors:
+        print("Parity audit input is invalid or incomplete:", file=sys.stderr)
+        for error in validation_errors:
+            print(f"  - {error}", file=sys.stderr)
+    if comparison_failures:
+        print("Functional parity differences found:", file=sys.stderr)
+        for failure in comparison_failures:
+            print(f"  - {failure}", file=sys.stderr)
+    return 1 if validation_errors or comparison_failures else 0
 
 
 if __name__ == "__main__":

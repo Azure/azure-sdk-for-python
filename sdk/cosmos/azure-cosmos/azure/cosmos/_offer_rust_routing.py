@@ -157,6 +157,68 @@ def _prepare_offer_query_headers(
     )
 
 
+def prepare_read_offer_request(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer_query: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Prepare a throughput-read request without executing a backend."""
+    req_headers = _prepare_offer_query_headers(client_connection=client_connection, options=options)
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.SqlQuery,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    base.set_session_token_header(
+        client_connection, req_headers, _OFFERS_PATH, request_params, options
+    )
+    return build_read_offer_prepared_request(
+        container_link=container_link,
+        offer_query=offer_query,
+        req_headers=req_headers,
+        options=options,
+    )
+
+
+async def prepare_read_offer_request_async(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer_query: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Async twin of :func:`prepare_read_offer_request`."""
+    req_headers = _prepare_offer_query_headers(client_connection=client_connection, options=options)
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.SqlQuery,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    await base.set_session_token_header_async(
+        client_connection, req_headers, _OFFERS_PATH, request_params, options
+    )
+    return build_read_offer_prepared_request(
+        container_link=container_link,
+        offer_query=offer_query,
+        req_headers=req_headers,
+        options=options,
+    )
+
+
+def parse_read_offer_response(backend_response: Any, *, client_connection: Any) -> list[dict[str, Any]]:
+    """Parse a backend response into the legacy offer-list shape."""
+    parsed = parse_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
+    )
+    return parse_read_offer_payload(cast(Mapping[str, Any], parsed))
+
+
 def parse_read_offer_payload(payload: Mapping[str, Any]) -> list[dict[str, Any]]:
     """Convert the Rust payload ``{"Offers":[...]}`` to a plain list of offer records.
 
@@ -381,6 +443,83 @@ def _prepare_offer_replace_headers(
         http_constants.ResourceType.Offer,
         documents._OperationType.Replace,
         options,
+    )
+
+
+def prepare_replace_offer_request(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Prepare an offer replacement without executing a backend."""
+    offer_link = offer["_self"]
+    offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
+    req_headers = _prepare_offer_replace_headers(
+        client_connection=client_connection,
+        offer_link=offer_link,
+        offer_id=offer_id,
+        options=options,
+    )
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.Replace,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    base.set_session_token_header(
+        client_connection, req_headers, base.GetPathFromLink(offer_link), request_params, options
+    )
+    return build_replace_offer_prepared_request(
+        container_link=container_link,
+        offer=offer,
+        offer_id=offer_id,
+        req_headers=req_headers,
+        options=options,
+    )
+
+
+async def prepare_replace_offer_request_async(
+    *,
+    client_connection: Any,
+    container_link: str,
+    offer: Mapping[str, Any],
+    options: Mapping[str, Any],
+) -> PreparedRequest:
+    """Async twin of :func:`prepare_replace_offer_request`."""
+    offer_link = offer["_self"]
+    offer_id = base.GetResourceIdOrFullNameFromLink(offer_link)
+    req_headers = _prepare_offer_replace_headers(
+        client_connection=client_connection,
+        offer_link=offer_link,
+        offer_id=offer_id,
+        options=options,
+    )
+    request_params = RequestObject(
+        http_constants.ResourceType.Offer,
+        documents._OperationType.Replace,
+        req_headers,
+        options.get("partitionKey", None),
+    )
+    await base.set_session_token_header_async(
+        client_connection, req_headers, base.GetPathFromLink(offer_link), request_params, options
+    )
+    return build_replace_offer_prepared_request(
+        container_link=container_link,
+        offer=offer,
+        offer_id=offer_id,
+        req_headers=req_headers,
+        options=options,
+    )
+
+
+def parse_replace_offer_response(backend_response: Any, *, client_connection: Any) -> Any:
+    """Parse an offer replacement response."""
+    return parse_backend_response(
+        backend_response,
+        client_connection=client_connection,
+        response_hook=None,
     )
 
 
