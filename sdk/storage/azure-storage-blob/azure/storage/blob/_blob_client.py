@@ -34,7 +34,6 @@ from ._blob_client_helpers import (
     _get_page_ranges_options,
     _parse_url,
     _quick_query_options,
-    _strip_snapshot_from_url,
     _resize_blob_options,
     _seal_append_blob_options,
     _set_blob_metadata_options,
@@ -182,7 +181,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         # The generated client should not include snapshot in the base URL since
         # it is passed as a method parameter by operations that need it.
         self._client = AzureBlobStorage(
-            _strip_snapshot_from_url(self.url), version=get_api_version(kwargs), pipeline=self._pipeline
+            self.url,
+            version=get_api_version(kwargs),
+            pipeline=self._pipeline,
         )
         self._configure_encryption(kwargs)
 
@@ -770,7 +771,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
-            snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             offset=offset,
             length=length,
@@ -873,7 +873,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         encoding = kwargs.pop("encoding", None)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options, delimiter = _quick_query_options(self.snapshot, query_expression, **kwargs)
+        options, delimiter = _quick_query_options(query_expression, **kwargs)
         try:
             headers, raw_response_body = self._client.block_blob.query(**options)
         except HttpResponseError as error:
@@ -974,8 +974,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :dedent: 12
                 :caption: Delete a blob.
         """
+        if self.snapshot and delete_snapshots:
+            raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
         options = _delete_blob_options(
-            snapshot=self.snapshot,
             version_id=get_version_id(self.version_id, kwargs),
             delete_snapshots=delete_snapshots,
             **kwargs,
@@ -1039,7 +1040,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         version_id = get_version_id(self.version_id, kwargs)
         try:
-            self._client.blob.get_properties(snapshot=self.snapshot, version_id=version_id, **kwargs)
+            self._client.blob.get_properties(version_id=version_id, **kwargs)
             return True
         # Encrypted with CPK
         except ResourceExistsError:
@@ -1134,7 +1135,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 self._client.blob.get_properties(
                     timeout=kwargs.pop("timeout", None),
                     version_id=version_id,
-                    snapshot=self.snapshot,
                     cls=kwargs.pop("cls", None) or deserialize_blob_properties,
                     **access_conditions,
                     **mod_conditions,
@@ -1303,7 +1303,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 immutability_policy_mode=immutability_policy.policy_mode,
                 cls=return_response_headers,
                 version_id=version_id,
-                snapshot=self.snapshot,
                 **kwargs,
             ),
         )
@@ -1329,7 +1328,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        self._client.blob.delete_immutability_policy(version_id=version_id, snapshot=self.snapshot, **kwargs)
+        self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
 
     @distributed_trace
     def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
@@ -1359,7 +1358,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             self._client.blob.set_legal_hold(
                 legal_hold=legal_hold,
                 version_id=version_id,
-                snapshot=self.snapshot,
                 cls=return_response_headers,
                 **kwargs,
             ),
@@ -1992,7 +1990,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             self._client.blob.set_tier(
                 tier=standard_blob_tier,
-                snapshot=self.snapshot,
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
                 if_tags=mod_conditions.get("if_tags"),
@@ -2175,7 +2172,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         try:
             blocks = self._client.block_blob.get_block_list(
                 list_type=block_list_type,
-                snapshot=self.snapshot,
                 timeout=kwargs.pop("timeout", None),
                 if_tags=mod_conditions.get("if_tags"),
                 **access_conditions,
@@ -2332,7 +2328,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             self._client.blob.set_tier(
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop("timeout", None),
-                snapshot=self.snapshot,
                 if_tags=mod_conditions.get("if_tags"),
                 **access_conditions,
                 **kwargs,
@@ -2450,7 +2445,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: Dict[str, str]
         """
         version_id = get_version_id(self.version_id, kwargs)
-        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
+        options = _get_blob_tags_options(version_id=version_id, **kwargs)
         try:
             _, tags = self._client.blob.get_tags(**options)
             return cast(Dict[str, str], parse_tags(tags))
@@ -2527,7 +2522,6 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         warnings.warn("get_page_ranges is deprecated, use list_page_ranges instead", DeprecationWarning)
 
         options = _get_page_ranges_options(
-            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_snapshot_diff=previous_snapshot_diff,
@@ -2615,7 +2609,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         """
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, previous_snapshot_diff=previous_snapshot, **kwargs
+            offset=offset, length=length, previous_snapshot_diff=previous_snapshot, **kwargs
         )
 
         if previous_snapshot:
@@ -2687,7 +2681,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, prev_snapshot_url=previous_snapshot_url, **kwargs
+            offset=offset, length=length, prev_snapshot_url=previous_snapshot_url, **kwargs
         )
         try:
             ranges = self._client.page_blob.get_page_ranges_diff(**options)

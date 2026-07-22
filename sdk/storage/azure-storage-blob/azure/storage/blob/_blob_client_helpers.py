@@ -45,7 +45,6 @@ from ._models import (
 )
 from ._serialize import (
     get_access_conditions,
-    get_blob_modify_conditions,
     get_cpk_scope_info,
     get_modify_conditions,
     get_source_conditions,
@@ -94,23 +93,6 @@ def _format_url(container_name: Union[bytes, str], scheme: str, blob_name: str, 
     if isinstance(container_name, str):
         container_name = container_name.encode("UTF-8")
     return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
-
-
-def _strip_snapshot_from_url(url: str) -> str:
-    """Strip snapshot query params from a URL.
-
-    The generated client should receive a base URL without snapshot params,
-    since snapshots are passed per-operation.
-
-    :param str url: The full URL possibly containing snapshot query params.
-    :return: The URL with snapshot query params removed.
-    :rtype: str
-    """
-    if "?" not in url:
-        return url
-    base, qs = url.split("?", 1)
-    filtered = "&".join(part for part in qs.split("&") if not part.startswith(("sharesnapshot=", "snapshot=")))
-    return f"{base}?{filtered}" if filtered else base
 
 
 def _encode_source_url(source_url: str) -> str:
@@ -273,7 +255,6 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
 def _download_blob_options(
     blob_name: str,
     container_name: str,
-    snapshot: Optional[str],
     version_id: Optional[str],
     offset: Optional[int],
     length: Optional[int],
@@ -309,7 +290,6 @@ def _download_blob_options(
         "config": config,
         "start_range": offset,
         "end_range": length,
-        "snapshot": snapshot,
         "version_id": version_id,
         "validate_content": validate_content,
         "encryption_options": {
@@ -334,7 +314,9 @@ def _download_blob_options(
     return options
 
 
-def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwargs: Any) -> Tuple[Dict[str, Any], str]:
+def _quick_query_options(
+    query_expression: str, **kwargs: Any
+) -> Tuple[Dict[str, Any], str]:
     delimiter = "\n"
     input_format = kwargs.pop("blob_format", None)
     if input_format == QuickQueryDialect.DelimitedJson:
@@ -382,7 +364,6 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
     cpk = kwargs.pop("cpk", None)
     options = {
         "query_request": query_request,
-        "snapshot": snapshot,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_headers_and_deserialized,
     }
@@ -403,7 +384,6 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
     options = {
         "timeout": kwargs.pop("timeout", None),
-        "snapshot": kwargs.pop("snapshot", None),  # this is added for delete_blobs
         "delete_snapshots": delete_snapshots or None,
     }
     options.update(access_conditions)
@@ -413,12 +393,9 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
 
 
 def _delete_blob_options(
-    snapshot: Optional[str], version_id: Optional[str], delete_snapshots: Optional[str] = None, **kwargs: Any
+    version_id: Optional[str], delete_snapshots: Optional[str] = None, **kwargs: Any
 ) -> Dict[str, Any]:
-    if snapshot and delete_snapshots:
-        raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
     options = _generic_delete_blob_options(delete_snapshots, **kwargs)
-    options["snapshot"] = snapshot
     options["version_id"] = version_id
     options["blob_delete_type"] = kwargs.pop("blob_delete_type", None)
     return options
@@ -844,38 +821,30 @@ def _set_blob_tags_options(
 ) -> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
-    if_tags = kwargs.pop("if_tags_match_condition", None)
-    blob_mod_conditions = get_blob_modify_conditions(kwargs)
+    mod_conditions = get_modify_conditions(kwargs)
 
     options = {"tags": serialized_tags, "version_id": version_id, "cls": return_response_headers}
     options.update(access_conditions)
-    if if_tags is not None:
-        options["if_tags"] = if_tags
-    options.update(blob_mod_conditions)
+    options.update(mod_conditions)
     options.update(kwargs)
     return options
 
 
-def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
+def _get_blob_tags_options(version_id: Optional[str], **kwargs: Any) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
-    if_tags = kwargs.pop("if_tags_match_condition", None)
-    blob_mod_conditions = get_blob_modify_conditions(kwargs)
+    mod_conditions = get_modify_conditions(kwargs)
 
     options = {
         "version_id": version_id,
-        "snapshot": snapshot,
         "timeout": kwargs.pop("timeout", None),
         "cls": return_headers_and_deserialized,
     }
     options.update(access_conditions)
-    if if_tags is not None:
-        options["if_tags"] = if_tags
-    options.update(blob_mod_conditions)
+    options.update(mod_conditions)
     return options
 
 
 def _get_page_ranges_options(
-    snapshot: Optional[str],
     offset: Optional[int] = None,
     length: Optional[int] = None,
     previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
@@ -890,7 +859,7 @@ def _get_page_ranges_options(
     page_range, _ = validate_and_format_range_headers(
         offset, length, start_range_required=False, end_range_required=False, align_to_page=True
     )
-    options = {"snapshot": snapshot, "timeout": kwargs.pop("timeout", None), "range": page_range}
+    options = {"timeout": kwargs.pop("timeout", None), "range": page_range}
     options.update(access_conditions)
     options.update(mod_conditions)
     if previous_snapshot_diff:

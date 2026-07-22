@@ -98,9 +98,11 @@ class BlobPropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        # Flat list responses expose `blob_items` directly; hierarchy responses nest them under `segment`.
-        items_source = getattr(self._response, "segment", None) or self._response
-        self.current_page = [self._build_item(item) for item in (items_source.blob_items or [])]
+        # TypeSpec hierarchical listing uses `hierarchical_list`; earlier generated shapes used `segment`.
+        items_source = getattr(self._response, "hierarchical_list", None) or getattr(self._response, "segment", None)
+        items_source = items_source or self._response
+        blob_items = getattr(items_source, "blob_items", None) or []
+        self.current_page = [self._build_item(item) for item in blob_items]
 
         return self._response.next_marker or None, self.current_page
 
@@ -194,7 +196,11 @@ class BlobPrefixPaged(BlobPropertiesPaged):
 
     def _extract_data_cb(self, get_next_return):
         continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = (self._response.segment.blob_prefixes or []) + (self._response.segment.blob_items or [])
+        items_source = getattr(self._response, "hierarchical_list", None) or getattr(self._response, "segment", None)
+        items_source = items_source or self._response
+        self.current_page = (getattr(items_source, "blob_prefixes", None) or []) + (
+            getattr(items_source, "blob_items", None) or []
+        )
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
 
@@ -314,7 +320,8 @@ class FilteredBlobPaged(PageIterator):
         self.location_mode, self._response = get_next_return
         self.service_endpoint = self._response.service_endpoint
         self.marker = self._response.next_marker
-        self.current_page = [self._build_item(item) for item in self._response.blobs]
+        blob_items = getattr(self._response, "blob_items", None) or getattr(self._response, "blobs", None) or []
+        self.current_page = [self._build_item(item) for item in blob_items]
 
         return self._response.next_marker or None, self.current_page
 
