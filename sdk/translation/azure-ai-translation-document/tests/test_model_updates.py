@@ -259,6 +259,26 @@ class TestModelUpdates(DocumentTranslationTest):
         assert status.images_charged == 3
         assert status.image_characters_detected == 1257
 
+    def test_translation_status_summary_deserializes_image_totals(self):
+        # TranslationStatusSummary exposes the image scan totals returned by the service,
+        # mapping the wire names totalImageScansSucceeded / totalImageScansFailed / totalImageCharged.
+        payload = {
+            "total": 10,
+            "failed": 2,
+            "success": 5,
+            "inProgress": 3,
+            "notYetStarted": 0,
+            "cancelled": 0,
+            "totalCharacterCharged": 10000,
+            "totalImageScansSucceeded": 6,
+            "totalImageScansFailed": 1,
+            "totalImageCharged": 3,
+        }
+        summary = TranslationStatusSummary(payload)
+        assert summary.total_image_scans_succeeded == 6
+        assert summary.total_image_scans_failed == 1
+        assert summary.total_images_charged == 3
+
     def test_begin_translation_overloaded_inputs_dispatch(self):
         # begin_translation accepts a list of DocumentTranslationInput positionally or via the
         # 'inputs=' keyword; both build the same StartTranslationDetails. This is SDK request
