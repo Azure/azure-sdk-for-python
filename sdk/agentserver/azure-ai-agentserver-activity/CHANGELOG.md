@@ -20,5 +20,5 @@
 
 ### Other Changes
 
-- Requires `azure-ai-agentserver-core>=2.0.0b7`.
+- Requires `azure-ai-agentserver-core>=2.0.0b8`.
 
