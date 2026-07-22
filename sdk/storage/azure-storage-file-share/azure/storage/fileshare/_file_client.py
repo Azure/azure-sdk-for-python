@@ -1547,7 +1547,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         """
         warnings.warn("get_ranges is deprecated, use list_ranges instead", DeprecationWarning)
 
-        options = _get_ranges_options(offset=offset, length=length, previous_sharesnapshot=self.snapshot, **kwargs)
+        options = _get_ranges_options(offset=offset, length=length, **kwargs)
         options["allow_trailing_dot"] = self.allow_trailing_dot
         options["file_request_intent"] = self.file_request_intent
         try:
@@ -1583,8 +1583,8 @@ class ShareFileClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.FileRange]
         """
         results_per_page = kwargs.pop("results_per_page", None)
-        options = _get_ranges_options(offset=offset, length=length, previous_sharesnapshot=self.snapshot, **kwargs)
-        command = functools.partial(self._client.file.get_range_list, **options)
+        options = _get_ranges_options(offset=offset, length=length, **kwargs)
+        command = functools.partial(self._client.file.list_all_ranges, **options)
         return ItemPaged(command, results_per_page=results_per_page, page_iterator_class=FileRangePaged)
 
     @distributed_trace
@@ -1695,14 +1695,13 @@ class ShareFileClient(StorageAccountHostsMixin):
         """
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_ranges_options(
-            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
             support_rename=include_renames,
             **kwargs,
         )
-        command = functools.partial(self._client.file.get_range_list, **options)
+        command = functools.partial(self._client.file.list_all_ranges, **options)
         return ItemPaged(command, results_per_page=results_per_page, page_iterator_class=FileRangePaged)
 
     @distributed_trace
