@@ -1583,7 +1583,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.FileRange]
         """
         results_per_page = kwargs.pop("results_per_page", None)
-        options = _get_ranges_options(offset=offset, length=length, previous_snapshot=self.snapshot, **kwargs)
+        options = _get_ranges_options(offset=offset, length=length, previous_sharesnapshot=self.snapshot, **kwargs)
         command = functools.partial(self._client.file.get_range_list, **options)
         return ItemPaged(command, results_per_page=results_per_page, page_iterator_class=FileRangePaged)
 
