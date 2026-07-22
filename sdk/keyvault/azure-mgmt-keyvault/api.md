@@ -3679,15 +3679,12 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.KeyProperties(TypedDict, total=False):
-        key "attributes": ForwardRef('KeyAttributes', module='types')
         key "curveName": Union[str, JsonWebKeyCurveName]
         key "keySize": int
         key "keyUri": str
         key "keyUriWithVersion": str
         key "kty": Union[str, JsonWebKeyType]
-        key "release_policy": ForwardRef('KeyReleasePolicy', module='types')
-        key "rotationPolicy": ForwardRef('RotationPolicy', module='types')
-        attributes: KeyAttributes
+        attributes: ForwardRef('KeyAttributes', module='types')
         curve_name: Union[str, JsonWebKeyCurveName]
         keyOps: list[Union[str, JsonWebKeyOperation]]
         key_ops: list[Union[str, JsonWebKeyOperation]]
@@ -3695,7 +3692,8 @@ namespace azure.mgmt.keyvault.types
         key_uri: str
         key_uri_with_version: str
         kty: Union[str, JsonWebKeyType]
-        release_policy: KeyReleasePolicy
+        release_policy: ForwardRef('KeyReleasePolicy', module='types')
+        rotationPolicy: ForwardRef('RotationPolicy', module='types')
         rotation_policy: RotationPolicy
 
 
@@ -3716,10 +3714,8 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.LifetimeAction(TypedDict, total=False):
-        key "action": ForwardRef('Action', module='types')
-        key "trigger": ForwardRef('Trigger', module='types')
-        action: Action
-        trigger: Trigger
+        action: ForwardRef('Action', module='types')
+        trigger: ForwardRef('Trigger', module='types')
 
 
     class azure.mgmt.keyvault.types.MHSMGeoReplicatedRegion(TypedDict, total=False):
@@ -3757,20 +3753,17 @@ namespace azure.mgmt.keyvault.types
     class azure.mgmt.keyvault.types.MHSMPrivateEndpointConnection(ProxyResource):
         key "etag": str
         key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "location": str
         key "name": str
-        key "properties": ForwardRef('MHSMPrivateEndpointConnectionProperties', module='types')
-        key "sku": ForwardRef('ManagedHsmSku', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         etag: str
         id: str
-        identity: ManagedServiceIdentity
+        identity: ForwardRef('ManagedServiceIdentity', module='types')
         location: str
         name: str
-        properties: MHSMPrivateEndpointConnectionProperties
-        sku: ManagedHsmSku
+        properties: ForwardRef('MHSMPrivateEndpointConnectionProperties', module='types')
+        sku: ForwardRef('ManagedHsmSku', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         system_data: SystemData
         tags: dict[str, str]
         type: str
@@ -3779,16 +3772,15 @@ namespace azure.mgmt.keyvault.types
     class azure.mgmt.keyvault.types.MHSMPrivateEndpointConnectionItem(TypedDict, total=False):
         key "etag": str
         key "id": str
-        key "properties": ForwardRef('MHSMPrivateEndpointConnectionProperties', module='types')
         etag: str
         id: str
-        properties: MHSMPrivateEndpointConnectionProperties
+        properties: ForwardRef('MHSMPrivateEndpointConnectionProperties', module='types')
 
 
     class azure.mgmt.keyvault.types.MHSMPrivateEndpointConnectionProperties(TypedDict, total=False):
-        key "privateEndpoint": ForwardRef('MHSMPrivateEndpoint', module='types')
-        key "privateLinkServiceConnectionState": ForwardRef('MHSMPrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: ForwardRef('MHSMPrivateEndpoint', module='types')
+        privateLinkServiceConnectionState: ForwardRef('MHSMPrivateLinkServiceConnectionState', module='types')
         private_endpoint: MHSMPrivateEndpoint
         private_link_service_connection_state: MHSMPrivateLinkServiceConnectionState
         provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
@@ -3822,19 +3814,16 @@ namespace azure.mgmt.keyvault.types
 
     class azure.mgmt.keyvault.types.ManagedHsm(ProxyResource):
         key "id": str
-        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "location": str
         key "name": str
-        key "properties": ForwardRef('ManagedHsmProperties', module='types')
-        key "sku": ForwardRef('ManagedHsmSku', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
-        identity: ManagedServiceIdentity
+        identity: ForwardRef('ManagedServiceIdentity', module='types')
         location: str
         name: str
-        properties: ManagedHsmProperties
-        sku: ManagedHsmSku
+        properties: ForwardRef('ManagedHsmProperties', module='types')
+        sku: ForwardRef('ManagedHsmSku', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         system_data: SystemData
         tags: dict[str, str]
         type: str
@@ -3869,15 +3858,12 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.ManagedHsmKeyProperties(TypedDict, total=False):
-        key "attributes": ForwardRef('ManagedHsmKeyAttributes', module='types')
         key "curveName": Union[str, JsonWebKeyCurveName]
         key "keySize": int
         key "keyUri": str
         key "keyUriWithVersion": str
         key "kty": Union[str, JsonWebKeyType]
-        key "release_policy": ForwardRef('ManagedHsmKeyReleasePolicy', module='types')
-        key "rotationPolicy": ForwardRef('ManagedHsmRotationPolicy', module='types')
-        attributes: ManagedHsmKeyAttributes
+        attributes: ForwardRef('ManagedHsmKeyAttributes', module='types')
         curve_name: Union[str, JsonWebKeyCurveName]
         keyOps: list[Union[str, JsonWebKeyOperation]]
         key_ops: list[Union[str, JsonWebKeyOperation]]
@@ -3885,7 +3871,8 @@ namespace azure.mgmt.keyvault.types
         key_uri: str
         key_uri_with_version: str
         kty: Union[str, JsonWebKeyType]
-        release_policy: ManagedHsmKeyReleasePolicy
+        release_policy: ForwardRef('ManagedHsmKeyReleasePolicy', module='types')
+        rotationPolicy: ForwardRef('ManagedHsmRotationPolicy', module='types')
         rotation_policy: ManagedHsmRotationPolicy
 
 
@@ -3906,10 +3893,8 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.ManagedHsmLifetimeAction(TypedDict, total=False):
-        key "action": ForwardRef('ManagedHsmAction', module='types')
-        key "trigger": ForwardRef('ManagedHsmTrigger', module='types')
-        action: ManagedHsmAction
-        trigger: ManagedHsmTrigger
+        action: ForwardRef('ManagedHsmAction', module='types')
+        trigger: ForwardRef('ManagedHsmTrigger', module='types')
 
 
     class azure.mgmt.keyvault.types.ManagedHsmProperties(TypedDict, total=False):
@@ -3917,11 +3902,9 @@ namespace azure.mgmt.keyvault.types
         key "enablePurgeProtection": bool
         key "enableSoftDelete": bool
         key "hsmUri": str
-        key "networkAcls": ForwardRef('MHSMNetworkRuleSet', module='types')
         key "provisioningState": Union[str, ProvisioningState]
         key "publicNetworkAccess": Union[str, PublicNetworkAccess]
         key "scheduledPurgeDate": str
-        key "securityDomainProperties": ForwardRef('ManagedHSMSecurityDomainProperties', module='types')
         key "softDeleteRetentionInDays": int
         key "statusMessage": str
         key "tenantId": str
@@ -3931,6 +3914,7 @@ namespace azure.mgmt.keyvault.types
         hsm_uri: str
         initialAdminObjectIds: list[str]
         initial_admin_object_ids: list[str]
+        networkAcls: ForwardRef('MHSMNetworkRuleSet', module='types')
         network_acls: MHSMNetworkRuleSet
         privateEndpointConnections: list[MHSMPrivateEndpointConnectionItem]
         private_endpoint_connections: list[MHSMPrivateEndpointConnectionItem]
@@ -3938,6 +3922,7 @@ namespace azure.mgmt.keyvault.types
         public_network_access: Union[str, PublicNetworkAccess]
         regions: list[MHSMGeoReplicatedRegion]
         scheduled_purge_date: str
+        securityDomainProperties: ForwardRef('ManagedHSMSecurityDomainProperties', module='types')
         security_domain_properties: ManagedHSMSecurityDomainProperties
         soft_delete_retention_in_days: int
         status_message: str
@@ -3945,8 +3930,7 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.ManagedHsmRotationPolicy(TypedDict, total=False):
-        key "attributes": ForwardRef('ManagedHsmKeyRotationPolicyAttributes', module='types')
-        attributes: ManagedHsmKeyRotationPolicyAttributes
+        attributes: ForwardRef('ManagedHsmKeyRotationPolicyAttributes', module='types')
         lifetimeActions: list[ManagedHsmLifetimeAction]
         lifetime_actions: list[ManagedHsmLifetimeAction]
 
@@ -4005,14 +3989,13 @@ namespace azure.mgmt.keyvault.types
         key "id": str
         key "location": str
         key "name": str
-        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         etag: str
         id: str
         location: str
         name: str
-        properties: PrivateEndpointConnectionProperties
+        properties: ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        systemData: ForwardRef('SystemData', module='types')
         system_data: SystemData
         tags: dict[str, str]
         type: str
@@ -4021,16 +4004,15 @@ namespace azure.mgmt.keyvault.types
     class azure.mgmt.keyvault.types.PrivateEndpointConnectionItem(TypedDict, total=False):
         key "etag": str
         key "id": str
-        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
         etag: str
         id: str
-        properties: PrivateEndpointConnectionProperties
+        properties: ForwardRef('PrivateEndpointConnectionProperties', module='types')
 
 
     class azure.mgmt.keyvault.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
-        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
-        key "privateLinkServiceConnectionState": ForwardRef('PrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: ForwardRef('PrivateEndpoint', module='types')
+        privateLinkServiceConnectionState: ForwardRef('PrivateLinkServiceConnectionState', module='types')
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: PrivateLinkServiceConnectionState
         provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
@@ -4048,10 +4030,10 @@ namespace azure.mgmt.keyvault.types
     class azure.mgmt.keyvault.types.ProxyResource(Resource):
         key "id": str
         key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
+        systemData: ForwardRef('SystemData', module='types')
         system_data: SystemData
         type: str
 
@@ -4059,17 +4041,16 @@ namespace azure.mgmt.keyvault.types
     class azure.mgmt.keyvault.types.Resource(TypedDict, total=False):
         key "id": str
         key "name": str
-        key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
         name: str
+        systemData: ForwardRef('SystemData', module='types')
         system_data: SystemData
         type: str
 
 
     class azure.mgmt.keyvault.types.RotationPolicy(TypedDict, total=False):
-        key "attributes": ForwardRef('KeyRotationPolicyAttributes', module='types')
-        attributes: KeyRotationPolicyAttributes
+        attributes: ForwardRef('KeyRotationPolicyAttributes', module='types')
         lifetimeActions: list[LifetimeAction]
         lifetime_actions: list[LifetimeAction]
 
@@ -4094,27 +4075,24 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.SecretPatchParameters(TypedDict, total=False):
-        key "properties": ForwardRef('SecretPatchProperties', module='types')
-        properties: SecretPatchProperties
+        properties: ForwardRef('SecretPatchProperties', module='types')
         tags: dict[str, str]
 
 
     class azure.mgmt.keyvault.types.SecretPatchProperties(TypedDict, total=False):
-        key "attributes": ForwardRef('SecretAttributes', module='types')
         key "contentType": str
         key "value": str
-        attributes: SecretAttributes
+        attributes: ForwardRef('SecretAttributes', module='types')
         content_type: str
         value: str
 
 
     class azure.mgmt.keyvault.types.SecretProperties(TypedDict, total=False):
-        key "attributes": ForwardRef('SecretAttributes', module='types')
         key "contentType": str
         key "secretUri": str
         key "secretUriWithVersion": str
         key "value": str
-        attributes: SecretAttributes
+        attributes: ForwardRef('SecretAttributes', module='types')
         content_type: str
         secret_uri: str
         secret_uri_with_version: str
@@ -4198,8 +4176,7 @@ namespace azure.mgmt.keyvault.types
 
 
     class azure.mgmt.keyvault.types.VaultPatchParameters(TypedDict, total=False):
-        key "properties": ForwardRef('VaultPatchProperties', module='types')
-        properties: VaultPatchProperties
+        properties: ForwardRef('VaultPatchProperties', module='types')
         tags: dict[str, str]
 
 
@@ -4211,12 +4188,9 @@ namespace azure.mgmt.keyvault.types
         key "enabledForDeployment": bool
         key "enabledForDiskEncryption": bool
         key "enabledForTemplateDeployment": bool
-        key "networkAcls": ForwardRef('NetworkRuleSet', module='types')
         key "publicNetworkAccess": str
-        key "sku": ForwardRef('Sku', module='types')
         key "softDeleteRetentionInDays": int
         key "tenantId": str
-        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         accessPolicies: list[AccessPolicyEntry]
         access_policies: list[AccessPolicyEntry]
         create_mode: Union[str, CreateMode]
@@ -4226,11 +4200,13 @@ namespace azure.mgmt.keyvault.types
         enabled_for_deployment: bool
         enabled_for_disk_encryption: bool
         enabled_for_template_deployment: bool
+        networkAcls: ForwardRef('NetworkRuleSet', module='types')
         network_acls: NetworkRuleSet
         public_network_access: str
-        sku: Sku
+        sku: ForwardRef('Sku', module='types')
         soft_delete_retention_in_days: int
         tenant_id: str
+        tokenBindingParameters: ForwardRef('TokenBindingParameters', module='types')
         token_binding_parameters: TokenBindingParameters
 
 
@@ -4243,13 +4219,11 @@ namespace azure.mgmt.keyvault.types
         key "enabledForDiskEncryption": bool
         key "enabledForTemplateDeployment": bool
         key "hsmPoolResourceId": str
-        key "networkAcls": ForwardRef('NetworkRuleSet', module='types')
         key "provisioningState": Union[str, VaultProvisioningState]
         key "publicNetworkAccess": str
         key "sku": Required[Sku]
         key "softDeleteRetentionInDays": int
         key "tenantId": Required[str]
-        key "tokenBindingParameters": ForwardRef('TokenBindingParameters', module='types')
         key "vaultUri": str
         accessPolicies: list[AccessPolicyEntry]
         access_policies: list[AccessPolicyEntry]
@@ -4261,6 +4235,7 @@ namespace azure.mgmt.keyvault.types
         enabled_for_disk_encryption: bool
         enabled_for_template_deployment: bool
         hsm_pool_resource_id: str
+        networkAcls: ForwardRef('NetworkRuleSet', module='types')
         network_acls: NetworkRuleSet
         privateEndpointConnections: list[PrivateEndpointConnectionItem]
         private_endpoint_connections: list[PrivateEndpointConnectionItem]
@@ -4269,6 +4244,7 @@ namespace azure.mgmt.keyvault.types
         sku: Sku
         soft_delete_retention_in_days: int
         tenant_id: str
+        tokenBindingParameters: ForwardRef('TokenBindingParameters', module='types')
         token_binding_parameters: TokenBindingParameters
         vault_uri: str
 
