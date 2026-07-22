@@ -11,13 +11,15 @@ DESCRIPTION:
     resulting run by polling `list_runs(...)` using the synchronous
     AIProjectClient.
 
-    The routine is bound to an existing hosted agent. Because the trigger is
-    a `CustomRoutineTrigger`, the routine never fires on its own; the sample
-    explicitly invokes it with `project_client.beta.routines.dispatch(...)`
-    passing an `InvokeAgentResponsesApiDispatchPayload` carrying the input
-    sent to the agent. The sample then polls the run history until a
-    terminal phase is reached (or a deadline elapses), printing each
-    observed transition. The routine is deleted at the end of the sample.
+    The sample uploads the basic hosted-agent code from `assets/basic-agent/`
+    as a temporary hosted-agent version and routes the configured hosted agent
+    name to that version. Because the trigger is a `CustomRoutineTrigger`, the
+    routine never fires on its own; the sample explicitly invokes it with
+    `project_client.beta.routines.dispatch(...)` passing an
+    `InvokeAgentResponsesApiDispatchPayload` carrying the input sent to the
+    agent. The sample then polls the run history until a terminal phase is
+    reached (or a deadline elapses), printing each observed transition. The
+    routine and hosted-agent version are deleted at the end of the sample.
 
     Routines are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.routines`.
@@ -32,8 +34,10 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent to invoke
-       when the routine is dispatched.
+    2) FOUNDRY_MODEL_NAME - The deployment name of the AI model used by the
+       temporary hosted agent.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+       `MyHostedAgent`.
 """
 
 import json
@@ -47,22 +51,51 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    CodeConfiguration,
+    CodeDependencyResolution,
     CustomRoutineTrigger,
+    HostedAgentDefinition,
     InvokeAgentResponsesApiDispatchPayload,
     InvokeAgentResponsesApiRoutineAction,
+    ProtocolVersionRecord,
     RoutineRun,
     RoutineRunPhase,
 )
 
+from hosted_agents_util import create_version_from_code, select_basic_agent_code_zip
+
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
+model_name = os.environ["FOUNDRY_MODEL_NAME"]
+dependency_resolution, code_zip_stream = select_basic_agent_code_zip(True)
 
 
 with (
+    code_zip_stream as code_stream,
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    create_version_from_code(
+        project_client=project_client,
+        agent_name=agent_name,
+        description="Routines dispatch hosted agent uploaded from assets/basic-agent.",
+        definition=HostedAgentDefinition(
+            cpu="0.5",
+            memory="1Gi",
+            code_configuration=CodeConfiguration(
+                runtime="python_3_14",
+                entry_point=["python", "main.py"],
+                dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+            ),
+            environment_variables={
+                "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                "FOUNDRY_MODEL_NAME": model_name,
+            },
+            protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
+        ),
+        code=code_stream,
+    ),
 ):
 
     routine_name = "sample-routine-dispatch"
