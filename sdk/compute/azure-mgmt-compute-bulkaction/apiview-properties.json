@@ -337,5 +337,5 @@
         "azure.mgmt.compute.bulkaction.operations.OccurrenceExtensionOperations.list_occurrence_by_vms": "Microsoft.Compute.OccurrenceExtension.listOccurrenceByVms",
         "azure.mgmt.compute.bulkaction.aio.operations.OccurrenceExtensionOperations.list_occurrence_by_vms": "Microsoft.Compute.OccurrenceExtension.listOccurrenceByVms"
     },
-    "CrossLanguageVersion": "d1fd98cafde6"
+    "CrossLanguageVersion": "6aa06176429e"
 }
