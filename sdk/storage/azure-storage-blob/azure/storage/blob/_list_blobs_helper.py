@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import base64
+from datetime import datetime, timezone
 from io import BytesIO
 from typing import Any, Callable, cast, List, Optional, Tuple, Union
 from urllib.parse import unquote
@@ -12,6 +14,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged, PageIterator
 
 from ._deserialize import (
+    deserialize_ors_policies,
     get_blob_properties_from_generated_code,
     load_many_xml_nodes,
     load_xml_int,
@@ -47,7 +50,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
     :returns: A tuple of next marker and a list of BlobProperties.
     :rtype: Tuple[Optional[str], List[~azure.storage.blob.BlobProperties]]
     """
-    from nanoarrow import ArrayStream  # pylint: disable=import-outside-toplevel
+    from nanoarrow import ArrayStream, Type  # pylint: disable=import-outside-toplevel
     from nanoarrow.ipc import InputStream  # pylint: disable=import-outside-toplevel
 
     # Declarative mapping: Arrow column name -> (BlobProperties attr, default value).
@@ -74,7 +77,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
         ("AccessTierChangeTime", "blob_tier_change_time", None),
         ("AccessTierInferred", "blob_tier_inferred", None),
         ("ArchiveStatus", "archive_status", None),
-        ("BlobSequenceNumber", "page_blob_sequence_number", None),
+        ("x-ms-blob-sequence-number", "page_blob_sequence_number", None),
         ("Sealed", "is_append_blob_sealed", None),
         ("LastAccessTime", "last_accessed_on", None),
         ("TagCount", "tag_count", None),
@@ -124,7 +127,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 next_marker = raw_marker.decode("utf-8") if isinstance(raw_marker, bytes) else raw_marker
                 next_marker = next_marker or None
 
-        field_names = [field.name for field in schema.fields]
+        fields = [(field.name, field.type) for field in schema.fields]
 
         for batch in reader:
             num_rows = len(batch)
@@ -133,16 +136,22 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
             cols = {}
             for i in range(batch.n_children):
                 child = batch.child(i)
-                try:
-                    cols[field_names[i]] = child.to_pylist()
-                except KeyError:
+                if fields[i][1] == Type.MAP:
                     offsets = list(child.buffer(1))
                     entries = child.child(0)
                     keys = entries.child(0).to_pylist()
-                    values = entries.child(1).to_pylist()
-                    cols[field_names[i]] = [
-                        {keys[j]: values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
+                    map_values = entries.child(1).to_pylist()
+                    values: List[Any] = [
+                        {keys[j]: map_values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
                     ]
+                elif fields[i][1] == Type.TIMESTAMP:
+                    values = [
+                        v.replace(tzinfo=timezone.utc) if isinstance(v, datetime) and v.tzinfo is None else v
+                        for v in child.to_pylist()
+                    ]
+                else:
+                    values = child.to_pylist()
+                cols[fields[i][0]] = values
 
             for row in range(num_rows):
 
@@ -168,9 +177,11 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 blob.blob_type = BlobType(blob_type_val) if blob_type_val else None  # type: ignore[assignment]
 
                 # Composite sub-objects built from their own column sub-sets.
-                blob.content_settings = ContentSettings(
-                    **{kwarg: _get(col) for col, kwarg in _CONTENT_SETTINGS_FIELDS.items()}
-                )
+                content_settings_kwargs = {kwarg: _get(col) for col, kwarg in _CONTENT_SETTINGS_FIELDS.items()}
+                content_md5 = content_settings_kwargs.get("content_md5")
+                if isinstance(content_md5, str):
+                    content_settings_kwargs["content_md5"] = bytearray(base64.b64decode(content_md5))
+                blob.content_settings = ContentSettings(**content_settings_kwargs)
                 blob.lease = LeaseProperties(**{kwarg: _get(col) for col, kwarg in _LEASE_FIELDS.items()})
                 blob.copy = CopyProperties(**{kwarg: _get(col) for col, kwarg in _COPY_FIELDS.items()})
                 blob.immutability_policy = ImmutabilityPolicy(
@@ -186,6 +197,12 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                 tags_val = _get("Tags", _get("BlobTags"))
                 if isinstance(tags_val, dict):
                     blob.tags = tags_val
+
+                # Object replication metadata is returned as its own map-typed column for
+                # block blobs when an object replication policy has been evaluated.
+                or_metadata_val = _get("OrMetadata")
+                if isinstance(or_metadata_val, dict) and or_metadata_val:
+                    blob.object_replication_source_properties = deserialize_ors_policies(or_metadata_val)
                 blob_items.append(blob)
 
     return next_marker, blob_items
@@ -537,6 +554,20 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
             self._arrow_response = None
             return next_marker or None, self.current_page or []
         return super()._extract_data_cb(get_next_return)
+
+
+class ArrowBlobNamesPaged(ArrowBlobPropertiesPaged):
+    """An Arrow-backed PageIterator that projects each list-blobs page down to blob names.
+
+    Reuses all of ``ArrowBlobPropertiesPaged``'s Arrow parsing, request routing, and XML
+    fallback, and simply yields ``blob.name`` for each item.
+    """
+
+    def _extract_data_cb(self, get_next_return: Any) -> Any:
+        next_marker, blobs = super()._extract_data_cb(get_next_return)
+        names = [blob.name for blob in blobs]
+        self.current_page = names  # type: ignore[assignment]
+        return next_marker, names
 
 
 class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):

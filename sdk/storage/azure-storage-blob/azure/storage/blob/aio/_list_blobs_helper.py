@@ -294,6 +294,20 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
         return await super()._extract_data_cb(get_next_return)
 
 
+class ArrowBlobNamesPaged(ArrowBlobPropertiesPaged):
+    """An async Arrow-backed PageIterator that projects each list-blobs page down to blob names.
+
+    Reuses all of ``ArrowBlobPropertiesPaged``'s Arrow parsing, request routing, and XML
+    fallback, and simply yields ``blob.name`` for each item.
+    """
+
+    async def _extract_data_cb(self, get_next_return):
+        next_marker, blobs = await super()._extract_data_cb(get_next_return)
+        names = [blob.name for blob in blobs]
+        self.current_page = names  # type: ignore[assignment]
+        return next_marker, names
+
+
 class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
     """Arrow-backed AsyncPageIterator for walk_blobs."""
 

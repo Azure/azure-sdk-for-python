@@ -214,6 +214,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         name_starts_with: Optional[str] = None,
         results_per_page: Optional[int] = None,
+        response_format: Literal["auto", "xml", "arrow"] = "auto",
         start_from: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
