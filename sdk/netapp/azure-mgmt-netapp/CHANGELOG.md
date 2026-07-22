@@ -7,25 +7,6 @@
   - Model `VolumeProperties` added property `breakthrough_mode`
   - Added enum `BreakthroughMode`
 
-## 18.0.0 (2026-07-21)
-
-### Features Added
-
-  - Model `VolumeProperties` added property `breakthrough_mode`
-  - Added enum `BreakthroughMode`
-
-### Breaking Changes
-
-  - Deleted or renamed operation group `ElasticAccountsOperations`
-  - Deleted or renamed operation group `ElasticCapacityPoolsOperations`
-  - Deleted or renamed operation group `ElasticVolumesOperations`
-  - Deleted or renamed operation group `ElasticSnapshotsOperations`
-  - Deleted or renamed operation group `ElasticSnapshotPoliciesOperations`
-  - Deleted or renamed operation group `ElasticBackupVaultsOperations`
-  - Deleted or renamed operation group `ElasticBackupPoliciesOperations`
-  - Deleted or renamed operation group `ElasticBackupsOperations`
-  - Deleted or renamed operation group `ActiveDirectoryConfigsOperations`
-
 ## 18.0.0b1 (2026-06-29)
 
 ### Features Added
