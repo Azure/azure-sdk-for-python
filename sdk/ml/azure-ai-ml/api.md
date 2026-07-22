@@ -10419,6 +10419,7 @@ namespace azure.ai.ml.operations
                 self, 
                 name: str, 
                 version: Optional[str] = None, 
+                label: Optional[str] = None, 
                 **kwargs: Any
             ) -> DeploymentTemplate: ...
 
@@ -10933,6 +10934,18 @@ namespace azure.ai.ml.operations
         @distributed_trace
         @monitor_with_activity(ops_logger, 'Job.Stream', ActivityType.PUBLICAPI)
         def stream(self, name: str) -> None: ...
+
+        @distributed_trace
+        @monitor_with_telemetry_mixin(ops_logger, 'Job.Update', ActivityType.PUBLICAPI)
+        def update(
+                self, 
+                name: str, 
+                *, 
+                description: Optional[str] = ..., 
+                display_name: Optional[str] = ..., 
+                properties: Optional[Dict[str, str]] = ..., 
+                tags: Optional[Dict[str, str]] = ...
+            ) -> Job: ...
 
         @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.Validate', ActivityType.PUBLICAPI)

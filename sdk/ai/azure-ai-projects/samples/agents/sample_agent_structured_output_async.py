@@ -28,12 +28,14 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import asyncio
 import os
 from dotenv import load_dotenv
 from pydantic import BaseModel, Field
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
@@ -45,6 +47,7 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 class CalendarEvent(BaseModel):
@@ -58,10 +61,9 @@ async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
-    ):
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 text=PromptAgentDefinitionTextOptions(
@@ -72,8 +74,11 @@ async def main() -> None:
                     and returns it in the desired structured output format.
                 """,
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
         conversation = await openai_client.conversations.create(
             items=[
@@ -88,15 +93,11 @@ async def main() -> None:
 
         response = await openai_client.responses.create(
             conversation=conversation.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
         print(f"Response output: {response.output_text}")
 
         await openai_client.conversations.delete(conversation_id=conversation.id)
         print("Conversation deleted")
-
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
 
 
 if __name__ == "__main__":

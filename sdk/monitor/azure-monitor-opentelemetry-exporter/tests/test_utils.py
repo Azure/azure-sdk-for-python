@@ -970,6 +970,77 @@ class TestUtils(unittest.TestCase):
         # IntegratedAuto but AKS_ARM_NAMESPACE_ID not set. Should be true. Env var overwrites other factors.
         self.assertTrue(_utils._is_attach_enabled())
 
+    # OneSettings normalization helpers
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Linux")
+    def test_get_os_name_linux(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "linux")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Windows")
+    def test_get_os_name_windows(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "windows")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="Darwin")
+    def test_get_os_name_darwin(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "darwin")
+
+    @patch("azure.monitor.opentelemetry.exporter._utils.platform.system", return_value="")
+    def test_get_os_name_unknown(self, mock_system):
+        self.assertEqual(_utils._get_os_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"FUNCTIONS_WORKER_RUNTIME": "python"},
+        clear=True,
+    )
+    def test_get_rp_name_functions(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME},
+        clear=True,
+    )
+    def test_get_rp_name_app_service(self):
+        self.assertEqual(_utils._get_rp_name(), "appsvc")  # cspell:disable-line
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {"KUBERNETES_SERVICE_HOST": TEST_KUBERNETES_SERVICE_HOST},
+        clear=True,
+    )
+    def test_get_rp_name_aks(self):
+        self.assertEqual(_utils._get_rp_name(), "aks")
+
+    @patch.dict("azure.monitor.opentelemetry.exporter._utils.environ", {}, clear=True)
+    def test_get_rp_name_unknown(self):
+        self.assertEqual(_utils._get_rp_name(), "unknown")
+
+    @patch.dict(
+        "azure.monitor.opentelemetry.exporter._utils.environ",
+        {
+            "FUNCTIONS_WORKER_RUNTIME": "python",
+            "WEBSITE_SITE_NAME": TEST_WEBSITE_SITE_NAME,
+        },
+        clear=True,
+    )
+    def test_get_rp_name_functions_takes_priority(self):
+        self.assertEqual(_utils._get_rp_name(), "fn")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=True,
+    )
+    def test_get_attach_type_name_integrated_auto(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "integratedauto")
+
+    @patch(
+        "azure.monitor.opentelemetry.exporter._utils._is_attach_enabled",
+        return_value=False,
+    )
+    def test_get_attach_type_name_manual(self, mock_attach):
+        self.assertEqual(_utils._get_attach_type_name(), "manual")
+
     # Synthetic
 
     def test_is_synthetic_source_bot(self):

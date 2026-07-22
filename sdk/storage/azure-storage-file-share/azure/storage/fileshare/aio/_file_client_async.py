@@ -42,16 +42,15 @@ from .._file_client_helpers import (
     _parse_url,
     _upload_range_from_url_options,
 )
-from .._generated.aio import AzureFileStorage
-from .._generated.models import FileHTTPHeaders
+from .._generated.aio import FileClient as AzureFileStorage
 from .._parser import _datetime_to_str, _get_file_permission, _parse_snapshot
 from .._serialize import (
-    get_access_conditions,
     get_api_version,
-    get_dest_access_conditions,
+    get_lease_id,
+    get_dest_lease_id,
     get_rename_smb_properties,
     get_smb_properties,
-    get_source_access_conditions,
+    get_source_lease_id,
 )
 from .._shared.base_client import StorageAccountHostsMixin, parse_query
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, parse_connection_str
@@ -220,13 +219,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         self.allow_source_trailing_dot = kwargs.pop("allow_source_trailing_dot", None)
         self.file_request_intent = token_intent
         self._client = AzureFileStorage(
-            version=get_api_version(kwargs),
             url=self.url,
-            base_url=self.url,
+            version=get_api_version(kwargs),
             pipeline=self._pipeline,
-            allow_trailing_dot=self.allow_trailing_dot,
-            allow_source_trailing_dot=self.allow_source_trailing_dot,
-            file_request_intent=self.file_request_intent,
         )
 
     async def __aenter__(self) -> Self:
@@ -386,7 +381,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :rtype: bool
         """
         try:
-            await self._client.file.get_properties(**kwargs)
+            await self._client.file.get_properties(
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
+            )
             return True
         except HttpResponseError as error:
             try:
@@ -497,7 +496,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Create a file.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         content_settings = kwargs.pop("content_settings", None)
         metadata = kwargs.pop("metadata", None)
         timeout = kwargs.pop("timeout", None)
@@ -505,16 +504,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         data = kwargs.pop("data", None)
-        file_http_headers = None
+        file_http_headers = {}
         if content_settings:
-            file_http_headers = FileHTTPHeaders(
-                file_cache_control=content_settings.cache_control,
-                file_content_type=content_settings.content_type,
-                file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-                file_content_encoding=content_settings.content_encoding,
-                file_content_language=content_settings.content_language,
-                file_content_disposition=content_settings.content_disposition,
-            )
+            file_http_headers = {
+                "file_cache_control": content_settings.cache_control,
+                "file_content_type": content_settings.content_type,
+                "file_content_md5": bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+                "file_content_encoding": content_settings.content_encoding,
+                "file_content_language": content_settings.content_language,
+                "file_content_disposition": content_settings.content_disposition,
+            }
         file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop("file_change_time", None)
         try:
@@ -529,14 +528,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     file_change_time=_datetime_to_str(file_change_time),
                     file_permission=file_permission,
                     file_permission_key=permission_key,
-                    file_http_headers=file_http_headers,
-                    optionalbody=data,
+                    **file_http_headers,
+                    optional_body=data,
                     validate_content=validate_content,
                     content_length=len(data) if data is not None else None,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     headers=headers,
                     timeout=timeout,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -826,7 +827,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :caption: Copy a file from a URL
         """
         metadata = kwargs.pop("metadata", None)
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         owner = kwargs.pop("owner", None)
         group = kwargs.pop("group", None)
@@ -840,9 +841,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             return cast(
                 Dict[str, Any],
                 await self._client.file.start_copy(
-                    source_url,
+                    copy_source=source_url,
                     metadata=metadata,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     owner=owner,
                     group=group,
                     file_mode=file_mode,
@@ -851,6 +852,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     headers=headers,
                     cls=return_response_headers,
                     timeout=timeout,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    allow_source_trailing_dot=self.allow_source_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -883,7 +887,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             #other-client--per-operation-configuration>`__.
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         if isinstance(copy_id, FileProperties):
             copy_id = copy_id.copy.id
@@ -891,7 +895,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             copy_id = copy_id["copy_id"]
         try:
             await self._client.file.abort_copy(
-                copy_id=copy_id, lease_access_conditions=access_conditions, timeout=timeout, **kwargs
+                copyid=copy_id,
+                lease_id=lease_id,
+                timeout=timeout,
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -966,7 +975,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 raise ValueError("Offset value must not be None if length is set.")
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
+
         validate_content = parse_validation_option(kwargs.pop("validate_content", None))
 
         # Decompression is not supported with CRC64 content validation
@@ -985,8 +995,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             name=self.file_name,
             path="/".join(self.file_path),
             share=self.share_name,
-            lease_access_conditions=access_conditions,
+            lease_id=lease_id,
             cls=deserialize_file_stream,
+            allow_trailing_dot=self.allow_trailing_dot,
+            file_request_intent=self.file_request_intent,
             **kwargs,
         )
         await downloader._setup()  # pylint: disable=protected-access
@@ -1021,10 +1033,16 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 :dedent: 16
                 :caption: Delete a file.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
-            await self._client.file.delete(lease_access_conditions=access_conditions, timeout=timeout, **kwargs)
+            await self._client.file.delete(
+                lease_id=lease_id,
+                timeout=timeout,
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1128,10 +1146,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
 
         kwargs.update(get_rename_smb_properties(kwargs))
 
-        file_http_headers = None
-        content_type = kwargs.pop("content_type", None)
-        if content_type:
-            file_http_headers = FileHTTPHeaders(file_content_type=content_type)
+        file_content_type = kwargs.pop("content_type", None)
 
         timeout = kwargs.pop("timeout", None)
         overwrite = kwargs.pop("overwrite", None)
@@ -1139,18 +1154,21 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
 
-        source_access_conditions = get_source_access_conditions(kwargs.pop("source_lease", None))
-        dest_access_conditions = get_dest_access_conditions(kwargs.pop("destination_lease", None))
+        source_lease_id = get_source_lease_id(kwargs.pop("source_lease", None))
+        dest_lease_id = get_dest_lease_id(kwargs.pop("destination_lease", None))
 
         try:
             await new_file_client._client.file.rename(  # pylint: disable=protected-access
-                self.url,
+                rename_source=self.url,
                 timeout=timeout,
                 replace_if_exists=overwrite,
-                file_http_headers=file_http_headers,
-                source_lease_access_conditions=source_access_conditions,
-                destination_lease_access_conditions=dest_access_conditions,
+                file_content_type=file_content_type,
+                source_lease_id=source_lease_id,
+                destination_lease_id=dest_lease_id,
                 headers=headers,
+                allow_trailing_dot=self.allow_trailing_dot,
+                allow_source_trailing_dot=self.allow_source_trailing_dot,
+                file_request_intent=self.file_request_intent,
                 **kwargs,
             )
 
@@ -1179,16 +1197,17 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: FileProperties
         :rtype: ~azure.storage.fileshare.FileProperties
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             file_props = cast(
                 FileProperties,
                 await self._client.file.get_properties(
-                    sharesnapshot=self.snapshot,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     timeout=timeout,
                     cls=deserialize_file_properties,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1269,17 +1288,17 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         file_content_length = kwargs.pop("size", None)
-        file_http_headers = FileHTTPHeaders(
-            file_cache_control=content_settings.cache_control,
-            file_content_type=content_settings.content_type,
-            file_content_md5=bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
-            file_content_encoding=content_settings.content_encoding,
-            file_content_language=content_settings.content_language,
-            file_content_disposition=content_settings.content_disposition,
-        )
+        file_http_headers = {
+            "file_cache_control": content_settings.cache_control,
+            "file_content_type": content_settings.content_type,
+            "file_content_md5": bytearray(content_settings.content_md5) if content_settings.content_md5 else None,
+            "file_content_encoding": content_settings.content_encoding,
+            "file_content_language": content_settings.content_language,
+            "file_content_disposition": content_settings.content_disposition,
+        }
         file_permission = _get_file_permission(file_permission, permission_key, None)
         file_change_time = kwargs.pop("file_change_time", None)
         try:
@@ -1287,16 +1306,18 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 Dict[str, Any],
                 await self._client.file.set_http_headers(
                     file_content_length=file_content_length,
-                    file_http_headers=file_http_headers,
+                    **file_http_headers,
                     file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                     file_creation_time=_datetime_to_str(file_creation_time),
                     file_last_write_time=_datetime_to_str(file_last_write_time),
                     file_change_time=_datetime_to_str(file_change_time),
                     file_permission=file_permission,
                     file_permission_key=permission_key,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     timeout=timeout,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1331,7 +1352,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
@@ -1340,10 +1361,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 Dict[str, Any],
                 await self._client.file.set_metadata(
                     metadata=metadata,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     timeout=timeout,
                     cls=return_response_headers,
                     headers=headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1403,19 +1426,21 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             data = data.encode(encoding)
         end_range = offset + length - 1  # Reformat to an inclusive range index
         content_range = f"bytes={offset}-{end_range}"
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         try:
             return cast(
                 Dict[str, Any],
                 await self._client.file.upload_range(
                     range=content_range,
                     content_length=length,
-                    optionalbody=data,
+                    optional_body=data,
                     timeout=timeout,
                     validate_content=validate_content,
                     file_last_written_mode=file_last_write_mode,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1496,6 +1521,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         options = _upload_range_from_url_options(
             source_url=source_url, offset=offset, length=length, source_offset=source_offset, **kwargs
         )
+        options["allow_trailing_dot"] = self.allow_trailing_dot
+        options["allow_source_trailing_dot"] = self.allow_source_trailing_dot
+        options["file_request_intent"] = self.file_request_intent
         try:
             return cast(Dict[str, Any], await self._client.file.upload_range_from_url(**options))
         except HttpResponseError as error:
@@ -1534,12 +1562,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         """
         warnings.warn("get_ranges is deprecated, use list_ranges instead", DeprecationWarning)
 
-        options = _get_ranges_options(snapshot=self.snapshot, offset=offset, length=length, **kwargs)
+        options = _get_ranges_options(offset=offset, length=length, **kwargs)
+        options["allow_trailing_dot"] = self.allow_trailing_dot
+        options["file_request_intent"] = self.file_request_intent
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
             process_storage_error(error)
-        return [{"start": file_range.start, "end": file_range.end} for file_range in ranges.ranges]
+        return [{"start": file_range.start, "end": file_range.end} for file_range in (ranges.ranges or [])]
 
     @distributed_trace
     def list_ranges(
@@ -1619,13 +1649,14 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         warnings.warn("get_ranges_diff is deprecated, use list_ranges_diff instead", DeprecationWarning)
 
         options = _get_ranges_options(
-            snapshot=self.snapshot,
             offset=offset,
             length=length,
             previous_sharesnapshot=previous_sharesnapshot,
             support_rename=include_renames,
             **kwargs,
         )
+        options["allow_trailing_dot"] = self.allow_trailing_dot
+        options["file_request_intent"] = self.file_request_intent
         try:
             ranges = await self._client.file.get_range_list(**options)
         except HttpResponseError as error:
@@ -1714,7 +1745,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
 
         if offset is None or offset % 512 != 0:
@@ -1730,10 +1761,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     timeout=timeout,
                     cls=return_response_headers,
                     content_length=0,
-                    optionalbody=None,
+                    optional_body=None,
                     file_range_write="clear",
                     range=content_range,
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1762,7 +1795,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         timeout = kwargs.pop("timeout", None)
         try:
             return cast(
@@ -1773,9 +1806,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     file_creation_time=None,
                     file_last_write_time=None,
                     file_permission="preserve",
-                    lease_access_conditions=access_conditions,
+                    lease_id=lease_id,
                     cls=return_response_headers,
                     timeout=timeout,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1798,7 +1833,11 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         timeout = kwargs.pop("timeout", None)
         results_per_page = kwargs.pop("results_per_page", None)
         command = functools.partial(
-            self._client.file.list_handles, sharesnapshot=self.snapshot, timeout=timeout, **kwargs
+            self._client.file.list_handles,
+            timeout=timeout,
+            allow_trailing_dot=self.allow_trailing_dot,
+            file_request_intent=self.file_request_intent,
+            **kwargs,
         )
         return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=HandlesPaged)
 
@@ -1828,7 +1867,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             raise ValueError("Handle ID '*' is not supported. Use 'close_all_handles' instead.")
         try:
             response = await self._client.file.force_close_handles(
-                handle_id, marker=None, sharesnapshot=self.snapshot, cls=return_response_headers, **kwargs
+                handle_id=handle_id,
+                marker=None,
+                cls=return_response_headers,
+                allow_trailing_dot=self.allow_trailing_dot,
+                file_request_intent=self.file_request_intent,
+                **kwargs,
             )
             return {
                 "closed_handles_count": response.get("number_of_handles_closed", 0),
@@ -1867,8 +1911,9 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     handle_id="*",
                     timeout=timeout,
                     marker=continuation_token,
-                    sharesnapshot=self.snapshot,
                     cls=return_response_headers,
+                    allow_trailing_dot=self.allow_trailing_dot,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 )
             except HttpResponseError as error:
@@ -1914,9 +1959,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                 Dict[str, Any],
                 await self._client.file.create_hard_link(
                     target_file=target,
-                    lease_access_conditions=lease,
+                    lease_id=lease,
                     timeout=timeout,
                     cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1972,9 +2018,10 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     file_last_write_time=file_last_write_time,
                     owner=owner,
                     group=group,
-                    lease_access_conditions=lease,
+                    lease_id=lease,
                     timeout=timeout,
                     cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
                     **kwargs,
                 ),
             )
@@ -1997,7 +2044,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         try:
             return cast(
                 Dict[str, Any],
-                await self._client.file.get_symbolic_link(timeout=timeout, cls=return_response_headers, **kwargs),
+                await self._client.file.get_symbolic_link(
+                    timeout=timeout,
+                    cls=return_response_headers,
+                    file_request_intent=self.file_request_intent,
+                    **kwargs,
+                ),
             )
         except HttpResponseError as error:
             process_storage_error(error)

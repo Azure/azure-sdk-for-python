@@ -6,8 +6,8 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_12_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AmlCompute as AmlComputeRest
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,
@@ -203,7 +203,11 @@ class AmlCompute(Compute):
             identity=(
                 IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None
             ),
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=(
+                prop.additional_properties.get("createdOn", None)
+                if hasattr(prop, "additional_properties")
+                else prop.get("createdOn") if hasattr(prop, "get") else None
+            ),
             enable_node_public_ip=(
                 prop.properties.enable_node_public_ip if prop.properties.enable_node_public_ip is not None else True
             ),
@@ -260,6 +264,10 @@ class AmlCompute(Compute):
             remote_login_port_public_access=remote_login_public_access,
             enable_node_public_ip=self.enable_node_public_ip,
         )
+        # osType defaulted to "Linux" on the legacy 2022-12-01-preview model and was serialized on the
+        # wire; it was @removed from the shared arm_ml_service model (api-version 2025-12-01). Set it via
+        # its wire key to preserve the old wire body.
+        aml_prop["osType"] = "Linux"
 
         aml_comp = AmlComputeRest(
             description=self.description,

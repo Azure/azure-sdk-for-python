@@ -34,7 +34,6 @@ from ._client_manager import ConfigurationClientManager, _ConfigurationClientWra
 from ._user_agent import USER_AGENT
 from ._utils import get_startup_backoff
 
-JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)
 
 
@@ -96,7 +95,19 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         self._on_refresh_error: Optional[Callable[[Exception], None]] = kwargs.pop("on_refresh_error", None)
         self._configuration_mapper: Optional[Callable] = kwargs.pop("configuration_mapper", None)
 
-    def _attempt_refresh(self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs):
+    def _attempt_refresh(
+        self, client: ConfigurationClient, replica_count: int, is_failover_request: bool, **kwargs
+    ) -> None:
+        """
+        Attempts to refresh configuration settings and feature flags using a single client.
+
+        :param client: The configuration client to attempt the refresh against.
+        :type client: ~azure.appconfiguration.provider.ConfigurationClient
+        :param replica_count: The number of replica clients available, used for correlation telemetry.
+        :type replica_count: int
+        :param is_failover_request: Whether this attempt is a failover from a previously failed client.
+        :type is_failover_request: bool
+        """
         settings_refreshed = False
         headers = self._update_correlation_context_header(
             kwargs.pop("headers", {}),

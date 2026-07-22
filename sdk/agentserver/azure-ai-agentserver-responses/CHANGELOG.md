@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0b9 (2026-07-22)
+
+### Other Changes
+
+- Raised the `azure-ai-agentserver-core` dependency floor to `>=2.0.0b8`.
+
+## 1.0.0b8 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
+
+### Breaking Changes
+
+- Renamed the public `IsolationContext` type to `PlatformContext`. Its fields are now `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`), replacing `user_key` / `chat_key`.
+- `ResponseContext.isolation` is now `ResponseContext.platform_context`.
+- Response provider protocol methods now accept a `context` keyword argument (previously `isolation`).
+- In-process partition enforcement is now keyed on the user ID (`x-agent-user-id`) instead of the chat isolation key.
+
 ## 1.0.0b7 (2026-05-25)
 
 ### Features Added

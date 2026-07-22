@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/GetManagedComputeDeployment.json
+# x-ms-original-file: 2026-05-15-preview/GetManagedComputeDeployment.json
 if __name__ == "__main__":
     main()

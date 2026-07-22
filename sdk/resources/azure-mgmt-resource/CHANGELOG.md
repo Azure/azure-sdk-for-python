@@ -26,6 +26,7 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Import path for `ResourceManagementClient` has changed from `azure.mgmt.resource` to `azure.mgmt.resource.resources`.
   - Model `Resource` deleted or renamed its instance variable `location`
   - Model `Resource` deleted or renamed its instance variable `extended_location`
   - Model `Resource` deleted or renamed its instance variable `tags`

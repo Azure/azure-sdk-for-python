@@ -6,14 +6,14 @@ from __future__ import annotations
 
 from azure.ai.agentserver.core._platform_headers import (
     APIM_REQUEST_ID,
-    CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
     CLIENT_REQUEST_ID,
+    FOUNDRY_CALL_ID,
     REQUEST_ID,
     SERVER_VERSION,
     SESSION_ID,
     TRACEPARENT,
-    USER_ISOLATION_KEY,
+    USER_ID,
 )
 from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY
 
@@ -30,11 +30,11 @@ class TestPlatformHeaderConstants:
     def test_session_id(self) -> None:
         assert SESSION_ID == "x-agent-session-id"
 
-    def test_user_isolation_key(self) -> None:
-        assert USER_ISOLATION_KEY == "x-agent-user-isolation-key"
+    def test_user_id(self) -> None:
+        assert USER_ID == "x-agent-user-id"
 
-    def test_chat_isolation_key(self) -> None:
-        assert CHAT_ISOLATION_KEY == "x-agent-chat-isolation-key"
+    def test_foundry_call_id(self) -> None:
+        assert FOUNDRY_CALL_ID == "x-agent-foundry-call-id"
 
     def test_client_header_prefix(self) -> None:
         assert CLIENT_HEADER_PREFIX == "x-client-"

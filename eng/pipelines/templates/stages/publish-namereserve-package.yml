@@ -15,7 +15,7 @@ parameters:
     default: 'auto'
   - name: VersionForReservation
     type: string
-    default: '0.0.0'
+    default: '0.0.0b1'
 
 extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml

@@ -16,7 +16,7 @@ from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
-from ci_tools.parsing import get_config_setting
+from ci_tools.parsing import ParsedSetup, get_config_setting
 from devtools_testutils.proxy_startup import prepare_local_tool
 from packaging.requirements import Requirement
 
@@ -75,6 +75,15 @@ def _cleanup_isolate_dirs() -> None:
 
 def _normalize_newlines(text: str) -> str:
     return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def get_check_dest_dir(
+    package: str, check: str, dest_dir: Optional[str]
+) -> Optional[str]:
+    if dest_dir and check == "apistub":
+        package_name = ParsedSetup.from_path(package).name
+        return os.path.join(dest_dir, package_name)
+    return dest_dir
 
 
 async def _tee_stream(
@@ -222,8 +231,10 @@ async def run_check(
             cmd += ["--service", service]
         if mark_arg:
             cmd += ["--mark_arg", mark_arg]
-        if dest_dir and check == "apistub":
-            cmd += ["--dest-dir", dest_dir]
+        if check == "apistub":
+            check_dest_dir = get_check_dest_dir(package, check, dest_dir)
+            if check_dest_dir:
+                cmd += ["--dest-dir", check_dest_dir]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
@@ -500,14 +511,12 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="""
+    parser = argparse.ArgumentParser(description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-"""
-    )
+""")
 
     parser.add_argument(
         "glob_string",

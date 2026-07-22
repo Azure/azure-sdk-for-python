@@ -17,36 +17,36 @@ DESCRIPTION:
     those inner tools.
 
     Toolboxes and tool search are preview features. CRUD goes through
-    'project_client.beta.toolboxes'.
+    'project_client.toolboxes'.
 
 USAGE:
     python sample_toolboxes_with_search_preview_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv openai aiohttp
+    pip install "azure-ai-projects>=2.3.0" python-dotenv openai aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys used by
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) MCP_PROJECT_CONNECTION_ID - The connection resource ID in Custom keys used by
        the inner MCP server inside the toolbox.
 """
 
 import asyncio
 import os
-
 from dotenv import load_dotenv
-
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
-
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
     MCPTool,
+    MCPToolboxTool,
+    ToolboxSearchPreviewToolboxTool,
     PromptAgentDefinition,
-    ToolboxSearchPreviewTool,
 )
 
 load_dotenv()
@@ -57,26 +57,27 @@ TOOLBOX_NAME = "toolbox_with_mcp_tool"
 INNER_MCP_LABEL = "github"
 INNER_MCP_URL = "https://api.githubcopilot.com/mcp"
 TOOLBOX_MCP_LABEL = "search-tool"
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
     ):
 
-        inner_mcp_tool = MCPTool(
+        inner_mcp_tool = MCPToolboxTool(
             server_label=INNER_MCP_LABEL,
             server_url=INNER_MCP_URL,
             require_approval="never",
             project_connection_id=os.environ["MCP_PROJECT_CONNECTION_ID"],
         )
 
-        toolbox_version = await project_client.beta.toolboxes.create_version(
+        toolbox_version = await project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description=f"Toolbox with `{INNER_MCP_LABEL}` MCP server and tool search enabled.",
-            tools=[inner_mcp_tool, ToolboxSearchPreviewTool()],
+            tools=[inner_mcp_tool, ToolboxSearchPreviewToolboxTool()],
         )
         print(f"Created toolbox `{TOOLBOX_NAME}` (version {toolbox_version.version}).")
 
@@ -87,12 +88,12 @@ async def main() -> None:
             server_label=TOOLBOX_MCP_LABEL,
             server_url=toolbox_mcp_url,
             authorization=token,
-            headers={"Foundry-Features": "Toolboxes=V1Preview"},
             require_approval="never",
         )
 
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
+        async with create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions=(
@@ -102,28 +103,24 @@ async def main() -> None:
                 ),
                 tools=[toolbox_mcp_tool],
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
+        ) as agent:
+            print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version}).")
 
-        response = await openai_client.responses.create(
-            input="What is my username in Github profile?",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-        )
+            response = await openai_client.responses.create(
+                input="What is my username in Github profile?",
+            )
 
-        for item in response.output:
-            if item.type == "mcp_approval_request":
-                print(f"server_label={item.server_label}, name={item.name}")
-            elif item.type == "mcp_list_tools":
-                print(f"server_label={item.server_label}, tools={[t.name for t in (item.tools or [])]}")
-            elif item.type == "mcp_call":
-                print(f"server_label={item.server_label}, name={item.name}, error={item.error}")
-            else:
-                print()
+            for item in response.output:
+                if item.type == "mcp_approval_request":
+                    print(f"server_label={item.server_label}, name={item.name}")
+                elif item.type == "mcp_list_tools":
+                    print(f"server_label={item.server_label}, tools={[t.name for t in (item.tools or [])]}")
+                elif item.type == "mcp_call":
+                    print(f"server_label={item.server_label}, name={item.name}, error={item.error}")
+                else:
+                    print()
 
-        print(f"Response: {response.output_text}")
-
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")
+            print(f"Response: {response.output_text}")
 
 
 if __name__ == "__main__":

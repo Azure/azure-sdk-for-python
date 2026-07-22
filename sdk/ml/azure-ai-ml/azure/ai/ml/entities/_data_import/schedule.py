@@ -6,9 +6,9 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ImportDataAction
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Schedule as RestSchedule
-from azure.ai.ml._restclient.v2023_04_01_preview.models import ScheduleProperties
+from azure.ai.ml._restclient.arm_ml_service.models import Schedule as RestSchedule
+from azure.ai.ml._restclient.arm_ml_service.models import ScheduleProperties
+from azure.ai.ml._restclient.v2023_08_01_preview.models import DataImport as RestDataImport
 from azure.ai.ml._schema._data_import.schedule import ImportDataScheduleSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ScheduleType
@@ -88,9 +88,18 @@ class ImportDataSchedule(Schedule):
 
     @classmethod
     def _from_rest_object(cls, obj: RestSchedule) -> "ImportDataSchedule":
+        # ``ImportDataAction`` is not in arm_ml_service, so the action is carried as a plain wire dict
+        # (camelCase keys); read it via mapping access and rehydrate the v2023_08 msrest ``DataImport``
+        # model so ``DataImport._from_rest_object`` keeps its typed attribute access. The trigger is a
+        # present arm model.
+        action = obj.properties.action
+        data_import_definition = action["dataImportDefinition"] if action is not None else None
+        rest_data_import = (
+            RestDataImport.deserialize(data_import_definition) if data_import_definition is not None else None
+        )
         return cls(
             trigger=TriggerBase._from_rest_object(obj.properties.trigger),
-            import_data=DataImport._from_rest_object(obj.properties.action.data_import_definition),
+            import_data=DataImport._from_rest_object(rest_data_import),
             name=obj.name,
             display_name=obj.properties.display_name,
             description=obj.properties.description,
@@ -102,14 +111,21 @@ class ImportDataSchedule(Schedule):
         )
 
     def _to_rest_object(self) -> RestSchedule:
-        return RestSchedule(
+        # ``ImportDataAction`` / ``DataImport`` are not in arm_ml_service; build the shared arm Schedule
+        # envelope and emit the import-data action as a plain wire dict (JSON-direct). ``data_import``
+        # serializes to a v2023_08 msrest model whose ``.serialize()`` yields the camelCase wire body.
+        rest_schedule = RestSchedule(
             properties=ScheduleProperties(
                 description=self.description,
                 properties=self.properties,
                 tags=self.tags,
-                action=ImportDataAction(data_import_definition=self.import_data._to_rest_object()),
                 display_name=self.display_name,
                 is_enabled=self._is_enabled,
                 trigger=self.trigger._to_rest_object() if self.trigger is not None else None,
             )
         )
+        rest_schedule.properties["action"] = {
+            "actionType": "ImportData",
+            "dataImportDefinition": self.import_data._to_rest_object().serialize(),
+        }
+        return rest_schedule
