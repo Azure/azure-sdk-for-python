@@ -30,14 +30,15 @@ class TextAnalysisClientConfiguration:  # pylint: disable=too-many-instance-attr
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is
-     "2025-11-15-preview". Note that overriding this default value may result in unsupported
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-05-15-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
-        api_version: str = kwargs.pop("api_version", "2025-11-15-preview")
+        api_version: str = kwargs.pop("api_version", "2026-05-15-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
