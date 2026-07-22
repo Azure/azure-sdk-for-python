@@ -18,7 +18,9 @@ from azure.core.credentials_async import AsyncTokenCredential
 from ._operations._patch import AsyncDocumentTranslationLROPoller, AsyncDocumentTranslationLROPollingMethod
 from .._operations._patch import TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
+from ._client import SingleDocumentTranslationClient as GeneratedSingleDocumentTranslationClient
 from ._operations._patch import DocumentTranslationClientOperationsMixin
+from ._operations._patch import SingleDocumentTranslationClientOperationsMixin
 from ..models import (
     DocumentStatus,
     TranslationStatus,
@@ -540,8 +542,29 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, Genera
         return (await super()._get_supported_formats(type=FileFormatType.DOCUMENT, **kwargs)).value
 
 
+class SingleDocumentTranslationClient(
+    SingleDocumentTranslationClientOperationsMixin, GeneratedSingleDocumentTranslationClient
+):
+    """SingleDocumentTranslationClient is your interface to the Document Translation service to
+    translate a single document.
+
+    :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
+     https://{TranslatorResourceName}.cognitiveservices.azure.com/translator. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version:
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.translation.document.DocumentTranslationApiVersion
+    """
+
+
 __all__: List[str] = [
     "DocumentTranslationClient",
+    "SingleDocumentTranslationClient",
     "AsyncDocumentTranslationLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 

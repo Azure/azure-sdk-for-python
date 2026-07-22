@@ -253,14 +253,14 @@ namespace azure.ai.translation.document
             ): ...
 
 
-    class azure.ai.translation.document.SingleDocumentTranslationClient(_SingleDocumentTranslationClientOperationsMixin): implements ContextManager 
+    class azure.ai.translation.document.SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin, GeneratedSingleDocumentTranslationClient): implements ContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
                 credential: Union[AzureKeyCredential, TokenCredential], 
                 *, 
-                api_version: str = ..., 
+                api_version: Union[str, DocumentTranslationApiVersion] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -291,7 +291,7 @@ namespace azure.ai.translation.document
         @overload
         def translate(
                 self, 
-                body: DocumentTranslateContent, 
+                body: JSON, 
                 *, 
                 allow_fallback: Optional[bool] = ..., 
                 category: Optional[str] = ..., 
@@ -519,14 +519,14 @@ namespace azure.ai.translation.document.aio
             ) -> Awaitable[AsyncHttpResponse]: ...
 
 
-    class azure.ai.translation.document.aio.SingleDocumentTranslationClient(_SingleDocumentTranslationClientOperationsMixin): implements AsyncContextManager 
+    class azure.ai.translation.document.aio.SingleDocumentTranslationClient(SingleDocumentTranslationClientOperationsMixin, GeneratedSingleDocumentTranslationClient): implements AsyncContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
                 credential: Union[AzureKeyCredential, AsyncTokenCredential], 
                 *, 
-                api_version: str = ..., 
+                api_version: Union[str, DocumentTranslationApiVersion] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -557,7 +557,7 @@ namespace azure.ai.translation.document.aio
         @overload
         async def translate(
                 self, 
-                body: DocumentTranslateContent, 
+                body: JSON, 
                 *, 
                 allow_fallback: Optional[bool] = ..., 
                 category: Optional[str] = ..., 
