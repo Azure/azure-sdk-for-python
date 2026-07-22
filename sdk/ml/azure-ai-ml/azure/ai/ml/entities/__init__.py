@@ -12,6 +12,8 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 import logging
 from typing import Any, Optional
 
+module_logger = logging.getLogger(__name__)
+
 from azure.ai.ml._restclient.arm_ml_service.models import CreatedByType
 from azure.ai.ml._restclient.arm_ml_service.models import UsageUnit
 
@@ -567,7 +569,7 @@ def __getattr__(name: str):
 
     if requested:
         if not getattr(__getattr__, "warning_issued", False):
-            logging.warning(
+            module_logger.warning(
                 " %s will be removed from the azure.ai.ml.entities namespace in a future release."
                 " Please import from the azure.ai.ml.sweep namespace instead.",
                 name,
