@@ -20,7 +20,7 @@ is called but no tracer is configured
 - Added `RunStepDeltaChunk` to `StreamEventData` model (GitHub issues [43022](https://github.com/Azure/azure-sdk-for-python/issues/43022))
 
 ### Sample updates
-- Added `sample_agents_mcp_in_create_and_process.py` abd `sample_agents_mcp_in_create_and_process_async.py` demonstrating MCP tool call approvals in `runs.create_and_process`.
+- Added `sample_agents_mcp_in_create_and_process.py` and `sample_agents_mcp_in_create_and_process_async.py` demonstrating MCP tool call approvals in `runs.create_and_process`.
 - Added `sample_agents_functions_in_create_and_process.py` and `sample_agents_functions_in_create_and_process_async.py` demonstrating manual function tool calls in `runs.create_and_process`.
 
 ## 1.2.0b4 (2025-09-12)

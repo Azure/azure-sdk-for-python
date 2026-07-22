@@ -145,7 +145,7 @@ Since the package is Python 3 only, do NOT make this wheel universal. This usual
 - wheel file name suffix is `py3-none-any`, and NOT `py2.py3-none-any`.
 - sdist must contain a `azure/__init__.py` file that declares `azure` as a namespace package using the `pkgutil` syntax
 
-# I already have a package that supports Python 2, can I get short version on how to udpate to Python 3 only?
+# I already have a package that supports Python 2, can I get short version on how to update to Python 3 only?
 
 - Remove "universal" from setup.cfg, or completely remove the file if it was the only option
 - In setup.py:

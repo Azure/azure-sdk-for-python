@@ -33,7 +33,7 @@ python -m pip install azure-keyvault-securitydomain azure-identity
 
 [azure-identity][azure_identity] is used for Microsoft Entra ID authentication as demonstrated below.
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.9 or later
 - An [Azure subscription][azure_sub]

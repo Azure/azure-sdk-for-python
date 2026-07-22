@@ -20,7 +20,7 @@ SDKs by default. Just install and configure the distro and use Azure clients as 
 ```python
 
 # Enable Azure Monitor OpenTelemetry Distro
-# It confiures Azure SDKs to use OpenTelemetry as well
+# It configures Azure SDKs to use OpenTelemetry as well
 from azure.monitor.opentelemetry import configure_azure_monitor
 from opentelemetry import trace
 

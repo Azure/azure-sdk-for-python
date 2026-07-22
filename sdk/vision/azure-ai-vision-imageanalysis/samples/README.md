@@ -52,7 +52,7 @@ See [Prerequisites](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/
   ```bash
   pip install azure-ai-vision-imageanalysis
   ```
-* If you plan to run the asynchronous client samples, insall the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+* If you plan to run the asynchronous client samples, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
   ```bash
   pip install aiohttp
   ```

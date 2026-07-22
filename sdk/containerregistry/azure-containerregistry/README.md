@@ -272,7 +272,7 @@ with ContainerRegistryClient(self.endpoint, self.credential) as client:
 
 ## Troubleshooting
 
-For infomation about troubleshooting, refer to the [troubleshooting guide].
+For information about troubleshooting, refer to the [troubleshooting guide].
 ### General
 ACR client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
 

@@ -39,7 +39,7 @@ This package's [documentation](https://github.com/Azure/azure-sdk-for-python/tre
 
 - This library only supports the API of the the operation groups below of [Azure AI Face v1.1-preview.1](https://learn.microsoft.com/rest/api/face/operation-groups?view=rest-face-v1.1-preview.1):
   - Face Detection Operations
-  - Face Recognition Operations: only `Find Similiar`, `Group` and `Verify Face To Face`.
+  - Face Recognition Operations: only `Find Similar`, `Group` and `Verify Face To Face`.
   - Liveness Session Operations
 - The namespace/package name for Azure AI Face has changed from `azure.cognitiveservices.vision.face` to `azure.ai.vision.face`.
 - Two client design:

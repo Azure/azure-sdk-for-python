@@ -20,7 +20,7 @@ Use the client library for the de-identification service to:
 
 ## Getting started
 
-### Prequisites
+### Prerequisites
 
 - Python 3.9 or later is required to use this package.
 - Install [pip][pip].

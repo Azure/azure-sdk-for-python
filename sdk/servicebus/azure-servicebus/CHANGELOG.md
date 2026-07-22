@@ -759,7 +759,7 @@ now raise more concrete exception other than `MessageSettleFailed` and `ServiceB
 
 **Breaking Changes**
 
-* Session receivers are now created via their own top level functions, e.g. `get_queue_sesison_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a paramter.
+* Session receivers are now created via their own top level functions, e.g. `get_queue_session_receiver` and `get_subscription_session_receiver`.  Non session receivers no longer take session_id as a parameter.
 * `ServiceBusSender.send()` no longer takes a timeout parameter, as it should be redundant with retry options provided when creating the client.
 * Exception imports have been removed from module `azure.servicebus`. Import from `azure.servicebus.exceptions` instead.
 * `ServiceBusSender.schedule()` has swapped the ordering of parameters `schedule_time_utc` and `messages` for better consistency with `send()` syntax.
@@ -781,7 +781,7 @@ Version 7.0.0b1 is a preview of our efforts to create a client library that is u
 * Manually calling `reconnect` should no longer be necessary, it is now performed implicitly.
 * Manually calling `open` should no longer be necessary, it is now performed implicitly.
     * Note: `close()`-ing is still required if a context manager is not used, to avoid leaking connections.
-* Added support for sending a batch of messages destined for heterogenous sessions.
+* Added support for sending a batch of messages destined for heterogeneous sessions.
 
 **Breaking changes**
 

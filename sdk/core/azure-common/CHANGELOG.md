@@ -159,7 +159,7 @@ Thank you to @jayden-at-arista for the contribution.
 
 ## 1.1.1 (2016-03-07)
 
-- Move msrestazure depency as "extra_requires"
+- Move msrestazure dependency as "extra_requires"
 
 ## 1.1.0 (2016-03-04)
 

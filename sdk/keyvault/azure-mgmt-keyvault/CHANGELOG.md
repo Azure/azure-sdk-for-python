@@ -92,7 +92,7 @@
 
 ### Bugs Fixed
 
-  - Do not use configured api_version to relpace the value in nextLink for `VaultsOperation.list`
+  - Do not use configured api_version to replace the value in nextLink for `VaultsOperation.list`
 
 ## 10.2.2 (2023-05-24)
 
@@ -238,7 +238,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -346,7 +346,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to

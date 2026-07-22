@@ -14,7 +14,7 @@ python -m pip install azure-defender-easm
 
 #### from source
 ```bash
-python setup.py intall
+python setup.py install
 ```
 
 #### Prerequisites

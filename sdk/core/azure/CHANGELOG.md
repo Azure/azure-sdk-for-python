@@ -362,12 +362,12 @@ New:
 
 **New**
 
-* Lastest Swagger update for CDN (endpoint create/update fix).
-* Lastest Swagger update for ARM VMScaleSet (reimage, redeploy).
-* Lastest Swagger update for ARM VirtualMachine (minor fixes, redeploy).
-* Lastest Swagger update for ARM Storage (minor fixes).
-* Lastest Swagger update for ARM Apps Logic (minor fixes).
-* Lastest Swagger update for ARM Web Apps (recommendation API).
+* Latest Swagger update for CDN (endpoint create/update fix).
+* Latest Swagger update for ARM VMScaleSet (reimage, redeploy).
+* Latest Swagger update for ARM VirtualMachine (minor fixes, redeploy).
+* Latest Swagger update for ARM Storage (minor fixes).
+* Latest Swagger update for ARM Apps Logic (minor fixes).
+* Latest Swagger update for ARM Web Apps (recommendation API).
 * Rename resource/authorization to resource/locks
 * Any default tags in the swagger spec are used as defaults for named args.
 * 'Azure-SDK-for-Python' is added to the user-agent of each generated libraries.

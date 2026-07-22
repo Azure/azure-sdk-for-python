@@ -101,7 +101,7 @@ encoder = JsonSchemaEncoder(client=schema_registry_client, group_name=group_name
 
 ### Encoder concepts
 
-* JsonSchemaEncoder: Provides API to encode content to and decode content from Binary Encoding, validate content against a JSON Schema, and cache schemas/schema IDs retrived from the registry using the `SchemaRegistryClient` locally.
+* JsonSchemaEncoder: Provides API to encode content to and decode content from Binary Encoding, validate content against a JSON Schema, and cache schemas/schema IDs retrieved from the registry using the `SchemaRegistryClient` locally.
 
 * OutboundMessageContent: Protocol defined under `azure.schemaregistry` that allows for `JsonSchemaEncoder.encode` interoperability with certain Azure Messaging SDK message types. Support has been added to:
   * `azure.eventhub.EventData` for `azure-eventhub>=5.9.0`

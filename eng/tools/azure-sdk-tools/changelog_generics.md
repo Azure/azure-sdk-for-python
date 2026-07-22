@@ -13,7 +13,7 @@ This version uses a next-generation code generator that *might* introduce breaki
   At a glance:
 
   - "is" should not be used at all.
-  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be prefered.
+  - "format" will return the string value, where "%s" string formatting will return `NameOfEnum.stringvalue`. Format syntax should be preferred.
 
 - New Long Running Operation:
 
@@ -59,7 +59,7 @@ This version uses a next-generation code generator that introduces important bre
 
 ## General breaking changes
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`

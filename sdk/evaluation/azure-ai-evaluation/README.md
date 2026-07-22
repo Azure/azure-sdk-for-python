@@ -186,7 +186,7 @@ For more details refer to [Evaluate on a target][evaluate_target]
 ### Simulator
 
 
-Simulators allow users to generate synthentic data using their application. Simulator expects the user to have a callback method that invokes their AI application. The intergration between your AI application and the simulator happens at the callback method. Here's how a sample callback would look like:
+Simulators allow users to generate synthetic data using their application. Simulator expects the user to have a callback method that invokes their AI application. The integration between your AI application and the simulator happens at the callback method. Here's how a sample callback would look like:
 
 
 ```python

@@ -217,7 +217,7 @@ client.create_pool(pool=pool_spec)
 
 ### Create Jobs
 
-Previously in v14.x, job creation was handeled through the `JobOperations` class and used the `CloudJob` model. 
+Previously in v14.x, job creation was handled through the `JobOperations` class and used the `CloudJob` model. 
 
 ```python
 # v14.x - Job Creation

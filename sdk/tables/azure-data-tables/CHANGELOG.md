@@ -102,7 +102,7 @@
 * Validation of the table name has been removed from the constructor of the TableClient. Instead individual APIs will validate the table name and raise a ValueError only if the service rejects the request due to the table name not being valid (#23106)
 * Fixed hard-coded URL scheme in batch requests (#21953)
 * Improved documentation for query formatting in `query_entities` APIs (#23235)
-* Removed unsecure debug logging
+* Removed insecure debug logging
 
 ### Other Changes
 * Python 2.7 is no longer supported. Please use Python version 3.6 or later.

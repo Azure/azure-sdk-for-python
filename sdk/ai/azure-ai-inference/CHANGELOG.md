@@ -74,7 +74,7 @@ as "structured output". See new samples `sample_chat_completions_with_structured
 * Support chat completion streaming response with function arguments (tool calls). Add new classes
 `StreamingChatResponseMessageUpdate` and `StreamingChatResponseToolCallUpdate`.
 * Support text embeddings result in base64 encoded string format.
-* Nicely formated print of chat completions and embeddings result objects.
+* Nicely formatted print of chat completions and embeddings result objects.
 
 ### Breaking Changes
 

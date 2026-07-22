@@ -18,7 +18,7 @@ Azure AI Document Intelligence ([previously known as Form Recognizer][service-re
 
 ## Getting started
 
-### Installating the package
+### Installing the package
 
 ```bash
 python -m pip install azure-ai-documentintelligence
@@ -32,7 +32,7 @@ This table shows the relationship between SDK versions and supported API service
 
 Older API versions are supported in `azure-ai-formrecognizer`, please see the [Migration Guide][migration-guide] for detailed instructions on how to update application.
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.8 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

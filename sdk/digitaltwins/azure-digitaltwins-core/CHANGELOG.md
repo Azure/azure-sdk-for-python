@@ -30,7 +30,7 @@
 **API updates**
 - Added etag and match_condition parameters to upsert_digital_twin and upsert_relationship APIs to support conditional operation.
 - Renamed `EventRoute` model to `DigitalTwinsEventRoute`.
-- Removed unsed `azure.digitaltwins.core.QueryResult` object.
+- Removed unused `azure.digitaltwins.core.QueryResult` object.
 - Renamed the `component_path` to `component_name`
 - Renamed the `payload` parameter to `telemetry` and made `message_id` a keyword-only parameter.
 

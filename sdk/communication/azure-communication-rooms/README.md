@@ -14,13 +14,13 @@ The Azure Communication Rooms package is used to do following:
 - Create meetings with managed permissions for its participants
 ## Getting started
 
-### Installating the package
+### Installing the package
 
 ```bash
 python -m pip install azure-communication-rooms
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.

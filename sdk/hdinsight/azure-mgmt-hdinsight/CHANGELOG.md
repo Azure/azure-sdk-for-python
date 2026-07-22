@@ -60,7 +60,7 @@
 ### Features Added
 
   - Model StorageAccount has a new parameter enable_secure_channel
-  - Added feature to support selecting use secure channel during creation. The paramter would force to true if the cluster created based on a stroage account that secure transfer enabled, no matter it use 'blob' or 'dfs' type.
+  - Added feature to support selecting use secure channel during creation. The parameter would force to true if the cluster created based on a storage account that secure transfer enabled, no matter it use 'blob' or 'dfs' type.
 
 ## 9.0.0b1 (2022-11-18)
 
@@ -167,7 +167,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -263,7 +263,7 @@ This version uses a next-generation code generator that introduces important bre
 
 ## 1.0.0 (2019-04-08)
 
-Stable versionning of the 0.3.0 (no changes)
+Stable versioning of the 0.3.0 (no changes)
 
 ## 0.3.0 (2019-04-08)
 

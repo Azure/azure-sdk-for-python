@@ -151,7 +151,7 @@ For example if you would like to alter connection pool you can initialise `Reque
  # Note: `session_owner` gives the information of ownership of the requests sessions to the transport instance, to authorize it to close on customer's behalf. If you're ok that the client closes your session on your behalf as necessary, you don't need to pass a value.
  ```
 
-For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
+For asynchronous pipelines a couple of transport options are available. Each of these transports are interchangeable depending on whether the user has installed various 3rd party dependencies (i.e. aiohttp or trio), and the user
 should easily be able to specify their chosen transport. SDK developers should use the `aiohttp` transport as the default for asynchronous pipelines where the user has not specified an alternative.
 
 ```python
@@ -259,7 +259,7 @@ class HttpRequest:
 
     @property
     def content(self) -> Any:
-        """Get's the request's content"""
+        """Gets the request's content"""
 ```
 
 `HttpResponse` on the other hand is an abstract base class that will have to be implemented

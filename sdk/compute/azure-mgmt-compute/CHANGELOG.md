@@ -1270,7 +1270,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -1577,7 +1577,7 @@ use no more than one client per process.
 **Bugfix**
 
   - Revert "images" API version introduced in 4.6.0 from 2019-03-01 to
-    2018-10-01 for backward compatiblity #4891
+    2018-10-01 for backward compatibility #4891
 
 ## 4.6.1 (2019-04-18)
 
@@ -1659,7 +1659,7 @@ use no more than one client per process.
 
 **Features/BreakingChanges**
 
-  - This version updates the access to properties realted to automatic
+  - This version updates the access to properties related to automatic
     OS upgrade introduced in 4.0.0
 
 ## 4.2.0 (2018-09-25)
@@ -1780,7 +1780,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to
@@ -1850,7 +1850,7 @@ for 'resource_skus' - 2017-12-01 for everything else
     dict from operation groups name to API version
   - Operation groups now have access to their own models. For instance,
     assuming you have variable called "client", you can access the
-    models for this opeations groups (according to your loaded profiles)
+    models for this operations groups (according to your loaded profiles)
     using `client.virtual_machines.models`
   - azure.mgmt.compute.models is deprecated. See
     <https://aka.ms/pysdkmodels> for details.

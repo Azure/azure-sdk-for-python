@@ -14,8 +14,8 @@ For this sample, it is necessary to create/have the following resources in the [
 * **App registration**: Register a new app or use an existing one.
   * Under _Certificates & secrets_ create a new **client secret** and store the value in a safe place.
 * **Key Vaults**: Create a new Key Vault resource or use an existing one.
-  * Under _Access policies_, add the app registrated in the previous step.
-* **Storage acounts**: Create a container in a new or existing storage account. The container in this sample is named "mycontainer", if you want to use other name you can change the value in `BlobStorage.ts` file:
+  * Under _Access policies_, add the app registered in the previous step.
+* **Storage accounts**: Create a container in a new or existing storage account. The container in this sample is named "mycontainer", if you want to use other name you can change the value in `BlobStorage.ts` file:
 `const containerName = "mycontainer";`
 * **Event Hubs**: Create an event hub inside a new or existing Event Hubs Namespace. The container in this sample is named "myeventhub", if you want to use other name you can change the value in `EventHubsTest.ts` file: `let eventHubName = "myeventhub";`
 * **Azure Cosmos DB**: Create a new account or use an existing one.
@@ -25,7 +25,7 @@ The following environment variables are needed:
 * From **App Registration**, in the _Overview_ section:
     * AZURE_TENANT_ID: The directory tentant ID.
     * AZURE_CLIENT_ID: The application ID.
-    * AZURE_CLIENT_SECRET: The client secret stored previusly when creating the _client secret_.
+    * AZURE_CLIENT_SECRET: The client secret stored previously when creating the _client secret_.
 
 * From **Key Vault**, in the _Overview_ section:
   * AZURE_PROJECT_URL: The DNS Name

@@ -1484,7 +1484,7 @@ This version uses a next-generation code generator that introduces important bre
 
 **General breaking changes**
 
-- Credential system has been completly revamped:
+- Credential system has been completely revamped:
 
   - `azure.common.credentials` or `msrestazure.azure_active_directory` instances are no longer supported, use the `azure-identity` classes instead: https://pypi.org/project/azure-identity/
   - `credentials` parameter has been renamed `credential`
@@ -2268,7 +2268,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to
@@ -2313,11 +2313,11 @@ introduce breaking changes.
 Fix `SecurityRule` constructor parameters order to respect the one
 used until 1.5.0. This indeed introduces a breaking change for users of
 1.6.0 and 1.7.0, but this constructor signature change was not expected,
-and following semantic versionning all 1.x versions should follow the
+and following semantic versioning all 1.x versions should follow the
 same signature.
 
 This fixes third party library, like Ansible, that expects (for
-excellent reasons) this SDK to follow strictly semantic versionning with
+excellent reasons) this SDK to follow strictly semantic versioning with
 regards to breaking changes and have their dependency system asking for
 `>=1.0;<2.0`
 
