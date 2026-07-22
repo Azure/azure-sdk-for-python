@@ -36,14 +36,18 @@ class MetricThreshold(RestTranslatableMixin):
 class NumericalDriftMetrics(RestTranslatableMixin):
     """Numerical Drift Metrics
 
-    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :keyword jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
     :paramtype jensen_shannon_distance: float
-    :param normalized_wasserstein_distance: The normalized Wasserstein distance between the two distributions
+    :keyword normalized_wasserstein_distance: The normalized Wasserstein distance between the two distributions
     :paramtype normalized_wasserstein_distance: float
-    :param population_stability_index: The population stability index between the two distributions
+    :keyword population_stability_index: The population stability index between the two distributions
     :paramtype population_stability_index: float
-    :param two_sample_kolmogorov_smirnov_test: The two sample Kolmogorov-Smirnov test between the two distributions
+    :keyword two_sample_kolmogorov_smirnov_test: The two sample Kolmogorov-Smirnov test between the two distributions
     :paramtype two_sample_kolmogorov_smirnov_test: float
+    :keyword metric: The name of the metric to apply the threshold to.
+    :paramtype metric: str
+    :keyword metric_threshold: The threshold value for the selected metric.
+    :paramtype metric_threshold: float
     """
 
     def __init__(
@@ -105,11 +109,11 @@ class NumericalDriftMetrics(RestTranslatableMixin):
 class CategoricalDriftMetrics(RestTranslatableMixin):
     """Categorical Drift Metrics
 
-    :param jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
+    :keyword jensen_shannon_distance: The Jensen-Shannon distance between the two distributions
     :paramtype jensen_shannon_distance: float
-    :param population_stability_index: The population stability index between the two distributions
+    :keyword population_stability_index: The population stability index between the two distributions
     :paramtype population_stability_index: float
-    :param pearsons_chi_squared_test: The Pearson's Chi-Squared test between the two distributions
+    :keyword pearsons_chi_squared_test: The Pearson's Chi-Squared test between the two distributions
     :paramtype pearsons_chi_squared_test: float
     """
 
@@ -163,9 +167,9 @@ class CategoricalDriftMetrics(RestTranslatableMixin):
 class DataDriftMetricThreshold(MetricThreshold):
     """Data drift metric threshold
 
-    :param numerical: Numerical drift metrics
+    :keyword numerical: Numerical drift metrics
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
-    :param categorical: Categorical drift metrics
+    :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
     """
 
@@ -240,9 +244,9 @@ class DataDriftMetricThreshold(MetricThreshold):
 class PredictionDriftMetricThreshold(MetricThreshold):
     """Prediction drift metric threshold
 
-    :param numerical: Numerical drift metrics
+    :keyword numerical: Numerical drift metrics
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
-    :param categorical: Categorical drift metrics
+    :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
     """
 
@@ -319,11 +323,11 @@ class PredictionDriftMetricThreshold(MetricThreshold):
 class DataQualityMetricsNumerical(RestTranslatableMixin):
     """Data Quality Numerical Metrics
 
-    :param null_value_rate: The null value rate
+    :keyword null_value_rate: The null value rate
     :paramtype null_value_rate: float
-    :param data_type_error_rate: The data type error rate
+    :keyword data_type_error_rate: The data type error rate
     :paramtype data_type_error_rate: float
-    :param out_of_bounds_rate: The out of bounds rate
+    :keyword out_of_bounds_rate: The out of bounds rate
     :paramtype out_of_bounds_rate: float
     """
 
@@ -391,11 +395,11 @@ class DataQualityMetricsNumerical(RestTranslatableMixin):
 class DataQualityMetricsCategorical(RestTranslatableMixin):
     """Data Quality Categorical Metrics
 
-    :param null_value_rate: The null value rate
+    :keyword null_value_rate: The null value rate
     :paramtype null_value_rate: float
-    :param data_type_error_rate: The data type error rate
+    :keyword data_type_error_rate: The data type error rate
     :paramtype data_type_error_rate: float
-    :param out_of_bounds_rate: The out of bounds rate
+    :keyword out_of_bounds_rate: The out of bounds rate
     :paramtype out_of_bounds_rate: float
     """
 
@@ -463,9 +467,9 @@ class DataQualityMetricsCategorical(RestTranslatableMixin):
 class DataQualityMetricThreshold(MetricThreshold):
     """Data quality metric threshold
 
-    :param numerical: Numerical data quality metrics
+    :keyword numerical: Numerical data quality metrics
     :paramtype numerical: ~azure.ai.ml.entities.DataQualityMetricsNumerical
-    :param categorical: Categorical data quality metrics
+    :keyword categorical: Categorical data quality metrics
     :paramtype categorical: ~azure.ai.ml.entities.DataQualityMetricsCategorical
     """
 
@@ -547,7 +551,7 @@ class DataQualityMetricThreshold(MetricThreshold):
 class FeatureAttributionDriftMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
-    :param normalized_discounted_cumulative_gain: The threshold value for metric.
+    :keyword normalized_discounted_cumulative_gain: The threshold value for metric.
     :paramtype normalized_discounted_cumulative_gain: float
     """
 
@@ -704,11 +708,11 @@ class ModelPerformanceMetricThreshold(RestTranslatableMixin):
 class CustomMonitoringMetricThreshold(MetricThreshold):
     """Feature attribution drift metric threshold
 
-    :param metric_name: The metric to calculate
-    :type metric_name: str
-    :param threshold: The threshold value. If None, a default value will be set
+    :keyword metric_name: The metric to calculate
+    :paramtype metric_name: str
+    :keyword threshold: The threshold value. If None, a default value will be set
         depending on the selected metric.
-    :type threshold: float
+    :paramtype threshold: float
     """
 
     def __init__(
@@ -735,15 +739,15 @@ class CustomMonitoringMetricThreshold(MetricThreshold):
 class GenerationSafetyQualityMonitoringMetricThreshold(RestTranslatableMixin):  # pylint: disable=name-too-long
     """Generation safety quality metric threshold
 
-    :param groundedness: The groundedness metric threshold
+    :keyword groundedness: The groundedness metric threshold
     :paramtype groundedness: Dict[str, float]
-    :param relevance: The relevance metric threshold
+    :keyword relevance: The relevance metric threshold
     :paramtype relevance: Dict[str, float]
-    :param coherence: The coherence metric threshold
+    :keyword coherence: The coherence metric threshold
     :paramtype coherence: Dict[str, float]
-    :param fluency: The fluency metric threshold
+    :keyword fluency: The fluency metric threshold
     :paramtype fluency: Dict[str, float]
-    :param similarity: The similarity metric threshold
+    :keyword similarity: The similarity metric threshold
     :paramtype similarity: Dict[str, float]
     """
 

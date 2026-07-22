@@ -173,37 +173,37 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     """Flow component version, used to define a Flow Component or Job.
 
     :keyword name: The name of the Flow job or component.
-    :type name: Optional[str]
+    :paramtype name: Optional[str]
     :keyword version: The version of the Flow job or component.
-    :type version: Optional[str]
+    :paramtype version: Optional[str]
     :keyword description: The description of the component. Defaults to None.
-    :type description: Optional[str]
+    :paramtype description: Optional[str]
     :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict]
+    :paramtype tags: Optional[dict]
     :keyword display_name: The display name of the component.
-    :type display_name: Optional[str]
+    :paramtype display_name: Optional[str]
     :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
         component will be used as flow directory.
-    :type flow: Optional[Union[str, Path]]
+    :paramtype flow: Optional[Union[str, Path]]
     :keyword column_mappings: The column mapping for the flow. Defaults to None.
-    :type column_mapping: Optional[dict[str, str]]
+    :paramtype column_mapping: Optional[dict[str, str]]
     :keyword variant: The variant of the flow. Defaults to None.
-    :type variant: Optional[str]
+    :paramtype variant: Optional[str]
     :keyword connections: The connections for the flow. Defaults to None.
-    :type connections: Optional[dict[str, dict[str, str]]]
+    :paramtype connections: Optional[dict[str, dict[str, str]]]
     :keyword environment_variables: The environment variables for the flow. Defaults to None.
-    :type environment_variables: Optional[dict[str, str]]
+    :paramtype environment_variables: Optional[dict[str, str]]
     :keyword environment: The environment for the flow component. Defaults to None.
-    :type environment: Optional[Union[str, Environment])
+    :paramtype environment: Optional[Union[str, Environment])
     :keyword is_deterministic: Specifies whether the Flow will return the same output given the same input.
         Defaults to True. When True, if a Flow (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job
         when used as a node or step in a pipeline. In that scenario, no compute resources will be used.
-    :type is_deterministic: Optional[bool]
+    :paramtype is_deterministic: Optional[bool]
     :keyword additional_includes: A list of shared additional files to be included in the component. Defaults to None.
-    :type additional_includes: Optional[list[str]]
+    :paramtype additional_includes: Optional[list[str]]
     :keyword properties: The job property dictionary. Defaults to None.
-    :type properties: Optional[dict[str, str]]
+    :paramtype properties: Optional[dict[str, str]]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if FlowComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -436,10 +436,10 @@ class FlowComponent(Component, AdditionalIncludesMixin):
         :type base_path: Path
         :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
             component will be used as flow directory.
-        :type flow: Optional[Union[str, Path]]
+        :paramtype flow: Optional[Union[str, Path]]
         :keyword source_path: The source path of the flow component, should be path to the flow dag yaml file
             if specified.
-        :type source_path: Optional[Union[str, os.PathLike]]
+        :paramtype source_path: Optional[Union[str, os.PathLike]]
         :return: The path to the flow directory and the file name of the flow dag yaml file.
         :rtype: Tuple[Path, str]
         """

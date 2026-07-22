@@ -23,10 +23,10 @@ module_logger = logging.getLogger(__name__)
 class ColumnTransformer(RestTranslatableMixin):
     """Column transformer settings.
 
-    :param fields: The fields on which to perform custom featurization
+    :keyword fields: The fields on which to perform custom featurization
     :type field: List[str]
-    :param parameters: parameters used for custom featurization
-    :type parameters: Dict[str, Optional[str, float]]
+    :keyword parameters: parameters used for custom featurization
+    :paramtype parameters: Dict[str, Optional[str, float]]
     """
 
     def __init__(
@@ -72,18 +72,18 @@ class TabularFeaturizationSettings(FeaturizationSettings):
         enable_dnn_featurization: Optional[bool] = None,
     ):
         """
-        :param blocked_transformers: A list of transformers to ignore when featurizing.
-        :type blocked_transformers: List[Union[BlockedTransformers, str]]
-        :param column_name_and_types: A dictionary of column names and feature types used to update column purpose.
-        :type column_name_and_types: Dict[str, str]
-        :param dataset_language: The language of the dataset.
-        :type dataset_language: str
-        :param transformer_params: A dictionary of transformers and their parameters.
-        :type transformer_params: Dict[str, List[ColumnTransformer]]
-        :param mode: The mode of the featurization.
-        :type mode: str
-        :param enable_dnn_featurization: Whether to enable DNN featurization.
-        :type enable_dnn_featurization: bool
+        :keyword blocked_transformers: A list of transformers to ignore when featurizing.
+        :paramtype blocked_transformers: List[Union[BlockedTransformers, str]]
+        :keyword column_name_and_types: A dictionary of column names and feature types used to update column purpose.
+        :paramtype column_name_and_types: Dict[str, str]
+        :keyword dataset_language: The language of the dataset.
+        :paramtype dataset_language: str
+        :keyword transformer_params: A dictionary of transformers and their parameters.
+        :paramtype transformer_params: Dict[str, List[ColumnTransformer]]
+        :keyword mode: The mode of the featurization.
+        :paramtype mode: str
+        :keyword enable_dnn_featurization: Whether to enable DNN featurization.
+        :paramtype enable_dnn_featurization: bool
         :ivar type: Specifies the type of FeaturizationSettings. Set automatically to "Tabular" for this class.
         :vartype type: str
         """

@@ -13,11 +13,11 @@ from azure.ai.ml.entities._mixins import DictMixin
 @experimental
 class AutoDeleteSetting(DictMixin):
     """Class which defines the auto delete setting.
-    :param condition: When to check if an asset is expired.
+    :keyword condition: When to check if an asset is expired.
      Possible values include: "CreatedGreaterThan", "LastAccessedGreaterThan".
-    :type condition: AutoDeleteCondition
-    :param value: Expiration condition value.
-    :type value: str
+    :paramtype condition: AutoDeleteCondition
+    :keyword value: Expiration condition value.
+    :paramtype value: str
     """
 
     def __init__(

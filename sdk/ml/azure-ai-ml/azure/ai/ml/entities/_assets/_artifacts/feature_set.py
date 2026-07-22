@@ -29,22 +29,22 @@ from .artifact import ArtifactStorageInfo
 class FeatureSet(Artifact):
     """Feature Set
 
-    :param name: The name of the Feature Set resource.
-    :type name: str
-    :param version: The version of the Feature Set resource.
-    :type version: str
-    :param entities: Specifies list of entities.
-    :type entities: list[str]
-    :param specification: Specifies the feature set spec details.
-    :type specification: ~azure.ai.ml.entities.FeatureSetSpecification
-    :param stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
-    :type stage: Optional[str]
-    :param description: The description of the Feature Set resource. Defaults to None.
-    :type description: Optional[str]
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
-    :type tags: Optional[dict[str, str]]
-    :param materialization_settings: Specifies the materialization settings. Defaults to None.
-    :type materialization_settings: Optional[~azure.ai.ml.entities.MaterializationSettings]
+    :keyword name: The name of the Feature Set resource.
+    :paramtype name: str
+    :keyword version: The version of the Feature Set resource.
+    :paramtype version: str
+    :keyword entities: Specifies list of entities.
+    :paramtype entities: list[str]
+    :keyword specification: Specifies the feature set spec details.
+    :paramtype specification: ~azure.ai.ml.entities.FeatureSetSpecification
+    :keyword stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
+    :paramtype stage: Optional[str]
+    :keyword description: The description of the Feature Set resource. Defaults to None.
+    :paramtype description: Optional[str]
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None.
+    :paramtype tags: Optional[dict[str, str]]
+    :keyword materialization_settings: Specifies the materialization settings. Defaults to None.
+    :paramtype materialization_settings: Optional[~azure.ai.ml.entities.MaterializationSettings]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     :raises ValidationException: Raised if stage is specified and is not valid.

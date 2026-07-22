@@ -204,8 +204,8 @@ class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
 class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
     """Personal access token credentials.
 
-    :param pat: Personal access token.
-    :type pat: str
+    :keyword pat: Personal access token.
+    :paramtype pat: str
 
     .. admonition:: Example:
 
@@ -244,10 +244,10 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
 class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username and password credentials.
 
-    :param username: The username, value should be url-encoded.
-    :type username: str
-    :param password: The password, value should be url-encoded.
-    :type password: str
+    :keyword username: The username, value should be url-encoded.
+    :paramtype username: str
+    :keyword password: The password, value should be url-encoded.
+    :paramtype password: str
     """
 
     def __init__(
@@ -315,8 +315,8 @@ class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
 class ServicePrincipalConfiguration(BaseTenantCredentials):
     """Service Principal credentials configuration.
 
-    :param client_secret: The client secret.
-    :type client_secret: str
+    :keyword client_secret: The client secret.
+    :paramtype client_secret: str
     """
 
     def __init__(
@@ -701,10 +701,10 @@ class AmlTokenConfiguration(_BaseIdentityConfiguration):
 class IdentityConfiguration(RestTranslatableMixin):
     """Identity configuration used to represent identity property on compute, endpoint, and registry resources.
 
-    :param type: The type of managed identity.
-    :type type: str
-    :param user_assigned_identities: A list of ManagedIdentityConfiguration objects.
-    :type user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
+    :keyword type: The type of managed identity.
+    :paramtype type: str
+    :keyword user_assigned_identities: A list of ManagedIdentityConfiguration objects.
+    :paramtype user_assigned_identities: Optional[list[~azure.ai.ml.entities.ManagedIdentityConfiguration]]
     """
 
     def __init__(
@@ -891,10 +891,10 @@ class AadCredentialConfiguration(RestTranslatableMixin):
 class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Access Key Credentials.
 
-    :param access_key_id: The access key ID.
-    :type access_key_id: str
-    :param secret_access_key: The secret access key.
-    :type secret_access_key: str
+    :keyword access_key_id: The access key ID.
+    :paramtype access_key_id: str
+    :keyword secret_access_key: The secret access key.
+    :paramtype secret_access_key: str
     """
 
     def __init__(
@@ -935,8 +935,8 @@ class AccessKeyConfiguration(RestTranslatableMixin, DictMixin):
 class ApiKeyConfiguration(RestTranslatableMixin, DictMixin):
     """Api Key Credentials.
 
-    :param key: API key id
-    :type key: str
+    :keyword key: API key id
+    :paramtype key: str
     """
 
     def __init__(

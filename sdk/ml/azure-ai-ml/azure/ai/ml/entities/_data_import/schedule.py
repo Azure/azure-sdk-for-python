@@ -23,20 +23,20 @@ from azure.ai.ml.entities._util import load_from_dict
 class ImportDataSchedule(Schedule):
     """ImportDataSchedule object.
 
-    :param name: Name of the schedule.
-    :type name: str
-    :param trigger: Trigger of the schedule.
-    :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param import_data: The schedule action data import definition.
-    :type import_data: DataImport
-    :param display_name: Display name of the schedule.
-    :type display_name: str
-    :param description: Description of the schedule, defaults to None
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The data import property dictionary.
-    :type properties: dict[str, str]
+    :keyword name: Name of the schedule.
+    :paramtype name: str
+    :keyword trigger: Trigger of the schedule.
+    :paramtype trigger: Union[CronTrigger, RecurrenceTrigger]
+    :keyword import_data: The schedule action data import definition.
+    :paramtype import_data: DataImport
+    :keyword display_name: Display name of the schedule.
+    :paramtype display_name: str
+    :keyword description: Description of the schedule, defaults to None
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The data import property dictionary.
+    :paramtype properties: dict[str, str]
     """
 
     def __init__(

@@ -294,7 +294,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
         :type lines: int
         :keyword container_type: The type of container to retrieve logs from. Possible values include:
             "StorageInitializer", "InferenceServer", defaults to None
-        :type container_type: Optional[str]
+        :paramtype container_type: Optional[str]
         :keyword local: [description], defaults to False
         :paramtype local: bool
         :return: the logs

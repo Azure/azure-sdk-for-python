@@ -34,16 +34,16 @@ if TYPE_CHECKING:
 class TextClassificationJob(AutoMLNLPJob):
     """Configuration for AutoML Text Classification Job.
 
-    :param target_column_name: The name of the target column, defaults to None
-    :type target_column_name: Optional[str]
-    :param training_data: Training data to be used for training, defaults to None
-    :type training_data: Optional[~azure.ai.ml.Input]
-    :param validation_data: Validation data to be used for evaluating the trained model, defaults to None
-    :type validation_data: Optional[~azure.ai.ml.Input]
-    :param primary_metric: The primary metric to be displayed, defaults to None
-    :type primary_metric: Optional[~azure.ai.ml.automl.ClassificationPrimaryMetrics]
-    :param log_verbosity: Log verbosity level, defaults to None
-    :type log_verbosity: Optional[str]
+    :keyword target_column_name: The name of the target column, defaults to None
+    :paramtype target_column_name: Optional[str]
+    :keyword training_data: Training data to be used for training, defaults to None
+    :paramtype training_data: Optional[~azure.ai.ml.Input]
+    :keyword validation_data: Validation data to be used for evaluating the trained model, defaults to None
+    :paramtype validation_data: Optional[~azure.ai.ml.Input]
+    :keyword primary_metric: The primary metric to be displayed, defaults to None
+    :paramtype primary_metric: Optional[~azure.ai.ml.automl.ClassificationPrimaryMetrics]
+    :keyword log_verbosity: Log verbosity level, defaults to None
+    :paramtype log_verbosity: Optional[str]
 
     .. admonition:: Example:
 

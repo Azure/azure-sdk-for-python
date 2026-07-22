@@ -144,7 +144,7 @@ class DataOperations(_ScopeDependentOperations):
         :type name: Optional[str]
         :keyword list_view_type: View type for including/excluding (for example) archived data assets.
             Default: ACTIVE_ONLY.
-        :type list_view_type: Optional[ListViewType]
+        :paramtype list_view_type: Optional[ListViewType]
         :return: An iterator like instance of Data objects
         :rtype: ~azure.core.paging.ItemPaged[Data]
 
@@ -763,14 +763,14 @@ class DataOperations(_ScopeDependentOperations):
         :param path: The data asset path to mount, in the form of `azureml:<name>` or `azureml:<name>:<version>`.
         :type path: str
         :keyword mount_point: A local path used as mount point.
-        :type mount_point: str
+        :paramtype mount_point: str
         :keyword mode: Mount mode. Only `ro_mount` (read-only) is supported for data asset mount.
-        :type mode: str
+        :paramtype mode: str
         :keyword debug: Whether to enable verbose logging.
-        :type debug: bool
+        :paramtype debug: bool
         :keyword persistent: Whether to persist the mount after reboot. Applies only when running on Compute Instance,
                 where the 'CI_NAME' environment variable is set."
-        :type persistent: bool
+        :paramtype persistent: bool
         :return: None
         """
 

@@ -67,41 +67,41 @@ class Spark(BaseNode, SparkJobEntryMixin):
     You should not instantiate this class directly. Instead, you should
     create it from the builder function: spark.
 
-    :param component: The ID or instance of the Spark component or job to be run during the step.
-    :type component: Union[str, ~azure.ai.ml.entities.SparkComponent]
-    :param identity: The identity that the Spark job will use while running on compute.
-    :type identity: Union[Dict[str, str],
+    :keyword component: The ID or instance of the Spark component or job to be run during the step.
+    :paramtype component: Union[str, ~azure.ai.ml.entities.SparkComponent]
+    :keyword identity: The identity that the Spark job will use while running on compute.
+    :paramtype identity: Union[Dict[str, str],
         ~azure.ai.ml.entities.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities.AmlTokenConfiguration,
         ~azure.ai.ml.entities.UserIdentityConfiguration
 
     ]
 
-    :param driver_cores: The number of cores to use for the driver process, only in cluster mode.
-    :type driver_cores: int
-    :param driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
+    :keyword driver_cores: The number of cores to use for the driver process, only in cluster mode.
+    :paramtype driver_cores: int
+    :keyword driver_memory: The amount of memory to use for the driver process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type driver_memory: str
-    :param executor_cores: The number of cores to use on each executor.
-    :type executor_cores: int
-    :param executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
+    :paramtype driver_memory: str
+    :keyword executor_cores: The number of cores to use on each executor.
+    :paramtype executor_cores: int
+    :keyword executor_memory: The amount of memory to use per executor process, formatted as strings with a size unit
         suffix ("k", "m", "g" or "t") (e.g. "512m", "2g").
-    :type executor_memory: str
-    :param executor_instances: The initial number of executors.
-    :type executor_instances: int
-    :param dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of
+    :paramtype executor_memory: str
+    :keyword executor_instances: The initial number of executors.
+    :paramtype executor_instances: int
+    :keyword dynamic_allocation_enabled: Whether to use dynamic resource allocation, which scales the number of
         executors registered with this application up and down based on the workload.
-    :type dynamic_allocation_enabled: bool
-    :param dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation
+    :paramtype dynamic_allocation_enabled: bool
+    :keyword dynamic_allocation_min_executors: The lower bound for the number of executors if dynamic allocation
         is enabled.
-    :type dynamic_allocation_min_executors: int
-    :param dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation
+    :paramtype dynamic_allocation_min_executors: int
+    :keyword dynamic_allocation_max_executors: The upper bound for the number of executors if dynamic allocation
         is enabled.
-    :type dynamic_allocation_max_executors: int
-    :param conf: A dictionary with pre-defined Spark configurations key and values.
-    :type conf: Dict[str, str]
-    :param inputs: A mapping of input names to input data sources used in the job.
-    :type inputs: Dict[str, Union[
+    :paramtype dynamic_allocation_max_executors: int
+    :keyword conf: A dictionary with pre-defined Spark configurations key and values.
+    :paramtype conf: Dict[str, str]
+    :keyword inputs: A mapping of input names to input data sources used in the job.
+    :paramtype inputs: Dict[str, Union[
         str,
         bool,
         int,
@@ -112,24 +112,24 @@ class Spark(BaseNode, SparkJobEntryMixin):
 
     ]]
 
-    :param outputs: A mapping of output names to output data sources used in the job.
-    :type outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
-    :param args: The arguments for the job.
-    :type args: str
-    :param compute: The compute resource the job runs on.
-    :type compute: str
-    :param resources: The compute resource configuration for the job.
-    :type resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
-    :param entry: The file or class entry point.
-    :type entry: Dict[str, str]
-    :param py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
-    :type py_files: List[str]
-    :param jars: The list of .JAR files to include on the driver and executor classpaths.
-    :type jars: List[str]
-    :param files: The list of files to be placed in the working directory of each executor.
-    :type files: List[str]
-    :param archives: The list of archives to be extracted into the working directory of each executor.
-    :type archives: List[str]
+    :keyword outputs: A mapping of output names to output data sources used in the job.
+    :paramtype outputs: Dict[str, Union[str, ~azure.ai.ml.Output]]
+    :keyword args: The arguments for the job.
+    :paramtype args: str
+    :keyword compute: The compute resource the job runs on.
+    :paramtype compute: str
+    :keyword resources: The compute resource configuration for the job.
+    :paramtype resources: Union[Dict, ~azure.ai.ml.entities.SparkResourceConfiguration]
+    :keyword entry: The file or class entry point.
+    :paramtype entry: Dict[str, str]
+    :keyword py_files: The list of .zip, .egg or .py files to place on the PYTHONPATH for Python apps.
+    :paramtype py_files: List[str]
+    :keyword jars: The list of .JAR files to include on the driver and executor classpaths.
+    :paramtype jars: List[str]
+    :keyword files: The list of files to be placed in the working directory of each executor.
+    :paramtype files: List[str]
+    :keyword archives: The list of archives to be extracted into the working directory of each executor.
+    :paramtype archives: List[str]
     """
 
     def __init__(

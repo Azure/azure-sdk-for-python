@@ -70,36 +70,36 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineJobIOMixin, PathAwareSchem
     You should not instantiate this class directly. Instead, you should
     use the `@pipeline` decorator to create a `PipelineJob`.
 
-    :param component: Pipeline component version. The field is mutually exclusive with 'jobs'.
-    :type component: Union[str, ~azure.ai.ml.entities._component.pipeline_component.PipelineComponent]
-    :param inputs: Inputs to the pipeline job.
-    :type inputs: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
-    :param outputs: Outputs of the pipeline job.
-    :type outputs: dict[str, ~azure.ai.ml.entities.Output]
-    :param name: Name of the PipelineJob. Defaults to None.
-    :type name: str
-    :param description: Description of the pipeline job. Defaults to None
-    :type description: str
-    :param display_name: Display name of the pipeline job. Defaults to None
-    :type display_name: str
-    :param experiment_name: Name of the experiment the job will be created under.
+    :keyword component: Pipeline component version. The field is mutually exclusive with 'jobs'.
+    :paramtype component: Union[str, ~azure.ai.ml.entities._component.pipeline_component.PipelineComponent]
+    :keyword inputs: Inputs to the pipeline job.
+    :paramtype inputs: dict[str, Union[~azure.ai.ml.entities.Input, str, bool, int, float]]
+    :keyword outputs: Outputs of the pipeline job.
+    :paramtype outputs: dict[str, ~azure.ai.ml.entities.Output]
+    :keyword name: Name of the PipelineJob. Defaults to None.
+    :paramtype name: str
+    :keyword description: Description of the pipeline job. Defaults to None
+    :paramtype description: str
+    :keyword display_name: Display name of the pipeline job. Defaults to None
+    :paramtype display_name: str
+    :keyword experiment_name: Name of the experiment the job will be created under.
         If None is provided, the experiment will be set to the current directory. Defaults to None
-    :type experiment_name: str
-    :param jobs: Pipeline component node name to component object. Defaults to None
-    :type jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
-    :param settings: Setting of the pipeline job. Defaults to None
-    :type settings: ~azure.ai.ml.entities.PipelineJobSettings
-    :param identity: Identity that the training job will use while running on compute. Defaults to None
-    :type identity: Union[
+    :paramtype experiment_name: str
+    :keyword jobs: Pipeline component node name to component object. Defaults to None
+    :paramtype jobs: dict[str, ~azure.ai.ml.entities._builders.BaseNode]
+    :keyword settings: Setting of the pipeline job. Defaults to None
+    :paramtype settings: ~azure.ai.ml.entities.PipelineJobSettings
+    :keyword identity: Identity that the training job will use while running on compute. Defaults to None
+    :paramtype identity: Union[
         ~azure.ai.ml.entities._credentials.ManagedIdentityConfiguration,
         ~azure.ai.ml.entities._credentials.AmlTokenConfiguration,
         ~azure.ai.ml.entities._credentials.UserIdentityConfiguration
 
     ]
-    :param compute: Compute target name of the built pipeline. Defaults to None
-    :type compute: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
-    :type tags: dict[str, str]
+    :keyword compute: Compute target name of the built pipeline. Defaults to None
+    :paramtype compute: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated. Defaults to None
+    :paramtype tags: dict[str, str]
     :param kwargs: A dictionary of additional configuration parameters. Defaults to None
     :type kwargs: dict
 

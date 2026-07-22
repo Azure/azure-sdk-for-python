@@ -82,15 +82,15 @@ class WorkspaceConnection(Resource):
     :type name: str
     :param target: The URL or ARM resource ID of the external resource.
     :type target: str
-    :param metadata: Metadata dictionary.
-    :type metadata: Optional[Dict[str, Any]]
-    :param type: The category of external resource for this connection.
-    :type type: The type of connection, possible values are: "git", "python_feed", "container_registry",
+    :keyword metadata: Metadata dictionary.
+    :paramtype metadata: Optional[Dict[str, Any]]
+    :keyword type: The category of external resource for this connection.
+    :paramtype type: The type of connection, possible values are: "git", "python_feed", "container_registry",
         "feature_store", "s3", "snowflake", "azure_sql_db", "azure_synapse_analytics", "azure_my_sql_db",
         "azure_postgres_db", "adls_gen_2", "azure_one_lake", "custom".
-    :param credentials: The credentials for authenticating to the external resource. Note that certain connection
+    :keyword credentials: The credentials for authenticating to the external resource. Note that certain connection
         types (as defined by the type input) only accept certain types of credentials.
-    :type credentials: Union[
+    :paramtype credentials: Union[
         ~azure.ai.ml.entities.PatTokenConfiguration,
         ~azure.ai.ml.entities.SasTokenConfiguration,
         ~azure.ai.ml.entities.UsernamePasswordConfiguration,
@@ -103,9 +103,9 @@ class WorkspaceConnection(Resource):
         ~azure.ai.ml.entities.AadCredentialConfiguration,
         None
         ]
-    :param is_shared: For connections in project, this controls whether or not this connection
+    :keyword is_shared: For connections in project, this controls whether or not this connection
         is shared amongst other projects that are shared by the parent hub. Defaults to true.
-    :type is_shared: bool
+    :paramtype is_shared: bool
     """
 
     def __init__(

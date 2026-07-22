@@ -38,40 +38,40 @@ def distillation(
     generating synthetic data from the teacher model and then finetuning the student model with the generated
     synthetic data.
 
-    :param experiment_name: The name of the experiment.
-    :type experiment_name: str
-    :param data_generation_type: The type of data generation to perform.
+    :keyword experiment_name: The name of the experiment.
+    :paramtype experiment_name: str
+    :keyword data_generation_type: The type of data generation to perform.
 
         Acceptable values: label_generation
-    :type data_generation_type: str
-    :param data_generation_task_type: The type of data to generate
+    :paramtype data_generation_type: str
+    :keyword data_generation_task_type: The type of data to generate
 
         Acceptable values: NLI, NLU_QA, CONVERSATION, MATH, SUMMARIZATION
     :type: data_generation_task_type: str
-    :param teacher_model_endpoint_connection: The kind of teacher model connection that includes the name, endpoint
+    :keyword teacher_model_endpoint_connection: The kind of teacher model connection that includes the name, endpoint
         url, and api_key.
     :type: teacher_model_endpoint_connection: WorkspaceConnection
-    :param student_model: The model to train
-    :type student_model: typing.Union[Input, str]
-    :param training_data: The training data to use. Should contain the questions but not the labels, defaults to None
-    :type training_data: typing.Optional[typing.Union[Input, str]], optional
-    :param validation_data: The validation data to use. Should contain the questions but not the labels, defaults to
+    :keyword student_model: The model to train
+    :paramtype student_model: typing.Union[Input, str]
+    :keyword training_data: The training data to use. Should contain the questions but not the labels, defaults to None
+    :paramtype training_data: typing.Optional[typing.Union[Input, str]], optional
+    :keyword validation_data: The validation data to use. Should contain the questions but not the labels, defaults to
         None
-    :type validation_data: typing.Optional[typing.Union[Input, str]], optional
-    :param teacher_model_settings: The settings for the teacher model. Accepts both the inference parameters and
+    :paramtype validation_data: typing.Optional[typing.Union[Input, str]], optional
+    :keyword teacher_model_settings: The settings for the teacher model. Accepts both the inference parameters and
         endpoint settings, defaults to None
 
         Acceptable keys for inference parameters: temperature, max_tokens, top_p, frequency_penalty, presence_penalty,
         stop
-    :type teacher_model_settings: typing.Optional[TeacherModelSettings], optional
-    :param prompt_settings: The settings for the prompt that affect the system prompt used for data generation,
+    :paramtype teacher_model_settings: typing.Optional[TeacherModelSettings], optional
+    :keyword prompt_settings: The settings for the prompt that affect the system prompt used for data generation,
         defaults to None
-    :type prompt_settings: typing.Optional[PromptSettings], optional
-    :param hyperparameters: The hyperparameters to use for finetuning, defaults to None
-    :type hyperparameters: typing.Optional[typing.Dict], optional
-    :param resources: The compute resource to use for the data generation step in the distillation job, defaults to
+    :paramtype prompt_settings: typing.Optional[PromptSettings], optional
+    :keyword hyperparameters: The hyperparameters to use for finetuning, defaults to None
+    :paramtype hyperparameters: typing.Optional[typing.Dict], optional
+    :keyword resources: The compute resource to use for the data generation step in the distillation job, defaults to
         None
-    :type resources: typing.Optional[ResourceConfiguration], optional
+    :paramtype resources: typing.Optional[ResourceConfiguration], optional
     :raises ValueError: Raises ValueError if there is no training data and data generation type is 'label_generation'
     :return: A DistillationJob to submit
     :rtype: DistillationJob

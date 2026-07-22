@@ -68,20 +68,20 @@ def getDataAssetType(data_type: DataType) -> str:
 class Data(Artifact):
     """Data for training and scoring.
 
-    :param name: Name of the resource.
-    :type name: str
-    :param version: Version of the resource.
-    :type version: str
-    :param description: Description of the resource.
-    :type description: str
-    :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
-    :param properties: The asset property dictionary.
-    :type properties: dict[str, str]
-    :param path: The path to the asset on the datastore. This can be local or remote
-    :type path: str
-    :param type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
-    :type type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
+    :keyword name: Name of the resource.
+    :paramtype name: str
+    :keyword version: Version of the resource.
+    :paramtype version: str
+    :keyword description: Description of the resource.
+    :paramtype description: str
+    :keyword tags: Tag dictionary. Tags can be added, removed, and updated.
+    :paramtype tags: dict[str, str]
+    :keyword properties: The asset property dictionary.
+    :paramtype properties: dict[str, str]
+    :keyword path: The path to the asset on the datastore. This can be local or remote
+    :paramtype path: str
+    :keyword type: The type of the asset. Valid values are uri_file, uri_folder, mltable. Defaults to uri_folder.
+    :paramtype type: Literal[AssetTypes.URI_FILE, AssetTypes.URI_FOLDER, AssetTypes.MLTABLE]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

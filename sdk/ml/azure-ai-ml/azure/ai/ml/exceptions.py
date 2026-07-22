@@ -393,12 +393,12 @@ class ValidationException(MlException):
         :param no_personal_data_message: The error message without any personal data.
             This will be pushed to telemetry logs.
         :type no_personal_data_message: str
-        :param error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
-        :type error_type: ValidationErrorType
-        :param target: The name of the element that caused the exception to be thrown.
-        :type target: ErrorTarget
-        :param error_category: The error category, defaults to Unknown.
-        :type error_category: ErrorCategory
+        :keyword error_type: The error type, chosen from one of the values of ValidationErrorType enum class.
+        :paramtype error_type: ValidationErrorType
+        :keyword target: The name of the element that caused the exception to be thrown.
+        :paramtype target: ErrorTarget
+        :keyword error_category: The error category, defaults to Unknown.
+        :paramtype error_category: ErrorCategory
         :param error: The original exception if any.
         :type error: Exception
         """

@@ -14,8 +14,8 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 class RequestLogging:
     """Request Logging deployment entity.
 
-    :param capture_headers: Request payload header.
-    :type capture_headers: list[str]
+    :keyword capture_headers: Request payload header.
+    :paramtype capture_headers: list[str]
     """
 
     def __init__(

@@ -31,11 +31,11 @@ from .model_configuration import ModelConfiguration
 class PackageInputPathId:
     """Package input path specified with a resource ID.
 
-    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: Optional[str]
-    :param resource_id: The resource ID of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
+    :keyword input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :paramtype input_path_type: Optional[str]
+    :keyword resource_id: The resource ID of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
         <>/providers/Microsoft.MachineLearningServices/workspaces/<>/data/<>/versions/<>".
-    :type resource_id: Optional[str]
+    :paramtype resource_id: Optional[str]
     """
 
     def __init__(
@@ -65,12 +65,12 @@ class PackageInputPathId:
 class PackageInputPathVersion:
     """Package input path specified with a resource name and version.
 
-    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: Optional[str]
-    :param resource_name: The resource name of the input path.
-    :type resource_name: Optional[str]
-    :param resource_version: The resource version of the input path.
-    :type resource_version: Optional[str]
+    :keyword input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :paramtype input_path_type: Optional[str]
+    :keyword resource_name: The resource name of the input path.
+    :paramtype resource_name: Optional[str]
+    :keyword resource_version: The resource version of the input path.
+    :paramtype resource_version: Optional[str]
     """
 
     def __init__(
@@ -106,11 +106,11 @@ class PackageInputPathVersion:
 class PackageInputPathUrl:
     """Package input path specified with a url.
 
-    :param input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
-    :type input_path_type: Optional[str]
-    :param url: The url of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
+    :keyword input_path_type: The type of the input path. Accepted values are "Url", "PathId", and "PathVersion".
+    :paramtype input_path_type: Optional[str]
+    :keyword url: The url of the input path. e.g. "azureml://subscriptions/<>/resourceGroups/
         <>/providers/Microsoft.MachineLearningServices/workspaces/data/<>/versions/<>".
-    :type url: Optional[str]
+    :paramtype url: Optional[str]
     """
 
     def __init__(self, *, input_path_type: Optional[str] = None, url: Optional[str] = None) -> None:
@@ -135,15 +135,15 @@ class PackageInputPathUrl:
 class ModelPackageInput:
     """Model package input.
 
-    :param type: The type of the input.
-    :type type: Optional[str]
-    :param path: The path of the input.
-    :type path: Optional[Union[~azure.ai.ml.entities.PackageInputPathId, ~azure.ai.ml.entities.PackageInputPathUrl,
+    :keyword type: The type of the input.
+    :paramtype type: Optional[str]
+    :keyword path: The path of the input.
+    :paramtype path: Optional[Union[~azure.ai.ml.entities.PackageInputPathId, ~azure.ai.ml.entities.PackageInputPathUrl,
         ~azure.ai.ml.entities.PackageInputPathVersion]]
-    :param mode: The input mode.
-    :type mode: Optional[str]
-    :param mount_path: The mount path for the input.
-    :type mount_path: Optional[str]
+    :keyword mode: The input mode.
+    :paramtype mode: Optional[str]
+    :keyword mount_path: The mount path for the input.
+    :paramtype mount_path: Optional[str]
 
     .. admonition:: Example:
 
@@ -199,21 +199,21 @@ class ModelPackage(Resource, PackageRequest):
 
     :param target_environment_name: The target environment name for the model package.
     :type target_environment_name: str
-    :param inferencing_server: The inferencing server of the model package.
-    :type inferencing_server: Union[~azure.ai.ml.entities.AzureMLOnlineInferencingServer,
+    :keyword inferencing_server: The inferencing server of the model package.
+    :paramtype inferencing_server: Union[~azure.ai.ml.entities.AzureMLOnlineInferencingServer,
         ~azure.ai.ml.entities.AzureMLBatchInferencingServer]
-    :param base_environment_source: The base environment source of the model package.
-    :type base_environment_source: Optional[~azure.ai.ml.entities.BaseEnvironment]
+    :keyword base_environment_source: The base environment source of the model package.
+    :paramtype base_environment_source: Optional[~azure.ai.ml.entities.BaseEnvironment]
     :param target_environment_version: The version of the model package.
     :type target_environment_version: Optional[str]
-    :param environment_variables: The environment variables of the model package.
-    :type environment_variables: Optional[dict[str, str]]
-    :param inputs: The inputs of the model package.
-    :type inputs: Optional[list[~azure.ai.ml.entities.ModelPackageInput]]
-    :param model_configuration: The model configuration.
-    :type model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
-    :param tags: The tags of the model package.
-    :type tags: Optional[dict[str, str]]
+    :keyword environment_variables: The environment variables of the model package.
+    :paramtype environment_variables: Optional[dict[str, str]]
+    :keyword inputs: The inputs of the model package.
+    :paramtype inputs: Optional[list[~azure.ai.ml.entities.ModelPackageInput]]
+    :keyword model_configuration: The model configuration.
+    :paramtype model_configuration: Optional[~azure.ai.ml.entities.ModelConfiguration]
+    :keyword tags: The tags of the model package.
+    :paramtype tags: Optional[dict[str, str]]
 
     .. admonition:: Example:
 

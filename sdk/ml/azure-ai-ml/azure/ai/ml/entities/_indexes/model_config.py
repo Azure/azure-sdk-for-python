@@ -17,22 +17,22 @@ from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
 class ModelConfiguration:
     """Configuration for a embedding model.
 
-    :param api_base: The base URL for the API.
-    :type api_base: Optional[str]
-    :param api_key: The API key.
-    :type api_key: Optional[str]
-    :param api_version: The API version.
-    :type api_version: Optional[str]
-    :param model_name: The name of the model.
-    :type model_name: Optional[str]
-    :param model_name: The deployment name of the model.
-    :type model_name: Optional[str]
-    :param connection_name: The name of the workspace connection of this model.
-    :type connection_name: Optional[str]
-    :param connection_type: The type of the workspace connection of this model.
-    :type connection_type: Optional[str]
-    :param model_kwargs: Additional keyword arguments for the model.
-    :type model_kwargs: Dict[str, Any]
+    :keyword api_base: The base URL for the API.
+    :paramtype api_base: Optional[str]
+    :keyword api_key: The API key.
+    :paramtype api_key: Optional[str]
+    :keyword api_version: The API version.
+    :paramtype api_version: Optional[str]
+    :keyword model_name: The name of the model.
+    :paramtype model_name: Optional[str]
+    :keyword model_name: The deployment name of the model.
+    :paramtype model_name: Optional[str]
+    :keyword connection_name: The name of the workspace connection of this model.
+    :paramtype connection_name: Optional[str]
+    :keyword connection_type: The type of the workspace connection of this model.
+    :paramtype connection_type: Optional[str]
+    :keyword model_kwargs: Additional keyword arguments for the model.
+    :paramtype model_kwargs: Dict[str, Any]
     """
 
     api_base: Optional[str]

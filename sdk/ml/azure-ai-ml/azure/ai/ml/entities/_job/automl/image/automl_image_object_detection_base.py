@@ -221,17 +221,17 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
          freezing layer0 and layer1. For a full list of models supported and details on layer freeze,
          please
          see: https://learn.microsoft.com/azure/machine-learning/reference-automl-images-hyperparameters#model-agnostic-hyperparameters.   # pylint: disable=line-too-long
-        :type layers_to_freeze: int
+        :paramtype layers_to_freeze: int
         :keyword learning_rate: Initial learning rate. Must be a float in the range [0, 1].
         :paramtype learning_rate: float
         :keyword learning_rate_scheduler: Type of learning rate scheduler. Must be 'warmup_cosine' or
          'step'. Possible values include: "None", "WarmupCosine", "Step".
-        :type learning_rate_scheduler: str or
+        :paramtype learning_rate_scheduler: str or
          ~azure.mgmt.machinelearningservices.models.LearningRateScheduler
         :keyword model_name: Name of the model to use for training.
          For more information on the available models please visit the official documentation:
          https://learn.microsoft.com/azure/machine-learning/how-to-auto-train-image-models.
-        :type model_name: str
+        :paramtype model_name: str
         :keyword momentum: Value of momentum when optimizer is 'sgd'. Must be a float in the range [0,
          1].
         :paramtype momentum: float
@@ -242,7 +242,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :keyword number_of_workers: Number of data loader workers. Must be a non-negative integer.
         :paramtype number_of_workers: int
         :keyword optimizer: Type of optimizer. Possible values include: "None", "Sgd", "Adam", "Adamw".
-        :type optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
+        :paramtype optimizer: str or ~azure.mgmt.machinelearningservices.models.StochasticOptimizer
         :keyword random_seed: Random seed to be used when using deterministic training.
         :paramtype random_seed: int
         :keyword step_lr_gamma: Value of gamma when learning rate scheduler is 'step'. Must be a float
@@ -267,7 +267,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :keyword box_detections_per_image: Maximum number of detections per image, for all classes.
          Must be a positive integer.
          Note: This settings is not supported for the 'yolov5' algorithm.
-        :type box_detections_per_image: int
+        :paramtype box_detections_per_image: int
         :keyword box_score_threshold: During inference, only return proposals with a classification
          score greater than
          BoxScoreThreshold. Must be a float in the range[0, 1].
@@ -275,30 +275,30 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
         :keyword image_size: Image size for training and validation. Must be a positive integer.
          Note: The training run may get into CUDA OOM if the size is too big.
          Note: This settings is only supported for the 'yolov5' algorithm.
-        :type image_size: int
+        :paramtype image_size: int
         :keyword max_size: Maximum size of the image to be rescaled before feeding it to the backbone.
          Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
          Note: This settings is not supported for the 'yolov5' algorithm.
-        :type max_size: int
+        :paramtype max_size: int
         :keyword min_size: Minimum size of the image to be rescaled before feeding it to the backbone.
          Must be a positive integer. Note: training run may get into CUDA OOM if the size is too big.
          Note: This settings is not supported for the 'yolov5' algorithm.
-        :type min_size: int
+        :paramtype min_size: int
         :keyword model_size: Model size. Must be 'small', 'medium', 'large', or 'extra_large'.
          Note: training run may get into CUDA OOM if the model size is too big.
          Note: This settings is only supported for the 'yolov5' algorithm.
-        :type model_size: str or ~azure.mgmt.machinelearningservices.models.ModelSize
+        :paramtype model_size: str or ~azure.mgmt.machinelearningservices.models.ModelSize
         :keyword multi_scale: Enable multi-scale image by varying image size by +/- 50%.
          Note: training run may get into CUDA OOM if no sufficient GPU memory.
          Note: This settings is only supported for the 'yolov5' algorithm.
-        :type multi_scale: bool
+        :paramtype multi_scale: bool
         :keyword nms_iou_threshold: IOU threshold used during inference in NMS post processing. Must be
          float in the range [0, 1].
         :paramtype nms_iou_threshold: float
         :keyword tile_grid_size: The grid size to use for tiling each image. Note: TileGridSize must
          not be
          None to enable small object detection logic. A string containing two integers in mxn format.
-        :type tile_grid_size: str
+        :paramtype tile_grid_size: str
         :keyword tile_overlap_ratio: Overlap ratio between adjacent tiles in each dimension. Must be
          float in the range [0, 1).
         :paramtype tile_overlap_ratio: float
@@ -306,7 +306,7 @@ class AutoMLImageObjectDetectionBase(AutoMLImage):
          predictions from tiles and image.
          Used in validation/ inference. Must be float in the range [0, 1].
          NMS: Non-maximum suppression.
-        :type tile_predictions_nms_threshold: str
+        :paramtype tile_predictions_nms_threshold: str
         :keyword validation_iou_threshold: IOU threshold to use when computing validation metric. Must
          be float in the range [0, 1].
         :paramtype validation_iou_threshold: float

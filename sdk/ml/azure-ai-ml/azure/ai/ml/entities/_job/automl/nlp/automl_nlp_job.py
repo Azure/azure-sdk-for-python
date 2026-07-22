@@ -30,31 +30,31 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
     You should not instantiate this class directly. Instead you should
     create classes for specific NLP Jobs.
 
-    :param task_type: NLP task type, must be one of 'TextClassification',
+    :keyword task_type: NLP task type, must be one of 'TextClassification',
         'TextClassificationMultilabel', or 'TextNER'
-    :type task_type: str
-    :param primary_metric: Primary metric to display from NLP job
-    :type primary_metric: str
-    :param training_data: Training data
-    :type training_data: Input
-    :param validation_data: Validation data
-    :type validation_data: Input
-    :param target_column_name: Column name of the target column, defaults to None
-    :type target_column_name: Optional[str]
-    :param log_verbosity: The degree of verbosity used in logging, defaults to None,
+    :paramtype task_type: str
+    :keyword primary_metric: Primary metric to display from NLP job
+    :paramtype primary_metric: str
+    :keyword training_data: Training data
+    :paramtype training_data: Input
+    :keyword validation_data: Validation data
+    :paramtype validation_data: Input
+    :keyword target_column_name: Column name of the target column, defaults to None
+    :paramtype target_column_name: Optional[str]
+    :keyword log_verbosity: The degree of verbosity used in logging, defaults to None,
         must be one of 'NotSet', 'Debug', 'Info', 'Warning', 'Error', 'Critical', or None
-    :type log_verbosity: Optional[str]
-    :param featurization: Featurization settings used for NLP job, defaults to None
-    :type featurization: Optional[~azure.ai.ml.automl.NlpFeaturizationSettings]
-    :param limits: Limit settings for NLP jobs, defaults to None
-    :type limits: Optional[~azure.ai.ml.automl.NlpLimitSettings]
-    :param sweep: Sweep settings used for NLP job, defaults to None
-    :type sweep: Optional[~azure.ai.ml.automl.NlpSweepSettings]
-    :param training_parameters: Fixed parameters for the training of all candidates.
+    :paramtype log_verbosity: Optional[str]
+    :keyword featurization: Featurization settings used for NLP job, defaults to None
+    :paramtype featurization: Optional[~azure.ai.ml.automl.NlpFeaturizationSettings]
+    :keyword limits: Limit settings for NLP jobs, defaults to None
+    :paramtype limits: Optional[~azure.ai.ml.automl.NlpLimitSettings]
+    :keyword sweep: Sweep settings used for NLP job, defaults to None
+    :paramtype sweep: Optional[~azure.ai.ml.automl.NlpSweepSettings]
+    :keyword training_parameters: Fixed parameters for the training of all candidates.
         , defaults to None
-    :type training_parameters: Optional[~azure.ai.ml.automl.NlpFixedParameters]
-    :param search_space: Search space(s) to sweep over for NLP sweep jobs, defaults to None
-    :type search_space: Optional[List[~azure.ai.ml.automl.NlpSearchSpace]]
+    :paramtype training_parameters: Optional[~azure.ai.ml.automl.NlpFixedParameters]
+    :keyword search_space: Search space(s) to sweep over for NLP sweep jobs, defaults to None
+    :paramtype search_space: Optional[List[~azure.ai.ml.automl.NlpSearchSpace]]
     """
 
     def __init__(
@@ -256,11 +256,11 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Define data configuration for NLP job
 
         :keyword training_data: Training data
-        :type training_data: ~azure.ai.ml.Input
+        :paramtype training_data: ~azure.ai.ml.Input
         :keyword target_column_name: Column name of the target column.
-        :type target_column_name: str
+        :paramtype target_column_name: str
         :keyword validation_data: Validation data
-        :type validation_data: ~azure.ai.ml.Input
+        :paramtype validation_data: ~azure.ai.ml.Input
         """
         # Properties for NlpVerticalDataSettings
         self.target_column_name = target_column_name
@@ -279,15 +279,15 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Define limit configuration for AutoML NLP job
 
         :keyword max_trials: Maximum number of AutoML iterations, defaults to 1
-        :type max_trials: int, optional
+        :paramtype max_trials: int, optional
         :keyword max_concurrent_trials: Maximum number of concurrent AutoML iterations, defaults to 1
-        :type max_concurrent_trials: int, optional
+        :paramtype max_concurrent_trials: int, optional
         :keyword max_nodes: Maximum number of nodes used for sweep, defaults to 1
-        :type max_nodes: int, optional
+        :paramtype max_nodes: int, optional
         :keyword timeout_minutes: Timeout for the AutoML job, defaults to None
-        :type timeout_minutes: Optional[int]
+        :paramtype timeout_minutes: Optional[int]
         :keyword trial_timeout_minutes: Timeout for each AutoML trial, defaults to None
-        :type trial_timeout_minutes: Optional[int]
+        :paramtype trial_timeout_minutes: Optional[int]
         """
         self._limits = NlpLimitSettings(
             max_trials=max_trials,
@@ -307,10 +307,10 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
 
         :keyword sampling_algorithm: Required. Specifies type of hyperparameter sampling algorithm.
             Possible values include: "Grid", "Random", and "Bayesian".
-        :type sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
+        :paramtype sampling_algorithm: Union[str, ~azure.ai.ml.automl.SamplingAlgorithmType]
         :keyword early_termination: Optional. early termination policy to end poorly performing training candidates,
             defaults to None.
-        :type early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
+        :paramtype early_termination: Optional[~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy]
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm
@@ -336,30 +336,30 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
 
         :keyword gradient_accumulation_steps: number of steps over which to accumulate gradients before a backward
             pass. This must be a positive integer., defaults to None
-        :type gradient_accumulation_steps: Optional[int]
+        :paramtype gradient_accumulation_steps: Optional[int]
         :keyword learning_rate: initial learning rate. Must be a float in (0, 1)., defaults to None
-        :type learning_rate: Optional[float]
+        :paramtype learning_rate: Optional[float]
         :keyword learning_rate_scheduler: the type of learning rate scheduler. Must choose from 'linear', 'cosine',
             'cosine_with_restarts', 'polynomial', 'constant', and 'constant_with_warmup'., defaults to None
-        :type learning_rate_scheduler: Optional[Union[str, ~azure.ai.ml.automl.NlpLearningRateScheduler]]
+        :paramtype learning_rate_scheduler: Optional[Union[str, ~azure.ai.ml.automl.NlpLearningRateScheduler]]
         :keyword model_name: the model name to use during training. Must choose from 'bert-base-cased',
             'bert-base-uncased', 'bert-base-multilingual-cased', 'bert-base-german-cased', 'bert-large-cased',
             'bert-large-uncased', 'distilbert-base-cased', 'distilbert-base-uncased', 'roberta-base', 'roberta-large',
             'distilroberta-base', 'xlm-roberta-base', 'xlm-roberta-large', xlnet-base-cased', and 'xlnet-large-cased'.,
             defaults to None
-        :type model_name: Optional[str]
+        :paramtype model_name: Optional[str]
         :keyword number_of_epochs: the number of epochs to train with. Must be a positive integer., defaults to None
-        :type number_of_epochs: Optional[int]
+        :paramtype number_of_epochs: Optional[int]
         :keyword training_batch_size: the batch size during training. Must be a positive integer., defaults to None
-        :type training_batch_size: Optional[int]
+        :paramtype training_batch_size: Optional[int]
         :keyword validation_batch_size: the batch size during validation. Must be a positive integer., defaults to None
-        :type validation_batch_size: Optional[int]
+        :paramtype validation_batch_size: Optional[int]
         :keyword warmup_ratio: ratio of total training steps used for a linear warmup from 0 to learning_rate.
             Must be a float in [0, 1]., defaults to None
-        :type warmup_ratio: Optional[float]
+        :paramtype warmup_ratio: Optional[float]
         :keyword weight_decay: value of weight decay when optimizer is sgd, adam, or adamw. This must be a float in
             the range [0, 1]., defaults to None
-        :type weight_decay: Optional[float]
+        :paramtype weight_decay: Optional[float]
         """
         self._training_parameters = self._training_parameters or NlpFixedParameters()
 
@@ -409,7 +409,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
         """Define featurization configuration for AutoML NLP job.
 
         :keyword dataset_language: Language of the dataset, defaults to None
-        :type dataset_language: Optional[str]
+        :paramtype dataset_language: Optional[str]
         """
         self._featurization = NlpFeaturizationSettings(
             dataset_language=dataset_language,
