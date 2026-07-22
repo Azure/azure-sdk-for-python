@@ -1,28 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Azure AI AgentServerHost core framework.
-
-Provides the :class:`AgentServerHost` base class and shared utilities for
-building Azure AI Hosted Agent containers.
-
-Public API::
-
-    from azure.ai.agentserver.core import (
-        AgentConfig,
-        AgentServerHost,
-        FoundryAgentRequestContext,
-        configure_observability,
-        create_error_response,
-        detach_context,
-        end_span,
-        flush_spans,
-        get_request_context,
-        record_error,
-        set_current_span,
-        trace_stream,
-    )
-"""
+"""Public API surface for the Azure AI Agent Server core framework."""
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._base import AgentServerHost
