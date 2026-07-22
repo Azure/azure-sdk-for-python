@@ -565,8 +565,8 @@ def _build_call_outcome(cb: Optional[CaptureBlock], backend: str):
 
 
 _REQUEST_UUID_RE = re.compile(
-    r"(?i)\b(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-"
-    r"[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\b"
+    r"(?i)(?<![0-9a-f])(?:[0-9a-f]{32}|[0-9a-f]{8}-[0-9a-f]{4}-"
+    r"[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?![0-9a-f])"
 )
 
 
@@ -645,7 +645,19 @@ def _build_comparison(
         request_kwargs=request_kwargs or None,
     )
     if cp_cb is not None and rs_cb is not None:
-        cmp.diffs = ph.diff_outcomes(cp_oc, rs_oc)
+        cp_diff_oc = ph.CallOutcome(
+            backend=cp_oc.backend,
+            return_value=_normalized_request(cp_oc.return_value),
+            response_headers=cp_oc.response_headers,
+            raised=cp_oc.raised,
+        )
+        rs_diff_oc = ph.CallOutcome(
+            backend=rs_oc.backend,
+            return_value=_normalized_request(rs_oc.return_value),
+            response_headers=rs_oc.response_headers,
+            raised=rs_oc.raised,
+        )
+        cmp.diffs = ph.diff_outcomes(cp_diff_oc, rs_diff_oc)
         cp_request = {
             "args": _normalized_request(cp_cb.request_args),
             "kwargs": _normalized_request(cp_cb.request_kwargs),
@@ -1074,9 +1086,9 @@ def emit_markdown(
         "neither backend can fix."
     )
     lines.append(
-        "* **Fully ignored headers** -- transport-layer noise that neither "
-        "backend's customer surface promises (e.g. ``via``, ``strict-transport-"
-        "security``). Skipped on both sides."
+        "* **Fully ignored headers** -- no actual response header is fully "
+        "ignored today. ``_etag`` remains only as a guard against applying "
+        "the body-field ignore rule to headers."
     )
     lines.append(
         "* **Everything else** -- both the *presence* and the *value* are "

@@ -577,6 +577,32 @@ class ReporterRenderingTests(unittest.TestCase):
             any(diff.startswith("request:") for diff in comparison.diffs)
         )
 
+    def test_embedded_generated_uuid_is_normalized(self):
+        """Independent resource UUIDs must not create false request or proxy diffs."""
+        cp_id = "responses_test11111111-1111-1111-1111-111111111111"
+        rs_id = "responses_test22222222-2222-2222-2222-222222222222"
+        cp = self._block(
+            backend="core-python",
+            request={"args": [], "kwargs": {"id": cp_id}},
+            return_value="<DatabaseProxy [dbs/{}]>".format(cp_id),
+        )
+        rs = self._block(
+            backend="rust",
+            request={"args": [], "kwargs": {"id": rs_id}},
+            return_value="<DatabaseProxy [dbs/{}]>".format(rs_id),
+        )
+
+        comparison = self.reporter._build_comparison(
+            "TestX", "test_y", cp, rs
+        )
+
+        self.assertFalse(
+            any(
+                diff.startswith(("request:", "return_value:"))
+                for diff in comparison.diffs
+            )
+        )
+
     def test_validation_rejects_wrong_backend_label(self):
         """A rust-vs-rust transcript pair must never be accepted as parity."""
         result = self.reporter.TestResult(

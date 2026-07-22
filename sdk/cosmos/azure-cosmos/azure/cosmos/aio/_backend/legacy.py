@@ -85,7 +85,9 @@ def coerce_async_backend(
     ``None`` (core-python) or an already-chosen legacy backend becomes
     :data:`ASYNC_LEGACY_BACKEND`; a rust backend passes through unchanged. The
     stored ``client_connection._backend`` stays ``Optional`` for ``pick_backend``;
-    this is the single boundary where a coordinator coerces it.
+    this is the single boundary where a coordinator coerces it. Current
+    coordinators include ``AsyncDatabaseHelper``, ``AsyncItemHelper``,
+    ``AsyncThroughputHelper``, and ``AsyncFeedRangeHelper``.
 
     :param backend: The selected async backend, or ``None`` for core-python.
     :returns: A concrete async backend (never ``None``).

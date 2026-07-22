@@ -49,6 +49,7 @@ use azure_data_cosmos_driver::models::CosmosOperation;
 use crate::wire::{
     extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
     extract_read_feed_ranges_force_refresh, extract_required_item_id,
+    run_create_database_operation, run_create_database_operation_async,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
@@ -209,11 +210,13 @@ fn extract_feed_range_from_partition_key_inputs(
 //         -> [request runs on the runtime; no Python thread held]
 //         -> await resolves with the BackendResponse tuple
 
+mod databases;
 mod feed_range;
 mod items;
 mod offers;
 mod query;
 
+pub(crate) use databases::{create_database, create_database_async};
 pub(crate) use feed_range::{
     feed_range_from_partition_key, feed_range_from_partition_key_async, is_feed_range_subset,
     is_feed_range_subset_async, read_feed_ranges, read_feed_ranges_async,

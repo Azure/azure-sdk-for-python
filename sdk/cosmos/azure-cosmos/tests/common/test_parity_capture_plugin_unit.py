@@ -6,6 +6,7 @@
 """Unit tests for parity-capture plugin registration safety."""
 from __future__ import annotations
 
+import asyncio
 import importlib.util
 import inspect
 import pathlib
@@ -60,12 +61,55 @@ class PluginRegistryTests(unittest.TestCase):
             "read_all_items",
             "read_feed_ranges",
             "feed_range_from_partition_key",
+            "create_database",
         ):
             self.assertIn(op, registry)
             self.assertIn("sync", registry[op])
             self.assertIn("aio", registry[op])
             self.assertTrue(callable(registry[op]["sync"]))
             self.assertTrue(callable(registry[op]["aio"]))
+
+    def test_sync_calls_outside_a_test_are_not_captured(self):
+        """Session setup operations must not create unknown-node audit rows."""
+        emitted = []
+        original_emit = self.plugin._emit_block  # noqa: SLF001
+        original_nodeid = self.plugin._STATE.current_nodeid  # noqa: SLF001
+        try:
+            self.plugin._emit_block = emitted.append  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = None  # noqa: SLF001
+            wrapper = self.plugin._build_sync_wrapper(  # noqa: SLF001
+                "create_database", "sync", lambda _client, value: value
+            )
+            result = wrapper(object(), "setup")
+        finally:
+            self.plugin._emit_block = original_emit  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = original_nodeid  # noqa: SLF001
+
+        self.assertEqual(result, "setup")
+        self.assertEqual(emitted, [])
+
+    def test_async_calls_outside_a_test_are_not_captured(self):
+        """Async session setup operations must not create unknown-node audit rows."""
+        emitted = []
+        original_emit = self.plugin._emit_block  # noqa: SLF001
+        original_nodeid = self.plugin._STATE.current_nodeid  # noqa: SLF001
+
+        async def original(_client, value):
+            return value
+
+        try:
+            self.plugin._emit_block = emitted.append  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = None  # noqa: SLF001
+            wrapper = self.plugin._build_aio_wrapper(  # noqa: SLF001
+                "create_database", "aio", original
+            )
+            result = asyncio.run(wrapper(object(), "setup"))
+        finally:
+            self.plugin._emit_block = original_emit  # noqa: SLF001
+            self.plugin._STATE.current_nodeid = original_nodeid  # noqa: SLF001
+
+        self.assertEqual(result, "setup")
+        self.assertEqual(emitted, [])
 
     def test_query_items_aio_patch_preserves_non_awaitable_signature(self):
         """The aio query_items target is sync-shaped and must stay non-coroutine after patching."""

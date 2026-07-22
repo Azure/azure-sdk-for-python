@@ -41,6 +41,7 @@ from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
 from .exceptions import CosmosResourceNotFoundError
+from ._helpers.database_helper import DatabaseHelper
 
 if TYPE_CHECKING:
     from . import ThroughputProperties
@@ -375,7 +376,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        ] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -386,9 +389,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword response_hook: A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
         :returns: A `DatabaseProxy` instance representing the database.
@@ -413,7 +416,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[
+            Callable[[Mapping[str, Any], Mapping[str, Any]], None]
+        ] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[True],
         **kwargs: Any
@@ -424,7 +429,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword Dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -511,7 +517,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
 
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
-        result = self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
+        database = {"id": id}
+        # Legacy consumes the hook from kwargs; Rust invokes the explicit hook
+        # through response parsing. Backend selection guarantees one delivery.
+        response_hook = kwargs.get("response_hook")
+        result = DatabaseHelper(self.client_connection, self._backend).create_database(
+            database,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
         return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result

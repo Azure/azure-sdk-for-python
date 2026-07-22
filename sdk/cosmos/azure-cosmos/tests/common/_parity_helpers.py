@@ -158,6 +158,30 @@ class BackendComparison:
         path appends the raw server error body, which is informational, not part
         of the typed-exception contract a caller catches on.
         """
+        self._assert_exception_contract()
+        exception_diffs = diff_outcomes(self.core_python, self.rust)
+        assert not exception_diffs, (
+            "Exception parity diffs:\n  - " + "\n  - ".join(exception_diffs)
+        )
+
+    def assert_functional_exception_parity(self):
+        """Assert the typed exception contract while reporting known header gaps."""
+        self._assert_exception_contract()
+        non_header_diffs = [
+            diff
+            for diff in diff_outcomes(self.core_python, self.rust)
+            if not any(diff.startswith(prefix) for prefix in self._HEADER_DIFF_PREFIXES)
+        ]
+        if non_header_diffs:
+            print(self.format_report())
+            assert False, (
+                "Functional exception parity diffs "
+                "(excluding response-header surface):\n  - "
+                + "\n  - ".join(non_header_diffs)
+            )
+        self.print_report()
+
+    def _assert_exception_contract(self):
         core_exc, rust_exc = self.core_python.raised, self.rust.raised
         if core_exc is None or rust_exc is None:
             print(self.format_report())
@@ -174,10 +198,6 @@ class BackendComparison:
         assert core_message == rust_message, (
             "exception.message differs after normalization: core-python {!r} / "
             "rust {!r}".format(core_message, rust_message)
-        )
-        exception_diffs = diff_outcomes(self.core_python, self.rust)
-        assert not exception_diffs, (
-            "Exception parity diffs:\n  - " + "\n  - ".join(exception_diffs)
         )
 
     def format_report(self) -> str:
@@ -292,6 +312,9 @@ class BackendComparison:
         "server": _PUSHBACK_RAW_HEADERS,
         "content-type": _PUSHBACK_RAW_HEADERS,
         "content-length": _PUSHBACK_RAW_HEADERS,
+        "cache-control": _PUSHBACK_RAW_HEADERS,
+        "pragma": _PUSHBACK_RAW_HEADERS,
+        "strict-transport-security": _PUSHBACK_RAW_HEADERS,
         # #7 — five typed Cosmos headers not modelled on
         # CosmosResponseHeaders.
         "x-ms-cosmos-physical-partition-id": _PUSHBACK_TYPED_HEADERS,
@@ -394,8 +417,8 @@ class BackendComparison:
                 "filters the six per-document server-stamped fields it "
                 "treats as test noise: id, _rid, _self, _ts, _etag, "
                 "_attachments). The header-surface differences below are "
-                "all known rust-binding gaps; cross-references to "
-                "docs/V5/RUST_PARITY_PUSHBACKS.md follow."
+                "all known rust-binding gaps; the tracked pushback for each "
+                "follows."
             ]
             # Render recorded buckets in pushback-number order.
             for pb_key in sorted(grouped.keys(), key=lambda k: k[0]):
@@ -405,14 +428,14 @@ class BackendComparison:
                 out.append("      {}".format(", ".join(hdrs)))
             if unrecorded:
                 out.append(
-                    "  - NOT YET RECORDED in docs/V5/RUST_PARITY_PUSHBACKS.md "
+                    "  - NOT YET RECORDED as a known pushback "
                     "(file a new entry if this persists):"
                 )
                 out.append("      {}".format(", ".join(sorted(unrecorded))))
             else:
                 out.append(
                     "  - NEW PUSHBACK NOT NEEDED: every header gap above is "
-                    "already tracked in docs/V5/RUST_PARITY_PUSHBACKS.md."
+                    "already tracked as a known pushback."
                 )
             return "\n".join(out)
         return ("EXCEPTION DIVERGENCE: both backends raised, but the typed "

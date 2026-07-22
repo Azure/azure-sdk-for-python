@@ -244,8 +244,7 @@ async fn run_feed_range_from_partition_key_future(
 
     let epk = FeedRange::for_partition(partition_key, definition)
         .min_inclusive()
-        .as_str()
-        .to_owned();
+        .to_hex();
 
     let (max, is_max_inclusive) =
         if definition.kind() == PartitionKeyKind::MultiHash && pk_len < path_len {

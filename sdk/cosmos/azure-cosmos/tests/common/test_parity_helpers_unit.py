@@ -137,6 +137,27 @@ def test_error_response_headers_are_compared():
     assert any(diff.startswith("header x-ms-custom:") for diff in diffs)
 
 
+def test_functional_exception_parity_allows_header_surface_gap():
+    """Known header gaps do not hide a matching typed exception contract."""
+    core = _parity_helpers.CallOutcome(
+        backend="core-python",
+        raised=ValueError("bad request"),
+        response_headers={"content-type": "application/json"},
+    )
+    rust = _parity_helpers.CallOutcome(
+        backend="rust",
+        raised=ValueError("bad request"),
+        response_headers={"x-ms-cosmos-sdk-diagnostics": "details"},
+    )
+    comparison = _parity_helpers.BackendComparison(
+        core_python=core,
+        rust=rust,
+        diffs=_parity_helpers.diff_outcomes(core, rust),
+    )
+
+    comparison.assert_functional_exception_parity()
+
+
 def test_exception_message_suffix_is_not_truncated():
     """Semantic differences after 240 characters must remain visible."""
     prefix = "x" * 300

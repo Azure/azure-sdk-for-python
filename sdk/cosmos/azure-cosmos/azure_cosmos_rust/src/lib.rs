@@ -183,6 +183,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::is_feed_range_subset);
     add_pyfn!(m, documents::read_offer);
     add_pyfn!(m, documents::replace_offer);
+    add_pyfn!(m, documents::create_database);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -198,6 +199,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::is_feed_range_subset_async);
     add_pyfn!(m, documents::read_offer_async);
     add_pyfn!(m, documents::replace_offer_async);
+    add_pyfn!(m, documents::create_database_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.

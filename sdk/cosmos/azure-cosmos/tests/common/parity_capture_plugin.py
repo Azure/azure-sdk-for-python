@@ -223,6 +223,25 @@ def _aio_create_item_target() -> Tuple[Any, str, str]:
 _register_op("create_item", sync=_sync_create_item_target, aio=_aio_create_item_target)
 
 
+# create_database -------------------------------------------------------------
+
+def _sync_create_database_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import cosmos_client as _sync_client_mod
+    return _sync_client_mod, "CosmosClient", "create_database"
+
+
+def _aio_create_database_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _cosmos_client as _aio_client_mod
+    return _aio_client_mod, "CosmosClient", "create_database"
+
+
+_register_op(
+    "create_database",
+    sync=_sync_create_database_target,
+    aio=_aio_create_database_target,
+)
+
+
 # delete_item ----------------------------------------------------------------
 
 def _sync_delete_item_target() -> Tuple[Any, str, str]:
@@ -689,7 +708,9 @@ def _emit_block(payload: Dict[str, Any]) -> None:
 def _build_sync_wrapper(op_name: str, surface: str,
                         original: Callable[..., Any]) -> Callable[..., Any]:
     def _wrapper(self_container, *args, **kwargs):
-        nodeid = _STATE.current_nodeid or "<unknown-nodeid>"
+        nodeid = _STATE.current_nodeid
+        if nodeid is None:
+            return original(self_container, *args, **kwargs)
         ordinal = _STATE.next_ordinal(nodeid)
         backend = _infer_backend_label(self_container)
         rust_count_before = _rust_operation_count()
@@ -863,7 +884,9 @@ def _build_sync_wrapper(op_name: str, surface: str,
 def _build_aio_wrapper(op_name: str, surface: str,
                        original: Callable[..., Any]) -> Callable[..., Any]:
     async def _wrapper(self_container, *args, **kwargs):
-        nodeid = _STATE.current_nodeid or "<unknown-nodeid>"
+        nodeid = _STATE.current_nodeid
+        if nodeid is None:
+            return await original(self_container, *args, **kwargs)
         ordinal = _STATE.next_ordinal(nodeid)
         backend = _infer_backend_label(self_container)
         rust_count_before = _rust_operation_count()

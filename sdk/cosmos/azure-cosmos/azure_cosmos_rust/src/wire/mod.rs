@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 //! Shared request and response translation between Python and the Rust driver.
-//! Operation-specific execution lives in `items`, `query`, `feed_range`, and
-//! `offers`; this module owns the behavior all four families need:
+//! Operation-specific execution lives in `databases`, `items`, `query`,
+//! `feed_range`, and `offers`; this module owns the behavior all five families need:
 //!
 //!   * Request (down): look up the rust driver by handle, parse the container
 //!     link and partition key, sort the customer's headers into the fields the
@@ -599,6 +599,8 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
             "indexingdirective" => Some("x-ms-indexing-directive"),
             "prioritylevel" => Some("x-ms-cosmos-priority-level"),
             "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
+            "offerthroughput" => Some("x-ms-offer-throughput"),
+            "autoupgradepolicy" => Some("x-ms-cosmos-offer-autopilot-settings"),
             "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
             // Read-side cache-validation kwarg. Accept the option-key
             // form as a defensive fallback; the Python prep already
@@ -934,18 +936,18 @@ fn offer_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
 }
 
 #[derive(Serialize)]
-struct PartitionKeyRangesEnvelope<'a> {
+struct PartitionKeyRangesEnvelope {
     #[serde(rename = "PartitionKeyRanges")]
-    partition_key_ranges: Vec<PartitionKeyRangeWire<'a>>,
+    partition_key_ranges: Vec<PartitionKeyRangeWire>,
 }
 
 #[derive(Serialize)]
-struct PartitionKeyRangeWire<'a> {
-    id: &'a str,
+struct PartitionKeyRangeWire {
+    id: String,
     #[serde(rename = "minInclusive")]
-    min_inclusive: &'a str,
+    min_inclusive: String,
     #[serde(rename = "maxExclusive")]
-    max_exclusive: &'a str,
+    max_exclusive: String,
 }
 
 #[derive(Serialize)]
@@ -973,9 +975,9 @@ fn partition_key_ranges_to_response_body(
     let partition_key_ranges = ranges
         .iter()
         .map(|range| PartitionKeyRangeWire {
-            id: range.id.as_str(),
-            min_inclusive: range.min_inclusive.as_str(),
-            max_exclusive: range.max_exclusive.as_str(),
+            id: range.id.clone(),
+            min_inclusive: range.min_inclusive.to_hex(),
+            max_exclusive: range.max_exclusive.to_hex(),
         })
         .collect();
     let envelope = PartitionKeyRangesEnvelope {
@@ -2040,6 +2042,7 @@ mod tests {
     }
 }
 
+mod databases;
 mod feed_range;
 mod items;
 mod offers;
@@ -2053,6 +2056,7 @@ use feed_range::{
 };
 use query::QueryTarget;
 
+pub(crate) use databases::{run_create_database_operation, run_create_database_operation_async};
 pub(crate) use feed_range::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,

@@ -72,9 +72,7 @@ url = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
-# Surfaced at the binding boundary when forwarding driver errors. Pin it to the
-# driver's own azure_core copy: the binding and the driver share credential,
-# header, and error types, and Rust treats the same crate pulled from two
-# different sources as two different types. Same source means one type, so the
-# credential and headers this binding builds can be passed into the driver.
-azure_core = { path = "../../../../../azure-sdk-for-rust/sdk/core/azure_core" }
+# Surfaced at the binding boundary when forwarding driver errors. Match the
+# driver's released azure_core dependency: Rust treats path and registry copies
+# as different types even when their APIs are otherwise identical.
+azure_core = "1.1.0"

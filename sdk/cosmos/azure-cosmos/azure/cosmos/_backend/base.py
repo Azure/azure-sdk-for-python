@@ -19,7 +19,7 @@ batch operation is added. Defining it now means adding that operation does not
 change this file.
 
 * ``execute`` -- one request, one reply (``BackendResponse``), for every
-  single-reply operation (item CRUD, feed-range, offer).
+  single-reply operation (database create, item CRUD, feed-range, offer).
 * ``execute_pages`` -- one request, one page of results (``QueryPage``), for
   the query and read-many operations. One call fetches one page; the caller
   re-invokes it per page, carrying the previous page's continuation forward.
@@ -50,6 +50,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 
 # Operation discriminator values for ``PreparedRequest.op``.
+OP_CREATE_DATABASE = "create_database"
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_ITEM = "read_item"
@@ -73,6 +74,7 @@ OP_REPLACE_OFFER = "replace_offer"
 # ``QUERY_TO_BINDING_METHOD`` below and dispatched through ``execute_pages``,
 # never through ``execute``.
 OP_TO_BINDING_METHOD = {
+    OP_CREATE_DATABASE: "create_database",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",

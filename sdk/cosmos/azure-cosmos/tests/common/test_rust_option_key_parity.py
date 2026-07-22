@@ -32,10 +32,10 @@ import pytest
 
 from azure.cosmos._helpers._request_prep import RUST_HANDLED_OPTION_KEYS
 
-# wire.rs lives at <pkg-root>/azure_cosmos_rust/src/wire.rs; this test file is at
+# wire/mod.rs lives at <pkg-root>/azure_cosmos_rust/src/wire/mod.rs; this test file is at
 # <pkg-root>/tests/common/, so two parents up from the test dir is the pkg root.
 _WIRE_RS = (
-    Path(__file__).resolve().parents[2] / "azure_cosmos_rust" / "src" / "wire.rs"
+    Path(__file__).resolve().parents[2] / "azure_cosmos_rust" / "src" / "wire" / "mod.rs"
 )
 
 

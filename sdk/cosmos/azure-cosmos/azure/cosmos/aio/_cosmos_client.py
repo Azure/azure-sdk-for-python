@@ -32,10 +32,10 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-
-from ._backend.base import AsyncCosmosBackend
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos.offer import ThroughputProperties
+
+from ._backend.base import AsyncCosmosBackend
 from ._backend.factory import make_async_backend
 from ._cosmos_client_connection_async import CosmosClientConnection, CredentialDict
 from ._database import DatabaseProxy, _get_database_link
@@ -46,6 +46,7 @@ from .._cosmos_responses import CosmosDict
 from ..cosmos_client import _parse_connection_str
 from ..documents import ConnectionPolicy, DatabaseAccount
 from ..exceptions import CosmosResourceNotFoundError
+from ._helpers.database_helper import AsyncDatabaseHelper
 
 # pylint: disable=docstring-keyword-should-match-keyword-only
 
@@ -366,8 +367,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -406,8 +407,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -441,8 +442,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[dict[str, str], dict[str, Any]], None] response_hook: A callable invoked with
-            the response metadata.
+        :keyword Callable[[Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -490,12 +491,16 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         request_options = _build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
 
-        result = await self.client_connection.CreateDatabase(database={"id": id}, options=request_options, **kwargs)
-        if response_hook:
-            response_hook(self.client_connection.last_response_headers)
+        database = {"id": id}
+        result = await AsyncDatabaseHelper(self.client_connection, self._backend).create_database(
+            database,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
         if not return_properties:
             return DatabaseProxy(self.client_connection, id=result["id"], properties=result)
-        return  DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
+        return DatabaseProxy(self.client_connection, id=result["id"], properties=result), result
 
     @overload
     async def create_database_if_not_exists(  # pylint: disable=redefined-builtin

@@ -21,6 +21,8 @@ identical wire bytes.
 
 The public builders:
 
+- ``build_create_database_prepared`` — account-level JSON body plus
+  throughput and customer-header options.
 - ``build_create_item_prepared`` — full request with JSON body and
   id minting.
 - ``build_delete_item_prepared`` — bodiless request; the document id
@@ -58,8 +60,10 @@ from __future__ import annotations
 
 from typing import Any, Dict, Mapping, Optional, Tuple
 
+from .._base import _validate_resource
 from .._availability_strategy_config import DEFAULT_THRESHOLD_MS
 from .._backend.base import (
+    OP_CREATE_DATABASE,
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
@@ -155,6 +159,8 @@ RUST_HANDLED_OPTION_KEYS = frozenset({
     # control; initialHeaders -> arbitrary customer headers forwarded as-is.
     "availabilityStrategy",
     "initialHeaders",
+    "offerThroughput",
+    "autoUpgradePolicy",
 })
 
 
@@ -176,6 +182,27 @@ def _normalize_option_value(option_key: str, value: Any) -> Any:
     if option_key in _SEQUENCE_VALUED_OPTION_KEYS and isinstance(value, (list, tuple)):
         return ",".join(str(component) for component in value)
     return value
+
+
+def build_create_database_prepared(
+    database: Dict[str, Any],
+    request_options: Mapping[str, Any],
+    *,
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> PreparedRequest:
+    """Build the account-level create-database request consumed by the Rust backend."""
+    _validate_resource(database)
+    headers = flatten_options_to_headers(request_options)
+    timeout = (kwargs or {}).get(Constants.Kwargs.TIMEOUT)
+    if timeout is not None:
+        headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout
+    return PreparedRequest(
+        op=OP_CREATE_DATABASE,
+        container_link="",
+        body_bytes=serialize_body_to_bytes(database),
+        partition_key_header="[]",
+        headers=headers,
+    )
 
 
 def _availability_strategy_to_wire(value: Any) -> Optional[str]:
@@ -938,5 +965,3 @@ def build_patch_item_prepared(
         headers=headers,
         item_id=item_id,
     )
-
-
