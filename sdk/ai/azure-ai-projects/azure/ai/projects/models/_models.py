@@ -58,7 +58,7 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from .. import _unions, models as _models
+    from .. import _types, models as _models
 
 
 class _CreateAgentVersionFromCodeContent(_Model):
@@ -161,16 +161,17 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebSearchTool,
-    WebSearchPreviewTool, WorkIQPreviewTool
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam,
+    WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
-     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
+     "work_iq_preview", "fabric_iq_preview", "web_iq_preview", "toolbox_search_preview",
+     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
+     "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -181,7 +182,7 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\", \"web_iq_preview\",
      \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
      \"capture_structured_outputs\", and \"openapi\"."""
 
@@ -267,12 +268,14 @@ class ToolboxTool(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationPreviewToolboxTool,
     CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
-    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolboxSearchPreviewToolboxTool,
-    WebSearchToolboxTool, WorkIQPreviewToolboxTool
+    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolSearchToolboxTool,
+    ToolboxSearchPreviewToolboxTool, WebIQPreviewToolboxTool, WebSearchToolboxTool,
+    WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", and "toolbox_search_preview".
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "web_iq_preview", "toolbox_search",
+     and "toolbox_search_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -289,7 +292,7 @@ class ToolboxTool(_Model):
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", and \"toolbox_search_preview\"."""
+     \"fabric_iq_preview\", \"web_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1119,12 +1122,20 @@ class AgentIdentity(_Model):
     :ivar client_id: The client ID of the agent instance. Also referred to as the instance ID.
      Required.
     :vartype client_id: str
+    :ivar status: The status of the agent identity. Present for both the agent instance identity
+     and the agent blueprint. Known values are: "active" and "disabled".
+    :vartype status: str or ~azure.ai.projects.models.AgentIdentityStatus
     """
 
     principal_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The principal ID of the agent instance. Required."""
     client_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The client ID of the agent instance. Also referred to as the instance ID. Required."""
+    status: Optional[Union[str, "_models.AgentIdentityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the agent identity. Present for both the agent instance identity and the agent
+     blueprint. Known values are: \"active\" and \"disabled\"."""
 
     @overload
     def __init__(
@@ -1132,6 +1143,7 @@ class AgentIdentity(_Model):
         *,
         principal_id: str,
         client_id: str,
+        status: Optional[Union[str, "_models.AgentIdentityStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -4812,11 +4824,11 @@ class DataGenerationJobOptions(_Model):
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, ToolUseFineTuningDataGenerationJobOptions,
-    TracesDataGenerationJobOptions
+    SimpleQnADataGenerationJobOptions, TaskGenerationDataGenerationJobOptions,
+    ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
-     and "tool_use".
+     "tool_use", and "task_generation".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
     :ivar max_samples: Maximum number of samples to generate. Required.
     :vartype max_samples: int
@@ -4829,8 +4841,8 @@ class DataGenerationJobOptions(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\", and
-     \"tool_use\"."""
+    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
+     \"tool_use\", and \"task_generation\"."""
     max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6670,6 +6682,12 @@ class EvaluatorGenerationJob(_Model):
     :vartype finished_at: ~datetime.datetime
     :ivar usage: Token consumption summary. Populated when the job reaches a terminal state.
     :vartype usage: ~azure.ai.projects.models.EvaluatorGenerationTokenUsage
+    :ivar input_quality_warnings: Non-fatal input-quality advisories produced by the generation
+     pipeline. Read-only; service-generated; populated only on terminal jobs when advisories fired.
+     Omitted when generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories.
+    :vartype input_quality_warnings:
+     list[~azure.ai.projects.models.RubricGenerationInputQualityWarning]
     """
 
     id: str = rest_field(visibility=["read"])
@@ -6692,6 +6710,13 @@ class EvaluatorGenerationJob(_Model):
     """The timestamp when the job finished, represented in Unix time (seconds since January 1, 1970)."""
     usage: Optional["_models.EvaluatorGenerationTokenUsage"] = rest_field(visibility=["read"])
     """Token consumption summary. Populated when the job reaches a terminal state."""
+    input_quality_warnings: Optional[list["_models.RubricGenerationInputQualityWarning"]] = rest_field(
+        visibility=["read"]
+    )
+    """Non-fatal input-quality advisories produced by the generation pipeline. Read-only;
+     service-generated; populated only on terminal jobs when advisories fired. Omitted when
+     generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories."""
 
     @overload
     def __init__(
@@ -6834,6 +6859,16 @@ class EvaluatorVersion(_Model):
      present only on evaluator versions created via an EvaluatorGenerationJob. Each artifact
      resolves to a versioned Foundry Dataset.
     :vartype generation_artifacts: ~azure.ai.projects.models.EvaluatorGenerationArtifacts
+    :ivar generation_job_id: Read-only provenance link back to the EvaluatorGenerationJob that
+     produced this version. Present only on evaluator versions created via the generation pipeline;
+     absent for manually-created versions and unaffected by subsequent ``PATCH`` calls.
+    :vartype generation_job_id: str
+    :ivar warnings: Categories of warnings surfaced on this generated evaluator version. Present
+     only on versions created via an EvaluatorGenerationJob when the paired job produced non-empty
+     warnings. Absent (treat as no warnings) when the version is not from generation, when the
+     paired job was clean, or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's
+     advisories. Follow ``generation_job_id`` to fetch the detailed warning payloads.
+    :vartype warnings: list[str or ~azure.ai.projects.models.GenerationWarningType]
     :ivar created_by: Creator of the evaluator. Required.
     :vartype created_by: str
     :ivar created_at: Creation date/time of the evaluator. Required.
@@ -6876,6 +6911,16 @@ class EvaluatorVersion(_Model):
     """Provenance artifacts from the generation pipeline. Read-only; present only on evaluator
      versions created via an EvaluatorGenerationJob. Each artifact resolves to a versioned Foundry
      Dataset."""
+    generation_job_id: Optional[str] = rest_field(visibility=["read"])
+    """Read-only provenance link back to the EvaluatorGenerationJob that produced this version.
+     Present only on evaluator versions created via the generation pipeline; absent for
+     manually-created versions and unaffected by subsequent ``PATCH`` calls."""
+    warnings: Optional[list[Union[str, "_models.GenerationWarningType"]]] = rest_field(visibility=["read"])
+    """Categories of warnings surfaced on this generated evaluator version. Present only on versions
+     created via an EvaluatorGenerationJob when the paired job produced non-empty warnings. Absent
+     (treat as no warnings) when the version is not from generation, when the paired job was clean,
+     or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's advisories. Follow
+     ``generation_job_id`` to fetch the detailed warning payloads."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
@@ -7331,7 +7376,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Deprecated. This property is deprecated and will be removed in a future version."""
@@ -7349,7 +7394,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         vector_store_ids: list[str],
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_unions.Filters"] = None,
+        filters: Optional["_types.Filters"] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
@@ -7400,7 +7445,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The IDs of the vector stores to search."""
@@ -7414,7 +7459,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_unions.Filters"] = None,
+        filters: Optional["_types.Filters"] = None,
         vector_store_ids: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -9169,13 +9214,12 @@ class MCPTool(Tool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
-     ``tunnel_id`` must be provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
+     provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
-     ``connector_id`` values are:
+     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
+     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9190,9 +9234,6 @@ class MCPTool(Tool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
-    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
-     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
-    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9222,8 +9263,7 @@ class MCPTool(Tool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
-     provided."""
+    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9236,8 +9276,8 @@ class MCPTool(Tool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
-      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
+      ``connector_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9252,9 +9292,6 @@ class MCPTool(Tool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
-    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
-     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9298,7 +9335,6 @@ class MCPTool(Tool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
-        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -9336,13 +9372,12 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
-     ``tunnel_id`` must be provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
+     provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
-     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
-     ``connector_id`` values are:
+     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
+     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9357,9 +9392,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
-    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
-     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
-    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9386,8 +9418,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
-     provided."""
+    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9400,8 +9431,8 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
-      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
+      ``connector_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9416,9 +9447,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
-    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
-     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9461,7 +9489,6 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
-        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -11644,6 +11671,14 @@ class OptimizationOptions(_Model):
      'conversation' for per-conversation multi-turn simulation scoring. Known values are: "turn" and
      "conversation".
     :vartype evaluation_level: str or ~azure.ai.projects.models.EvaluationLevel
+    :ivar max_stalls: Maximum number of consecutive reflective minibatch rejections before stopping
+     early. A 'stall' occurs when the optimizer proposes a prompt change, evaluates it on a small
+     subset, and the score does not improve — so no full validation-set evaluation is triggered. The
+     counter resets whenever a minibatch passes and its full-validation score beats the current
+     best. Only a sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the
+     stop. The service defaults to 5 if a value is not specified by the caller. Must be >= 1 when
+     set.
+    :vartype max_stalls: int
     """
 
     max_candidates: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11664,6 +11699,13 @@ class OptimizationOptions(_Model):
     """Evaluation granularity. Null/omitted means per-item single-turn. Set to 'conversation' for
      per-conversation multi-turn simulation scoring. Known values are: \"turn\" and
      \"conversation\"."""
+    max_stalls: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of consecutive reflective minibatch rejections before stopping early. A 'stall'
+     occurs when the optimizer proposes a prompt change, evaluates it on a small subset, and the
+     score does not improve — so no full validation-set evaluation is triggered. The counter resets
+     whenever a minibatch passes and its full-validation score beats the current best. Only a
+     sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the stop. The
+     service defaults to 5 if a value is not specified by the caller. Must be >= 1 when set."""
 
     @overload
     def __init__(
@@ -11674,6 +11716,7 @@ class OptimizationOptions(_Model):
         eval_model: Optional[str] = None,
         optimization_model: Optional[str] = None,
         evaluation_level: Optional[Union[str, "_models.EvaluationLevel"]] = None,
+        max_stalls: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -12454,9 +12497,6 @@ class Reasoning(_Model):
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype summary: str or str or str
-    :ivar context: Is one of the following types: Literal["auto"], Literal["current_turn"],
-     Literal["all_turns"]
-    :vartype context: str or str or str
     :ivar generate_summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype generate_summary: str or str or str
@@ -12471,11 +12511,6 @@ class Reasoning(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
-    context: Optional[Literal["auto", "current_turn", "all_turns"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Is one of the following types: Literal[\"auto\"], Literal[\"current_turn\"],
-     Literal[\"all_turns\"]"""
     generate_summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12487,7 +12522,6 @@ class Reasoning(_Model):
         *,
         effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]] = None,
         summary: Optional[Literal["auto", "concise", "detailed"]] = None,
-        context: Optional[Literal["auto", "current_turn", "all_turns"]] = None,
         generate_summary: Optional[Literal["auto", "concise", "detailed"]] = None,
     ) -> None: ...
 
@@ -12875,9 +12909,7 @@ class RoutineRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """The unique run identifier for the routine attempt. Required."""
-    status: Optional["_unions.RoutineRunStatus"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
+    status: Optional["_types.RoutineRunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The run status. Is one of the following types: str"""
     phase: Optional[Union[str, "_models.RoutineRunPhase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -12948,7 +12980,7 @@ class RoutineRun(_Model):
     def __init__(
         self,
         *,
-        status: Optional["_unions.RoutineRunStatus"] = None,
+        status: Optional["_types.RoutineRunStatus"] = None,
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
@@ -13048,6 +13080,76 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorDefinitionType.RUBRIC  # type: ignore
+
+
+class RubricGenerationInputQualityWarning(_Model):
+    """A non-fatal advisory produced during rubric evaluator generation when resolved inputs are
+    technically valid but likely too weak to produce a high-quality rubric. Read-only;
+    service-generated. Persisted with the terminal EvaluatorGenerationJob.
+
+    :ivar code: Stable searchable machine-readable warning code. Required. Known values are:
+     "empty_prompt", "short_prompt", "empty_agent_instructions", "short_agent_instructions",
+     "empty_dataset_content", "short_dataset_content", "low_trace_count", and
+     "insufficient_total_input".
+    :vartype code: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningCode
+    :ivar severity: Advisory severity. Initial values: ``warning``. Required. "warning"
+    :vartype severity: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSeverity
+    :ivar message: Human-readable message suitable for direct SDK/CLI/UI display. Must not include
+     raw prompt, instruction, dataset, or trace text. Required.
+    :vartype message: str
+    :ivar source: Which source category the warning applies to. ``aggregate`` is used only for
+     cross-source warnings. Required. Known values are: "prompt", "agent", "dataset", and
+     "aggregate".
+    :vartype source: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSource
+    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the
+     warning applies to a specific source. Omitted for aggregate warnings and for warnings not tied
+     to one source.
+    :vartype source_index: int
+    """
+
+    code: Union[str, "_models.RubricGenerationInputQualityWarningCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stable searchable machine-readable warning code. Required. Known values are: \"empty_prompt\",
+     \"short_prompt\", \"empty_agent_instructions\", \"short_agent_instructions\",
+     \"empty_dataset_content\", \"short_dataset_content\", \"low_trace_count\", and
+     \"insufficient_total_input\"."""
+    severity: Union[str, "_models.RubricGenerationInputQualityWarningSeverity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advisory severity. Initial values: ``warning``. Required. \"warning\""""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable message suitable for direct SDK/CLI/UI display. Must not include raw prompt,
+     instruction, dataset, or trace text. Required."""
+    source: Union[str, "_models.RubricGenerationInputQualityWarningSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Which source category the warning applies to. ``aggregate`` is used only for cross-source
+     warnings. Required. Known values are: \"prompt\", \"agent\", \"dataset\", and \"aggregate\"."""
+    source_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the warning applies to a
+     specific source. Omitted for aggregate warnings and for warnings not tied to one source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.RubricGenerationInputQualityWarningCode"],
+        severity: Union[str, "_models.RubricGenerationInputQualityWarningSeverity"],
+        message: str,
+        source: Union[str, "_models.RubricGenerationInputQualityWarningSource"],
+        source_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SASCredentials(BaseCredentials, discriminator="SAS"):
@@ -13895,6 +13997,48 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator="task_generation"):
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is TaskGeneration for this model. Required.
+     Task generation for evaluation scenarios.
+    :vartype type: str or ~azure.ai.projects.models.TASK_GENERATION
+    """
+
+    type: Literal[DataGenerationJobType.TASK_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is TaskGeneration for this model. Required. Task generation
+     for evaluation scenarios."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.TASK_GENERATION  # type: ignore
 
 
 class TaxonomyCategory(_Model):
@@ -14974,6 +15118,45 @@ class ToolProjectConnection(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ToolSearchToolboxTool(ToolboxTool, discriminator="toolbox_search"):
+    """A toolbox search tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.TOOLBOX_SEARCH
+    """
+
+    type: Literal[ToolboxToolType.TOOLBOX_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.TOOLBOX_SEARCH  # type: ignore
+
+
 class ToolSearchToolParam(Tool, discriminator="tool_search"):
     """Tool search tool.
 
@@ -15448,6 +15631,125 @@ class VersionSelector(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class WebIQPreviewTool(Tool, discriminator="web_iq_preview"):
+    """A WebIQ server-side tool.
+
+    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
+     connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. Default
+     is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    type: Literal[ToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WebIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the WebIQ MCP server to connect to."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
+     used."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the agent requires approval before executing actions. Default is always. Is either a
+     MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        server_label: Optional[str] = None,
+        server_url: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolType.WEB_IQ_PREVIEW  # type: ignore
+
+
+class WebIQPreviewToolboxTool(ToolboxTool, discriminator="web_iq_preview"):
+    """A WebIQ tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: Required. WEB_IQ_PREVIEW.
+    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
+    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
+    :vartype project_connection_id: str
+    :ivar server_label: The label of the WebIQ MCP server to connect to.
+    :vartype server_label: str
+    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
+     connection will be used.
+    :vartype server_url: str
+    :ivar require_approval: Whether the agent requires approval before executing actions. Default
+     is always. Is either a MCPToolRequireApproval type or a str type.
+    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
+    """
+
+    type: Literal[ToolboxToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. WEB_IQ_PREVIEW."""
+    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The ID of the WebIQ project connection. Required."""
+    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The label of the WebIQ MCP server to connect to."""
+    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
+     used."""
+    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the agent requires approval before executing actions. Default is always. Is either a
+     MCPToolRequireApproval type or a str type."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        project_connection_id: str,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+        server_label: Optional[str] = None,
+        server_url: Optional[str] = None,
+        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.WEB_IQ_PREVIEW  # type: ignore
 
 
 class WebSearchApproximateLocation(_Model):
