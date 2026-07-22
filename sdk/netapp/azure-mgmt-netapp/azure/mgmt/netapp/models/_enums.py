@@ -1,4 +1,3 @@
-# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -82,15 +81,6 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup."""
 
 
-class BindAuthenticationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The authentication level to use when binding to the LDAP server."""
-
-    ANONYMOUS = "Anonymous"
-    """Anonymous bind i.e. no credentials provided."""
-    SIMPLE = "Simple"
-    """Simple bind i.e. plain text credentials provided."""
-
-
 class BreakthroughMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether the volume operates in Breakthrough Mode. When set to 'Enabled', the volume
     runs on the resources configured for this mode, delivering improved performance and higher
@@ -167,24 +157,6 @@ class CacheProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The resource is succeeded."""
     CANCELED = "Canceled"
     """Resource creation was canceled."""
-
-
-class CheckElasticResourceAvailabilityReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Availability reason."""
-
-    INVALID = "Invalid"
-    """Value indicating the name provided does not match Azure NetApp Files naming requirements."""
-    ALREADY_EXISTS = "AlreadyExists"
-    """Value indicating the name is already in use and is therefore unavailable."""
-
-
-class CheckElasticResourceAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Availability status."""
-
-    TRUE = "True"
-    """Value indicating the name is valid and available."""
-    FALSE = "False"
-    """Value indicating the the name is invalid, unavailable, or both."""
 
 
 class CheckNameResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -313,25 +285,6 @@ class CredentialsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     unexpired."""
 
 
-class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Day of the week."""
-
-    SUNDAY = "Sunday"
-    """Take a snapshot each Sunday."""
-    MONDAY = "Monday"
-    """Take a snapshot each Monday."""
-    TUESDAY = "Tuesday"
-    """Take a snapshot each Tuesday."""
-    WEDNESDAY = "Wednesday"
-    """Take a snapshot each Wednesday."""
-    THURSDAY = "Thursday"
-    """Take a snapshot each Thursday."""
-    FRIDAY = "Friday"
-    """Take a snapshot each Friday."""
-    SATURDAY = "Saturday"
-    """Take a snapshot each Saturday."""
-
-
 class DesiredRansomwareProtectionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The desired state of the Advanced Ransomware Protection feature."""
 
@@ -341,144 +294,10 @@ class DesiredRansomwareProtectionState(str, Enum, metaclass=CaseInsensitiveEnumM
     """Advanced Ransomware Protection is enabled."""
 
 
-class ElasticBackupPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Elastic Backup Policy state."""
-
-    ENABLED = "Enabled"
-    """Value indicating the policy is enabled."""
-    DISABLED = "Disabled"
-    """Value indicating the policy is disabled."""
-
-
-class ElasticBackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of backup."""
-
-    MANUAL = "Manual"
-    """Manual backup type."""
-    SCHEDULED = "Scheduled"
-    """Scheduled backup type."""
-
-
-class ElasticKeyVaultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """KeyVault status."""
-
-    CREATED = "Created"
-    """KeyVault connection created but not in use."""
-    IN_USE = "InUse"
-    """KeyVault connection in use by SMB Volume."""
-    DELETED = "Deleted"
-    """KeyVault connection Deleted."""
-    ERROR = "Error"
-    """Error with the KeyVault connection."""
-    UPDATING = "Updating"
-    """KeyVault connection Updating."""
-
-
-class ElasticNfsv3Access(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NFSv3 access."""
-
-    ENABLED = "Enabled"
-    """Clients can connect to the volume using the NFSv3 protocol."""
-    DISABLED = "Disabled"
-    """Clients can't connect to the volume using the NFSv3 protocol."""
-
-
-class ElasticNfsv4Access(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """NFSv4 access."""
-
-    ENABLED = "Enabled"
-    """Clients can connect to the volume using the NFSv4 protocol."""
-    DISABLED = "Disabled"
-    """Clients can't connect to the volume using the NFSv4 protocol."""
-
-
-class ElasticPoolEncryptionKeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Pool Encryption Key Source."""
-
-    NET_APP = "NetApp"
-    """Represents the encryption key source of Elastic pool is Microsoft.NetApp."""
-    KEY_VAULT = "KeyVault"
-    """Represents the encryption key source of Elastic pool is Microsoft.KeyVault."""
-
-
-class ElasticProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Protocol types for elastic volume."""
-
-    NF_SV3 = "NFSv3"
-    """NFSv3 protocol type."""
-    NF_SV4 = "NFSv4"
-    """NFSv4 protocol type."""
-    SMB = "SMB"
-    """SMB/CIFS protocol type."""
-
-
-class ElasticResourceAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Current availability status of the resource."""
-
-    ONLINE = "Online"
-    """The resource is currently Online and accessible."""
-    OFFLINE = "Offline"
-    """The resource is currently Offline and not accessible."""
-
-
-class ElasticRootAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Root access."""
-
-    ENABLED = "Enabled"
-    """Root user access is enabled for clients affected by this rule."""
-    DISABLED = "Disabled"
-    """Root user access is disabled for clients affected by this rule."""
-
-
-class ElasticServiceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Service level for elastic capacity pool."""
-
-    ZONE_REDUNDANT = "ZoneRedundant"
-    """Zone redundant storage service level."""
-
-
-class ElasticSmbEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SMB encryption."""
-
-    ENABLED = "Enabled"
-    """Value indicating the SMB encryption is enabled."""
-    DISABLED = "Disabled"
-    """Value indicating the SMB encryption is disabled."""
-
-
-class ElasticUnixAccessRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Unix access rule."""
-
-    READ_ONLY = "ReadOnly"
-    """Clients connecting with this rule will only have read access to the volume."""
-    READ_WRITE = "ReadWrite"
-    """Clients connecting with this rule will have full read and write access to the volume."""
-    NO_ACCESS = "NoAccess"
-    """Clients connecting with this rule will have no access to the volume."""
-
-
-class ElasticVolumePolicyEnforcement(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Policy enforcement."""
-
-    ENFORCED = "Enforced"
-    """Value indicating the policy is enforced on the volume."""
-    NOT_ENFORCED = "NotEnforced"
-    """Value indicating the policy is not enforced on the volume."""
-
-
-class ElasticVolumeRestorationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current state of the restoration process."""
-
-    RESTORING = "Restoring"
-    """Value indicating that the volume is currently restoring."""
-    RESTORED = "Restored"
-    """Value indicating that the volume is restored."""
-    FAILED = "Failed"
-    """Value indicating that the volume restore has failed."""
-
-
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag indicating whether subvolume operations are enabled on the volume."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. This type
+    will be removed in a future API version.
+    """
 
     ENABLED = "Enabled"
     """subvolumes are enabled."""
@@ -633,21 +452,6 @@ class KeyVaultStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """KeyVault connection Updating."""
 
 
-class LargeVolumeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of the Large Volume. When set to 'LargeVolume', the large volume is created
-    with standard configuration. If it is set to 'ExtraLargeVolume7Dot2PiB', the extra large volume
-    is created with higher capacity limit 7.2PiB with cool access enabled, delivering higher
-    capacity limit with lower costs.
-    """
-
-    LARGE_VOLUME = "LargeVolume"
-    """The large volume is created with standard configuration that provides standard performance and
-    throughput."""
-    EXTRA_LARGE_VOLUME7_DOT2_PI_B = "PremExtraLargeVolume7Dot2PiB"
-    """The extra large volume is created with higher volume capacity limit 7.2PiB with cool access
-    enabled, delivering higher capacity limit with lower costs."""
-
-
 class LdapServerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the LDAP server."""
 
@@ -772,15 +576,6 @@ class OnCertificateConflictAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAIL = "Fail"
     """Fail the operation if a conflict occurs, meaning the bucket operation will fail, and the
     existing certificate will continue to be in use."""
-
-
-class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Policy status."""
-
-    ENABLED = "Enabled"
-    """Value indicating the policy is enabled."""
-    DISABLED = "Disabled"
-    """Value indicating the policy is disabled."""
 
 
 class ProtocolTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -954,26 +749,6 @@ class SmbNonBrowsable(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """smbNonBrowsable share setting is disabled."""
     ENABLED = "Enabled"
     """smbNonBrowsable share setting is enabled."""
-
-
-class SnapshotDirectoryVisibility(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Controls the visibility of the Elastic Volume's read-only snapshot directory, which provides
-    access to each of the volume's snapshots.
-    """
-
-    HIDDEN = "Hidden"
-    """Value indicating the read-only snapshot directory is not visible."""
-    VISIBLE = "Visible"
-    """Value indicating the read-only snapshot directory is visible."""
-
-
-class SnapshotUsage(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Snapshot usage for backup."""
-
-    USE_EXISTING_SNAPSHOT = "UseExistingSnapshot"
-    """Value indicating an existing snapshot is used."""
-    CREATE_NEW_SNAPSHOT = "CreateNewSnapshot"
-    """Value indicating a new snapshot is created."""
 
 
 class VolumeBackupRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1152,15 +927,6 @@ class VolumeRestoreRelationshipStatus(str, Enum, metaclass=CaseInsensitiveEnumMe
     """FAILED."""
     UNKNOWN = "Unknown"
     """UNKNOWN."""
-
-
-class VolumeSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Volume size for backup."""
-
-    LARGE = "Large"
-    """Value indicating backup is for a large volume."""
-    REGULAR = "Regular"
-    """Value indicating backup is not for a large volume."""
 
 
 class VolumeStorageToNetworkProximity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
