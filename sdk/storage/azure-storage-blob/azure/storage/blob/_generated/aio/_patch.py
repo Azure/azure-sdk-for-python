@@ -11,7 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline import policies
 
 from .._utils.serialization import Deserializer, Serializer
@@ -25,7 +24,6 @@ from .operations import (
 )
 from ._client import BlobClient as GeneratedBlobClient
 from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfiguration
-from .._patch import RangeHeaderPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -65,8 +63,8 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
 
 
 class AzureBlobStorage(GeneratedBlobClient):
-    """Subclass of the generated async BlobClient that allows optional credentials,
-    accepts a pre-built pipeline, and injects the RangeHeaderPolicy.
+    """Subclass of the generated async BlobClient that allows optional credentials
+    and accepts a pre-built pipeline.
 
     :param url: The host name of the blob storage account.
     :type url: str
@@ -87,17 +85,11 @@ class AzureBlobStorage(GeneratedBlobClient):
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            # Wrap the pre-built pipeline to inject RangeHeaderPolicy
-            _wrapped_pipeline = AsyncPipeline(
-                transport=pipeline._transport,
-                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
-            )
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
+            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
-                    RangeHeaderPolicy(),
                     policies.RequestIdPolicy(**kwargs),
                     self._config.headers_policy,
                     self._config.user_agent_policy,

@@ -10,8 +10,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.pipeline import Pipeline, PipelineRequest
-from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline import policies
 
 from ._utils.serialization import Deserializer, Serializer
@@ -28,15 +26,6 @@ from ._configuration import BlobClientConfiguration as GeneratedBlobClientConfig
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-
-class RangeHeaderPolicy(SansIOHTTPPolicy):
-    """Policy that converts the 'Range' header to 'x-ms-range'."""
-
-    def on_request(self, request: PipelineRequest) -> None:
-        range_value = request.http_request.headers.pop("Range", None)
-        if range_value is not None:
-            request.http_request.headers["x-ms-range"] = range_value
 
 
 class BlobClientConfiguration(GeneratedBlobClientConfiguration):
@@ -73,8 +62,8 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
 
 
 class AzureBlobStorage(GeneratedBlobClient):
-    """Subclass of the generated BlobClient that allows optional credentials,
-    accepts a pre-built pipeline, and injects the RangeHeaderPolicy.
+    """Subclass of the generated BlobClient that allows optional credentials
+    and accepts a pre-built pipeline.
 
     :param url: The host name of the blob storage account.
     :type url: str
@@ -95,17 +84,11 @@ class AzureBlobStorage(GeneratedBlobClient):
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            # Wrap the pre-built pipeline to inject RangeHeaderPolicy
-            _wrapped_pipeline = Pipeline(
-                transport=pipeline._transport,
-                policies=[RangeHeaderPolicy()] + list(pipeline._impl_policies),
-            )
-            self._client = PipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
+            self._client = PipelineClient(base_url=_endpoint, pipeline=pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
                 _policies = [
-                    RangeHeaderPolicy(),
                     policies.RequestIdPolicy(**kwargs),
                     self._config.headers_policy,
                     self._config.user_agent_policy,
