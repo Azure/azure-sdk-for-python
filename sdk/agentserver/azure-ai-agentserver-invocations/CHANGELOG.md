@@ -1,6 +1,12 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (Unreleased)
+
+### Bugs Fixed
+
+- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute.
+
+## 1.0.0b7 (2026-07-22)
 
 ### Features Added
 
@@ -10,9 +16,9 @@
   `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
   returns `404` if not registered. See README for details.
 
-### Bugs Fixed
+### Other Changes
 
-- Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute.
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
 
 ## 1.0.0b6 (2026-06-28)
 
