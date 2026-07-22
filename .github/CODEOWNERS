@@ -53,7 +53,7 @@
 /sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084
+/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @yuanqu72
 
 # AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
@@ -265,12 +265,12 @@
 /sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
-/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
+/sdk/agentserver/    @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 # PRLabel: %Hosted Agents
 /sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
-# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
+# ServiceOwners: @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 
 # ServiceLabel: %Image Analysis %Service Attention
 # PRLabel: %Image Analysis

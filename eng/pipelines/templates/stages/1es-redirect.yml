@@ -19,6 +19,10 @@ parameters:
 - name: oneESTemplateTag
   type: string
   default: release
+- name: EnableCompiledCodeql
+  type: boolean
+  default: false
+
 
 extends:
   ${{ if and(parameters.Use1ESOfficial, eq(parameters.oneESTemplateTag, 'canary')) }}:
@@ -55,9 +59,16 @@ extends:
         enabled: false
         justificationForDisabling: "ESLint injected task has failures because it uses an old version of mkdirp. We should not fail for tools not controlled by the repo. See: https://dev.azure.com/azur     19 e-sdk/internal/_build/results?buildId=3556850"
       codeql:
-        compiled:
-          enabled: false
-          justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
+        ${{ if eq(parameters.EnableCompiledCodeql, true) }}:
+          # "cpp" covers both C and C++ code. Language is specified because 
+          # checkout happens after the injected "CodeQL Initialize" step
+          language: cpp
+          compiled:
+            enabled: true
+        ${{ else }}:
+          compiled: 
+            enabled: false
+            justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
       componentgovernance:
         enabled: false
         justificationForDisabling: "To reduce redundant CG runs across all our pipeline jobs we are disabling and only running in our main build job."
