@@ -1,5 +1,5 @@
 directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-js-azure-ai-projects
-commit: 5c50b699e1066ef791ac65840f898cb868eac6bd
+commit: f47a66a24ffa5b1a28cc18d2785cf379225eb9ec
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
   - specification/ai-foundry/data-plane/Foundry/src/agents
@@ -17,9 +17,9 @@ additionalDirectories:
   - specification/ai-foundry/data-plane/Foundry/src/insights
   - specification/ai-foundry/data-plane/Foundry/src/memory-stores
   - specification/ai-foundry/data-plane/Foundry/src/models
-  - specification/ai-foundry/data-plane/Foundry/src/openai-conversations
-  - specification/ai-foundry/data-plane/Foundry/src/openai-evaluations
-  - specification/ai-foundry/data-plane/Foundry/src/openai-responses
+  - specification/ai-foundry/data-plane/Foundry/src/openai/conversations
+  - specification/ai-foundry/data-plane/Foundry/src/openai/evaluations
+  - specification/ai-foundry/data-plane/Foundry/src/openai/responses
   - specification/ai-foundry/data-plane/Foundry/src/red-teams
   - specification/ai-foundry/data-plane/Foundry/src/routines
   - specification/ai-foundry/data-plane/Foundry/src/schedules
