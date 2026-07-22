@@ -49,17 +49,9 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
 
-        version: str = kwargs.pop("version", "2026-06-06")
         self.url = url
         self.credential = credential
-        from .._version import VERSION
-
-        self.version = version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
-
-        kwargs.setdefault("sdk_moniker", "storage-blob/{}".format(VERSION))
-        self.polling_interval = kwargs.get("polling_interval", 30)
-        self._configure(**kwargs)
+        self.version: str = kwargs.pop("version", "2026-06-06")
 
 
 class AzureBlobStorage(GeneratedBlobClient):
