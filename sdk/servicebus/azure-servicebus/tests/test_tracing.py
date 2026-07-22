@@ -19,6 +19,22 @@ from azure.core.settings import settings
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus.aio._transport._pyamqp_transport_async import PyamqpTransportAsync
 
+try:
+    from azure.servicebus._transport._uamqp_transport import UamqpTransport
+    from azure.servicebus.aio._transport._uamqp_transport_async import UamqpTransportAsync
+
+    uamqp_installed = True
+except ImportError:
+    UamqpTransport = None
+    UamqpTransportAsync = None
+    uamqp_installed = False
+
+sync_transports = [PyamqpTransport]
+async_transports = [PyamqpTransportAsync]
+if uamqp_installed:
+    sync_transports.append(UamqpTransport)
+    async_transports.append(UamqpTransportAsync)
+
 
 @pytest.fixture(scope="module", autouse=True)
 def tracer_provider():
@@ -59,12 +75,13 @@ class MockReceiver:
         return MockReceivedMessage()
 
 
-def test_receive_iter_no_http_suppression(enable_otel_tracing):
+@pytest.mark.parametrize("transport", sync_transports)
+def test_receive_iter_no_http_suppression(enable_otel_tracing, transport):
     """Messages are yielded outside the receive span, so HTTP instrumentation is not suppressed in user code."""
     receiver = MockReceiver(message_count=2)
 
     yielded = 0
-    for _ in PyamqpTransport.iter_contextual_wrapper(receiver):
+    for _ in transport.iter_contextual_wrapper(receiver):
         yielded += 1
         # User code scope: suppression must not be active.
         assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY) is not True
@@ -73,12 +90,13 @@ def test_receive_iter_no_http_suppression(enable_otel_tracing):
 
 
 @pytest.mark.asyncio
-async def test_receive_iter_no_http_suppression_async(enable_otel_tracing):
+@pytest.mark.parametrize("transport", async_transports)
+async def test_receive_iter_no_http_suppression_async(enable_otel_tracing, transport):
     """Async counterpart of the sync suppression-scope test."""
     receiver = MockReceiver(message_count=2)
 
     yielded = 0
-    async for _ in PyamqpTransportAsync.iter_contextual_wrapper_async(receiver):
+    async for _ in transport.iter_contextual_wrapper_async(receiver):
         yielded += 1
         assert get_value(_SUPPRESS_HTTP_INSTRUMENTATION_KEY) is not True
 
