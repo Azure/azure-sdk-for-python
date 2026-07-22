@@ -141,7 +141,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                     entries = child.child(0)
                     keys = entries.child(0).to_pylist()
                     map_values = entries.child(1).to_pylist()
-                    values = [
+                    values: List[Any] = [
                         {keys[j]: map_values[j] for j in range(offsets[r], offsets[r + 1])} for r in range(num_rows)
                     ]
                 elif fields[i][1] == Type.TIMESTAMP:
