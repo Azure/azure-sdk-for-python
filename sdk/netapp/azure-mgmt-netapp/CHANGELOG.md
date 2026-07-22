@@ -8,6 +8,7 @@
   - Added enum `BreakthroughMode`
 
 ### Breaking Changes
+
   - Deleted or renamed operation group `ElasticAccountsOperations`
   - Deleted or renamed operation group `ElasticCapacityPoolsOperations`
   - Deleted or renamed operation group `ElasticVolumesOperations`
