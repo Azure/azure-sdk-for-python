@@ -18,7 +18,6 @@ USAGE: python blob_samples_hello_world.py
 import os
 import sys
 
-
 # set up
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, "SampleSource.txt")
@@ -60,7 +59,9 @@ class BlobSamples(object):
 
     def block_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: block_blob_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: block_blob_sample"
+            )
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
@@ -100,7 +101,9 @@ class BlobSamples(object):
 
     def stream_block_blob(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: stream_block_blob")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: stream_block_blob"
+            )
             sys.exit(1)
 
         import uuid
@@ -150,7 +153,7 @@ class BlobSamples(object):
 
     def page_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: page_blob_sample")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: page_blob_sample")
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
@@ -186,7 +189,9 @@ class BlobSamples(object):
 
     def append_blob_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: append_blob_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: append_blob_sample"
+            )
             sys.exit(1)
 
         # Instantiate a new BlobServiceClient using a connection string
