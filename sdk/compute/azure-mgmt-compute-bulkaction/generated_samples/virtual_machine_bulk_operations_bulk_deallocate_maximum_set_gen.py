@@ -32,11 +32,11 @@ def main():
     )
 
     response = client.virtual_machine_bulk_operations.bulk_deallocate_operation(
-        resource_group_name="myResourceGroup",
-        location="eastus2euap",
+        resource_group_name="rgBulkactions",
+        location="useast2euap",
         request_body={
             "executionParameters": {
-                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 20}
+                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 19}
             },
             "resources": {
                 "ids": [
@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-06/VirtualMachineBulkOperations_BulkDeallocate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-07-06-preview/VirtualMachineBulkOperations_BulkDeallocate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()
