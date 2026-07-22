@@ -1179,7 +1179,7 @@ namespace azure.mgmt.cognitiveservices.aio.operations
             ) -> ComputeOperationStatus: ...
 
 
-    class azure.mgmt.cognitiveservices.aio.operations.ComputesOperations:
+    class azure.mgmt.cognitiveservices.aio.operations.ComputesOperations(_ComputesOperationsGenerated):
 
         def __init__(
                 self, 
@@ -9523,7 +9523,7 @@ namespace azure.mgmt.cognitiveservices.operations
             ) -> ComputeOperationStatus: ...
 
 
-    class azure.mgmt.cognitiveservices.operations.ComputesOperations:
+    class azure.mgmt.cognitiveservices.operations.ComputesOperations(_ComputesOperationsGenerated):
 
         def __init__(
                 self, 
