@@ -39,7 +39,6 @@ from cryptography.hazmat.primitives.keywrap import (
 from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import HttpResponseError
 
-
 MAX_SINGLE_PUT_SIZE = 64 * 1024 * 1024
 
 
@@ -86,15 +85,13 @@ class RSAKeyWrapper:
 
     def wrap_key(self, key, algorithm="RSA"):
         if algorithm == "RSA":
-            return self.public_key.encrypt(
-                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec  # nosec
-            )
+            return self.public_key.encrypt(key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None))  # nosec
         raise ValueError("Unknown key wrap algorithm.")
 
     def unwrap_key(self, key, algorithm):
         if algorithm == "RSA":
             return self.private_key.decrypt(
-                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec  # nosec
+                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec
             )
         raise ValueError("Unknown key wrap algorithm.")
 
