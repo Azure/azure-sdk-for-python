@@ -184,6 +184,15 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
         is served at ``GET /invocations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
+    :param asyncapi_spec_json: Optional AsyncAPI spec dict.  When provided, the spec
+        is served at ``GET /invocations/docs/asyncapi.json``.  AsyncAPI is the companion
+        to OpenAPI for streaming/bidirectional surfaces (e.g. ``invocations_ws``).
+    :type asyncapi_spec_json: Optional[dict[str, Any]]
+    :param asyncapi_spec_yaml: Optional AsyncAPI spec as raw YAML text.  When provided,
+        the spec is served verbatim at ``GET /invocations/docs/asyncapi.yaml``.  The
+        path extension is authoritative for the returned content type (no ``Accept``
+        negotiation); the platform never converts between JSON and YAML.
+    :type asyncapi_spec_yaml: Optional[str]
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Invocations"
@@ -192,12 +201,29 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         self,
         *,
         openapi_spec: Optional[dict[str, Any]] = None,
+        asyncapi_spec_json: Optional[dict[str, Any]] = None,
+        asyncapi_spec_yaml: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         self._invoke_fn: Optional[Callable] = None
         self._get_invocation_fn: Optional[Callable] = None
         self._cancel_invocation_fn: Optional[Callable] = None
+        # asyncapi_spec_* are validated eagerly: a stringified dict passed as
+        # asyncapi_spec_yaml is technically valid YAML and would silently reach
+        # clients as a single-line JSON blob. openapi_spec is left unchecked to
+        # preserve backward-compat with existing callers passing dict-like
+        # Mapping subclasses; consider unifying in a future release.
+        if asyncapi_spec_json is not None and not isinstance(asyncapi_spec_json, dict):
+            raise TypeError(
+                f"asyncapi_spec_json must be dict, got {type(asyncapi_spec_json).__name__}"
+            )
+        if asyncapi_spec_yaml is not None and not isinstance(asyncapi_spec_yaml, str):
+            raise TypeError(
+                f"asyncapi_spec_yaml must be str, got {type(asyncapi_spec_yaml).__name__}"
+            )
         self._openapi_spec = openapi_spec
+        self._asyncapi_spec_json = asyncapi_spec_json
+        self._asyncapi_spec_yaml = asyncapi_spec_yaml
 
         # Initialise WS handler slots (no parameters — the keep-alive
         # interval lives on ``AgentConfig`` and is wired into Hypercorn
@@ -211,6 +237,18 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 self._get_openapi_spec_endpoint,
                 methods=["GET"],
                 name="get_openapi_spec",
+            ),
+            Route(
+                "/invocations/docs/asyncapi.json",
+                self._get_asyncapi_spec_json_endpoint,
+                methods=["GET"],
+                name="get_asyncapi_spec_json",
+            ),
+            Route(
+                "/invocations/docs/asyncapi.yaml",
+                self._get_asyncapi_spec_yaml_endpoint,
+                methods=["GET"],
+                name="get_asyncapi_spec_yaml",
             ),
             Route(
                 "/invocations",
@@ -238,8 +276,11 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
 
         # --- Invocations startup configuration logging ---
         logger.info(
-            "Invocations protocol: openapi_spec_configured=%s",
+            "Invocations protocol: openapi_spec_configured=%s, "
+            "asyncapi_spec_json_configured=%s, asyncapi_spec_yaml_configured=%s",
             self._openapi_spec is not None,
+            self._asyncapi_spec_json is not None,
+            self._asyncapi_spec_yaml is not None,
         )
 
     # ------------------------------------------------------------------
@@ -342,6 +383,14 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         """Return the stored OpenAPI spec, or None."""
         return self._openapi_spec
 
+    def get_asyncapi_spec_json(self) -> Optional[dict[str, Any]]:
+        """Return the stored AsyncAPI spec (JSON representation), or None."""
+        return self._asyncapi_spec_json
+
+    def get_asyncapi_spec_yaml(self) -> Optional[str]:
+        """Return the stored AsyncAPI spec as raw YAML text, or None."""
+        return self._asyncapi_spec_yaml
+
     # ------------------------------------------------------------------
     # Span attribute helper
     # ------------------------------------------------------------------
@@ -359,6 +408,26 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
                 headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
             )
         return JSONResponse(spec)
+
+    async def _get_asyncapi_spec_json_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        spec = self.get_asyncapi_spec_json()
+        if spec is None:
+            return create_error_response(
+                "not_found", "No AsyncAPI (JSON) spec registered",
+                status_code=404,
+                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            )
+        return JSONResponse(spec)
+
+    async def _get_asyncapi_spec_yaml_endpoint(self, request: Request) -> Response:  # pylint: disable=unused-argument
+        spec = self.get_asyncapi_spec_yaml()
+        if spec is None:
+            return create_error_response(
+                "not_found", "No AsyncAPI (YAML) spec registered",
+                status_code=404,
+                headers=_apply_error_source_headers({}, _ERROR_SOURCE_UPSTREAM),
+            )
+        return Response(spec, media_type="application/yaml; charset=utf-8")
 
     def _wrap_streaming_response(
         self,
