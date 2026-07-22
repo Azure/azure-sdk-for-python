@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b9 (2026-07-22)
+
+### Other Changes
+
+- Raised the `azure-ai-agentserver-core` dependency floor to `>=2.0.0b8`.
+
 ## 1.0.0b8 (2026-06-28)
 
 ### Features Added
