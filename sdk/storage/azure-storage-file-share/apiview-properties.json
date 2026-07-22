@@ -18,6 +18,7 @@
         "azure.storage.fileshare.models.Metrics": "Storage.File.Metrics",
         "azure.storage.fileshare.models.RetentionPolicy": "Storage.File.RetentionPolicy",
         "azure.storage.fileshare.models.ShareFileRangeList": "Storage.File.ShareFileRangeList",
+        "azure.storage.fileshare.models.ShareFileRangeListSegment": "Storage.File.ShareFileRangeListSegment",
         "azure.storage.fileshare.models.ShareItemInternal": "Storage.File.ShareItemInternal",
         "azure.storage.fileshare.models.ShareNfsSettings": "Storage.File.ShareNfsSettings",
         "azure.storage.fileshare.models.ShareNfsSettingsEncryptionInTransit": "Storage.File.ShareNfsSettingsEncryptionInTransit",
@@ -98,6 +99,8 @@
         "azure.storage.fileshare.aio.operations.FileOperations.upload_range_from_url": "Storage.File.File.uploadRangeFromUrl",
         "azure.storage.fileshare.operations.FileOperations.get_range_list": "Storage.File.File.getRangeList",
         "azure.storage.fileshare.aio.operations.FileOperations.get_range_list": "Storage.File.File.getRangeList",
+        "azure.storage.fileshare.operations.FileOperations.list_all_ranges": "Storage.File.File.listAllRanges",
+        "azure.storage.fileshare.aio.operations.FileOperations.list_all_ranges": "Storage.File.File.listAllRanges",
         "azure.storage.fileshare.operations.FileOperations.start_copy": "Storage.File.File.startCopy",
         "azure.storage.fileshare.aio.operations.FileOperations.start_copy": "Storage.File.File.startCopy",
         "azure.storage.fileshare.operations.FileOperations.abort_copy": "Storage.File.File.abortCopy",
@@ -157,5 +160,5 @@
         "azure.storage.fileshare.operations.ShareOperations.restore": "Storage.File.Share.restore",
         "azure.storage.fileshare.aio.operations.ShareOperations.restore": "Storage.File.Share.restore"
     },
-    "CrossLanguageVersion": "fdd35c41a0ed"
+    "CrossLanguageVersion": "86bc872539d9"
 }
