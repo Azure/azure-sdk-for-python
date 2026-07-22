@@ -1,5 +1,9 @@
 # Release History
 
+## 10.1.0b1 (2026-07-22)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 10.0.0 (2026-07-20)
 
 ### Features Added
