@@ -14,7 +14,7 @@ from preparer import (
 )
 from devtools_testutils import recorded_by_proxy
 from azure.storage.blob import ContainerClient
-from azure.ai.translation.document import (
+from azure.ai.translation.document.models import (
     DocumentTranslationInput,
     TranslationTarget,
     TranslationGlossary,

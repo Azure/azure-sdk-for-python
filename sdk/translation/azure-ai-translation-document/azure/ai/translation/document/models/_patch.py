@@ -52,7 +52,7 @@ class DocumentTranslationInput:
         (see https://aka.ms/azsdk/documenttranslation/managed-identity).
     :param targets: Required. Location of the destination for the output. This is a list of
         TranslationTargets. Note that a TranslationTarget is required for each language code specified.
-    :type targets: list[~azure.ai.translation.document.TranslationTarget]
+    :type targets: list[~azure.ai.translation.document.models.TranslationTarget]
     :keyword Optional[str] source_language: Language code for the source documents.
         If none is specified, the source language will be auto-detected for each document.
     :keyword Optional[str] prefix: A case-sensitive prefix string to filter documents in the source path for
@@ -62,7 +62,7 @@ class DocumentTranslationInput:
         translation. This is most often use for file extensions.
     :keyword storage_type: Storage type of the input documents source string. Possible values
         include: "Folder", "File".
-    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.StorageInputType]
+    :paramtype storage_type: Optional[str or ~azure.ai.translation.document.models.StorageInputType]
     :keyword Optional[str] storage_source: Storage Source. Default value: "AzureBlob".
         Currently only "AzureBlob" is supported.
     """

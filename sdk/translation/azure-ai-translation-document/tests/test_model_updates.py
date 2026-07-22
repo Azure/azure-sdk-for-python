@@ -13,6 +13,8 @@ from azure.ai.translation.document.models import (
     TranslationStatus,
     BatchOptions,
     StartTranslationDetails,
+    DocumentTranslationInput,
+    TranslationTarget,
 )
 from testcase import DocumentTranslationTest
 from preparer import (
@@ -20,7 +22,7 @@ from preparer import (
     DocumentTranslationClientPreparer as _DocumentTranslationClientPreparer,
 )
 from devtools_testutils import recorded_by_proxy
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
 from azure.ai.translation.document._patch import get_translation_input
 
 DocumentTranslationClientPreparer = functools.partial(_DocumentTranslationClientPreparer, DocumentTranslationClient)

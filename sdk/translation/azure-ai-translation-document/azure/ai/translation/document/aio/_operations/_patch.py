@@ -62,7 +62,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
+    a pageable of :class:`~azure.ai.translation.document.models.DocumentStatus`."""
 
     _polling_method: "AsyncDocumentTranslationLROPollingMethod"
 
@@ -82,7 +82,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         """The details for the translation operation
 
         :return: The details for the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatus
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         """
         if self._polling_method._current_body:
             return TranslationStatus(self._polling_method._current_body)

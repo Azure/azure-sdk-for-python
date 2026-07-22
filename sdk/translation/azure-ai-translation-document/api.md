@@ -1,48 +1,6 @@
 ```py
 namespace azure.ai.translation.document
 
-    class azure.ai.translation.document.DocumentStatus(GeneratedDocumentStatus):
-        characters_charged: Optional[int]
-        created_on: datetime
-        deployment_name: Optional[str]
-        error: Optional[DocumentTranslationError]
-        id: str
-        image_characters_detected: Optional[int]
-        images_charged: Optional[int]
-        last_updated_on: datetime
-        source_document_url: str
-        status: Union[str, Status]
-        total_image_scans_failed: Optional[int]
-        total_image_scans_succeeded: Optional[int]
-        translated_document_url: Optional[str]
-        translated_to: str
-        translation_progress: float
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                characters_charged: Optional[int] = ..., 
-                created_on: datetime, 
-                deployment_name: Optional[str] = ..., 
-                error: Optional[DocumentTranslationError] = ..., 
-                id: str, 
-                image_characters_detected: Optional[int] = ..., 
-                images_charged: Optional[int] = ..., 
-                last_updated_on: datetime, 
-                source_document_url: str, 
-                status: Union[str, Status], 
-                total_image_scans_failed: Optional[int] = ..., 
-                total_image_scans_succeeded: Optional[int] = ..., 
-                translated_document_url: Optional[str] = ..., 
-                translated_to: str, 
-                translation_progress: float
-            ): ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]): ...
-
-
     class azure.ai.translation.document.DocumentTranslationApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2024_05_01 = "2024-05-01"
         V2026_03_01 = "2026-03-01"
@@ -173,73 +131,6 @@ namespace azure.ai.translation.document
             ) -> HttpResponse: ...
 
 
-    class azure.ai.translation.document.DocumentTranslationError(_Model):
-        code: Union[str, TranslationErrorCode]
-        inner_error: Optional[InnerTranslationError]
-        message: str
-        target: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                code: Union[str, TranslationErrorCode], 
-                inner_error: Optional[InnerTranslationError] = ..., 
-                message: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.translation.document.DocumentTranslationFileFormat(_Model):
-        content_types: list[str]
-        default_format_version: Optional[str]
-        file_extensions: list[str]
-        file_format: str
-        format_versions: Optional[list[str]]
-        type: Optional[Union[str, FileFormatType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                content_types: list[str], 
-                default_format_version: Optional[str] = ..., 
-                file_extensions: list[str], 
-                file_format: str, 
-                format_versions: Optional[list[str]] = ..., 
-                type: Optional[Union[str, FileFormatType]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.translation.document.DocumentTranslationInput:
-        prefix: Optional[str]
-        source_language: Optional[str]
-        source_url: str
-        storage_source: Optional[str]
-        storage_type: Optional[Union[str, StorageInputType]]
-        suffix: Optional[str]
-        targets: List[TranslationTarget]
-
-        def __init__(
-                self, 
-                source_url: str, 
-                targets: List[TranslationTarget], 
-                *, 
-                prefix: Optional[str] = ..., 
-                source_language: Optional[str] = ..., 
-                storage_source: Optional[str] = ..., 
-                storage_type: Optional[Union[str, StorageInputType]] = ..., 
-                suffix: Optional[str] = ...
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-
     class azure.ai.translation.document.DocumentTranslationLROPoller(LROPoller[PollingReturnType_co]):
         property details: TranslationStatus    # Read-only
         property id: str    # Read-only
@@ -301,82 +192,6 @@ namespace azure.ai.translation.document
                 translate_text_within_image: Optional[bool] = ..., 
                 **kwargs: Any
             ) -> Iterator[bytes]: ...
-
-
-    class azure.ai.translation.document.StorageInputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        FILE = "File"
-        FOLDER = "Folder"
-
-
-    class azure.ai.translation.document.TranslationGlossary(GeneratedTranslationGlossary):
-        file_format: str
-        format_version: Optional[str]
-        glossary_url: str
-        storage_source: Optional[Union[str, TranslationStorageSource]]
-
-        @overload
-        def __init__(
-                self, 
-                glossary_url: str, 
-                file_format: str, 
-                *, 
-                format_version: Optional[str] = ..., 
-                storage_source: Optional[Union[str, TranslationStorageSource]] = ...
-            ): ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]): ...
-
-
-    class azure.ai.translation.document.TranslationStatus(GeneratedTranslationStatus):
-        created_on: datetime
-        error: Optional[DocumentTranslationError]
-        id: str
-        last_updated_on: datetime
-        status: Union[str, Status]
-        summary: TranslationStatusSummary
-
-        def __getattr__(self, name: str) -> Any: ...
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                created_on: datetime, 
-                error: Optional[DocumentTranslationError] = ..., 
-                id: str, 
-                last_updated_on: datetime, 
-                status: Union[str, Status], 
-                summary: TranslationStatusSummary
-            ): ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]): ...
-
-
-    class azure.ai.translation.document.TranslationTarget(GeneratedTranslationTarget):
-        property category_id: Optional[str]
-        category_id: str
-        deployment_name: Optional[str]
-        glossaries: Optional[List[TranslationGlossary]]
-        language: str
-        storage_source: Optional[Union[str, TranslationStorageSource]]
-        target_url: str
-
-        @overload
-        def __init__(
-                self, 
-                target_url: str, 
-                language: str, 
-                *, 
-                category_id: Optional[str] = ..., 
-                deployment_name: Optional[str] = ..., 
-                glossaries: Optional[List[TranslationGlossary]] = ..., 
-                storage_source: Optional[Union[str, TranslationStorageSource]] = ...
-            ): ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]): ...
 
 
 namespace azure.ai.translation.document.aio

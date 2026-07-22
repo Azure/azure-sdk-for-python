@@ -6,11 +6,16 @@
 import os
 import time
 import uuid
-from azure.ai.translation.document.models import DocumentBatch, SourceInput, StartTranslationDetails
+from azure.ai.translation.document.models import (
+    DocumentBatch,
+    SourceInput,
+    StartTranslationDetails,
+    DocumentTranslationInput,
+    TranslationTarget,
+)
 from devtools_testutils import AzureRecordedTestCase, set_custom_default_matcher
 from azure.storage.blob import ContainerClient
 from azure.identity import DefaultAzureCredential
-from azure.ai.translation.document import DocumentTranslationInput, TranslationTarget
 
 
 class Document:

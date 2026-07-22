@@ -179,7 +179,8 @@ poller = document_translation_client.begin_translation("<sas_url_to_source>", "<
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
@@ -302,7 +303,8 @@ Begin translating with documents in multiple source containers to multiple targe
 ```python
 import os
 from azure.core.credentials import AzureKeyCredential
-from azure.ai.translation.document import DocumentTranslationClient, DocumentTranslationInput, TranslationTarget
+from azure.ai.translation.document import DocumentTranslationClient
+from azure.ai.translation.document.models import DocumentTranslationInput, TranslationTarget
 
 endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
 key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]

@@ -33,7 +33,6 @@ from .models import (
     DocumentTranslationFileFormat,
     FileFormatType,
     TranslationStatus,
-    DocumentTranslationError,
     DocumentTranslationInput,
     BatchOptions,
 )
@@ -287,10 +286,10 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, Genera
             translation. This is most often use for file extensions.
         :keyword storage_type: Storage type of the input documents source string. Possible values
             include: "Folder", "File".
-        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :paramtype storage_type: str or ~azure.ai.translation.document.models.StorageInputType
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
-        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :paramtype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
         :keyword str deployment_name: Deployment name of the custom translation model for the
             translation request.
         :keyword bool translate_text_within_image: Whether to translate text embedded within images
@@ -415,7 +414,7 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, Genera
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
+        :type inputs: List[~azure.ai.translation.document.models.DocumentTranslationInput]
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -436,7 +435,7 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, Genera
         :param inputs: The translation inputs. Each individual input has a single
             source URL to documents and can contain multiple targets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput] or
+        :type inputs: List[~azure.ai.translation.document.models.DocumentTranslationInput] or
             IO[bytes] or JSON or ~azure.ai.translation.document.models.StartTranslationDetails
         :param str source_url: The source SAS URL to the Azure Blob container containing the documents
             to be translated. See the service documentation for the supported SAS permissions for accessing
@@ -456,10 +455,10 @@ class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, Genera
             translation. This is most often use for file extensions.
         :keyword storage_type: Storage type of the input documents source string. Possible values
             include: "Folder", "File".
-        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :paramtype storage_type: str or ~azure.ai.translation.document.models.StorageInputType
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
-        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :paramtype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -706,15 +705,6 @@ __all__: List[str] = [
     "SingleDocumentTranslationClient",
     "DocumentTranslationApiVersion",
     "DocumentTranslationLROPoller",
-    # re-export models at this level for backwards compatibility
-    "TranslationGlossary",
-    "TranslationTarget",
-    "DocumentTranslationInput",
-    "TranslationStatus",
-    "DocumentStatus",
-    "DocumentTranslationError",
-    "DocumentTranslationFileFormat",
-    "StorageInputType",
 ]  # Add all objects you want publicly available to users at this package level
 
 

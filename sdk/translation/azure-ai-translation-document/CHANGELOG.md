@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.0 (Unreleased)
+## 2.0.0 (2026-08-01)
 
 ### Features Added
 
@@ -25,6 +25,14 @@
 
 - Changed the default service API version from `2024-05-01` to `2026-03-01`. To keep the previous
   behavior, pass `api_version="2024-05-01"` when constructing the client.
+- Models are no longer re-exported from the top-level `azure.ai.translation.document` namespace and
+  must now be imported from `azure.ai.translation.document.models`. This affects `TranslationGlossary`,
+  `TranslationTarget`, `DocumentTranslationInput`, `TranslationStatus`, `DocumentStatus`,
+  `DocumentTranslationError`, `DocumentTranslationFileFormat`, and `StorageInputType`. For example,
+  replace `from azure.ai.translation.document import TranslationStatus` with
+  `from azure.ai.translation.document.models import TranslationStatus`. The clients
+  (`DocumentTranslationClient`, `SingleDocumentTranslationClient`), `DocumentTranslationApiVersion`,
+  and `DocumentTranslationLROPoller` remain available at the top level.
 
 ### Bugs Fixed
 
