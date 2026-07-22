@@ -14,7 +14,9 @@ from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
 PYLINT_VERSION = "4.0.4"
+PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.7"
 NEXT_PYLINT_VERSION = "4.0.6"
+NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.9"
 
 
 class pylint(Check):
@@ -64,12 +66,22 @@ class pylint(Check):
             # install dependencies
             self.install_dev_reqs(executable, args, package_dir)
             try:
+                if args.next:
+                    # use latest version of azure-pylint-guidelines-checker for next pylint checks
+                    cmds = [
+                        f"azure-pylint-guidelines-checker=={NEXT_PYLINT_GUIDELINES_CHECKER_VERSION}",
+                    ]
+                else:
+                    cmds = [
+                        f"azure-pylint-guidelines-checker=={PYLINT_GUIDELINES_CHECKER_VERSION}",
+                    ]
+                cmds.append(
+                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+                )
+
                 install_into_venv(
                     executable,
-                    [
-                        "azure-pylint-guidelines-checker==0.5.7",
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
-                    ],
+                    cmds,
                     package_dir,
                 )
             except CalledProcessError as e:
