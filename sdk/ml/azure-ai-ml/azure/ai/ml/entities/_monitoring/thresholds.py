@@ -171,6 +171,12 @@ class DataDriftMetricThreshold(MetricThreshold):
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
     :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
+    :keyword metric: The metric name. Defaults to None.
+    :paramtype metric: Optional[str]
     """
 
     def __init__(
@@ -248,6 +254,10 @@ class PredictionDriftMetricThreshold(MetricThreshold):
     :paramtype numerical: ~azure.ai.ml.entities.NumericalDriftMetrics
     :keyword categorical: Categorical drift metrics
     :paramtype categorical: ~azure.ai.ml.entities.CategoricalDriftMetrics
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
     """
 
     def __init__(
@@ -471,6 +481,12 @@ class DataQualityMetricThreshold(MetricThreshold):
     :paramtype numerical: ~azure.ai.ml.entities.DataQualityMetricsNumerical
     :keyword categorical: Categorical data quality metrics
     :paramtype categorical: ~azure.ai.ml.entities.DataQualityMetricsCategorical
+    :keyword data_type: The feature type of the metric threshold. Defaults to None.
+    :paramtype data_type: Optional[~azure.ai.ml.constants.MonitorFeatureType]
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
+    :keyword metric_name: The metric name. Defaults to None.
+    :paramtype metric_name: Optional[str]
     """
 
     def __init__(
@@ -553,6 +569,8 @@ class FeatureAttributionDriftMetricThreshold(MetricThreshold):
 
     :keyword normalized_discounted_cumulative_gain: The threshold value for metric.
     :paramtype normalized_discounted_cumulative_gain: float
+    :keyword threshold: The threshold value. Defaults to None.
+    :paramtype threshold: Optional[float]
     """
 
     def __init__(
@@ -898,6 +916,8 @@ class GenerationTokenStatisticsMonitorMetricThreshold(RestTranslatableMixin):  #
     :ivar threshold: Gets or sets the threshold value.
      If null, a default value will be set depending on the selected metric.
     :vartype threshold: ~azure.mgmt.machinelearningservices.models.MonitoringThreshold
+    :keyword totaltoken: The per-group total token count thresholds. Defaults to None.
+    :paramtype totaltoken: Optional[Dict[str, float]]
     """
 
     def __init__(
