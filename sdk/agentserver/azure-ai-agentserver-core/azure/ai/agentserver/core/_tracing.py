@@ -671,15 +671,20 @@ class _FoundryEnrichmentSpanProcessor:
         # Set agent identity attributes at span end so they cannot be
         # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
         #
-        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # Workaround: opentelemetry-sdk sets _end_time before calling
         # _on_ending, which causes set_attribute() to silently no-op despite the
-        # spec requiring mutability during OnEnding.  We write to _attributes
-        # directly until the SDK is fixed.  The try/except guards against future
-        # SDK changes that may rename or remove the internal field.
+        # spec requiring mutability during OnEnding.  We write to the span's
+        # attribute store directly until the SDK is fixed.  opentelemetry-sdk
+        # >=1.43.0 changed ``span._attributes`` from a plain dict to a
+        # ``BoundedAttributes`` whose backing store is ``._dict`` and which no
+        # longer supports item assignment; older versions exposed a mutable
+        # mapping directly.  Resolve ``._dict`` when present so both work.
+        # The try/except guards against future SDK changes to these internals.
         # TODO: switch to span.set_attribute() once the SDK honours the spec.
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
+        target = getattr(attrs, "_dict", attrs)
         try:
             target = getattr(attrs, "_dict", attrs)
             if self.agent_name:

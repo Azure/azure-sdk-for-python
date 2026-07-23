@@ -1,11 +1,28 @@
 # Release History
 
-## 2.0.0b8 (Unreleased)
+## 2.0.0b9 (Unreleased)
+
+### Features Added
+
+- Added Agent Server-managed OTLP/gRPC export when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` is configured.
+
+### Breaking Changes
+
+### Bugs Fixed
 
 ### Other Changes
 
 - Added local OTLP HTTP/protobuf and gRPC protocol regression tests covering traces, metrics, and logs without requiring external collector infrastructure.
-- Added Agent Server-managed OTLP/gRPC export when `OTEL_EXPORTER_OTLP_PROTOCOL=grpc` is configured.
+
+## 2.0.0b8 (2026-07-22)
+
+### Features Added
+
+- Added `azure.ai.agentserver.core.storage`, the protocol-neutral Foundry durable state-store layer. `FoundryStateStore.get_or_create(name, ...)` is the primary entry point -- an async classmethod that resolves (or creates, on first use) the store in one call. Store-level operations act on the bound store: `get()` (its descriptor), `update(...)` (its mutable `description` / `tags`), and `delete()` (the whole store, cascade-deleting every item). Item operations are explicit and consistently named: `create_item`, `set_item`, `get_item`, `delete_item`, `list_keys`. Store names are path-encoded with base64url on the wire, store-level `item_ttl_seconds` is configured once at create, optional `user_isolation` is declared at store create, and trusted callers may delegate end-user partitioning with `user_id` (`x-ms-user-id`). Response bodies (`StateStore`, `StateStoreItem`, `StateStoreItemRef`, `DeletedStateStore`, `DeletedStateStoreItem`, `StateStoreItemKey`) are typed model classes generated from a formal TypeSpec contract, not hand-written dataclasses. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md).
+
+### Bugs Fixed
+
+- Fixed span attribute enrichment under `opentelemetry-sdk` >= 1.43.0, where `span._attributes` became a `BoundedAttributes` (backed by `._dict`) that no longer supports item assignment. Enrichment now resolves the backing store so agent identity attributes are written on both older and newer OpenTelemetry SDKs.
 
 ## 2.0.0b7 (2026-06-28)
 
