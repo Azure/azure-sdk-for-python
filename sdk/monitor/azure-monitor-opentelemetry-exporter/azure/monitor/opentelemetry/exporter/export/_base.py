@@ -196,17 +196,22 @@ class BaseExporter:
             **kwargs,
         )
         # TODO: Uncomment configuration changes once testing is completed
-        # from azure.monitor.opentelemetry.exporter._utils import _get_os, _get_rp, _get_attach_type
+        # from azure.monitor.opentelemetry.exporter._utils import (
+        #     _get_os_name,
+        #     _get_rp_name,
+        #     _get_attach_type_name,
+        # )
         # from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
 
         # if self._configuration_manager:
         #     self._configuration_manager.initialize(
-        #         os=_get_os(),
-        #         rp=_get_rp(),
-        #         attach=_get_attach_type(),
+        #         os=_get_os_name(),
+        #         rp=_get_rp_name(),
+        #         attach=_get_attach_type_name(),
         #         component="ext",
         #         version=ext_version,
         #         region=self._region,
+        #         ikey=self._instrumentation_key,
         #     )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:

@@ -25,6 +25,7 @@ class _ConfigurationProfile:
     version: str = ""
     component: str = ""
     region: str = ""
+    ikey: str = ""
 
     @classmethod
     def fill(cls, **kwargs) -> None:
@@ -41,6 +42,8 @@ class _ConfigurationProfile:
             cls.attach = kwargs["attach"]
         if "region" in kwargs and cls.region == "":
             cls.region = kwargs["region"]
+        if "ikey" in kwargs and cls.ikey == "":
+            cls.ikey = kwargs["ikey"]
 
 
 class OneSettingsResponse:
@@ -218,48 +221,34 @@ def evaluate_feature(feature_key: str, settings: Dict[str, Any]) -> Optional[boo
 
     Example settings structure:
     {
-        "live_metrics": {
+        "FEATURE_LIVE_METRICS": {
             "default": "disabled",  # Feature is disabled by default
             "override": [
-                {"os": "w"},  # Enable on Windows (any version)
-                {"os": "l", "ver": {"min": "1.0.0b20"}},  # Enable on Linux with version >= 1.0.0b20
-                {"component": "ext", "rp": "f"}  # Enable if component is exporter AND rp is functions
+                {"os": "windows"},  # Enable on Windows (any version)
+                # Enable on Linux at exact version 1.0.0b21 with the distro component
+                {"os": "linux", "ver": "1.0.0b21", "component": "dst"},
+                {"ikey": "12345678-1234-1234-1234-123456789abc"},  # Enable for a specific instrumentation key
+                {"component": "dst"}  # Enable if component is distro
             ]
         },
-        "sampling": {
+        "FEATURE_SDK_STATS": {
             "default": "enabled",  # Feature is enabled by default
             "override": [
-                {"os": ["w", "l"]},  # Disable on Windows OR Linux
-                {"ver": {"max": "1.0.0"}},  # Disable on versions <= 1.0.0
-                # Disable if attach is integratedauto/manual AND region is eastus
-                {"attach": ["i", "m"], "region": "eastus"}
-            ]
-        },
-        "profiling": {
-            "default": "disabled",
-            "override": [
-                {"os": "w", "ver": {"min": "2.0.0", "max": "3.0.0"}},  # Enable on Windows with version 2.0.0-3.0.0
-                # Enable if component is exporter AND rp is functions/appsvc AND region is westus/eastus
-                {"component": "ext", "rp": ["f", "a"], "region": ["westus", "eastus"]}
-            ]
-        },
-        "debug_logging": {
-            "default": "enabled",
-            "override": [
-                {"ver": "1.0.0b1"},  # Disable on exact version 1.0.0b1
-                # Disable on Linux with distro component, manual attach, and AKS runtime
-                {"os": "l", "component": "dst", "attach": "m", "rp": "k"}
+                {"os": "linux"},  # Disable on Linux
+                # Disable on Linux at exact version 1.0.0b20 with the exporter component
+                {"os": "linux", "ver": "1.0.0b20", "component": "ext"}
             ]
         }
     }
 
-    Available condition fields:
-    - os: Operating system ("w"=windows, "l"=linux, "d"=darwin, "u"=unknown, etc.) - supports single value or list
-    - ver: Version constraints - supports exact string match or dict with "min"/"max" keys
-    - component: Component type ("ext"=exporter, "dst"=distro) - exact string match
-    - rp: Runtime platform ("u"=unknown, "f"=functions, "a"=appsvc, "k"=aks) - supports single value or list
-    - region: Host region ("westus", "eastus", etc.) - supports single value or list
-    - attach: Attachment type ("m"=manual, "i"=integratedauto) - supports single value or list
+    Available condition fields (each override rule is a single-value exact match per field):
+    - os: Operating system ("windows", "linux", "darwin", "unknown")
+    - ver: Exact version string match (e.g. "1.0.0b21"); when present, "component" is also required
+    - rp: Resource provider ("appsvc", "fn", "aks", "unknown")
+    - ikey: Instrumentation key (GUID format, case-insensitive)
+    - component: Component type ("dst"=distro, "ext"=exporter, "mot"=msft distro)
+    - attach: Attach type ("manual", "integratedauto")
+    - region: Azure region (e.g. "eastus", "westeurope")
 
     Override logic:
     - Each item in the override list is an independent rule
@@ -301,6 +290,11 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
 
     All conditions within a single override rule must match for the rule to apply.
 
+    A version ("ver") condition is only honored when the rule also carries a "component"
+    condition (per the OneSettings schema, "ver" requires "component"). A rule that specifies
+    "ver" without "component" is treated as non-matching. Because "component" is a regular
+    condition, it is still matched against the current profile like any other field.
+
     :param override_rule: Dictionary of conditions that must all be true
     :type override_rule: Dict[str, Any]
     :return: True if all conditions in the rule match, False otherwise
@@ -308,6 +302,10 @@ def _matches_override_rule(override_rule: Dict[str, Any]) -> bool:
     """
     # Validate input
     if not override_rule:
+        return False
+
+    # A "ver" condition requires a "component" condition to be present in the same rule.
+    if "ver" in override_rule and "component" not in override_rule:
         return False
 
     # All conditions in this rule must match
@@ -338,32 +336,11 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
         return False
 
     if condition_key == "os":
-        # OS condition - check if current OS is in the list
-        if isinstance(condition_value, list):
-            return profile.os.lower() in [str(os).lower() for os in condition_value]
+        # OS condition - exact match (case-insensitive)
         return profile.os.lower() == str(condition_value).lower()
 
     if condition_key == "ver":
-        # Version condition - support min/max version checks
-        if isinstance(condition_value, dict):
-            current_version = profile.version
-            if not current_version:
-                return False
-
-            # Check minimum version
-            if "min" in condition_value:
-                min_version = condition_value["min"]
-                if not _compare_versions(current_version, str(min_version), ">="):
-                    return False
-
-            # Check maximum version
-            if "max" in condition_value:
-                max_version = condition_value["max"]
-                if not _compare_versions(current_version, str(max_version), "<="):
-                    return False
-
-            return True
-        # Exact version match
+        # Version condition - exact match
         return profile.version == str(condition_value)
 
     if condition_key == "component":
@@ -371,96 +348,23 @@ def _matches_condition(condition_key: str, condition_value: Any) -> bool:
         return profile.component == str(condition_value)
 
     if condition_key == "rp":
-        # Runtime platform condition - check if current RP is in the list
-        if isinstance(condition_value, list):
-            return profile.rp in [str(rp) for rp in condition_value]
+        # Resource provider condition - exact match
         return profile.rp == str(condition_value)
 
     if condition_key == "region":
-        # Region condition - check if current region is in the list
-        if isinstance(condition_value, list):
-            return profile.region in [str(region) for region in condition_value]
+        # Region condition - exact match
         return profile.region == str(condition_value)
 
     if condition_key == "attach":
-        # Attach type condition - check if current attach type is in the list
-        if isinstance(condition_value, list):
-            return profile.attach in [str(attach) for attach in condition_value]
+        # Attach type condition - exact match
         return profile.attach == str(condition_value)
+
+    if condition_key == "ikey":
+        # Instrumentation key condition - exact match, case-insensitive (GUIDs are hex)
+        return profile.ikey.lower() == str(condition_value).lower()
 
     # Unknown condition key
     return False
-
-
-def _compare_versions(version1: str, version2: str, operator: str) -> bool:
-    """Compare two version strings using the specified operator.
-
-    Handles standard semantic versioning with beta versions (e.g., "1.0.0b28").
-
-    :param version1: First version string (e.g., "2.9.1", "1.0.0b28")
-    :type version1: str
-    :param version2: Second version string (e.g., "2.9.0", "1.0.0b20")
-    :type version2: str
-    :param operator: Comparison operator (">=", "<=", "==", ">", "<")
-    :type operator: str
-    :return: True if the comparison is satisfied, False otherwise
-    :rtype: bool
-    """
-    try:
-        # Parse version strings into comparable tuples
-        v1_parts = _parse_version_with_beta(version1)
-        v2_parts = _parse_version_with_beta(version2)
-
-        # Compare tuples
-        if operator == ">=":
-            return v1_parts >= v2_parts
-        if operator == "<=":
-            return v1_parts <= v2_parts
-        if operator == "==":
-            return v1_parts == v2_parts
-        if operator == ">":
-            return v1_parts > v2_parts
-        if operator == "<":
-            return v1_parts < v2_parts
-        return False
-    except (ValueError, AttributeError):
-        # If version parsing fails, fall back to string comparison
-        if operator == ">=":
-            return version1 >= version2
-        if operator == "<=":
-            return version1 <= version2
-        if operator == "==":
-            return version1 == version2
-        if operator == ">":
-            return version1 > version2
-        if operator == "<":
-            return version1 < version2
-        return False
-
-
-def _parse_version_with_beta(version: str) -> tuple:
-    """Parse a version string that may contain beta suffix into a comparable tuple.
-
-    Examples:
-    - "1.0.0" -> (1, 0, 0, float('inf'))  # Release version sorts after beta
-    - "1.0.0b28" -> (1, 0, 0, 28)        # Beta version with number
-    - "2.1.5b1" -> (2, 1, 5, 1)          # Beta version with number
-
-    :param version: Version string to parse
-    :type version: str
-    :return: Tuple representing version for comparison
-    :rtype: tuple
-    """
-    # Check if version contains beta suffix
-    if "b" in version:
-        # Split on 'b' to separate base version and beta number
-        base_version, beta_part = version.split("b", 1)
-        base_parts = [int(x) for x in base_version.split(".")]
-        beta_number = int(beta_part) if beta_part.isdigit() else 0
-        return tuple(base_parts + [beta_number])
-    # Release version - use infinity for beta part so it sorts after beta versions
-    base_parts = [int(x) for x in version.split(".")]
-    return tuple(base_parts + [float("inf")])
 
 
 # cSpell:enable
