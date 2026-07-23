@@ -2382,15 +2382,17 @@ class CreateResponse(TypedDict, total=False):
     :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse.
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user, with a maximum length of 64 characters. We recommend hashing their username or email
-     address, in order to avoid sending us any identifying information.
+     address, in order to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field.
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
      Literal["flex"], Literal["scale"], Literal["priority"]
@@ -2454,15 +2456,17 @@ class CreateResponse(TypedDict, total=False):
     """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse."""
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     safety_identifier: str
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
      maximum length of 64 characters. We recommend hashing their username or email address, in order
-     to avoid sending us any identifying information."""
+     to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     prompt_cache_key: str
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field."""
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
      Literal[\"scale\"], Literal[\"priority\"]"""
@@ -4786,8 +4790,6 @@ class ItemFileSearchToolCall(TypedDict, total=False):
 class ItemFunctionToolCall(TypedDict, total=False):
     """Function tool call.
 
-    :ivar id: The unique ID of the function tool call. Required.
-    :vartype id: str
     :ivar type: The type of the function tool call. Always ``function_call``. Required.
      FUNCTION_CALL.
     :vartype type: Literal["function_call"]
@@ -4805,8 +4807,6 @@ class ItemFunctionToolCall(TypedDict, total=False):
     :vartype status: Literal["in_progress", "completed", "incomplete"]
     """
 
-    id: Required[str]
-    """The unique ID of the function tool call. Required."""
     type: Required[Literal["function_call"]]
     """The type of the function tool call. Always ``function_call``. Required. FUNCTION_CALL."""
     call_id: Required[str]
@@ -8399,15 +8399,17 @@ class ResponseObject(TypedDict, total=False):
     :ivar user: This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse.
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype user: str
     :ivar safety_identifier: A stable identifier used to help detect users of your application that
      may be violating OpenAI's usage policies. The IDs should be a string that uniquely identifies
      each user, with a maximum length of 64 characters. We recommend hashing their username or email
-     address, in order to avoid sending us any identifying information.
+     address, in order to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_.
     :vartype safety_identifier: str
     :ivar prompt_cache_key: Used by OpenAI to cache responses for similar requests to optimize your
-     cache hit rates. Replaces the ``user`` field.
+     cache hit rates. Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_.
     :vartype prompt_cache_key: str
     :ivar service_tier: Is one of the following types: Literal["auto"], Literal["default"],
      Literal["flex"], Literal["scale"], Literal["priority"]
@@ -8451,11 +8453,14 @@ class ResponseObject(TypedDict, total=False):
     :vartype error: "ResponseErrorInfo"
     :ivar incomplete_details: Required.
     :vartype incomplete_details: "ResponseIncompleteDetails"
-    :ivar output: An array of content items generated by the model. The length and order of items
-     in the ``output`` array is dependent on the model's response. Rather than accessing the first
-     item in the ``output`` array and assuming it's an ``assistant`` message with the content
-     generated by the model, consider using the ``output_text`` property where supported in SDKs.
-     Required.
+    :ivar output: An array of content items generated by the model.
+
+     * The length and order of items in the `output` array is dependent
+     on the model's response.
+     * Rather than accessing the first item in the `output` array and
+     assuming it's an `assistant` message with the content generated by
+     the model, you might consider using the `output_text` property where
+     supported in SDKs. Required.
     :vartype output: list["OutputItem"]
     :ivar reasoning:
     :vartype reasoning: "Reasoning"
@@ -8485,15 +8490,17 @@ class ResponseObject(TypedDict, total=False):
     """This field is being replaced by ``safety_identifier`` and ``prompt_cache_key``. Use
      ``prompt_cache_key`` instead to maintain caching optimizations. A stable identifier for your
      end-users. Used to boost cache hit rates by better bucketing similar requests and  to help
-     OpenAI detect and prevent abuse."""
+     OpenAI detect and prevent abuse. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     safety_identifier: str
     """A stable identifier used to help detect users of your application that may be violating
      OpenAI's usage policies. The IDs should be a string that uniquely identifies each user, with a
      maximum length of 64 characters. We recommend hashing their username or email address, in order
-     to avoid sending us any identifying information."""
+     to avoid sending us any identifying information. `Learn more
+     </docs/guides/safety-best-practices#safety-identifiers>`_."""
     prompt_cache_key: str
     """Used by OpenAI to cache responses for similar requests to optimize your cache hit rates.
-     Replaces the ``user`` field."""
+     Replaces the ``user`` field. `Learn more </docs/guides/prompt-caching>`_."""
     service_tier: Optional[Literal["auto", "default", "flex", "scale", "priority"]]
     """Is one of the following types: Literal[\"auto\"], Literal[\"default\"], Literal[\"flex\"],
      Literal[\"scale\"], Literal[\"priority\"]"""
@@ -8529,10 +8536,14 @@ class ResponseObject(TypedDict, total=False):
     incomplete_details: Required[Optional["ResponseIncompleteDetails"]]
     """Required."""
     output: Required[list["OutputItem"]]
-    """An array of content items generated by the model. The length and order of items in the
-     ``output`` array is dependent on the model's response. Rather than accessing the first item in
-     the ``output`` array and assuming it's an ``assistant`` message with the content generated by
-     the model, consider using the ``output_text`` property where supported in SDKs. Required."""
+    """An array of content items generated by the model.
+
+      * The length and order of items in the `output` array is dependent
+      on the model's response.
+      * Rather than accessing the first item in the `output` array and
+      assuming it's an `assistant` message with the content generated by
+      the model, you might consider using the `output_text` property where
+      supported in SDKs. Required."""
     reasoning: Optional["Reasoning"]
     instructions: Required[Optional[Union[str, list["Item"]]]]
     """Required. Is either a str type or a [Item] type."""
@@ -9055,8 +9066,11 @@ class ResponseTextDoneEvent(TypedDict, total=False):
 
 
 class ResponseTextParam(TypedDict, total=False):
-    """Configuration options for a text response from the model. Can be plain text or structured
-    JSON data.
+    """Configuration options for a text response from the model. Can be plain
+    text or structured JSON data. Learn more:
+
+    * [Text inputs and outputs](/docs/guides/text)
+    * [Structured Outputs](/docs/guides/structured-outputs).
 
     :ivar format:
     :vartype format: "TextResponseFormatConfiguration"
@@ -9586,7 +9600,8 @@ class ToolChoiceAllowed(TypedDict, total=False):
 
 
 class ToolChoiceCodeInterpreter(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. CODE_INTERPRETER.
     :vartype type: Literal["code_interpreter"]
@@ -9597,7 +9612,8 @@ class ToolChoiceCodeInterpreter(TypedDict, total=False):
 
 
 class ToolChoiceComputer(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER.
     :vartype type: Literal["computer"]
@@ -9608,7 +9624,8 @@ class ToolChoiceComputer(TypedDict, total=False):
 
 
 class ToolChoiceComputerUse(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE.
     :vartype type: Literal["computer_use"]
@@ -9619,7 +9636,8 @@ class ToolChoiceComputerUse(TypedDict, total=False):
 
 
 class ToolChoiceComputerUsePreview(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. COMPUTER_USE_PREVIEW.
     :vartype type: Literal["computer_use_preview"]
@@ -9645,7 +9663,8 @@ class ToolChoiceCustom(TypedDict, total=False):
 
 
 class ToolChoiceFileSearch(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. FILE_SEARCH.
     :vartype type: Literal["file_search"]
@@ -9671,7 +9690,8 @@ class ToolChoiceFunction(TypedDict, total=False):
 
 
 class ToolChoiceImageGeneration(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. IMAGE_GENERATION.
     :vartype type: Literal["image_generation"]
@@ -9700,7 +9720,8 @@ class ToolChoiceMCP(TypedDict, total=False):
 
 
 class ToolChoiceWebSearchPreview(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW.
     :vartype type: Literal["web_search_preview"]
@@ -9711,7 +9732,8 @@ class ToolChoiceWebSearchPreview(TypedDict, total=False):
 
 
 class ToolChoiceWebSearchPreview20250311(TypedDict, total=False):
-    """Indicates that the model should use a built-in tool to generate a response.
+    """Indicates that the model should use a built-in tool to generate a response. `Learn more about
+    built-in tools <https://platform.openai.com/docs/guides/tools>`_.
 
     :ivar type: Required. WEB_SEARCH_PREVIEW2025_03_11.
     :vartype type: Literal["web_search_preview_2025_03_11"]

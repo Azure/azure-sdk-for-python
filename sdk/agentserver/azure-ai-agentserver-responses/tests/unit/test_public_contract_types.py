@@ -91,6 +91,24 @@ def test_generated_union_aliases_are_publicly_exported() -> None:
         assert hasattr(models, name)
 
 
+def test_create_response_accepts_function_call_input_without_id() -> None:
+    request: CreateResponse = {
+        "model": "test-model",
+        "input": [
+            {
+                "type": "function_call",
+                "call_id": "call_123",
+                "name": "lookup",
+                "arguments": "{}",
+            }
+        ],
+    }
+
+    input_item = request["input"][0]
+    assert input_item["type"] == "function_call"
+    assert "id" not in input_item
+
+
 # =====================================================================
 # 1. context.request → CreateResponse
 # =====================================================================

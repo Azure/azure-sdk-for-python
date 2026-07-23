@@ -339,6 +339,11 @@ def _validate_CreateResponse_context_management_item(value: Any, path: str, erro
     _validate_OpenAI_ContextManagementParam(value, path, errors)
 
 def _validate_CreateResponse_include_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('CreateResponse', 'include_item')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_IncludeEnum(value, path, errors)
 
 def _validate_OpenAI_InputParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -513,9 +518,19 @@ def _validate_OpenAI_ResponseTextParam_format(value: Any, path: str, errors: lis
     _validate_OpenAI_TextResponseFormatConfiguration(value, path, errors)
 
 def _validate_OpenAI_ResponseTextParam_verbosity(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('ResponseTextParam', 'verbosity')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_Verbosity(value, path, errors)
 
 def _validate_OpenAI_ToolChoiceParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('ToolChoiceParam', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_ToolChoiceParamType(value, path, errors)
 
 def _validate_OpenAI_ToolChoiceAllowed(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -1023,6 +1038,11 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
         _validate_OpenAI_ItemWebSearchToolCall(value, path, errors)
 
 def _validate_OpenAI_TextResponseFormatConfiguration_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('TextResponseFormatConfiguration', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_TextResponseFormatConfigurationType(value, path, errors)
 
 def _validate_OpenAI_TextResponseFormatConfigurationResponseFormatJsonObject(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -1086,6 +1106,11 @@ def _validate_OpenAI_ToolChoiceAllowed_tools_item(value: Any, path: str, errors:
             _validate_CreateResponse_structured_inputs_additional_property(_item, f"{path}.{_key}", errors)
 
 def _validate_OpenAI_Tool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('Tool', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_ToolType(value, path, errors)
 
 def _validate_A2APreviewTool(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -1597,6 +1622,11 @@ def _validate_WorkIQPreviewTool(value: Any, path: str, errors: list[dict[str, st
         _validate_WorkIQPreviewTool_work_iq_preview(value['work_iq_preview'], f"{path}.work_iq_preview", errors)
 
 def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('Item', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_ItemType(value, path, errors)
 
 def _validate_OpenAI_AdditionalToolsItemParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -1841,8 +1871,6 @@ def _validate_OpenAI_ItemFunctionToolCall(value: Any, path: str, errors: list[di
         _validate_OpenAI_ItemFunctionToolCall_arguments(value['arguments'], f"{path}.arguments", errors)
     if 'call_id' in value:
         _validate_OpenAI_ItemFunctionToolCall_call_id(value['call_id'], f"{path}.call_id", errors)
-    if 'id' in value:
-        _validate_OpenAI_ItemFunctionToolCall_id(value['id'], f"{path}.id", errors)
     if 'name' in value:
         _validate_OpenAI_ItemFunctionToolCall_name(value['name'], f"{path}.name", errors)
     if 'namespace' in value:
@@ -3231,13 +3259,6 @@ def _validate_OpenAI_ItemFunctionToolCall_call_id(value: Any, path: str, errors:
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_ItemFunctionToolCall_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    if value is None:
-        return
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_ItemFunctionToolCall_name(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'string'):
         _append_type_mismatch(errors, path, 'string', value)
@@ -3817,6 +3838,11 @@ def _validate_OpenAI_NamespaceToolParam_tools_item(value: Any, path: str, errors
         return
 
 def _validate_OpenAI_WebSearchPreviewTool_search_content_types_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('WebSearchPreviewTool', 'search_content_types_item')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_SearchContentType(value, path, errors)
 
 def _validate_OpenAI_ItemType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4112,6 +4138,11 @@ def _validate_OpenAI_CodeInterpreterOutputImage(value: Any, path: str, errors: l
         _validate_OpenAI_CodeInterpreterOutputImage_url(value['url'], f"{path}.url", errors)
 
 def _validate_OpenAI_ComputerAction_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('ComputerAction', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_ComputerActionType(value, path, errors)
 
 def _validate_OpenAI_ClickParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4357,6 +4388,11 @@ def _validate_OpenAI_LocalShellExecAction_type(value: Any, path: str, errors: li
         return
 
 def _validate_OpenAI_RealtimeMCPError_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('RealtimeMCPError', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_RealtimeMcpErrorType(value, path, errors)
 
 def _validate_OpenAI_RealtimeMCPHTTPError(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4954,6 +4990,11 @@ def _validate_OpenAI_MessageContent(value: Any, path: str, errors: list[dict[str
         _validate_OpenAI_TextContent(value, path, errors)
 
 def _validate_OpenAI_OutputMessageContent_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('OutputMessageContent', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_OutputMessageContentType(value, path, errors)
 
 def _validate_OpenAI_OutputMessageContentOutputTextContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5033,6 +5074,11 @@ def _validate_OpenAI_WebSearchActionSearch_sources_item(value: Any, path: str, e
     _validate_OpenAI_WebSearchActionSearchSources(value, path, errors)
 
 def _validate_OpenAI_ContainerNetworkPolicyParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('ContainerNetworkPolicyParam', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_ContainerNetworkPolicyParamType(value, path, errors)
 
 def _validate_OpenAI_ContainerNetworkPolicyAllowlistParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5074,6 +5120,11 @@ def _validate_OpenAI_DragParam_path_item(value: Any, path: str, errors: list[dic
     _validate_OpenAI_CoordParam(value, path, errors)
 
 def _validate_OpenAI_FunctionAndCustomToolCallOutput_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('FunctionAndCustomToolCallOutput', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_FunctionAndCustomToolCallOutputType(value, path, errors)
 
 def _validate_OpenAI_FunctionAndCustomToolCallOutputInputFileContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5182,6 +5233,11 @@ def _validate_OpenAI_RealtimeMcpErrorType_2(value: Any, path: str, errors: list[
         return
 
 def _validate_OpenAI_MessageContent_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('MessageContent', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_MessageContentType(value, path, errors)
 
 def _validate_OpenAI_ComputerScreenshotContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5635,6 +5691,11 @@ def _validate_OpenAI_LogProb(value: Any, path: str, errors: list[dict[str, str]]
         _validate_OpenAI_LogProb_top_logprobs(value['top_logprobs'], f"{path}.top_logprobs", errors)
 
 def _validate_OpenAI_Annotation_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
+    _allowed_values = _field_literal_values('Annotation', 'type')
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        return
     _validate_OpenAI_AnnotationType(value, path, errors)
 
 def _validate_OpenAI_ContainerFileCitationBody(value: Any, path: str, errors: list[dict[str, str]]) -> None:

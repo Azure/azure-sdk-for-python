@@ -2802,14 +2802,12 @@ namespace azure.ai.agentserver.responses.models
     class azure.ai.agentserver.responses.models.ItemFunctionToolCall(TypedDict, total=False):
         key "arguments": Required[str]
         key "call_id": Required[str]
-        key "id": Required[str]
         key "name": Required[str]
         key "namespace": str
         key "status": Literal["in_progress", "completed", "incomplete"]
         key "type": Required[Literal["function_call"]]
         arguments: str
         call_id: str
-        id: str
         name: str
         namespace: str
         status: Literal[in_progress, completed, incomplete]

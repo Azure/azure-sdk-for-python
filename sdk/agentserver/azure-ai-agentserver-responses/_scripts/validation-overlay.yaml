@@ -39,11 +39,6 @@ schemas:
   Item:
     default_discriminator: "message"
 
-  # OpenAI input function_call items require type/call_id/name/arguments, but
-  # not the output-item id assigned by the server.
-  ItemFunctionToolCall:
-    not_required: ["id"]
-
   # GAP-03: OpenAI spec InputImageContentParamAutoParam only requires [type].
   # The "detail" field is nullable/optional and defaults to "auto".
   MessageContentInputImageContent:
