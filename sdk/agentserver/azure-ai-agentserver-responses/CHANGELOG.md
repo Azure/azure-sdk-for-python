@@ -1,11 +1,10 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b9 (2026-07-22)
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
-- Reworked the resilient responses samples: `sample_21_resilient_langgraph` is now a real-time streaming LangGraph agent that composes LangGraph's checkpointer with the framework's response checkpoints (see the "Composing an External Durable Engine" section of the handler guide), added real crash-harness e2e coverage for samples 19–22, and removed the copilot sample. No library API changes.
+- Raised the `azure-ai-agentserver-core` dependency floor to `>=2.0.0b8`.
 
 ## 1.0.0b8 (2026-06-28)
 

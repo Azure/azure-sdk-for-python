@@ -1751,6 +1751,7 @@ namespace azure.mgmt.hybridcompute.models
 
     class azure.mgmt.hybridcompute.models.GatewayProperties(_Model):
         allowed_features: Optional[list[str]]
+        gateway_bypass: Optional[list[str]]
         gateway_endpoint: Optional[str]
         gateway_id: Optional[str]
         gateway_type: Optional[Union[str, GatewayType]]
@@ -1761,6 +1762,7 @@ namespace azure.mgmt.hybridcompute.models
                 self, 
                 *, 
                 allowed_features: Optional[list[str]] = ..., 
+                gateway_bypass: Optional[list[str]] = ..., 
                 gateway_type: Optional[Union[str, GatewayType]] = ...
             ) -> None: ...
 
@@ -1798,12 +1800,14 @@ namespace azure.mgmt.hybridcompute.models
 
     class azure.mgmt.hybridcompute.models.GatewayUpdateProperties(_Model):
         allowed_features: Optional[list[str]]
+        gateway_bypass: Optional[list[str]]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                allowed_features: Optional[list[str]] = ...
+                allowed_features: Optional[list[str]] = ..., 
+                gateway_bypass: Optional[list[str]] = ...
             ) -> None: ...
 
         @overload
@@ -1859,22 +1863,6 @@ namespace azure.mgmt.hybridcompute.models
                 *, 
                 public_network_access: Optional[Union[str, PublicNetworkAccessType]] = ..., 
                 service_extensions: Optional[list[ServiceExtension]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.hybridcompute.models.Identity(_Model):
-        principal_id: Optional[str]
-        tenant_id: Optional[str]
-        type: Optional[Union[str, ResourceIdentityType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                type: Optional[Union[str, ResourceIdentityType]] = ...
             ) -> None: ...
 
         @overload
@@ -2274,6 +2262,7 @@ namespace azure.mgmt.hybridcompute.models
     class azure.mgmt.hybridcompute.models.LicenseTarget(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         WINDOWS_SERVER2012 = "Windows Server 2012"
         WINDOWS_SERVER2012_R2 = "Windows Server 2012 R2"
+        WINDOWS_SERVER2016 = "Windows Server 2016"
 
 
     class azure.mgmt.hybridcompute.models.LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2382,7 +2371,7 @@ namespace azure.mgmt.hybridcompute.models
 
     class azure.mgmt.hybridcompute.models.Machine(TrackedResource):
         id: str
-        identity: Optional[Identity]
+        identity: Optional[ManagedServiceIdentity]
         kind: Optional[Union[str, ArcKindEnum]]
         location: str
         name: str
@@ -2398,7 +2387,7 @@ namespace azure.mgmt.hybridcompute.models
         def __init__(
                 self, 
                 *, 
-                identity: Optional[Identity] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 kind: Optional[Union[str, ArcKindEnum]] = ..., 
                 location: str, 
                 properties: Optional[MachineProperties] = ..., 
@@ -2671,6 +2660,7 @@ namespace azure.mgmt.hybridcompute.models
         provisioning_state: Optional[str]
         service_statuses: Optional[ServiceStatuses]
         status: Optional[Union[str, StatusTypes]]
+        status_reason: Optional[Union[str, MachineStatusReason]]
         storage_profile: Optional[StorageProfile]
         tpm_ek_certificate: Optional[str]
         vm_id: Optional[str]
@@ -2816,8 +2806,12 @@ namespace azure.mgmt.hybridcompute.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.hybridcompute.models.MachineStatusReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        CLONED = "Cloned"
+
+
     class azure.mgmt.hybridcompute.models.MachineUpdate(ResourceUpdate):
-        identity: Optional[Identity]
+        identity: Optional[ManagedServiceIdentity]
         kind: Optional[Union[str, ArcKindEnum]]
         properties: Optional[MachineUpdateProperties]
         tags: dict[str, str]
@@ -2828,7 +2822,7 @@ namespace azure.mgmt.hybridcompute.models
         def __init__(
                 self, 
                 *, 
-                identity: Optional[Identity] = ..., 
+                identity: Optional[ManagedServiceIdentity] = ..., 
                 kind: Optional[Union[str, ArcKindEnum]] = ..., 
                 properties: Optional[MachineUpdateProperties] = ..., 
                 tags: Optional[dict[str, str]] = ...
@@ -2870,6 +2864,31 @@ namespace azure.mgmt.hybridcompute.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.ManagedServiceIdentity(_Model):
+        principal_id: Optional[str]
+        tenant_id: Optional[str]
+        type: Union[str, ManagedServiceIdentityType]
+        user_assigned_identities: Optional[dict[str, UserAssignedIdentity]]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                type: Union[str, ManagedServiceIdentityType], 
+                user_assigned_identities: Optional[dict[str, UserAssignedIdentity]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        NONE = "None"
+        SYSTEM_ASSIGNED = "SystemAssigned"
+        SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+        USER_ASSIGNED = "UserAssigned"
 
 
     class azure.mgmt.hybridcompute.models.NetworkInterface(_Model):
@@ -3364,10 +3383,6 @@ namespace azure.mgmt.hybridcompute.models
         name: Optional[str]
 
 
-    class azure.mgmt.hybridcompute.models.ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        SYSTEM_ASSIGNED = "SystemAssigned"
-
-
     class azure.mgmt.hybridcompute.models.ResourceUpdate(_Model):
         tags: Optional[dict[str, str]]
 
@@ -3623,6 +3638,11 @@ namespace azure.mgmt.hybridcompute.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.hybridcompute.models.UserAssignedIdentity(_Model):
+        client_id: Optional[str]
+        principal_id: Optional[str]
 
 
     class azure.mgmt.hybridcompute.models.VMGuestPatchClassificationLinux(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4977,6 +4997,8 @@ namespace azure.mgmt.hybridcompute.types
         key "provisioningState": Union[str, ProvisioningState]
         allowedFeatures: list[str]
         allowed_features: list[str]
+        gatewayBypass: list[str]
+        gateway_bypass: list[str]
         gateway_endpoint: str
         gateway_id: str
         gateway_type: Union[str, GatewayType]
@@ -4992,6 +5014,8 @@ namespace azure.mgmt.hybridcompute.types
     class azure.mgmt.hybridcompute.types.GatewayUpdateProperties(TypedDict, total=False):
         allowedFeatures: list[str]
         allowed_features: list[str]
+        gatewayBypass: list[str]
+        gateway_bypass: list[str]
 
 
     class azure.mgmt.hybridcompute.types.HardwareProfile(TypedDict, total=False):
@@ -5029,15 +5053,6 @@ namespace azure.mgmt.hybridcompute.types
         public_network_access: Union[str, PublicNetworkAccessType]
         serviceExtensions: list[ServiceExtension]
         service_extensions: list[ServiceExtension]
-
-
-    class azure.mgmt.hybridcompute.types.Identity(TypedDict, total=False):
-        key "principalId": str
-        key "tenantId": str
-        key "type": Union[str, ResourceIdentityType]
-        principal_id: str
-        tenant_id: str
-        type: Union[str, ResourceIdentityType]
 
 
     class azure.mgmt.hybridcompute.types.IpAddress(TypedDict, total=False):
@@ -5284,7 +5299,7 @@ namespace azure.mgmt.hybridcompute.types
 
     class azure.mgmt.hybridcompute.types.Machine(TrackedResource):
         key "id": str
-        key "identity": ForwardRef('Identity', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "kind": Union[str, ArcKindEnum]
         key "location": Required[str]
         key "name": str
@@ -5292,7 +5307,7 @@ namespace azure.mgmt.hybridcompute.types
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
         id: str
-        identity: Identity
+        identity: ManagedServiceIdentity
         kind: Union[str, ArcKindEnum]
         location: str
         name: str
@@ -5436,6 +5451,7 @@ namespace azure.mgmt.hybridcompute.types
         key "provisioningState": str
         key "serviceStatuses": ForwardRef('ServiceStatuses', module='types')
         key "status": Union[str, StatusTypes]
+        key "statusReason": Union[str, MachineStatusReason]
         key "storageProfile": ForwardRef('StorageProfile', module='types')
         key "tpmEkCertificate": str
         key "vmId": str
@@ -5475,6 +5491,7 @@ namespace azure.mgmt.hybridcompute.types
         provisioning_state: str
         service_statuses: ServiceStatuses
         status: Union[str, StatusTypes]
+        status_reason: Union[str, MachineStatusReason]
         storage_profile: StorageProfile
         tpm_ek_certificate: str
         vm_id: str
@@ -5555,10 +5572,10 @@ namespace azure.mgmt.hybridcompute.types
 
 
     class azure.mgmt.hybridcompute.types.MachineUpdate(ResourceUpdate):
-        key "identity": ForwardRef('Identity', module='types')
+        key "identity": ForwardRef('ManagedServiceIdentity', module='types')
         key "kind": Union[str, ArcKindEnum]
         key "properties": ForwardRef('MachineUpdateProperties', module='types')
-        identity: Identity
+        identity: ManagedServiceIdentity
         kind: Union[str, ArcKindEnum]
         properties: MachineUpdateProperties
         tags: dict[str, str]
@@ -5581,6 +5598,17 @@ namespace azure.mgmt.hybridcompute.types
         parent_cluster_resource_id: str
         private_link_scope_resource_id: str
         tpm_ek_certificate: str
+
+
+    class azure.mgmt.hybridcompute.types.ManagedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, ManagedServiceIdentityType]]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ManagedServiceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentity]
+        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.hybridcompute.types.NetworkInterface(TypedDict, total=False):
@@ -5855,6 +5883,13 @@ namespace azure.mgmt.hybridcompute.types
         system_data: SystemData
         tags: dict[str, str]
         type: str
+
+
+    class azure.mgmt.hybridcompute.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
 
 
     class azure.mgmt.hybridcompute.types.VolumeLicenseDetails(TypedDict, total=False):
