@@ -38,7 +38,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
 class TestBatchDeployment(AzureRecordedTestCase):
-    @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
+    @pytest.mark.skip(reason="TODO (ADO 1546262): Test failing constantly due to service-side issues in batch deployment creation. Re-enable once the batch deployment service is stable.")
     def test_batch_deployment(self, client: MLClient, data_with_2_versions: str) -> None:
         endpoint_yaml = "tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
         deployment_yaml = "tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
@@ -72,7 +72,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.skip(reason="TODO (2349252): Scoring script not found in code configuration")
+    @pytest.mark.skip(reason="TODO (ADO 2349252): Scoring script not found in code configuration during batch deployment label resolution. Service-side issue with code configuration lookup.")
     def test_batch_deployment_dependency_label_resolution(
         self,
         client: MLClient,
@@ -136,7 +136,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    @pytest.mark.skip(reason="TODO (2349249): 'Environment Id' is not a valid ARM resource identifier")
+    @pytest.mark.skip(reason="TODO (ADO 2349249): 'Environment Id' is not a valid ARM resource identifier when downloading batch job outputs. Service-side validation issue.")
     def test_batch_job_download(
         self,
         client: MLClient,

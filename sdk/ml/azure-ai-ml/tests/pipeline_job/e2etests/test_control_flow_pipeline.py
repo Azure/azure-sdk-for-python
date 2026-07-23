@@ -337,7 +337,7 @@ class TestControlFLowPipelineComponent(TestConditionalNodeInPipeline):
             pipeline_path="./tests/test_configs/pipeline_jobs/control_flow/control_flow_with_pipeline_component.yml",
         )
 
-    @pytest.mark.skip(reason="TODO(2177353): check why recorded tests failure.")
+    @pytest.mark.skip(reason="TODO (ADO 2177353): Recorded playback fails for do_while control flow pipeline component. Requires investigation into recording instability for do_while pipelines.")
     def test_do_while(self, client: MLClient, randstr: Callable[[], str]):
         assert_control_flow_in_pipeline_component(
             client=client,

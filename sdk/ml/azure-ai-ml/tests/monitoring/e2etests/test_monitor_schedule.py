@@ -60,7 +60,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
-    @pytest.mark.skip(reason="Endpoint does not exist anymore")
+    @pytest.mark.skip(reason="The hardcoded 'iris-endpoint'/'my-iris-deployment' test resources no longer exist. Test needs to be updated to create and clean up its own endpoint resources.")
     def test_out_of_box_schedule(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/out_of_the_box.yaml"
         endpoint_name = "iris-endpoint"
@@ -147,7 +147,7 @@ class TestMonitorSchedule(AzureRecordedTestCase):
     @pytest.mark.skipif(
         condition=is_live(), reason="complicated logic, consult SDK team if this needs to be re-recorded"
     )
-    @pytest.mark.skip(reason="Endpoint does not exist anymore")
+    @pytest.mark.skip(reason="The hardcoded 'iris-endpoint'/'my-iris-deployment' test resources no longer exist. Test needs to be updated to create and clean up its own endpoint resources.")
     def test_default_target_baseline_dataset(self, client: MLClient):
         test_path = "tests/test_configs/monitoring/yaml_configs/no_target_baseline_data.yaml"
         endpoint_name = "iris-endpoint"

@@ -18,7 +18,7 @@ def mltable_schema():
 
 
 @pytest.mark.unittest
-@pytest.mark.skip(reason="extension folder does not exist in GitHub")
+@pytest.mark.skip(reason="The 'extension/schema/MLTable.schema.json' file is not present in the GitHub repository checkout. This test can only run in an internal development environment with the full monorepo.")
 class TestDataUtils:
     def test_validate_mltable_metadata_schema(self, tmp_path: Path, mltable_schema: Dict):
         mltable_folder = tmp_path / "mltable_folder"

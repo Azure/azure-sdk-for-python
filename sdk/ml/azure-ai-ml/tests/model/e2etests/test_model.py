@@ -215,7 +215,7 @@ class TestModel(AzureRecordedTestCase):
         model_list = [m.name for m in model_list if m is not None]
         assert model.name in model_list
 
-    @pytest.mark.skip(reason="_prepare_to_copy method was removed")
+    @pytest.mark.skip(reason="The private `_prepare_to_copy` method was removed; model promotion now uses `MLClient.models.share()`. This test needs to be rewritten against the public API.")
     def test_promote_model(self, randstr: Callable[[], str], client: MLClient, registry_client: MLClient) -> None:
         # Create model in workspace
         model_path = Path("./tests/test_configs/model/model_full.yml")

@@ -361,7 +361,7 @@ class TestIfElse(TestControlFlowPipeline):
             "type": "if_else",
         }
 
-    @pytest.mark.skipif(condition=not is_live(), reason="TODO(2177353): check why recorded tests failure.")
+    @pytest.mark.skipif(condition=not is_live(), reason="TODO (ADO 2177353): Recorded playback fails for this control flow pipeline test. Likely non-deterministic component version ordering.")
     def test_if_else_multiple_blocks_subgraph(self, client: MLClient):
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
