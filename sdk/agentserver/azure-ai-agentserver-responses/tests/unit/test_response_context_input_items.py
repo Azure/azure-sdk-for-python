@@ -16,7 +16,6 @@ from azure.ai.agentserver.responses.models import (
     ItemMessage,
     ItemReferenceParam,
     MessageContentInputTextContent,
-    MessageRole,
     OutputItemMessage,
 )
 from azure.ai.agentserver.responses.models._helpers import to_item, to_output_item
@@ -43,7 +42,7 @@ def _item_ref(item_id: str) -> ItemReferenceParam:
     return cast(ItemReferenceParam, {"id": item_id})
 
 
-def _assert_message(item: Any, role: str | MessageRole | None = None) -> None:
+def _assert_message(item: Any, role: str | None = None) -> None:
     assert isinstance(item, dict)
     assert item.get("type") == "message"
     if role is not None:
@@ -64,7 +63,7 @@ def _assert_output_message(item: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__no_references_passes_through() -> None:
     """Inline items are returned as Item subtypes (ItemMessage)."""
-    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
     request = _make_request([msg])
     ctx = ResponseContext(
         response_id="resp_001",
@@ -76,7 +75,7 @@ async def test_get_input_items__no_references_passes_through() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    _assert_message(items[0], MessageRole.USER)
+    _assert_message(items[0], "user")
 
 
 # ------------------------------------------------------------------
@@ -116,7 +115,7 @@ async def test_get_input_items__resolves_single_reference() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__mixed_inline_and_references() -> None:
     """Inline items and references are interleaved; references are resolved in-place."""
-    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
     ref1 = _item_ref("item_111")
     ref2 = _item_ref("item_222")
     resolved1 = OutputItemMessage(id="item_111", role="assistant", content=[], status="completed")
@@ -136,7 +135,7 @@ async def test_get_input_items__mixed_inline_and_references() -> None:
 
     # inline passed through as Item wire payload, references resolved via to_item()
     assert len(items) == 3
-    _assert_message(items[0], MessageRole.USER)
+    _assert_message(items[0], "user")
     _assert_message(items[1], "assistant")  # resolved from OutputItemMessage
     _assert_message(items[2], "user")  # resolved from OutputItemMessage
 
@@ -177,7 +176,7 @@ async def test_get_input_items__unresolvable_references_dropped() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__no_provider_no_resolution() -> None:
     """Without a provider, ItemReferenceParam entries are silently dropped (unresolvable)."""
-    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
     ref = _item_ref("item_xyz")
 
     request = _make_request([inline_msg, ref])
@@ -193,7 +192,7 @@ async def test_get_input_items__no_provider_no_resolution() -> None:
 
     # inline item returned as Item wire payload; reference placeholder is dropped
     assert len(items) == 1
-    _assert_message(items[0], MessageRole.USER)
+    _assert_message(items[0], "user")
 
 
 # ------------------------------------------------------------------
@@ -244,7 +243,7 @@ async def test_get_input_items__string_input_expanded() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    _assert_message(items[0], MessageRole.USER)
+    _assert_message(items[0], "user")
 
 
 # ------------------------------------------------------------------
@@ -332,9 +331,9 @@ async def test_get_input_items__all_references_unresolvable() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__preserves_order() -> None:
     """Order of inline items and resolved references matches input order."""
-    msg1 = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="first")])
+    msg1 = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="first")])
     ref = _item_ref("item_mid")
-    msg2 = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="last")])
+    msg2 = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="last")])
     resolved = OutputItemMessage(id="item_mid", role="assistant", content=[], status="completed")
     provider = _mock_provider(get_items_return=[resolved])
 
@@ -350,9 +349,9 @@ async def test_get_input_items__preserves_order() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 3
-    _assert_message(items[0], MessageRole.USER)
+    _assert_message(items[0], "user")
     _assert_message(items[1], "assistant")  # resolved via to_item()
-    _assert_message(items[2], MessageRole.USER)
+    _assert_message(items[2], "user")
 
 
 # ------------------------------------------------------------------
@@ -362,11 +361,11 @@ async def test_get_input_items__preserves_order() -> None:
 
 def test_to_output_item__converts_item_message() -> None:
     """ItemMessage is converted to OutputItemMessage with generated ID."""
-    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
     result = to_output_item(msg, "resp_123")
     assert result is not None
     _assert_output_message(result)
-    assert result["role"] == MessageRole.USER
+    assert result["role"] == "user"
 
 
 def test_to_output_item__returns_none_for_reference() -> None:
@@ -416,7 +415,7 @@ def test_to_item__returns_none_for_output_only_types(output_item: dict[str, str]
 @pytest.mark.asyncio
 async def test_get_input_items_for_persistence__resolves_references() -> None:
     """_get_input_items_for_persistence resolves item_reference entries to OutputItem."""
-    inline_msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
     ref = _item_ref("item_ref1")
     resolved = OutputItemMessage(id="item_ref1", role="assistant", content=[], status="completed")
     provider = _mock_provider(get_items_return=[resolved])
@@ -440,7 +439,7 @@ async def test_get_input_items_for_persistence__resolves_references() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items_for_persistence__no_references_passes_through() -> None:
     """When no references exist, all inline items are returned as OutputItem."""
-    msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
     request = _make_request([msg])
     ctx = ResponseContext(
         response_id="resp_persist_002",

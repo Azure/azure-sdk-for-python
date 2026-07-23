@@ -31,7 +31,6 @@ from azure.ai.agentserver.responses.models import (
     Item,
     ItemMessage,
     MessageContentInputTextContent,
-    MessageRole,
     OutputItem,
     OutputItemFunctionToolCall,
     OutputItemMessage,
@@ -123,7 +122,7 @@ class TestInputItemsContractTypes:
 
     @pytest.mark.asyncio
     async def test_inline_message_returns_item_message_subtype(self) -> None:
-        msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(type="input_text", text="hi")])
+        msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
         request = cast(CreateResponse, {"model": "m", "input": [msg]})
         ctx = ResponseContext(response_id="resp_type_2a", mode_flags=_mode_flags(), request=request)
 

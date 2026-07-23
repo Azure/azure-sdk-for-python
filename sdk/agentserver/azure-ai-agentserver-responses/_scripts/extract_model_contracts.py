@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 
-import re
 import shutil
 from pathlib import Path
 
@@ -21,50 +20,6 @@ ROOT_INIT_PREFIX = (
     "from ._unions import *  # type: ignore # noqa: F401,F403\n"
     "from .types import *  # type: ignore # noqa: F401,F403\n"
 )
-
-ENUM_FALLBACK_PREFIX = (
-    "# coding=utf-8\n"
-    "# --------------------------------------------------------------------------\n"
-    "# Copyright (c) Microsoft Corporation. All rights reserved.\n"
-    "# Licensed under the MIT License. See License.txt in the project root for license information.\n"
-    "# --------------------------------------------------------------------------\n\n"
-    "import keyword\n"
-    "import re\n"
-    "from enum import Enum\n\n"
-    "from azure.core import CaseInsensitiveEnumMeta\n\n\n"
-    "_ENUM_VALUES: dict[str, dict[str, str]] = "
-)
-
-ENUM_FALLBACK_SUFFIX = (
-    "\n\n"
-    "def _normalize_enum_value(value: str) -> str:\n"
-    "    return ''.join(ch for ch in value.upper() if ch.isalnum())\n\n\n"
-    "def _enum_member_name(value: str) -> str:\n"
-    "    name = re.sub(r'[^A-Z0-9]+', '_', value.upper()).strip('_')\n"
-    "    name = re.sub(r'(?<=\\d)(?=[A-Z])', '_', name)\n"
-    "    if not name or name[0].isdigit() or keyword.iskeyword(name):\n"
-    "        name = f'ENUM_{name}'\n"
-    "    return name\n\n\n"
-    "def _build_enum(enum_name: str, enum_values: dict[str, str]) -> type[Enum]:\n"
-    "    namespace = CaseInsensitiveEnumMeta.__prepare__(enum_name, (str, Enum))\n"
-    "    namespace['__module__'] = __name__\n"
-    "    namespace['__doc__'] = f'Type of {enum_name}.'\n"
-    "    for normalized_name, wire_value in enum_values.items():\n"
-    "        if normalized_name.isidentifier() and not keyword.iskeyword(normalized_name):\n"
-    "            namespace[normalized_name] = wire_value\n"
-    "        safe_name = _enum_member_name(wire_value)\n"
-    "        if safe_name not in namespace:\n"
-    "            namespace[safe_name] = wire_value\n"
-    "    return CaseInsensitiveEnumMeta(enum_name, (str, Enum), namespace)\n\n\n"
-    "_ENUM_CLASSES = {name: _build_enum(name, values) for name, values in _ENUM_VALUES.items()}\n"
-    "globals().update(_ENUM_CLASSES)\n\n\n"
-    "def __getattr__(name: str) -> type[Enum]:\n"
-    "    try:\n"
-    "        return _ENUM_CLASSES[name]\n"
-    "    except KeyError as exc:\n"
-    "        raise AttributeError(f'module {__name__!r} has no attribute {name!r}') from exc\n"
-)
-
 
 def _remove_pycache(root: Path) -> None:
     for pycache in root.rglob("__pycache__"):
@@ -87,42 +42,10 @@ def _find_emitted_models_root(emitter_output_root: Path) -> Path:
     return candidates[0].parent
 
 
-def _normalize_enum_value(value: str) -> str:
-    return re.sub(r"[^A-Z0-9]", "", value.upper())
-
-
 def _strip_trailing_whitespace(path: Path) -> None:
     path.write_text(
         "\n".join(line.rstrip() for line in path.read_text(encoding="utf-8").splitlines()) + "\n",
         encoding="utf-8",
-    )
-
-
-def _literal_enum_values(types_py: Path) -> dict[str, dict[str, str]]:
-    text = types_py.read_text(encoding="utf-8")
-    enum_values: dict[str, dict[str, str]] = {}
-    for match in re.finditer(r"(?ms)^([A-Za-z][A-Za-z0-9_]*) = Literal\[(.*?)\]\n\"\"\"", text):
-        enum_name = match.group(1)
-        values = re.findall(r'"([^"]+)"', match.group(2))
-        if values:
-            enum_values[enum_name] = {_normalize_enum_value(value): value for value in values}
-    return enum_values
-
-
-def _build_enum_fallback(types_py: Path) -> str:
-    return ENUM_FALLBACK_PREFIX + repr(_literal_enum_values(types_py)) + ENUM_FALLBACK_SUFFIX
-
-
-def _build_root_init(types_py: Path) -> str:
-    enum_names = sorted(_literal_enum_values(types_py))
-    if not enum_names:
-        return ROOT_INIT_PREFIX
-    enum_lines = "\n".join(f'{name} = getattr(_generated_enums, "{name}")' for name in enum_names)
-    return (
-        ROOT_INIT_PREFIX
-        + "from . import _enums as _generated_enums\n\n"
-        + enum_lines
-        + "\n"
     )
 
 
@@ -143,8 +66,7 @@ def finalize(emitter_output_root: Path, generated_root: Path) -> None:
     for file_name in ("__init__.py", "_patch.py"):
         shutil.copy2(emitted_root / "models" / file_name, models_root / file_name)
 
-    (generated_root / "__init__.py").write_text(_build_root_init(generated_root / "types.py"), encoding="utf-8")
-    (generated_root / "_enums.py").write_text(_build_enum_fallback(generated_root / "types.py"), encoding="utf-8")
+    (generated_root / "__init__.py").write_text(ROOT_INIT_PREFIX, encoding="utf-8")
     _remove_pycache(generated_root)
 
 
