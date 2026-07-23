@@ -22,10 +22,10 @@ from ._generated.models import (
     QueryFormatType,
     QuerySerialization,
 )
-from ._models import ContainerEncryptionScope, DelimitedJsonDialect
 
 if TYPE_CHECKING:
     from ._lease import BlobLeaseClient
+    from ._models import DelimitedJsonDialect
 
 
 _SUPPORTED_API_VERSIONS = [
@@ -192,6 +192,8 @@ def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Dict[str, Any]:
+    from ._models import ContainerEncryptionScope
+
     encryption_scope = kwargs.pop("container_encryption_scope", None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
@@ -250,7 +252,9 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
+def serialize_query_format(formater: Union[str, "DelimitedJsonDialect"]) -> Optional[QuerySerialization]:
+    from ._models import DelimitedJsonDialect
+
     if formater == "ParquetDialect":
         qq_format = QueryFormat(
             type=QueryFormatType.PARQUET, parquet_text_configuration=" "  # type: ignore[call-overload]
