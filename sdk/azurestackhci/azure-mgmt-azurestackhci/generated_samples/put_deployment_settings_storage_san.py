@@ -201,6 +201,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-30/PutDeploymentSettings_StorageSAN.json
+# x-ms-original-file: 2026-05-01-preview/PutDeploymentSettings_StorageSAN.json
 if __name__ == "__main__":
     main()

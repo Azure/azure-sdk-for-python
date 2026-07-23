@@ -180,6 +180,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-30/PutDeploymentSettings_StorageS2D.json
+# x-ms-original-file: 2026-05-01-preview/PutDeploymentSettings_StorageS2D.json
 if __name__ == "__main__":
     main()

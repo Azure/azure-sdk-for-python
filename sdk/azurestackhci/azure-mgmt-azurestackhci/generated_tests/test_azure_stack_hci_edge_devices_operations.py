@@ -57,6 +57,10 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                     },
                     "provisioningState": "str",
                     "reportedProperties": {
+                        "confidentialVmProfile": {
+                            "igvmStatus": "str",
+                            "statusDetails": [{"code": "str", "message": "str"}],
+                        },
                         "deviceState": "str",
                         "extensionProfile": {
                             "extensions": [
@@ -139,6 +143,7 @@ class TestAzureStackHCIEdgeDevicesOperations(AzureMgmtRecordedTestCase):
                                     "vlanId": "str",
                                 }
                             ],
+                            "sdnProperties": {"sdnApiAddress": "str", "sdnDomainName": "str", "sdnStatus": "str"},
                             "switchDetails": [
                                 {
                                     "extensions": [

@@ -146,7 +146,7 @@ class TestAzureStackHCIDeploymentSettingsOperationsAsync(AzureMgmtRecordedTestCa
                                             "euLocation": bool,
                                             "streamingDataClient": bool,
                                         },
-                                        "optionalServices": {"customLocation": "str"},
+                                        "optionalServices": {"confidentialVmIntent": "str", "customLocation": "str"},
                                         "physicalNodes": [{"ipv4Address": "str", "name": "str"}],
                                         "sdnIntegration": {
                                             "networkController": {
@@ -205,6 +205,13 @@ class TestAzureStackHCIDeploymentSettingsOperationsAsync(AzureMgmtRecordedTestCa
                                     {
                                         "description": "str",
                                         "endTimeUtc": "str",
+                                        "error": {
+                                            "additionalInfo": [{"info": {}, "type": "str"}],
+                                            "code": "str",
+                                            "details": [...],
+                                            "message": "str",
+                                            "target": "str",
+                                        },
                                         "exception": ["str"],
                                         "fullStepIndex": "str",
                                         "name": "str",
@@ -220,6 +227,13 @@ class TestAzureStackHCIDeploymentSettingsOperationsAsync(AzureMgmtRecordedTestCa
                                     {
                                         "description": "str",
                                         "endTimeUtc": "str",
+                                        "error": {
+                                            "additionalInfo": [{"info": {}, "type": "str"}],
+                                            "code": "str",
+                                            "details": [...],
+                                            "message": "str",
+                                            "target": "str",
+                                        },
                                         "exception": ["str"],
                                         "fullStepIndex": "str",
                                         "name": "str",
