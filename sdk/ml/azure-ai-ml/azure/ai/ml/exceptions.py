@@ -548,7 +548,7 @@ class UnsupportedParameterKindError(UserErrorException):
 
     :param func_name: The name of the function that received the unsupported parameter kind.
     :type func_name: str
-    :param parameter_kind: The unsupported parameter kind, defaults to "*args or **kwargs".
+    :param parameter_kind: The unsupported parameter kind, defaults to ``*args or **kwargs``.
     :type parameter_kind: str
     """
 
