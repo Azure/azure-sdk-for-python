@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import re
 from types import ModuleType
+from typing import Literal, Optional
 
 from _scripts.validator_emitter import build_validator_module
 
@@ -42,7 +43,7 @@ def test_emitter_generates_class_without_schema_definition() -> None:
     assert "\nSCHEMAS =" not in code
 
 
-def test_emitter_uses_generated_enum_values_when_available() -> None:
+def test_emitter_uses_generated_literal_alias_values_when_available() -> None:
     schemas = {
         "OpenAI.ToolType": {
             "anyOf": [
@@ -52,21 +53,41 @@ def test_emitter_uses_generated_enum_values_when_available() -> None:
         }
     }
     code = build_validator_module(schemas, ["OpenAI.ToolType"])
-    assert "_enum_values('ToolType')" in code
+    assert "_schema_literal_values('ToolType')" in code
 
 
-def test_emitter_uses_service_tier_literal_alias() -> None:
+def test_emitter_uses_request_field_literal_before_schema_alias() -> None:
     schemas = {
+        "CreateResponse": {
+            "type": "object",
+            "properties": {"service_tier": {"$ref": "#/components/schemas/OpenAI.ServiceTier"}},
+        },
         "OpenAI.ServiceTier": {
             "type": "string",
-            "enum": ["auto", "default", "flex", "scale"],
-        }
+            "enum": ["auto", "default", "flex", "priority"],
+        },
     }
 
-    code = build_validator_module(schemas, ["OpenAI.ServiceTier"])
+    code = build_validator_module(schemas, ["CreateResponse"])
 
-    assert "'ServiceTier': 'ServiceTierEnum'" in code
-    assert "'ServiceTier': ('auto', 'default', 'flex', 'scale', 'priority')" not in code
+    assert "_LITERAL_ENUM_ALIASES" not in code
+    assert "_field_literal_values('CreateResponse', 'service_tier')" in code
+    assert code.index("_field_literal_values('CreateResponse', 'service_tier')") < code.index(
+        "_schema_literal_values('ServiceTier')"
+    )
+
+    class FakeCreateResponse:
+        __annotations__ = {"service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority"]]}
+
+    module = _load_module(code)
+    module._response_types = type("FakeTypes", (), {"CreateResponse": FakeCreateResponse})
+
+    assert module.validate_CreateResponse({"service_tier": "scale"}) == []
+    errors = module.validate_CreateResponse({"service_tier": "unknown"})
+    assert any(
+        e["path"] == "$.service_tier" and "Allowed: auto, default, flex, scale, priority" in e["message"]
+        for e in errors
+    )
 
 
 def test_emitter_deduplicates_string_union_error_message() -> None:
