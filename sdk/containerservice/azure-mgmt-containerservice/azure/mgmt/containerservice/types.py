@@ -13,27 +13,17 @@ from typing_extensions import Required, TypedDict
 if TYPE_CHECKING:
     from .models import (
         AccelerationMode,
-        AddonAutoscaling,
         AdoptionPolicy,
         AdvancedNetworkPolicies,
         AgentPoolMode,
-        AgentPoolNetworkInterfaceType,
         AgentPoolSSHAccess,
         AgentPoolType,
-        AlertConfigurationMode,
-        AlertConfigurationProvisioningState,
         ArtifactSource,
         BackendPoolType,
-        BastionSku,
-        ClusterServiceLoadBalancerHealthProbeMode,
         Code,
         ConnectionStatus,
-        ContainerNetworkLogs,
-        ControlPlaneScalingSize,
         CreatedByType,
         DeletePolicy,
-        DriftAction,
-        DriverType,
         Expander,
         ExtendedLocationTypes,
         GPUDriver,
@@ -41,10 +31,7 @@ if TYPE_CHECKING:
         GatewayAPIIstioEnabled,
         IPFamily,
         IdentityBindingProvisioningState,
-        InfrastructureEncryption,
-        IpvsScheduler,
         IstioIngressGatewayMode,
-        JWTAuthenticatorProvisioningState,
         KeyVaultNetworkAccessTypes,
         KubeletDiskType,
         KubernetesSupportPlan,
@@ -61,10 +48,6 @@ if TYPE_CHECKING:
         ManagedClusterSKUName,
         ManagedClusterSKUTier,
         ManagedGatewayType,
-        ManagementMode,
-        MeshMembershipProvisioningState,
-        MigStrategy,
-        Mode,
         NamespaceProvisioningState,
         NetworkDataplane,
         NetworkMode,
@@ -72,30 +55,25 @@ if TYPE_CHECKING:
         NetworkPluginMode,
         NetworkPolicy,
         NginxIngressControllerType,
-        NodeDisruptionPolicy,
         NodeOSUpgradeChannel,
         NodeProvisioningDefaultNodePools,
         NodeProvisioningMode,
         OSDiskType,
         OSSKU,
         OSType,
-        Operator,
         OutboundType,
         PodIPAllocationMode,
-        PodLinkLocalAccess,
         PolicyRule,
         PrivateEndpointConnectionProvisioningState,
         Protocol,
         ProxyRedirectionMechanism,
         PublicNetworkAccess,
         ResourceIdentityType,
-        ResourceProvisioningState,
         RestrictionLevel,
         ScaleDownMode,
         ScaleSetEvictionPolicy,
         ScaleSetPriority,
         SchedulerConfigMode,
-        SeccompDefault,
         ServiceMeshMode,
         SnapshotType,
         TransitEncryptionType,
@@ -103,8 +81,6 @@ if TYPE_CHECKING:
         Type,
         UndrainableNodeBehavior,
         UpgradeChannel,
-        UpgradeStrategy,
-        VmState,
         WeekDay,
         WorkloadRuntime,
     )
@@ -231,14 +207,14 @@ class AdvancedNetworkingSecurityTransitEncryption(TypedDict, total=False):  # py
     managed pods will be encrypted when it leaves the node boundary.
 
     :ivar type: Configures pod-to-pod encryption. This can be enabled only on Cilium-based
-     clusters. If not specified, the default value is None. Known values are: "WireGuard", "mTLS",
-     and "None".
+     clusters. If not specified, the default value is None. Known values are: "WireGuard" and
+     "None".
     :vartype type: Union[str, "TransitEncryptionType"]
     """
 
     type: Union[str, "TransitEncryptionType"]
     """Configures pod-to-pod encryption. This can be enabled only on Cilium-based clusters. If not
-     specified, the default value is None. Known values are: \"WireGuard\", \"mTLS\", and \"None\"."""
+     specified, the default value is None. Known values are: \"WireGuard\" and \"None\"."""
 
 
 class Resource(TypedDict, total=False):
@@ -324,55 +300,6 @@ class AgentPoolArtifactStreamingProfile(TypedDict, total=False):
      not specified, the default is false."""
 
 
-class AgentPoolBlueGreenUpgradeSettings(TypedDict, total=False):
-    """Settings for blue-green upgrade on an agentpool.
-
-    :ivar drain_batch_size: The number or percentage of nodes to drain in batch during blue-green
-     upgrade. Must be a non-zero number. This can either be set to an integer (e.g. '5') or a
-     percentage (e.g. '50%'). If a percentage is specified, it is the percentage of the total number
-     of blue nodes of the initial upgrade operation. For percentages, fractional nodes are rounded
-     up. If not specified, the default is 10%. For more information, including best practices, see:
-     `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
-     <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_.
-    :vartype drain_batch_size: str
-    :ivar drain_timeout_in_minutes: The drain timeout for a node, i.e., the amount of time (in
-     minutes) to wait on eviction of pods and graceful termination per node. This eviction wait time
-     honors waiting on pod disruption budgets. If this time is exceeded, the upgrade fails. If not
-     specified, the default is 30 minutes.
-    :vartype drain_timeout_in_minutes: int
-    :ivar batch_soak_duration_in_minutes: The soak duration after draining a batch of nodes, i.e.,
-     the amount of time (in minutes) to wait after draining a batch of nodes before moving on the
-     next batch. If not specified, the default is 15 minutes.
-    :vartype batch_soak_duration_in_minutes: int
-    :ivar final_soak_duration_in_minutes: The soak duration for a node pool, i.e., the amount of
-     time (in minutes) to wait after all old nodes are drained before we remove the old nodes. If
-     not specified, the default is 60 minutes. Only applicable for blue-green upgrade strategy.
-    :vartype final_soak_duration_in_minutes: int
-    """
-
-    drainBatchSize: str
-    """The number or percentage of nodes to drain in batch during blue-green upgrade. Must be a
-     non-zero number. This can either be set to an integer (e.g. '5') or a percentage (e.g. '50%').
-     If a percentage is specified, it is the percentage of the total number of blue nodes of the
-     initial upgrade operation. For percentages, fractional nodes are rounded up. If not specified,
-     the default is 10%. For more information, including best practices, see:
-     `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
-     <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_."""
-    drainTimeoutInMinutes: int
-    """The drain timeout for a node, i.e., the amount of time (in minutes) to wait on eviction of pods
-     and graceful termination per node. This eviction wait time honors waiting on pod disruption
-     budgets. If this time is exceeded, the upgrade fails. If not specified, the default is 30
-     minutes."""
-    batchSoakDurationInMinutes: int
-    """The soak duration after draining a batch of nodes, i.e., the amount of time (in minutes) to
-     wait after draining a batch of nodes before moving on the next batch. If not specified, the
-     default is 15 minutes."""
-    finalSoakDurationInMinutes: int
-    """The soak duration for a node pool, i.e., the amount of time (in minutes) to wait after all old
-     nodes are drained before we remove the old nodes. If not specified, the default is 60 minutes.
-     Only applicable for blue-green upgrade strategy."""
-
-
 class AgentPoolDeleteMachinesParameter(TypedDict, total=False):
     """Specifies a list of machine names from the agent pool to be deleted.
 
@@ -437,7 +364,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: Union[str, "KubeletDiskType"]
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: Union[str, "WorkloadRuntime"]
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -466,9 +393,9 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :vartype os_type: Union[str, "OSType"]
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
-     "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: Union[str, "OSSKU"]
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -481,13 +408,13 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: Union[str, "ScaleDownMode"]
     :ivar type_properties_type: The type of Agent Pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet", "VirtualMachines", and "FlexNodes".
+     "VirtualMachineScaleSets", "AvailabilitySet", and "VirtualMachines".
     :vartype type_properties_type: Union[str, "AgentPoolType"]
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
      `https://docs.microsoft.com/azure/aks/use-system-pools
      <https://docs.microsoft.com/azure/aks/use-system-pools>`_. Known values are: "System", "User",
-     "Gateway", "ManagedSystem", and "Machines".
+     and "Gateway".
     :vartype mode: Union[str, "AgentPoolMode"]
     :ivar orchestrator_version: The version of Kubernetes specified by the user. Both patch version
      <major.minor.patch> (e.g. 1.20.13) and <major.minor> (e.g. 1.20) are supported. When
@@ -508,18 +435,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :ivar node_image_version: The version of the node image. Setting this value triggers an
      agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
-    :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
-     Rolling. Known values are: "Rolling" and "BlueGreen".
-    :vartype upgrade_strategy: Union[str, "UpgradeStrategy"]
-    :ivar enable_os_disk_full_caching: Whether to enable the full-cache ephemeral OS disk feature.
-     When this feature is enabled, the entire operating system will be locally cached on the
-     ephemeral OS disk, preventing E17 events caused by network failures.
-    :vartype enable_os_disk_full_caching: bool
     :ivar upgrade_settings: Settings for upgrading the agentpool.
     :vartype upgrade_settings: "AgentPoolUpgradeSettings"
-    :ivar upgrade_settings_blue_green: Settings for Blue-Green upgrade on the agentpool. Applies
-     when upgrade strategy is set to BlueGreen.
-    :vartype upgrade_settings_blue_green: "AgentPoolBlueGreenUpgradeSettings"
     :ivar provisioning_state: The current deployment or provisioning state.
     :vartype provisioning_state: str
     :ivar power_state: Whether the Agent Pool is running or stopped. When an Agent Pool is first
@@ -563,14 +480,6 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :ivar node_taints: The taints added to new nodes during node pool create and scale. For
      example, key=value:NoSchedule.
     :vartype node_taints: list[str]
-    :ivar node_initialization_taints: Taints added on the nodes during creation that will not be
-     reconciled by AKS. These taints will not be reconciled by AKS and can be removed with a kubectl
-     call. This field can be modified after node pool is created, but nodes will not be recreated
-     with new taints until another operation that requires recreation (e.g. node image upgrade)
-     happens. These taints allow for required configuration to run before the node is ready to
-     accept workloads, for example 'key1=value1:NoSchedule' that then can be removed with ``kubectl
-     taint nodes node1 key1=value1:NoSchedule-``.
-    :vartype node_initialization_taints: list[str]
     :ivar proximity_placement_group_id: The ID for Proximity Placement Group.
     :vartype proximity_placement_group_id: str
     :ivar kubelet_config: The Kubelet configuration on the agent pool nodes.
@@ -632,9 +541,6 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: "LocalDNSProfile"
-    :ivar prepared_image_specification_profile: Settings to determine the prepared image
-     specification used to provision nodes in a pool.
-    :vartype prepared_image_specification_profile: "PreparedImageSpecificationProfile"
     """
 
     eTag: str
@@ -665,7 +571,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      ephemeral storage. Known values are: \"OS\" and \"Temporary\"."""
     workloadRuntime: Union[str, "WorkloadRuntime"]
     """Determines the type of workload a node can run. Known values are: \"OCIContainer\",
-     \"WasmWasi\", \"KataMshvVmIsolation\", and \"KataVmIsolation\"."""
+     \"WasmWasi\", and \"KataVmIsolation\"."""
     messageOfTheDay: str
     """Message of the day for Linux nodes, base64-encoded. A base64-encoded string which will be
      written to /etc/motd after decoding. This allows customization of the message of the day for
@@ -691,9 +597,9 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     osSKU: Union[str, "OSSKU"]
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
-     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
-     \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     maxCount: int
     """The maximum number of nodes for auto-scaling."""
     minCount: int
@@ -705,14 +611,14 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      autoscaler behavior. If not specified, it defaults to Delete. Known values are: \"Delete\" and
      \"Deallocate\"."""
     type: Union[str, "AgentPoolType"]
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
-     \"VirtualMachines\", and \"FlexNodes\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
+     \"VirtualMachines\"."""
     mode: Union[str, "AgentPoolMode"]
     """The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at all times.
      For additional information on agent pool restrictions and best practices, see:
      `https://docs.microsoft.com/azure/aks/use-system-pools
      <https://docs.microsoft.com/azure/aks/use-system-pools>`_. Known values are: \"System\",
-     \"User\", \"Gateway\", \"ManagedSystem\", and \"Machines\"."""
+     \"User\", and \"Gateway\"."""
     orchestratorVersion: str
     """The version of Kubernetes specified by the user. Both patch version <major.minor.patch> (e.g.
      1.20.13) and <major.minor> (e.g. 1.20) are supported. When <major.minor> is specified, the
@@ -732,18 +638,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     nodeImageVersion: str
     """The version of the node image. Setting this value triggers an agentPool rollback. Only values
      from ``recentlyUsedVersions`` are allowed."""
-    upgradeStrategy: Union[str, "UpgradeStrategy"]
-    """Defines the upgrade strategy for the agent pool. The default is Rolling. Known values are:
-     \"Rolling\" and \"BlueGreen\"."""
-    enableOSDiskFullCaching: bool
-    """Whether to enable the full-cache ephemeral OS disk feature. When this feature is enabled, the
-     entire operating system will be locally cached on the ephemeral OS disk, preventing E17 events
-     caused by network failures."""
     upgradeSettings: "AgentPoolUpgradeSettings"
     """Settings for upgrading the agentpool."""
-    upgradeSettingsBlueGreen: "AgentPoolBlueGreenUpgradeSettings"
-    """Settings for Blue-Green upgrade on the agentpool. Applies when upgrade strategy is set to
-     BlueGreen."""
     provisioningState: str
     """The current deployment or provisioning state."""
     powerState: "PowerState"
@@ -784,14 +680,6 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     nodeTaints: list[str]
     """The taints added to new nodes during node pool create and scale. For example,
      key=value:NoSchedule."""
-    nodeInitializationTaints: list[str]
-    """Taints added on the nodes during creation that will not be reconciled by AKS. These taints will
-     not be reconciled by AKS and can be removed with a kubectl call. This field can be modified
-     after node pool is created, but nodes will not be recreated with new taints until another
-     operation that requires recreation (e.g. node image upgrade) happens. These taints allow for
-     required configuration to run before the node is ready to accept workloads, for example
-     'key1=value1:NoSchedule' that then can be removed with ``kubectl taint nodes node1
-     key1=value1:NoSchedule-``."""
     proximityPlacementGroupID: str
     """The ID for Proximity Placement Group."""
     kubeletConfig: "KubeletConfig"
@@ -851,38 +739,6 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
      performance and reliability of DNS resolution in an AKS cluster. For more details see
      aka.ms/aks/localdns."""
-    preparedImageSpecificationProfile: "PreparedImageSpecificationProfile"
-    """Settings to determine the prepared image specification used to provision nodes in a pool."""
-
-
-class AgentPoolNetworkInterface(TypedDict, total=False):
-    """Configuration of a secondary network interface provisioned on each VM instance in the agent
-    pool. For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
-
-    :ivar type: Type of NIC to be provisioned on the VM. Known values are: "Standard" and
-     "Dynamic".
-    :vartype type: Union[str, "AgentPoolNetworkInterfaceType"]
-    :ivar vnet_subnet_id: The resource ID of the subnet which will be attached to the secondary
-     network interface. Required when ``type`` is ``Standard``; must be an empty string (``""``) or
-     omitted when ``type`` is ``Dynamic``.
-    :vartype vnet_subnet_id: str
-    :ivar enable_accelerated_networking: Whether accelerated networking is enabled on this
-     secondary NIC. If omitted, this defaults to true only when the agent pool VM SKU supports
-     accelerated networking. Validation will fail if it is enabled on an unsupported SKU or NIC
-     configuration.
-    :vartype enable_accelerated_networking: bool
-    """
-
-    type: Union[str, "AgentPoolNetworkInterfaceType"]
-    """Type of NIC to be provisioned on the VM. Known values are: \"Standard\" and \"Dynamic\"."""
-    vnetSubnetId: str
-    """The resource ID of the subnet which will be attached to the secondary network interface.
-     Required when ``type`` is ``Standard``; must be an empty string (``\"\"``) or omitted when
-     ``type`` is ``Dynamic``."""
-    enableAcceleratedNetworking: bool
-    """Whether accelerated networking is enabled on this secondary NIC. If omitted, this defaults to
-     true only when the agent pool VM SKU supports accelerated networking. Validation will fail if
-     it is enabled on an unsupported SKU or NIC configuration."""
 
 
 class AgentPoolNetworkProfile(TypedDict, total=False):
@@ -890,53 +746,20 @@ class AgentPoolNetworkProfile(TypedDict, total=False):
 
     :ivar node_public_ip_tags: IPTags of instance-level public IPs.
     :vartype node_public_ip_tags: list["IPTag"]
-    :ivar node_public_ip_prefix_i_ds: The resource IDs of public IP prefixes for node public IPs.
-     At most one IPv4 and one IPv6 prefix may be specified. Order does not matter; the RP determines
-     IP version from the referenced resource's publicIPAddressVersion. Requires enableNodePublicIP
-     to be true on the agent pool. Mutually exclusive with the top-level nodePublicIPPrefixID
-     property. Immutable after node pool creation. To change prefixes, delete and recreate the node
-     pool. For more information, see `https://aka.ms/aks/ipv6-ilpip
-     <https://aka.ms/aks/ipv6-ilpip>`_.
-    :vartype node_public_ip_prefix_i_ds: list[str]
     :ivar allowed_host_ports: The port ranges that are allowed to access. The specified ranges are
      allowed to overlap.
     :vartype allowed_host_ports: list["PortRange"]
     :ivar application_security_groups: The IDs of the application security groups which agent pool
      will associate when created.
     :vartype application_security_groups: list[str]
-    :ivar secondary_network_interfaces: Secondary network interface configurations for each VM in
-     the agent pool. Each entry is a template: one physical NIC per entry is provisioned on every VM
-     instance. These interfaces are created at agent pool creation time and are immutable. The
-     length of the list must be less than the NIC capacity minus 1 for the VM size of the agent pool
-     (AKS manages the primary NIC). For example, a Standard_D8a_v4 VM supports up to 4 NICs, so the
-     maximum number of secondary interfaces allowed is 3. For mixed-SKU VM pools the effective
-     capacity is the minimum across all SKUs: count(secondaryNetworkInterfaces) + 1 <= min(maxNICs).
-     For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
-    :vartype secondary_network_interfaces: list["AgentPoolNetworkInterface"]
     """
 
     nodePublicIPTags: list["IPTag"]
     """IPTags of instance-level public IPs."""
-    nodePublicIPPrefixIDs: list[str]
-    """The resource IDs of public IP prefixes for node public IPs. At most one IPv4 and one IPv6
-     prefix may be specified. Order does not matter; the RP determines IP version from the
-     referenced resource's publicIPAddressVersion. Requires enableNodePublicIP to be true on the
-     agent pool. Mutually exclusive with the top-level nodePublicIPPrefixID property. Immutable
-     after node pool creation. To change prefixes, delete and recreate the node pool. For more
-     information, see `https://aka.ms/aks/ipv6-ilpip <https://aka.ms/aks/ipv6-ilpip>`_."""
     allowedHostPorts: list["PortRange"]
     """The port ranges that are allowed to access. The specified ranges are allowed to overlap."""
     applicationSecurityGroups: list[str]
     """The IDs of the application security groups which agent pool will associate when created."""
-    secondaryNetworkInterfaces: list["AgentPoolNetworkInterface"]
-    """Secondary network interface configurations for each VM in the agent pool. Each entry is a
-     template: one physical NIC per entry is provisioned on every VM instance. These interfaces are
-     created at agent pool creation time and are immutable. The length of the list must be less than
-     the NIC capacity minus 1 for the VM size of the agent pool (AKS manages the primary NIC). For
-     example, a Standard_D8a_v4 VM supports up to 4 NICs, so the maximum number of secondary
-     interfaces allowed is 3. For mixed-SKU VM pools the effective capacity is the minimum across
-     all SKUs: count(secondaryNetworkInterfaces) + 1 <= min(maxNICs). For more information, see
-     `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_."""
 
 
 class AgentPoolSecurityProfile(TypedDict, total=False):
@@ -950,8 +773,8 @@ class AgentPoolSecurityProfile(TypedDict, total=False):
      signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
      If not specified, the default is false.
     :vartype enable_secure_boot: bool
-    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser",
-     "Disabled", and "EntraId".
+    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser" and
+     "Disabled".
     :vartype ssh_access: Union[str, "AgentPoolSSHAccess"]
     """
 
@@ -964,8 +787,7 @@ class AgentPoolSecurityProfile(TypedDict, total=False):
      drivers can boot. For more details, see aka.ms/aks/trustedlaunch.  If not specified, the
      default is false."""
     sshAccess: Union[str, "AgentPoolSSHAccess"]
-    """SSH access method of an agent pool. Known values are: \"LocalUser\", \"Disabled\", and
-     \"EntraId\"."""
+    """SSH access method of an agent pool. Known values are: \"LocalUser\" and \"Disabled\"."""
 
 
 class AgentPoolStatus(TypedDict, total=False):
@@ -1000,15 +822,6 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
      <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_.
     :vartype max_unavailable: str
-    :ivar max_blocked_nodes: The maximum number or percentage of extra nodes that are allowed to be
-     blocked in the agent pool during an upgrade when undrainable node behavior is Cordon. This can
-     either be set to an integer (e.g. '5') or a percentage (e.g. '50%'). If a percentage is
-     specified, it is the percentage of the total agent pool size at the time of the upgrade. For
-     percentages, fractional nodes are rounded up. If not specified, the default is maxSurge. This
-     must always be greater than or equal to maxSurge. For more information, including best
-     practices, see: `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
-     <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_.
-    :vartype max_blocked_nodes: str
     :ivar drain_timeout_in_minutes: The drain timeout for a node. The amount of time (in minutes)
      to wait on eviction of pods and graceful termination per node. This eviction wait time honors
      waiting on pod disruption budgets. If this time is exceeded, the upgrade fails. If not
@@ -1041,15 +854,6 @@ class AgentPoolUpgradeSettings(TypedDict, total=False):
      For more information, including best practices, see:
      `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
      <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_."""
-    maxBlockedNodes: str
-    """The maximum number or percentage of extra nodes that are allowed to be blocked in the agent
-     pool during an upgrade when undrainable node behavior is Cordon. This can either be set to an
-     integer (e.g. '5') or a percentage (e.g. '50%'). If a percentage is specified, it is the
-     percentage of the total agent pool size at the time of the upgrade. For percentages, fractional
-     nodes are rounded up. If not specified, the default is maxSurge. This must always be greater
-     than or equal to maxSurge. For more information, including best practices, see:
-     `https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster
-     <https://learn.microsoft.com/en-us/azure/aks/upgrade-cluster>`_."""
     drainTimeoutInMinutes: int
     """The drain timeout for a node. The amount of time (in minutes) to wait on eviction of pods and
      graceful termination per node. This eviction wait time honors waiting on pod disruption
@@ -1078,92 +882,6 @@ class AgentPoolWindowsProfile(TypedDict, total=False):
     """Whether to disable OutboundNAT in windows nodes. The default value is false. Outbound NAT can
      only be disabled if the cluster outboundType is NAT Gateway and the Windows agent pool does not
      have node public IP enabled."""
-
-
-class AlertConfiguration(ProxyResource):
-    """Alert configuration for a managed cluster. Allows configuring AKS-managed alerts that notify
-    users of important cluster events and conditions.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The resource-specific properties for this resource.
-    :vartype properties: "AlertConfigurationProperties"
-    """
-
-    properties: "AlertConfigurationProperties"
-    """The resource-specific properties for this resource."""
-
-
-class AlertConfigurationProperties(TypedDict, total=False):
-    """Properties of the alert configuration.
-
-    :ivar mode: The mode of the alert configuration. Specifies how AKS manages the alerts.
-     Required. Known values are: "Disabled" and "Managed".
-    :vartype mode: Union[str, "AlertConfigurationMode"]
-    :ivar notification: Notification settings for the alert configuration. Required.
-    :vartype notification: "AlertNotification"
-    :ivar provisioning_state: The current provisioning state of the alert configuration. Known
-     values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "AlertConfigurationProvisioningState"]
-    """
-
-    mode: Required[Union[str, "AlertConfigurationMode"]]
-    """The mode of the alert configuration. Specifies how AKS manages the alerts. Required. Known
-     values are: \"Disabled\" and \"Managed\"."""
-    notification: Required["AlertNotification"]
-    """Notification settings for the alert configuration. Required."""
-    provisioningState: Union[str, "AlertConfigurationProvisioningState"]
-    """The current provisioning state of the alert configuration. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-
-
-class AlertNotification(TypedDict, total=False):
-    """Notification settings for the alert configuration.
-
-    :ivar action_group_id: The resource ID of the Azure Monitor action group to send notifications
-     to. Required.
-    :vartype action_group_id: str
-    """
-
-    actionGroupId: Required[str]
-    """The resource ID of the Azure Monitor action group to send notifications to. Required."""
-
-
-class AllowedSubject(TypedDict, total=False):
-    """A subject authorized to use the identity binding for token exchange. The namespace selector is
-    required and must be non-empty. The service account selector is optional; when omitted, all
-    service accounts in matching namespaces are authorized. Selectors within a single
-    AllowedSubject are AND'd; multiple AllowedSubjects on an IdentityBinding are OR'd.
-
-    :ivar namespace_selector: Label selector matching the namespaces in which this identity may be
-     used. Must be non-empty: an empty selector would match every namespace and is rejected to
-     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
-     target specific namespaces by name. Required.
-    :vartype namespace_selector: "LabelSelector"
-    :ivar service_account_selector: Optional label selector matching the service accounts (within
-     the namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
-     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
-    :vartype service_account_selector: "LabelSelector"
-    """
-
-    namespaceSelector: Required["LabelSelector"]
-    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
-     an empty selector would match every namespace and is rejected to prevent overly permissive
-     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
-     by name. Required."""
-    serviceAccountSelector: "LabelSelector"
-    """Optional label selector matching the service accounts (within the namespaces matched by
-     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
-     matching namespaces are authorized. When provided, it must be non-empty."""
 
 
 class AutoScaleProfile(TypedDict, total=False):
@@ -1228,70 +946,6 @@ class AzureKeyVaultKms(TypedDict, total=False):
      must be a valid resource ID. When keyVaultNetworkAccess is ``Public``, leave the field empty."""
 
 
-class BastionProfile(TypedDict, total=False):
-    """Profile to enable managed Azure Bastion or reference to an existing Bastion for the managed
-    cluster. See `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more
-    details.
-
-    :ivar enabled: Indicates whether managed bastion is enabled.
-    :vartype enabled: bool
-    :ivar bastion_id: The resource ID of the managed bastion associated with the managed cluster.
-    :vartype bastion_id: str
-    :ivar sku: The SKU of the managed bastion.
-
-     Only Standard and Premium SKUs are supported.
-     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
-     bastion with new SKU.
-
-     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
-     values are: "Standard" and "Premium".
-    :vartype sku: Union[str, "BastionSku"]
-    :ivar scale_units: The scale units of the managed bastion. Default value is 2.
-    :vartype scale_units: int
-    :ivar public_ip_address_id: The resource ID of the public IP address associated with the
-     managed bastion.
-
-     When provided during creation, the managed bastion will reference this existing public IP
-     address instead of creating a new one.
-     The referenced public IP address must be in the same subscription and region as the managed
-     cluster.
-
-     When not provided during creation, AKS will automatically create a new public IP address.
-
-     This field cannot be updated. To change IP address after creation, please disable and re-enable
-     the managed bastion with the new public IP address.
-    :vartype public_ip_address_id: str
-    """
-
-    enabled: bool
-    """Indicates whether managed bastion is enabled."""
-    bastionId: str
-    """The resource ID of the managed bastion associated with the managed cluster."""
-    sku: Union[str, "BastionSku"]
-    """The SKU of the managed bastion.
-     
-     Only Standard and Premium SKUs are supported.
-     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
-     bastion with new SKU.
-     
-     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
-     values are: \"Standard\" and \"Premium\"."""
-    scaleUnits: int
-    """The scale units of the managed bastion. Default value is 2."""
-    publicIpAddressId: str
-    """The resource ID of the public IP address associated with the managed bastion.
-     
-     When provided during creation, the managed bastion will reference this existing public IP
-     address instead of creating a new one.
-     The referenced public IP address must be in the same subscription and region as the managed
-     cluster.
-     
-     When not provided during creation, AKS will automatically create a new public IP address.
-     
-     This field cannot be updated. To change IP address after creation, please disable and re-enable
-     the managed bastion with the new public IP address."""
-
-
 class ClusterUpgradeSettings(TypedDict, total=False):
     """Settings for upgrading a cluster.
 
@@ -1349,28 +1003,17 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
     :ivar outbound_type: The outbound (egress) routing method. This can only be set at cluster
      creation time and cannot be changed later. For more information see `egress outbound type
      <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_. Known values are: "loadBalancer",
-     "userDefinedRouting", "managedNATGateway", "managedNATGatewayV2", "userAssignedNATGateway", and
-     "none".
+     "userDefinedRouting", "managedNATGateway", "userAssignedNATGateway", and "none".
     :vartype outbound_type: Union[str, "OutboundType"]
     :ivar load_balancer_sku: The load balancer sku for the managed cluster. The default is
      'standard'. See `Azure Load Balancer SKUs
      <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information about the
-     differences between load balancer SKUs. Known values are: "service", "standard", and "basic".
+     differences between load balancer SKUs. Known values are: "standard" and "basic".
     :vartype load_balancer_sku: Union[str, "LoadBalancerSku"]
     :ivar load_balancer_profile: Profile of the cluster load balancer.
     :vartype load_balancer_profile: "ManagedClusterLoadBalancerProfile"
-    :ivar bastion_profile: Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
-    :vartype bastion_profile: "BastionProfile"
     :ivar nat_gateway_profile: Profile of the cluster NAT gateway.
     :vartype nat_gateway_profile: "ManagedClusterNATGatewayProfile"
-    :ivar nat_gateway_id: The Azure resource ID of the NAT gateway to use for egress at cluster
-     startup when outboundType is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool
-     type is podIP, and load balancer type is service SKU. This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
-     When using managed NATGateway this field is auto populated. For more information, see
-     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_.
-    :vartype nat_gateway_id: str
     :ivar static_egress_gateway_profile: The profile for Static Egress Gateway addon. For more
      details about Static Egress Gateway, see `https://aka.ms/aks/static-egress-gateway
      <https://aka.ms/aks/static-egress-gateway>`_.
@@ -1388,16 +1031,6 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
      families are used to determine single-stack or dual-stack clusters. For single-stack, the
      expected value is IPv4. For dual-stack, the expected values are IPv4 and IPv6.
     :vartype ip_families: list[Union[str, "IPFamily"]]
-    :ivar pod_link_local_access: Defines access to special link local addresses (Azure Instance
-     Metadata Service, aka IMDS) for pods with hostNetwork=false. if not specified, the default is
-     'IMDS'. Known values are: "IMDS" and "None".
-    :vartype pod_link_local_access: Union[str, "PodLinkLocalAccess"]
-    :ivar kube_proxy_config: Holds configuration customizations for kube-proxy. Any values not
-     defined will use the kube-proxy defaulting behavior. See `https://v
-     <https://v>`_<version>.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
-     where <version> is represented by a <major version>-<minor version> string. Kubernetes version
-     1.23 would be '1-23'.
-    :vartype kube_proxy_config: "ContainerServiceNetworkProfileKubeProxyConfig"
     """
 
     networkPlugin: Union[str, "NetworkPlugin"]
@@ -1428,27 +1061,16 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
     """The outbound (egress) routing method. This can only be set at cluster creation time and cannot
      be changed later. For more information see `egress outbound type
      <https://docs.microsoft.com/azure/aks/egress-outboundtype>`_. Known values are:
-     \"loadBalancer\", \"userDefinedRouting\", \"managedNATGateway\", \"managedNATGatewayV2\",
-     \"userAssignedNATGateway\", and \"none\"."""
+     \"loadBalancer\", \"userDefinedRouting\", \"managedNATGateway\", \"userAssignedNATGateway\",
+     and \"none\"."""
     loadBalancerSku: Union[str, "LoadBalancerSku"]
     """The load balancer sku for the managed cluster. The default is 'standard'. See `Azure Load
      Balancer SKUs <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information
-     about the differences between load balancer SKUs. Known values are: \"service\", \"standard\",
-     and \"basic\"."""
+     about the differences between load balancer SKUs. Known values are: \"standard\" and \"basic\"."""
     loadBalancerProfile: "ManagedClusterLoadBalancerProfile"
     """Profile of the cluster load balancer."""
-    bastionProfile: "BastionProfile"
-    """Profile of the Bastion Host associated with the managed cluster. See
-     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
     natGatewayProfile: "ManagedClusterNATGatewayProfile"
     """Profile of the cluster NAT gateway."""
-    natGatewayId: str
-    """The Azure resource ID of the NAT gateway to use for egress at cluster startup when outboundType
-     is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool type is podIP, and load
-     balancer type is service SKU. This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
-     When using managed NATGateway this field is auto populated. For more information, see
-     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_."""
     staticEgressGatewayProfile: "ManagedClusterStaticEgressGatewayProfile"
     """The profile for Static Egress Gateway addon. For more details about Static Egress Gateway, see
      `https://aka.ms/aks/static-egress-gateway <https://aka.ms/aks/static-egress-gateway>`_."""
@@ -1464,77 +1086,6 @@ class ContainerServiceNetworkProfile(TypedDict, total=False):
     """The IP families used to specify IP versions available to the cluster. IP families are used to
      determine single-stack or dual-stack clusters. For single-stack, the expected value is IPv4.
      For dual-stack, the expected values are IPv4 and IPv6."""
-    podLinkLocalAccess: Union[str, "PodLinkLocalAccess"]
-    """Defines access to special link local addresses (Azure Instance Metadata Service, aka IMDS) for
-     pods with hostNetwork=false. if not specified, the default is 'IMDS'. Known values are:
-     \"IMDS\" and \"None\"."""
-    kubeProxyConfig: "ContainerServiceNetworkProfileKubeProxyConfig"
-    """Holds configuration customizations for kube-proxy. Any values not defined will use the
-     kube-proxy defaulting behavior. See `https://v
-     <https://v>`_<version>.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
-     where <version> is represented by a <major version>-<minor version> string. Kubernetes version
-     1.23 would be '1-23'."""
-
-
-class ContainerServiceNetworkProfileKubeProxyConfig(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Holds configuration customizations for kube-proxy. Any values not defined will use the
-    kube-proxy defaulting behavior. See `https://v
-    <https://v>`_<version>.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
-    where <version> is represented by a <major version>-<minor version> string. Kubernetes version
-    1.23 would be '1-23'.
-
-    :ivar enabled: Whether to enable on kube-proxy on the cluster (if no 'kubeProxyConfig' exists,
-     kube-proxy is enabled in AKS by default without these customizations).
-    :vartype enabled: bool
-    :ivar mode: Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES'). Known values
-     are: "IPTABLES", "IPVS", and "NFTABLES".
-    :vartype mode: Union[str, "Mode"]
-    :ivar ipvs_config: Holds configuration customizations for IPVS. May only be specified if 'mode'
-     is set to 'IPVS'.
-    :vartype ipvs_config: "ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig"
-    """
-
-    enabled: bool
-    """Whether to enable on kube-proxy on the cluster (if no 'kubeProxyConfig' exists, kube-proxy is
-     enabled in AKS by default without these customizations)."""
-    mode: Union[str, "Mode"]
-    """Specify which proxy mode to use ('IPTABLES', 'IPVS' or 'NFTABLES'). Known values are:
-     \"IPTABLES\", \"IPVS\", and \"NFTABLES\"."""
-    ipvsConfig: "ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig"
-    """Holds configuration customizations for IPVS. May only be specified if 'mode' is set to 'IPVS'."""
-
-
-class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Holds configuration customizations for IPVS. May only be specified if 'mode' is set to 'IPVS'.
-
-    :ivar scheduler: IPVS scheduler, for more information please see
-     `http://www.linuxvirtualserver.org/docs/scheduling.html
-     <http://www.linuxvirtualserver.org/docs/scheduling.html>`_. Known values are: "RoundRobin" and
-     "LeastConnection".
-    :vartype scheduler: Union[str, "IpvsScheduler"]
-    :ivar tcp_timeout_seconds: The timeout value used for idle IPVS TCP sessions in seconds. Must
-     be a positive integer value.
-    :vartype tcp_timeout_seconds: int
-    :ivar tcp_fin_timeout_seconds: The timeout value used for IPVS TCP sessions after receiving a
-     FIN in seconds. Must be a positive integer value.
-    :vartype tcp_fin_timeout_seconds: int
-    :ivar udp_timeout_seconds: The timeout value used for IPVS UDP packets in seconds. Must be a
-     positive integer value.
-    :vartype udp_timeout_seconds: int
-    """
-
-    scheduler: Union[str, "IpvsScheduler"]
-    """IPVS scheduler, for more information please see
-     `http://www.linuxvirtualserver.org/docs/scheduling.html
-     <http://www.linuxvirtualserver.org/docs/scheduling.html>`_. Known values are: \"RoundRobin\"
-     and \"LeastConnection\"."""
-    tcpTimeoutSeconds: int
-    """The timeout value used for idle IPVS TCP sessions in seconds. Must be a positive integer value."""
-    tcpFinTimeoutSeconds: int
-    """The timeout value used for IPVS TCP sessions after receiving a FIN in seconds. Must be a
-     positive integer value."""
-    udpTimeoutSeconds: int
-    """The timeout value used for IPVS UDP packets in seconds. Must be a positive integer value."""
 
 
 class ContainerServiceSshConfiguration(TypedDict, total=False):
@@ -1688,61 +1239,11 @@ class GPUProfile(TypedDict, total=False):
     :ivar driver: Whether to install GPU drivers. When it's not specified, default is Install.
      Known values are: "Install" and "None".
     :vartype driver: Union[str, "GPUDriver"]
-    :ivar driver_type: Specify the type of GPU driver to install when creating Windows agent pools.
-     If not provided, AKS selects the driver based on system compatibility. This cannot be changed
-     once the AgentPool has been created. This cannot be set on Linux AgentPools. For Linux
-     AgentPools, the driver is selected based on system compatibility. Known values are: "GRID" and
-     "CUDA".
-    :vartype driver_type: Union[str, "DriverType"]
-    :ivar nvidia: NVIDIA-specific GPU settings.
-    :vartype nvidia: "NvidiaGPUProfile"
     """
 
     driver: Union[str, "GPUDriver"]
     """Whether to install GPU drivers. When it's not specified, default is Install. Known values are:
      \"Install\" and \"None\"."""
-    driverType: Union[str, "DriverType"]
-    """Specify the type of GPU driver to install when creating Windows agent pools. If not provided,
-     AKS selects the driver based on system compatibility. This cannot be changed once the AgentPool
-     has been created. This cannot be set on Linux AgentPools. For Linux AgentPools, the driver is
-     selected based on system compatibility. Known values are: \"GRID\" and \"CUDA\"."""
-    nvidia: "NvidiaGPUProfile"
-    """NVIDIA-specific GPU settings."""
-
-
-class HardEvictionThreshold(TypedDict, total=False):
-    """Hard eviction thresholds for kubelet. These thresholds trigger pod eviction when node resources
-    drop below the specified values. Values must be greater than or equal to the documented
-    minimums for each signal. Supported formats are Ki, Mi, Gi, or percentages using %.
-
-    :ivar memory_available: The threshold for available memory below which pod eviction is
-     triggered. Accepts absolute values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute
-     values must be greater than or equal to 100Mi. Percentage values must be greater than or equal
-     to 2%.
-    :vartype memory_available: str
-    :ivar node_fs_available: The threshold for available node filesystem space below which pod
-     eviction is triggered. Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%').
-     Must be greater than or equal to the system default of 10%.
-    :vartype node_fs_available: str
-    :ivar node_fs_inodes_free: The threshold for available inodes on the node filesystem below
-     which pod eviction is triggered. Accepts absolute inode counts (e.g. '100000') or percentage
-     values (e.g. '5%'). Percentage values must be greater than or equal to the system default of
-     5%.
-    :vartype node_fs_inodes_free: str
-    """
-
-    memoryAvailable: str
-    """The threshold for available memory below which pod eviction is triggered. Accepts absolute
-     values (e.g. '500Mi') or percentage values (e.g. '5%'). Absolute values must be greater than or
-     equal to 100Mi. Percentage values must be greater than or equal to 2%."""
-    nodeFsAvailable: str
-    """The threshold for available node filesystem space below which pod eviction is triggered.
-     Accepts absolute values (e.g. '1Gi') or percentage values (e.g. '10%'). Must be greater than or
-     equal to the system default of 10%."""
-    nodeFsInodesFree: str
-    """The threshold for available inodes on the node filesystem below which pod eviction is
-     triggered. Accepts absolute inode counts (e.g. '100000') or percentage values (e.g. '5%').
-     Percentage values must be greater than or equal to the system default of 5%."""
 
 
 class IdentityBinding(ProxyResource):
@@ -1821,12 +1322,6 @@ class IdentityBindingProperties(TypedDict, total=False):
     :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: Union[str, "IdentityBindingProvisioningState"]
-    :ivar allowed_subjects: Optional list of subjects authorized to use this identity binding for
-     token exchange. Each entry pairs a required namespace label selector with an optional service
-     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
-     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
-     evaluation. Maximum 100 entries.
-    :vartype allowed_subjects: list["AllowedSubject"]
     """
 
     managedIdentity: Required["IdentityBindingManagedIdentityProfile"]
@@ -1836,12 +1331,6 @@ class IdentityBindingProperties(TypedDict, total=False):
     provisioningState: Union[str, "IdentityBindingProvisioningState"]
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Creating\", \"Updating\", and \"Deleting\"."""
-    allowedSubjects: list["AllowedSubject"]
-    """Optional list of subjects authorized to use this identity binding for token exchange. Each
-     entry pairs a required namespace label selector with an optional service account label
-     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
-     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
-     Maximum 100 entries."""
 
 
 class IPTag(TypedDict, total=False):
@@ -1993,173 +1482,6 @@ class IstioServiceMesh(TypedDict, total=False):
      <https://learn.microsoft.com/en-us/azure/aks/istio-upgrade>`_."""
 
 
-class JWTAuthenticator(ProxyResource):
-    """Configuration for JWT authenticator in the managed cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of JWTAuthenticator. For details on how to configure the
-     properties of a JWT authenticator, please refer to the Kubernetes documentation:
-     `https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
-     <https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration>`_.
-     Please note that not all fields available in the Kubernetes documentation are supported by AKS.
-     For troubleshooting, please see `https://aka.ms/aks-external-issuers-docs
-     <https://aka.ms/aks-external-issuers-docs>`_. Required.
-    :vartype properties: "JWTAuthenticatorProperties"
-    """
-
-    properties: Required["JWTAuthenticatorProperties"]
-    """The properties of JWTAuthenticator. For details on how to configure the properties of a JWT
-     authenticator, please refer to the Kubernetes documentation:
-     `https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
-     <https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration>`_.
-     Please note that not all fields available in the Kubernetes documentation are supported by AKS.
-     For troubleshooting, please see `https://aka.ms/aks-external-issuers-docs
-     <https://aka.ms/aks-external-issuers-docs>`_. Required."""
-
-
-class JWTAuthenticatorClaimMappingExpression(TypedDict, total=False):
-    """The claim mapping expression for JWTAuthenticator.
-
-    :ivar expression: The CEL expression used to access token claims. Required.
-    :vartype expression: str
-    """
-
-    expression: Required[str]
-    """The CEL expression used to access token claims. Required."""
-
-
-class JWTAuthenticatorClaimMappings(TypedDict, total=False):
-    """The claim mappings for JWTAuthenticator.
-
-    :ivar username: The expression to extract username attribute from the token claims. Required.
-    :vartype username: "JWTAuthenticatorClaimMappingExpression"
-    :ivar groups: The expression to extract groups attribute from the token claims. When not
-     provided, no groups are extracted from the token claims.
-    :vartype groups: "JWTAuthenticatorClaimMappingExpression"
-    :ivar uid: The expression to extract uid attribute from the token claims. When not provided, no
-     uid is extracted from the token claims.
-    :vartype uid: "JWTAuthenticatorClaimMappingExpression"
-    :ivar extra: The expression to extract extra attribute from the token claims. When not
-     provided, no extra attributes are extracted from the token claims.
-    :vartype extra: list["JWTAuthenticatorExtraClaimMappingExpression"]
-    """
-
-    username: Required["JWTAuthenticatorClaimMappingExpression"]
-    """The expression to extract username attribute from the token claims. Required."""
-    groups: "JWTAuthenticatorClaimMappingExpression"
-    """The expression to extract groups attribute from the token claims. When not provided, no groups
-     are extracted from the token claims."""
-    uid: "JWTAuthenticatorClaimMappingExpression"
-    """The expression to extract uid attribute from the token claims. When not provided, no uid is
-     extracted from the token claims."""
-    extra: list["JWTAuthenticatorExtraClaimMappingExpression"]
-    """The expression to extract extra attribute from the token claims. When not provided, no extra
-     attributes are extracted from the token claims."""
-
-
-class JWTAuthenticatorExtraClaimMappingExpression(TypedDict, total=False):  # pylint: disable=name-too-long
-    """The extra claim mapping expression for JWTAuthenticator.
-
-    :ivar key: The key of the extra attribute. Required.
-    :vartype key: str
-    :ivar value_expression: The CEL expression used to extract the value of the extra attribute.
-     Required.
-    :vartype value_expression: str
-    """
-
-    key: Required[str]
-    """The key of the extra attribute. Required."""
-    valueExpression: Required[str]
-    """The CEL expression used to extract the value of the extra attribute. Required."""
-
-
-class JWTAuthenticatorIssuer(TypedDict, total=False):
-    """The OIDC issuer details for JWTAuthenticator.
-
-    :ivar url: The issuer URL. The URL must begin with the scheme https and cannot contain a query
-     string or fragment. This must match the "iss" claim in the presented JWT, and the issuer
-     returned from discovery. Required.
-    :vartype url: str
-    :ivar audiences: The set of acceptable audiences the JWT must be issued to. At least one is
-     required. When multiple is set, AudienceMatchPolicy is used in API Server configuration.
-     Required.
-    :vartype audiences: list[str]
-    """
-
-    url: Required[str]
-    """The issuer URL. The URL must begin with the scheme https and cannot contain a query string or
-     fragment. This must match the \"iss\" claim in the presented JWT, and the issuer returned from
-     discovery. Required."""
-    audiences: Required[list[str]]
-    """The set of acceptable audiences the JWT must be issued to. At least one is required. When
-     multiple is set, AudienceMatchPolicy is used in API Server configuration. Required."""
-
-
-class JWTAuthenticatorProperties(TypedDict, total=False):
-    """The properties of JWTAuthenticator. For details on how to configure the properties of a JWT
-    authenticator, please refer to the Kubernetes documentation:
-    `https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
-    <https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration>`_.
-    Please note that not all fields available in the Kubernetes documentation are supported by AKS.
-    For troubleshooting, please see `https://aka.ms/aks-external-issuers-docs
-    <https://aka.ms/aks-external-issuers-docs>`_.
-
-    :ivar provisioning_state: The current provisioning state of the JWT authenticator. Known values
-     are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
-    :vartype provisioning_state: Union[str, "JWTAuthenticatorProvisioningState"]
-    :ivar issuer: The JWT OIDC issuer details. Required.
-    :vartype issuer: "JWTAuthenticatorIssuer"
-    :ivar claim_validation_rules: The rules that are applied to validate token claims to
-     authenticate users. All the expressions must evaluate to true for validation to succeed.
-    :vartype claim_validation_rules: list["JWTAuthenticatorValidationRule"]
-    :ivar claim_mappings: The mappings that define how user attributes are extracted from the token
-     claims. Required.
-    :vartype claim_mappings: "JWTAuthenticatorClaimMappings"
-    :ivar user_validation_rules: The rules that are applied to the mapped user before completing
-     authentication. All the expressions must evaluate to true for validation to succeed.
-    :vartype user_validation_rules: list["JWTAuthenticatorValidationRule"]
-    """
-
-    provisioningState: Union[str, "JWTAuthenticatorProvisioningState"]
-    """The current provisioning state of the JWT authenticator. Known values are: \"Succeeded\",
-     \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
-    issuer: Required["JWTAuthenticatorIssuer"]
-    """The JWT OIDC issuer details. Required."""
-    claimValidationRules: list["JWTAuthenticatorValidationRule"]
-    """The rules that are applied to validate token claims to authenticate users. All the expressions
-     must evaluate to true for validation to succeed."""
-    claimMappings: Required["JWTAuthenticatorClaimMappings"]
-    """The mappings that define how user attributes are extracted from the token claims. Required."""
-    userValidationRules: list["JWTAuthenticatorValidationRule"]
-    """The rules that are applied to the mapped user before completing authentication. All the
-     expressions must evaluate to true for validation to succeed."""
-
-
-class JWTAuthenticatorValidationRule(TypedDict, total=False):
-    """The validation rule for JWTAuthenticator.
-
-    :ivar expression: The CEL expression used to validate the claim or attribute. Required.
-    :vartype expression: str
-    :ivar message: The validation error message.
-    :vartype message: str
-    """
-
-    expression: Required[str]
-    """The CEL expression used to validate the claim or attribute. Required."""
-    message: str
-    """The validation error message."""
-
-
 class KubeletConfig(TypedDict, total=False):
     """Kubelet configurations of agent nodes. See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
@@ -2201,20 +1523,6 @@ class KubeletConfig(TypedDict, total=False):
     :vartype container_log_max_files: int
     :ivar pod_max_pids: The maximum number of processes per pod.
     :vartype pod_max_pids: int
-    :ivar seccomp_default: Specifies the default seccomp profile applied to all workloads. If not
-     specified, 'Unconfined' will be used by default. Known values are: "Unconfined" and
-     "RuntimeDefault".
-    :vartype seccomp_default: Union[str, "SeccompDefault"]
-    :ivar kube_reserved: Kube-reserved values for kubelet. When a value is not set, the
-     system-computed default based on VM size is used. See `AKS node resource reservations
-     <https://aka.ms/aks/nodereservations>`_ for details on computed defaults. Only applicable for
-     Linux nodepools.
-    :vartype kube_reserved: "KubeReserved"
-    :ivar hard_eviction_threshold: Hard eviction thresholds for kubelet. When a threshold is not
-     set, the system default is used. See `AKS node resource reservations
-     <https://aka.ms/aks/nodereservations>`_ for details on computed defaults. Only applicable for
-     Linux nodepools.
-    :vartype hard_eviction_threshold: "HardEvictionThreshold"
     """
 
     cpuManagerPolicy: str
@@ -2249,104 +1557,6 @@ class KubeletConfig(TypedDict, total=False):
      be ≥ 2."""
     podMaxPids: int
     """The maximum number of processes per pod."""
-    seccompDefault: Union[str, "SeccompDefault"]
-    """Specifies the default seccomp profile applied to all workloads. If not specified, 'Unconfined'
-     will be used by default. Known values are: \"Unconfined\" and \"RuntimeDefault\"."""
-    kubeReserved: "KubeReserved"
-    """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
-     VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
-     for details on computed defaults. Only applicable for Linux nodepools."""
-    hardEvictionThreshold: "HardEvictionThreshold"
-    """Hard eviction thresholds for kubelet. When a threshold is not set, the system default is used.
-     See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_ for details on
-     computed defaults. Only applicable for Linux nodepools."""
-
-
-class KubeReserved(TypedDict, total=False):
-    """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
-    VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
-    for details on computed defaults. Only applicable for Linux nodepools.
-
-    :ivar cpu_millicores: The amount of CPU reserved for Kubernetes system daemons, in millicores.
-     Must be greater than or equal to 140. For example, a value of 200 means 200m (0.2 CPU cores).
-    :vartype cpu_millicores: int
-    :ivar memory_mb: The amount of memory reserved for Kubernetes system daemons, in MiB. Must be
-     greater than or equal to 750.
-    :vartype memory_mb: int
-    """
-
-    cpuMillicores: int
-    """The amount of CPU reserved for Kubernetes system daemons, in millicores. Must be greater than
-     or equal to 140. For example, a value of 200 means 200m (0.2 CPU cores)."""
-    memoryMB: int
-    """The amount of memory reserved for Kubernetes system daemons, in MiB. Must be greater than or
-     equal to 750."""
-
-
-class KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Encryption at rest of Kubernetes resource objects using service-managed keys. More information
-    on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
-    <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
-
-    :ivar infrastructure_encryption: Whether to enable encryption at rest of Kubernetes resource
-     objects using service-managed keys. More information on this can be found under
-     `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: "Enabled" and
-     "Disabled".
-    :vartype infrastructure_encryption: Union[str, "InfrastructureEncryption"]
-    """
-
-    infrastructureEncryption: Union[str, "InfrastructureEncryption"]
-    """Whether to enable encryption at rest of Kubernetes resource objects using service-managed keys.
-     More information on this can be found under
-     `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_. Known values are: \"Enabled\" and
-     \"Disabled\"."""
-
-
-class LabelSelector(TypedDict, total=False):
-    """A label selector is a label query over a set of resources. The result of matchLabels and
-    matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
-    matches no objects.
-
-    :ivar match_labels: matchLabels is an array of {key=value} pairs. A single {key=value} in the
-     matchLabels map is equivalent to an element of matchExpressions, whose key field is ``key``,
-     the operator is ``In``, and the values array contains only ``value``. The requirements are
-     ANDed.
-    :vartype match_labels: list[str]
-    :ivar match_expressions: matchExpressions is a list of label selector requirements. The
-     requirements are ANDed.
-    :vartype match_expressions: list["LabelSelectorRequirement"]
-    """
-
-    matchLabels: list[str]
-    """matchLabels is an array of {key=value} pairs. A single {key=value} in the matchLabels map is
-     equivalent to an element of matchExpressions, whose key field is ``key``, the operator is
-     ``In``, and the values array contains only ``value``. The requirements are ANDed."""
-    matchExpressions: list["LabelSelectorRequirement"]
-    """matchExpressions is a list of label selector requirements. The requirements are ANDed."""
-
-
-class LabelSelectorRequirement(TypedDict, total=False):
-    """A label selector requirement is a selector that contains values, a key, and an operator that
-    relates the key and values.
-
-    :ivar key: key is the label key that the selector applies to.
-    :vartype key: str
-    :ivar operator: operator represents a key's relationship to a set of values. Valid operators
-     are In and NotIn. Known values are: "In", "NotIn", "Exists", and "DoesNotExist".
-    :vartype operator: Union[str, "Operator"]
-    :ivar values_property: values is an array of string values, the values array must be non-empty.
-    :vartype values_property: list[str]
-    """
-
-    key: str
-    """key is the label key that the selector applies to."""
-    operator: Union[str, "Operator"]
-    """operator represents a key's relationship to a set of values. Valid operators are In and NotIn.
-     Known values are: \"In\", \"NotIn\", \"Exists\", and \"DoesNotExist\"."""
-    values: list[str]
-    """values is an array of string values, the values array must be non-empty."""
 
 
 class LinuxOSConfig(TypedDict, total=False):
@@ -2383,82 +1593,6 @@ class LinuxOSConfig(TypedDict, total=False):
      <https://www.kernel.org/doc/html/latest/admin-guide/mm/transhuge.html#admin-guide-transhuge>`_."""
     swapFileSizeMB: int
     """The size in MB of a swap file that will be created on each node."""
-
-
-class ListBootstrapDataRequest(TypedDict, total=False):
-    """Empty request body for listing FlexNode bootstrap data."""
-
-
-class LoadBalancer(ProxyResource):
-    """The configurations regarding multiple standard load balancers. If not supplied, single load
-    balancer mode will be used. Multiple standard load balancers mode will be used if at lease one
-    configuration is supplied. There has to be a configuration named ``kubernetes``. The name field
-    will be the name of the corresponding public load balancer. There will be an internal load
-    balancer created if needed, and the name will be ``<name>-internal``. The internal lb shares
-    the same configurations as the external one. The internal lbs are not needed to be included in
-    LoadBalancer list.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of the load balancer.
-    :vartype properties: "LoadBalancerProperties"
-    """
-
-    properties: "LoadBalancerProperties"
-    """The properties of the load balancer."""
-
-
-class LoadBalancerProperties(TypedDict, total=False):
-    """Properties for a load balancer resource.
-
-    :ivar primary_agent_pool_name: Required field. A string value that must specify the ID of an
-     existing agent pool. All nodes in the given pool will always be added to this load balancer.
-     This agent pool must have at least one node and minCount>=1 for autoscaling operations. An
-     agent pool can only be the primary pool for a single load balancer. Required.
-    :vartype primary_agent_pool_name: str
-    :ivar allow_service_placement: Whether to automatically place services on the load balancer. If
-     not supplied, the default value is true. If set to false manually, both of the external and the
-     internal load balancer will not be selected for services unless they explicitly target it.
-    :vartype allow_service_placement: bool
-    :ivar service_label_selector: Only services that must match this selector can be placed on this
-     load balancer.
-    :vartype service_label_selector: "LabelSelector"
-    :ivar service_namespace_selector: Services created in namespaces that match the selector can be
-     placed on this load balancer.
-    :vartype service_namespace_selector: "LabelSelector"
-    :ivar node_selector: Nodes that match this selector will be possible members of this load
-     balancer.
-    :vartype node_selector: "LabelSelector"
-    :ivar provisioning_state: The current provisioning state.
-    :vartype provisioning_state: str
-    """
-
-    primaryAgentPoolName: Required[str]
-    """Required field. A string value that must specify the ID of an existing agent pool. All nodes in
-     the given pool will always be added to this load balancer. This agent pool must have at least
-     one node and minCount>=1 for autoscaling operations. An agent pool can only be the primary pool
-     for a single load balancer. Required."""
-    allowServicePlacement: bool
-    """Whether to automatically place services on the load balancer. If not supplied, the default
-     value is true. If set to false manually, both of the external and the internal load balancer
-     will not be selected for services unless they explicitly target it."""
-    serviceLabelSelector: "LabelSelector"
-    """Only services that must match this selector can be placed on this load balancer."""
-    serviceNamespaceSelector: "LabelSelector"
-    """Services created in namespaces that match the selector can be placed on this load balancer."""
-    nodeSelector: "LabelSelector"
-    """Nodes that match this selector will be possible members of this load balancer."""
-    provisioningState: str
-    """The current provisioning state."""
 
 
 class LocalDNSOverride(TypedDict, total=False):
@@ -2549,465 +1683,6 @@ class LocalDNSProfile(TypedDict, total=False):
      KubeDNS traffic)."""
 
 
-class Machine(ProxyResource):
-    """A machine. Contains details about the underlying virtual machine. A machine may be visible here
-    but not in kubectl get nodes; if so it may be because the machine has not been registered with
-    the Kubernetes API Server yet.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: The properties of the machine.
-    :vartype properties: "MachineProperties"
-    :ivar zones: The Availability zone in which machine is located.
-    :vartype zones: list[str]
-    """
-
-    properties: "MachineProperties"
-    """The properties of the machine."""
-    zones: list[str]
-    """The Availability zone in which machine is located."""
-
-
-class MachineBillingProfile(TypedDict, total=False):
-    """The properties having to do with machine billing.
-
-    :ivar spot_max_price: The max price (in US Dollars) you are willing to pay for spot instances.
-     Possible values are any decimal value greater than zero or -1 which indicates default price to
-     be up-to on-demand. For more details on spot pricing, see `spot VMs pricing
-     <https://docs.microsoft.com/azure/virtual-machines/spot-vms#pricing>`_.
-    :vartype spot_max_price: float
-    """
-
-    spotMaxPrice: float
-    """The max price (in US Dollars) you are willing to pay for spot instances. Possible values are
-     any decimal value greater than zero or -1 which indicates default price to be up-to on-demand.
-     For more details on spot pricing, see `spot VMs pricing
-     <https://docs.microsoft.com/azure/virtual-machines/spot-vms#pricing>`_."""
-
-
-class MachineHardwareProfile(TypedDict, total=False):
-    """The hardware and GPU settings of the machine.
-
-    :ivar vm_size: The size of the VM. VM size availability varies by region. If a node contains
-     insufficient compute resources (memory, cpu, etc) pods might fail to run correctly. For more
-     details on restricted VM sizes, see: `https://docs.microsoft.com/azure/aks/quotas-skus-regions
-     <https://docs.microsoft.com/azure/aks/quotas-skus-regions>`_.
-    :vartype vm_size: str
-    :ivar gpu_instance_profile: GPUInstanceProfile to be used to specify GPU MIG instance profile
-     for supported GPU VM SKU. Known values are: "MIG1g", "MIG2g", "MIG3g", "MIG4g", and "MIG7g".
-    :vartype gpu_instance_profile: Union[str, "GPUInstanceProfile"]
-    :ivar gpu_profile: The GPU settings of the machine.
-    :vartype gpu_profile: "GPUProfile"
-    :ivar ultra_ssd_enabled: Whether to enable UltraSSD.
-    :vartype ultra_ssd_enabled: bool
-    """
-
-    vmSize: str
-    """The size of the VM. VM size availability varies by region. If a node contains insufficient
-     compute resources (memory, cpu, etc) pods might fail to run correctly. For more details on
-     restricted VM sizes, see: `https://docs.microsoft.com/azure/aks/quotas-skus-regions
-     <https://docs.microsoft.com/azure/aks/quotas-skus-regions>`_."""
-    gpuInstanceProfile: Union[str, "GPUInstanceProfile"]
-    """GPUInstanceProfile to be used to specify GPU MIG instance profile for supported GPU VM SKU.
-     Known values are: \"MIG1g\", \"MIG2g\", \"MIG3g\", \"MIG4g\", and \"MIG7g\"."""
-    gpuProfile: "GPUProfile"
-    """The GPU settings of the machine."""
-    ultraSsdEnabled: bool
-    """Whether to enable UltraSSD."""
-
-
-class MachineIpAddress(TypedDict, total=False):
-    """The machine IP address details.
-
-    :ivar family: To determine if address belongs IPv4 or IPv6 family. Known values are: "IPv4" and
-     "IPv6".
-    :vartype family: Union[str, "IPFamily"]
-    :ivar ip: IPv4 or IPv6 address of the machine.
-    :vartype ip: str
-    """
-
-    family: Union[str, "IPFamily"]
-    """To determine if address belongs IPv4 or IPv6 family. Known values are: \"IPv4\" and \"IPv6\"."""
-    ip: str
-    """IPv4 or IPv6 address of the machine."""
-
-
-class MachineKubernetesProfile(TypedDict, total=False):
-    """The Kubernetes configurations used by the machine.
-
-    :ivar node_labels: The node labels on the machine.
-    :vartype node_labels: dict[str, str]
-    :ivar orchestrator_version: The version of Kubernetes specified by the user. Both patch version
-     <major.minor.patch> and <major.minor> are supported. When <major.minor> is specified, the
-     latest supported patch version is chosen automatically.
-    :vartype orchestrator_version: str
-    :ivar current_orchestrator_version: The version of Kubernetes running on the machine. If
-     orchestratorVersion was a fully specified version <major.minor.patch>, this field will be
-     exactly equal to it. If orchestratorVersion was <major.minor>, this field will contain the full
-     <major.minor.patch> version being used.
-    :vartype current_orchestrator_version: str
-    :ivar kubelet_disk_type: Determines the placement of emptyDir volumes, container runtime data
-     root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
-    :vartype kubelet_disk_type: Union[str, "KubeletDiskType"]
-    :ivar kubelet_config: The Kubelet configuration on the machine.
-    :vartype kubelet_config: "KubeletConfig"
-    :ivar node_initialization_taints: Taints added on the node during creation that will not be
-     reconciled by AKS. These taints will not be reconciled by AKS and can be removed with a kubectl
-     call. These taints allow for required configuration to run before the node is ready to accept
-     workloads, for example 'key1=value1:NoSchedule' that then can be removed with ``kubectl taint
-     nodes node1 key1=value1:NoSchedule-``.
-    :vartype node_initialization_taints: list[str]
-    :ivar node_taints: The taints added to new node during machine create. For example,
-     key=value:NoSchedule.
-    :vartype node_taints: list[str]
-    :ivar max_pods: The maximum number of pods that can run on a node.
-    :vartype max_pods: int
-    :ivar node_name: The node name in the Kubernetes cluster.
-    :vartype node_name: str
-    :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
-    :vartype workload_runtime: Union[str, "WorkloadRuntime"]
-    :ivar artifact_streaming_profile: Configuration for using artifact streaming on AKS.
-    :vartype artifact_streaming_profile: "AgentPoolArtifactStreamingProfile"
-    """
-
-    nodeLabels: dict[str, str]
-    """The node labels on the machine."""
-    orchestratorVersion: str
-    """The version of Kubernetes specified by the user. Both patch version <major.minor.patch> and
-     <major.minor> are supported. When <major.minor> is specified, the latest supported patch
-     version is chosen automatically."""
-    currentOrchestratorVersion: str
-    """The version of Kubernetes running on the machine. If orchestratorVersion was a fully specified
-     version <major.minor.patch>, this field will be exactly equal to it. If orchestratorVersion was
-     <major.minor>, this field will contain the full <major.minor.patch> version being used."""
-    kubeletDiskType: Union[str, "KubeletDiskType"]
-    """Determines the placement of emptyDir volumes, container runtime data root, and Kubelet
-     ephemeral storage. Known values are: \"OS\" and \"Temporary\"."""
-    kubeletConfig: "KubeletConfig"
-    """The Kubelet configuration on the machine."""
-    nodeInitializationTaints: list[str]
-    """Taints added on the node during creation that will not be reconciled by AKS. These taints will
-     not be reconciled by AKS and can be removed with a kubectl call. These taints allow for
-     required configuration to run before the node is ready to accept workloads, for example
-     'key1=value1:NoSchedule' that then can be removed with ``kubectl taint nodes node1
-     key1=value1:NoSchedule-``."""
-    nodeTaints: list[str]
-    """The taints added to new node during machine create. For example, key=value:NoSchedule."""
-    maxPods: int
-    """The maximum number of pods that can run on a node."""
-    nodeName: str
-    """The node name in the Kubernetes cluster."""
-    workloadRuntime: Union[str, "WorkloadRuntime"]
-    """Determines the type of workload a node can run. Known values are: \"OCIContainer\",
-     \"WasmWasi\", \"KataMshvVmIsolation\", and \"KataVmIsolation\"."""
-    artifactStreamingProfile: "AgentPoolArtifactStreamingProfile"
-    """Configuration for using artifact streaming on AKS."""
-
-
-class MachineNetworkProperties(TypedDict, total=False):
-    """network properties of the machine.
-
-    :ivar ip_addresses: IPv4, IPv6 addresses of the machine.
-    :vartype ip_addresses: list["MachineIpAddress"]
-    :ivar vnet_subnet_id: The ID of the subnet which node and optionally pods will join on startup.
-     If this is not specified, a VNET and subnet will be generated and used. If no podSubnetID is
-     specified, this applies to nodes and pods, otherwise it applies to just nodes. This is of the
-     form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
-    :vartype vnet_subnet_id: str
-    :ivar pod_subnet_id: The ID of the subnet which pods will join when launched. If omitted, pod
-     IPs are statically assigned on the node subnet (see vnetSubnetID for more details). This is of
-     the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}.
-    :vartype pod_subnet_id: str
-    :ivar enable_node_public_ip: Whether the machine is allocated its own public IP. Some scenarios
-     may require the machine to receive their own dedicated public IP addresses. A common scenario
-     is for gaming workloads, where a console needs to make a direct connection to a cloud virtual
-     machine to minimize hops. The default is false.
-    :vartype enable_node_public_ip: bool
-    :ivar node_public_ip_prefix_id: The public IP prefix ID which VM node should use IPs from. This
-     is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}.
-    :vartype node_public_ip_prefix_id: str
-    :ivar node_public_ip_tags: IPTags of instance-level public IPs.
-    :vartype node_public_ip_tags: list["IPTag"]
-    """
-
-    ipAddresses: list["MachineIpAddress"]
-    """IPv4, IPv6 addresses of the machine."""
-    vnetSubnetID: str
-    """The ID of the subnet which node and optionally pods will join on startup. If this is not
-     specified, a VNET and subnet will be generated and used. If no podSubnetID is specified, this
-     applies to nodes and pods, otherwise it applies to just nodes. This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}."""
-    podSubnetID: str
-    """The ID of the subnet which pods will join when launched. If omitted, pod IPs are statically
-     assigned on the node subnet (see vnetSubnetID for more details). This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/virtualNetworks/{virtualNetworkName}/subnets/{subnetName}."""
-    enableNodePublicIP: bool
-    """Whether the machine is allocated its own public IP. Some scenarios may require the machine to
-     receive their own dedicated public IP addresses. A common scenario is for gaming workloads,
-     where a console needs to make a direct connection to a cloud virtual machine to minimize hops.
-     The default is false."""
-    nodePublicIPPrefixID: str
-    """The public IP prefix ID which VM node should use IPs from. This is of the form:
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/publicIPPrefixes/{publicIPPrefixName}."""
-    nodePublicIPTags: list["IPTag"]
-    """IPTags of instance-level public IPs."""
-
-
-class MachineOSProfile(TypedDict, total=False):
-    """The operating system and disk used by the machine.
-
-    :ivar os_type: The operating system type. The default is Linux. Known values are: "Linux" and
-     "Windows".
-    :vartype os_type: Union[str, "OSType"]
-    :ivar os_sku: Specifies the OS SKU used by the agent pool. If not specified, the default is
-     Ubuntu if OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be
-     changed to Windows2022 after Windows2019 is deprecated. Known values are: "Ubuntu",
-     "AzureLinux", "AzureLinux3", "Mariner", "Flatcar", "CBLMariner", "Windows2019", "Windows2022",
-     "Ubuntu2204", "Windows2025", "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
-    :vartype os_sku: Union[str, "OSSKU"]
-    :ivar os_disk_size_gb: OS Disk Size in GB to be used to specify the disk size for every machine
-     in the master/agent pool. If you specify 0, it will apply the default osDisk size according to
-     the vmSize specified.
-    :vartype os_disk_size_gb: int
-    :ivar os_disk_type: The OS disk type to be used for machines in the agent pool. The default is
-     'Ephemeral' if the VM supports it and has a cache disk larger than the requested OSDiskSizeGB.
-     Otherwise, defaults to 'Managed'. May not be changed after creation. For more information see
-     `Ephemeral OS <https://docs.microsoft.com/azure/aks/cluster-configuration#ephemeral-os>`_.
-     Known values are: "Managed" and "Ephemeral".
-    :vartype os_disk_type: Union[str, "OSDiskType"]
-    :ivar enable_fips: Whether to use a FIPS-enabled OS.
-    :vartype enable_fips: bool
-    :ivar linux_profile: The Linux machine's specific profile.
-    :vartype linux_profile: "MachineOSProfileLinuxProfile"
-    :ivar windows_profile: The Windows machine's specific profile.
-    :vartype windows_profile: "AgentPoolWindowsProfile"
-    """
-
-    osType: Union[str, "OSType"]
-    """The operating system type. The default is Linux. Known values are: \"Linux\" and \"Windows\"."""
-    osSKU: Union[str, "OSSKU"]
-    """Specifies the OS SKU used by the agent pool. If not specified, the default is Ubuntu if
-     OSType=Linux or Windows2019 if OSType=Windows. And the default Windows OSSKU will be changed to
-     Windows2022 after Windows2019 is deprecated. Known values are: \"Ubuntu\", \"AzureLinux\",
-     \"AzureLinux3\", \"Mariner\", \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\",
-     \"Ubuntu2204\", \"Windows2025\", \"WindowsAnnual\", \"Ubuntu2404\", and
-     \"AzureContainerLinux\"."""
-    osDiskSizeGB: int
-    """OS Disk Size in GB to be used to specify the disk size for every machine in the master/agent
-     pool. If you specify 0, it will apply the default osDisk size according to the vmSize
-     specified."""
-    osDiskType: Union[str, "OSDiskType"]
-    """The OS disk type to be used for machines in the agent pool. The default is 'Ephemeral' if the
-     VM supports it and has a cache disk larger than the requested OSDiskSizeGB. Otherwise, defaults
-     to 'Managed'. May not be changed after creation. For more information see `Ephemeral OS
-     <https://docs.microsoft.com/azure/aks/cluster-configuration#ephemeral-os>`_. Known values are:
-     \"Managed\" and \"Ephemeral\"."""
-    enableFIPS: bool
-    """Whether to use a FIPS-enabled OS."""
-    linuxProfile: "MachineOSProfileLinuxProfile"
-    """The Linux machine's specific profile."""
-    windowsProfile: "AgentPoolWindowsProfile"
-    """The Windows machine's specific profile."""
-
-
-class MachineOSProfileLinuxProfile(TypedDict, total=False):
-    """The Linux machine's specific profile.
-
-    :ivar linux_os_config: The OS configuration of Linux machine.
-    :vartype linux_os_config: "LinuxOSConfig"
-    :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
-     string which will be written to /etc/motd after decoding. This allows customization of the
-     message of the day for Linux nodes. It must not be specified for Windows nodes. It must be a
-     static string (i.e., will be printed raw and not be executed as a script).
-    :vartype message_of_the_day: str
-    """
-
-    linuxOSConfig: "LinuxOSConfig"
-    """The OS configuration of Linux machine."""
-    messageOfTheDay: str
-    """Message of the day for Linux nodes, base64-encoded. A base64-encoded string which will be
-     written to /etc/motd after decoding. This allows customization of the message of the day for
-     Linux nodes. It must not be specified for Windows nodes. It must be a static string (i.e., will
-     be printed raw and not be executed as a script)."""
-
-
-class MachineProperties(TypedDict, total=False):
-    """The properties of the machine.
-
-    :ivar network: network properties of the machine.
-    :vartype network: "MachineNetworkProperties"
-    :ivar resource_id: Azure resource id of the machine. It can be used to GET underlying VM
-     Instance.
-    :vartype resource_id: str
-    :ivar hardware: The hardware and GPU settings of the machine.
-    :vartype hardware: "MachineHardwareProfile"
-    :ivar operating_system: The operating system and disk used by the machine.
-    :vartype operating_system: "MachineOSProfile"
-    :ivar kubernetes: The Kubernetes configurations used by the machine.
-    :vartype kubernetes: "MachineKubernetesProfile"
-    :ivar mode: Machine only allows 'System' and 'User' mode. Known values are: "System", "User",
-     "Gateway", "ManagedSystem", and "Machines".
-    :vartype mode: Union[str, "AgentPoolMode"]
-    :ivar security: The security settings of the machine.
-    :vartype security: "MachineSecurityProfile"
-    :ivar priority: The priority for the machine. If not specified, the default is 'Regular'. Known
-     values are: "Spot" and "Regular".
-    :vartype priority: Union[str, "ScaleSetPriority"]
-    :ivar eviction_policy: The eviction policy for machine. This cannot be specified unless the
-     priority is 'Spot'. If not specified, the default is 'Delete'. Known values are: "Delete" and
-     "Deallocate".
-    :vartype eviction_policy: Union[str, "ScaleSetEvictionPolicy"]
-    :ivar billing: The properties having to do with machine billing.
-    :vartype billing: "MachineBillingProfile"
-    :ivar node_image_version: The version of node image.
-    :vartype node_image_version: str
-    :ivar provisioning_state: The current deployment or provisioning state.
-    :vartype provisioning_state: str
-    :ivar tags: The tags to be persisted on the machine.
-    :vartype tags: dict[str, str]
-    :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
-     will change when the resource is updated. Specify an if-match or if-none-match header with the
-     eTag value for a subsequent request to enable optimistic concurrency per the normal eTag
-     convention.
-    :vartype e_tag: str
-    :ivar status: Contains read-only information about the machine.
-    :vartype status: "MachineStatus"
-    :ivar local_dns_profile: Configures the per-node local DNS, with VnetDNS and KubeDNS overrides.
-     LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
-     more details see aka.ms/aks/localdns.
-    :vartype local_dns_profile: "LocalDNSProfile"
-    """
-
-    network: "MachineNetworkProperties"
-    """network properties of the machine."""
-    resourceId: str
-    """Azure resource id of the machine. It can be used to GET underlying VM Instance."""
-    hardware: "MachineHardwareProfile"
-    """The hardware and GPU settings of the machine."""
-    operatingSystem: "MachineOSProfile"
-    """The operating system and disk used by the machine."""
-    kubernetes: "MachineKubernetesProfile"
-    """The Kubernetes configurations used by the machine."""
-    mode: Union[str, "AgentPoolMode"]
-    """Machine only allows 'System' and 'User' mode. Known values are: \"System\", \"User\",
-     \"Gateway\", \"ManagedSystem\", and \"Machines\"."""
-    security: "MachineSecurityProfile"
-    """The security settings of the machine."""
-    priority: Union[str, "ScaleSetPriority"]
-    """The priority for the machine. If not specified, the default is 'Regular'. Known values are:
-     \"Spot\" and \"Regular\"."""
-    evictionPolicy: Union[str, "ScaleSetEvictionPolicy"]
-    """The eviction policy for machine. This cannot be specified unless the priority is 'Spot'. If not
-     specified, the default is 'Delete'. Known values are: \"Delete\" and \"Deallocate\"."""
-    billing: "MachineBillingProfile"
-    """The properties having to do with machine billing."""
-    nodeImageVersion: str
-    """The version of node image."""
-    provisioningState: str
-    """The current deployment or provisioning state."""
-    tags: dict[str, str]
-    """The tags to be persisted on the machine."""
-    eTag: str
-    """Unique read-only string used to implement optimistic concurrency. The eTag value will change
-     when the resource is updated. Specify an if-match or if-none-match header with the eTag value
-     for a subsequent request to enable optimistic concurrency per the normal eTag convention."""
-    status: "MachineStatus"
-    """Contains read-only information about the machine."""
-    localDNSProfile: "LocalDNSProfile"
-    """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
-     performance and reliability of DNS resolution in an AKS cluster. For more details see
-     aka.ms/aks/localdns."""
-
-
-class MachineSecurityProfile(TypedDict, total=False):
-    """The security settings of the machine.
-
-    :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
-     for keys and measurements held locally on the node. For more details, see
-     aka.ms/aks/trustedlaunch. If not specified, the default is false.
-    :vartype enable_vtpm: bool
-    :ivar enable_secure_boot: Secure Boot is a feature of Trusted Launch which ensures that only
-     signed operating systems and drivers can boot. For more details, see aka.ms/aks/trustedlaunch.
-     If not specified, the default is false.
-    :vartype enable_secure_boot: bool
-    :ivar ssh_access: SSH access method of an agent pool. Known values are: "LocalUser",
-     "Disabled", and "EntraId".
-    :vartype ssh_access: Union[str, "AgentPoolSSHAccess"]
-    :ivar enable_encryption_at_host: Whether to enable host based OS and data drive encryption.
-     This is only supported on certain VM sizes and in certain Azure regions. For more information,
-     see: `https://docs.microsoft.com/azure/aks/enable-host-encryption
-     <https://docs.microsoft.com/azure/aks/enable-host-encryption>`_.
-    :vartype enable_encryption_at_host: bool
-    """
-
-    enableVTPM: bool
-    """vTPM is a Trusted Launch feature for configuring a dedicated secure vault for keys and
-     measurements held locally on the node. For more details, see aka.ms/aks/trustedlaunch. If not
-     specified, the default is false."""
-    enableSecureBoot: bool
-    """Secure Boot is a feature of Trusted Launch which ensures that only signed operating systems and
-     drivers can boot. For more details, see aka.ms/aks/trustedlaunch.  If not specified, the
-     default is false."""
-    sshAccess: Union[str, "AgentPoolSSHAccess"]
-    """SSH access method of an agent pool. Known values are: \"LocalUser\", \"Disabled\", and
-     \"EntraId\"."""
-    enableEncryptionAtHost: bool
-    """Whether to enable host based OS and data drive encryption. This is only supported on certain VM
-     sizes and in certain Azure regions. For more information, see:
-     `https://docs.microsoft.com/azure/aks/enable-host-encryption
-     <https://docs.microsoft.com/azure/aks/enable-host-encryption>`_."""
-
-
-class MachineStatus(TypedDict, total=False):
-    """Contains read-only information about the machine.
-
-    :ivar provisioning_error: The error details information of the machine. Preserves the detailed
-     info of failure. If there was no error, this field is omitted.
-    :vartype provisioning_error: "ErrorDetail"
-    :ivar creation_timestamp: Specifies the time at which the machine was created.
-    :vartype creation_timestamp: str
-    :ivar drift_action: The drift action of the machine. Indicates whether a machine has deviated
-     from its expected state due to changes in managed cluster properties, requiring corrective
-     action. Known values are: "Synced" and "Recreate".
-    :vartype drift_action: Union[str, "DriftAction"]
-    :ivar drift_reason: Reason for machine drift. Provides detailed information on why the machine
-     has drifted. This field is omitted if the machine is up to date.
-    :vartype drift_reason: str
-    :ivar vm_state: Virtual machine state. Indicates the current state of the underlying virtual
-     machine. Known values are: "Running" and "Deleted".
-    :vartype vm_state: Union[str, "VmState"]
-    """
-
-    provisioningError: "ErrorDetail"
-    """The error details information of the machine. Preserves the detailed info of failure. If there
-     was no error, this field is omitted."""
-    creationTimestamp: str
-    """Specifies the time at which the machine was created."""
-    driftAction: Union[str, "DriftAction"]
-    """The drift action of the machine. Indicates whether a machine has deviated from its expected
-     state due to changes in managed cluster properties, requiring corrective action. Known values
-     are: \"Synced\" and \"Recreate\"."""
-    driftReason: str
-    """Reason for machine drift. Provides detailed information on why the machine has drifted. This
-     field is omitted if the machine is up to date."""
-    vmState: Union[str, "VmState"]
-    """Virtual machine state. Indicates the current state of the underlying virtual machine. Known
-     values are: \"Running\" and \"Deleted\"."""
-
-
 class MaintenanceConfiguration(ProxyResource):
     """Planned maintenance configuration, used to configure when updates can be deployed to a Managed
     Cluster. See `planned maintenance <https://docs.microsoft.com/azure/aks/planned-maintenance>`_
@@ -3041,12 +1716,6 @@ class MaintenanceConfigurationProperties(TypedDict, total=False):
     :vartype time_in_week: list["TimeInWeek"]
     :ivar not_allowed_time: Time slots on which upgrade is not allowed.
     :vartype not_allowed_time: list["TimeSpan"]
-    :ivar maintenance_window_id: The fully qualified resource ID of the maintenance window that
-     this maintenance configuration is linked to. When set, the schedule is derived read-only from
-     the linked maintenance window — maintenanceWindow becomes a computed field. When absent (the
-     default), the schedule is defined inline via the maintenanceWindow property. The caller must
-     have read access to the target maintenance window.
-    :vartype maintenance_window_id: str
     :ivar maintenance_window: Maintenance window for the maintenance configuration.
     :vartype maintenance_window: "MaintenanceWindow"
     """
@@ -3057,12 +1726,6 @@ class MaintenanceConfigurationProperties(TypedDict, total=False):
      entries."""
     notAllowedTime: list["TimeSpan"]
     """Time slots on which upgrade is not allowed."""
-    maintenanceWindowId: str
-    """The fully qualified resource ID of the maintenance window that this maintenance configuration
-     is linked to. When set, the schedule is derived read-only from the linked maintenance window —
-     maintenanceWindow becomes a computed field. When absent (the default), the schedule is defined
-     inline via the maintenanceWindow property. The caller must have read access to the target
-     maintenance window."""
     maintenanceWindow: "MaintenanceWindow"
     """Maintenance window for the maintenance configuration."""
 
@@ -3137,97 +1800,6 @@ class TrackedResource(Resource):
     """Resource tags."""
     location: Required[str]
     """The geo-location where the resource lives. Required."""
-
-
-class MaintenanceWindowResource(TrackedResource):
-    """A maintenance window is a resource-group-scoped resource that defines a reusable maintenance
-    schedule which can be linked to maintenance configurations on one or more managed clusters. For
-    more information, see `https://aka.ms/aks/maintenance-windows
-    <https://aka.ms/aks/maintenance-windows>`_.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: Properties of a maintenance window.
-    :vartype properties: "MaintenanceWindowResourceProperties"
-    """
-
-    properties: "MaintenanceWindowResourceProperties"
-    """Properties of a maintenance window."""
-
-
-class MaintenanceWindowResourceProperties(TypedDict, total=False):
-    """Properties of a maintenance window. For more information, see
-    `https://aka.ms/aks/maintenance-windows <https://aka.ms/aks/maintenance-windows>`_.
-
-    :ivar provisioning_state: The provisioning state of the maintenance window. Known values are:
-     "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar schedule: Recurrence schedule for the maintenance window. One and only one of the
-     schedule types should be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'.
-     Required.
-    :vartype schedule: "Schedule"
-    :ivar start_date: The date the maintenance window activates. If the current date is before this
-     date, the maintenance window is inactive and will not be used. If not specified, the
-     maintenance window will be active right away.
-    :vartype start_date: str
-    :ivar start_time: The start time of the maintenance window. Accepted values are from '00:00' to
-     '23:59'. 'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means
-     UTC time '00:00'. Required.
-    :vartype start_time: str
-    :ivar duration_hours: Length of the maintenance window in hours. Required.
-    :vartype duration_hours: int
-    :ivar utc_offset: The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00'
-     for PST. If not specified, the default is '+00:00'. Note: this is a static offset and does not
-     adjust for Daylight Saving Time. Customers in DST-observing regions should pick the offset that
-     matches their preferred wall-clock time year-round; the maintenance window will shift by one
-     hour relative to local time when DST starts or ends.
-    :vartype utc_offset: str
-    :ivar not_allowed_dates: Date ranges during which maintenance is not allowed. 'utcOffset'
-     applies to these dates. For example, with 'utcOffset: +02:00' and a date span of '2026-12-23'
-     to '2027-01-03', maintenance will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in
-     UTC time.
-    :vartype not_allowed_dates: list["DateSpan"]
-    """
-
-    provisioningState: Union[str, "ResourceProvisioningState"]
-    """The provisioning state of the maintenance window. Known values are: \"Succeeded\", \"Failed\",
-     and \"Canceled\"."""
-    schedule: Required["Schedule"]
-    """Recurrence schedule for the maintenance window. One and only one of the schedule types should
-     be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'. Required."""
-    startDate: str
-    """The date the maintenance window activates. If the current date is before this date, the
-     maintenance window is inactive and will not be used. If not specified, the maintenance window
-     will be active right away."""
-    startTime: Required[str]
-    """The start time of the maintenance window. Accepted values are from '00:00' to '23:59'.
-     'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means UTC time
-     '00:00'. Required."""
-    durationHours: Required[int]
-    """Length of the maintenance window in hours. Required."""
-    utcOffset: str
-    """The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00' for PST. If not
-     specified, the default is '+00:00'. Note: this is a static offset and does not adjust for
-     Daylight Saving Time. Customers in DST-observing regions should pick the offset that matches
-     their preferred wall-clock time year-round; the maintenance window will shift by one hour
-     relative to local time when DST starts or ends."""
-    notAllowedDates: list["DateSpan"]
-    """Date ranges during which maintenance is not allowed. 'utcOffset' applies to these dates. For
-     example, with 'utcOffset: +02:00' and a date span of '2026-12-23' to '2027-01-03', maintenance
-     will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in UTC time."""
 
 
 class ManagedCluster(TrackedResource):
@@ -3410,7 +1982,7 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: Union[str, "KubeletDiskType"]
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: Union[str, "WorkloadRuntime"]
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -3439,9 +2011,9 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :vartype os_type: Union[str, "OSType"]
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
-     "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: Union[str, "OSSKU"]
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -3454,13 +2026,13 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: Union[str, "ScaleDownMode"]
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
+     "AvailabilitySet", and "VirtualMachines".
     :vartype type: Union[str, "AgentPoolType"]
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
      `https://docs.microsoft.com/azure/aks/use-system-pools
      <https://docs.microsoft.com/azure/aks/use-system-pools>`_. Known values are: "System", "User",
-     "Gateway", "ManagedSystem", and "Machines".
+     and "Gateway".
     :vartype mode: Union[str, "AgentPoolMode"]
     :ivar orchestrator_version: The version of Kubernetes specified by the user. Both patch version
      <major.minor.patch> (e.g. 1.20.13) and <major.minor> (e.g. 1.20) are supported. When
@@ -3481,18 +2053,8 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :ivar node_image_version: The version of the node image. Setting this value triggers an
      agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
-    :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
-     Rolling. Known values are: "Rolling" and "BlueGreen".
-    :vartype upgrade_strategy: Union[str, "UpgradeStrategy"]
-    :ivar enable_os_disk_full_caching: Whether to enable the full-cache ephemeral OS disk feature.
-     When this feature is enabled, the entire operating system will be locally cached on the
-     ephemeral OS disk, preventing E17 events caused by network failures.
-    :vartype enable_os_disk_full_caching: bool
     :ivar upgrade_settings: Settings for upgrading the agentpool.
     :vartype upgrade_settings: "AgentPoolUpgradeSettings"
-    :ivar upgrade_settings_blue_green: Settings for Blue-Green upgrade on the agentpool. Applies
-     when upgrade strategy is set to BlueGreen.
-    :vartype upgrade_settings_blue_green: "AgentPoolBlueGreenUpgradeSettings"
     :ivar provisioning_state: The current deployment or provisioning state.
     :vartype provisioning_state: str
     :ivar power_state: Whether the Agent Pool is running or stopped. When an Agent Pool is first
@@ -3536,14 +2098,6 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     :ivar node_taints: The taints added to new nodes during node pool create and scale. For
      example, key=value:NoSchedule.
     :vartype node_taints: list[str]
-    :ivar node_initialization_taints: Taints added on the nodes during creation that will not be
-     reconciled by AKS. These taints will not be reconciled by AKS and can be removed with a kubectl
-     call. This field can be modified after node pool is created, but nodes will not be recreated
-     with new taints until another operation that requires recreation (e.g. node image upgrade)
-     happens. These taints allow for required configuration to run before the node is ready to
-     accept workloads, for example 'key1=value1:NoSchedule' that then can be removed with ``kubectl
-     taint nodes node1 key1=value1:NoSchedule-``.
-    :vartype node_initialization_taints: list[str]
     :ivar proximity_placement_group_id: The ID for Proximity Placement Group.
     :vartype proximity_placement_group_id: str
     :ivar kubelet_config: The Kubelet configuration on the agent pool nodes.
@@ -3605,9 +2159,6 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: "LocalDNSProfile"
-    :ivar prepared_image_specification_profile: Settings to determine the prepared image
-     specification used to provision nodes in a pool.
-    :vartype prepared_image_specification_profile: "PreparedImageSpecificationProfile"
     """
 
     eTag: str
@@ -3638,7 +2189,7 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      ephemeral storage. Known values are: \"OS\" and \"Temporary\"."""
     workloadRuntime: Union[str, "WorkloadRuntime"]
     """Determines the type of workload a node can run. Known values are: \"OCIContainer\",
-     \"WasmWasi\", \"KataMshvVmIsolation\", and \"KataVmIsolation\"."""
+     \"WasmWasi\", and \"KataVmIsolation\"."""
     messageOfTheDay: str
     """Message of the day for Linux nodes, base64-encoded. A base64-encoded string which will be
      written to /etc/motd after decoding. This allows customization of the message of the day for
@@ -3664,9 +2215,9 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     osSKU: Union[str, "OSSKU"]
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
-     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
-     \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     maxCount: int
     """The maximum number of nodes for auto-scaling."""
     minCount: int
@@ -3678,14 +2229,14 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
      autoscaler behavior. If not specified, it defaults to Delete. Known values are: \"Delete\" and
      \"Deallocate\"."""
     type: Union[str, "AgentPoolType"]
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
-     \"VirtualMachines\", and \"FlexNodes\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
+     \"VirtualMachines\"."""
     mode: Union[str, "AgentPoolMode"]
     """The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at all times.
      For additional information on agent pool restrictions and best practices, see:
      `https://docs.microsoft.com/azure/aks/use-system-pools
      <https://docs.microsoft.com/azure/aks/use-system-pools>`_. Known values are: \"System\",
-     \"User\", \"Gateway\", \"ManagedSystem\", and \"Machines\"."""
+     \"User\", and \"Gateway\"."""
     orchestratorVersion: str
     """The version of Kubernetes specified by the user. Both patch version <major.minor.patch> (e.g.
      1.20.13) and <major.minor> (e.g. 1.20) are supported. When <major.minor> is specified, the
@@ -3705,18 +2256,8 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     nodeImageVersion: str
     """The version of the node image. Setting this value triggers an agentPool rollback. Only values
      from ``recentlyUsedVersions`` are allowed."""
-    upgradeStrategy: Union[str, "UpgradeStrategy"]
-    """Defines the upgrade strategy for the agent pool. The default is Rolling. Known values are:
-     \"Rolling\" and \"BlueGreen\"."""
-    enableOSDiskFullCaching: bool
-    """Whether to enable the full-cache ephemeral OS disk feature. When this feature is enabled, the
-     entire operating system will be locally cached on the ephemeral OS disk, preventing E17 events
-     caused by network failures."""
     upgradeSettings: "AgentPoolUpgradeSettings"
     """Settings for upgrading the agentpool."""
-    upgradeSettingsBlueGreen: "AgentPoolBlueGreenUpgradeSettings"
-    """Settings for Blue-Green upgrade on the agentpool. Applies when upgrade strategy is set to
-     BlueGreen."""
     provisioningState: str
     """The current deployment or provisioning state."""
     powerState: "PowerState"
@@ -3757,14 +2298,6 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     nodeTaints: list[str]
     """The taints added to new nodes during node pool create and scale. For example,
      key=value:NoSchedule."""
-    nodeInitializationTaints: list[str]
-    """Taints added on the nodes during creation that will not be reconciled by AKS. These taints will
-     not be reconciled by AKS and can be removed with a kubectl call. This field can be modified
-     after node pool is created, but nodes will not be recreated with new taints until another
-     operation that requires recreation (e.g. node image upgrade) happens. These taints allow for
-     required configuration to run before the node is ready to accept workloads, for example
-     'key1=value1:NoSchedule' that then can be removed with ``kubectl taint nodes node1
-     key1=value1:NoSchedule-``."""
     proximityPlacementGroupID: str
     """The ID for Proximity Placement Group."""
     kubeletConfig: "KubeletConfig"
@@ -3824,8 +2357,6 @@ class ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
      performance and reliability of DNS resolution in an AKS cluster. For more details see
      aka.ms/aks/localdns."""
-    preparedImageSpecificationProfile: "PreparedImageSpecificationProfile"
-    """Settings to determine the prepared image specification used to provision nodes in a pool."""
 
 
 class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
@@ -3860,7 +2391,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      root, and Kubelet ephemeral storage. Known values are: "OS" and "Temporary".
     :vartype kubelet_disk_type: Union[str, "KubeletDiskType"]
     :ivar workload_runtime: Determines the type of workload a node can run. Known values are:
-     "OCIContainer", "WasmWasi", "KataMshvVmIsolation", and "KataVmIsolation".
+     "OCIContainer", "WasmWasi", and "KataVmIsolation".
     :vartype workload_runtime: Union[str, "WorkloadRuntime"]
     :ivar message_of_the_day: Message of the day for Linux nodes, base64-encoded. A base64-encoded
      string which will be written to /etc/motd after decoding. This allows customization of the
@@ -3889,9 +2420,9 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :vartype os_type: Union[str, "OSType"]
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
-     "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: Union[str, "OSSKU"]
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -3904,13 +2435,13 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: Union[str, "ScaleDownMode"]
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
+     "AvailabilitySet", and "VirtualMachines".
     :vartype type: Union[str, "AgentPoolType"]
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
      `https://docs.microsoft.com/azure/aks/use-system-pools
      <https://docs.microsoft.com/azure/aks/use-system-pools>`_. Known values are: "System", "User",
-     "Gateway", "ManagedSystem", and "Machines".
+     and "Gateway".
     :vartype mode: Union[str, "AgentPoolMode"]
     :ivar orchestrator_version: The version of Kubernetes specified by the user. Both patch version
      <major.minor.patch> (e.g. 1.20.13) and <major.minor> (e.g. 1.20) are supported. When
@@ -3931,18 +2462,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar node_image_version: The version of the node image. Setting this value triggers an
      agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
-    :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
-     Rolling. Known values are: "Rolling" and "BlueGreen".
-    :vartype upgrade_strategy: Union[str, "UpgradeStrategy"]
-    :ivar enable_os_disk_full_caching: Whether to enable the full-cache ephemeral OS disk feature.
-     When this feature is enabled, the entire operating system will be locally cached on the
-     ephemeral OS disk, preventing E17 events caused by network failures.
-    :vartype enable_os_disk_full_caching: bool
     :ivar upgrade_settings: Settings for upgrading the agentpool.
     :vartype upgrade_settings: "AgentPoolUpgradeSettings"
-    :ivar upgrade_settings_blue_green: Settings for Blue-Green upgrade on the agentpool. Applies
-     when upgrade strategy is set to BlueGreen.
-    :vartype upgrade_settings_blue_green: "AgentPoolBlueGreenUpgradeSettings"
     :ivar provisioning_state: The current deployment or provisioning state.
     :vartype provisioning_state: str
     :ivar power_state: Whether the Agent Pool is running or stopped. When an Agent Pool is first
@@ -3986,14 +2507,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar node_taints: The taints added to new nodes during node pool create and scale. For
      example, key=value:NoSchedule.
     :vartype node_taints: list[str]
-    :ivar node_initialization_taints: Taints added on the nodes during creation that will not be
-     reconciled by AKS. These taints will not be reconciled by AKS and can be removed with a kubectl
-     call. This field can be modified after node pool is created, but nodes will not be recreated
-     with new taints until another operation that requires recreation (e.g. node image upgrade)
-     happens. These taints allow for required configuration to run before the node is ready to
-     accept workloads, for example 'key1=value1:NoSchedule' that then can be removed with ``kubectl
-     taint nodes node1 key1=value1:NoSchedule-``.
-    :vartype node_initialization_taints: list[str]
     :ivar proximity_placement_group_id: The ID for Proximity Placement Group.
     :vartype proximity_placement_group_id: str
     :ivar kubelet_config: The Kubelet configuration on the agent pool nodes.
@@ -4055,9 +2568,6 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      LocalDNS helps improve performance and reliability of DNS resolution in an AKS cluster. For
      more details see aka.ms/aks/localdns.
     :vartype local_dns_profile: "LocalDNSProfile"
-    :ivar prepared_image_specification_profile: Settings to determine the prepared image
-     specification used to provision nodes in a pool.
-    :vartype prepared_image_specification_profile: "PreparedImageSpecificationProfile"
     :ivar name: Unique name of the agent pool profile in the context of the subscription and
      resource group. Windows agent pool names must be 6 characters or less. Required.
     :vartype name: str
@@ -4189,10 +2699,6 @@ class ManagedClusterAzureMonitorProfile(TypedDict, total=False):
      and configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
      overview.
     :vartype metrics: "ManagedClusterAzureMonitorProfileMetrics"
-    :ivar container_insights: Azure Monitor Container Insights Profile for Kubernetes Events,
-     Inventory and Container stdout & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for
-     an overview.
-    :vartype container_insights: "ManagedClusterAzureMonitorProfileContainerInsights"
     :ivar app_monitoring: Application Monitoring Profile for Kubernetes Application Container.
      Collects application logs, metrics and traces through auto-instrumentation of the application
      using Azure Monitor OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for
@@ -4205,9 +2711,6 @@ class ManagedClusterAzureMonitorProfile(TypedDict, total=False):
      out-of-the-box Kubernetes infrastructure metrics to send to an Azure Monitor Workspace and
      configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
      overview."""
-    containerInsights: "ManagedClusterAzureMonitorProfileContainerInsights"
-    """Azure Monitor Container Insights Profile for Kubernetes Events, Inventory and Container stdout
-     & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for an overview."""
     appMonitoring: "ManagedClusterAzureMonitorProfileAppMonitoring"
     """Application Monitoring Profile for Kubernetes Application Container. Collects application logs,
      metrics and traces through auto-instrumentation of the application using Azure Monitor
@@ -4224,38 +2727,12 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(TypedDict, total=False):  #
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
     :vartype auto_instrumentation:
      "ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation"
-    :ivar open_telemetry_metrics: Application Monitoring Open Telemetry Metrics Profile for AKS.
-     Collects OpenTelemetry metrics of the application using Azure Monitor OpenTelemetry based SDKs.
-     See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
-     `https://aka.ms/AzureMonitorApplicationMonitoring
-     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
-    :vartype open_telemetry_metrics:
-     "ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics"
-    :ivar open_telemetry_logs_and_traces: Application Monitoring Open Telemetry Logs and Traces
-     Profile for AKS. Collects OpenTelemetry logs and traces of the application using Azure Monitor
-     OpenTelemetry based SDKs. See `https://aka.ms/AKSAppMonitoringDocs
-     <https://aka.ms/AKSAppMonitoringDocs>`_ and `https://aka.ms/AzureMonitorApplicationMonitoring
-     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
-    :vartype open_telemetry_logs_and_traces:
-     "ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces"
     """
 
     autoInstrumentation: "ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation"
     """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
      workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
      traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
-     `https://aka.ms/AzureMonitorApplicationMonitoring
-     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
-    openTelemetryMetrics: "ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics"
-    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
-     of the application using Azure Monitor OpenTelemetry based SDKs. See
-     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
-     `https://aka.ms/AzureMonitorApplicationMonitoring
-     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
-    openTelemetryLogsAndTraces: "ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces"
-    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
-     logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
-     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
      `https://aka.ms/AzureMonitorApplicationMonitoring
      <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
 
@@ -4275,118 +2752,6 @@ class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(
 
     enabled: bool
     """Indicates if Application Monitoring Auto-instrumentation is enabled or not."""
-
-
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
-    logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
-    `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
-    `https://aka.ms/AzureMonitorApplicationMonitoring
-    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
-
-    :ivar enabled: Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or
-     not.
-    :vartype enabled: bool
-    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not
-     specified, the default port is 28331.
-    :vartype http_port: int
-    :ivar grpc_port: The host port for Open Telemetry GRPC logs and traces. If not specified, the
-     default port is 28332.
-    :vartype grpc_port: int
-    """
-
-    enabled: bool
-    """Indicates if Application Monitoring Open Telemetry Logs and traces is enabled or not."""
-    httpPort: int
-    """The host port for Open Telemetry HTTP/PROTOBUF logs and traces. If not specified, the default
-     port is 28331."""
-    grpcPort: int
-    """The host port for Open Telemetry GRPC logs and traces. If not specified, the default port is
-     28332."""
-
-
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
-    of the application using Azure Monitor OpenTelemetry based SDKs. See
-    `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
-    `https://aka.ms/AzureMonitorApplicationMonitoring
-    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
-
-    :ivar enabled: Indicates if Application Monitoring Open Telemetry Metrics is enabled or not.
-    :vartype enabled: bool
-    :ivar http_port: The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the
-     default port is 28333.
-    :vartype http_port: int
-    :ivar grpc_port: The host port for Open Telemetry GRPC metrics. If not specified, the default
-     port is 28334.
-    :vartype grpc_port: int
-    """
-
-    enabled: bool
-    """Indicates if Application Monitoring Open Telemetry Metrics is enabled or not."""
-    httpPort: int
-    """The host port for Open Telemetry HTTP/PROTOBUF metrics. If not specified, the default port is
-     28333."""
-    grpcPort: int
-    """The host port for Open Telemetry GRPC metrics. If not specified, the default port is 28334."""
-
-
-class ManagedClusterAzureMonitorProfileContainerInsights(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Azure Monitor Container Insights Profile for Kubernetes Events, Inventory and Container stdout
-    & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for an overview.
-
-    :ivar enabled: Indicates if Azure Monitor Container Insights Logs Addon is enabled or not.
-    :vartype enabled: bool
-    :ivar log_analytics_workspace_resource_id: Fully Qualified ARM Resource Id of Azure Log
-     Analytics Workspace for storing Azure Monitor Container Insights Logs.
-    :vartype log_analytics_workspace_resource_id: str
-    :ivar syslog_port: The syslog host port. If not specified, the default port is 28330.
-    :vartype syslog_port: int
-    :ivar disable_custom_metrics: Indicates whether custom metrics collection has to be disabled or
-     not. If not specified the default is false. No custom metrics will be emitted if this field is
-     false but the container insights enabled field is false.
-    :vartype disable_custom_metrics: bool
-    :ivar disable_prometheus_metrics_scraping: Indicates whether prometheus metrics scraping is
-     disabled or not. If not specified the default is false. No prometheus metrics will be emitted
-     if this field is false but the container insights enabled field is false.
-    :vartype disable_prometheus_metrics_scraping: bool
-    :ivar container_network_logs: Configures container network logs ingestion with Azure Monitor.
-     Which network logs to ingest is controlled by the CRD found in the following links. No network
-     logs are ingested by default. More information on container network logs can be found at
-     `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_. More
-     information on configuring container network log can be found at
-     `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_. If not specified,
-     the default is Disabled. Known values are: "Disabled" and "Enabled".
-    :vartype container_network_logs: Union[str, "ContainerNetworkLogs"]
-    """
-
-    enabled: bool
-    """Indicates if Azure Monitor Container Insights Logs Addon is enabled or not."""
-    logAnalyticsWorkspaceResourceId: str
-    """Fully Qualified ARM Resource Id of Azure Log Analytics Workspace for storing Azure Monitor
-     Container Insights Logs."""
-    syslogPort: int
-    """The syslog host port. If not specified, the default port is 28330."""
-    disableCustomMetrics: bool
-    """Indicates whether custom metrics collection has to be disabled or not. If not specified the
-     default is false. No custom metrics will be emitted if this field is false but the container
-     insights enabled field is false."""
-    disablePrometheusMetricsScraping: bool
-    """Indicates whether prometheus metrics scraping is disabled or not. If not specified the default
-     is false. No prometheus metrics will be emitted if this field is false but the container
-     insights enabled field is false."""
-    containerNetworkLogs: Union[str, "ContainerNetworkLogs"]
-    """Configures container network logs ingestion with Azure Monitor. Which network logs to ingest is
-     controlled by the CRD found in the following links. No network logs are ingested by default.
-     More information on container network logs can be found at
-     `https://aka.ms/ContainerNetworkLogsDoc <https://aka.ms/ContainerNetworkLogsDoc>`_. More
-     information on configuring container network log can be found at
-     `https://aka.ms/acns/howtoenablecnl <https://aka.ms/acns/howtoenablecnl>`_. If not specified,
-     the default is Disabled. Known values are: \"Disabled\" and \"Enabled\"."""
 
 
 class ManagedClusterAzureMonitorProfileKubeStateMetrics(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -4484,26 +2849,6 @@ class ManagedClusterBootstrapProfile(TypedDict, total=False):
      premium SKU and zone redundancy."""
 
 
-class ManagedClusterControlPlaneScalingProfile(TypedDict, total=False):
-    """Profile for providing scaled and performance guaranteed control plane capacity to deliver
-    consistent performance under high workload. Requires Kubernetes version 1.33.0 or later.
-
-    :ivar scaling_size: The scaling size of the control plane. Scaling sizes offer guaranteed
-     capacity and predictable Kubernetes performance beyond standard tier defaults. Higher H sizes
-     provide increased performance guarantees. See `https://aka.ms/aks/hyperscale
-     <https://aka.ms/aks/hyperscale>`_ for performance metrics details for each size. Required.
-     Known values are: "H2", "H4", and "H8".
-    :vartype scaling_size: Union[str, "ControlPlaneScalingSize"]
-    """
-
-    scalingSize: Required[Union[str, "ControlPlaneScalingSize"]]
-    """The scaling size of the control plane. Scaling sizes offer guaranteed capacity and predictable
-     Kubernetes performance beyond standard tier defaults. Higher H sizes provide increased
-     performance guarantees. See `https://aka.ms/aks/hyperscale <https://aka.ms/aks/hyperscale>`_
-     for performance metrics details for each size. Required. Known values are: \"H2\", \"H4\", and
-     \"H8\"."""
-
-
 class ManagedClusterCostAnalysis(TypedDict, total=False):
     """The cost analysis configuration for the cluster.
 
@@ -4519,22 +2864,6 @@ class ManagedClusterCostAnalysis(TypedDict, total=False):
      'Premium' to enable this feature. Enabling this will add Kubernetes Namespace and Deployment
      details to the Cost Analysis views in the Azure portal. If not specified, the default is false.
      For more information see aka.ms/aks/docs/cost-analysis."""
-
-
-class ManagedClusterHealthMonitorProfile(TypedDict, total=False):
-    """Health monitor profile for the managed cluster.
-
-    :ivar enable_continuous_control_plane_and_addon_monitor: Whether to enable continuous control
-     plane and addon monitor.
-    :vartype enable_continuous_control_plane_and_addon_monitor: bool
-    :ivar enable_on_demand_monitor: Whether to enable on-demand monitor.
-    :vartype enable_on_demand_monitor: bool
-    """
-
-    enableContinuousControlPlaneAndAddonMonitor: bool
-    """Whether to enable continuous control plane and addon monitor."""
-    enableOnDemandMonitor: bool
-    """Whether to enable on-demand monitor."""
 
 
 class ManagedClusterHostedSystemProfile(TypedDict, total=False):
@@ -4581,9 +2910,6 @@ class ManagedClusterHTTPProxyConfig(TypedDict, total=False):
     :vartype https_proxy: str
     :ivar no_proxy: The endpoints that should not go through proxy.
     :vartype no_proxy: list[str]
-    :ivar effective_no_proxy: A read-only list of all endpoints for which traffic should not be
-     sent to the proxy. This list is a superset of noProxy and values injected by AKS.
-    :vartype effective_no_proxy: list[str]
     :ivar trusted_ca: Alternative CA cert to use for connecting to proxy servers.
     :vartype trusted_ca: str
     :ivar enabled: Whether to enable HTTP proxy. If disabled, the specified proxy configuration
@@ -4597,9 +2923,6 @@ class ManagedClusterHTTPProxyConfig(TypedDict, total=False):
     """The HTTPS proxy server endpoint to use."""
     noProxy: list[str]
     """The endpoints that should not go through proxy."""
-    effectiveNoProxy: list[str]
-    """A read-only list of all endpoints for which traffic should not be sent to the proxy. This list
-     is a superset of noProxy and values injected by AKS."""
     trustedCa: str
     """Alternative CA cert to use for connecting to proxy servers."""
     enabled: bool
@@ -4651,23 +2974,6 @@ class ManagedClusterIdentity(TypedDict, total=False):
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
 
 
-class ManagedClusterIngressDefaultDomainProfile(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Default domain profile for the managed cluster ingress profile.
-
-    :ivar enabled: Whether to enable Default Domain.
-    :vartype enabled: bool
-    :ivar domain_name: The unique fully qualified domain name assigned to the cluster. This will
-     not change even if disabled then reenabled.
-    :vartype domain_name: str
-    """
-
-    enabled: bool
-    """Whether to enable Default Domain."""
-    domainName: str
-    """The unique fully qualified domain name assigned to the cluster. This will not change even if
-     disabled then reenabled."""
-
-
 class ManagedClusterIngressProfile(TypedDict, total=False):
     """Ingress profile for the container service cluster.
 
@@ -4678,9 +2984,6 @@ class ManagedClusterIngressProfile(TypedDict, total=False):
     :vartype web_app_routing: "ManagedClusterIngressProfileWebAppRouting"
     :ivar gateway_api: Settings for the managed Gateway API installation.
     :vartype gateway_api: "ManagedClusterIngressProfileGatewayConfiguration"
-    :ivar application_load_balancer: Settings for the managed Application Load Balancer
-     installation.
-    :vartype application_load_balancer: "ManagedClusterIngressProfileApplicationLoadBalancer"
     """
 
     webAppRouting: "ManagedClusterIngressProfileWebAppRouting"
@@ -4690,26 +2993,6 @@ class ManagedClusterIngressProfile(TypedDict, total=False):
      <https://learn.microsoft.com/en-us/azure/aks/app-routing?tabs=default%2Cdeploy-app-default>`_."""
     gatewayAPI: "ManagedClusterIngressProfileGatewayConfiguration"
     """Settings for the managed Gateway API installation."""
-    applicationLoadBalancer: "ManagedClusterIngressProfileApplicationLoadBalancer"
-    """Settings for the managed Application Load Balancer installation."""
-
-
-class ManagedClusterIngressProfileApplicationLoadBalancer(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Application Load Balancer settings for the ingress profile.
-
-    :ivar enabled: Whether to enable Application Load Balancer.
-    :vartype enabled: bool
-    :ivar identity: Managed identity of the Application Load Balancer add-on. This is the identity
-     that should be granted permissions to manage the associated Application Gateway for Containers
-     resource.
-    :vartype identity: "UserAssignedIdentity"
-    """
-
-    enabled: bool
-    """Whether to enable Application Load Balancer."""
-    identity: "UserAssignedIdentity"
-    """Managed identity of the Application Load Balancer add-on. This is the identity that should be
-     granted permissions to manage the associated Application Gateway for Containers resource."""
 
 
 class ManagedClusterIngressProfileGatewayConfiguration(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -4766,10 +3049,6 @@ class ManagedClusterIngressProfileWebAppRouting(TypedDict, total=False):  # pyli
      <https://learn.microsoft.com/en-us/azure/aks/web-app-routing?tabs=with-osm>`_ for more
      instructions.
     :vartype identity: "UserAssignedIdentity"
-    :ivar default_domain: Configuration for the Default Domain. This is a unique, autogenerated
-     domain that comes with a signed TLS Certificate allowing for secure HTTPS. See `the Default
-     Domain documentation <https://aka.ms/aks/defaultdomain>`_ for more instructions.
-    :vartype default_domain: "ManagedClusterIngressDefaultDomainProfile"
     """
 
     enabled: bool
@@ -4793,10 +3072,6 @@ class ManagedClusterIngressProfileWebAppRouting(TypedDict, total=False):  # pyli
      Azure Key Vault. See `this overview of the add-on
      <https://learn.microsoft.com/en-us/azure/aks/web-app-routing?tabs=with-osm>`_ for more
      instructions."""
-    defaultDomain: "ManagedClusterIngressDefaultDomainProfile"
-    """Configuration for the Default Domain. This is a unique, autogenerated domain that comes with a
-     signed TLS Certificate allowing for secure HTTPS. See `the Default Domain documentation
-     <https://aka.ms/aks/defaultdomain>`_ for more instructions."""
 
 
 class ManagedClusterLoadBalancerProfile(TypedDict, total=False):
@@ -4822,12 +3097,8 @@ class ManagedClusterLoadBalancerProfile(TypedDict, total=False):
      cluster or not.
     :vartype enable_multiple_standard_load_balancers: bool
     :ivar backend_pool_type: The type of the managed inbound Load Balancer BackendPool. Known
-     values are: "NodeIPConfiguration", "NodeIP", and "PodIP".
+     values are: "NodeIPConfiguration" and "NodeIP".
     :vartype backend_pool_type: Union[str, "BackendPoolType"]
-    :ivar cluster_service_load_balancer_health_probe_mode: The health probing behavior for External
-     Traffic Policy Cluster services. Known values are: "ServiceNodePort" and "Shared".
-    :vartype cluster_service_load_balancer_health_probe_mode: Union[str,
-     "ClusterServiceLoadBalancerHealthProbeMode"]
     """
 
     managedOutboundIPs: "ManagedClusterLoadBalancerProfileManagedOutboundIPs"
@@ -4848,10 +3119,7 @@ class ManagedClusterLoadBalancerProfile(TypedDict, total=False):
     """Enable multiple standard load balancers per AKS cluster or not."""
     backendPoolType: Union[str, "BackendPoolType"]
     """The type of the managed inbound Load Balancer BackendPool. Known values are:
-     \"NodeIPConfiguration\", \"NodeIP\", and \"PodIP\"."""
-    clusterServiceLoadBalancerHealthProbeMode: Union[str, "ClusterServiceLoadBalancerHealthProbeMode"]
-    """The health probing behavior for External Traffic Policy Cluster services. Known values are:
-     \"ServiceNodePort\" and \"Shared\"."""
+     \"NodeIPConfiguration\" and \"NodeIP\"."""
 
 
 class ManagedClusterLoadBalancerProfileManagedOutboundIPs(TypedDict, total=False):  # pylint: disable=name-too-long
@@ -4904,17 +3172,11 @@ class ManagedClusterManagedOutboundIPProfile(TypedDict, total=False):
     :ivar count: The desired number of outbound IPs created/managed by Azure. Allowed values must
      be in the range of 1 to 16 (inclusive). The default value is 1.
     :vartype count: int
-    :ivar count_i_pv6: The desired number of IPv6 outbound IPs created/managed by Azure. Allowed
-     values must be in the range of 1 to 16 (inclusive).
-    :vartype count_i_pv6: int
     """
 
     count: int
     """The desired number of outbound IPs created/managed by Azure. Allowed values must be in the
      range of 1 to 16 (inclusive). The default value is 1."""
-    countIPv6: int
-    """The desired number of IPv6 outbound IPs created/managed by Azure. Allowed values must be in the
-     range of 1 to 16 (inclusive)."""
 
 
 class ManagedClusterMetricsProfile(TypedDict, total=False):
@@ -4936,11 +3198,6 @@ class ManagedClusterNATGatewayProfile(TypedDict, total=False):
     :vartype managed_outbound_ip_profile: "ManagedClusterManagedOutboundIPProfile"
     :ivar effective_outbound_i_ps: The effective outbound IP resources of the cluster NAT gateway.
     :vartype effective_outbound_i_ps: list["ResourceReference"]
-    :ivar outbound_ip_prefixes: Desired outbound IP Prefix resources for the managed NAT Gateway.
-     Only compatible with NAT Gateway V2.
-    :vartype outbound_ip_prefixes: "ManagedClusterNATGatewayProfileOutboundIpPrefixes"
-    :ivar outbound_i_ps: Desired outbound IP resources for the managed NAT Gateway.
-    :vartype outbound_i_ps: "ManagedClusterNATGatewayProfileOutboundIPs"
     :ivar idle_timeout_in_minutes: Desired outbound flow idle timeout in minutes. Allowed values
      are in the range of 4 to 120 (inclusive). The default value is 4 minutes.
     :vartype idle_timeout_in_minutes: int
@@ -4950,36 +3207,9 @@ class ManagedClusterNATGatewayProfile(TypedDict, total=False):
     """Profile of the managed outbound IP resources of the cluster NAT gateway."""
     effectiveOutboundIPs: list["ResourceReference"]
     """The effective outbound IP resources of the cluster NAT gateway."""
-    outboundIPPrefixes: "ManagedClusterNATGatewayProfileOutboundIpPrefixes"
-    """Desired outbound IP Prefix resources for the managed NAT Gateway. Only compatible with NAT
-     Gateway V2."""
-    outboundIPs: "ManagedClusterNATGatewayProfileOutboundIPs"
-    """Desired outbound IP resources for the managed NAT Gateway."""
     idleTimeoutInMinutes: int
     """Desired outbound flow idle timeout in minutes. Allowed values are in the range of 4 to 120
      (inclusive). The default value is 4 minutes."""
-
-
-class ManagedClusterNATGatewayProfileOutboundIpPrefixes(TypedDict, total=False):  # pylint: disable=name-too-long
-    """ManagedClusterNATGatewayProfileOutboundIpPrefixes.
-
-    :ivar public_ip_prefixes: A list of public IP prefix resources.
-    :vartype public_ip_prefixes: list[str]
-    """
-
-    publicIPPrefixes: list[str]
-    """A list of public IP prefix resources."""
-
-
-class ManagedClusterNATGatewayProfileOutboundIPs(TypedDict, total=False):  # pylint: disable=name-too-long
-    """ManagedClusterNATGatewayProfileOutboundIPs.
-
-    :ivar public_i_ps: A list of public IP resources.
-    :vartype public_i_ps: list[str]
-    """
-
-    publicIPs: list[str]
-    """A list of public IP resources."""
 
 
 class ManagedClusterNodeProvisioningProfile(TypedDict, total=False):
@@ -5185,9 +3415,6 @@ class ManagedClusterProperties(TypedDict, total=False):
     :vartype provisioning_state: str
     :ivar power_state: The Power State of the cluster.
     :vartype power_state: "PowerState"
-    :ivar creation_data: CreationData to be used to specify the source Snapshot ID if the cluster
-     will be created/upgraded using a snapshot.
-    :vartype creation_data: "CreationData"
     :ivar max_agent_pools: The max number of agent pools for the managed cluster.
     :vartype max_agent_pools: int
     :ivar kubernetes_version: The version of Kubernetes specified by the user. Both patch version
@@ -5247,17 +3474,6 @@ class ManagedClusterProperties(TypedDict, total=False):
     :ivar support_plan: The support plan for the Managed Cluster. If unspecified, the default is
      'KubernetesOfficial'. Known values are: "KubernetesOfficial" and "AKSLongTermSupport".
     :vartype support_plan: Union[str, "KubernetesSupportPlan"]
-    :ivar enable_fips: Whether to enable FIPS mode at the cluster level. When enabled, this setting
-     enforces FIPS compliance for all AKS-managed components, such as the node operating system,
-     addons, and `managed containerized components <https://aka.ms/aks/components/docs>`_. See
-     `Enable cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is
-     enabled, all node pools in the cluster must also be FIPS-enabled.
-    :vartype enable_fips: bool
-    :ivar enable_namespace_resources: Enable namespace as Azure resource. The default value is
-     false. It can be enabled/disabled on creation and updating of the managed cluster. See
-     `https://aka.ms/NamespaceARMResource <https://aka.ms/NamespaceARMResource>`_ for more details
-     on Namespace as a ARM Resource.
-    :vartype enable_namespace_resources: bool
     :ivar network_profile: The network configuration profile.
     :vartype network_profile: "ContainerServiceNetworkProfile"
     :ivar aad_profile: The Azure Active Directory configuration.
@@ -5295,7 +3511,7 @@ class ManagedClusterProperties(TypedDict, total=False):
     :ivar ingress_profile: Ingress profile for the managed cluster.
     :vartype ingress_profile: "ManagedClusterIngressProfile"
     :ivar public_network_access: PublicNetworkAccess of the managedCluster. Allow or deny public
-     network access for AKS. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
+     network access for AKS. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: Union[str, "PublicNetworkAccess"]
     :ivar workload_auto_scaler_profile: Workload Auto-scaler profile for the managed cluster.
     :vartype workload_auto_scaler_profile: "ManagedClusterWorkloadAutoScalerProfile"
@@ -5323,14 +3539,6 @@ class ManagedClusterProperties(TypedDict, total=False):
      `https://aka.ms/aks/automatic/systemcomponents
      <https://aka.ms/aks/automatic/systemcomponents>`_.
     :vartype hosted_system_profile: "ManagedClusterHostedSystemProfile"
-    :ivar health_monitor_profile: Health monitor profile for the managed cluster.
-    :vartype health_monitor_profile: "ManagedClusterHealthMonitorProfile"
-    :ivar control_plane_scaling_profile: Profile for providing scaled and performance guaranteed
-     control plane capacity to deliver consistent performance under high workload. Requires
-     Kubernetes version 1.33.0 or later.
-    :vartype control_plane_scaling_profile: "ManagedClusterControlPlaneScalingProfile"
-    :ivar node_disruption_profile: Node disruption profile for a managed cluster.
-    :vartype node_disruption_profile: "NodeDisruptionProfile"
     :ivar status: Contains read-only information about the Managed Cluster.
     :vartype status: "ManagedClusterStatus"
     """
@@ -5339,9 +3547,6 @@ class ManagedClusterProperties(TypedDict, total=False):
     """The current provisioning state."""
     powerState: "PowerState"
     """The Power State of the cluster."""
-    creationData: "CreationData"
-    """CreationData to be used to specify the source Snapshot ID if the cluster will be
-     created/upgraded using a snapshot."""
     maxAgentPools: int
     """The max number of agent pools for the managed cluster."""
     kubernetesVersion: str
@@ -5401,16 +3606,6 @@ class ManagedClusterProperties(TypedDict, total=False):
     supportPlan: Union[str, "KubernetesSupportPlan"]
     """The support plan for the Managed Cluster. If unspecified, the default is 'KubernetesOfficial'.
      Known values are: \"KubernetesOfficial\" and \"AKSLongTermSupport\"."""
-    enableFIPS: bool
-    """Whether to enable FIPS mode at the cluster level. When enabled, this setting enforces FIPS
-     compliance for all AKS-managed components, such as the node operating system, addons, and
-     `managed containerized components <https://aka.ms/aks/components/docs>`_. See `Enable
-     cluster-wide FIPS <https://aka.ms/aks/fips>`_ for more details. When this property is enabled,
-     all node pools in the cluster must also be FIPS-enabled."""
-    enableNamespaceResources: bool
-    """Enable namespace as Azure resource. The default value is false. It can be enabled/disabled on
-     creation and updating of the managed cluster. See `https://aka.ms/NamespaceARMResource
-     <https://aka.ms/NamespaceARMResource>`_ for more details on Namespace as a ARM Resource."""
     networkProfile: "ContainerServiceNetworkProfile"
     """The network configuration profile."""
     aadProfile: "ManagedClusterAADProfile"
@@ -5449,7 +3644,7 @@ class ManagedClusterProperties(TypedDict, total=False):
     """Ingress profile for the managed cluster."""
     publicNetworkAccess: Union[str, "PublicNetworkAccess"]
     """PublicNetworkAccess of the managedCluster. Allow or deny public network access for AKS. Known
-     values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
+     values are: \"Enabled\" and \"Disabled\"."""
     workloadAutoScalerProfile: "ManagedClusterWorkloadAutoScalerProfile"
     """Workload Auto-scaler profile for the managed cluster."""
     azureMonitorProfile: "ManagedClusterAzureMonitorProfile"
@@ -5474,13 +3669,6 @@ class ManagedClusterProperties(TypedDict, total=False):
     """Settings for hosted system addons. For more information, see
      `https://aka.ms/aks/automatic/systemcomponents
      <https://aka.ms/aks/automatic/systemcomponents>`_."""
-    healthMonitorProfile: "ManagedClusterHealthMonitorProfile"
-    """Health monitor profile for the managed cluster."""
-    controlPlaneScalingProfile: "ManagedClusterControlPlaneScalingProfile"
-    """Profile for providing scaled and performance guaranteed control plane capacity to deliver
-     consistent performance under high workload. Requires Kubernetes version 1.33.0 or later."""
-    nodeDisruptionProfile: "NodeDisruptionProfile"
-    """Node disruption profile for a managed cluster."""
     status: "ManagedClusterStatus"
     """Contains read-only information about the Managed Cluster."""
 
@@ -5596,29 +3784,6 @@ ManagedClusterPropertiesAutoScalerProfile.__doc__ = """Parameters to be applied 
 """
 
 
-class ManagedClusterPropertiesForSnapshot(TypedDict, total=False):
-    """managed cluster properties for snapshot, these properties are read only.
-
-    :ivar kubernetes_version: The current kubernetes version.
-    :vartype kubernetes_version: str
-    :ivar sku: The current managed cluster sku.
-    :vartype sku: "ManagedClusterSKU"
-    :ivar enable_rbac: Whether the cluster has enabled Kubernetes Role-Based Access Control or not.
-    :vartype enable_rbac: bool
-    :ivar network_profile: The current network profile.
-    :vartype network_profile: "NetworkProfileForSnapshot"
-    """
-
-    kubernetesVersion: str
-    """The current kubernetes version."""
-    sku: "ManagedClusterSKU"
-    """The current managed cluster sku."""
-    enableRbac: bool
-    """Whether the cluster has enabled Kubernetes Role-Based Access Control or not."""
-    networkProfile: "NetworkProfileForSnapshot"
-    """The current network profile."""
-
-
 class ManagedClusterSecurityProfile(TypedDict, total=False):
     """Security profile for the container service cluster.
 
@@ -5628,33 +3793,16 @@ class ManagedClusterSecurityProfile(TypedDict, total=False):
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile.
     :vartype azure_key_vault_kms: "AzureKeyVaultKms"
-    :ivar kubernetes_resource_object_encryption_profile: Encryption at rest of Kubernetes resource
-     objects. More information on this can be found under
-     `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
-    :vartype kubernetes_resource_object_encryption_profile:
-     "KubernetesResourceObjectEncryptionProfile"
     :ivar workload_identity: Workload identity settings for the security profile. Workload identity
      enables Kubernetes applications to access Azure cloud resources securely with Azure AD. See
      `https://aka.ms/aks/wi <https://aka.ms/aks/wi>`_ for more details.
     :vartype workload_identity: "ManagedClusterSecurityProfileWorkloadIdentity"
     :ivar image_cleaner: Image Cleaner settings for the security profile.
     :vartype image_cleaner: "ManagedClusterSecurityProfileImageCleaner"
-    :ivar image_integrity: Image integrity is a feature that works with Azure Policy to verify
-     image integrity by signature. This will not have any effect unless Azure Policy is applied to
-     enforce image signatures. See `https://aka.ms/aks/image-integrity
-     <https://aka.ms/aks/image-integrity>`_ for how to use this feature via policy.
-    :vartype image_integrity: "ManagedClusterSecurityProfileImageIntegrity"
-    :ivar node_restriction: `Node Restriction
-     <https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction>`_
-     settings for the security profile.
-    :vartype node_restriction: "ManagedClusterSecurityProfileNodeRestriction"
     :ivar custom_ca_trust_certificates: A list of up to 10 base64 encoded CAs that will be added to
      the trust store on all nodes in the cluster. For more information see `Custom CA Trust
      Certificates <https://learn.microsoft.com/en-us/azure/aks/custom-certificate-authority>`_.
     :vartype custom_ca_trust_certificates: list[str]
-    :ivar service_account_image_pull_profile: Defines service account based image pull settings.
-    :vartype service_account_image_pull_profile: "ServiceAccountImagePullProfile"
     """
 
     defender: "ManagedClusterSecurityProfileDefender"
@@ -5663,31 +3811,16 @@ class ManagedClusterSecurityProfile(TypedDict, total=False):
     """Azure Key Vault `key management service
      <https://kubernetes.io/docs/tasks/administer-cluster/kms-provider/>`_ settings for the security
      profile."""
-    kubernetesResourceObjectEncryptionProfile: "KubernetesResourceObjectEncryptionProfile"
-    """Encryption at rest of Kubernetes resource objects. More information on this can be found under
-     `https://aka.ms/aks/kubernetesResourceObjectEncryption
-     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_."""
     workloadIdentity: "ManagedClusterSecurityProfileWorkloadIdentity"
     """Workload identity settings for the security profile. Workload identity enables Kubernetes
      applications to access Azure cloud resources securely with Azure AD. See `https://aka.ms/aks/wi
      <https://aka.ms/aks/wi>`_ for more details."""
     imageCleaner: "ManagedClusterSecurityProfileImageCleaner"
     """Image Cleaner settings for the security profile."""
-    imageIntegrity: "ManagedClusterSecurityProfileImageIntegrity"
-    """Image integrity is a feature that works with Azure Policy to verify image integrity by
-     signature. This will not have any effect unless Azure Policy is applied to enforce image
-     signatures. See `https://aka.ms/aks/image-integrity <https://aka.ms/aks/image-integrity>`_ for
-     how to use this feature via policy."""
-    nodeRestriction: "ManagedClusterSecurityProfileNodeRestriction"
-    """`Node Restriction
-     <https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers/#noderestriction>`_
-     settings for the security profile."""
     customCATrustCertificates: list[str]
     """A list of up to 10 base64 encoded CAs that will be added to the trust store on all nodes in the
      cluster. For more information see `Custom CA Trust Certificates
      <https://learn.microsoft.com/en-us/azure/aks/custom-certificate-authority>`_."""
-    serviceAccountImagePullProfile: "ServiceAccountImagePullProfile"
-    """Defines service account based image pull settings."""
 
 
 class ManagedClusterSecurityProfileDefender(TypedDict, total=False):
@@ -5810,28 +3943,6 @@ class ManagedClusterSecurityProfileImageCleaner(TypedDict, total=False):  # pyli
     """Image Cleaner scanning interval in hours."""
 
 
-class ManagedClusterSecurityProfileImageIntegrity(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Image integrity related settings for the security profile.
-
-    :ivar enabled: Whether to enable image integrity. The default value is false.
-    :vartype enabled: bool
-    """
-
-    enabled: bool
-    """Whether to enable image integrity. The default value is false."""
-
-
-class ManagedClusterSecurityProfileNodeRestriction(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Node Restriction settings for the security profile.
-
-    :ivar enabled: Whether to enable Node Restriction.
-    :vartype enabled: bool
-    """
-
-    enabled: bool
-    """Whether to enable Node Restriction."""
-
-
 class ManagedClusterSecurityProfileWorkloadIdentity(TypedDict, total=False):  # pylint: disable=name-too-long
     """Workload identity settings for the security profile.
 
@@ -5876,56 +3987,6 @@ class ManagedClusterSKU(TypedDict, total=False):
     """The tier of a managed cluster SKU. If not specified, the default is 'Free'. See `AKS Pricing
      Tier <https://learn.microsoft.com/azure/aks/free-standard-pricing-tiers>`_ for more details.
      Known values are: \"Premium\", \"Standard\", and \"Free\"."""
-
-
-class ManagedClusterSnapshot(TrackedResource):
-    """A managed cluster snapshot resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar properties: Properties of a managed cluster snapshot.
-    :vartype properties: "ManagedClusterSnapshotProperties"
-    """
-
-    properties: "ManagedClusterSnapshotProperties"
-    """Properties of a managed cluster snapshot."""
-
-
-class ManagedClusterSnapshotProperties(TypedDict, total=False):
-    """Properties for a managed cluster snapshot.
-
-    :ivar creation_data: CreationData to be used to specify the source resource ID to create this
-     snapshot.
-    :vartype creation_data: "CreationData"
-    :ivar snapshot_type: The type of a snapshot. The default is NodePool. Known values are:
-     "NodePool" and "ManagedCluster".
-    :vartype snapshot_type: Union[str, "SnapshotType"]
-    :ivar managed_cluster_properties_read_only: What the properties will be showed when getting
-     managed cluster snapshot. Those properties are read-only.
-    :vartype managed_cluster_properties_read_only: "ManagedClusterPropertiesForSnapshot"
-    """
-
-    creationData: "CreationData"
-    """CreationData to be used to specify the source resource ID to create this snapshot."""
-    snapshotType: Union[str, "SnapshotType"]
-    """The type of a snapshot. The default is NodePool. Known values are: \"NodePool\" and
-     \"ManagedCluster\"."""
-    managedClusterPropertiesReadOnly: "ManagedClusterPropertiesForSnapshot"
-    """What the properties will be showed when getting managed cluster snapshot. Those properties are
-     read-only."""
 
 
 class ManagedClusterStaticEgressGatewayProfile(TypedDict, total=False):
@@ -6126,16 +4187,10 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(
 
     :ivar enabled: Whether to enable VPA. Default value is false. Required.
     :vartype enabled: bool
-    :ivar addon_autoscaling: Whether VPA add-on is enabled and configured to scale AKS-managed
-     add-ons. Known values are: "Enabled" and "Disabled".
-    :vartype addon_autoscaling: Union[str, "AddonAutoscaling"]
     """
 
     enabled: Required[bool]
     """Whether to enable VPA. Default value is false. Required."""
-    addonAutoscaling: Union[str, "AddonAutoscaling"]
-    """Whether VPA add-on is enabled and configured to scale AKS-managed add-ons. Known values are:
-     \"Enabled\" and \"Disabled\"."""
 
 
 class ManagedNamespace(TrackedResource):
@@ -6204,99 +4259,6 @@ class ManualScaleProfile(TypedDict, total=False):
      or 'Standard_D16s_v5'."""
     count: int
     """Number of nodes."""
-
-
-class MeshMembership(ProxyResource):
-    """Mesh membership of a managed cluster.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: "SystemData"
-    :ivar properties: Mesh membership properties of a managed cluster.
-    :vartype properties: "MeshMembershipProperties"
-    :ivar managed_by: The fully qualified resource ID of the resource that manages this resource.
-     Indicates if this resource is managed by another Azure resource. If this is present, complete
-     mode deployment will not delete the resource if it is removed from the template since it is
-     managed by another resource.
-    :vartype managed_by: str
-    :ivar e_tag: If eTag is provided in the response body, it may also be provided as a header per
-     the normal etag convention.  Entity tags are used for comparing two or more entities from the
-     same requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match
-     (section 14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields.
-    :vartype e_tag: str
-    """
-
-    properties: "MeshMembershipProperties"
-    """Mesh membership properties of a managed cluster."""
-    managedBy: str
-    """The fully qualified resource ID of the resource that manages this resource. Indicates if this
-     resource is managed by another Azure resource. If this is present, complete mode deployment
-     will not delete the resource if it is removed from the template since it is managed by another
-     resource."""
-    eTag: str
-    """If eTag is provided in the response body, it may also be provided as a header per the normal
-     etag convention.  Entity tags are used for comparing two or more entities from the same
-     requested resource. HTTP/1.1 uses entity tags in the etag (section 14.19), If-Match (section
-     14.24), If-None-Match (section 14.26), and If-Range (section 14.27) header fields."""
-
-
-class MeshMembershipPrivateConnectProfile(TypedDict, total=False):
-    """Private connect profile for mesh membership.
-
-    :ivar private_ip_address: The private IP address of the member cluster private FQDN. This is a
-     read-only property populated by the service.
-    :vartype private_ip_address: str
-    :ivar subnet_resource_id: The delegated subnet resource ID. Customer can provide their own
-     subnet, or AKS will allocate one if not specified. When providing your own subnet, the minimum
-     required size is /28.
-    :vartype subnet_resource_id: str
-    """
-
-    privateIpAddress: str
-    """The private IP address of the member cluster private FQDN. This is a read-only property
-     populated by the service."""
-    subnetResourceId: str
-    """The delegated subnet resource ID. Customer can provide their own subnet, or AKS will allocate
-     one if not specified. When providing your own subnet, the minimum required size is /28."""
-
-
-class MeshMembershipProperties(TypedDict, total=False):
-    """Mesh membership properties of a managed cluster.
-
-    :ivar provisioning_state: The current provisioning state of the Mesh Membership. Known values
-     are: "Canceled", "Creating", "Deleting", "Failed", "Succeeded", and "Updating".
-    :vartype provisioning_state: Union[str, "MeshMembershipProvisioningState"]
-    :ivar private_connect_profile: Profile for configuring private connectivity between the mesh
-     control plane and member clusters. When configured, communication between the mesh control
-     plane and this member cluster occurs over private network instead of public networks. Visit
-     `https://aka.ms/applink <https://aka.ms/applink>`_ for more information.
-    :vartype private_connect_profile: "MeshMembershipPrivateConnectProfile"
-    :ivar managed_mesh_id: The ARM resource id for the managed mesh member. This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppLink/applinks/{appLinkName}/appLinkMembers/{appLinkMemberName}'.
-     Visit `https://aka.ms/applink <https://aka.ms/applink>`_ for more information. Required.
-    :vartype managed_mesh_id: str
-    """
-
-    provisioningState: Union[str, "MeshMembershipProvisioningState"]
-    """The current provisioning state of the Mesh Membership. Known values are: \"Canceled\",
-     \"Creating\", \"Deleting\", \"Failed\", \"Succeeded\", and \"Updating\"."""
-    privateConnectProfile: "MeshMembershipPrivateConnectProfile"
-    """Profile for configuring private connectivity between the mesh control plane and member
-     clusters. When configured, communication between the mesh control plane and this member cluster
-     occurs over private network instead of public networks. Visit `https://aka.ms/applink
-     <https://aka.ms/applink>`_ for more information."""
-    managedMeshID: Required[str]
-    """The ARM resource id for the managed mesh member. This is of the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppLink/applinks/{appLinkName}/appLinkMembers/{appLinkMemberName}'.
-     Visit `https://aka.ms/applink <https://aka.ms/applink>`_ for more information. Required."""
 
 
 class NamespaceProperties(TypedDict, total=False):
@@ -6381,87 +4343,6 @@ class NetworkPolicies(TypedDict, total=False):
      and \"AllowSameNamespace\"."""
 
 
-class NetworkProfileForSnapshot(TypedDict, total=False):
-    """network profile for managed cluster snapshot, these properties are read only.
-
-    :ivar network_plugin: networkPlugin for managed cluster snapshot. Known values are: "azure",
-     "kubenet", and "none".
-    :vartype network_plugin: Union[str, "NetworkPlugin"]
-    :ivar network_plugin_mode: NetworkPluginMode for managed cluster snapshot. "overlay"
-    :vartype network_plugin_mode: Union[str, "NetworkPluginMode"]
-    :ivar network_policy: networkPolicy for managed cluster snapshot. Known values are: "none",
-     "calico", "azure", and "cilium".
-    :vartype network_policy: Union[str, "NetworkPolicy"]
-    :ivar network_mode: networkMode for managed cluster snapshot. Known values are: "transparent"
-     and "bridge".
-    :vartype network_mode: Union[str, "NetworkMode"]
-    :ivar load_balancer_sku: loadBalancerSku for managed cluster snapshot. Known values are:
-     "service", "standard", and "basic".
-    :vartype load_balancer_sku: Union[str, "LoadBalancerSku"]
-    """
-
-    networkPlugin: Union[str, "NetworkPlugin"]
-    """networkPlugin for managed cluster snapshot. Known values are: \"azure\", \"kubenet\", and
-     \"none\"."""
-    networkPluginMode: Union[str, "NetworkPluginMode"]
-    """NetworkPluginMode for managed cluster snapshot. \"overlay\""""
-    networkPolicy: Union[str, "NetworkPolicy"]
-    """networkPolicy for managed cluster snapshot. Known values are: \"none\", \"calico\", \"azure\",
-     and \"cilium\"."""
-    networkMode: Union[str, "NetworkMode"]
-    """networkMode for managed cluster snapshot. Known values are: \"transparent\" and \"bridge\"."""
-    loadBalancerSku: Union[str, "LoadBalancerSku"]
-    """loadBalancerSku for managed cluster snapshot. Known values are: \"service\", \"standard\", and
-     \"basic\"."""
-
-
-class NodeDisruptionProfile(TypedDict, total=False):
-    """Node disruption profile for a managed cluster.
-
-    :ivar node_disruption_policy: The policy configuration for when to allow certain operations
-     which require node re-image and trigger redeployment. For example, some operations, such as
-     updating the .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an
-     existing managed cluster, trigger rolling updates of the nodes. This setting allows control
-     over when such updates are accepted. The default is 'Allow'. For a full list of covered
-     operations see aka.ms/aks/nodedisruptionpolicy". Known values are: "Allow",
-     "AllowDuringMaintenanceWindow", and "Block".
-    :vartype node_disruption_policy: Union[str, "NodeDisruptionPolicy"]
-    """
-
-    nodeDisruptionPolicy: Union[str, "NodeDisruptionPolicy"]
-    """The policy configuration for when to allow certain operations which require node re-image and
-     trigger redeployment. For example, some operations, such as updating the
-     .properties.ManagedClusterSecurityProfile.customCATrustCertificates field on an existing
-     managed cluster, trigger rolling updates of the nodes. This setting allows control over when
-     such updates are accepted. The default is 'Allow'. For a full list of covered operations see
-     aka.ms/aks/nodedisruptionpolicy\". Known values are: \"Allow\",
-     \"AllowDuringMaintenanceWindow\", and \"Block\"."""
-
-
-class NvidiaGPUProfile(TypedDict, total=False):
-    """NVIDIA-specific GPU settings.
-
-    :ivar management_mode: The Managed GPU experience installs additional components, such as the
-     Data Center GPU Manager (DCGM) metrics for monitoring, on top of the GPU driver for you. For
-     more details of what is installed, check out aka.ms/aks/managed-gpu. Known values are:
-     "Unmanaged" and "Managed".
-    :vartype management_mode: Union[str, "ManagementMode"]
-    :ivar mig_strategy: Sets the MIG (Multi-Instance GPU) strategy that will be used for managed
-     MIG support. For more information about the different strategies, visit aka.ms/aks/managed-gpu.
-     When not specified, the default is None. Known values are: "None", "Single", and "Mixed".
-    :vartype mig_strategy: Union[str, "MigStrategy"]
-    """
-
-    managementMode: Union[str, "ManagementMode"]
-    """The Managed GPU experience installs additional components, such as the Data Center GPU Manager
-     (DCGM) metrics for monitoring, on top of the GPU driver for you. For more details of what is
-     installed, check out aka.ms/aks/managed-gpu. Known values are: \"Unmanaged\" and \"Managed\"."""
-    migStrategy: Union[str, "MigStrategy"]
-    """Sets the MIG (Multi-Instance GPU) strategy that will be used for managed MIG support. For more
-     information about the different strategies, visit aka.ms/aks/managed-gpu. When not specified,
-     the default is None. Known values are: \"None\", \"Single\", and \"Mixed\"."""
-
-
 class PortRange(TypedDict, total=False):
     """The port range.
 
@@ -6495,20 +4376,6 @@ class PowerState(TypedDict, total=False):
 
     code: Union[str, "Code"]
     """Tells whether the cluster is Running or Stopped. Known values are: \"Running\" and \"Stopped\"."""
-
-
-class PreparedImageSpecificationProfile(TypedDict, total=False):
-    """Settings to determine the prepared image specification used to provision nodes in a pool.
-
-    :ivar prepared_image_specification_id: The resource ID of the prepared image specification
-     resource to use. This can include a version. Omitting the version will use the latest version
-     of the prepared image specification.
-    :vartype prepared_image_specification_id: str
-    """
-
-    preparedImageSpecificationId: str
-    """The resource ID of the prepared image specification resource to use. This can include a
-     version. Omitting the version will use the latest version of the prepared image specification."""
 
 
 class PrivateEndpoint(TypedDict, total=False):
@@ -6616,18 +4483,6 @@ class PrivateLinkServiceConnectionState(TypedDict, total=False):
      \"Rejected\", and \"Disconnected\"."""
     description: str
     """The private link service connection description."""
-
-
-class RebalanceLoadBalancersRequestBody(TypedDict, total=False):
-    """The names of the load balancers to rebalance. If set to empty, all load balancers will be
-    rebalanced.
-
-    :ivar load_balancer_names: The load balancer names list.
-    :vartype load_balancer_names: list[str]
-    """
-
-    loadBalancerNames: list[str]
-    """The load balancer names list."""
 
 
 class RelativeMonthlySchedule(TypedDict, total=False):
@@ -6806,37 +4661,6 @@ class SchedulerProfile(TypedDict, total=False):
      <https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler>`_)."""
 
 
-class ServiceAccountImagePullProfile(TypedDict, total=False):
-    """Profile for configuring image pull authentication to use service account scoped managed
-    identities for authentication instead of node scoped managed identity (kubelet identity) for
-    authentication to Azure Container Registry. For more information, refer to
-    `https://aka.ms/aks/identity-binding/acr-image-pull/docs
-    <https://aka.ms/aks/identity-binding/acr-image-pull/docs>`_.
-
-    :ivar enabled: Indicates whether service account based image pull is enabled, for which
-     identity bindings are required for the managed identity to be used for authentication. For more
-     information, refer to `https://aka.ms/aks/identity-binding-docs
-     <https://aka.ms/aks/identity-binding-docs>`_.
-    :vartype enabled: bool
-    :ivar default_managed_identity_id: Optional. The default managed identity resource ID used for
-     image pulls at the cluster level. When configured, this identity is used if a Pod’s service
-     account does not explicitly specify an identity for pulling images. If not configured and no
-     identity is specified at service account level, image will be pulled via anonymous
-     authentication.
-    :vartype default_managed_identity_id: str
-    """
-
-    enabled: bool
-    """Indicates whether service account based image pull is enabled, for which identity bindings are
-     required for the managed identity to be used for authentication. For more information, refer to
-     `https://aka.ms/aks/identity-binding-docs <https://aka.ms/aks/identity-binding-docs>`_."""
-    defaultManagedIdentityId: str
-    """Optional. The default managed identity resource ID used for image pulls at the cluster level.
-     When configured, this identity is used if a Pod’s service account does not explicitly specify
-     an identity for pulling images. If not configured and no identity is specified at service
-     account level, image will be pulled via anonymous authentication."""
-
-
 class ServiceMeshProfile(TypedDict, total=False):
     """Service mesh profile for a managed cluster.
 
@@ -6884,8 +4708,7 @@ class SnapshotProperties(TypedDict, total=False):
     :ivar creation_data: CreationData to be used to specify the source agent pool resource ID to
      create this snapshot.
     :vartype creation_data: "CreationData"
-    :ivar snapshot_type: The type of a snapshot. The default is NodePool. Known values are:
-     "NodePool" and "ManagedCluster".
+    :ivar snapshot_type: The type of a snapshot. The default is NodePool. "NodePool"
     :vartype snapshot_type: Union[str, "SnapshotType"]
     :ivar kubernetes_version: The version of Kubernetes.
     :vartype kubernetes_version: str
@@ -6896,9 +4719,9 @@ class SnapshotProperties(TypedDict, total=False):
     :vartype os_type: Union[str, "OSType"]
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
-     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3", "Mariner",
-     "Flatcar", "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025",
-     "WindowsAnnual", "Ubuntu2404", and "AzureContainerLinux".
+     1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", "Ubuntu2404", and
+     "AzureContainerLinux".
     :vartype os_sku: Union[str, "OSSKU"]
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str
@@ -6909,8 +4732,7 @@ class SnapshotProperties(TypedDict, total=False):
     creationData: "CreationData"
     """CreationData to be used to specify the source agent pool resource ID to create this snapshot."""
     snapshotType: Union[str, "SnapshotType"]
-    """The type of a snapshot. The default is NodePool. Known values are: \"NodePool\" and
-     \"ManagedCluster\"."""
+    """The type of a snapshot. The default is NodePool. \"NodePool\""""
     kubernetesVersion: str
     """The version of Kubernetes."""
     nodeImageVersion: str
@@ -6920,9 +4742,9 @@ class SnapshotProperties(TypedDict, total=False):
     osSku: Union[str, "OSSKU"]
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
-     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"Mariner\",
-     \"Flatcar\", \"CBLMariner\", \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\",
-     \"WindowsAnnual\", \"Ubuntu2404\", and \"AzureContainerLinux\"."""
+     is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", \"Ubuntu2404\", and
+     \"AzureContainerLinux\"."""
     vmSize: str
     """The size of the VM."""
     enableFIPS: bool
