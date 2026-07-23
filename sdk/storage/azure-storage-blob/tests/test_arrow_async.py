@@ -12,7 +12,7 @@ import pytest
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 from azure.storage.blob import BlobProperties, BlobType
-from azure.storage.blob.aio import BlobServiceClient, ContainerClient
+from azure.storage.blob.aio import BlobPrefix, BlobServiceClient, ContainerClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -595,6 +595,9 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         blob_pages = container.walk_blobs(response_format="arrow", results_per_page=3).by_page()
         first_blobs_list = [blob async for blob in await blob_pages.__anext__()]
         self.verify_blobs(first_blobs_list, ["a/", "d/", "flat_blob1"])
+        assert isinstance(first_blobs_list[0], BlobPrefix)
+        assert isinstance(first_blobs_list[1], BlobPrefix)
+        assert isinstance(first_blobs_list[2], BlobProperties)
         second_blobs_list = [blob async for blob in await blob_pages.__anext__()]
         self.verify_blobs(second_blobs_list, ["flat_blob2", "flat_blob3", "flat_blob4"])
 

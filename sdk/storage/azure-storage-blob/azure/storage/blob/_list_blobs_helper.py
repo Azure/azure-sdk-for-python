@@ -21,7 +21,7 @@ from ._deserialize import (
     load_xml_string,
     parse_tags,
 )
-from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated.models import BlobItemInternal, BlobName, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._generated._utils.serialization import Deserializer
 from ._models import (
     BlobProperties,
@@ -40,15 +40,15 @@ _ARROW_CONTENT_TYPE = "application/vnd.apache.arrow.stream"
 
 def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statements
     raw_bytes: Union[bytes, bytearray], container: Optional[str]
-) -> Tuple[Optional[str], List[BlobProperties]]:
+) -> Tuple[Optional[str], List[Union[BlobProperties, GenBlobPrefix]]]:
     """
-    Parse an Apache Arrow IPC stream response into a list of BlobProperties.
+    Parse an Apache Arrow IPC stream response into a list of blob items.
 
     :param raw_bytes: The raw Arrow IPC bytes.
     :type raw_bytes: bytes or bytearray
     :param Optional[str] container: The container name to stamp on each item.
-    :returns: A tuple of next marker and a list of BlobProperties.
-    :rtype: Tuple[Optional[str], List[~azure.storage.blob.BlobProperties]]
+    :returns: A tuple of next marker and a list of BlobProperties and/or BlobPrefix markers.
+    :rtype: Tuple[Optional[str], List[Union[~azure.storage.blob.BlobProperties, BlobPrefix]]]
     """
     from nanoarrow import ArrayStream, Type  # pylint: disable=import-outside-toplevel
     from nanoarrow.ipc import InputStream  # pylint: disable=import-outside-toplevel
@@ -112,7 +112,7 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
     }
 
     next_marker: Optional[str] = None
-    blob_items: List[BlobProperties] = []
+    blob_items: List[Union[BlobProperties, GenBlobPrefix]] = []
 
     with InputStream.from_readable(BytesIO(raw_bytes)) as stream:
         reader = ArrayStream(stream)
@@ -163,6 +163,10 @@ def _parse_arrow_response(  # pylint: disable=too-many-locals,too-many-statement
                         return default
                     val = col[_r]
                     return val if val is not None else default
+
+                if _get("ResourceType") == "blobprefix":
+                    blob_items.append(GenBlobPrefix(name=BlobName(encoded=False, content=_get("Name"))))
+                    continue
 
                 blob = BlobProperties()
                 blob.container = container  # type: ignore[assignment]
@@ -581,9 +585,12 @@ class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
         self.delimiter: Optional[str] = kwargs.get("delimiter")
 
     def _extract_data_cb(self, get_next_return):
-        # Arrow responses only carry blob items; defer to the base class for those.
+        # Arrow hierarchy responses interleave virtual directories (BlobPrefix) with blobs,
+        # tagged by _parse_arrow_response via the "ResourceType" column.
         if self._arrow_response is not None:
-            return super()._extract_data_cb(get_next_return)
+            next_marker, page = super()._extract_data_cb(get_next_return)
+            self.current_page = [self._build_item(item) for item in page]
+            return next_marker, self.current_page
         # XML fallback: reuse the base to populate the response, then preserve the
         # hierarchy's virtual directories (BlobPrefix) alongside the blobs.
         next_marker, _ = super()._extract_data_cb(get_next_return)

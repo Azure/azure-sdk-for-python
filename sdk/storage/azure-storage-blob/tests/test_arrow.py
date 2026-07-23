@@ -11,7 +11,7 @@ import pytest
 
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
-from azure.storage.blob import BlobProperties, BlobServiceClient, BlobType, ContainerClient
+from azure.storage.blob import BlobPrefix, BlobProperties, BlobServiceClient, BlobType, ContainerClient
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
@@ -589,6 +589,9 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         blob_pages = container.walk_blobs(response_format="arrow", results_per_page=3).by_page()
         first_blobs_list = list(next(blob_pages))
         self.verify_blobs(first_blobs_list, ["a/", "d/", "flat_blob1"])
+        assert isinstance(first_blobs_list[0], BlobPrefix)
+        assert isinstance(first_blobs_list[1], BlobPrefix)
+        assert isinstance(first_blobs_list[2], BlobProperties)
         second_blobs_list = list(next(blob_pages))
         self.verify_blobs(second_blobs_list, ["flat_blob2", "flat_blob3", "flat_blob4"])
 

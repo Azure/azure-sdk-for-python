@@ -319,9 +319,12 @@ class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
         self.delimiter = kwargs.get("delimiter")
 
     async def _extract_data_cb(self, get_next_return):
-        # Arrow responses only carry blob items; defer to the base class for those.
+        # Arrow hierarchy responses interleave virtual directories (BlobPrefix) with blobs,
+        # tagged by _parse_arrow_response via the "ResourceType" column.
         if self._arrow_response is not None:
-            return await super()._extract_data_cb(get_next_return)
+            next_marker, page = await super()._extract_data_cb(get_next_return)
+            self.current_page = [self._build_item(item) for item in page]
+            return next_marker, self.current_page
         # XML fallback: reuse the base to populate the response, then preserve the
         # hierarchy's virtual directories (BlobPrefix) alongside the blobs.
         next_marker, _ = await super()._extract_data_cb(get_next_return)
