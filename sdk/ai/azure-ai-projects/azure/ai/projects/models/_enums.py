@@ -429,6 +429,21 @@ class DeploymentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Model deployment."""
 
 
+class DimensionChangeKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """How a rubric dimension changed relative to the preceding evaluator version."""
+
+    NEW = "new"
+    """The dimension was introduced in this evaluator version."""
+    CARRIED_OVER = "carried_over"
+    """The generated dimension was preserved without a substantive change."""
+    AMPLIFIED = "amplified"
+    """The generated dimension retained its meaning and received a higher weight."""
+    REGENERATED = "regenerated"
+    """The generated dimension was substantively changed."""
+    HUMAN_EDITED = "human_edited"
+    """The dimension is owned by a human edit and must be preserved during selective regeneration."""
+
+
 class EvaluationLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level at which evaluation is performed."""
 
@@ -815,6 +830,36 @@ class RankerVersionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEFAULT_2024_11_15."""
 
 
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for
+    `reasoning models <https://platform.openai.com/docs/guides/reasoning>`_.
+    Currently supported values are ``none``, ``minimal``, ``low``, ``medium``, ``high``, and
+    ``xhigh``. Reducing
+    reasoning effort can result in faster responses and fewer tokens used
+    on reasoning in a response.
+
+    * `gpt-5.1` defaults to `none`, which does not perform reasoning. The supported reasoning
+    values for `gpt-5.1` are `none`, `low`, `medium`, and `high`. Tool calls are supported for all
+    reasoning values in gpt-5.1.
+    * All models before `gpt-5.1` default to `medium` reasoning effort, and do not support `none`.
+    * The `gpt-5-pro` model defaults to (and only supports) `high` reasoning effort.
+    * `xhigh` is supported for all models after `gpt-5.1-codex-max`.
+    """
+
+    NONE = "none"
+    """NONE."""
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
 class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence type."""
 
@@ -910,6 +955,17 @@ class RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A recurring cron-based trigger."""
     TIMER = "timer"
     """A one-shot timer trigger."""
+
+
+class RubricHealthConfidence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The completeness of the evidence used to compute rubric health."""
+
+    LOW = "low"
+    """The health signals are incomplete or insufficiently supported."""
+    MED = "med"
+    """The health signals have sufficient structural evidence but limited empirical support."""
+    HIGH = "high"
+    """The health signals include strong supporting evidence."""
 
 
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

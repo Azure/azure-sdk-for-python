@@ -10,7 +10,18 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import hashlib
 from io import IOBase
-from typing import Union, Optional, Any, IO, overload
+from collections.abc import MutableMapping as MutableMappingABC
+from typing import (
+    Union,
+    Optional,
+    Any,
+    IO,
+    Iterator,
+    overload,
+    cast,
+    MutableMapping,
+)
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
@@ -24,7 +35,9 @@ from ..models._patch import (
 )
 
 
-def _compute_sha256_from_stream(stream: IO[bytes], *, chunk_size: int = 1024 * 1024) -> str:
+def _compute_sha256_from_stream(
+    stream: IO[bytes], *, chunk_size: int = 1024 * 1024
+) -> str:
     if not isinstance(stream, IOBase) or not stream.seekable():
         raise TypeError("'code' must be provided as a seekable IO[bytes] stream.")
 
@@ -51,7 +64,7 @@ class AgentsOperations(GeneratedAgentsOperations):
         :attr:`agents` attribute.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     def create_version(
         self,
         agent_name: str,
@@ -104,7 +117,12 @@ class AgentsOperations(GeneratedAgentsOperations):
 
     @overload
     def create_version(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: MutableMapping[str, Any],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
 
@@ -118,7 +136,7 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Required.
-        :type body: JSON
+        :type body: MutableMapping[str, Any]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -129,7 +147,12 @@ class AgentsOperations(GeneratedAgentsOperations):
 
     @overload
     def create_version(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.AgentVersionDetails:
         """Create an agent version.
 
@@ -156,7 +179,7 @@ class AgentsOperations(GeneratedAgentsOperations):
     def create_version(
         self,
         agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
+        body: Union[JSON, MutableMapping[str, Any], IO[bytes]] = _Unset,
         *,
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
@@ -177,7 +200,7 @@ class AgentsOperations(GeneratedAgentsOperations):
          * Must not exceed 63 characters. Required.
         :type agent_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
+        :type body: JSON or MutableMapping[str, Any] or IO[bytes]
         :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
          agent definition. Required.
         :paramtype definition: ~azure.ai.projects.models.AgentDefinition
@@ -206,20 +229,59 @@ class AgentsOperations(GeneratedAgentsOperations):
             # Add Foundry-Features header if not already present
             headers = kwargs.get("headers")
             if headers is None:
-                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
-            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = {
+                    _FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS
+                }
+            elif not _has_header_case_insensitive(
+                headers, _FOUNDRY_FEATURES_HEADER_NAME
+            ):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = (
+                    _AGENT_OPERATION_FEATURE_HEADERS
+                )
                 kwargs["headers"] = headers
 
         try:
+            if body is _Unset:
+                # Use keyword-only overload when body is not provided
+                return super().create_version(
+                    agent_name,
+                    definition=definition,
+                    metadata=metadata,
+                    description=description,
+                    blueprint_reference=blueprint_reference,
+                    draft=draft,
+                    **kwargs,
+                )
+            # Use body overload when body is provided
+            if isinstance(body, (IOBase, bytes)):
+                typed_body: Union[MutableMapping[str, Any], IO[bytes]] = body
+            else:
+                # Strip service-owned fields from MutableMapping bodies before delegation
+                if isinstance(body, MutableMappingABC):
+                    body_copy = dict(body)
+                    # Remove service-owned response fields per task requirements
+                    for key in [
+                        "object",
+                        "id",
+                        "name",
+                        "version",
+                        "createdAt",
+                        "created_at",
+                        "status",
+                        "instanceIdentity",
+                        "instance_identity",
+                        "blueprint",
+                        "agentGuid",
+                        "agent_guid",
+                    ]:
+                        body_copy.pop(key, None)
+
+                    typed_body = body_copy  # type: ignore[assignment]
+                else:
+                    typed_body = body  # type: ignore[assignment]
             return super().create_version(
                 agent_name,
-                body,
-                definition=definition,
-                metadata=metadata,
-                description=description,
-                blueprint_reference=blueprint_reference,
-                draft=draft,
+                cast(Any, typed_body),
                 **kwargs,
             )
         except HttpResponseError as exc:
@@ -238,9 +300,16 @@ class AgentsOperations(GeneratedAgentsOperations):
             }
 
             """
-            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+            if (
+                exc.status_code == 403
+                and not self._config.allow_preview
+                and exc.model is not None
+            ):
                 api_error_response = exc.model
-                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                if (
+                    hasattr(api_error_response, "error")
+                    and api_error_response.error is not None
+                ):
                     if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
                         new_exc = HttpResponseError(
                             message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
@@ -313,6 +382,7 @@ class AgentsOperations(GeneratedAgentsOperations):
             description=description,
             metadata=metadata,
         )
+
         content = _models._models._CreateAgentVersionFromCodeContent(  # pylint: disable=protected-access
             metadata=metadata_obj,
             code=code,
@@ -321,23 +391,34 @@ class AgentsOperations(GeneratedAgentsOperations):
         if getattr(self._config, "allow_preview", False):
             # Add Foundry-Features header if not already present
             headers = kwargs.get("headers")
+
             if headers is None:
-                kwargs["headers"] = {_FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS}
-            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _AGENT_OPERATION_FEATURE_HEADERS
+                kwargs["headers"] = {
+                    _FOUNDRY_FEATURES_HEADER_NAME: _AGENT_OPERATION_FEATURE_HEADERS
+                }
+            elif not _has_header_case_insensitive(
+                headers, _FOUNDRY_FEATURES_HEADER_NAME
+            ):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = (
+                    _AGENT_OPERATION_FEATURE_HEADERS
+                )
                 kwargs["headers"] = headers
 
         try:
             return super()._create_version_from_code(
-                agent_name,
-                content,
-                code_zip_sha256=code_zip_sha256,
-                **kwargs,
+                agent_name, content, code_zip_sha256=code_zip_sha256, **kwargs
             )
         except HttpResponseError as exc:
-            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+            if (
+                exc.status_code == 403
+                and not self._config.allow_preview
+                and exc.model is not None
+            ):
                 api_error_response = exc.model
-                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                if (
+                    hasattr(api_error_response, "error")
+                    and api_error_response.error is not None
+                ):
                     if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
                         new_exc = HttpResponseError(
                             message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",
@@ -348,3 +429,63 @@ class AgentsOperations(GeneratedAgentsOperations):
                         new_exc.model = exc.model
                         raise new_exc from exc
             raise
+
+    @distributed_trace
+    def get_session_log_stream(  # type: ignore[override]
+        self,
+        agent_name: str,
+        agent_version: str,
+        session_id: str,
+        *,
+        stream: bool = True,
+        **kwargs: Any,
+    ) -> Iterator[bytes]:
+        """Stream console logs for a hosted agent session.
+
+        Streams console logs (stdout / stderr) for a specific hosted agent session
+        as a Server-Sent Events (SSE) stream.
+
+        Each SSE frame contains:
+
+        * `event`: always `"log"`
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
+
+        Example SSE frames:
+
+        .. code-block::
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting FoundryCBAgent server on port 8088"}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application startup complete."}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since last 60 seconds"}
+
+        The stream remains open until the client disconnects or the server
+        terminates the connection. Clients should handle reconnection as needed.
+
+        :param agent_name: The name of the hosted agent. Required.
+        :type agent_name: str
+        :param agent_version: The version of the agent. Required.
+        :type agent_version: str
+        :param session_id: The session ID (maps to an ADC sandbox). Required.
+        :type session_id: str
+        :keyword stream: Whether to stream the response. Default is True.
+        :paramtype stream: bool
+        :return: Iterator of bytes containing SSE frames
+        :rtype: Iterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return cast(
+            Iterator[bytes],
+            super().get_session_log_stream(
+                agent_name, agent_version, session_id, stream=stream, **kwargs
+            ),
+        )
