@@ -1521,7 +1521,7 @@ class ShareFileClient(StorageAccountHostsMixin):
         """DEPRECATED: Returns the list of valid page ranges for a file or snapshot
         of a file.
 
-        .. deprecated::
+        .. deprecated:: 12.27.0b1
             Use :func:`list_ranges` instead.
 
         :param int offset:
@@ -1602,7 +1602,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         .. versionadded:: 12.6.0
 
-        .. deprecated::
+        .. deprecated:: 12.27.0b1
             Use :func:`list_ranges_diff` instead.
 
         :param int offset:
