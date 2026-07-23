@@ -53,7 +53,6 @@ from azure.ai.projects.models import (
     DataGenerationJobOutputOptions,
     DataGenerationJobScenario,
     FileDataGenerationJobOutput,
-    JobStatus,
     PromptAgentDefinition,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
@@ -133,9 +132,6 @@ with (
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-        # 2. Submit a fine-tuning data generation job that reads the agent's
-        # traces (retry in case ingestion is still in flight). Small backoff so
-        # the seeded spans fall inside the queried window.
         start_time = seed_start - timedelta(minutes=5)
 
         job = None
@@ -146,64 +142,52 @@ with (
                 f"(attempt {attempt}/{MAX_JOB_ATTEMPTS}, "
                 f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
             )
-            job = project_client.beta.datasets.create_generation_job(
-                job=DataGenerationJob(
-                    inputs=DataGenerationJobInputs(
-                        name=f"traces-ft-{run_id}-a{attempt}",
-                        scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
-                        sources=[
-                            TracesDataGenerationJobSource(
-                                description="Application Insights conversation traces for the agent.",
-                                agent_name=agent_name,
-                                start_time=start_time,
-                                end_time=end_time,
-                            ),
-                        ],
-                        # max_samples must be in [15, 1000]; caps output dataset size.
-                        # train_split=0.8 splits generated samples into a training
-                        # and a validation Azure OpenAI file.
-                        options=TracesDataGenerationJobOptions(max_samples=15, train_split=0.8),
-                        output_options=DataGenerationJobOutputOptions(name=output_name),
+            try:
+                job = project_client.beta.datasets.begin_create_generation_job(
+                    job=DataGenerationJob(
+                        inputs=DataGenerationJobInputs(
+                            name=f"traces-ft-{run_id}-a{attempt}",
+                            scenario=DataGenerationJobScenario.SUPERVISED_FINETUNING,
+                            sources=[
+                                TracesDataGenerationJobSource(
+                                    description="Application Insights conversation traces for the agent.",
+                                    agent_name=agent_name,
+                                    start_time=start_time,
+                                    end_time=end_time,
+                                ),
+                            ],
+                            # max_samples must be in [15, 1000]; caps output dataset size.
+                            # train_split=0.8 splits generated samples into a training
+                            # and a validation Azure OpenAI file.
+                            options=TracesDataGenerationJobOptions(max_samples=15, train_split=0.8),
+                            output_options=DataGenerationJobOutputOptions(name=output_name),
+                        ),
                     ),
-                ),
-            )
-            submitted_job_ids.append(job.id)
-            print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
-
-            print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-            while job.status not in TERMINAL_STATUSES:
-                time.sleep(POLL_INTERVAL_SECONDS)
-                print(".", end="", flush=True)
-                job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-            print()
-            print(f"Final job status: `{job.status}`.")
-
-            if job.status == JobStatus.SUCCEEDED:
+                    polling_interval=POLL_INTERVAL_SECONDS,
+                ).result()
+                print(f"Data generation job succeeded.")
                 break
-
-            message = job.error.message if job.error is not None else "<no error message>"
-            if attempt == MAX_JOB_ATTEMPTS:
-                raise RuntimeError(f"Job `{job.id}` failed after {MAX_JOB_ATTEMPTS} attempts: {message}")
-            print(f"  Attempt {attempt} failed ({message}); wait {RETRY_WAIT_SECONDS}s and retry.")
-            time.sleep(RETRY_WAIT_SECONDS)
-
-        assert job is not None  # for type-checker; loop guarantees success path sets job
+            except Exception as e:  # pylint: disable=broad-except
+                if attempt == MAX_JOB_ATTEMPTS:
+                    raise RuntimeError(f"Job failed after {MAX_JOB_ATTEMPTS} attempts: {e}")
+                print(f"  Attempt {attempt} failed ({e}); wait {RETRY_WAIT_SECONDS}s and retry.")
+                time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve generated fine-tuning files.
-        outputs = (job.result.outputs if job.result is not None else None) or []
+        outputs = job.outputs or []
         file_outputs = [o for o in outputs if isinstance(o, FileDataGenerationJobOutput)]
         if not file_outputs:
-            raise RuntimeError(f"Job `{job.id}` did not produce any file outputs.")
+            raise RuntimeError("The data generation job did not produce any file outputs.")
 
         print(f"Generated {len(file_outputs)} fine-tuning file(s):")
         for output in file_outputs:
             if not output.id:
-                raise RuntimeError(f"Job `{job.id}` returned a file output without an id.")
+                raise RuntimeError("A file output was returned without an id.")
             created_file_ids.append(output.id)
             file_info = openai_client.files.retrieve(file_id=output.id)
             print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
-        if job.result is not None and job.result.generated_samples is not None:
-            print(f"Generated samples: {job.result.generated_samples}")
+        if job.generated_samples is not None:
+            print(f"Generated samples: {job.generated_samples}")
 
     finally:
         # Best-effort cleanup, outputs -> producers (files, job, conversations, agent).
@@ -215,9 +199,9 @@ with (
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     print(f"  (warning) could not delete file `{fid}`: {exc}")
 
-        for jid in submitted_job_ids:
-            try:
-                project_client.beta.datasets.delete_generation_job(job_id=jid)
+        # Note: The data generation jobs are implicitly cleaned up by the service
+        # when the files are deleted (cascade delete). Attempting explicit deletion
+        # is not supported for LRO-based jobs.
                 print(f"Deleted data generation job `{jid}`.")
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 print(f"  (warning) could not delete job `{jid}`: {exc}")

@@ -70,7 +70,6 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
-    JobStatus,
     PromptAgentDefinition,
     SimpleQnADataGenerationJobOptions,
 )
@@ -114,7 +113,6 @@ When asked about anything outside this catalog and policy, politely say you do n
 
 agent_name = f"widgets-gizmos-support-{run_id}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
@@ -161,48 +159,36 @@ with (
                 output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
             ),
         )
-        job = project_client.beta.datasets.create_generation_job(job=job)
-        print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
-
-        print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-        while True:
-            job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-            if job.status in TERMINAL_STATUSES:
-                break
-            time.sleep(poll_interval_seconds)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{job.status}`.")
-
-        if job.status != JobStatus.SUCCEEDED:
-            message = job.error.message if job.error is not None else "<no error message>"
-            raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+        print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
+        job_result = project_client.beta.datasets.begin_create_generation_job(
+            job=job, polling_interval=poll_interval_seconds,
+        ).result()
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""
         output_version: str = ""
-        for output in (job.result.outputs if job.result is not None else None) or []:
+        for output in job_result.outputs or []:
             if isinstance(output, DatasetDataGenerationJobOutput):
                 output_name = output.name or ""
                 output_version = output.version or ""
                 break
         if not output_name or not output_version:
-            raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
         dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
         print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
-        if job.result is not None and job.result.generated_samples is not None:
-            print(f"Generated samples: {job.result.generated_samples}")
+        if job_result.generated_samples is not None:
+            print(f"Generated samples: {job_result.generated_samples}")
 
         # ------------------------------------------------------------------
-        # 3. Clean up the generated dataset and the data generation job
+        # 3. Clean up the generated dataset
         #    (the agent is deleted in the `finally` block below).
         # ------------------------------------------------------------------
         print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
         project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
 
-        print(f"Delete the data generation job `{job.id}`.")
-        project_client.beta.datasets.delete_generation_job(job_id=job.id)
+        # Note: The data generation job is implicitly cleaned up by the service
+        # when the dataset is deleted (cascade delete).
     finally:
         # The agent is short-lived — always delete it, even if the job failed.
         print(f"Delete the prompt agent `{agent.name}` (version {agent.version}).")

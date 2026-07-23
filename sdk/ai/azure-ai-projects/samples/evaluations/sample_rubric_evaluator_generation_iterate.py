@@ -37,10 +37,8 @@ USAGE:
 """
 
 import os
-import time
 import uuid
 from datetime import datetime, timezone
-from typing import cast
 
 from dotenv import load_dotenv
 
@@ -51,7 +49,6 @@ from azure.ai.projects.models import (
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
     EvaluatorGenerationJob,
-    JobStatus,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
 )
@@ -67,14 +64,15 @@ ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 evaluator_name = f"reservation-quality-iterate-{ts}-{short}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
-    job = project_client.beta.evaluators.create_generation_job(
+    # The LRO polls automatically; `.result()` blocks until the job reaches a terminal state
+    # and returns the produced EvaluatorVersion directly.
+    print("Waiting for generation job to complete (polling is handled by the SDK)...")
+    v1 = project_client.beta.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -95,20 +93,10 @@ with (
             ),
         ),
         operation_id=f"rubric-iterate-{short}",
-    )
-
-    print(f"Waiting for job `{job.id}` to complete...")
-    while job.status not in TERMINAL_STATUSES:
-        time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
-
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
+        polling_interval=poll_interval_seconds,
+    ).result()
 
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
-    v1 = job.result
-    assert v1 is not None
     v1_definition = v1.definition
     assert isinstance(v1_definition, RubricBasedEvaluatorDefinition)
     print(
