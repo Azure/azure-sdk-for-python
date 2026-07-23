@@ -147,7 +147,7 @@ class TestModel(AzureRecordedTestCase):
         client.models.restore(name=name, version=version_archived)
         assert version_archived in get_model_list()
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
+    @pytest.mark.skip(reason="TODO (ADO 1791832): The full-model-list operation is slow enough to cause testing pipeline timeouts. This archive/restore container test needs a more efficient assertion strategy.")
     def test_model_archive_restore_container(
         self, client: MLClient, randstr: Callable[[], str], tmp_path: Path
     ) -> None:
