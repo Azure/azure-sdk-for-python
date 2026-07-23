@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - Updated default API version to `2026-07-01-preview`
+  - Regular Release
 
 ## 10.0.0 (2026-07-20)
 
