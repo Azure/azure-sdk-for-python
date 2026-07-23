@@ -31,7 +31,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity openai python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -153,7 +153,7 @@ with (
     #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-print("Creating multi-source data generation job (File + Prompt) and waiting for completion (polling is handled by the SDK)...")
+    print("Creating multi-source data generation job (File + Prompt) and waiting for completion (polling is handled by the SDK)...")
     job_result = project_client.beta.datasets.begin_create_generation_job(
         job=DataGenerationJob(
             inputs=DataGenerationJobInputs(
