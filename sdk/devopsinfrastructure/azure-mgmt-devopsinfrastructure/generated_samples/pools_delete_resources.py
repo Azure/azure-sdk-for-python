@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.devopsinfrastructure import DevOpsInfrastructureMgmtClient
     pip install azure-identity
     pip install azure-mgmt-devopsinfrastructure
 # USAGE
-    python list_pools_by_subscription_and_resource_group.py
+    python pools_delete_resources.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,18 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.pools.list_by_resource_group(
-        resource_group_name="rg",
+    client.pools.delete_resources(
+        resource_group_name="my-resource-group",
+        pool_name="my-dev-ops-pool",
+        body={
+            "resourceIds": [
+                "/subscriptions/a2e95d27-c161-4b61-bda4-11512c14c2c2/resourceGroups/my-resource-group/providers/Microsoft.DevOpsInfrastructure/pools/my-dev-ops-pool/resources/dd8cc705c_0",
+                "/subscriptions/a2e95d27-c161-4b61-bda4-11512c14c2c2/resourceGroups/my-resource-group/providers/Microsoft.DevOpsInfrastructure/pools/my-dev-ops-pool/resources/dd8cc705c_1",
+            ]
+        },
     )
-    for item in response:
-        print(item)
 
 
-# x-ms-original-file: 2026-07-03-preview/ListPoolsBySubscriptionAndResourceGroup.json
+# x-ms-original-file: 2026-07-03-preview/Pools_DeleteResources.json
 if __name__ == "__main__":
     main()
