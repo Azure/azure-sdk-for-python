@@ -37,8 +37,7 @@ AZURE_LOCATION = "westcentralus"
 # The subscription id is read from the environment for live runs and defaults to
 # the sanitized zero-GUID so the real subscription is never committed.
 SYNTHETICS_SUBSCRIPTION_ID = (
-    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
-    or "00000000-0000-0000-0000-000000000000"
+    os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID") or "00000000-0000-0000-0000-000000000000"
 )
 REAL_PRIVATE_LINK_SERVICE_ID = (
     f"/subscriptions/{SYNTHETICS_SUBSCRIPTION_ID}"
@@ -59,17 +58,22 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         connection_name = "testconn1"
 
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
 
         # Create
         created = self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDesc",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "description": "ConnectionDesc",
+                }
+            },
         )
         # Playback note: the test runner's subscription ID is sanitized to all-zeros
         # in recordings, so we assert by PLS name suffix (resource-path-stable across
@@ -81,7 +85,9 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
 
         # Get
         fetched = self.client.connections.get(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         )
         assert fetched.name == connection_name
         assert fetched.id == created.id
@@ -89,9 +95,12 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         # NOTE: do not assert on `connection_status` — see module docstring.
 
         # List
-        items = list(self.client.connections.list(
-            resource_group_name=rg, storage_mover_name=sm_name,
-        ))
+        items = list(
+            self.client.connections.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+            )
+        )
         assert len(items) >= 1
         assert connection_name in [c.name for c in items]
 
@@ -102,18 +111,26 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
         # (test_storage_mover_connection_scenarios) also calls update without
         # post-update verification for the same reason.
         self.client.connections.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
-            connection={"properties": {
-                "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
-                "description": "ConnectionDescUpdate",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
+            connection={
+                "properties": {
+                    "privateLinkServiceId": REAL_PRIVATE_LINK_SERVICE_ID,
+                    "description": "ConnectionDescUpdate",
+                }
+            },
         )
 
         # Delete + 404 verification
         self.client.connections.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            connection_name=connection_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.connections.get(
-                resource_group_name=rg, storage_mover_name=sm_name, connection_name=connection_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                connection_name=connection_name,
             )

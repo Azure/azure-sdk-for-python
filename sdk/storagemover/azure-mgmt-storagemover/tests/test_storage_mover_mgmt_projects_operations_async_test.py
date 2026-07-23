@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -24,7 +25,8 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
 
     async def _create_storage_mover(self, rg, sm_name):
         return await self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
 
@@ -37,7 +39,9 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
 
         project_name = "project-col1"
         project = await self.client.projects.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={},
         )
         assert project.name == project_name
@@ -45,20 +49,28 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
         assert project.type.lower() == "microsoft.storagemover/storagemovers/projects"
 
         project = await self.client.projects.get(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
         )
         assert project.name == project_name
 
-        items = [p async for p in self.client.projects.list(
-            resource_group_name=rg, storage_mover_name=sm_name,
-        )]
+        items = [
+            p
+            async for p in self.client.projects.list(
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+            )
+        ]
         assert len(items) >= 1
         names = [p.name for p in items]
         assert project_name in names
 
         with pytest.raises(ResourceNotFoundError):
             await self.client.projects.get(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name + "111",
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name + "111",
             )
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
@@ -70,27 +82,37 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
 
         project_name = "project-res1"
         created = await self.client.projects.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={},
         )
 
         fetched = await self.client.projects.get(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
         )
         assert fetched.name == created.name
         assert fetched.id == created.id
 
         updated = await self.client.projects.update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={"properties": {"description": "This is an updated project"}},
         )
         assert updated.properties.description == "This is an updated project"
 
         poller = await self.client.projects.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
         )
         await poller.result()
         with pytest.raises(ResourceNotFoundError):
             await self.client.projects.get(
-                resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+                resource_group_name=rg,
+                storage_mover_name=sm_name,
+                project_name=project_name,
             )

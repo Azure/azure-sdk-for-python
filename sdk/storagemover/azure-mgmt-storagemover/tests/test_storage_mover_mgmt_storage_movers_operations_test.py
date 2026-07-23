@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -112,20 +113,27 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
         endpoint_name = "testblobendpoint"
 
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         self.client.endpoints.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
-            endpoint={"properties": {
-                "endpointType": "AzureStorageBlobContainer",
-                "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
-                "blobContainerName": "testcontainer",
-            }},
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
+            endpoint={
+                "properties": {
+                    "endpointType": "AzureStorageBlobContainer",
+                    "storageAccountResourceId": FAKE_STORAGE_ACCOUNT_ID,
+                    "blobContainerName": "testcontainer",
+                }
+            },
         )
 
         endpoint = self.client.endpoints.get(
-            resource_group_name=rg, storage_mover_name=sm_name, endpoint_name=endpoint_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            endpoint_name=endpoint_name,
         )
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "AzureStorageBlobContainer"
@@ -140,16 +148,21 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
         project_name = "testproj1"
 
         self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         self.client.projects.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
             project={},
         )
 
         project = self.client.projects.get(
-            resource_group_name=rg, storage_mover_name=sm_name, project_name=project_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
+            project_name=project_name,
         )
         assert project.name == project_name
 
@@ -162,7 +175,8 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
         sm_name = "testsm-updel"
 
         sm = self.client.storage_movers.create_or_update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"location": AZURE_LOCATION},
         )
         assert sm.name == sm_name
@@ -170,7 +184,8 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
         # Update description via PATCH
         sm = self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"properties": {"description": "This is an updated storage mover"}},
         )
         assert sm.properties.description == "This is an updated storage mover"
@@ -178,14 +193,16 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
         # Add a single tag (mirrors AddTagAsync) — Python SDK has no AddTag helper, so use update.
         # Subscription policies may inject extra tags, so only assert on the tag we set.
         sm = self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag1": "val1"}},
         )
         assert sm.tags.get("tag1") == "val1"
 
         # Set tags (mirrors SetTagsAsync — PATCH with a new tag map).
         sm = self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag2": "val2", "tag3": "val3"}},
         )
         assert sm.tags.get("tag2") == "val2"
@@ -193,14 +210,16 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
         # Remove a tag (mirrors RemoveTagAsync) — verify tag3 is still present.
         sm = self.client.storage_movers.update(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
             storage_mover={"tags": {"tag3": "val3"}},
         )
         assert sm.tags.get("tag3") == "val3"
 
         # Delete and confirm 404
         self.client.storage_movers.begin_delete(
-            resource_group_name=rg, storage_mover_name=sm_name,
+            resource_group_name=rg,
+            storage_mover_name=sm_name,
         ).result()
         with pytest.raises(ResourceNotFoundError):
             self.client.storage_movers.get(resource_group_name=rg, storage_mover_name=sm_name)
