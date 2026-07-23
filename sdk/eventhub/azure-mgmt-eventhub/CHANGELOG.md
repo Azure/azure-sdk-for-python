@@ -44,10 +44,11 @@
   - Deleted or renamed model `PrivateLinkResourceProperties`
   - Deleted or renamed model `ProvisioningIssue`
   - Deleted or renamed model `ProvisioningIssueProperties`
-
-### Other Changes
-
-  - Deleted model `AvailableClustersList`/`EHNamespaceIdListResult`/`NetworkRuleSetListResult`/`NetworkSecurityPerimeterConfigurationList`/`PrivateLinkResourcesListResult` which actually were not used by SDK users
+  - Deleted model `AvailableClustersList`
+  - Deleted model `EHNamespaceIdListResult`
+  - Deleted model `NetworkRuleSetListResult`
+  - Deleted model `NetworkSecurityPerimeterConfigurationList`
+  - Deleted model `PrivateLinkResourcesListResult`
 
 ## 12.0.0b2 (2026-07-07)
 
