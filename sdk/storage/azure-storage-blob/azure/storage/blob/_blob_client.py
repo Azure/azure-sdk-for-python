@@ -63,7 +63,7 @@ from ._quick_query_helper import BlobQueryReader
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.response_handlers import process_storage_error, return_response_headers
 from ._shared.validation import is_crc64_validation, parse_validation_option
-from ._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from ._serialize import get_lease_id, get_api_version, get_modify_conditions, get_version_id
 from ._upload_helpers import upload_append_blob, upload_block_blob, upload_page_blob
 
 if TYPE_CHECKING:
@@ -1115,17 +1115,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 :caption: Getting the properties for a blob.
         """
         # TODO: extract this out as _get_blob_properties_options
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop("cpk", None)
-        cpk_kwargs = {}
         if cpk:
             if self.scheme.lower() != "https":
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_kwargs["encryption_key"] = cpk.key_value
-            cpk_kwargs["encryption_key_sha256"] = cpk.key_hash
-            cpk_kwargs["encryption_algorithm"] = cpk.algorithm
         try:
             cls_method = kwargs.pop("cls", None)
             if cls_method:
@@ -1136,9 +1132,15 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                     timeout=kwargs.pop("timeout", None),
                     version_id=version_id,
                     cls=kwargs.pop("cls", None) or deserialize_blob_properties,
-                    **access_conditions,
-                    **mod_conditions,
-                    **cpk_kwargs,
+                    lease_id=lease_id,
+                    if_modified_since=mod_conditions.get("if_modified_since"),
+                    if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                    if_tags=mod_conditions.get("if_tags"),
+                    etag=mod_conditions.get("etag"),
+                    match_condition=mod_conditions.get("match_condition"),
+                    encryption_key=cpk.key_value if cpk else None,
+                    encryption_key_sha256=cpk.key_hash if cpk else None,
+                    encryption_algorithm=cpk.algorithm if cpk else None,
                     **kwargs,
                 ),
             )
@@ -1980,7 +1982,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
@@ -1992,8 +1994,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=standard_blob_tier,
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
+                lease_id=lease_id,
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2167,14 +2169,14 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :return: A tuple of two lists - committed and uncommitted blocks
         :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 timeout=kwargs.pop("timeout", None),
+                lease_id=lease_id,
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2320,7 +2322,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTier must be specified")
@@ -2329,7 +2331,7 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop("timeout", None),
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:

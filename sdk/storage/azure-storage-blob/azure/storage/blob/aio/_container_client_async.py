@@ -51,7 +51,7 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier, SignedIdentifiers
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from .._models import AccessPolicy, ContainerProperties, BlobType, BlobProperties, FilteredBlob
-from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
+from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_lease_id
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
@@ -430,7 +430,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 :caption: Delete a container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
@@ -438,7 +438,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 timeout=timeout,
                 if_modified_since=mod_conditions.get("if_modified_since"),
                 if_unmodified_since=mod_conditions.get("if_unmodified_since"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -540,11 +540,11 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 :caption: Getting properties on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response = await self._client.container.get_properties(
-                timeout=timeout, cls=deserialize_container_properties, **access_conditions, **kwargs
+                timeout=timeout, cls=deserialize_container_properties, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -618,7 +618,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
@@ -627,7 +627,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 cls=return_response_headers,
                 headers=headers,
                 if_modified_since=mod_conditions.get("if_modified_since"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -702,11 +702,11 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 :caption: Getting the access policy on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = await self._client.container.get_access_policy(
-                timeout=timeout, cls=return_headers_and_deserialized, **access_conditions, **kwargs
+                timeout=timeout, cls=return_headers_and_deserialized, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -785,7 +785,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         signed_identifiers = identifiers or None  # type: ignore
 
         mod_conditions = get_modify_conditions(kwargs)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         try:
             return cast(
                 Dict[str, Union[str, datetime]],
@@ -796,7 +796,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                     cls=return_response_headers,
                     if_modified_since=mod_conditions.get("if_modified_since"),
                     if_unmodified_since=mod_conditions.get("if_unmodified_since"),
-                    **access_conditions,
+                    lease_id=lease_id,
                     **kwargs,
                 ),
             )

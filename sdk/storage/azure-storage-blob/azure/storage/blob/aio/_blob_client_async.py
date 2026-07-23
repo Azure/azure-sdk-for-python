@@ -79,7 +79,7 @@ from .._deserialize import (
 from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 from .._generated.aio import AzureBlobStorage
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
-from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._serialize import get_lease_id, get_api_version, get_modify_conditions, get_version_id
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
@@ -205,8 +205,6 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
         super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        # The generated client should not include snapshot in the base URL since
-        # it is passed as a method parameter by operations that need it.
         self._client = AzureBlobStorage(
             self.url,
             version=get_api_version(kwargs),
@@ -1174,19 +1172,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :dedent: 12
                 :caption: Getting the properties for a blob.
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         cpk = kwargs.pop("cpk", None)
-        cpk_info = {}
         if cpk:
             if self.scheme.lower() != "https":
                 raise ValueError("Customer provided encryption key must be used over HTTPS.")
-            cpk_info = {
-                "encryption_key": cpk.key_value,
-                "encryption_key_sha256": cpk.key_hash,
-                "encryption_algorithm": cpk.algorithm,
-            }
         try:
             cls_method = kwargs.pop("cls", None)
             if cls_method:
@@ -1195,9 +1187,15 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
                 cls=kwargs.pop("cls", None) or deserialize_blob_properties,
-                **access_conditions,
-                **mod_conditions,
-                **cpk_info,
+                lease_id=lease_id,
+                if_modified_since=mod_conditions.get("if_modified_since"),
+                if_unmodified_since=mod_conditions.get("if_unmodified_since"),
+                if_tags=mod_conditions.get("if_tags"),
+                etag=mod_conditions.get("etag"),
+                match_condition=mod_conditions.get("match_condition"),
+                encryption_key=cpk.key_value if cpk else None,
+                encryption_key_sha256=cpk.key_hash if cpk else None,
+                encryption_algorithm=cpk.algorithm if cpk else None,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2040,7 +2038,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         version_id = get_version_id(self.version_id, kwargs)
         if standard_blob_tier is None:
@@ -2050,8 +2048,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 tier=standard_blob_tier,
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
+                lease_id=lease_id,
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2226,14 +2224,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: A tuple of two lists - committed and uncommitted blocks
         :rtype: Tuple[List[BlobBlock], List[BlobBlock]]
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         try:
             blocks = await self._client.block_blob.get_block_list(
                 list_type=block_list_type,
                 timeout=kwargs.pop("timeout", None),
+                lease_id=lease_id,
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -2380,7 +2378,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: None
         :rtype: None
         """
-        access_conditions = get_access_conditions(kwargs.pop("lease", None))
+        lease_id = get_lease_id(kwargs.pop("lease", None))
         mod_conditions = get_modify_conditions(kwargs)
         if premium_page_blob_tier is None:
             raise ValueError("A PremiumPageBlobTiermust be specified")
@@ -2389,7 +2387,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 tier=premium_page_blob_tier,
                 timeout=kwargs.pop("timeout", None),
                 if_tags=mod_conditions.get("if_tags"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:

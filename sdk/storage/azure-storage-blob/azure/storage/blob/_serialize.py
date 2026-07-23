@@ -88,14 +88,12 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Dict[str, Any]:
+def get_lease_id(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[str]:
     try:
-        lease_id = lease.id  # type: ignore
+        lease_id = cast(str, lease.id)  # type: ignore[attr-defined]
     except AttributeError:
-        lease_id = lease  # type: ignore
-    if lease_id:
-        return {"lease_id": lease_id}
-    return {}
+        lease_id = cast(Optional[str], lease)
+    return lease_id
 
 
 def _pop_etag_match_condition(kwargs: Dict[str, Any]) -> Dict[str, Any]:

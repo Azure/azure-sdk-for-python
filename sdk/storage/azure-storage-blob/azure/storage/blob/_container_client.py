@@ -38,7 +38,7 @@ from ._list_blobs_helper import (
     IgnoreListBlobsDeserializer,
 )
 from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob
-from ._serialize import get_access_conditions, get_api_version, get_container_cpk_scope_info, get_modify_conditions
+from ._serialize import get_lease_id, get_api_version, get_container_cpk_scope_info, get_modify_conditions
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
 from ._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
@@ -416,7 +416,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Delete a container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
@@ -424,7 +424,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 timeout=timeout,
                 if_modified_since=mod_conditions.get("if_modified_since"),
                 if_unmodified_since=mod_conditions.get("if_unmodified_since"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -524,11 +524,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting properties on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response = self._client.container.get_properties(
-                timeout=timeout, cls=deserialize_container_properties, **access_conditions, **kwargs
+                timeout=timeout, cls=deserialize_container_properties, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -602,7 +602,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         headers = kwargs.pop("headers", {})
         headers.update(add_metadata_headers(metadata))
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         mod_conditions = get_modify_conditions(kwargs)
         timeout = kwargs.pop("timeout", None)
         try:
@@ -611,7 +611,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 cls=return_response_headers,
                 headers=headers,
                 if_modified_since=mod_conditions.get("if_modified_since"),
-                **access_conditions,
+                lease_id=lease_id,
                 **kwargs,
             )
         except HttpResponseError as error:
@@ -686,11 +686,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 :caption: Getting the access policy on the container.
         """
         lease = kwargs.pop("lease", None)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             response, identifiers = self._client.container.get_access_policy(
-                timeout=timeout, cls=return_headers_and_deserialized, **access_conditions, **kwargs
+                timeout=timeout, cls=return_headers_and_deserialized, lease_id=lease_id, **kwargs
             )
         except HttpResponseError as error:
             process_storage_error(error)
@@ -767,7 +767,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         signed_identifiers = identifiers or None  # type: ignore
         lease = kwargs.pop("lease", None)
         mod_conditions = get_modify_conditions(kwargs)
-        access_conditions = get_access_conditions(lease)
+        lease_id = get_lease_id(lease)
         timeout = kwargs.pop("timeout", None)
         try:
             return cast(
@@ -779,7 +779,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                     cls=return_response_headers,
                     if_modified_since=mod_conditions.get("if_modified_since"),
                     if_unmodified_since=mod_conditions.get("if_unmodified_since"),
-                    **access_conditions,
+                    lease_id=lease_id,
                     **kwargs,
                 ),
             )

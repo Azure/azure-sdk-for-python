@@ -44,7 +44,7 @@ from ._models import (
     QuickQueryDialect,
 )
 from ._serialize import (
-    get_access_conditions,
+    get_lease_id,
     get_cpk_scope_info,
     get_modify_conditions,
     get_source_conditions,
@@ -62,11 +62,17 @@ from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.validation import CV_TYPE_PARSED, is_crc64_validation, parse_validation_option
 from ._upload_helpers import _any_conditions
 
+
 if TYPE_CHECKING:
     from urllib.parse import ParseResult
     from ._generated import AzureBlobStorage
     from ._models import ContentSettings
     from ._shared.models import StorageConfiguration
+
+
+def _add_lease_id(options: Dict[str, Any], lease_id: Optional[str]) -> None:
+    if lease_id:
+        options["lease_id"] = lease_id
 
 
 def _parse_url(
@@ -152,7 +158,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
 
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    kwargs.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(kwargs, get_lease_id(kwargs.pop("lease", None)))
     mod_conditions = get_modify_conditions(kwargs)
     kwargs.update(get_cpk_scope_info(kwargs))
 
@@ -243,7 +249,7 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         "headers": headers,
     }
     options.update(get_modify_conditions(kwargs))
-    options.update(get_access_conditions(kwargs.pop("destination_lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("destination_lease", None)))
     options.update(get_source_conditions(kwargs))
     options.update(get_cpk_scope_info(kwargs))
     options.update(kwargs)
@@ -304,7 +310,7 @@ def _download_blob_options(
         "name": blob_name,
         "container": container_name,
     }
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     if cpk:
         options["encryption_key"] = cpk.key_value
@@ -358,7 +364,7 @@ def _quick_query_options(
         input_serialization=serialize_query_format(input_format),
         output_serialization=serialize_query_format(output_format),
     )
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
 
     cpk = kwargs.pop("cpk", None)
@@ -367,7 +373,7 @@ def _quick_query_options(
         "timeout": kwargs.pop("timeout", None),
         "cls": return_headers_and_deserialized,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     if cpk:
         options["encryption_key"] = cpk.key_value
@@ -378,7 +384,7 @@ def _quick_query_options(
 
 
 def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if delete_snapshots:
         delete_snapshots = DeleteSnapshotsOptionType(delete_snapshots)
@@ -386,7 +392,7 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
         "timeout": kwargs.pop("timeout", None),
         "delete_snapshots": delete_snapshots or None,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(kwargs)
     return options
@@ -402,7 +408,7 @@ def _delete_blob_options(
 
 
 def _set_http_headers_options(content_settings: Optional["ContentSettings"] = None, **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     options = {"timeout": kwargs.pop("timeout", None), "cls": return_response_headers}
     if content_settings:
@@ -412,7 +418,7 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
         options["blob_content_encoding"] = content_settings.content_encoding
         options["blob_content_language"] = content_settings.content_language
         options["blob_content_disposition"] = content_settings.content_disposition
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(kwargs)
     return options
@@ -421,13 +427,13 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
 def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any):
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
 
     cpk = kwargs.pop("cpk", None)
     options = {"timeout": kwargs.pop("timeout", None), "cls": return_response_headers, "headers": headers}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
     if cpk:
@@ -447,7 +453,7 @@ def _create_page_blob_options(
 ) -> Dict[str, Any]:
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
     if content_settings:
@@ -485,7 +491,7 @@ def _create_page_blob_options(
         "tier": tier,
         "headers": headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
     if cpk:
@@ -501,7 +507,7 @@ def _create_append_blob_options(
 ) -> Dict[str, Any]:
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
     if content_settings:
@@ -528,7 +534,7 @@ def _create_append_blob_options(
         "cls": return_response_headers,
         "headers": headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
     if cpk:
@@ -542,13 +548,13 @@ def _create_append_blob_options(
 def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop("cpk", None)
 
     options = {"timeout": kwargs.pop("timeout", None), "cls": return_response_headers, "headers": headers}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
     if cpk:
@@ -634,9 +640,9 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
-        dest_access_conditions = get_access_conditions(kwargs.pop("destination_lease", None))
+        dest_lease_id = get_lease_id(kwargs.pop("destination_lease", None))
         options.update(source_mod_conditions)
-        options.update(dest_access_conditions)
+        _add_lease_id(options, dest_lease_id)
         options["tier"] = tier.value if tier else None
         options["seal_blob"] = kwargs.pop("seal_destination_blob", None)
         options["blob_tags_string"] = blob_tags_string
@@ -645,13 +651,13 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
 
 def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     if isinstance(copy_id, BlobProperties):
         copy_id = copy_id.copy.id  # type: ignore [assignment]
     elif isinstance(copy_id, dict):
         copy_id = copy_id["copy_id"]
     options = {"copy_id": copy_id, "timeout": kwargs.pop("timeout", None)}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(kwargs)
     return options
 
@@ -662,7 +668,7 @@ def _stage_block_options(
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
         data = data.encode(kwargs.pop("encoding", "UTF-8"))  # type: ignore
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     if length is None:
         length = get_length(data)
         if length is None:
@@ -683,7 +689,7 @@ def _stage_block_options(
         "validate_content": validate_content,
         "cls": return_response_headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(cpk_scope_info)
     if cpk:
         options["encryption_key"] = cpk.key_value
@@ -709,7 +715,7 @@ def _stage_block_from_url_options(
     if source_length is not None and source_offset is not None:
         source_length = source_offset + source_length - 1
     block_id = encode_base64(str(block_id))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     range_header = None
     if source_offset is not None:
         range_header, _ = validate_and_format_range_headers(source_offset, source_length)
@@ -729,7 +735,7 @@ def _stage_block_from_url_options(
         "timeout": kwargs.pop("timeout", None),
         "cls": return_response_headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(cpk_scope_info)
     if cpk:
         options["encryption_key"] = cpk.key_value
@@ -774,7 +780,7 @@ def _commit_block_list_options(
             block_lookup.latest.append(encode_base64(str(block)))
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if content_settings:
         kwargs["blob_cache_control"] = content_settings.cache_control
@@ -805,7 +811,7 @@ def _commit_block_list_options(
         "blob_tags_string": blob_tags_string,
         "headers": headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
     if cpk:
@@ -820,18 +826,18 @@ def _set_blob_tags_options(
     version_id: Optional[str], tags: Optional[Dict[str, str]] = None, **kwargs: Any
 ) -> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
 
     options = {"tags": serialized_tags, "version_id": version_id, "cls": return_response_headers}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(kwargs)
     return options
 
 
 def _get_blob_tags_options(version_id: Optional[str], **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
 
     options = {
@@ -839,7 +845,7 @@ def _get_blob_tags_options(version_id: Optional[str], **kwargs: Any) -> Dict[str
         "timeout": kwargs.pop("timeout", None),
         "cls": return_headers_and_deserialized,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     return options
 
@@ -850,7 +856,7 @@ def _get_page_ranges_options(
     previous_snapshot_diff: Optional[Union[str, Dict[str, Any]]] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if length is not None and offset is None:
         raise ValueError("Offset value must not be None if length is set.")
@@ -860,7 +866,7 @@ def _get_page_ranges_options(
         offset, length, start_range_required=False, end_range_required=False, align_to_page=True
     )
     options = {"timeout": kwargs.pop("timeout", None), "range": page_range}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     if previous_snapshot_diff:
         try:
@@ -877,7 +883,7 @@ def _get_page_ranges_options(
 def _set_sequence_number_options(
     sequence_number_action: str, sequence_number: Optional[str] = None, **kwargs: Any
 ) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if sequence_number_action is None:
         raise ValueError("A sequence number action must be specified")
@@ -887,21 +893,21 @@ def _set_sequence_number_options(
         "blob_sequence_number": sequence_number,
         "cls": return_response_headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     options.update(kwargs)
     return options
 
 
 def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if size is None:
         raise ValueError("A content length must be specified for a Page Blob.")
 
     cpk = kwargs.pop("cpk", None)
     options = {"size": size, "timeout": kwargs.pop("timeout", None), "cls": return_response_headers}
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(mod_conditions)
     if cpk:
         options["encryption_key"] = cpk.key_value
@@ -920,7 +926,7 @@ def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -
         raise ValueError("length must be an integer that aligns with 512 page size")
     end_range = offset + length - 1  # Reformat to an inclusive range index
     content_range = f"bytes={offset}-{end_range}"  # type: ignore
-    access_conditions = get_access_conditions(kwargs.pop("lease", None))
+    lease_id = get_lease_id(kwargs.pop("lease", None))
     seq_conditions = {
         "if_sequence_number_less_than_or_equal_to": kwargs.pop("if_sequence_number_lte", None),
         "if_sequence_number_less_than": kwargs.pop("if_sequence_number_lt", None),
@@ -939,7 +945,7 @@ def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -
         "validate_content": validate_content,
         "cls": return_response_headers,
     }
-    options.update(access_conditions)
+    _add_lease_id(options, lease_id)
     options.update(seq_conditions)
     options.update(mod_conditions)
     options.update(cpk_scope_info)
@@ -1003,7 +1009,7 @@ def _upload_pages_from_url_options(
     options.update(seq_conditions_kwargs)
     options.update(cpk_info_kwargs)
     options.update(source_cpk_info_kwargs)
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     options.update(get_source_conditions(kwargs))
     options.update(get_cpk_scope_info(kwargs))
@@ -1039,7 +1045,7 @@ def _clear_page_options(offset: int, length: int, **kwargs: Any) -> Dict[str, An
     }
     options.update(seq_conditions_kwargs)
     options.update(cpk_info_kwargs)
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     options.update(kwargs)
     return options
@@ -1082,7 +1088,7 @@ def _append_block_options(
     }
     options.update(append_conditions_kwargs)
     options.update(cpk_info_kwargs)
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     options.update(get_cpk_scope_info(kwargs))
     options.update(kwargs)
@@ -1140,7 +1146,7 @@ def _append_block_from_url_options(
     options.update(append_conditions_kwargs)
     options.update(cpk_info_kwargs)
     options.update(source_cpk_info_kwargs)
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     options.update(get_source_conditions(kwargs))
     options.update(get_cpk_scope_info(kwargs))
@@ -1156,7 +1162,7 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
 
     options = {"timeout": kwargs.pop("timeout", None), "cls": return_response_headers}
     options.update(append_conditions_kwargs)
-    options.update(get_access_conditions(kwargs.pop("lease", None)))
+    _add_lease_id(options, get_lease_id(kwargs.pop("lease", None)))
     options.update(get_modify_conditions(kwargs))
     options.update(kwargs)
     return options
@@ -1206,3 +1212,4 @@ def _from_blob_url(
         else:
             path_snapshot = snapshot
     return (account_url, container_name, blob_name, path_snapshot)
+
