@@ -119,7 +119,7 @@ async def lease_renewal_loop(  # pylint: disable=too-many-statements
             for steering inputs. Called after successful lease renewal.
         :paramtype steering_poll_callback: Callable[[], Awaitable[None]] | None
         :keyword last_refresh_provider: Optional ``() -> float`` callable
-            returning the ``asyncio.get_event_loop().time()`` value at the
+            returning the ``asyncio.get_running_loop().time()`` value at the
             most-recent lease refresh (heartbeat OR side-effect refresh
             from a payload PATCH that piggybacked lease ownership via
             ``TaskManager._lease_ext_kwargs``). When provided, the loop
@@ -160,7 +160,7 @@ async def lease_renewal_loop(  # pylint: disable=too-many-statements
             except Exception:  # pylint: disable=broad-exception-caught  # noqa: BLE001
                 last_refresh_t = 0.0
             if last_refresh_t > 0.0:
-                now_t = asyncio.get_event_loop().time()
+                now_t = asyncio.get_running_loop().time()
                 age = now_t - last_refresh_t
                 if age < interval:
                     remaining = interval - age
