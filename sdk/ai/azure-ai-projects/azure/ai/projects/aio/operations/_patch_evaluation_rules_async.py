@@ -8,10 +8,14 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Union, Any, IO, overload
+from collections.abc import MutableMapping as MutableMappingABC
+from io import IOBase
+from typing import Any, IO, MutableMapping, Union, cast, overload
+
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
-from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
+from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations
 from ... import models as _models
 from ...models._enums import _FoundryFeaturesOptInKeys
 from ...models._patch import (
@@ -32,9 +36,14 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
         :attr:`evaluation_rules` attribute.
     """
 
-    @overload
+    @overload  # type: ignore[override]
     async def create_or_update(
-        self, id: str, evaluation_rule: _models.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        evaluation_rule: _models.EvaluationRule,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -53,14 +62,19 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
     @overload
     async def create_or_update(
-        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        evaluation_rule: MutableMapping[str, Any],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: JSON
+        :type evaluation_rule: MutableMapping[str, Any]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -72,7 +86,12 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
     @overload
     async def create_or_update(
-        self, id: str, evaluation_rule: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self,
+        id: str,
+        evaluation_rule: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any,
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
@@ -91,15 +110,20 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
     @distributed_trace_async
     async def create_or_update(
-        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
+        self,
+        id: str,
+        evaluation_rule: Union[
+            _models.EvaluationRule, MutableMapping[str, Any], IO[bytes]
+        ],
+        **kwargs: Any,
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Is one of the following types:
-         EvaluationRule, JSON, IO[bytes] Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
+         EvaluationRule, EvaluationRule, IO[bytes] Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or MutableMapping[str, Any] or IO[bytes]
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -111,16 +135,39 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
                 kwargs["headers"] = {
                     _FOUNDRY_FEATURES_HEADER_NAME: _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
                 }
-            elif not _has_header_case_insensitive(headers, _FOUNDRY_FEATURES_HEADER_NAME):
-                headers[_FOUNDRY_FEATURES_HEADER_NAME] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+            elif not _has_header_case_insensitive(
+                headers, _FOUNDRY_FEATURES_HEADER_NAME
+            ):
+                headers[_FOUNDRY_FEATURES_HEADER_NAME] = (
+                    _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+                )
                 kwargs["headers"] = headers
 
         try:
-            return await super().create_or_update(id, evaluation_rule, **kwargs)
+            # Strip service-owned fields from MutableMapping bodies before delegation
+            if isinstance(evaluation_rule, MutableMappingABC) and not isinstance(
+                evaluation_rule, (IOBase, bytes)
+            ):
+
+                rule_copy = dict(evaluation_rule)
+                # Remove service-owned response fields per task requirements
+                for key in ["id", "systemData", "system_data"]:
+                    rule_copy.pop(key, None)
+                return await super().create_or_update(id, cast(Any, rule_copy), **kwargs)  # type: ignore[arg-type]
+            return await super().create_or_update(
+                id, cast(Any, evaluation_rule), **kwargs
+            )
         except HttpResponseError as exc:
-            if exc.status_code == 403 and not self._config.allow_preview and exc.model is not None:
+            if (
+                exc.status_code == 403
+                and not self._config.allow_preview
+                and exc.model is not None
+            ):
                 api_error_response = exc.model
-                if hasattr(api_error_response, "error") and api_error_response.error is not None:
+                if (
+                    hasattr(api_error_response, "error")
+                    and api_error_response.error is not None
+                ):
                     if api_error_response.error.code == _PREVIEW_FEATURE_REQUIRED_CODE:
                         new_exc = HttpResponseError(
                             message=f"{exc.message} {_PREVIEW_FEATURE_ADDED_ERROR_MESSAGE}",

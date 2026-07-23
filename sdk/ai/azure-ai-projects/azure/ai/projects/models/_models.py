@@ -58,7 +58,7 @@ from ._enums import (
 )
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import _unions, models as _models
 
 
 class _CreateAgentVersionFromCodeContent(_Model):
@@ -161,17 +161,16 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebSearchTool,
+    WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -5564,6 +5563,9 @@ class Dimension(_Model):
      dimension has this set to true and is non-editable. Users may set this on their own custom
      dimensions. The service defaults to ``false`` if a value is not specified by the caller.
     :vartype always_applicable: bool
+    :ivar metadata: Service-generated version lineage for this dimension. Present only when lineage
+     tracking is available.
+    :vartype metadata: ~azure.ai.projects.models.DimensionMetadata
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -5582,6 +5584,9 @@ class Dimension(_Model):
      applicability assessment). The service-generated general quality/policy dimension has this set
      to true and is non-editable. Users may set this on their own custom dimensions. The service
      defaults to ``false`` if a value is not specified by the caller."""
+    metadata: Optional["_models.DimensionMetadata"] = rest_field(visibility=["read"])
+    """Service-generated version lineage for this dimension. Present only when lineage tracking is
+     available."""
 
     @overload
     def __init__(
@@ -5591,6 +5596,57 @@ class Dimension(_Model):
         description: str,
         weight: int,
         always_applicable: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DimensionMetadata(_Model):
+    """Service-generated version lineage for a rubric dimension.
+
+    :ivar origin_version: The evaluator version in which the dimension was first introduced, or the
+     earliest version known after lineage tracking began. Required.
+    :vartype origin_version: str
+    :ivar last_modified_version: The evaluator version containing the most recent substantive
+     change to the dimension. Required.
+    :vartype last_modified_version: str
+    :ivar change_kind: How the dimension changed relative to the preceding evaluator version.
+     Required. Known values are: "new", "carried_over", "amplified", "regenerated", and
+     "human_edited".
+    :vartype change_kind: str or ~azure.ai.projects.models.DimensionChangeKind
+    :ivar change_detail: A bounded service-generated explanation of the version transition.
+    :vartype change_detail: str
+    """
+
+    origin_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evaluator version in which the dimension was first introduced, or the earliest version
+     known after lineage tracking began. Required."""
+    last_modified_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The evaluator version containing the most recent substantive change to the dimension. Required."""
+    change_kind: Union[str, "_models.DimensionChangeKind"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the dimension changed relative to the preceding evaluator version. Required. Known values
+     are: \"new\", \"carried_over\", \"amplified\", \"regenerated\", and \"human_edited\"."""
+    change_detail: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A bounded service-generated explanation of the version transition."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        origin_version: str,
+        last_modified_version: str,
+        change_kind: Union[str, "_models.DimensionChangeKind"],
+        change_detail: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -7332,7 +7388,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Deprecated. This property is deprecated and will be removed in a future version."""
@@ -7350,7 +7406,7 @@ class FileSearchTool(Tool, discriminator="file_search"):
         vector_store_ids: list[str],
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_types.Filters"] = None,
+        filters: Optional["_unions.Filters"] = None,
         name: Optional[str] = None,
         description: Optional[str] = None,
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
@@ -7401,7 +7457,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Ranking options for search."""
-    filters: Optional["_types.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    filters: Optional["_unions.Filters"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Is either a ComparisonFilter type or a CompoundFilter type."""
     vector_store_ids: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The IDs of the vector stores to search."""
@@ -7415,7 +7471,7 @@ class FileSearchToolboxTool(ToolboxTool, discriminator="file_search"):
         tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
         max_num_results: Optional[int] = None,
         ranking_options: Optional["_models.RankingOptions"] = None,
-        filters: Optional["_types.Filters"] = None,
+        filters: Optional["_unions.Filters"] = None,
         vector_store_ids: Optional[list[str]] = None,
     ) -> None: ...
 
@@ -9170,12 +9226,13 @@ class MCPTool(Tool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
-     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
+     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9190,6 +9247,9 @@ class MCPTool(Tool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
+    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9219,7 +9279,8 @@ class MCPTool(Tool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9232,8 +9293,8 @@ class MCPTool(Tool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
-      ``connector_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
+      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9248,6 +9309,9 @@ class MCPTool(Tool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
+     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9291,6 +9355,7 @@ class MCPTool(Tool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
+        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -9328,12 +9393,13 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     :vartype type: str or ~azure.ai.projects.models.MCP
     :ivar server_label: A label for this MCP server, used to identify it in tool calls. Required.
     :vartype server_label: str
-    :ivar server_url: The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be
-     provided.
+    :ivar server_url: The URL for the MCP server. One of ``server_url``, ``connector_id``, or
+     ``tunnel_id`` must be provided.
     :vartype server_url: str
     :ivar connector_id: Identifier for service connectors, like those available in ChatGPT. One of
-     ``server_url`` or ``connector_id`` must be provided. Learn more about service connectors `here
-     </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service
+     connectors `here </docs/guides/tools-remote-mcp#connectors>`_. Currently supported
+     ``connector_id`` values are:
 
      * Dropbox: `connector_dropbox`
      * Gmail: `connector_gmail`
@@ -9348,6 +9414,9 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
        Literal["connector_outlookcalendar"], Literal["connector_outlookemail"],
        Literal["connector_sharepoint"]
     :vartype connector_id: str or str or str or str or str or str or str or str
+    :ivar tunnel_id: The Secure MCP Tunnel ID to use instead of a direct server URL. One of
+     ``server_url``, ``connector_id``, or ``tunnel_id`` must be provided.
+    :vartype tunnel_id: str
     :ivar authorization: An OAuth access token that can be used with a remote MCP server, either
      with a custom MCP server URL or a service connector. Your application must handle the OAuth
      authorization flow and provide the token here.
@@ -9374,7 +9443,8 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
     server_label: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A label for this MCP server, used to identify it in tool calls. Required."""
     server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL for the MCP server. One of ``server_url`` or ``connector_id`` must be provided."""
+    """The URL for the MCP server. One of ``server_url``, ``connector_id``, or ``tunnel_id`` must be
+     provided."""
     connector_id: Optional[
         Literal[
             "connector_dropbox",
@@ -9387,8 +9457,8 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
             "connector_sharepoint",
         ]
     ] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url`` or
-      ``connector_id`` must be provided. Learn more about service connectors `here
+    """Identifier for service connectors, like those available in ChatGPT. One of ``server_url``,
+      ``connector_id``, or ``tunnel_id`` must be provided. Learn more about service connectors `here
       </docs/guides/tools-remote-mcp#connectors>`_. Currently supported ``connector_id`` values are:
  
       * Dropbox: `connector_dropbox`
@@ -9403,6 +9473,9 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
         Literal[\"connector_googlecalendar\"], Literal[\"connector_googledrive\"],
         Literal[\"connector_microsoftteams\"], Literal[\"connector_outlookcalendar\"],
         Literal[\"connector_outlookemail\"], Literal[\"connector_sharepoint\"]"""
+    tunnel_id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The Secure MCP Tunnel ID to use instead of a direct server URL. One of ``server_url``,
+     ``connector_id``, or ``tunnel_id`` must be provided."""
     authorization: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An OAuth access token that can be used with a remote MCP server, either with a custom MCP
      server URL or a service connector. Your application must handle the OAuth authorization flow
@@ -9445,6 +9518,7 @@ class MCPToolboxTool(ToolboxTool, discriminator="mcp"):
                 "connector_sharepoint",
             ]
         ] = None,
+        tunnel_id: Optional[str] = None,
         authorization: Optional[str] = None,
         server_description: Optional[str] = None,
         headers: Optional[dict[str, str]] = None,
@@ -12431,26 +12505,32 @@ class RankingOptions(_Model):
 class Reasoning(_Model):
     """Reasoning.
 
-    :ivar effort: Is one of the following types: Literal["none"], Literal["minimal"],
-     Literal["low"], Literal["medium"], Literal["high"], Literal["xhigh"]
-    :vartype effort: str or str or str or str or str or str
+    :ivar effort: Known values are: "none", "minimal", "low", "medium", "high", and "xhigh".
+    :vartype effort: str or ~azure.ai.projects.models.ReasoningEffort
     :ivar summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype summary: str or str or str
+    :ivar context: Is one of the following types: Literal["auto"], Literal["current_turn"],
+     Literal["all_turns"]
+    :vartype context: str or str or str
     :ivar generate_summary: Is one of the following types: Literal["auto"], Literal["concise"],
      Literal["detailed"]
     :vartype generate_summary: str or str or str
     """
 
-    effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]] = rest_field(
+    effort: Optional[Union[str, "_models.ReasoningEffort"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Is one of the following types: Literal[\"none\"], Literal[\"minimal\"], Literal[\"low\"],
-     Literal[\"medium\"], Literal[\"high\"], Literal[\"xhigh\"]"""
+    """Known values are: \"none\", \"minimal\", \"low\", \"medium\", \"high\", and \"xhigh\"."""
     summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Is one of the following types: Literal[\"auto\"], Literal[\"concise\"], Literal[\"detailed\"]"""
+    context: Optional[Literal["auto", "current_turn", "all_turns"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Is one of the following types: Literal[\"auto\"], Literal[\"current_turn\"],
+     Literal[\"all_turns\"]"""
     generate_summary: Optional[Literal["auto", "concise", "detailed"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -12460,8 +12540,9 @@ class Reasoning(_Model):
     def __init__(
         self,
         *,
-        effort: Optional[Literal["none", "minimal", "low", "medium", "high", "xhigh"]] = None,
+        effort: Optional[Union[str, "_models.ReasoningEffort"]] = None,
         summary: Optional[Literal["auto", "concise", "detailed"]] = None,
+        context: Optional[Literal["auto", "current_turn", "all_turns"]] = None,
         generate_summary: Optional[Literal["auto", "concise", "detailed"]] = None,
     ) -> None: ...
 
@@ -12849,7 +12930,9 @@ class RoutineRun(_Model):
 
     id: str = rest_field(visibility=["read"])
     """The unique run identifier for the routine attempt. Required."""
-    status: Optional["_types.RoutineRunStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    status: Optional["_unions.RoutineRunStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """The run status. Is one of the following types: str"""
     phase: Optional[Union[str, "_models.RoutineRunPhase"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -12920,7 +13003,7 @@ class RoutineRun(_Model):
     def __init__(
         self,
         *,
-        status: Optional["_types.RoutineRunStatus"] = None,
+        status: Optional["_unions.RoutineRunStatus"] = None,
         phase: Optional[Union[str, "_models.RoutineRunPhase"]] = None,
         trigger_type: Optional[Union[str, "_models.RoutineTriggerType"]] = None,
         trigger_name: Optional[str] = None,
@@ -12982,6 +13065,12 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
      average of 3.0). The 'any dimension scored 1 → fail' rule still applies regardless of this
      threshold.
     :vartype pass_threshold: float
+    :ivar health: Service-generated rubric health. Present only when health computation is enabled
+     and at least one signal is available.
+    :vartype health: ~azure.ai.projects.models.RubricHealth
+    :ivar superseded_dimensions: Dimensions from the preceding evaluator version that are not
+     present in this rubric. Present only when version lineage is available.
+    :vartype superseded_dimensions: list[~azure.ai.projects.models.SupersededDimension]
     """
 
     type: Literal[EvaluatorDefinitionType.RUBRIC] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -12998,6 +13087,12 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
      emitted ``score``. When the runtime weighted average meets or exceeds this value, the result is
      ``pass``. Defaults to 0.5 (equivalent to a raw 1-5 weighted average of 3.0). The 'any dimension
      scored 1 → fail' rule still applies regardless of this threshold."""
+    health: Optional["_models.RubricHealth"] = rest_field(visibility=["read"])
+    """Service-generated rubric health. Present only when health computation is enabled and at least
+     one signal is available."""
+    superseded_dimensions: Optional[list["_models.SupersededDimension"]] = rest_field(visibility=["read"])
+    """Dimensions from the preceding evaluator version that are not present in this rubric. Present
+     only when version lineage is available."""
 
     @overload
     def __init__(
@@ -13020,6 +13115,62 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorDefinitionType.RUBRIC  # type: ignore
+
+
+class RubricHealth(_Model):
+    """Service-generated health signals for a rubric evaluator.
+
+    :ivar diversity: Normalized non-redundancy among rubric dimensions. Higher values indicate
+     greater diversity.
+    :vartype diversity: float
+    :ivar coverage: Normalized coverage of concepts found in the evaluator-generation sources.
+    :vartype coverage: float
+    :ivar negative_vs_positive: Failure-path coverage normalized against the service's configured
+     target fraction. A value of 1.0 means the target was met or exceeded.
+    :vartype negative_vs_positive: float
+    :ivar overall: Normalized aggregate health score. Omitted when required component signals are
+     unavailable.
+    :vartype overall: float
+    :ivar confidence: The completeness of the evidence used to compute the health signals. Known
+     values are: "low", "med", and "high".
+    :vartype confidence: str or ~azure.ai.projects.models.RubricHealthConfidence
+    """
+
+    diversity: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Normalized non-redundancy among rubric dimensions. Higher values indicate greater diversity."""
+    coverage: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Normalized coverage of concepts found in the evaluator-generation sources."""
+    negative_vs_positive: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Failure-path coverage normalized against the service's configured target fraction. A value of
+     1.0 means the target was met or exceeded."""
+    overall: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Normalized aggregate health score. Omitted when required component signals are unavailable."""
+    confidence: Optional[Union[str, "_models.RubricHealthConfidence"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The completeness of the evidence used to compute the health signals. Known values are: \"low\",
+     \"med\", and \"high\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        diversity: Optional[float] = None,
+        coverage: Optional[float] = None,
+        negative_vs_positive: Optional[float] = None,
+        overall: Optional[float] = None,
+        confidence: Optional[Union[str, "_models.RubricHealthConfidence"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SASCredentials(BaseCredentials, discriminator="SAS"):
@@ -13318,10 +13469,12 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -13856,6 +14009,39 @@ class StructuredOutputDefinition(_Model):
         description: str,
         schema: dict[str, Any],
         strict: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SupersededDimension(_Model):
+    """A dimension from the preceding evaluator version that is not present in the current rubric.
+
+    :ivar id: The stable identifier of the superseded dimension. Required.
+    :vartype id: str
+    :ivar reason: A bounded service-generated reason why the dimension was superseded. Required.
+    :vartype reason: str
+    """
+
+    id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The stable identifier of the superseded dimension. Required."""
+    reason: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A bounded service-generated reason why the dimension was superseded. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        reason: str,
     ) -> None: ...
 
     @overload

@@ -129,6 +129,7 @@
         "azure.ai.projects.models.DeleteSkillVersionResult": "Azure.AI.Projects.DeleteSkillVersionResponse",
         "azure.ai.projects.models.Deployment": "Azure.AI.Projects.Deployment",
         "azure.ai.projects.models.Dimension": "Azure.AI.Projects.Dimension",
+        "azure.ai.projects.models.DimensionMetadata": "Azure.AI.Projects.DimensionMetadata",
         "azure.ai.projects.models.DispatchRoutineResult": "Azure.AI.Projects.DispatchRoutineResponse",
         "azure.ai.projects.models.EmbeddingConfiguration": "Azure.AI.Projects.EmbeddingConfiguration",
         "azure.ai.projects.models.EmptyModelParam": "OpenAI.EmptyModelParam",
@@ -279,7 +280,6 @@
         "azure.ai.projects.models.Reasoning": "OpenAI.Reasoning",
         "azure.ai.projects.models.RecurrenceTrigger": "Azure.AI.Projects.RecurrenceTrigger",
         "azure.ai.projects.models.RedTeam": "Azure.AI.Projects.RedTeam",
-        "azure.ai.projects.models.ReminderPreviewTool": "Azure.AI.Projects.ReminderPreviewTool",
         "azure.ai.projects.models.ReminderPreviewToolboxTool": "Azure.AI.Projects.ReminderPreviewToolboxTool",
         "azure.ai.projects.models.ResponsesProtocolConfiguration": "Azure.AI.Projects.ResponsesProtocolConfiguration",
         "azure.ai.projects.models.ResponseUsageInputTokensDetails": "OpenAI.ResponseUsageInputTokensDetails",
@@ -287,6 +287,7 @@
         "azure.ai.projects.models.Routine": "Azure.AI.Projects.Routine",
         "azure.ai.projects.models.RoutineRun": "Azure.AI.Projects.RoutineRun",
         "azure.ai.projects.models.RubricBasedEvaluatorDefinition": "Azure.AI.Projects.RubricBasedEvaluatorDefinition",
+        "azure.ai.projects.models.RubricHealth": "Azure.AI.Projects.RubricHealth",
         "azure.ai.projects.models.SASCredentials": "Azure.AI.Projects.SASCredentials",
         "azure.ai.projects.models.Schedule": "Azure.AI.Projects.Schedule",
         "azure.ai.projects.models.ScheduleRoutineTrigger": "Azure.AI.Projects.ScheduleRoutineTrigger",
@@ -306,6 +307,7 @@
         "azure.ai.projects.models.SpecificFunctionShellParam": "OpenAI.SpecificFunctionShellParam",
         "azure.ai.projects.models.StructuredInputDefinition": "Azure.AI.Projects.StructuredInputDefinition",
         "azure.ai.projects.models.StructuredOutputDefinition": "Azure.AI.Projects.StructuredOutputDefinition",
+        "azure.ai.projects.models.SupersededDimension": "Azure.AI.Projects.SupersededDimension",
         "azure.ai.projects.models.TaxonomyCategory": "Azure.AI.Projects.TaxonomyCategory",
         "azure.ai.projects.models.TaxonomySubCategory": "Azure.AI.Projects.TaxonomySubCategory",
         "azure.ai.projects.models.TelemetryConfig": "Azure.AI.Projects.TelemetryConfig",
@@ -380,6 +382,8 @@
         "azure.ai.projects.models.EvaluatorDefinitionType": "Azure.AI.Projects.EvaluatorDefinitionType",
         "azure.ai.projects.models.EvaluatorMetricType": "Azure.AI.Projects.EvaluatorMetricType",
         "azure.ai.projects.models.EvaluatorMetricDirection": "Azure.AI.Projects.EvaluatorMetricDirection",
+        "azure.ai.projects.models.DimensionChangeKind": "Azure.AI.Projects.DimensionChangeKind",
+        "azure.ai.projects.models.RubricHealthConfidence": "Azure.AI.Projects.RubricHealthConfidence",
         "azure.ai.projects.models.PendingUploadType": "Azure.AI.Projects.PendingUploadType",
         "azure.ai.projects.models.EvaluatorGenerationJobSourceType": "Azure.AI.Projects.EvaluatorGenerationJobSourceType",
         "azure.ai.projects.models.JobStatus": "Azure.AI.Projects.JobStatus",
@@ -424,6 +428,7 @@
         "azure.ai.projects.models.TelemetryDataKind": "Azure.AI.Projects.TelemetryDataKind",
         "azure.ai.projects.models.TelemetryEndpointAuthType": "Azure.AI.Projects.TelemetryEndpointAuthType",
         "azure.ai.projects.models.TelemetryTransportProtocol": "Azure.AI.Projects.TelemetryTransportProtocol",
+        "azure.ai.projects.models.ReasoningEffort": "OpenAI.ReasoningEffort",
         "azure.ai.projects.models.ToolChoiceParamType": "OpenAI.ToolChoiceParamType",
         "azure.ai.projects.models.TextResponseFormatConfigurationType": "OpenAI.TextResponseFormatConfigurationType",
         "azure.ai.projects.models.AgentVersionStatus": "Azure.AI.Projects.AgentVersionStatus",
@@ -541,5 +546,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "32a086fb0432"
+    "CrossLanguageVersion": "f7f86af3b631"
 }
