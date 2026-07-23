@@ -12,7 +12,9 @@ from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import policies
+from azure.core.pipeline import AsyncPipeline
 
+from ..._shared.policies import RangeHeaderPolicy
 from .._utils.serialization import Deserializer, Serializer
 from .operations import (
     AppendBlobOperations,
@@ -51,7 +53,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
 
         self.url = url
         self.credential = credential
-        self.version: str = kwargs.pop("version", "2026-06-06")
+        self.version: str = kwargs.pop("version", "2026-12-06")
 
 
 class AzureBlobStorage(GeneratedBlobClient):
@@ -77,7 +79,14 @@ class AzureBlobStorage(GeneratedBlobClient):
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
 
         if pipeline is not None:
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=pipeline)
+            _impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
+            if not any(isinstance(policy, RangeHeaderPolicy) for policy in _impl_policies):
+                _impl_policies.insert(0, RangeHeaderPolicy())
+            _wrapped_pipeline = AsyncPipeline(
+                transport=pipeline._transport,  # pylint: disable=protected-access
+                policies=_impl_policies,
+            )
+            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
         else:
             _policies = kwargs.pop("policies", None)
             if _policies is None:
@@ -91,6 +100,7 @@ class AzureBlobStorage(GeneratedBlobClient):
                     self._config.retry_policy,
                     self._config.authentication_policy,
                     self._config.custom_hook_policy,
+                    RangeHeaderPolicy(),
                     self._config.logging_policy,
                     policies.DistributedTracingPolicy(**kwargs),
                     policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
