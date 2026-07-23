@@ -206,8 +206,8 @@ with (
     print(f"Generated dataset: name=`{dataset.name}` version=`{dataset.version}` id=`{dataset.id}`")
     print(f"  description: {dataset.description}")
     print(f"  tags:        {dataset.tags}")
-    if job.result is not None and job.result.generated_samples is not None:
-        print(f"Generated samples: {job.result.generated_samples}")
+    if job_result.generated_samples is not None:
+        print(f"Generated samples: {job_result.generated_samples}")
 
     # ------------------------------------------------------------------
     # 4. Clean up.
