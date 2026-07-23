@@ -15,7 +15,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python sandbox_groups_delete.py
+    python ai_agents_groups_list_by_resource_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,12 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.sandbox_groups.begin_delete(
+    response = client.ai_agents_groups.list_by_resource_group(
         resource_group_name="myResourceGroup",
-        sandbox_group_name="mySandboxGroup",
-    ).result()
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-06-01-preview/SandboxGroupsDelete.json
+# x-ms-original-file: 2026-08-01-preview/AiAgentsGroupsListByResourceGroup.json
 if __name__ == "__main__":
     main()

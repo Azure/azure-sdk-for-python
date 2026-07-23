@@ -1,5 +1,30 @@
 # Release History
 
+## 10.2.0b3 (2026-07-23)
+
+### Features Added
+
+  - Client `ContainerInstanceManagementClient` added operation group `ai_agents_groups`
+  - Model `AzureFileVolume` added property `user_assigned_identity_client_id`
+  - Added model `AiAgentsGroup`
+  - Added model `AiAgentsGroupAccessToken`
+  - Added model `AiAgentsGroupNetworkProfile`
+  - Added model `AiAgentsGroupProperties`
+  - Added enum `AiAgentsGroupProvisioningState`
+  - Added model `AiAgentsGroupTagsUpdate`
+  - Added operation group `AiAgentsGroupsOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `ContainerInstanceManagementClient.sandbox_groups`
+  - Deleted or renamed model `SandboxGroup`
+  - Deleted or renamed model `SandboxGroupAccessToken`
+  - Deleted or renamed model `SandboxGroupNetworkProfile`
+  - Deleted or renamed model `SandboxGroupProperties`
+  - Deleted or renamed model `SandboxGroupProvisioningState`
+  - Deleted or renamed model `SandboxGroupTagsUpdate`
+  - Deleted or renamed model `SandboxGroupsOperations`
+
 ## 10.2.0b2 (2026-06-01)
 
 ### Features Added

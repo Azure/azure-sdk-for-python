@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerinstance import ContainerInstanceManagementClient
     pip install azure-identity
     pip install azure-mgmt-containerinstance
 # USAGE
-    python sandbox_groups_update.py
+    python ai_agents_groups_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +31,26 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.sandbox_groups.begin_update(
+    response = client.ai_agents_groups.begin_create_or_update(
         resource_group_name="myResourceGroup",
-        sandbox_group_name="mySandboxGroup",
-        properties={"tags": {"environment": "production"}},
+        ai_agents_group_name="myAiAgentsGroup",
+        resource={
+            "location": "eastus",
+            "properties": {
+                "networkProfile": {
+                    "subnets": [
+                        {
+                            "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myResourceGroup/providers/Microsoft.Network/virtualNetworks/myVNet/subnets/mySubnet"
+                        }
+                    ]
+                }
+            },
+            "tags": {"environment": "test"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-06-01-preview/SandboxGroupsUpdate.json
+# x-ms-original-file: 2026-08-01-preview/AiAgentsGroupsCreateOrUpdate.json
 if __name__ == "__main__":
     main()
