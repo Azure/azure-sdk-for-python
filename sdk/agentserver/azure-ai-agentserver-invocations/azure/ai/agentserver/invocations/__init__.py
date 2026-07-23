@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocations-protocol host for Azure AI Hosted Agents — an :class:`~azure.ai.agentserver.core.AgentServerHost` subclass exposing ``InvocationAgentServerHost``."""
+"""Invocations-protocol host for Azure AI Hosted Agents, exposing ``InvocationAgentServerHost``."""
 
 # NOTE: keep this module docstring on a SINGLE line. The apiview-stub-generator
 # (apistub, pinned via eng/apiview_reqs.txt) namespace detector mis-parses a
