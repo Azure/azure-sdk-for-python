@@ -2,10 +2,12 @@
 
 ## 12.31.0b1 (Unreleased)
 
-## Other Changes
-Access Policy was leaking generated model type
-
 ### Features Added
+
+### Other Changes
+- Added public `SignedIdentifier` model and updated `ContainerClient.get_container_access_policy`
+  and `azure.storage.blob.aio.ContainerClient.get_container_access_policy` to return public
+  models instead of generated internal types.
 
 ## 12.30.0 (2026-06-08)
 

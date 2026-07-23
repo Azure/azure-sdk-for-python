@@ -21,6 +21,7 @@ from ._shared.response_handlers import return_context_and_deserialized, process_
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models._patch import _BackCompatMixin
 from ._generated.models import AccessPolicy as GenAccessPolicy
+from ._generated.models import SignedIdentifier as GenSignedIdentifier
 from ._generated.models import ArrowField
 from ._generated.models import CorsRule as GeneratedCorsRule
 from ._generated.models import Logging as GeneratedLogging
@@ -1180,6 +1181,35 @@ class AccessPolicy(_BackCompatMixin):
             permission=generated.permission,
             expiry=generated.expiry if generated.expiry else None,
             start=generated.start if generated.start else None,
+        )
+
+
+class SignedIdentifier(object):
+    """A stored access policy identifier for container access policies.
+
+    :param str id: The identifier name of the stored access policy.
+    :param access_policy: The access policy associated with this identifier.
+    :type access_policy: Optional[~azure.storage.blob.AccessPolicy]
+    """
+
+    id: str
+    access_policy: Optional["AccessPolicy"]
+
+    def __init__(self, id: str, access_policy: Optional["AccessPolicy"] = None) -> None:
+        self.id = id
+        self.access_policy = access_policy
+
+    def _to_generated(self) -> GenSignedIdentifier:
+        return GenSignedIdentifier(
+            id=self.id,
+            access_policy=self.access_policy._to_generated() if self.access_policy is not None else None,
+        )
+
+    @classmethod
+    def _from_generated(cls, generated: GenSignedIdentifier) -> "SignedIdentifier":
+        return cls(
+            id=generated.id,
+            access_policy=AccessPolicy._from_generated(generated.access_policy),
         )
 
 

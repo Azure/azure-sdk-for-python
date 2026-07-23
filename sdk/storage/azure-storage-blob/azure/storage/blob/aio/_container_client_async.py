@@ -48,9 +48,9 @@ from .._container_client_helpers import (
 from .._deserialize import deserialize_container_properties
 from .._encryption import StorageEncryptionMixin
 from .._generated.aio import AzureBlobStorage
-from .._generated.models import SignedIdentifier, SignedIdentifiers
+from .._generated.models import SignedIdentifier as GenSignedIdentifier, SignedIdentifiers as GenSignedIdentifiers
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
-from .._models import AccessPolicy, ContainerProperties, BlobType, BlobProperties, FilteredBlob
+from .._models import AccessPolicy, ContainerProperties, BlobType, BlobProperties, FilteredBlob, SignedIdentifier
 from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_lease_id
 from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
@@ -711,12 +711,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         except HttpResponseError as error:
             process_storage_error(error)
         items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
-        for si in items or []:
-            if si.access_policy is not None:
-                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
+        signed_identifiers = [SignedIdentifier._from_generated(si) for si in (items or [])]
         return {
             "public_access": response.get("blob_public_access"),
-            "signed_identifiers": items or [],
+            "signed_identifiers": signed_identifiers,
         }
 
     @distributed_trace_async
@@ -781,7 +779,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         identifiers = []
         for key, value in signed_identifiers.items():
             access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
-            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
+            identifiers.append(GenSignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
         signed_identifiers = identifiers or None  # type: ignore
 
         mod_conditions = get_modify_conditions(kwargs)
@@ -790,7 +788,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             return cast(
                 Dict[str, Union[str, datetime]],
                 await self._client.container.set_access_policy(
-                    container_acl=SignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
+                    container_acl=GenSignedIdentifiers(items_property=signed_identifiers)
+                    if signed_identifiers
+                    else None,
                     timeout=timeout,
                     access=public_access,
                     cls=return_response_headers,

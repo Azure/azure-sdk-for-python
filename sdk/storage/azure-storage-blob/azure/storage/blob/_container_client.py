@@ -28,7 +28,7 @@ from ._deserialize import deserialize_container_properties
 from ._download import StorageStreamDownloader
 from ._encryption import StorageEncryptionMixin
 from ._generated import AzureBlobStorage
-from ._generated.models import SignedIdentifier, SignedIdentifiers
+from ._generated.models import SignedIdentifier as GenSignedIdentifier, SignedIdentifiers as GenSignedIdentifiers
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
     BlobNamesPaged,
@@ -37,7 +37,7 @@ from ._list_blobs_helper import (
     FilteredBlobPaged,
     IgnoreListBlobsDeserializer,
 )
-from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob
+from ._models import AccessPolicy, BlobProperties, BlobType, ContainerProperties, FilteredBlob, SignedIdentifier
 from ._serialize import get_lease_id, get_api_version, get_container_cpk_scope_info, get_modify_conditions
 from ._shared.base_client import parse_connection_str, StorageAccountHostsMixin, TransportWrapper
 from ._shared.request_handlers import add_metadata_headers
@@ -695,12 +695,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         except HttpResponseError as error:
             process_storage_error(error)
         items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
-        for si in items or []:
-            if si.access_policy is not None:
-                si.access_policy = AccessPolicy._from_generated(si.access_policy)  # pylint: disable=protected-access
+        signed_identifiers = [SignedIdentifier._from_generated(si) for si in (items or [])]
         return {
             "public_access": response.get("blob_public_access"),
-            "signed_identifiers": items or [],
+            "signed_identifiers": signed_identifiers,
         }
 
     @distributed_trace
@@ -763,7 +761,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         identifiers = []
         for key, value in signed_identifiers.items():
             access_policy = value._to_generated() if value else None  # pylint: disable=protected-access
-            identifiers.append(SignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
+            identifiers.append(GenSignedIdentifier(id=key, access_policy=access_policy))  # type: ignore[arg-type]
         signed_identifiers = identifiers or None  # type: ignore
         lease = kwargs.pop("lease", None)
         mod_conditions = get_modify_conditions(kwargs)
@@ -773,7 +771,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
             return cast(
                 Dict[str, Union[str, datetime]],
                 self._client.container.set_access_policy(
-                    container_acl=SignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
+                    container_acl=GenSignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None,
                     timeout=timeout,
                     access=public_access,
                     cls=return_response_headers,
