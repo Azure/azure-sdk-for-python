@@ -127,7 +127,7 @@ with (
         print(f"Wait {INITIAL_INGEST_WAIT_SECONDS}s for Application Insights to ingest the spans.", flush=True)
         time.sleep(INITIAL_INGEST_WAIT_SECONDS)
 
-start_time = seed_start - timedelta(minutes=5)
+        start_time = seed_start - timedelta(minutes=5)
 
         job = None
         for attempt in range(1, MAX_JOB_ATTEMPTS + 1):
@@ -167,6 +167,8 @@ start_time = seed_start - timedelta(minutes=5)
                 time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve the generated dataset.
+        if job is None:
+            raise RuntimeError("The data generation job did not return a result.")
         outputs = job.outputs or []
         dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
         if dataset_output is None or not dataset_output.name or not dataset_output.version:
@@ -195,9 +197,6 @@ start_time = seed_start - timedelta(minutes=5)
         # Note: The data generation jobs are implicitly cleaned up by the service
         # when the dataset is deleted (cascade delete). Attempting explicit deletion
         # is not supported for LRO-based jobs.
-                print(f"Deleted data generation job `{jid}`.")
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                print(f"  (warning) could not delete job `{jid}`: {exc}")
 
         if created_conversation_ids:
             for cid in created_conversation_ids:

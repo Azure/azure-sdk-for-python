@@ -168,32 +168,21 @@ with (
             output_options=DataGenerationJobOutputOptions(name=output_name),
         ),
     )
-    job = project_client.beta.datasets.create_generation_job(job=job)
-    print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
-
-    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-    while True:
-        job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-        if job.status in TERMINAL_STATUSES:
-            break
-        time.sleep(poll_interval_seconds)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
-
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+    print("Create a fine-tuning data generation job and wait for it to complete.")
+    job_result = project_client.beta.datasets.begin_create_generation_job(
+        job=job,
+        polling_interval=poll_interval_seconds,
+    ).result()
 
     # ------------------------------------------------------------------
     # 3. Inspect the generated fine-tuning file outputs.
     # ------------------------------------------------------------------
     # `train_split=0.8` produces two Azure OpenAI files: a training partition
     # and a validation partition. Both are emitted as FileDataGenerationJobOutput
-    # entries in `job.result.outputs`.
+    # entries in `job_result.outputs`.
     file_outputs = [
         output
-        for output in ((job.result.outputs if job.result is not None else None) or [])
+        for output in (job_result.outputs or [])
         if isinstance(output, FileDataGenerationJobOutput)
     ]
     if not file_outputs:
