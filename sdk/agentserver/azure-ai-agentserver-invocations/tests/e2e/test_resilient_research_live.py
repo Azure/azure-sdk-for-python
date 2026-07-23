@@ -44,7 +44,15 @@ import pytest
 
 from ._crash_harness import CrashHarness
 
-pytestmark = pytest.mark.live
+pytestmark = [
+    pytest.mark.live,
+    # CrashHarness uses POSIX process-group signals (os.killpg / os.getpgid),
+    # absent on Windows — skip there like the other POSIX-only tests.
+    pytest.mark.skipif(
+        not hasattr(os, "fork"),
+        reason="CrashHarness uses POSIX process-group signals (os.killpg)",
+    ),
+]
 
 
 def _missing_env_reason() -> str | None:
