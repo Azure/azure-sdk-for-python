@@ -26,11 +26,6 @@ else:
     from typing_extensions import Self
 
 
-# These public models inherited (transitively) from the autorest msrest model,
-# which exposed ``serialize``, ``deserialize``, ``from_dict``, ``as_dict``,
-# ``is_xml_model``, and ``enable_additional_properties_sending``. After the
-# migration the generated models use a different base class. The public classes mix this in to expose
-# exactly the historical methods, each delegating to ``Model``.
 class _BackCompatMixin:
     _validation = {}
 
@@ -68,8 +63,6 @@ class _BackCompatMixin:
         :returns: An instance of this model.
         :rtype: Self
         """
-        # ``Model.deserialize`` is a classmethod already bound to ``Model``; reach
-        # through ``__func__`` so it runs with this subclass as ``cls``.
         return Model.deserialize.__func__(cls, data, content_type=content_type)
 
     @classmethod
@@ -133,8 +126,7 @@ class _BackCompatMixin:
 def _patched_getattr(self, name):
     """Lazily initialize ``_data`` for subclasses that skip ``super().__init__()``.
 
-    Older releases of ``azure-storage-file-datalake`` (and any user code that follows
-    the same pattern) subclass these blob generated XML models and set rest_field
+    Older releases of ``azure-storage-file-datalake`` subclass these blob generated XML models and set rest_field
     attributes directly inside their own ``__init__`` without ever calling
     ``super().__init__()`` - so typespec's ``_Model.__init__`` (the one that creates
     ``_data``) is never invoked. The first attribute write would otherwise raise

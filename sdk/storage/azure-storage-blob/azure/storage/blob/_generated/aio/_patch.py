@@ -11,7 +11,6 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
-from azure.core.pipeline import policies
 from azure.core.pipeline import AsyncPipeline
 
 from ..._shared.policies import RangeHeaderPolicy
@@ -58,7 +57,7 @@ class BlobClientConfiguration(GeneratedBlobClientConfiguration):
 
 class AzureBlobStorage(GeneratedBlobClient):
     """Subclass of the generated async BlobClient that allows optional credentials
-    and accepts a pre-built pipeline.
+    and uses a pre-built pipeline.
 
     :param url: The host name of the blob storage account.
     :type url: str
@@ -75,38 +74,19 @@ class AzureBlobStorage(GeneratedBlobClient):
         self, url: str, credential: Optional["AsyncTokenCredential"] = None, *, pipeline: Any = None, **kwargs: Any
     ) -> None:
 
+        if pipeline is None:
+            raise ValueError("Parameter 'pipeline' must not be None.")
+
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
-
-        if pipeline is not None:
-            _impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
-            if not any(isinstance(policy, RangeHeaderPolicy) for policy in _impl_policies):
-                _impl_policies.insert(0, RangeHeaderPolicy())
-            _wrapped_pipeline = AsyncPipeline(
-                transport=pipeline._transport,  # pylint: disable=protected-access
-                policies=_impl_policies,
-            )
-            self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
-        else:
-            _policies = kwargs.pop("policies", None)
-            if _policies is None:
-                _policies = [
-                    policies.RequestIdPolicy(**kwargs),
-                    self._config.headers_policy,
-                    self._config.user_agent_policy,
-                    self._config.proxy_policy,
-                    policies.ContentDecodePolicy(**kwargs),
-                    self._config.redirect_policy,
-                    self._config.retry_policy,
-                    self._config.authentication_policy,
-                    self._config.custom_hook_policy,
-                    RangeHeaderPolicy(),
-                    self._config.logging_policy,
-                    policies.DistributedTracingPolicy(**kwargs),
-                    policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
-                    self._config.http_logging_policy,
-                ]
-            self._client = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        _impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
+        if not any(isinstance(policy, RangeHeaderPolicy) for policy in _impl_policies):
+            _impl_policies.insert(0, RangeHeaderPolicy())
+        _wrapped_pipeline = AsyncPipeline(
+            transport=pipeline._transport,  # pylint: disable=protected-access
+            policies=_impl_policies,
+        )
+        self._client = AsyncPipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
