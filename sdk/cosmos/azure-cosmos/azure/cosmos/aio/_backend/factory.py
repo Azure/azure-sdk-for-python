@@ -53,6 +53,8 @@ def make_async_backend(
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
+    connection_timeout_seconds: Optional[float] = None,
+    read_timeout_seconds: Optional[float] = None,
     strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
@@ -106,8 +108,9 @@ def make_async_backend(
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
                 proxy_allowed=proxy_allowed,
+                connection_timeout_seconds=connection_timeout_seconds,
+                read_timeout_seconds=read_timeout_seconds,
             ),
             strict_isolation=resolve_strict_isolation(strict_isolation),
         )
     return None
-

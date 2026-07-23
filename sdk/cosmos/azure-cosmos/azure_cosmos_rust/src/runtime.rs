@@ -94,12 +94,19 @@ use crate::credential::PyTokenCredential;
 ///
 /// Neither is a rust driver: a rust driver (`CosmosDriver`) is per
 /// `(endpoint, credential, config)` and lives in the `DRIVERS` cache, not here.
-/// `proxy_allowed` is recorded because it is a process-global switch that can only
-/// be set once (see `proxy_allowed_conflicts`).
+/// The connection-pool settings are recorded because they are process-global and
+/// can only be set once (see `runtime_settings_conflict`).
 pub(crate) struct RuntimeContext {
     pub(crate) tokio_rt: TokioRuntime,
     pub(crate) driver_runtime: Arc<CosmosDriverRuntime>,
+    settings: RuntimeSettings,
+}
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+struct RuntimeSettings {
     proxy_allowed: Option<bool>,
+    max_connect_timeout: Option<Duration>,
+    max_dataplane_request_timeout: Option<Duration>,
 }
 
 /// One cached driver plus a count of how many live clients use it.
@@ -223,20 +230,29 @@ fn compose_cache_key(endpoint: &str, credential_fp: &str, config_fp: &str) -> St
     format!("{endpoint}\u{1f}{credential_fp}\u{1f}{config_fp}")
 }
 
-/// The runtime is process-global, so `proxy_allowed` can only be set once.
-/// A later explicit request that differs from the initialized value is a conflict.
+/// The driver runtime and its connection pool are process-global, so a later
+/// explicit runtime setting that differs from the initialized value is a conflict.
 ///
 /// The winner is whichever client wins the `OnceLock` `get_or_init` race -- NOT
 /// "the first client in source order". Under concurrent client construction with
-/// differing `proxy_allowed`, which value initializes the process runtime is
+/// differing settings, which values initialize the process runtime are
 /// nondeterministic and the loser gets a hard error. The contract is therefore
-/// "set `proxy_allowed` to the same value on every Rust client", not "set it on
-/// the first one".
-fn proxy_allowed_conflicts(initialized: Option<bool>, requested: Option<bool>) -> bool {
-    match requested {
-        Some(value) => initialized != Some(value),
-        None => false,
-    }
+/// "use the same process-wide settings on every Rust client", not "set them on
+/// the first client".
+fn runtime_settings_conflict(initialized: RuntimeSettings, requested: RuntimeSettings) -> bool {
+    setting_conflicts(initialized.proxy_allowed, requested.proxy_allowed)
+        || setting_conflicts(
+            initialized.max_connect_timeout,
+            requested.max_connect_timeout,
+        )
+        || setting_conflicts(
+            initialized.max_dataplane_request_timeout,
+            requested.max_dataplane_request_timeout,
+        )
+}
+
+fn setting_conflicts<T: PartialEq>(initialized: Option<T>, requested: Option<T>) -> bool {
+    requested.is_some() && initialized != requested
 }
 
 const AUTH_REQUIRED_ERROR: &str = "init_client requires either a master_key or a token credential";
@@ -277,27 +293,20 @@ pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
 ///
 /// The first client to reach here initializes both together inside the
 /// `RUNTIME_CONTEXT` `OnceLock`, with the GIL released (`py.allow_threads`), and
-/// records its `proxy_allowed`. Every later client just fetches the same context
-/// and is checked against that recorded value. Because these runtimes are
-/// process-wide (not per client), the proxy switch can only be set once: a later
-/// client asking for a different value is a hard error (see
-/// `proxy_allowed_conflicts`) rather than a silent mismatch. Without this, every
-/// client would stand up its own Tokio runtime and driver runtime instead of
-/// sharing one pair.
+/// records its connection-pool settings. Every later client fetches the same
+/// context and is checked against those recorded values. Because these runtimes
+/// are process-wide (not per client), a later client asking for a different proxy
+/// or transport timeout is a hard error rather than a silent mismatch.
 fn runtime_context(
     py: Python<'_>,
-    requested_proxy_allowed: Option<bool>,
+    requested_settings: RuntimeSettings,
 ) -> PyResult<&'static RuntimeContext> {
     let ctx_or_error = RUNTIME_CONTEXT.get_or_init(|| {
         py.allow_threads(|| {
             let tokio_rt =
                 TokioRuntime::new().map_err(|e| format!("failed to start tokio runtime: {e}"))?;
             let mut runtime_builder = CosmosDriverRuntime::builder();
-            if let Some(proxy_allowed) = requested_proxy_allowed {
-                let connection_pool = ConnectionPoolOptions::builder()
-                    .with_proxy_allowed(proxy_allowed)
-                    .build()
-                    .map_err(|e| format!("invalid connection pool options: {e}"))?;
+            if let Some(connection_pool) = connection_pool_from_settings(requested_settings)? {
                 runtime_builder = runtime_builder.with_connection_pool(connection_pool);
             }
             let driver_runtime = tokio_rt
@@ -306,31 +315,44 @@ fn runtime_context(
             Ok(RuntimeContext {
                 tokio_rt,
                 driver_runtime,
-                proxy_allowed: requested_proxy_allowed,
+                settings: requested_settings,
             })
         })
     });
     match ctx_or_error {
         Ok(ctx) => {
-            if proxy_allowed_conflicts(ctx.proxy_allowed, requested_proxy_allowed) {
-                let initialized = match ctx.proxy_allowed {
-                    Some(true) => "true",
-                    Some(false) => "false",
-                    None => "unset",
-                };
-                let requested = match requested_proxy_allowed {
-                    Some(true) => "true",
-                    Some(false) => "false",
-                    None => "unset",
-                };
+            if runtime_settings_conflict(ctx.settings, requested_settings) {
                 return Err(PyValueError::new_err(format!(
-                    "Rust runtime proxy configuration is process-global and was already initialized with proxy_allowed={initialized}; cannot honor proxy_allowed={requested} for this client. The process-global runtime adopts the proxy_allowed of whichever client initializes it first -- a race under concurrent construction, not source order -- so set proxy_allowed to the same value on every Rust CosmosClient in the process."
+                    "Rust transport configuration is process-global and was already initialized with {:?}; cannot honor {:?} for this client. Set proxy_allowed, connection_timeout, and read_timeout consistently on every Rust CosmosClient in the process.",
+                    ctx.settings, requested_settings
                 )));
             }
             Ok(ctx)
         }
         Err(message) => Err(PyRuntimeError::new_err(message.clone())),
     }
+}
+
+fn connection_pool_from_settings(
+    settings: RuntimeSettings,
+) -> Result<Option<ConnectionPoolOptions>, String> {
+    if settings == RuntimeSettings::default() {
+        return Ok(None);
+    }
+    let mut builder = ConnectionPoolOptions::builder();
+    if let Some(proxy_allowed) = settings.proxy_allowed {
+        builder = builder.with_proxy_allowed(proxy_allowed);
+    }
+    if let Some(timeout) = settings.max_connect_timeout {
+        builder = builder.with_max_connect_timeout(timeout);
+    }
+    if let Some(timeout) = settings.max_dataplane_request_timeout {
+        builder = builder.with_max_dataplane_request_timeout(timeout);
+    }
+    builder
+        .build()
+        .map(Some)
+        .map_err(|e| format!("invalid connection pool options: {e}"))
 }
 
 /// Read-only fetch of the process-wide `RuntimeContext` for the per-operation
@@ -364,10 +386,10 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // Process-wide vs per-key: the runtimes are shared once for the process; the rust
 // driver this builds is per key. The optional `config` is a Python
 // `PreparedClientConfig` of construction settings the driver honors --
-// preferred_locations, runtime proxy allowance, plus account-level operation
-// options (excluded locations, throttle-retry caps, hedging threshold,
-// consistency level). They apply when the driver for this key is first built;
-// later clients with the same key share it.
+// preferred_locations, process-wide connection-pool settings, plus account-level
+// operation options (excluded locations, throttle-retry caps, hedging threshold,
+// consistency level). They apply when the runtime/driver is first built; later
+// clients with the same key share the driver.
 // Without this entry point there would be no way to get or make a client's rust
 // driver, and no reference counting to share and tear it down safely.
 
@@ -385,8 +407,8 @@ pub(crate) fn init_client(
     let endpoint_url = Url::parse(endpoint)
         .map_err(|e| PyValueError::new_err(format!("invalid endpoint URL: {e}")))?;
 
-    let requested_proxy_allowed = proxy_allowed_from_config(config)?;
-    let runtime_ctx = runtime_context(py, requested_proxy_allowed)?;
+    let requested_settings = runtime_settings_from_config(config)?;
+    let runtime_ctx = runtime_context(py, requested_settings)?;
 
     // Fingerprint the credential first so it joins the key: a different credential
     // must not reuse another's driver. Reading a token credential's identity or
@@ -515,13 +537,27 @@ pub(crate) fn init_client(
     Ok(handle)
 }
 
-/// Read the optional `proxy_allowed` runtime switch from the prepared config.
-/// Missing attribute or `None` means "unset" (use runtime env/default behavior).
-fn proxy_allowed_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<Option<bool>> {
-    match config {
-        Some(client_config) => get_config_opt::<bool>(client_config, "proxy_allowed"),
-        None => Ok(None),
-    }
+/// Read the process-wide connection-pool settings from the prepared config.
+fn runtime_settings_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<RuntimeSettings> {
+    let Some(client_config) = config else {
+        return Ok(RuntimeSettings::default());
+    };
+    Ok(RuntimeSettings {
+        proxy_allowed: get_config_opt::<bool>(client_config, "proxy_allowed")?,
+        max_connect_timeout: timeout_from_config(client_config, "connection_timeout_seconds")?,
+        max_dataplane_request_timeout: timeout_from_config(client_config, "read_timeout_seconds")?,
+    })
+}
+
+fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<Option<Duration>> {
+    let Some(seconds) = get_config_opt::<f64>(config, field_name)? else {
+        return Ok(None);
+    };
+    Duration::try_from_secs_f64(seconds).map(Some).map_err(|_| {
+        PyValueError::new_err(format!(
+            "{field_name} must be a finite, non-negative number of seconds"
+        ))
+    })
 }
 
 /// Read the optional `preferred_locations` off the prepared client config and
@@ -733,14 +769,16 @@ pub(crate) fn close_client(handle: &str) -> PyResult<()> {
 #[cfg(test)]
 mod tests {
     use super::{
-        apply_close, compose_cache_key, config_fingerprint_from_repr, get_config_opt,
-        master_key_fingerprint, proxy_allowed_conflicts, read_consistency_from_str,
-        token_credential_fingerprint, validate_auth_inputs, AUTH_EXCLUSIVE_ERROR,
+        apply_close, compose_cache_key, config_fingerprint_from_repr,
+        connection_pool_from_settings, get_config_opt, master_key_fingerprint,
+        read_consistency_from_str, runtime_settings_conflict, runtime_settings_from_config,
+        token_credential_fingerprint, validate_auth_inputs, RuntimeSettings, AUTH_EXCLUSIVE_ERROR,
         AUTH_REQUIRED_ERROR,
     };
     use azure_data_cosmos_driver::options::ReadConsistencyStrategy;
     use pyo3::prelude::*;
     use pyo3::types::{PyModule, PyString};
+    use std::time::Duration;
 
     // The reference-counted driver cache evicts an endpoint's driver only when
     // its last client closes. apply_close is the decision behind that: it must
@@ -798,12 +836,84 @@ mod tests {
     }
 
     #[test]
-    fn proxy_allowed_conflicts_only_when_later_call_is_explicit_and_differs() {
-        assert!(!proxy_allowed_conflicts(None, None));
-        assert!(!proxy_allowed_conflicts(Some(true), None));
-        assert!(!proxy_allowed_conflicts(Some(true), Some(true)));
-        assert!(proxy_allowed_conflicts(Some(true), Some(false)));
-        assert!(proxy_allowed_conflicts(None, Some(true)));
+    fn runtime_settings_conflict_only_when_later_explicit_value_differs() {
+        let initialized = RuntimeSettings {
+            proxy_allowed: Some(true),
+            max_connect_timeout: Some(Duration::from_secs(5)),
+            max_dataplane_request_timeout: Some(Duration::from_secs(65)),
+        };
+        assert!(!runtime_settings_conflict(
+            initialized,
+            RuntimeSettings::default()
+        ));
+        assert!(!runtime_settings_conflict(initialized, initialized));
+        assert!(runtime_settings_conflict(
+            initialized,
+            RuntimeSettings {
+                max_connect_timeout: Some(Duration::from_secs(4)),
+                ..initialized
+            }
+        ));
+        assert!(runtime_settings_conflict(
+            RuntimeSettings::default(),
+            RuntimeSettings {
+                proxy_allowed: Some(true),
+                ..RuntimeSettings::default()
+            }
+        ));
+    }
+
+    #[test]
+    fn runtime_settings_read_transport_timeouts_from_python_config() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::from_code_bound(
+                py,
+                r#"
+class Config:
+    proxy_allowed = False
+    connection_timeout_seconds = 1.25
+    read_timeout_seconds = 42.5
+"#,
+                "runtime_settings_test.py",
+                "runtime_settings_test",
+            )
+            .expect("module must compile");
+            let config = module
+                .getattr("Config")
+                .and_then(|cls| cls.call0())
+                .expect("Config() should construct");
+
+            let settings =
+                runtime_settings_from_config(Some(&config)).expect("settings should parse");
+            assert_eq!(settings.proxy_allowed, Some(false));
+            assert_eq!(
+                settings.max_connect_timeout,
+                Some(Duration::from_millis(1_250))
+            );
+            assert_eq!(
+                settings.max_dataplane_request_timeout,
+                Some(Duration::from_millis(42_500))
+            );
+        });
+    }
+
+    #[test]
+    fn runtime_settings_build_connection_pool_timeout_caps() {
+        let settings = RuntimeSettings {
+            proxy_allowed: Some(false),
+            max_connect_timeout: Some(Duration::from_millis(1_250)),
+            max_dataplane_request_timeout: Some(Duration::from_millis(42_500)),
+        };
+        let pool = connection_pool_from_settings(settings)
+            .expect("connection pool settings should be valid")
+            .expect("non-default settings should build a pool");
+        assert!(!pool.proxy_allowed());
+        assert_eq!(pool.max_connect_timeout(), Duration::from_millis(1_250));
+        assert_eq!(
+            pool.max_dataplane_request_timeout(),
+            Duration::from_millis(42_500)
+        );
     }
 
     #[test]

@@ -31,6 +31,8 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+import azure.cosmos.aio._cosmos_client as async_cosmos_client_module
+import azure.cosmos.cosmos_client as sync_cosmos_client_module
 from azure.cosmos._backend.base import (
     BackendResponse,
     CosmosBackend,
@@ -51,10 +53,12 @@ from azure.cosmos._backend import _driver_registry
 from azure.cosmos._backend._driver_registry import (
     StrictEngineIsolationError,
     ProxyPolicyConflictError,
+    TransportTimeoutPolicyConflictError,
     _reset_for_tests as _reset_driver_registry,
     make_credential_key,
     register_client_config,
     register_proxy_policy,
+    register_transport_timeout_policy,
     release_client_config,
 )
 from azure.cosmos._backend.constants import (
@@ -68,6 +72,7 @@ from azure.cosmos._backend.factory import (
     build_client_config,
     make_backend,
     reject_unsupported_transport_settings,
+    resolve_client_transport_timeouts,
     resolve_backend_name,
     resolve_strict_isolation,
 )
@@ -82,6 +87,7 @@ from azure.cosmos.aio._backend.factory import make_async_backend
 from azure.cosmos.aio._backend.rust import AsyncRustBackend
 from azure.cosmos.aio._container import ContainerProxy as AsyncContainerProxy
 from azure.cosmos.container import ContainerProxy
+from azure.cosmos.documents import ConnectionPolicy
 from azure.cosmos.partition_key import NonePartitionKeyValue
 
 
@@ -1357,6 +1363,8 @@ def test_prepared_client_config_repr_distinguishes_every_field():
         "user_agent_suffix": "checkout-westus2",
         "consistency_level": "Eventual",
         "proxy_allowed": True,
+        "connection_timeout_seconds": 1.5,
+        "read_timeout_seconds": 30.0,
     }
 
     field_names = {f.name for f in dataclasses.fields(PreparedClientConfig)}
@@ -1414,6 +1422,73 @@ def test_async_factory_carries_preferred_locations_into_rust_backend(monkeypatch
     assert backend._client_config == PreparedClientConfig(
         preferred_locations=("West US",)
     )
+
+
+def test_sync_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_backend(
+        BACKEND_NAME_RUST,
+        url="https://timeouts-sync.documents.azure.com",
+        credential="k",
+        connection_timeout_seconds=2.5,
+        read_timeout_seconds=45,
+    )
+    assert isinstance(backend, RustBackend)
+    assert backend._client_config == PreparedClientConfig(
+        connection_timeout_seconds=2.5,
+        read_timeout_seconds=45.0,
+    )
+
+
+def test_async_factory_carries_transport_timeouts_into_rust_backend(monkeypatch):
+    monkeypatch.delenv(BACKEND_ENV_VAR, raising=False)
+    backend = make_async_backend(
+        BACKEND_NAME_RUST,
+        url="https://timeouts-async.documents.azure.com",
+        credential="k",
+        connection_timeout_seconds=1.5,
+        read_timeout_seconds=30,
+    )
+    assert isinstance(backend, AsyncRustBackend)
+    assert backend._client_config == PreparedClientConfig(
+        connection_timeout_seconds=1.5,
+        read_timeout_seconds=30.0,
+    )
+
+
+def test_sync_client_carries_effective_default_transport_timeouts(monkeypatch):
+    monkeypatch.setattr(
+        sync_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    client = sync_cosmos_client_module.CosmosClient(
+        "https://client-sync.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+    )
+    assert client._backend._client_config == PreparedClientConfig(
+        connection_timeout_seconds=5.0,
+        read_timeout_seconds=65.0,
+    )
+    client._backend.close()
+
+
+@pytest.mark.asyncio
+async def test_async_client_carries_explicit_transport_timeouts(monkeypatch):
+    monkeypatch.setattr(
+        async_cosmos_client_module, "CosmosClientConnection", MagicMock()
+    )
+    client = async_cosmos_client_module.CosmosClient(
+        "https://client-async.documents.azure.com",
+        "key",
+        _backend=BACKEND_NAME_RUST,
+        connection_timeout=2.0,
+        read_timeout=30.0,
+    )
+    assert client._backend._client_config == PreparedClientConfig(
+        connection_timeout_seconds=2.0,
+        read_timeout_seconds=30.0,
+    )
+    await client._backend.close()
 
 
 def test_rust_backend_passes_client_config_to_init_client(monkeypatch):
@@ -1629,6 +1704,8 @@ def test_build_client_config_combines_all_settings():
         availability_strategy={"threshold_ms": 25},
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
+        connection_timeout_seconds=2.5,
+        read_timeout_seconds=45,
     )
     assert config == PreparedClientConfig(
         preferred_locations=("West US",),
@@ -1638,7 +1715,56 @@ def test_build_client_config_combines_all_settings():
         hedging_threshold_ms=25,
         user_agent_suffix="checkout-westus2",
         consistency_level="Eventual",
+        connection_timeout_seconds=2.5,
+        read_timeout_seconds=45.0,
     )
+
+
+def test_resolve_client_transport_timeouts_uses_legacy_defaults():
+    """Untuned Rust clients preserve the legacy 5 s connect and 65 s read values."""
+    assert resolve_client_transport_timeouts({}) == (5, 65)
+
+
+def test_resolve_client_transport_timeouts_honors_alias_and_custom_policy():
+    """The legacy millisecond alias keeps precedence and policy defaults still apply."""
+    policy = ConnectionPolicy()
+    policy.RequestTimeout = 3
+    policy.ReadTimeout = 40
+    assert resolve_client_transport_timeouts(
+        {
+            "connection_policy": policy,
+            "connection_timeout": 2,
+            "request_timeout": 750,
+        }
+    ) == (0.75, 40)
+
+
+def test_build_client_config_carries_transport_timeouts():
+    config = build_client_config(
+        None,
+        connection_timeout_seconds=1.25,
+        read_timeout_seconds=42.5,
+    )
+    assert config == PreparedClientConfig(
+        connection_timeout_seconds=1.25,
+        read_timeout_seconds=42.5,
+    )
+
+
+@pytest.mark.parametrize(
+    "kwargs, message",
+    [
+        ({"connection_timeout_seconds": 0.05}, "at least 0.1"),
+        ({"connection_timeout_seconds": 7}, "at most 6.0"),
+        ({"read_timeout_seconds": 0}, "at least 0.1"),
+        ({"read_timeout_seconds": float("inf")}, "must be finite"),
+    ],
+)
+def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
+    kwargs, message
+):
+    with pytest.raises(ValueError, match=message):
+        build_client_config(None, **kwargs)
 
 
 def test_build_client_config_carries_user_agent_suffix():
@@ -1747,6 +1873,41 @@ def test_register_proxy_policy_tolerates_none_config():
     register_proxy_policy(build_client_config(None, proxy_allowed=True))
     with pytest.raises(ProxyPolicyConflictError):
         register_proxy_policy(build_client_config(None, proxy_allowed=False))
+
+
+def test_register_transport_timeout_policy_accepts_equal_values():
+    config = build_client_config(
+        None,
+        connection_timeout_seconds=5,
+        read_timeout_seconds=65,
+    )
+    register_transport_timeout_policy(config)
+    register_transport_timeout_policy(config)
+
+
+@pytest.mark.parametrize(
+    "first, second",
+    [
+        ((5, 65), (4, 65)),
+        ((5, 65), (5, 30)),
+    ],
+)
+def test_register_transport_timeout_policy_rejects_conflicts(first, second):
+    register_transport_timeout_policy(
+        build_client_config(
+            None,
+            connection_timeout_seconds=first[0],
+            read_timeout_seconds=first[1],
+        )
+    )
+    with pytest.raises(TransportTimeoutPolicyConflictError, match="process-global"):
+        register_transport_timeout_policy(
+            build_client_config(
+                None,
+                connection_timeout_seconds=second[0],
+                read_timeout_seconds=second[1],
+            )
+        )
 
 
 @pytest.mark.parametrize("level", ["BoundedStaleness", "ConsistentPrefix"])

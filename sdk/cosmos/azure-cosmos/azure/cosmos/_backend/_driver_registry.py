@@ -25,8 +25,8 @@ Two terms used everywhere below:
   top-level bucket; within it each distinct ``(credential, config)`` pair is its own
   engine.
 * *Config* is the ``PreparedClientConfig`` -- the subset of ``CosmosClient`` settings
-  that change engine behavior (preferred/excluded locations, consistency level,
-  throttling retry, hedging threshold, user-agent suffix, proxy_allowed). It compares
+  carried to the binding (preferred/excluded locations, consistency, throttling,
+  hedging, user-agent suffix, and process-wide proxy/transport settings). It compares
   by value; ``None`` means untuned. The binding fingerprints it from its ``repr()``.
 
 The 50,000-foot view -- this module is a *detector, not a fixer*. It has no effect on
@@ -137,6 +137,10 @@ class ProxyPolicyConflictError(ValueError):
     """
 
 
+class TransportTimeoutPolicyConflictError(ValueError):
+    """Raised when Rust clients request different process-wide transport timeouts."""
+
+
 # Process-global ``proxy_allowed`` policy. Unlike the per-account ``_REGISTRY`` above,
 # this is a single value for the whole process because the Rust runtime it configures is
 # a process singleton. ``_PROXY_POLICY_SET`` distinguishes "no explicit value seen yet"
@@ -144,6 +148,10 @@ class ProxyPolicyConflictError(ValueError):
 # opinion", so a None-setting client never establishes the policy). Guarded by _LOCK.
 _PROXY_POLICY: Optional[bool] = None
 _PROXY_POLICY_SET: bool = False
+_CONNECTION_TIMEOUT_POLICY: Optional[float] = None
+_CONNECTION_TIMEOUT_POLICY_SET: bool = False
+_READ_TIMEOUT_POLICY: Optional[float] = None
+_READ_TIMEOUT_POLICY_SET: bool = False
 
 
 # Canonical endpoint -> the live engines for that account. Each key is a
@@ -244,6 +252,60 @@ def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
                 "(or leave it unset), and construct the client that sets it first, "
                 "before any others.".format(established=_PROXY_POLICY, requested=requested)
             )
+
+
+def register_transport_timeout_policy(config: Optional[PreparedClientConfig]) -> None:
+    """Fail fast when Rust clients disagree on process-wide transport timeouts."""
+    if config is None:
+        return
+    requested_connection = config.connection_timeout_seconds
+    requested_read = config.read_timeout_seconds
+    if requested_connection is None and requested_read is None:
+        return
+
+    global _CONNECTION_TIMEOUT_POLICY  # pylint: disable=global-statement
+    global _CONNECTION_TIMEOUT_POLICY_SET  # pylint: disable=global-statement
+    global _READ_TIMEOUT_POLICY  # pylint: disable=global-statement
+    global _READ_TIMEOUT_POLICY_SET  # pylint: disable=global-statement
+    with _LOCK:
+        conflicts = []
+        if (
+            requested_connection is not None
+            and _CONNECTION_TIMEOUT_POLICY_SET
+            and _CONNECTION_TIMEOUT_POLICY != requested_connection
+        ):
+            conflicts.append(
+                "connection_timeout={requested!r} (already {established!r})".format(
+                    requested=requested_connection,
+                    established=_CONNECTION_TIMEOUT_POLICY,
+                )
+            )
+        if (
+            requested_read is not None
+            and _READ_TIMEOUT_POLICY_SET
+            and _READ_TIMEOUT_POLICY != requested_read
+        ):
+            conflicts.append(
+                "read_timeout={requested!r} (already {established!r})".format(
+                    requested=requested_read,
+                    established=_READ_TIMEOUT_POLICY,
+                )
+            )
+        if conflicts:
+            raise TransportTimeoutPolicyConflictError(
+                "Rust transport timeouts are process-global; this CosmosClient "
+                "conflicts with an earlier client: {}. Set the same constructor "
+                "timeouts on every Rust-backed CosmosClient in the process.".format(
+                    ", ".join(conflicts)
+                )
+            )
+
+        if requested_connection is not None and not _CONNECTION_TIMEOUT_POLICY_SET:
+            _CONNECTION_TIMEOUT_POLICY = requested_connection
+            _CONNECTION_TIMEOUT_POLICY_SET = True
+        if requested_read is not None and not _READ_TIMEOUT_POLICY_SET:
+            _READ_TIMEOUT_POLICY = requested_read
+            _READ_TIMEOUT_POLICY_SET = True
 
 
 def register_client_config(
@@ -352,7 +414,15 @@ def _reset_for_tests() -> None:
     the registry lives for the whole process.
     """
     global _PROXY_POLICY, _PROXY_POLICY_SET  # pylint: disable=global-statement
+    global _CONNECTION_TIMEOUT_POLICY  # pylint: disable=global-statement
+    global _CONNECTION_TIMEOUT_POLICY_SET  # pylint: disable=global-statement
+    global _READ_TIMEOUT_POLICY  # pylint: disable=global-statement
+    global _READ_TIMEOUT_POLICY_SET  # pylint: disable=global-statement
     with _LOCK:
         _REGISTRY.clear()
         _PROXY_POLICY = None
         _PROXY_POLICY_SET = False
+        _CONNECTION_TIMEOUT_POLICY = None
+        _CONNECTION_TIMEOUT_POLICY_SET = False
+        _READ_TIMEOUT_POLICY = None
+        _READ_TIMEOUT_POLICY_SET = False

@@ -1,7 +1,30 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::*;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+
+use pyo3::exceptions::PyRuntimeError;
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
+
+use azure_data_cosmos_driver::{
+    driver::CosmosDriver,
+    error::CosmosError,
+    models::{
+        FeedRange, PartitionKey, PartitionKeyDefinition, PartitionKeyKind, PartitionKeyVersion,
+    },
+};
+
+use super::diagnostics::BINDING_OP_COUNT;
+use super::request::{parse_container_link, parse_feed_range_partition_key_header};
+use super::response::{
+    tuple_from_feed_range_from_partition_key_result, tuple_from_is_feed_range_subset_result,
+    tuple_from_partition_key_ranges_result,
+};
+use super::{lookup_driver, AbortOnDrop};
+use crate::feed_range_subset::compute_is_feed_range_subset;
+use crate::runtime::require_runtime_context;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub(super) enum FeedRangePartitionKeySource {

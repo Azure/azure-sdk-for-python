@@ -32,7 +32,7 @@ from azure.core.pipeline.policies import RetryMode
 from azure.core.tracing.decorator import distributed_trace
 
 from ._backend.base import CosmosBackend, raise_account_read_unsupported
-from ._backend.factory import make_backend
+from ._backend.factory import make_backend, resolve_client_transport_timeouts
 from ._base import build_options, _set_throughput_options
 from ._constants import _Constants as Constants
 from ._cosmos_client_connection import CosmosClientConnection, CredentialDict
@@ -40,7 +40,6 @@ from ._cosmos_responses import CosmosDict
 from ._retry_utility import ConnectionRetryPolicy
 from .database import DatabaseProxy, _get_database_link
 from .documents import ConnectionPolicy, DatabaseAccount
-from .exceptions import CosmosResourceNotFoundError
 from ._helpers.database_helper import DatabaseHelper
 
 if TYPE_CHECKING:
@@ -249,6 +248,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         # container methods should use the legacy ``CreateItem`` path.
         backend_choice = kwargs.pop("_backend", None)
         proxy_allowed = kwargs.pop("proxy_allowed", None)
+        connection_timeout, read_timeout = resolve_client_transport_timeouts(kwargs)
         # Read (don't pop) the startup settings the Rust backend can carry to the
         # driver; the legacy connection policy still receives them via **kwargs
         # below. The retry dials mirror _build_connection_policy's precedence
@@ -274,6 +274,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             user_agent_suffix=kwargs.get("user_agent_suffix"),
             consistency_level=consistency_level,
             proxy_allowed=proxy_allowed,
+            connection_timeout_seconds=connection_timeout,
+            read_timeout_seconds=read_timeout,
             # Transport/TLS knobs the Rust path can't honor yet: read (don't pop)
             # so the legacy connection still consumes them on the core-python path,
             # while the Rust branch rejects them instead of silently ignoring them.
@@ -462,7 +464,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -498,6 +501,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
+        kwargs.pop("session_token", None)
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
         id = args[0] if args else kwargs.pop("id")
         # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
@@ -515,12 +521,10 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 UserWarning,
             )
 
+        response_hook = kwargs.pop("response_hook", None)
         request_options = build_options(kwargs)
         _set_throughput_options(offer=offer_throughput, request_options=request_options)
         database = {"id": id}
-        # Legacy consumes the hook from kwargs; Rust invokes the explicit hook
-        # through response parsing. Backend selection guarantees one delivery.
-        response_hook = kwargs.get("response_hook")
         result = DatabaseHelper(self.client_connection, self._backend).create_database(
             database,
             request_options,
@@ -538,7 +542,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         *,
         offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
         initial_headers: Optional[dict[str, str]] = None,
-        response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+        response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
         throughput_bucket: Optional[int] = None,
         return_properties: Literal[False] = False,
         **kwargs: Any
@@ -555,7 +559,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -572,7 +577,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             *,
             offer_throughput: Optional[Union[int, 'ThroughputProperties']] = None,
             initial_headers: Optional[dict[str, str]] = None,
-            response_hook: Optional[Callable[[Mapping[str, Any]], None]] = None,
+            response_hook: Optional[Callable[[Mapping[str, Any], Mapping[str, Any]], None]] = None,
             throughput_bucket: Optional[int] = None,
             return_properties: Literal[True],
             **kwargs: Any
@@ -589,7 +594,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -618,7 +624,8 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         :keyword Union[int, ~azure.cosmos.ThroughputProperties] offer_throughput: The provisioned throughput
             for this database.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
-        :keyword Callable[[Mapping[str, Any]], None] response_hook: A callable invoked with the response metadata.
+        :keyword Callable[[Mapping[str, Any], Mapping[str, Any]], None] response_hook:
+            A callable invoked with the response metadata and database properties.
         :keyword int throughput_bucket: The desired throughput bucket for the client
         :keyword bool return_properties: Specifies whether to return either a DatabaseProxy
             or a Tuple containing a DatabaseProxy and the associated database properties.
@@ -646,6 +653,9 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
                 "The 'match_condition' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 UserWarning)
+        kwargs.pop("session_token", None)
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
         id = args[0] if args else kwargs.pop("id")
         # Keep positional arguments for populate_query_metrics and offer_throughput for backwards compatibility
@@ -655,22 +665,27 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
             raise TypeError(f"Unexpected positional arguments: {args[3:]}")
 
         return_properties = kwargs.pop("return_properties", False)
-        try:
-            database_proxy = self.get_database_client(id)
-            result = database_proxy.read(
-                populate_query_metrics=populate_query_metrics,
-                **kwargs
+        if populate_query_metrics is not None:
+            warnings.warn(
+                "The 'populate_query_metrics' flag does not apply to this method"
+                " and will be removed in the future",
+                UserWarning,
             )
-            if not return_properties:
-                return database_proxy
+
+        response_hook = kwargs.pop("response_hook", None)
+        request_options = build_options(kwargs)
+        _set_throughput_options(offer=offer_throughput, request_options=request_options)
+        database = {"id": id}
+        result = DatabaseHelper(self.client_connection, self._backend).create_database_if_not_exists(
+            database,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
+        )
+        database_proxy = DatabaseProxy(self.client_connection, id=result["id"], properties=result)
+        if return_properties:
             return database_proxy, result
-        except CosmosResourceNotFoundError:
-            return self.create_database(
-                id,
-                offer_throughput=offer_throughput,
-                return_properties=return_properties,
-                **kwargs
-            )
+        return database_proxy
 
     def get_database_client(self, database: Union[str, DatabaseProxy, Mapping[str, Any]]) -> DatabaseProxy:
         """Retrieve an existing database with the ID (name) `id`.

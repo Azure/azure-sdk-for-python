@@ -51,6 +51,7 @@ from azure.core.utils import CaseInsensitiveDict
 
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_DATABASE = "create_database"
+OP_CREATE_DATABASE_IF_NOT_EXISTS = "create_database_if_not_exists"
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
 OP_READ_ITEM = "read_item"
@@ -75,6 +76,7 @@ OP_REPLACE_OFFER = "replace_offer"
 # never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
+    OP_CREATE_DATABASE_IF_NOT_EXISTS: "create_database_if_not_exists",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",
@@ -264,6 +266,17 @@ class PreparedClientConfig:
     #: ``HTTP_PROXY``); ``False`` forces a direct connection (no proxy); ``None``
     #: carries nothing, so the runtime keeps its existing env/default behavior.
     proxy_allowed: Optional[bool] = None
+
+    #: Effective client connection timeout in seconds. The binding applies this
+    #: to the Rust driver's process-wide ``max_connect_timeout``. ``None`` leaves
+    #: the driver default unchanged.
+    connection_timeout_seconds: Optional[float] = None
+
+    #: Effective client socket-read timeout in seconds. The Rust transport has no
+    #: read-inactivity timeout, so the binding uses this as the process-wide cap
+    #: for one complete data-plane HTTP attempt (connect, send, and receive).
+    #: ``None`` leaves the driver default unchanged.
+    read_timeout_seconds: Optional[float] = None
 
 
 

@@ -74,6 +74,7 @@ from ._driver_registry import (
     make_credential_key,
     register_client_config,
     register_proxy_policy,
+    register_transport_timeout_policy,
     release_client_config,
 )
 
@@ -173,8 +174,8 @@ class RustBackendShared:
         It computes ``_credential_key`` once -- an async/sync token credential by object
         identity, or a master key by fingerprint, never the plaintext secret -- so open
         and close identify this client to the guard the same way. It also enforces the
-        process-wide proxy policy *first*, so a proxy conflict fails before any
-        registration exists to undo.
+        process-wide proxy and transport-timeout policies *first*, so a runtime
+        conflict fails before any registration exists to undo.
         """
         self._endpoint = endpoint
         self._master_key = master_key
@@ -205,12 +206,12 @@ class RustBackendShared:
         # never releases a registration it never made; set it False only once
         # registration succeeds.
         self._config_released = True
-        # proxy_allowed is process-global for the Rust runtime (one OnceLock-backed
-        # runtime per process), not per-account like the engine registration below.
-        # Enforce a single process-wide policy here, fail-fast and deterministic, before
-        # recording any engine registration -- a proxy conflict must raise before there
-        # is a registration to release. No-op for clients that leave proxy_allowed unset.
+        # Proxy allowance and transport timeouts are process-global for the Rust
+        # runtime, not per-account like the engine registration below. Enforce them
+        # here before recording a registration; the binding repeats the checks as a
+        # lazy-initialization backstop.
         register_proxy_policy(client_config)
+        register_transport_timeout_policy(client_config)
         register_client_config(
             endpoint,
             client_config,

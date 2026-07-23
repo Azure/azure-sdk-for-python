@@ -1,7 +1,26 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::*;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+
+use pyo3::exceptions::PyRuntimeError;
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
+
+use azure_core::http::headers::{HeaderName, HeaderValue};
+use azure_data_cosmos_driver::{
+    driver::CosmosDriver,
+    error::CosmosError,
+    models::{ActivityId, CosmosOperation, CosmosResponse, SessionToken},
+    options::ContentResponseOnWrite,
+};
+
+use super::diagnostics::BINDING_OP_COUNT;
+use super::request::{build_operation_options, OpModifiers};
+use super::response::{tuple_from_offer_feed_result, tuple_from_result};
+use super::{lookup_driver, AbortOnDrop};
+use crate::runtime::require_runtime_context;
 
 /// Entry point the binding calls to run one container's offer/throughput read and
 /// wait for it (sync). Offers are an account-level, non-partitioned resource, so --

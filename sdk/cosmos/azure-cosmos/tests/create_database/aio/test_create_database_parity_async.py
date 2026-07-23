@@ -110,13 +110,16 @@ async def test_create_database_options_and_response_hook_async():
             throughput_bucket=1,
             initial_headers={"x-ms-cosmos-throughput-bucket": "1"},
             return_properties=True,
-            response_hook=lambda headers: hook_calls.append(dict(headers)),
+            response_hook=lambda headers, body: hook_calls.append(
+                (dict(headers), dict(body))
+            ),
         )
         return {
             "database_id_matches": properties["id"] == database_id,
             "hook_count": len(hook_calls),
+            "hook_database_id_matches": hook_calls[0][1]["id"] == database_id,
             "request_charge_present": "x-ms-request-charge" in {
-                key.lower() for key in hook_calls[0]
+                key.lower() for key in hook_calls[0][0]
             },
         }
 

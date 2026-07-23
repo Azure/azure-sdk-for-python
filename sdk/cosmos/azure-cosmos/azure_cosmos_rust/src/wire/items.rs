@@ -1,7 +1,28 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-use super::*;
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+
+use pyo3::exceptions::PyRuntimeError;
+use pyo3::prelude::*;
+use pyo3::types::PyTuple;
+
+use azure_data_cosmos_driver::{
+    driver::CosmosDriver,
+    error::CosmosError,
+    models::{
+        ActivityId, CosmosOperation, CosmosResponse, ItemReference, PartitionKey, SessionToken,
+    },
+};
+
+use super::diagnostics::BINDING_OP_COUNT;
+use super::request::{
+    build_operation_options, parse_container_link, parse_partition_key_header, OpModifiers,
+};
+use super::response::tuple_from_result;
+use super::{lookup_driver, AbortOnDrop};
+use crate::runtime::require_runtime_context;
 
 /// Sync runner shared by all six point operations (`documents/items.rs` sync entries).
 /// Steps: bump the binding-invocation counter, look up the rust driver by handle,

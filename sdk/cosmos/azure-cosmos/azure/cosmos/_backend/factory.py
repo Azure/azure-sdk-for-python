@@ -51,13 +51,15 @@ from __future__ import annotations
 
 import asyncio
 import inspect
+import math
 import os
 from collections.abc import Mapping
 from collections.abc import Sequence as _AbcSequence
+from numbers import Real
 from typing import Any, Optional, Sequence, Tuple
 
 from .._availability_strategy_config import CrossRegionHedgingStrategy, DEFAULT_THRESHOLD_MS
-from ..documents import ConsistencyLevel
+from ..documents import ConnectionPolicy, ConsistencyLevel
 from ._async_credential_bridge import AsyncTokenCredentialBridge
 from .base import CosmosBackend, PreparedClientConfig
 from .constants import (
@@ -420,10 +422,13 @@ def build_client_config(
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
+    connection_timeout_seconds: Optional[float] = None,
+    read_timeout_seconds: Optional[float] = None,
 ) -> Optional[PreparedClientConfig]:
     """Gather the tuning options the Rust path can carry (preferred/excluded
     regions, retry caps, region-hedging, user-agent label, consistency level,
-    proxy on/off) into one :class:`PreparedClientConfig`, and return ``None``
+    proxy on/off, and transport timeout caps) into one
+    :class:`PreparedClientConfig`, and return ``None``
     when the customer tuned nothing.
 
     Why the ``None`` matters: an untuned client then takes the exact same simple
@@ -432,15 +437,18 @@ def build_client_config(
     didn't ask for one. Shared by the sync and async factories so the
     kwarg-to-config mapping lives in exactly one place.
 
-    Each setting is carried only when the customer actually expressed it:
+    Most settings are carried only when the customer actually expressed them.
+    The public clients always pass the effective transport timeouts, including
+    the legacy defaults, because the Rust transport defaults differ:
 
     * ``preferred_locations`` / ``excluded_locations`` -- empty means "no
       preference / no exclusion".
     * throttling caps -- ``None`` means "untuned"; the driver keeps its own
       defaults (9 retries / 30 s), which match Python-core's.
-    * ``availability_strategy`` -- ``None`` (absent) carries nothing, so the
-      driver keeps its default; ``False`` carries an explicit disable; ``True``
-      or a dict carries the hedging threshold.
+    * ``availability_strategy`` -- ``None`` (absent) and ``False`` carry
+      nothing, so the driver keeps its default; ``True`` or a dict carries the
+      hedging threshold. Carrying an explicit disable requires a separate
+      config field that does not exist yet.
     * ``user_agent_suffix`` -- ``None`` or an empty string carries nothing, so
       the driver keeps its default SDK User-Agent; any non-empty label is carried
       for the driver to stamp on every request's User-Agent.
@@ -452,6 +460,10 @@ def build_client_config(
     * ``proxy_allowed`` -- ``None`` carries nothing; ``True`` lets the Rust driver
       use proxy settings from environment variables; ``False`` forces a direct
       connection (no proxy).
+    * ``connection_timeout_seconds`` maps exactly to the driver's whole-process
+      connection timeout.
+    * ``read_timeout_seconds`` is approximate: Python treats it as socket-read
+      inactivity, while the Rust transport caps the complete HTTP attempt.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
         raise ValueError(
@@ -466,6 +478,15 @@ def build_client_config(
     # the location tuples; only a non-empty label is worth carrying to the driver.
     suffix = user_agent_suffix or None
     consistency = _resolve_consistency_level(consistency_level)
+    connection_timeout = _normalize_transport_timeout(
+        connection_timeout_seconds,
+        "connection_timeout",
+        maximum=6.0,
+    )
+    read_timeout = _normalize_transport_timeout(
+        read_timeout_seconds,
+        "read_timeout",
+    )
     if (
         not preferred
         and not excluded
@@ -475,6 +496,8 @@ def build_client_config(
         and suffix is None
         and consistency is None
         and proxy_allowed is None
+        and connection_timeout is None
+        and read_timeout is None
     ):
         return None
     return PreparedClientConfig(
@@ -486,7 +509,54 @@ def build_client_config(
         user_agent_suffix=suffix,
         consistency_level=consistency,
         proxy_allowed=proxy_allowed,
+        connection_timeout_seconds=connection_timeout,
+        read_timeout_seconds=read_timeout,
     )
+
+
+def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, Any]:
+    """Return the effective constructor-level connection and read timeouts.
+
+    This mirrors ``_build_connection_policy`` without consuming ``kwargs`` so the
+    legacy client still receives the same values. ``request_timeout`` is the old
+    millisecond alias for ``connection_timeout`` and therefore keeps precedence.
+    """
+    policy = kwargs.get("connection_policy") or ConnectionPolicy()
+    if "request_timeout" in kwargs:
+        connection_timeout = kwargs["request_timeout"] / 1000.0
+    else:
+        connection_timeout = kwargs.get("connection_timeout", policy.RequestTimeout)
+    read_timeout = kwargs.get("read_timeout", policy.ReadTimeout)
+    return connection_timeout, read_timeout
+
+
+def _normalize_transport_timeout(
+    value: Optional[float],
+    name: str,
+    *,
+    maximum: Optional[float] = None,
+) -> Optional[float]:
+    """Validate a Python timeout against the Rust connection-pool limits."""
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, Real):
+        raise ValueError("{} must be a number of seconds; got {!r}.".format(name, value))
+    timeout = float(value)
+    if not math.isfinite(timeout):
+        raise ValueError("{} must be finite; got {!r}.".format(name, value))
+    if timeout < 0.1:
+        raise ValueError(
+            "{} must be at least 0.1 seconds on the Rust backend; got {!r}.".format(
+                name, value
+            )
+        )
+    if maximum is not None and timeout > maximum:
+        raise ValueError(
+            "{} must be at most {} seconds on the Rust backend; got {!r}.".format(
+                name, maximum, value
+            )
+        )
+    return timeout
 
 
 def _resolve_consistency_level(consistency_level: Optional[str]) -> Optional[str]:
@@ -561,6 +631,8 @@ def make_backend(
     user_agent_suffix: Optional[str] = None,
     consistency_level: Optional[str] = None,
     proxy_allowed: Optional[bool] = None,
+    connection_timeout_seconds: Optional[float] = None,
+    read_timeout_seconds: Optional[float] = None,
     strict_isolation: Optional[bool] = None,
     proxy_config: Any = None,
     proxies: Any = None,
@@ -619,6 +691,8 @@ def make_backend(
                 user_agent_suffix=user_agent_suffix,
                 consistency_level=consistency_level,
                 proxy_allowed=proxy_allowed,
+                connection_timeout_seconds=connection_timeout_seconds,
+                read_timeout_seconds=read_timeout_seconds,
             ),
             strict_isolation=resolve_strict_isolation(strict_isolation),
         )
