@@ -80,7 +80,12 @@ class AzureBlobStorage(GeneratedBlobClient):
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
         _impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
-        if not any(isinstance(policy, RangeHeaderPolicy) for policy in _impl_policies):
+        # ``_impl_policies`` holds ``_SansIOHTTPPolicyRunner`` wrappers, not the raw
+        # policies, so unwrap ``_policy`` before checking to avoid inserting a duplicate.
+        if not any(
+            isinstance(getattr(policy, "_policy", policy), RangeHeaderPolicy)  # pylint: disable=protected-access
+            for policy in _impl_policies
+        ):
             _impl_policies.insert(0, RangeHeaderPolicy())
         _wrapped_pipeline = AsyncPipeline(
             transport=pipeline._transport,  # pylint: disable=protected-access

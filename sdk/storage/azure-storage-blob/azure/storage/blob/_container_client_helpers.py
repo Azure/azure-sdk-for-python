@@ -53,12 +53,26 @@ def _generate_delete_blobs_subrequest_options(
     lease_id: Optional[str] = None,
     if_modified_since: Optional[Any] = None,
     if_unmodified_since: Optional[Any] = None,
+    etag: Optional[str] = None,
+    match_condition: Optional[MatchConditions] = None,
     if_match: Optional[str] = None,
     if_none_match: Optional[str] = None,
     if_tags: Optional[str] = None,
     **kwargs,
 ) -> Tuple[Dict[str, Any], Dict[str, Any]]:
     # pylint: disable=protected-access
+
+    # ``get_modify_conditions`` emits azure.core-style ``etag``/``match_condition``
+    # rather than ``if_match``/``if_none_match``. Translate them here so the batch
+    # sub-request still sends the conditional header instead of silently dropping it.
+    if match_condition == MatchConditions.IfNotModified:
+        if_match = if_match or etag
+    elif match_condition == MatchConditions.IfPresent:
+        if_match = if_match or "*"
+    elif match_condition == MatchConditions.IfModified:
+        if_none_match = if_none_match or etag
+    elif match_condition == MatchConditions.IfMissing:
+        if_none_match = if_none_match or "*"
 
     # Construct parameters
     timeout = kwargs.pop("timeout", None)
