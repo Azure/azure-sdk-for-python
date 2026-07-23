@@ -24,7 +24,7 @@
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @xirzec @chlowell @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
