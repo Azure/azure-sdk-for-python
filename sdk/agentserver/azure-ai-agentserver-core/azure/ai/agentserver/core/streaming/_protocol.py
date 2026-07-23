@@ -37,13 +37,13 @@ class EventStreamNotFoundError(EventStreamError):
     """Raised when any operation references a stream id that is not
     currently a live stream.
 
-      unified the previously-distinct
+    unified the previously-distinct
     ``EventStreamNotFoundError`` (never registered) and
     ``EventStreamGoneError`` (registered then destroyed) into this
     single error type. Three independent reasons fire this:
 
     - the id was never registered (no ``get_or_create(id)`` ever ran)
-    - the id was explicitly ``streams.delete(id)``d
+    - the id was explicitly deleted via ``streams.delete(id)``
     - the id's stream was Closed and its close-clock TTL
       (``close_time + ttl_seconds``) elapsed, causing the registry
       to auto-tombstone

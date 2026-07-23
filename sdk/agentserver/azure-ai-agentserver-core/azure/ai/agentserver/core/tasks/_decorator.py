@@ -1807,7 +1807,7 @@ def multi_turn_task(
         :keyword steerable: When True, ``start()`` against an in-flight chain
             queues the new input instead of raising ``TaskConflictError``.
         :return: A :class:`MultiTurnTask` instance (distinct public class from
-    :class:`Task`).
+            :class:`Task`).
         :rtype: Any
     """
     #  — reject unknown kwargs at decoration time

@@ -484,7 +484,7 @@ namespace azure.ai.agentserver.core.storage
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    @dataclass(eq = True, frozen = False, init = True, order = False, repr = True, unsafe_hash = False)
+    @dataclass(eq = True, frozen = False, init = True, kw_only = False, match_args = True, order = False, repr = True, slots = False, unsafe_hash = False, weakref_slot = False)
     class azure.ai.agentserver.core.storage.StateStoreItemKeyPage:
         first_id: Optional[str]
         has_more: bool = field(compare = True, default = False, hash = None, init = True, kw_only = False, metadata = {}, name = "has_more", repr = True, type = "bool")

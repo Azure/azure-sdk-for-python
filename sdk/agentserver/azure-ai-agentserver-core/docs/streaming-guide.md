@@ -510,7 +510,7 @@ Consumers explicitly choose which registry they want:
 
 ## See also
 
-- [`tasks-guide.md`](./tasks-guide.md) — `@task` developer
+- [`tasks-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) — `@task` developer
   guide; Pattern E shows the streaming integration end-to-end.
 - `samples/resilient_streaming/resilient_streaming.py` (in this package)
   — minimal standalone sample.

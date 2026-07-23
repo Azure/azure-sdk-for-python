@@ -18,8 +18,8 @@ Key features:
   entered fresh, resumed from suspension, or recovered from a crash.
 - **RetryPolicy** — configurable retry with exponential, fixed, or linear
   backoff (see :class:`RetryPolicy` presets).
-- **Streaming** lives in :mod:`azure.ai.agentserver.core.streaming`
- : handlers call ``stream = await streams.get_or_create(invocation_id)``
+- **Streaming** lives in :mod:`azure.ai.agentserver.core.streaming`;
+  handlers call ``stream = await streams.get_or_create(invocation_id)``
   to obtain a stream handle; ``TaskRun`` itself is NOT iterable.
 
 Public API::
