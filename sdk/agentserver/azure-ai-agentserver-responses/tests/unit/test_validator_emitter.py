@@ -101,11 +101,15 @@ def test_emitter_deduplicates_string_union_error_message() -> None:
     }
 
     module = _load_module(build_validator_module(schemas, ["OpenAI.InputItemType"]))
+    module._response_types = type(
+        "FakeTypes",
+        (),
+        {"InputItemType": Literal["message", "item_reference"]},
+    )
     errors = module.validate_OpenAI_InputItemType(123)
     assert errors
     assert errors[0]["path"] == "$"
-    assert "InputItemType" in errors[0]["message"]
-    assert "got integer" in errors[0]["message"].lower()
+    assert "Allowed: message, item_reference" in errors[0]["message"]
     assert "string, string" not in errors[0]["message"]
 
 

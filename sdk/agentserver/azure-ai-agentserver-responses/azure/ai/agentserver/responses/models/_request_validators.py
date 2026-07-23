@@ -270,7 +270,7 @@ def _validate_CreateResponse_safety_identifier(value: Any, path: str, errors: li
 
 def _validate_CreateResponse_service_tier(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('CreateResponse', 'service_tier')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -340,7 +340,7 @@ def _validate_CreateResponse_context_management_item(value: Any, path: str, erro
 
 def _validate_CreateResponse_include_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('CreateResponse', 'include_item')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -382,12 +382,12 @@ def _validate_OpenAI_ServiceTier(value: Any, path: str, errors: list[dict[str, s
     if _literal_error is not None:
         _append_error(errors, path, _literal_error)
         return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_CreateResponse_structured_inputs_additional_property(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -407,12 +407,12 @@ def _validate_OpenAI_ToolChoiceOptions(value: Any, path: str, errors: list[dict[
     if _literal_error is not None:
         _append_error(errors, path, _literal_error)
         return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ToolChoiceParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -429,32 +429,47 @@ def _validate_OpenAI_ToolChoiceParam(value: Any, path: str, errors: list[dict[st
         return
     if _disc_value == 'allowed_tools':
         _validate_OpenAI_ToolChoiceAllowed(value, path, errors)
+        return
     if _disc_value == 'apply_patch':
         _validate_OpenAI_SpecificApplyPatchParam(value, path, errors)
+        return
     if _disc_value == 'code_interpreter':
         _validate_OpenAI_ToolChoiceCodeInterpreter(value, path, errors)
+        return
     if _disc_value == 'computer':
         _validate_OpenAI_ToolChoiceComputer(value, path, errors)
+        return
     if _disc_value == 'computer_use':
         _validate_OpenAI_ToolChoiceComputerUse(value, path, errors)
+        return
     if _disc_value == 'computer_use_preview':
         _validate_OpenAI_ToolChoiceComputerUsePreview(value, path, errors)
+        return
     if _disc_value == 'custom':
         _validate_OpenAI_ToolChoiceCustom(value, path, errors)
+        return
     if _disc_value == 'file_search':
         _validate_OpenAI_ToolChoiceFileSearch(value, path, errors)
+        return
     if _disc_value == 'function':
         _validate_OpenAI_ToolChoiceFunction(value, path, errors)
+        return
     if _disc_value == 'image_generation':
         _validate_OpenAI_ToolChoiceImageGeneration(value, path, errors)
+        return
     if _disc_value == 'mcp':
         _validate_OpenAI_ToolChoiceMCP(value, path, errors)
+        return
     if _disc_value == 'shell':
         _validate_OpenAI_SpecificFunctionShellParam(value, path, errors)
+        return
     if _disc_value == 'web_search_preview':
         _validate_OpenAI_ToolChoiceWebSearchPreview(value, path, errors)
+        return
     if _disc_value == 'web_search_preview_2025_03_11':
         _validate_OpenAI_ToolChoiceWebSearchPreview20250311(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: allowed_tools, apply_patch, code_interpreter, computer, computer_use, computer_use_preview, custom, file_search, function, image_generation, mcp, shell, web_search_preview, web_search_preview_2025_03_11")
 
 def _validate_OpenAI_ToolsArray(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'array'):
@@ -475,19 +490,16 @@ def _validate_OpenAI_ContextManagementParam(value: Any, path: str, errors: list[
         _validate_OpenAI_ContextManagementParam_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_IncludeEnum(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_IncludeEnum_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected IncludeEnum to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('IncludeEnum')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_InputParam_string(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -519,7 +531,7 @@ def _validate_OpenAI_ResponseTextParam_format(value: Any, path: str, errors: lis
 
 def _validate_OpenAI_ResponseTextParam_verbosity(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('ResponseTextParam', 'verbosity')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -527,7 +539,7 @@ def _validate_OpenAI_ResponseTextParam_verbosity(value: Any, path: str, errors: 
 
 def _validate_OpenAI_ToolChoiceParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('ToolChoiceParam', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -689,19 +701,6 @@ def _validate_OpenAI_ContextManagementParam_type(value: Any, path: str, errors: 
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_IncludeEnum_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('IncludeEnum')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_InputParam_array_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_Item(value, path, errors)
 
@@ -719,10 +718,14 @@ def _validate_OpenAI_TextResponseFormatConfiguration(value: Any, path: str, erro
         return
     if _disc_value == 'json_object':
         _validate_OpenAI_TextResponseFormatConfigurationResponseFormatJsonObject(value, path, errors)
+        return
     if _disc_value == 'json_schema':
         _validate_OpenAI_TextResponseFormatJsonSchema(value, path, errors)
+        return
     if _disc_value == 'text':
         _validate_OpenAI_TextResponseFormatConfigurationResponseFormatText(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: json_object, json_schema, text")
 
 def _validate_OpenAI_Verbosity(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if value is None:
@@ -731,28 +734,25 @@ def _validate_OpenAI_Verbosity(value: Any, path: str, errors: list[dict[str, str
     if _literal_error is not None:
         _append_error(errors, path, _literal_error)
         return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ToolChoiceParamType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ToolChoiceParamType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected ToolChoiceParamType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('ToolChoiceParamType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ToolChoiceAllowed_mode(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -911,60 +911,89 @@ def _validate_OpenAI_Tool(value: Any, path: str, errors: list[dict[str, str]]) -
         return
     if _disc_value == 'a2a_preview':
         _validate_A2APreviewTool(value, path, errors)
+        return
     if _disc_value == 'apply_patch':
         _validate_OpenAI_ApplyPatchToolParam(value, path, errors)
+        return
     if _disc_value == 'azure_ai_search':
         _validate_AzureAISearchTool(value, path, errors)
+        return
     if _disc_value == 'azure_function':
         _validate_AzureFunctionTool(value, path, errors)
+        return
     if _disc_value == 'bing_custom_search_preview':
         _validate_BingCustomSearchPreviewTool(value, path, errors)
+        return
     if _disc_value == 'bing_grounding':
         _validate_BingGroundingTool(value, path, errors)
+        return
     if _disc_value == 'browser_automation_preview':
         _validate_BrowserAutomationPreviewTool(value, path, errors)
+        return
     if _disc_value == 'capture_structured_outputs':
         _validate_CaptureStructuredOutputsTool(value, path, errors)
+        return
     if _disc_value == 'code_interpreter':
         _validate_OpenAI_CodeInterpreterTool(value, path, errors)
+        return
     if _disc_value == 'computer':
         _validate_OpenAI_ComputerTool(value, path, errors)
+        return
     if _disc_value == 'computer_use_preview':
         _validate_OpenAI_ComputerUsePreviewTool(value, path, errors)
+        return
     if _disc_value == 'custom':
         _validate_OpenAI_CustomToolParam(value, path, errors)
+        return
     if _disc_value == 'fabric_dataagent_preview':
         _validate_MicrosoftFabricPreviewTool(value, path, errors)
+        return
     if _disc_value == 'file_search':
         _validate_OpenAI_FileSearchTool(value, path, errors)
+        return
     if _disc_value == 'function':
         _validate_OpenAI_FunctionTool(value, path, errors)
+        return
     if _disc_value == 'image_generation':
         _validate_OpenAI_ImageGenTool(value, path, errors)
+        return
     if _disc_value == 'local_shell':
         _validate_OpenAI_LocalShellToolParam(value, path, errors)
+        return
     if _disc_value == 'mcp':
         _validate_OpenAI_MCPTool(value, path, errors)
+        return
     if _disc_value == 'memory_search':
         _validate_MemorySearchTool(value, path, errors)
+        return
     if _disc_value == 'memory_search_preview':
         _validate_MemorySearchPreviewTool(value, path, errors)
+        return
     if _disc_value == 'namespace':
         _validate_OpenAI_NamespaceToolParam(value, path, errors)
+        return
     if _disc_value == 'openapi':
         _validate_OpenApiTool(value, path, errors)
+        return
     if _disc_value == 'sharepoint_grounding_preview':
         _validate_SharepointPreviewTool(value, path, errors)
+        return
     if _disc_value == 'shell':
         _validate_OpenAI_FunctionShellToolParam(value, path, errors)
+        return
     if _disc_value == 'tool_search':
         _validate_OpenAI_ToolSearchToolParam(value, path, errors)
+        return
     if _disc_value == 'web_search':
         _validate_OpenAI_WebSearchTool(value, path, errors)
+        return
     if _disc_value == 'web_search_preview':
         _validate_OpenAI_WebSearchPreviewTool(value, path, errors)
+        return
     if _disc_value == 'work_iq_preview':
         _validate_WorkIQPreviewTool(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: a2a_preview, apply_patch, azure_ai_search, azure_function, bing_custom_search_preview, bing_grounding, browser_automation_preview, capture_structured_outputs, code_interpreter, computer, computer_use_preview, custom, fabric_dataagent_preview, file_search, function, image_generation, local_shell, mcp, memory_search, memory_search_preview, namespace, openapi, sharepoint_grounding_preview, shell, tool_search, web_search, web_search_preview, work_iq_preview")
 
 def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -980,66 +1009,96 @@ def _validate_OpenAI_Item(value: Any, path: str, errors: list[dict[str, str]]) -
         return
     if _disc_value == 'additional_tools':
         _validate_OpenAI_AdditionalToolsItemParam(value, path, errors)
+        return
     if _disc_value == 'apply_patch_call':
         _validate_OpenAI_ApplyPatchToolCallItemParam(value, path, errors)
+        return
     if _disc_value == 'apply_patch_call_output':
         _validate_OpenAI_ApplyPatchToolCallOutputItemParam(value, path, errors)
+        return
     if _disc_value == 'code_interpreter_call':
         _validate_OpenAI_ItemCodeInterpreterToolCall(value, path, errors)
+        return
     if _disc_value == 'compaction':
         _validate_OpenAI_CompactionSummaryItemParam(value, path, errors)
+        return
     if _disc_value == 'computer_call':
         _validate_OpenAI_ItemComputerToolCall(value, path, errors)
+        return
     if _disc_value == 'computer_call_output':
         _validate_OpenAI_ComputerCallOutputItemParam(value, path, errors)
+        return
     if _disc_value == 'custom_tool_call':
         _validate_OpenAI_ItemCustomToolCall(value, path, errors)
+        return
     if _disc_value == 'custom_tool_call_output':
         _validate_OpenAI_ItemCustomToolCallOutput(value, path, errors)
+        return
     if _disc_value == 'file_search_call':
         _validate_OpenAI_ItemFileSearchToolCall(value, path, errors)
+        return
     if _disc_value == 'function_call':
         _validate_OpenAI_ItemFunctionToolCall(value, path, errors)
+        return
     if _disc_value == 'function_call_output':
         _validate_OpenAI_FunctionCallOutputItemParam(value, path, errors)
+        return
     if _disc_value == 'image_generation_call':
         _validate_OpenAI_ItemImageGenToolCall(value, path, errors)
+        return
     if _disc_value == 'item_reference':
         _validate_OpenAI_ItemReferenceParam(value, path, errors)
+        return
     if _disc_value == 'local_shell_call':
         _validate_OpenAI_ItemLocalShellToolCall(value, path, errors)
+        return
     if _disc_value == 'local_shell_call_output':
         _validate_OpenAI_ItemLocalShellToolCallOutput(value, path, errors)
+        return
     if _disc_value == 'mcp_approval_request':
         _validate_OpenAI_ItemMcpApprovalRequest(value, path, errors)
+        return
     if _disc_value == 'mcp_approval_response':
         _validate_OpenAI_MCPApprovalResponse(value, path, errors)
+        return
     if _disc_value == 'mcp_call':
         _validate_OpenAI_ItemMcpToolCall(value, path, errors)
+        return
     if _disc_value == 'mcp_list_tools':
         _validate_OpenAI_ItemMcpListTools(value, path, errors)
+        return
     if _disc_value == 'memory_search_call':
         _validate_MemorySearchToolCallItemParam(value, path, errors)
+        return
     if _disc_value == 'message':
         _validate_OpenAI_ItemMessage(value, path, errors)
+        return
     if _disc_value == 'output_message':
         _validate_OpenAI_ItemOutputMessage(value, path, errors)
+        return
     if _disc_value == 'reasoning':
         _validate_OpenAI_ItemReasoningItem(value, path, errors)
+        return
     if _disc_value == 'shell_call':
         _validate_OpenAI_FunctionShellCallItemParam(value, path, errors)
+        return
     if _disc_value == 'shell_call_output':
         _validate_OpenAI_FunctionShellCallOutputItemParam(value, path, errors)
+        return
     if _disc_value == 'tool_search_call':
         _validate_OpenAI_ToolSearchCallItemParam(value, path, errors)
+        return
     if _disc_value == 'tool_search_output':
         _validate_OpenAI_ToolSearchOutputItemParam(value, path, errors)
+        return
     if _disc_value == 'web_search_call':
         _validate_OpenAI_ItemWebSearchToolCall(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: additional_tools, apply_patch_call, apply_patch_call_output, code_interpreter_call, compaction, computer_call, computer_call_output, custom_tool_call, custom_tool_call_output, file_search_call, function_call, function_call_output, image_generation_call, item_reference, local_shell_call, local_shell_call_output, mcp_approval_request, mcp_approval_response, mcp_call, mcp_list_tools, memory_search_call, message, output_message, reasoning, shell_call, shell_call_output, tool_search_call, tool_search_output, web_search_call")
 
 def _validate_OpenAI_TextResponseFormatConfiguration_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('TextResponseFormatConfiguration', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -1084,19 +1143,6 @@ def _validate_OpenAI_TextResponseFormatConfigurationResponseFormatText(value: An
     if 'type' in value:
         _validate_OpenAI_TextResponseFormatConfigurationResponseFormatText_type(value['type'], f"{path}.type", errors)
 
-def _validate_OpenAI_ToolChoiceParamType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('ToolChoiceParamType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_ToolChoiceAllowed_tools_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -1107,7 +1153,7 @@ def _validate_OpenAI_ToolChoiceAllowed_tools_item(value: Any, path: str, errors:
 
 def _validate_OpenAI_Tool_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('Tool', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -1623,7 +1669,7 @@ def _validate_WorkIQPreviewTool(value: Any, path: str, errors: list[dict[str, st
 
 def _validate_OpenAI_Item_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('Item', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -2269,19 +2315,16 @@ def _validate_OpenAI_ItemWebSearchToolCall(value: Any, path: str, errors: list[d
         _validate_OpenAI_ItemWebSearchToolCall_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_TextResponseFormatConfigurationType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_TextResponseFormatConfigurationType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected TextResponseFormatConfigurationType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('TextResponseFormatConfigurationType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_TextResponseFormatConfigurationResponseFormatJsonObject_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -2322,19 +2365,16 @@ def _validate_OpenAI_TextResponseFormatConfigurationResponseFormatText_type(valu
         return
 
 def _validate_OpenAI_ToolType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ToolType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected ToolType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('ToolType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_A2APreviewTool_agent_card_path(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -2961,19 +3001,16 @@ def _validate_WorkIQPreviewTool_work_iq_preview(value: Any, path: str, errors: l
     return
 
 def _validate_OpenAI_ItemType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ItemType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected ItemType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('ItemType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_AdditionalToolsItemParam_role(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -3723,19 +3760,6 @@ def _validate_OpenAI_ItemWebSearchToolCall_type(value: Any, path: str, errors: l
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_TextResponseFormatConfigurationType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('TextResponseFormatConfigurationType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_ResponseFormatJsonSchemaSchema(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
         _append_type_mismatch(errors, path, 'object', value)
@@ -3743,19 +3767,6 @@ def _validate_OpenAI_ResponseFormatJsonSchemaSchema(value: Any, path: str, error
     for _key, _item in value.items():
         if _key not in ():
             _validate_CreateResponse_structured_inputs_additional_property(_item, f"{path}.{_key}", errors)
-
-def _validate_OpenAI_ToolType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('ToolType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
 
 def _validate_OpenAI_AutoCodeInterpreterToolParam(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -3839,24 +3850,11 @@ def _validate_OpenAI_NamespaceToolParam_tools_item(value: Any, path: str, errors
 
 def _validate_OpenAI_WebSearchPreviewTool_search_content_types_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('WebSearchPreviewTool', 'search_content_types_item')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
     _validate_OpenAI_SearchContentType(value, path, errors)
-
-def _validate_OpenAI_ItemType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('ItemType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
 
 def _validate_OpenAI_ItemCodeInterpreterToolCall_outputs_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _matched_union = False
@@ -3888,22 +3886,32 @@ def _validate_OpenAI_ComputerAction(value: Any, path: str, errors: list[dict[str
         return
     if _disc_value == 'click':
         _validate_OpenAI_ClickParam(value, path, errors)
+        return
     if _disc_value == 'double_click':
         _validate_OpenAI_DoubleClickAction(value, path, errors)
+        return
     if _disc_value == 'drag':
         _validate_OpenAI_DragParam(value, path, errors)
+        return
     if _disc_value == 'keypress':
         _validate_OpenAI_KeyPressAction(value, path, errors)
+        return
     if _disc_value == 'move':
         _validate_OpenAI_MoveParam(value, path, errors)
+        return
     if _disc_value == 'screenshot':
         _validate_OpenAI_ScreenshotParam(value, path, errors)
+        return
     if _disc_value == 'scroll':
         _validate_OpenAI_ScrollParam(value, path, errors)
+        return
     if _disc_value == 'type':
         _validate_OpenAI_TypeParam(value, path, errors)
+        return
     if _disc_value == 'wait':
         _validate_OpenAI_WaitParam(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: click, double_click, drag, keypress, move, screenshot, scroll, type, wait")
 
 def _validate_OpenAI_ComputerActionList(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'array'):
@@ -3982,10 +3990,14 @@ def _validate_OpenAI_RealtimeMCPError(value: Any, path: str, errors: list[dict[s
         return
     if _disc_value == 'http_error':
         _validate_OpenAI_RealtimeMCPHTTPError(value, path, errors)
+        return
     if _disc_value == 'protocol_error':
         _validate_OpenAI_RealtimeMCPProtocolError(value, path, errors)
+        return
     if _disc_value == 'tool_execution_error':
         _validate_OpenAI_RealtimeMCPToolExecutionError(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: http_error, protocol_error, tool_execution_error")
 
 def _validate_OpenAI_ItemMcpListTools_tools_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_MCPListToolsTool(value, path, errors)
@@ -4103,12 +4115,12 @@ def _validate_OpenAI_SearchContentType(value: Any, path: str, errors: list[dict[
     if _literal_error is not None:
         _append_error(errors, path, _literal_error)
         return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_CodeInterpreterOutputLogs(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4139,7 +4151,7 @@ def _validate_OpenAI_CodeInterpreterOutputImage(value: Any, path: str, errors: l
 
 def _validate_OpenAI_ComputerAction_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('ComputerAction', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -4389,7 +4401,7 @@ def _validate_OpenAI_LocalShellExecAction_type(value: Any, path: str, errors: li
 
 def _validate_OpenAI_RealtimeMCPError_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('RealtimeMCPError', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -4485,8 +4497,11 @@ def _validate_OpenAI_OutputMessageContent(value: Any, path: str, errors: list[di
         return
     if _disc_value == 'output_text':
         _validate_OpenAI_OutputMessageContentOutputTextContent(value, path, errors)
+        return
     if _disc_value == 'refusal':
         _validate_OpenAI_OutputMessageContentRefusalContent(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: output_text, refusal")
 
 def _validate_OpenAI_ReasoningTextContent(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -4605,8 +4620,11 @@ def _validate_OpenAI_ContainerNetworkPolicyParam(value: Any, path: str, errors: 
         return
     if _disc_value == 'allowlist':
         _validate_OpenAI_ContainerNetworkPolicyAllowlistParam(value, path, errors)
+        return
     if _disc_value == 'disabled':
         _validate_OpenAI_ContainerNetworkPolicyDisabledParam(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: allowlist, disabled")
 
 def _validate_OpenAI_FunctionToolParam_defer_loading(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'boolean'):
@@ -4653,19 +4671,16 @@ def _validate_OpenAI_CodeInterpreterOutputImage_url(value: Any, path: str, error
         return
 
 def _validate_OpenAI_ComputerActionType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ComputerActionType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected ComputerActionType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('ComputerActionType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ClickParam_button(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4831,10 +4846,14 @@ def _validate_OpenAI_FunctionAndCustomToolCallOutput(value: Any, path: str, erro
         return
     if _disc_value == 'input_file':
         _validate_OpenAI_FunctionAndCustomToolCallOutputInputFileContent(value, path, errors)
+        return
     if _disc_value == 'input_image':
         _validate_OpenAI_FunctionAndCustomToolCallOutputInputImageContent(value, path, errors)
+        return
     if _disc_value == 'input_text':
         _validate_OpenAI_FunctionAndCustomToolCallOutputInputTextContent(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: input_file, input_image, input_text")
 
 def _validate_OpenAI_FileSearchToolCallResults_attributes(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if value is None:
@@ -4896,19 +4915,16 @@ def _validate_OpenAI_InputFileContentParam(value: Any, path: str, errors: list[d
         _validate_OpenAI_InputFileContentParam_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_RealtimeMcpErrorType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_RealtimeMcpErrorType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected RealtimeMcpErrorType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('RealtimeMcpErrorType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_RealtimeMCPHTTPError_code(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -4972,26 +4988,36 @@ def _validate_OpenAI_MessageContent(value: Any, path: str, errors: list[dict[str
         return
     if _disc_value == 'computer_screenshot':
         _validate_OpenAI_ComputerScreenshotContent(value, path, errors)
+        return
     if _disc_value == 'input_file':
         _validate_OpenAI_MessageContentInputFileContent(value, path, errors)
+        return
     if _disc_value == 'input_image':
         _validate_OpenAI_MessageContentInputImageContent(value, path, errors)
+        return
     if _disc_value == 'input_text':
         _validate_OpenAI_MessageContentInputTextContent(value, path, errors)
+        return
     if _disc_value == 'output_text':
         _validate_OpenAI_MessageContentOutputTextContent(value, path, errors)
+        return
     if _disc_value == 'reasoning_text':
         _validate_OpenAI_MessageContentReasoningTextContent(value, path, errors)
+        return
     if _disc_value == 'refusal':
         _validate_OpenAI_MessageContentRefusalContent(value, path, errors)
+        return
     if _disc_value == 'summary_text':
         _validate_OpenAI_SummaryTextContent(value, path, errors)
+        return
     if _disc_value == 'text':
         _validate_OpenAI_TextContent(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: computer_screenshot, input_file, input_image, input_text, output_text, reasoning_text, refusal, summary_text, text")
 
 def _validate_OpenAI_OutputMessageContent_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('OutputMessageContent', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -5075,7 +5101,7 @@ def _validate_OpenAI_WebSearchActionSearch_sources_item(value: Any, path: str, e
 
 def _validate_OpenAI_ContainerNetworkPolicyParam_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('ContainerNetworkPolicyParam', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -5103,25 +5129,12 @@ def _validate_OpenAI_ContainerNetworkPolicyDisabledParam(value: Any, path: str, 
     if 'type' in value:
         _validate_OpenAI_ContainerNetworkPolicyDisabledParam_type(value['type'], f"{path}.type", errors)
 
-def _validate_OpenAI_ComputerActionType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('ComputerActionType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_DragParam_path_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_CoordParam(value, path, errors)
 
 def _validate_OpenAI_FunctionAndCustomToolCallOutput_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('FunctionAndCustomToolCallOutput', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -5219,22 +5232,9 @@ def _validate_OpenAI_InputFileContentParam_type(value: Any, path: str, errors: l
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_RealtimeMcpErrorType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('RealtimeMcpErrorType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_MessageContent_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('MessageContent', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -5369,19 +5369,16 @@ def _validate_OpenAI_TextContent(value: Any, path: str, errors: list[dict[str, s
         _validate_OpenAI_TextContent_type(value['type'], f"{path}.type", errors)
 
 def _validate_OpenAI_OutputMessageContentType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_OutputMessageContentType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected OutputMessageContentType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('OutputMessageContentType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_OutputMessageContentOutputTextContent_annotations(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5438,19 +5435,16 @@ def _validate_OpenAI_WebSearchActionSearchSources(value: Any, path: str, errors:
         _validate_OpenAI_WebSearchActionSearchSources_url(value['url'], f"{path}.url", errors)
 
 def _validate_OpenAI_ContainerNetworkPolicyParamType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_ContainerNetworkPolicyParamType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected ContainerNetworkPolicyParamType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('ContainerNetworkPolicyParamType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ContainerNetworkPolicyAllowlistParam_allowed_domains(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5490,19 +5484,16 @@ def _validate_OpenAI_CoordParam(value: Any, path: str, errors: list[dict[str, st
         _validate_OpenAI_CoordParam_y(value['y'], f"{path}.y", errors)
 
 def _validate_OpenAI_FunctionAndCustomToolCallOutputType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_FunctionAndCustomToolCallOutputType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected FunctionAndCustomToolCallOutputType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('FunctionAndCustomToolCallOutputType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_FunctionAndCustomToolCallOutputInputFileContent_file_data(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5529,19 +5520,16 @@ def _validate_OpenAI_FunctionAndCustomToolCallOutputInputTextContent_text(value:
         return
 
 def _validate_OpenAI_MessageContentType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_MessageContentType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected MessageContentType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('MessageContentType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ComputerScreenshotContent_detail(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5567,19 +5555,6 @@ def _validate_OpenAI_TextContent_type(value: Any, path: str, errors: list[dict[s
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_OutputMessageContentType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('OutputMessageContentType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_OutputMessageContentOutputTextContent_annotations_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_Annotation(value, path, errors)
 
@@ -5599,19 +5574,6 @@ def _validate_OpenAI_WebSearchActionSearchSources_url(value: Any, path: str, err
         _append_type_mismatch(errors, path, 'string', value)
         return
 
-def _validate_OpenAI_ContainerNetworkPolicyParamType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('ContainerNetworkPolicyParamType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
 def _validate_OpenAI_CoordParam_x(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'integer'):
         _append_type_mismatch(errors, path, 'integer', value)
@@ -5620,32 +5582,6 @@ def _validate_OpenAI_CoordParam_x(value: Any, path: str, errors: list[dict[str, 
 def _validate_OpenAI_CoordParam_y(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'integer'):
         _append_type_mismatch(errors, path, 'integer', value)
-        return
-
-def _validate_OpenAI_FunctionAndCustomToolCallOutputType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('FunctionAndCustomToolCallOutputType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
-
-def _validate_OpenAI_MessageContentType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('MessageContentType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
         return
 
 def _validate_OpenAI_Annotation(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5662,12 +5598,17 @@ def _validate_OpenAI_Annotation(value: Any, path: str, errors: list[dict[str, st
         return
     if _disc_value == 'container_file_citation':
         _validate_OpenAI_ContainerFileCitationBody(value, path, errors)
+        return
     if _disc_value == 'file_citation':
         _validate_OpenAI_FileCitationBody(value, path, errors)
+        return
     if _disc_value == 'file_path':
         _validate_OpenAI_FilePath(value, path, errors)
+        return
     if _disc_value == 'url_citation':
         _validate_OpenAI_UrlCitationBody(value, path, errors)
+        return
+    _append_error(errors, f"{path}.type", f"Invalid discriminator '{_disc_value}'. Allowed: container_file_citation, file_citation, file_path, url_citation")
 
 def _validate_OpenAI_LogProb(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):
@@ -5692,7 +5633,7 @@ def _validate_OpenAI_LogProb(value: Any, path: str, errors: list[dict[str, str]]
 
 def _validate_OpenAI_Annotation_type(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _allowed_values = _field_literal_values('Annotation', 'type')
-    if _allowed_values is not None:
+    if _allowed_values is not None and value is not None:
         if value not in _allowed_values:
             _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
         return
@@ -5810,19 +5751,16 @@ def _validate_OpenAI_LogProb_top_logprobs(value: Any, path: str, errors: list[di
         _validate_OpenAI_LogProb_top_logprobs_item(_item, f"{path}[{_idx}]", errors)
 
 def _validate_OpenAI_AnnotationType(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _matched_union = False
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_0: list[dict[str, str]] = []
-        _validate_OpenAI_InputParam_string(value, path, _branch_errors_0)
-        if not _branch_errors_0:
-            _matched_union = True
-    if not _matched_union and _is_type(value, 'string'):
-        _branch_errors_1: list[dict[str, str]] = []
-        _validate_OpenAI_AnnotationType_2(value, path, _branch_errors_1)
-        if not _branch_errors_1:
-            _matched_union = True
-    if not _matched_union:
-        _append_error(errors, path, f"Expected AnnotationType to be a string value, got {_type_label(value)}")
+    _allowed_values, _literal_error = _schema_literal_values('AnnotationType')
+    if _literal_error is not None:
+        _append_error(errors, path, _literal_error)
+        return
+    if _allowed_values is not None:
+        if value not in _allowed_values:
+            _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
+        if not _is_type(value, 'string'):
+            _append_type_mismatch(errors, path, 'string', value)
+            return
         return
 
 def _validate_OpenAI_ContainerFileCitationBody_container_id(value: Any, path: str, errors: list[dict[str, str]]) -> None:
@@ -5914,19 +5852,6 @@ def _validate_OpenAI_UrlCitationBody_url(value: Any, path: str, errors: list[dic
 
 def _validate_OpenAI_LogProb_top_logprobs_item(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     _validate_OpenAI_TopLogProb(value, path, errors)
-
-def _validate_OpenAI_AnnotationType_2(value: Any, path: str, errors: list[dict[str, str]]) -> None:
-    _allowed_values, _literal_error = _schema_literal_values('AnnotationType')
-    if _literal_error is not None:
-        _append_error(errors, path, _literal_error)
-        return
-    if _allowed_values is None:
-        return
-    if value not in _allowed_values:
-        _append_error(errors, path, f"Invalid value '{value}'. Allowed: {', '.join(str(v) for v in _allowed_values)}")
-    if not _is_type(value, 'string'):
-        _append_type_mismatch(errors, path, 'string', value)
-        return
 
 def _validate_OpenAI_TopLogProb(value: Any, path: str, errors: list[dict[str, str]]) -> None:
     if not _is_type(value, 'object'):

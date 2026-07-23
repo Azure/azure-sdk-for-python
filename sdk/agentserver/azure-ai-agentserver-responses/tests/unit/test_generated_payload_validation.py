@@ -60,6 +60,17 @@ def test_generated_create_response_validator_accepts_scale_service_tier() -> Non
     assert errors == []
 
 
+def test_generated_create_response_validator_accepts_nullable_literal_fields() -> None:
+    errors = validate_create_response_payload(
+        {
+            "input": "hello world",
+            "service_tier": None,
+            "text": {"verbosity": None},
+        }
+    )
+    assert errors == []
+
+
 def test_generated_create_response_validator_rejects_unknown_service_tier() -> None:
     errors = validate_create_response_payload({"input": "hello world", "service_tier": "unknown"})
     assert any(
@@ -86,6 +97,20 @@ def test_generated_create_response_validator_rejects_input_item_missing_type() -
 def test_generated_create_response_validator_rejects_input_item_type_with_wrong_primitive() -> None:
     errors = validate_create_response_payload({"input": [{"type": 1}]})
     assert any(e["path"] == "$.input" and "Expected one of: string, array" in e["message"] for e in errors)
+
+
+@pytest.mark.parametrize(
+    "payload,path",
+    [
+        ({"include": ["not_an_include"]}, "$.include[0]"),
+        ({"input": [{"type": "not_an_item"}]}, "$.input"),
+        ({"tool_choice": {"type": "not_a_tool_choice"}}, "$.tool_choice"),
+        ({"text": {"format": {"type": "not_a_format"}}}, "$.text.format.type"),
+    ],
+)
+def test_generated_create_response_validator_rejects_invalid_literal_values(payload: dict, path: str) -> None:
+    errors = validate_create_response_payload(payload)
+    assert any(e["path"] == path for e in errors)
 
 
 # Minimal valid payloads per item type, satisfying each schema's required fields.

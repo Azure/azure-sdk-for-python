@@ -148,9 +148,13 @@ endif
 ifeq ($(OS),Windows_NT)
 clean:
 	@if exist "$(OUTPUT_DIR)" rmdir /s /q "$(OUTPUT_DIR)"
+	@if exist "$(VALIDATORS_OUTPUT)" del /q "$(VALIDATORS_OUTPUT)"
+	@if exist "$(TEMP_OUTPUT_DIR)" rmdir /s /q "$(TEMP_OUTPUT_DIR)"
 else
 clean:
 	rm -rf $(OUTPUT_DIR)
+	rm -f $(VALIDATORS_OUTPUT)
+	rm -rf $(TEMP_OUTPUT_DIR)
 endif
 
 # --------------------------------------------------------------------------

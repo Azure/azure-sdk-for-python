@@ -308,7 +308,7 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                         indent,
                         f"_allowed_values = _field_literal_values({type_name!r}, {field_name!r})",
                     )
-                    emit_line(block, indent, "if _allowed_values is not None:")
+                    emit_line(block, indent, f"if _allowed_values is not None and {value_expr} is not None:")
                     emit_line(block, indent + 1, f"if {value_expr} not in _allowed_values:")
                     emit_line(
                         block,
@@ -321,6 +321,36 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 fn = ensure_schema_function(ref_name)
                 emit_line(block, indent, f"{fn}({value_expr}, {path_expr}, {errors_expr})")
             return
+
+        if is_enum_like_schema(schema) and schema_name_hint and schema_name_hint in ordered_schemas:
+            literal_alias_name = schema_name_hint.rsplit(".", 1)[-1]
+            if literal_alias_name and literal_alias_name[0].isalpha():
+                emit_line(
+                    block,
+                    indent,
+                    f"_allowed_values, _literal_error = _schema_literal_values({literal_alias_name!r})",
+                )
+                emit_line(block, indent, "if _literal_error is not None:")
+                emit_line(block, indent + 1, f"_append_error({errors_expr}, {path_expr}, _literal_error)")
+                emit_line(block, indent + 1, "return")
+                emit_line(block, indent, "if _allowed_values is not None:")
+                emit_line(block, indent + 1, f"if {value_expr} not in _allowed_values:")
+                emit_line(
+                    block,
+                    indent + 2,
+                    f"_append_error({errors_expr}, {path_expr}, "
+                    f"f\"Invalid value '{{{value_expr}}}'. "
+                    f"Allowed: {{', '.join(str(v) for v in _allowed_values)}}\")",
+                )
+                emit_line(block, indent + 1, f"if not _is_type({value_expr}, 'string'):")
+                emit_line(
+                    block,
+                    indent + 2,
+                    f"_append_type_mismatch({errors_expr}, {path_expr}, 'string', {value_expr})",
+                )
+                emit_line(block, indent + 2, "return")
+                emit_line(block, indent + 1, "return")
+                return
 
         if "enum" in schema:
             allowed = tuple(schema.get("enum", []))
@@ -476,6 +506,15 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     ref_fn = ensure_schema_function(ref_name)
                     emit_line(block, indent, f"if _disc_value == {disc_value!r}:")
                     emit_line(block, indent + 1, f"{ref_fn}({value_expr}, {path_expr}, {errors_expr})")
+                    emit_line(block, indent + 1, "return")
+                allowed_disc_values = tuple(sorted(str(value) for value in mapping if isinstance(value, str)))
+                emit_line(
+                    block,
+                    indent,
+                    f"_append_error({errors_expr}, f\"{{{path_expr}}}.{prop}\", "
+                    f"f\"Invalid discriminator '{{_disc_value}}'. "
+                    f"Allowed: {', '.join(allowed_disc_values)}\")",
+                )
 
     rendered_blocks: dict[str, list[str]] = {}
     idx = 0

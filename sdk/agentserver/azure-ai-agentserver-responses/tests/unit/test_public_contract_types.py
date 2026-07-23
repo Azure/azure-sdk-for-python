@@ -91,6 +91,12 @@ def test_generated_union_aliases_are_publicly_exported() -> None:
         assert hasattr(models, name)
 
 
+def test_generated_literal_aliases_are_publicly_exported() -> None:
+    for name in ("AnnotationType", "IncludeEnum", "ServiceTierEnum", "ToolChoiceOptions"):
+        assert name in models.__all__
+        assert hasattr(models, name)
+
+
 def test_create_response_accepts_function_call_input_without_id() -> None:
     request: CreateResponse = {
         "model": "test-model",
