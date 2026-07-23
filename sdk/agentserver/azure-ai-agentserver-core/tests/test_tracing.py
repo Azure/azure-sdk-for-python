@@ -243,6 +243,60 @@ class TestSetupDistroExport:
                 assert distro_globals["is_otlp_enabled"]()
                 assert os.environ["OTEL_EXPORTER_OTLP_PROTOCOL"] == "grpc"
 
+    def test_suppressing_distro_otlp_prevents_duplicate_http_and_console_exporters(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        configured_kwargs = []
+
+        def capture_setup(_resource, otel_kwargs):
+            configured_kwargs.append(otel_kwargs)
+            return None
+
+        with (
+            mock.patch.dict(
+                os.environ,
+                {
+                    "OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4317",
+                    "OTEL_EXPORTER_OTLP_PROTOCOL": "grpc",
+                },
+            ),
+            mock.patch.dict(
+                distro_globals,
+                {
+                    "_setup_tracing": capture_setup,
+                    "_setup_metrics": capture_setup,
+                    "_setup_logging": capture_setup,
+                    "_setup_instrumentations": lambda *_args, **_kwargs: None,
+                    "_initialize_sdkstats": lambda _enable_azure_monitor: None,
+                },
+            ),
+        ):
+            with _tracing._suppress_distro_otlp_components():
+                use_microsoft_opentelemetry()
+
+        exporter_modules = []
+        for otel_kwargs in configured_kwargs:
+            exporter_modules.extend(
+                getattr(processor.span_exporter, "__module__", "")
+                for processor in otel_kwargs.get("span_processors") or []
+            )
+            exporter_modules.extend(
+                getattr(reader._exporter, "__module__", "")
+                for reader in otel_kwargs.get("metric_readers") or []
+            )
+            exporter_modules.extend(
+                getattr(processor._batch_processor._exporter, "__module__", "")
+                for processor in otel_kwargs.get("log_record_processors") or []
+            )
+
+        assert len(configured_kwargs) == 3
+        assert not any(module.startswith("opentelemetry.exporter.otlp.proto.http") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk.trace.export") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk.metrics.export") for module in exporter_modules)
+        assert not any(module.startswith("opentelemetry.sdk._logs.export") for module in exporter_modules)
+
 
 # ------------------------------------------------------------------ #
 # Constructor passes / skips connection string
