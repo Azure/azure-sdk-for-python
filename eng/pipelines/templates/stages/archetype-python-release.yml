@@ -191,10 +191,9 @@ stages:
                             Get-ChildItem $esrpDirectory
                           displayName: Isolate files for ESRP Publish
 
-                        # TEMP: disabled to avoid accidental ESRP publish during testing — re-enable before release
-                        # - template: /eng/pipelines/templates/steps/esrp-publish.yml
-                        #   parameters:
-                        #     targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
+                        - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                          parameters:
+                            targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
