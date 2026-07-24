@@ -850,6 +850,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         timeout = kwargs.pop("timeout", None)
         response_format = kwargs.pop("response_format", "xml")
         use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
             try:
                 import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
@@ -906,6 +908,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if response_format is set to "arrow".
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -925,6 +930,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         timeout = kwargs.pop("timeout", None)
         response_format = kwargs.pop("response_format", "xml")
         use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
             try:
                 import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import
@@ -1019,6 +1026,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         timeout = kwargs.pop("timeout", None)
         response_format = kwargs.pop("response_format", "xml")
         use_arrow = response_format == "arrow"
+        if kwargs.get("end_before") is not None and not use_arrow:
+            raise ValueError("'end_before' is only supported when using arrow response format.")
         if use_arrow:
             try:
                 import nanoarrow  # pylint: disable=import-outside-toplevel,unused-import

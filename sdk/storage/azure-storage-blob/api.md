@@ -1779,6 +1779,7 @@ namespace azure.storage.blob
         def list_blob_names(
                 self, 
                 *, 
+                end_before: Optional[str] = ..., 
                 name_starts_with: Optional[str] = ..., 
                 response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
@@ -4430,6 +4431,7 @@ namespace azure.storage.blob.aio
         def list_blob_names(
                 self, 
                 *, 
+                end_before: Optional[str] = ..., 
                 name_starts_with: Optional[str] = ..., 
                 response_format: Literal[auto, xml, arrow] = ..., 
                 results_per_page: Optional[int] = ..., 
