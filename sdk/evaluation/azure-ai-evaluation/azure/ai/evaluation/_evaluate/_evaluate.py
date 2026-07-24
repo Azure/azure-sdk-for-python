@@ -1391,9 +1391,7 @@ def emit_eval_result_events_to_app_insights(
         return
 
     exporter_options = _get_app_insights_exporter_options(app_insights_config)
-    use_entra_authentication = (
-        app_insights_config.get("credential_type") == "ProjectManagedIdentity"
-    )
+    use_entra_authentication = app_insights_config.get("credential_type") == "ProjectManagedIdentity"
 
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
@@ -1426,16 +1424,12 @@ def emit_eval_result_events_to_app_insights(
         export_result_tracker: Optional["_ExportResultTrackingLogExporter"] = None
         log_exporter: Any = azure_log_exporter
         if use_entra_authentication:
-            export_result_tracker = _ExportResultTrackingLogExporter(
-                azure_log_exporter, LogExportResult.FAILURE
-            )
+            export_result_tracker = _ExportResultTrackingLogExporter(azure_log_exporter, LogExportResult.FAILURE)
             log_exporter = export_result_tracker
 
         # Add the Azure Monitor exporter to the logger provider
         # Set export_timeout_millis to prevent individual batch exports from hanging
-        logger_provider.add_log_record_processor(
-            BatchLogRecordProcessor(log_exporter, export_timeout_millis=60000)
-        )
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter, export_timeout_millis=60000))
 
         # Create event logger
         event_provider = EventLoggerProvider(logger_provider)
@@ -1544,22 +1538,16 @@ class _ExportResultTrackingLogExporter:  # pylint: disable=too-few-public-method
 def _get_app_insights_exporter_options(
     app_insights_config: AppInsightsConfig,
 ) -> Dict[str, Any]:
-    exporter_options: Dict[str, Any] = {
-        "connection_string": app_insights_config["connection_string"]
-    }
+    exporter_options: Dict[str, Any] = {"connection_string": app_insights_config["connection_string"]}
     credential_type = app_insights_config.get("credential_type")
     if credential_type is None or credential_type == "ApiKey":
         return exporter_options
     if credential_type != "ProjectManagedIdentity":
-        raise ValueError(
-            f"Unsupported App Insights credential type: {credential_type}."
-        )
+        raise ValueError(f"Unsupported App Insights credential type: {credential_type}.")
 
     credential = app_insights_config.get("credential")
     if credential is None:
-        raise ValueError(
-            "App Insights ProjectManagedIdentity authentication requires a TokenCredential."
-        )
+        raise ValueError("App Insights ProjectManagedIdentity authentication requires a TokenCredential.")
     exporter_options["credential"] = _AzureMonitorScopedCredential(credential)
     exporter_options["credential_scopes"] = [AZURE_MONITOR_SCOPE]
     return exporter_options
