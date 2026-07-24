@@ -16,7 +16,7 @@ from azure.mgmt.chaos import ChaosManagementClient
     pip install azure-identity
     pip install azure-mgmt-chaos
 # USAGE
-    python scenario_configurations_create_or_update_with_physical_zones.py
+    python connections_create_or_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,29 +31,22 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.scenario_configurations.begin_create_or_update(
+    response = client.connections.create_or_update(
         resource_group_name="exampleRG",
         workspace_name="exampleWorkspace",
-        scenario_name="12345678-1234-1234-1234-123456789012",
-        scenario_configuration_name="config-physical-zone",
+        connection_name="aksClusterConnection",
         resource={
             "properties": {
-                "parameters": [{"key": "duration", "value": "PT10M"}],
-                "resourceTargeting": {
-                    "exclude": {
-                        "resources": [
-                            "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Compute/virtualMachines/protectedVM"
-                        ]
-                    },
-                    "include": {"physicalZones": ["westus2-az1"]},
-                },
-                "scenarioId": "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.Chaos/workspaces/exampleWorkspace/scenarios/12345678-1234-1234-1234-123456789012",
+                "kind": "AksExtension",
+                "principalId": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+                "targetResourceId": "/subscriptions/6b052e15-03d3-4f17-b2e1-be7f07588291/resourceGroups/exampleRG/providers/Microsoft.ContainerService/managedClusters/exampleCluster",
+                "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
             }
         },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-08-01-preview/ScenarioConfigurations_CreateOrUpdate_With_Physical_Zones.json
+# x-ms-original-file: 2026-08-01-preview/Connections_CreateOrUpdate.json
 if __name__ == "__main__":
     main()

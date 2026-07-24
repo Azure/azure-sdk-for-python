@@ -1,5 +1,52 @@
 # Release History
 
+## 3.0.0b2 (2026-07-24)
+
+### Features Added
+
+  - Client `ChaosManagementClient` added operation group `connections`
+  - Model `PermissionError` added property `error_message`
+  - Model `ScenarioConfigurationProperties` added property `resource_targeting`
+  - Model `ScenarioRunProperties` added property `excluded_resources`
+  - Model `ScenarioRunProperties` added property `resource_snapshot_id`
+  - Model `ValidationProperties` added property `excluded_resources`
+  - Model `ValidationProperties` added property `resources`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_cancelled`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_failed`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_evaluated_succeeded`
+  - Model `WorkspaceEvaluationProperties` added property `num_templates_to_evaluate`
+  - Model `WorkspaceEvaluationProperties` added property `resource_snapshot_id`
+  - Added model `Connection`
+  - Added enum `ConnectionKind`
+  - Added model `ConnectionProperties`
+  - Added enum `ConnectionStatus`
+  - Added model `ResourceTargeting`
+  - Added model `ResourceTargetingCriteria`
+  - Added model `TemplateEvaluationResultItem`
+  - Added model `WorkspaceDiscovery`
+  - Added model `WorkspaceDiscoveryProperties`
+  - Added enum `WorkspaceDiscoveryStatus`
+  - Model `ScenarioConfigurationsOperations` added method `begin_execute`
+  - Model `ScenarioRunsOperations` added method `begin_cancel`
+  - Model `WorkspacesOperations` added method `begin_discover`
+  - Model `WorkspacesOperations` added method `begin_evaluate`
+  - Added operation group `ConnectionsOperations`
+
+### Breaking Changes
+
+  - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `exclusions`
+  - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `filters`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_cancelled`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_failed`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_succeeded`
+  - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_to_evaluate`
+  - Deleted or renamed model `ConfigurationExclusions`
+  - Deleted or renamed model `ConfigurationFilters`
+  - Deleted or renamed model `ScenarioEvaluationResultItem`
+  - Deleted or renamed method `ScenarioConfigurationsOperations.execute`
+  - Deleted or renamed method `ScenarioRunsOperations.cancel`
+  - Deleted or renamed method `WorkspacesOperations.begin_refresh_recommendations`
+
 ## 3.0.0b1 (2026-05-06)
 
 ### Features Added
