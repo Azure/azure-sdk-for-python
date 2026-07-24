@@ -33,8 +33,8 @@
   - Added model `StorageSanConfig`
   - Added enum `StorageType`
   - Added enum `VolumeType`
-  - Model `UpdatesOperations` added method `begin_prepare`
-  - Added model `UpdateSummariesOperationGroupOperations`
+  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Added operation group `UpdateSummariesOperationGroupOperations`
 
 ## 8.1.0b1 (2026-04-13)
 
