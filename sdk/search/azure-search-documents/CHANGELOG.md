@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-- Regenerated from the `2026-04-01` API version at spec commit `18ebae7ea8f6aefd83268aacdb1f480b24842726`. No changes to the public API surface.
+- Updated the pinned TypeSpec spec commit to `18ebae7ea8f6aefd83268aacdb1f480b24842726` and regenerated the `2026-04-01` API version. The new spec content is gated to the `2026-05-01-preview` API version, which this package does not target, so the generated `2026-04-01` client surface is unchanged.
 
 ## 12.0.0 (2026-04-01)
 
