@@ -1,0 +1,13 @@
+directory: specification/ai-foundry/data-plane/Foundry/src/sdk-python-azure-ai-voice-agents
+commit: <replace with your value>
+repo: <replace with your value>
+additionalDirectories: 
+- specification/ai-foundry/data-plane/Foundry/src/agents
+- specification/ai-foundry/data-plane/Foundry/src/common
+- specification/ai-foundry/data-plane/Foundry/src/memory-stores
+- specification/ai-foundry/data-plane/Foundry/src/openai/responses
+- specification/ai-foundry/data-plane/Foundry/src/sdk-common
+- specification/ai-foundry/data-plane/Foundry/src/skills
+- specification/ai-foundry/data-plane/Foundry/src/tools
+- specification/ai-foundry/data-plane/Foundry/src/toolboxes
+- specification/ai-foundry/data-plane/Foundry/src/voice-agents
