@@ -1,5 +1,11 @@
 # Release History
 
+## 12.1.0 (Unreleased)
+
+### Other Changes
+
+- Updated the pinned TypeSpec spec commit to `18ebae7ea8f6aefd83268aacdb1f480b24842726` and regenerated the `2026-04-01` API version. The new spec content is gated to the `2026-05-01-preview` API version, which this package does not target, so the generated `2026-04-01` client surface is unchanged.
+
 ## 12.0.0 (2026-04-01)
 
 ### Features Added
