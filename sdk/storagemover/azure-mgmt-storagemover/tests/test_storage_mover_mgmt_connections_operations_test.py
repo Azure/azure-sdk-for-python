@@ -51,6 +51,7 @@ class TestStorageMoverMgmtConnectionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_get_list_update_delete(self, resource_group):

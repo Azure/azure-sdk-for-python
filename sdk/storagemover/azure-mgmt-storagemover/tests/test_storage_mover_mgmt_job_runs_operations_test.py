@@ -97,6 +97,7 @@ class TestStorageMoverMgmtJobRunsOperations(AzureMgmtRecordedTestCase):
     # cannot create one, so we cover the equivalent read paths: list returns an empty
     # page, and get on an unknown name raises ResourceNotFoundError.
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_exist(self, resource_group):

@@ -29,6 +29,7 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_update_get_exists(self, resource_group):
@@ -70,6 +71,7 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         with pytest.raises(ResourceNotFoundError):
             await self.client.storage_movers.get(resource_group_name=rg, storage_mover_name=sm_name + "111")
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_get_storage_mover(self, resource_group):
@@ -91,11 +93,12 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         assert fetched1.id == fetched2.id == created.id
         assert fetched1.tags == fetched2.tags
 
-    @pytest.mark.skip(reason="Agents cannot be created by the RP; this test requires a registered agent VM.")
+    @pytest.mark.live_test_only
     @pytest.mark.asyncio
     async def test_get_storage_mover_agent(self):
         pass
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_get_storage_mover_endpoint(self, resource_group):
@@ -129,6 +132,7 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         assert endpoint.name == endpoint_name
         assert endpoint.properties.endpoint_type == "AzureStorageBlobContainer"
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_get_storage_mover_project(self, resource_group):
@@ -155,6 +159,7 @@ class TestStorageMoverMgmtStorageMoversOperationsAsync(AzureMgmtRecordedTestCase
         )
         assert project.name == project_name
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_update_add_set_remove_tag_delete(self, resource_group):

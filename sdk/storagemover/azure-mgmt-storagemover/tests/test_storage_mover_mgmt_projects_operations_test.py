@@ -32,6 +32,7 @@ class TestStorageMoverMgmtProjectsOperations(AzureMgmtRecordedTestCase):
 
     # ----- ProjectCollectionTests.CreateGetExistsTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_get_exists(self, resource_group):
@@ -86,6 +87,7 @@ class TestStorageMoverMgmtProjectsOperations(AzureMgmtRecordedTestCase):
 
     # ----- ProjectResourceTests.GetUpdateDeleteTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_update_delete(self, resource_group):

@@ -30,6 +30,7 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
     # ----- StorageMoverCollectionTests.CreateUpdateGetExistsTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_update_get_exists(self, resource_group):
@@ -76,6 +77,7 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
     # ----- StorageMoverResourceTests.GetStorageMoverTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_storage_mover(self, resource_group):
@@ -100,12 +102,13 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
     # ----- StorageMoverResourceTests.GetStorageMoverAgentTest -----
     # SKIP: agents cannot be created via RP — they are registered by an actual agent VM.
 
-    @pytest.mark.skip(reason="Agents cannot be created by the RP; this test requires a registered agent VM.")
+    @pytest.mark.live_test_only
     def test_get_storage_mover_agent(self):
         pass
 
     # ----- StorageMoverResourceTests.GetStorageMoverEndpointTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_storage_mover_endpoint(self, resource_group):
@@ -141,6 +144,7 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
     # ----- StorageMoverResourceTests.GetStorageMoverProjectTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_storage_mover_project(self, resource_group):
@@ -169,6 +173,7 @@ class TestStorageMoverMgmtStorageMoversOperations(AzureMgmtRecordedTestCase):
 
     # ----- StorageMoverResourceTests.UpdateAddSetRemoveTagDeleteTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_update_add_set_remove_tag_delete(self, resource_group):

@@ -71,6 +71,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     # ----- EndpointTests.CreateUpdateGetDeleteTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_update_get_delete(self, resource_group):
@@ -225,6 +226,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     # ----- EndpointTests.MultiCloudConnectorEndpointCreateGetDeleteTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_multi_cloud_connector_create_get_delete(self, resource_group):
@@ -271,6 +273,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
     # available for recording"). It is included here for parity; the request uses
     # placeholder URIs/credentials, so the RP may reject them when run live.
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_s3_with_hmac_create_get_delete(self, resource_group):
@@ -331,6 +334,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     # ----- valid-EndpointKind tests -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_nfs_mount_kind_source(self, resource_group):
@@ -356,6 +360,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Source"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_smb_mount_kind_source(self, resource_group):
@@ -381,6 +386,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Source"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_multi_cloud_connector_kind_source(self, resource_group):
@@ -406,6 +412,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Source"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_blob_container_kind_source(self, resource_group):
@@ -431,6 +438,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Source"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_blob_container_kind_target(self, resource_group):
@@ -456,6 +464,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Target"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_smb_file_share_kind_target(self, resource_group):
@@ -481,6 +490,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
         assert endpoint.properties.endpoint_kind == "Target"
         await self._delete_endpoint(rg, sm_name, endpoint_name)
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_nfs_file_share_kind_target(self, resource_group):
@@ -508,6 +518,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     # ----- invalid-EndpointKind tests -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_nfs_mount_kind_target_fails(self, resource_group):
@@ -530,6 +541,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
             )
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_smb_mount_kind_target_fails(self, resource_group):
@@ -552,6 +564,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
             )
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_multi_cloud_connector_kind_target_fails(self, resource_group):
@@ -574,6 +587,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
             )
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_smb_file_share_kind_source_fails(self, resource_group):
@@ -596,6 +610,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
                 },
             )
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_nfs_file_share_kind_source_fails(self, resource_group):
@@ -620,6 +635,7 @@ class TestStorageMoverMgmtEndpointsOperationsAsync(AzureMgmtRecordedTestCase):
 
     # ----- EndpointTests.NfsFileShareEndpointCreateGetDeleteTest -----
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_nfs_file_share_create_get_delete(self, resource_group):

@@ -149,6 +149,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
     # ----- JobDefinitionJobRunTests.JobDefinitionJobRunTest (matrix row #10) -----
     # See the sync sibling for full rationale + design notes.
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy_async
     async def test_job_definition_job_run(self, resource_group, **kwargs):
@@ -362,6 +363,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
         return variables
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_with_weekly_schedule(self, resource_group, **kwargs):
@@ -427,6 +429,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
         return variables
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_with_daily_schedule_and_preserve_permissions(self, resource_group, **kwargs):
@@ -482,6 +485,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
 
         return variables
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_with_onetime_schedule(self, resource_group, **kwargs):
@@ -536,6 +540,7 @@ class TestStorageMoverMgmtJobDefinitionsOperationsAsync(AzureMgmtRecordedTestCas
     # See the sync sibling file for the full step-by-step description; this is the
     # async mirror.
 
+    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy_async
     async def test_start_c2c_job_with_private_source(self, resource_group, **kwargs):

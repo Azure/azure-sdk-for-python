@@ -49,7 +49,7 @@ class TestStorageMoverMgmtAgentsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
 
-    @pytest.mark.skip(reason="Requires a registered agent VM; agents cannot be created via the RP. Live-only test.")
+    @pytest.mark.live_test_only
     @recorded_by_proxy
     def test_agents_get_list_update(self):
         agent = self.client.agents.get(
