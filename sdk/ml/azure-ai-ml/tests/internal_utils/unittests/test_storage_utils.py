@@ -267,7 +267,10 @@ class TestStorageUtils:
             return_value="mocksasuri",
         ), patch(
             "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset",
-            return_value={"properties": {}},
+            return_value={
+                "id": "azureml://registries/test_registry_name/environments/name/versions/16",
+                "properties": {},
+            },
         ):
             mock_environment_operation.create_or_update(environment)
             mock_thing.assert_called_once_with(
