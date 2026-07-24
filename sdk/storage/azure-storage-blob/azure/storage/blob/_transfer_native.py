@@ -12,9 +12,10 @@ extension is installed and conditions are met, transfers are dispatched to the R
 backend for improved performance.
 """
 
-from typing import Any, Dict, Iterator, Optional, TYPE_CHECKING
+from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TYPE_CHECKING
 
 import logging
+import threading
 
 if TYPE_CHECKING:
     from ._shared.models import StorageConfiguration
@@ -34,21 +35,38 @@ def _is_native_available() -> bool:
         return False
 
 
-def _extract_access_token(credential: Any) -> Optional[str]:
-    """Extract an OAuth access token from a TokenCredential.
+def _build_token_provider(credential: Any) -> Optional[Callable[[Any], Tuple[str, int]]]:
+    """Build a token-provider callable for the native extension.
 
-    Returns the token string if the credential supports get_token(),
-    or None if it doesn't (e.g. shared key, SAS credential).
+    The native extension refreshes tokens on demand by calling back into Python
+    rather than caching a single token string. This returns a callable with the
+    signature ``provider(scopes) -> (token, expires_on)`` (``expires_on`` is a Unix
+    timestamp in seconds), or ``None`` if the credential doesn't use OAuth tokens
+    (e.g. shared key or SAS — those authenticate via the URL).
+
+    The returned closure calls ``credential.get_token`` **fresh on every invocation**
+    (no local caching), deferring all caching and refresh to the credential itself.
+    azure-identity credentials proactively refresh within 5 minutes of expiry and force
+    a synchronous refresh once a token is expired, so the extension never receives an
+    already-expired token. A per-provider :class:`threading.Lock` serializes concurrent
+    calls (the native side may invoke the provider from multiple worker threads).
     """
     if credential is None:
         return None
     if not hasattr(credential, "get_token"):
         return None
-    try:
-        token = credential.get_token(_STORAGE_SCOPE)
-        return token.token
-    except Exception:  # pylint: disable=broad-except
-        return None
+
+    lock = threading.Lock()
+
+    def provider(scopes: Any) -> Tuple[str, int]:
+        # Rust passes the scopes requested by the bearer-token policy; fall back to the
+        # storage scope if none were provided.
+        requested = tuple(scopes) if scopes else (_STORAGE_SCOPE,)
+        with lock:
+            token = credential.get_token(*requested)
+        return token.token, int(token.expires_on)
+
+    return provider
 
 
 def _extract_account_url(blob_client: Any) -> str:
@@ -246,7 +264,7 @@ def try_native_upload(
             return None
 
         account_url = _extract_account_url(blob_client)
-        access_token = _extract_access_token(blob_client.credential)
+        token_provider = _build_token_provider(blob_client.credential)
 
         overwrite = kwargs.get("overwrite", False)
         content_settings = kwargs.get("content_settings", None)
@@ -262,7 +280,7 @@ def try_native_upload(
             container=blob_client.container_name,
             blob=blob_client.blob_name,
             data=upload_data,
-            access_token=access_token,
+            token_provider=token_provider,
             overwrite=overwrite,
             content_type=content_type,
             metadata=metadata,
@@ -360,14 +378,14 @@ def try_native_download_eager(
         )
 
         account_url = _extract_account_url(blob_client)
-        access_token = _extract_access_token(blob_client.credential)
+        token_provider = _build_token_provider(blob_client.credential)
         max_concurrency = kwargs.get("max_concurrency", None)
 
         data = native_download(
             account_url=account_url,
             container=blob_client.container_name,
             blob=blob_client.blob_name,
-            access_token=access_token,
+            token_provider=token_provider,
             offset=offset,
             length=length,
             max_concurrency=max_concurrency,

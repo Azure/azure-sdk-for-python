@@ -66,8 +66,14 @@ class _RecordCapture(logging.Handler):
         self.records.clear()
 
 
-def _get_token(credential):
-    return credential.get_token(STORAGE_SCOPE).token
+def _make_token_provider(credential):
+    """Build a token-provider callable matching the extension's contract."""
+
+    def provider(scopes):
+        token = credential.get_token(*(tuple(scopes) if scopes else (STORAGE_SCOPE,)))
+        return token.token, int(token.expires_on)
+
+    return provider
 
 
 def ensure_container(credential):
@@ -89,7 +95,7 @@ def test_direct_extension(credential):
     if not is_available():
         raise RuntimeError("Native extension not available — build it with `maturin develop`.")
 
-    token = _get_token(credential)
+    token_provider = _make_token_provider(credential)
     blob_name = f"direct-{uuid.uuid4().hex}.bin"
 
     # A payload big enough to exercise the chunked / parallel path (16 MiB).
@@ -100,7 +106,7 @@ def test_direct_extension(credential):
         container=CONTAINER,
         blob=blob_name,
         data=payload,
-        access_token=token,
+        token_provider=token_provider,
         overwrite=True,
         content_type="application/octet-stream",
         max_concurrency=8,
@@ -112,7 +118,7 @@ def test_direct_extension(credential):
         account_url=ACCOUNT_URL,
         container=CONTAINER,
         blob=blob_name,
-        access_token=token,
+        token_provider=token_provider,
         max_concurrency=8,
         expected_size=len(payload),
     )
@@ -129,7 +135,7 @@ def test_direct_extension(credential):
             container=CONTAINER,
             blob=buf_blob,
             data=buf,
-            access_token=token,
+            token_provider=token_provider,
             overwrite=True,
             max_concurrency=8,
         )
@@ -137,7 +143,7 @@ def test_direct_extension(credential):
             account_url=ACCOUNT_URL,
             container=CONTAINER,
             blob=buf_blob,
-            access_token=token,
+            token_provider=token_provider,
             max_concurrency=8,
             expected_size=len(payload),
         )
