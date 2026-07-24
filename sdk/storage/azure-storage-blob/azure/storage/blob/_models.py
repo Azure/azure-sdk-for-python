@@ -210,6 +210,7 @@ class RetentionPolicy(_BackCompatMixin):
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
         self.enabled = enabled
         self.days = days
+        self.allow_permanent_delete = None
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
