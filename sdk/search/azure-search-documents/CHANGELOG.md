@@ -1,5 +1,11 @@
 # Release History
 
+## 12.1.0 (Unreleased)
+
+### Other Changes
+
+- Regenerated from the `2026-04-01` API version at spec commit `18ebae7ea8f6aefd83268aacdb1f480b24842726`. No changes to the public API surface.
+
 ## 12.0.0 (2026-04-01)
 
 ### Features Added
