@@ -247,12 +247,12 @@ class TestFeedRangeMultiPartition:
     # ------------------------------------------------------------------ #
     # Partition-key caller shapes (full key and prefix key)
     # ------------------------------------------------------------------ #
-    def test_full_partition_key_query_pagination_resume(self):
-        """Full hierarchical partition-key query resumes correctly by continuation.
+    def test_full_partition_key_query_pagination_resume_and_count_is_index_only(self):
+        """Full hierarchical partition-key query resumes and remains index-only.
 
         This uses a dedicated MultiHash container and a full key value so the
         query stays scoped to one logical partition while still exercising
-        pagination + resume on the partition_key path.
+        pagination, resume, and aggregate query metrics on the partition_key path.
         """
         db = _client().get_database_client(DATABASE_ID)
         container_id = "FeedRangeMultiPartitionFullPK-" + str(uuid.uuid4())
@@ -308,6 +308,28 @@ class TestFeedRangeMultiPartition:
             ]
             fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
             assert baseline_ids == fetched_ids
+
+            count_iterable = created_container.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=full_key,
+                enable_cross_partition_query=False,
+                populate_query_metrics=True,
+            )
+            count_pager = count_iterable.by_page()
+            count_pages = [list(page) for page in count_pager]
+            assert count_pages == [[25]]
+            assert count_pager.continuation_token is None
+
+            count_headers = count_iterable.get_response_headers()
+            count_metrics = dict(
+                entry.split("=", 1)
+                for entry in count_headers[http_constants.HttpHeaders.QueryMetrics].split(";")
+                if entry
+            )
+            assert int(count_metrics["retrievedDocumentCount"]) == 0
+            assert int(count_metrics["retrievedDocumentSize"]) == 0
+            assert float(count_metrics["indexUtilizationRatio"]) == 1.0
+            assert float(count_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
 
             # A single-partition feed-range query emits a legacy opaque
             # continuation token; that token must still resume on the

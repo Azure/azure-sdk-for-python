@@ -798,11 +798,12 @@ class TestFeedRangeMultiPartitionAsync:
         finally:
             await client.close()
 
-    async def test_full_partition_key_query_pagination_resume_async(self):
+    async def test_full_partition_key_query_pagination_resume_and_count_is_index_only_async(self):
         """Query with a full partition key on a hierarchical container, drain
         page 1, resume from the returned continuation token, and confirm the
         resumed pages match the remaining pages of a fresh iterator and
-        cover the same documents as a baseline scan in the same order.
+        cover the same documents as a baseline scan in the same order. Also
+        confirm a partition-scoped aggregate remains index-only.
         """
         client = _client()
         try:
@@ -873,6 +874,29 @@ class TestFeedRangeMultiPartitionAsync:
                 assert baseline_ids == fetched_ids, (
                     "Page 1 plus the resumed pages must equal the baseline "
                     "documents for this partition key in the same order")
+
+                count_iterable = created_container.query_items(
+                    query="SELECT VALUE COUNT(1) FROM c",
+                    partition_key=full_key,
+                    populate_query_metrics=True,
+                )
+                count_pager = count_iterable.by_page()
+                count_pages = []
+                async for page in count_pager:
+                    count_pages.append([item async for item in page])
+                assert count_pages == [[25]]
+                assert count_pager.continuation_token is None
+
+                count_headers = count_iterable.get_response_headers()
+                count_metrics = dict(
+                    entry.split("=", 1)
+                    for entry in count_headers[http_constants.HttpHeaders.QueryMetrics].split(";")
+                    if entry
+                )
+                assert int(count_metrics["retrievedDocumentCount"]) == 0
+                assert int(count_metrics["retrievedDocumentSize"]) == 0
+                assert float(count_metrics["indexUtilizationRatio"]) == 1.0
+                assert float(count_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
 
                 # A single-partition feed-range query emits a legacy opaque
                 # continuation token; that token must still resume on the
@@ -1112,4 +1136,3 @@ class TestFeedRangeMultiPartitionAsync:
 
 if __name__ == "__main__":
     unittest.main()
-
