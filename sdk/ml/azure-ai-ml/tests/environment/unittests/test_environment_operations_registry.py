@@ -80,3 +80,33 @@ class TestEnvironmentOperation:
         ):
             mock_environment_operation.create_or_update(env)
             check_upload.assert_not_called()
+
+    def test_create_or_update_registry_empty_lro_body_refetches(
+        self, mock_environment_operation: EnvironmentOperations
+    ):
+        """A registry create that completes with an empty (None) LRO body must not crash.
+
+        The arm registry create LRO can return ``None``; deserializing it eagerly raised
+        ``'NoneType' object has no attribute 'items'``. The op must skip the deserialize and fall
+        through to the ``_get`` re-fetch guard instead. ``_deserialize`` is intentionally NOT patched
+        so a reverted guard would surface the real crash.
+        """
+        env = load_environment(source="./tests/test_configs/environment/environment_conda.yml")
+        refetched = Mock()
+        with patch(
+            "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset", return_value="some_sas_uri"
+        ), patch(
+            "azure.ai.ml.operations._environment_operations._check_and_upload_env_build_context", return_value=env
+        ), patch(
+            "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset",
+            return_value=None,
+        ), patch.object(
+            mock_environment_operation, "_get", return_value=refetched
+        ) as mock_get, patch(
+            "azure.ai.ml.operations._environment_operations.Environment._from_rest_object", return_value=None
+        ) as mock_from_rest:
+            mock_environment_operation.create_or_update(env)
+
+        mock_get.assert_called_once()
+        # The re-fetched object (not None) must be what is handed to _from_rest_object.
+        mock_from_rest.assert_called_once_with(refetched)
