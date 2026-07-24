@@ -188,21 +188,22 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     show_progress=self._show_progress,
                 )
             env_version_resource = environment._to_rest_object()
-            env_rest_obj = (
-                EnvironmentVersion._deserialize(
-                    begin_create_or_update_registry_versioned_asset(
-                        self._registry_service_client,
-                        "environments",
-                        environment.name,
-                        environment.version,
-                        self._operation_scope.resource_group_name,
-                        self._registry_name,
-                        env_version_resource,
-                    ),
-                    [],
+            if self._registry_name:
+                registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "environments",
+                    environment.name,
+                    environment.version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    env_version_resource,
                 )
-                if self._registry_name
-                else self._version_operations.create_or_update(
+                # The registry create LRO can complete with an empty body; only deserialize a
+                # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                env_rest_obj = EnvironmentVersion._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+            else:
+                env_rest_obj = self._version_operations.create_or_update(
                     name=environment.name,
                     version=environment.version,
                     workspace_name=self._workspace_name,
@@ -210,7 +211,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            )
             if not env_rest_obj and self._registry_name:
                 env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
