@@ -23,6 +23,7 @@ use azure_storage_blob::{BlobClient, BlobClientOptions};
 use once_cell::sync::Lazy;
 use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
+use pyo3::buffer::PyBuffer;
 use pyo3::types::{PyBytes, PyDict};
 use tokio::runtime::Runtime;
 
@@ -128,7 +129,7 @@ fn upload_blob<'py>(
     account_url: &str,
     container: &str,
     blob: &str,
-    data: &[u8],
+    data: &Bound<'py, PyAny>,
     access_token: Option<&str>,
     overwrite: bool,
     content_type: Option<&str>,
@@ -139,7 +140,25 @@ fn upload_blob<'py>(
 ) -> PyResult<Bound<'py, PyDict>> {
     let blob_client = build_blob_client(account_url, container, blob, access_token)?;
 
-    let content: RequestContent<Bytes, NoFormat> = Bytes::copy_from_slice(data).into();
+    // We copy the payload once into a Rust-owned `Bytes` here, while the GIL is held.
+    //
+    // This single copy is required (not merely convenient): the upload below releases the
+    // GIL via `allow_threads`, so we must not hold a borrow into Python-owned memory that
+    // another Python thread could mutate or free. Accepting any buffer-protocol object
+    // (bytes, bytearray, contiguous memoryview) via `PyBuffer` lets the caller avoid a
+    // separate Python-side `bytes()` conversion.
+    //
+    // We intentionally do NOT stream across the FFI boundary: the Rust crate buffers each
+    // partition into memory regardless, and a Python-backed stream would require per-chunk
+    // GIL re-acquisition from parallel tasks — more complex and slower than one bulk copy.
+    // For the buffered path, the crate partitions via zero-copy `Bytes::slice`.
+    let buffer = PyBuffer::<u8>::get(data)?;
+    if !buffer.is_c_contiguous() {
+        return Err(PyValueError::new_err(
+            "Native upload requires a C-contiguous buffer.",
+        ));
+    }
+    let content: RequestContent<Bytes, NoFormat> = Bytes::from(buffer.to_vec(py)?).into();
 
     let mut options = BlockBlobClientUploadOptions::default();
 
