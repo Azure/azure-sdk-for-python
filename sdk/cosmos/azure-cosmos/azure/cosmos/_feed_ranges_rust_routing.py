@@ -7,8 +7,8 @@
 
 Both sync and async feed-range methods call into this one module so the two paths build
 the same requests and return the exact same feed-range values. Without it, each would carry
-its own copy of the can-use / build / parse logic; the two could drift, and the Rust path
-could hand back feed-range values that differ from the legacy path -- which breaks customers
+its own copy of the can-use / build / parse logic; the two could diverge, and the Rust path
+could return feed-range values that differ from the legacy path -- which breaks customers
 who reuse a feed-range value in a later call."""
 from __future__ import annotations
 
@@ -37,9 +37,9 @@ def can_use_rust_backend_for_read_feed_ranges(
     if backend is None:
         return False
     # Legacy read_feed_ranges forwards unknown kwargs into routing-map reads.
-    # Keep those calls on legacy until each knob is explicitly mirrored on Rust.
-    # This per-call gate is migration scaffolding: it shrinks as knobs are mirrored and
-    # goes away once the Rust path reaches full parity.
+    # Keep those calls on legacy until each option is explicitly supported on Rust.
+    # This per-call gate is temporary migration code: it shrinks as options are
+    # supported on Rust and goes away once the Rust path reaches full parity.
     return len(kwargs) == 0
 
 
@@ -161,7 +161,7 @@ def parse_feed_range_from_partition_key_payload(payload: Mapping[str, Any]) -> d
     # "There were no overlapping feed ranges with the target." or returns the wrong token -- all
     # silent wrong results, no error at the call itself. Building the Range here (instead of via
     # from_json) also lets us validate each inner key up front and raise the same clear ValueError
-    # as parse_read_feed_ranges_payload, rather than letting a malformed payload surface as a bare
+    # as parse_read_feed_ranges_payload, rather than letting a malformed payload appear as a bare
     # KeyError from Range.ParseFromDict.
     return FeedRangeInternalEpk(
         Range(min_bound.upper(), max_bound.upper(), is_min_inclusive, is_max_inclusive)
@@ -184,7 +184,7 @@ def build_is_feed_range_subset_prepared_request(
     """Build the PreparedRequest consumed by the binding's is_feed_range_subset entry point.
 
     is_feed_range_subset is a pure client-side check with no network call, so there is no
-    container to target: the two feed-range dicts ride in the body as
+    container to target: the two feed-range dicts are sent in the body as
     ``{"parent": <feed-range dict>, "child": <feed-range dict>}`` and the container link and
     partition-key header are left empty."""
     body_bytes = serialize_body_to_bytes(
@@ -280,14 +280,14 @@ def try_is_feed_range_subset_with_rust_backend(
         # Rust rejected the feed-range inputs (a malformed dict, inverted bounds
         # where min > max, or a non-hex EPK). The legacy compare is more permissive
         # on these nonsensical opaque values -- it never validates min <= max -- so
-        # fall back to it for exact parity instead of surfacing a Rust-only error.
+        # fall back to it for exact parity instead of raising a Rust-only error.
         return None
     if backend_response is None:
         return None
     # Pass client_connection=None so parse_backend_response does NOT write
     # last_response_headers. The legacy is_feed_range_subset is a pure client-side
     # computation that never touches last_response_headers, so the Rust path must
-    # not either -- otherwise it would clobber the headers left by the caller's
+    # not either -- otherwise it would overwrite the headers left by the caller's
     # previous real operation with this call's empty (no-wire) header set.
     parsed = parse_backend_response(
         backend_response,

@@ -43,7 +43,7 @@ pub(super) enum QueryTarget {
 /// Entry point the binding calls to run one query page and wait for it. Finds the
 /// driver for this client, splits the container link into database + container
 /// names, works out the query scope, then runs the driver work below and converts
-/// the reply into the tuple the Python parser reads. Mirrors `run_item_operation`
+/// the reply into the tuple the Python parser reads. Matches `run_item_operation`
 /// but builds a `CosmosOperation::query_items` targeting either a logical partition
 /// (`["pk"]`) or the full container (`[]`).
 pub(crate) fn run_query_operation<'py>(

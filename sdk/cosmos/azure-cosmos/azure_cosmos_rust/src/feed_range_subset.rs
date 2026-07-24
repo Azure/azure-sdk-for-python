@@ -65,7 +65,7 @@ fn hex_char_value(byte: u8) -> Result<u8, String> {
 
 /// Decode a hex effective-partition-key string into its raw bytes. The string
 /// must have an even number of characters (two hex digits per byte); this
-/// mirrors the even-length requirement in the python `add_to_effective_partition_key`.
+/// matches the even-length requirement in the python `add_to_effective_partition_key`.
 fn effective_partition_key_to_bytes(hex: &str) -> Result<Vec<u8>, String> {
     let chars = hex.as_bytes();
     if chars.len() % 2 != 0 {

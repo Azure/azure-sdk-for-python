@@ -18,17 +18,16 @@ that offer (a query against the account's offers), and ``replace_throughput``
 then edits the record and writes it back. That read-modify-write is why the
 replace functions drive two operations, not one.
 
-Why this module exists (public methods must not know which engine runs):
-before this, ``get_throughput`` / ``replace_throughput`` on the proxy read
-``client_connection._backend`` and branched inline -- try the rust engine, else
+Why this module exists (public methods must not know which engine runs): without
+it, ``get_throughput`` / ``replace_throughput`` on the proxy would read
+``client_connection._backend`` and branch inline -- try the rust engine, else
 fall back to the legacy ``QueryOffers`` / ``ReplaceOffer`` calls -- inside the
-customer-facing method. That put engine-selection code in the public API surface.
-Here, each function coerces the client's backend selection to a concrete backend
-(``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``, never
-``None``) and drives the work through
+customer-facing method, putting engine-selection code in the public API surface.
+Instead, each function coerces the client's backend selection to a concrete
+backend (``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``,
+never ``None``) and drives the work through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
-method is now a thin delegate that names no engine. Without this module that
-branching would still live in every public throughput method.
+method is a thin delegate that names no engine.
 """
 from __future__ import annotations
 

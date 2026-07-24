@@ -24,7 +24,7 @@ This module is the single place that decides whether one page of query_items (or
 whole-container read_all_items) can be fetched by the Rust backend instead of the
 Python HTTP path, and that packages the request and the response so a Rust-served
 page looks exactly like a legacy one. Both the sync and async client connections
-import from here, so the two paths share one source of truth and cannot drift.
+import from here, so the two paths share one definition and cannot diverge.
 It has three jobs: decide if a page is safe for Rust (the ``can_use_*`` gates),
 build the page request (``build_query_items_prepared_query`` /
 ``build_read_all_items_prepared_query``), and finish the response to match
@@ -32,8 +32,8 @@ legacy (``finalize_rust_query_page_response``).
 Without this file the query fast paths in the client would have nothing to call
 and every query page would stay on the Python HTTP path.
 
-The ``can_use_*`` gates are migration scaffolding: each ``return False`` case shrinks as
-that case lands on Rust, and the gates go away once the Rust path reaches full parity.
+The ``can_use_*`` gates are temporary migration code: each ``return False`` case shrinks as
+that case is supported on Rust, and the gates go away once the Rust path reaches full parity.
 """
 from __future__ import annotations
 

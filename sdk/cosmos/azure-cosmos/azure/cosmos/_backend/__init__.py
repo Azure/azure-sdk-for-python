@@ -25,17 +25,20 @@ operations; ``execute_pages`` is wired for ``query_items`` / ``read_all_items``.
 ``execute_batch`` is defined but raises ``NotImplementedError`` until the batch
 operation is added.
 
-Two backends exist. The rust backend forwards each operation to the compiled
-Rust driver; it is the path going forward and the only one meant for production.
-The core-python choice runs the SDK's legacy in-place code, kept for testing and
-comparison. It is now an explicit backend -- ``LegacyBackend`` (see
-``azure.cosmos._backend.legacy``) -- so every family coordinator (the item
-helper, and the throughput / feed-range coordinators) holds one backend by
-interface and never reads ``None`` as "call legacy": both backends run through
-``CosmosBackend.run_operation`` and the legacy one just runs the original call.
-The stored client selection is still ``Optional`` (the factory returns ``None``
-for core-python); each coordinator coerces that ``None`` to ``LegacyBackend`` at
-its own boundary (see ``azure.cosmos._backend.legacy.coerce_backend``).
+Two backends exist, and both are concrete ``CosmosBackend`` objects that run
+through ``CosmosBackend.run_operation``. The rust backend forwards each operation
+to the compiled Rust driver; it is the path going forward and the only one meant
+for production. The core-python backend (``LegacyBackend``, see
+``azure.cosmos._backend.legacy``) runs the SDK's original in-place code and is
+kept for testing and comparison; its ``run_operation`` just runs that original
+call.
+
+The backend a client stores is ``Optional``: the factory returns a ``RustBackend``
+for rust and ``None`` for core-python. Each family coordinator (``DatabaseHelper``,
+``ItemHelper``, ``ThroughputHelper``, ``FeedRangeHelper``) turns that selection
+into a concrete backend at its own boundary -- ``None`` becomes ``LegacyBackend``
+-- and then holds that one backend by interface, so no coordinator branches on
+``None`` (see ``azure.cosmos._backend.legacy.coerce_backend``).
 
 The async versions of all of this live in ``azure.cosmos.aio._backend``.
 """

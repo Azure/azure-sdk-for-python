@@ -227,7 +227,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             )
         # Log which backend and op ran, so a migration can confirm from logs that
         # traffic stays on the Rust path. The handle is omitted (it carries a
-        # credential fingerprint).
+        # credential hash).
         _LOGGER.debug(
             "cosmos backend=%s op=%s dispatch=%s",
             BACKEND_NAME_RUST,
@@ -235,7 +235,7 @@ class RustBackend(RustBackendShared, CosmosBackend):
             OP_TO_BINDING_METHOD.get(prepared.op),
         )
         # A response-less driver failure (transport error, client-side
-        # validation, pre-HTTP timeout) surfaces as the binding's
+        # validation, pre-HTTP timeout) is raised as the binding's
         # DriverTransportError; translate it to azure-core's ServiceResponseError
         # so customer handlers and transport-retry policies match the legacy path.
         try:

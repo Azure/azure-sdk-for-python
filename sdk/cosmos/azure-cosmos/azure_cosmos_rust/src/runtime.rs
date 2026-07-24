@@ -13,7 +13,7 @@
 //! its own rust driver -- its own connection pool and routing state -- so N
 //! clients to the same account would mean N connection pools; and there would be
 //! no safe place to decide when to tear a driver down (closing one client could
-//! rip the driver out from under another).
+//! remove the driver while another client is still using it).
 //!
 //! Three "runtime"-ish things live here; keep them distinct:
 //!   * shared Tokio runtime (`RuntimeContext.tokio_rt`) -- the one process-wide
@@ -289,7 +289,7 @@ pub(crate) fn drivers() -> &'static RwLock<HashMap<String, DriverEntry>> {
 }
 
 /// Build (once) or fetch the two process-wide runtimes -- the shared Tokio
-/// runtime and the driver runtime -- and hand back the shared `RuntimeContext`.
+/// runtime and the driver runtime -- and return the shared `RuntimeContext`.
 ///
 /// The first client to reach here initializes both together inside the
 /// `RUNTIME_CONTEXT` `OnceLock`, with the GIL released (`py.allow_threads`), and
@@ -375,7 +375,7 @@ pub(crate) fn require_runtime_context(op_name: &str) -> PyResult<&'static Runtim
 // init_client
 // ---------------------------------------------------------------------------
 //
-// The front door, called once when a customer constructs a `CosmosClient` on the
+// The entry point, called once when a customer constructs a `CosmosClient` on the
 // rust backend. It returns the driver handle -- the `(endpoint, credential,
 // config)` cache key -- and makes sure a rust driver for that key exists:
 //   * Fast path: a driver for this key already exists (another client with the
@@ -422,7 +422,7 @@ pub(crate) fn init_client(
         }
     };
     // Fingerprint the config so it joins the key too. Read here under the GIL, since
-    // config is a Python object. An absent config folds to `cfg:none`.
+    // config is a Python object. An absent config maps to `cfg:none`.
     let config_fp = config_fingerprint(config)?;
     let handle = compose_cache_key(endpoint, &credential_fp, &config_fp);
 
@@ -563,7 +563,7 @@ fn timeout_from_config(config: &Bound<'_, PyAny>, field_name: &str) -> PyResult<
 /// Read the optional `preferred_locations` off the prepared client config and
 /// turn each region name into a driver `Region` for preferred-region routing.
 ///
-/// Mirrors how `extract_op_modifiers` reads `excludedlocations`: it accepts any
+/// Matches how `extract_op_modifiers` reads `excludedlocations`: it accepts any
 /// Python sequence of strings (the `PreparedClientConfig` stores a tuple) and
 /// lets the driver normalize each name ("West US" -> "westus"). A config object
 /// without the attribute, or a Python `None`, yields no regions rather than an
@@ -617,7 +617,7 @@ fn user_agent_suffix_from_config(config: &Bound<'_, PyAny>) -> PyResult<Option<U
 
 /// Build a driver-level `OperationOptions` from the prepared client config's
 /// per-account settings -- excluded regions, throttle-retry caps, the hedging
-/// threshold, and the chosen read consistency level. These ride on the
+/// threshold, and the chosen read consistency level. These are carried on the
 /// "account" layer the driver applies to every request the client makes.
 ///
 /// Returns `None` when the config carries none of them, so a client that only
@@ -783,8 +783,8 @@ mod tests {
     // The reference-counted driver cache evicts an endpoint's driver only when
     // its last client closes. apply_close is the decision behind that: it must
     // drop the count by one and report "evict" exactly when the count reaches
-    // zero. This is the rule that stops one client's close from pulling the
-    // driver out from under another client to the same account.
+    // zero. This is the rule that stops one client's close from removing the
+    // driver while another client to the same account is still using it.
     #[test]
     fn apply_close_drops_one_reference_and_evicts_only_at_zero() {
         // Two clients share the driver: closing one leaves it alive (one left).
@@ -962,7 +962,7 @@ class Config:
             assert_eq!(missing, None);
 
             let err = get_config_opt::<String>(&config, "exploding")
-                .expect_err("non-attribute getattr failure must be surfaced");
+                .expect_err("non-attribute getattr failure must be reported");
             assert!(err.to_string().contains("boom"), "unexpected error: {err}");
         });
     }

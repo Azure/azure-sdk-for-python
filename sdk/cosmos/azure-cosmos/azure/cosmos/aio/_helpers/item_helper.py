@@ -6,7 +6,7 @@
 """Async version of the single-item helper.
 
 Same behaviour and arguments as the sync helper. The option building is
-shared with the sync side so the two cannot drift; what is here is the
+shared with the sync side so the two cannot diverge; what is here is the
 per-call work done with ``await``.
 """
 from __future__ import annotations
@@ -232,7 +232,7 @@ class AsyncItemHelper:
         except (AttributeError, TypeError):
             # Only the stub connections used in unit tests reach here. A real
             # extraction error is left to propagate so a wrong partition key
-            # fails loudly instead of writing to the wrong place.
+            # raises instead of writing to the wrong place.
             return _Empty()
 
     async def delete_item(

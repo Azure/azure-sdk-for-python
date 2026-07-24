@@ -88,7 +88,7 @@ impl PyTokenCredential {
     /// AccessToken with `.token` / `.expires_on`) into the rust driver's typed
     /// `AccessToken`. This is the one place the binding crosses from Rust back
     /// into Python for auth; every failure becomes a `Credential`-kind error so
-    /// the rust driver surfaces a clean authentication failure instead of an
+    /// the rust driver reports a clean authentication failure instead of an
     /// opaque one. Without it the driver would receive no token and could not
     /// sign the request.
     fn fetch_token(&self, py: Python<'_>, scopes: &[&str]) -> azure_core::Result<AccessToken> {

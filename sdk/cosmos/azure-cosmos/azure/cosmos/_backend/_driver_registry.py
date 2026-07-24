@@ -22,34 +22,35 @@ Two terms used everywhere below:
 
 * *Engine identity* is the triple ``(endpoint, credential, config)``: two clients
   share one engine only when all three match. The account (endpoint) is just the
-  top-level bucket; within it each distinct ``(credential, config)`` pair is its own
+  top-level grouping; within it each distinct ``(credential, config)`` pair is its own
   engine.
 * *Config* is the ``PreparedClientConfig`` -- the subset of ``CosmosClient`` settings
   carried to the binding (preferred/excluded locations, consistency, throttling,
   hedging, user-agent suffix, and process-wide proxy/transport settings). It compares
-  by value; ``None`` means untuned. The binding fingerprints it from its ``repr()``.
+  by value; ``None`` means untuned. The binding derives its identity key from its
+  ``repr()``.
 
-The 50,000-foot view -- this module is a *detector, not a fixer*. It has no effect on
+The high-level view -- this module is a *detector, not a fixer*. It has no effect on
 how engines are actually created or freed; that all lives in the binding. So if this
 module did not exist:
 
 * **Nothing functional would change.** The binding still shares one engine when
-  endpoint+credential+config match and still forks a separate engine when they differ;
+  endpoint+credential+config match and still builds a separate engine when they differ;
   its per-engine refcount, lazy build on first op, and teardown are untouched.
   Connection pools, memory, latency, and correctness in default use are identical --
   default mode never reads this module's data.
 * **The only thing lost is strict isolation mode** -- the opt-in early warning. Without
   it there is no way to detect, at construction, that a client is about to make the
   binding build a *second* engine for an account that already has one. Teams that want
-  a "one engine per account" guarantee would get no early signal: accidental engine
-  fan-out (a loop of slightly different clients, or two clients with different
+  a "one engine per account" guarantee would get no early signal: accidentally building
+  many engines (a loop of slightly different clients, or two clients with different
   credentials/configs to one account) proceeds silently and is discovered only later,
-  indirectly, via the symptoms it was meant to pre-empt -- climbing connections, file
+  indirectly, via the symptoms it was meant to prevent -- growing connections, file
   descriptors, and memory in production.
 
-In one line: without this module nothing breaks and nothing leaks that was not already
-possible -- you only lose the opt-in early warning that turns silent engine fan-out
-into a loud, fail-fast error at construction time.
+In short: without this module nothing breaks and nothing leaks that was not already
+possible -- the only thing lost is the opt-in early warning that turns silently
+building many engines into an immediate, fail-fast error at construction time.
 
 The problem it guards against: the binding shares one engine between two clients only
 when their endpoint, credential, *and* config all match; differ on any one and it
@@ -59,34 +60,35 @@ accumulate many engines for one account -- more connections and memory than expe
 usually noticed only later in production.
 
 This guard runs in the real workflow: ``_shared.py`` calls it on every client open and
-close. Strict isolation mode is an opt-in that puts it to work. When on, a later client
-that would build a new engine for an account that already has one raises
-``StrictEngineIsolationError`` at construction. By default the second engine is allowed
-silently and the guard only keeps bookkeeping -- its behavior matters only when strict
-mode is enabled (a service or CI that means to reuse one engine).
+close. Strict isolation mode is an opt-in that makes the guard act on that
+bookkeeping. When on, a later client that would build a new engine for an account that
+already has one raises ``StrictEngineIsolationError`` at construction. By default the
+second engine is allowed silently and the guard only keeps bookkeeping -- its behavior
+matters only when strict mode is enabled (a service or CI that means to reuse one
+engine).
 
-To decide correctly the guard mirrors the binding's cache key. For each account it
+To decide correctly the guard copies the binding's cache key. For each account it
 tracks the live engines -- one entry per distinct ``(credential, config)`` pair, with
 a count of how many clients hold it -- so a later client is allowed when its pair
 matches one still live and flagged when it would build a new one. Three details keep
-the mirror faithful:
+this copy accurate:
 
-* The credential is part of the key, because the binding forks an engine on a
+* The credential is part of the key, because the binding builds an engine on a
   credential difference too.
 * The endpoint is canonicalized, so ``https://acct...com`` and
-  ``https://acct...com/`` (and host-case variants) land in the same bucket.
-* No secret is retained: a master key is reduced to a non-reversible fingerprint
+  ``https://acct...com/`` (and host-case variants) map to the same account key.
+* No secret is retained: a master key is reduced to a non-reversible hash
   before it is used as a key, and a token credential is keyed by object identity.
 
-Three independent counts exist; (1) Python's own object refcount
+Three independent counts exist: (1) Python's own object refcount
 frees Python objects and knows nothing about engines. (2) This module's count is the
 opt-in guard -- it runs at client open/close, in the python wrapper, before and
 independently of the binding. (3) The binding's per-engine refcount governs the real
 engine's lifetime and is built lazily: ``rust.py`` calls the binding's ``init_client``
 only on the first item operation, not at client construction.
 
-This module is **not** part of the binding's cache. It is a separate ledger in the
-python wrapper that *mirrors* the binding's cache key so it can predict, at client
+This module is **not** part of the binding's cache. It is a separate record in the
+python wrapper that *copies* the binding's cache key so it can predict, at client
 construction, whether the binding would build a new engine -- it never reads or calls
 into the binding.
 
@@ -129,7 +131,7 @@ class ProxyPolicyConflictError(ValueError):
     at construction, in both default and strict mode (the engine-isolation registry
     cannot catch it because it treats ``proxy_allowed`` as just another per-account
     config field). Clients that leave ``proxy_allowed`` unset (``None``) never set or
-    conflict with the policy, mirroring the binding's ``proxy_allowed_conflicts``.
+    conflict with the policy, matching the binding's ``proxy_allowed_conflicts``.
 
     To avoid this error, establish the policy deterministically: construct one client
     with the desired ``proxy_allowed`` before any others (and before any concurrent
@@ -165,7 +167,7 @@ _REGISTRY: Dict[str, Dict[Tuple[Any, Optional[PreparedClientConfig]], int]] = {}
 
 def _canonicalize_endpoint(endpoint: str) -> str:
     """Normalize an account endpoint so trivial URL variants of the same account
-    share one registry bucket.
+    share one registry entry.
 
     Lowercases scheme and host (DNS is case-insensitive), drops a default port and
     a trailing slash, and discards any query or fragment. Conservative on purpose:
@@ -197,11 +199,11 @@ def make_credential_key(master_key: Optional[str], token_credential: Optional[An
     """Reduce a client's credential to a hashable identity matching the binding's.
 
     The factory supplies exactly one of the two. A token credential is keyed by its
-    object identity (``id``), which equals the raw pointer the binding fingerprints
+    object identity (``id``), which equals the raw pointer the binding uses as its key
     (``as_ptr``); the client holds a strong reference for its whole life, so that
     identity is stable while it is registered. A master key is reduced to a
-    non-reversible fingerprint, so this module never keeps the plaintext secret --
-    equal keys fingerprint equal, different keys do not. Both ``None`` keys as ``None``.
+    non-reversible hash, so this module never keeps the plaintext secret --
+    equal keys hash equal, different keys do not. Both ``None`` keys as ``None``.
     """
     if token_credential is not None:
         return id(token_credential)
@@ -218,7 +220,7 @@ def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
     one value. This makes that agreement deterministic at construction instead of leaving
     it to the binding's lazy, race-determined check at the first operation.
 
-    Rules (mirroring the binding's ``proxy_allowed_conflicts``):
+    Rules (matching the binding's ``proxy_allowed_conflicts``):
 
     * A client that does not set ``proxy_allowed`` (``None``) is always compatible and
       never establishes the policy -- it accepts whatever value wins.
@@ -228,11 +230,11 @@ def register_proxy_policy(config: Optional[PreparedClientConfig]) -> None:
 
     Called from ``_shared`` at client construction, before ``register_client_config``,
     so a proxy conflict fails before the client records any engine registration to
-    release. The Rust ``OnceLock`` conflict check remains the backstop -- this guard
+    release. The Rust ``OnceLock`` conflict check remains the fallback -- this guard
     only turns the late, nondeterministic failure into an early, deterministic one. It
     does not eliminate the case where a ``None``-setting client operates first and
-    lazily pins the runtime to its default before an explicit-value client is built;
-    that requires the "construct the proxy-setting client first" discipline.
+    lazily fixes the runtime to its default before an explicit-value client is built;
+    that requires the practice of constructing the proxy-setting client first.
     """
     if config is None or config.proxy_allowed is None:
         return
@@ -332,7 +334,7 @@ def register_client_config(
     The first client to an account always records, whatever its strict flag.
     ``PreparedClientConfig`` compares by value and ``None`` (an untuned client)
     compares cleanly, so two untuned clients -- or two with equal settings and the
-    same credential -- share one engine and never trip the strict check.
+    same credential -- share one engine and never trigger the strict check.
 
     :param endpoint: The account endpoint the client targets (canonicalized here).
     :param config: The client's prepared config, or ``None`` when untuned.

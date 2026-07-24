@@ -16,17 +16,16 @@ range on its own. The functions here back the public ``ContainerProxy`` methods
 * ``is_feed_range_subset`` -- whether one feed range is fully inside another. This
   is a local calculation; it makes no service call.
 
-Why this module exists (public methods must not know which engine runs):
-before this, these calls read ``client_connection._backend`` and branched -- try
-the rust engine, else run the legacy routing-map code -- inside the customer-facing
-proxy method. Here each function coerces the client's selection to a concrete
+Why this module exists (public methods must not know which engine runs): without
+it, these calls would read ``client_connection._backend`` and branch -- try the
+rust engine, else run the legacy routing-map code -- inside the customer-facing
+proxy method. Instead each function coerces the client's selection to a concrete
 backend (``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``,
 never ``None``) and drives the work through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the proxy
 method is a thin delegate that names no engine. This mirrors
 :class:`~azure.cosmos._helpers.item_helper.ItemHelper` and the throughput
-coordinator. Without this module that branching would live in every public
-feed-range method.
+coordinator.
 """
 from __future__ import annotations
 

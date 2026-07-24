@@ -21,21 +21,21 @@ Terms, defined concretely (no abstract words):
   *which* rust driver the client talks to (it is not the driver object and not the
   ``CosmosClient``). It is ``None`` until the client's first operation, then built
   once (in the ``_handle`` slot created by ``_init_shared``) and reused.
-* **the guard** -- the ``_driver_registry`` module: a per-process ledger that counts
+* **the guard** -- the ``_driver_registry`` module: a per-process record that counts
   how many live clients point at each engine for an account. This is a **separate**
-  Python-side ledger from the binding's own driver cache and reference count (above):
+  Python-side record from the binding's own driver cache and reference count (above):
   the binding's count does the real driver pooling, while the guard is used only for
   *strict-isolation* enforcement. In strict-isolation mode it raises when a new client
   would force the binding to build a *second* engine for an account that already has
   one.
-* **guard registration** -- adding this client to that ledger, the
+* **guard registration** -- adding this client to that record, the
   ``register_client_config(...)`` call (count +1). Releasing is
   ``release_client_config(...)`` (count -1).
 * **the bridge** -- ``AsyncTokenCredentialBridge``, the wrapper used *only* when the
   customer passes an async credential. It runs a background thread so the (sync) rust
   driver can fetch tokens.
 
-The 50,000-foot view -- what this module is. There are two Rust backends,
+The high-level view -- what this module is. There are two Rust backends,
 ``RustBackend`` (sync) and ``AsyncRustBackend`` (async). When a customer creates a
 client, each backend does the same setup work; on close, the same teardown work. They
 differ only in *how they build and run the driver handle* (sync vs async). This file
@@ -53,7 +53,7 @@ related to the bridge only on that one close step; for a normal master-key or
 sync-token client, the bridge is not involved at all.
 
 If this file did not exist, each backend would keep its own copy of that open/close
-code, and the moment the two copies drift you get a bug on one side only -- e.g. the
+code, and the moment the two copies diverge, a bug appears on one side only -- e.g. the
 async backend forgets to release its guard registration (the guard's live count leaks,
 so strict mode starts wrongly rejecting new clients), or forgets to stop the bridge's
 background thread (it keeps running after the client is closed), or computes the
@@ -91,7 +91,7 @@ class _UnmatchableDriverError(BaseException):
 
 
 def driver_transport_error_type(rust_module: Optional[Any]) -> type:
-    """Hand back the binding's ``DriverTransportError`` class for ``except`` use.
+    """Return the binding's ``DriverTransportError`` class for ``except`` use.
 
     Why it exists: the backends convert that error into azure-core's
     ``ServiceResponseError``. Without this, a transport failure (a failure with *no*
@@ -131,7 +131,7 @@ def close_credential_bridge_quietly(credential: Optional[Any]) -> None:
     such method and is left untouched).
 
     Why it exists: without it, the bridge's background thread keeps running after close.
-    And without the "quietly" part -- it swallows and logs any error -- a teardown error
+    And without the "quietly" part -- it catches and logs any error -- a teardown error
     on this close/finalizer path could hide the actual close.
     """
     closer = getattr(credential, "_close_cosmos_async_bridge", None)
@@ -172,7 +172,7 @@ class RustBackendShared:
         its own fields, so every attribute the finalizer might touch already exists.)
 
         It computes ``_credential_key`` once -- an async/sync token credential by object
-        identity, or a master key by fingerprint, never the plaintext secret -- so open
+        identity, or a master key by a hash, never the plaintext secret -- so open
         and close identify this client to the guard the same way. It also enforces the
         process-wide proxy and transport-timeout policies *first*, so a runtime
         conflict fails before any registration exists to undo.
@@ -190,7 +190,7 @@ class RustBackendShared:
         self._strict_isolation = strict_isolation
         # The credential's identity for the engine-isolation guard, keyed the same
         # way the binding keys its driver cache (token object identity, or a
-        # master-key fingerprint -- never the plaintext secret). Computed once and
+        # master-key hash -- never the plaintext secret). Computed once and
         # reused on release so the registry counts stay balanced.
         self._credential_key = make_credential_key(master_key, token_credential)
         # The driver handle init_client returns: a key made from (endpoint,
@@ -209,7 +209,7 @@ class RustBackendShared:
         # Proxy allowance and transport timeouts are process-global for the Rust
         # runtime, not per-account like the engine registration below. Enforce them
         # here before recording a registration; the binding repeats the checks as a
-        # lazy-initialization backstop.
+        # lazy-initialization fallback.
         register_proxy_policy(client_config)
         register_transport_timeout_policy(client_config)
         register_client_config(
@@ -223,11 +223,11 @@ class RustBackendShared:
     def _release_config_once(self) -> None:
         """Release this client's guard registration exactly once.
 
-        Without the once-guarantee, releasing twice would over-count-down the guard and
-        could drop an engine entry other clients still share. A lock plus the
-        ``_config_released`` flag make it exactly-once no matter how close is reached --
-        handle never built, ``close()`` called twice, or ``close()`` racing the object's
-        finalizer.
+        Without the once-guarantee, releasing twice would decrement the guard's count
+        too far and could drop an engine entry other clients still share. A lock plus
+        the ``_config_released`` flag make it exactly-once no matter how close is reached
+        -- handle never built, ``close()`` called twice, or ``close()`` racing the
+        object's finalizer.
         """
         with self._handle_lock:
             if self._config_released:
@@ -244,7 +244,7 @@ class RustBackendShared:
 
         Because both backends build their driver handle from these exact same arguments,
         this is what guarantees the sync and async paths ask the binding for the same
-        engine identity instead of drifting apart.
+        engine identity instead of diverging.
         """
         return init_client_args(
             self._endpoint,

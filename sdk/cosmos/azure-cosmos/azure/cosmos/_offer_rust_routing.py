@@ -15,16 +15,16 @@ Every Cosmos container has one "offer" record that holds how much throughput
 
 On the legacy (core-python) path both are done by hand over the account's
 ``/offers`` feed. This module lets a Rust-backed client run the exact same work on
-the Rust driver instead, and -- key point -- hand back offer records with the
+the Rust driver instead, and -- key point -- return offer records with the
 identical shape, so the code that turns them into ``ThroughputProperties`` is
 unchanged and the customer sees the same RU/s number and autoscale ceiling either
 way.
 
-Both the sync and async surfaces call into this one module so they build the
-identical request and parse the identical response. Without it, each surface would
-carry its own copy of the can-use / build / parse logic; the two could drift, and a
+Both the sync and async entry points call into this one module so they build the
+identical request and parse the identical response. Without it, each entry point would
+carry its own copy of the can-use / build / parse logic; the two could diverge, and a
 customer's throughput read or change could behave differently depending on which
-surface (sync vs async) they used.
+entry point (sync vs async) they used.
 
 """
 from __future__ import annotations
@@ -53,32 +53,32 @@ def can_use_rust_backend_for_read_offer(
     """Return True when ``read_offer`` / ``get_throughput`` can use the Rust backend.
 
     True only when this client uses the Rust backend and the remaining call shape is
-    mirrored by the Rust route. The Rust binding now exposes an offer entry point (``read_offer`` /
+    supported by the Rust route. The Rust binding now exposes an offer entry point (``read_offer`` /
     ``read_offer_async``), so a Rust-backed client's throughput read runs the offer
     query on the driver and returns the same offer records as legacy. Any extra
     kwarg -- which legacy forwards into ``QueryOffers`` -- keeps the call on legacy
-    until that knob is explicitly mirrored on the Rust path. This per-call gate is
-    migration scaffolding: it shrinks as knobs are mirrored and goes away once the
-    surface is fully mirrored.
+    until that option is explicitly supported on the Rust path. This per-call gate is
+    temporary migration code: it shrinks as options are supported and goes away once the
+    whole operation is supported on Rust.
 
     :param backend: The client's Rust backend, or ``None`` for core-python.
     :type backend: Any
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]
-    :param kwargs: The caller's remaining arguments (any unmirrored knob keeps the
+    :param kwargs: The caller's remaining arguments (any unsupported option keeps the
         call on legacy).
     :type kwargs: Mapping[str, Any]
     :rtype: bool
     """
     if backend is None:
         return False
-    # Rust offer path does not yet mirror socket read timeout or client-side
-    # availability strategy shaping used by legacy QueryOffers.
+    # Rust offer path does not yet support the socket read timeout or the
+    # client-side availability strategy that legacy QueryOffers applies.
     if options.get(Constants.Kwargs.READ_TIMEOUT) is not None:
         return False
     if options.get(Constants.Kwargs.AVAILABILITY_STRATEGY) is not None:
         return False
-    # Extra kwargs -> stay on legacy (Rust can't honor those knobs yet).
+    # Extra kwargs -> stay on legacy (Rust can't honor those options yet).
     return len(kwargs) == 0
 
 
@@ -366,18 +366,18 @@ def can_use_rust_backend_for_replace_throughput(
 
     ``replace_throughput`` is a two-step read-modify-write on the container's offer:
     it first reads the offer (the same query ``get_throughput`` runs) and then PUTs
-    the mutated offer back. Both steps ride the offer entry points on the Rust
-    driver, and both honor exactly the same knobs, so the gate mirrors the read gate
+    the mutated offer back. Both steps use the offer entry points on the Rust
+    driver, and both honor exactly the same options, so this gate matches the read gate
     (``can_use_rust_backend_for_read_offer``): Rust-backed client, no socket read
-    timeout, no client-side availability strategy, and no extra kwargs. Any unmirrored
-    knob keeps the whole call on legacy so nothing a customer passed is silently
+    timeout, no client-side availability strategy, and no extra kwargs. Any unsupported
+    option keeps the whole call on legacy so nothing a customer passed is silently
     dropped.
 
     :param backend: The client's Rust backend, or ``None`` for core-python.
     :type backend: Any
     :param options: Normalized request options for this call.
     :type options: Mapping[str, Any]
-    :param kwargs: The caller's remaining arguments (any unmirrored knob keeps the
+    :param kwargs: The caller's remaining arguments (any unsupported option keeps the
         call on legacy).
     :type kwargs: Mapping[str, Any]
     :rtype: bool

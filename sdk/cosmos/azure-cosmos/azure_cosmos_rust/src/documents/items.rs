@@ -109,7 +109,7 @@ pub(crate) fn delete_item<'py>(
 }
 
 /// read_item: bodiless; id from `PreparedRequest.item_id`. A conditional read
-/// surfaces as HTTP 304, which the Python parser treats as success. Without it
+/// comes back as HTTP 304, which the Python parser treats as success. Without it
 /// the single most common operation -- the point read -- would not work on the
 /// rust backend.
 #[pyfunction]
@@ -140,10 +140,10 @@ pub(crate) fn read_item<'py>(
 /// `OperationType::Patch`: the rust driver reads the item, applies the ops, and
 /// writes it back with an If-Match-guarded Replace. `honor_content_response` is
 /// true, so `no_response` applies to that inner Replace. Without it, partial
-/// updates could not be pushed to the rust driver at all.
+/// updates could not be sent to the rust driver at all.
 ///
 /// The Python helper only routes the supported subset here; a `filter_predicate`
-/// or a caller-set precondition takes the legacy path, so neither rides on this
+/// or a caller-set precondition takes the legacy path, so neither is carried on this
 /// prepared request.
 #[pyfunction]
 pub(crate) fn patch_item<'py>(
@@ -167,12 +167,6 @@ pub(crate) fn patch_item<'py>(
     )
 }
 
-/// query_items: feed operation where `PreparedRequest.partition_key_header`
-/// chooses the query scope. A non-empty header targets one logical partition;
-/// `[]` targets the full container. The query JSON is read from
-/// `PreparedRequest.body_bytes`. Without it, one page of query_items could not
-/// run on the rust driver, and every query would stay on the core-python HTTP
-/// path.
 /// Async twin of `create_item`: identical inputs and driver work, returns a
 /// Python awaitable instead of a ready tuple.
 #[pyfunction]

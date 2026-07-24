@@ -13,11 +13,12 @@ partition-key value out of a document on a save).
 
 Both come from the container's properties, which are fetched by one container
 read and cached. This class does that read once and reads both facts off the
-result, in one place, so the backend's request prep no longer calls the
-connection's ``_container_properties_cache`` and ``_AddPartitionKey`` directly.
+result, in one place, so the backend's request prep reads both facts from here
+instead of calling the connection's ``_container_properties_cache`` and
+``_AddPartitionKey`` directly.
 
-The core-python (no-backend) path is unaffected; it still uses the connection
-directly.
+The core-python (legacy) path does not use this provider; it reads the same two
+facts from the connection directly.
 """
 from __future__ import annotations
 

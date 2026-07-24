@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-"""The single front door and gatekeeper for backend selection.
+"""The single entry point for backend selection.
 
 Consistent terms used throughout this file:
 
@@ -21,8 +21,8 @@ Consistent terms used throughout this file:
 * **credential** -- how the customer proves who they are (a master key, or a
   token from ``azure-identity``).
 
-50,000-foot view -- what this file does
----------------------------------------
+High-level view -- what this file does
+--------------------------------------
 
 When a customer writes ``CosmosClient(url, credential, _backend="rust")``,
 something has to (1) decide which engine that client will use, and (2) if it is
@@ -35,8 +35,8 @@ was chosen, or ``None`` if core-python was chosen (the rest of the SDK reads
 
 If this file didn't exist: that decide-and-check-and-repackage logic would have
 to live inside ``CosmosClient`` itself -- and be duplicated in both the sync and
-async clients. The moment those two copies drifted, you'd get bugs on one side
-only. Worse, without the up-front checks, a customer who passed something Rust
+async clients. The moment those two copies diverged, bugs would appear on one
+side only. Worse, without the up-front checks, a customer who passed something Rust
 can't do yet (say, a custom proxy, or Bounded Staleness consistency) wouldn't
 find out at ``CosmosClient(...)``. It would appear to work, then fail on their
 first database call with a confusing low-level error far from the real cause.
@@ -339,12 +339,12 @@ def reject_unsupported_transport_settings(
     when it wasn't -- a security-relevant surprise. So it raises if any were
     passed.
 
-    It is careful to let the defaults through so a normal client isn't tripped
-    up: ``connection_verify`` defaults to ``True``/absent (ordinary
+    It is careful to let the defaults through so a normal client isn't wrongly
+    rejected: ``connection_verify`` defaults to ``True``/absent (ordinary
     verification, which the driver already does) and only a custom CA bundle path
     (a ``str``) or an explicit ``False`` (disable verification) is unsupported;
-    an empty ``proxies`` dict is "no proxy". Every other knob trips when it is
-    present (non-``None``).
+    an empty ``proxies`` dict is "no proxy". Every other setting is rejected when it
+    is present (non-``None``).
     """
     def _fail(setting: str, detail: str) -> None:
         raise ValueError(
@@ -474,7 +474,7 @@ def build_client_config(
     preferred = _normalize_locations(preferred_locations, "preferred_locations")
     excluded = _normalize_locations(excluded_locations, "excluded_locations")
     hedging_threshold_ms = _resolve_hedging(availability_strategy)
-    # An empty string carries nothing, mirroring the "no preference" treatment of
+    # An empty string carries nothing, matching the "no preference" treatment of
     # the location tuples; only a non-empty label is worth carrying to the driver.
     suffix = user_agent_suffix or None
     consistency = _resolve_consistency_level(consistency_level)
@@ -517,8 +517,8 @@ def build_client_config(
 def resolve_client_transport_timeouts(kwargs: Mapping[str, Any]) -> Tuple[Any, Any]:
     """Return the effective constructor-level connection and read timeouts.
 
-    This mirrors ``_build_connection_policy`` without consuming ``kwargs`` so the
-    legacy client still receives the same values. ``request_timeout`` is the old
+    This matches ``_build_connection_policy`` without consuming ``kwargs`` so the
+    legacy client still receives the same values. ``request_timeout`` is the older
     millisecond alias for ``connection_timeout`` and therefore keeps precedence.
     """
     policy = kwargs.get("connection_policy") or ConnectionPolicy()
@@ -641,23 +641,23 @@ def make_backend(
     ssl_config: Any = None,
     transport: Any = None,
 ) -> Optional[CosmosBackend]:
-    """The one public entry point that ties the rest of this file together: build
+    """The one public entry point that combines the rest of this file: build
     the backend instance a sync ``CosmosClient`` will hold.
 
-    Without it: the client constructor would have to orchestrate all of the below
-    itself, in two places (sync and async), with the drift bugs that invites. So
-    this resolves the name; if Rust, requires the endpoint URL, rejects
-    unsupported transport settings, sorts the credential, folds the tuning into a
-    config, resolves the isolation switch, and hands back a :class:`RustBackend`.
-    If core-python, it returns ``None``.
+    Without it: the client constructor would have to do all of the below itself,
+    in two places (sync and async), which invites one-sided bugs when the two
+    copies diverge. So this resolves the name; if Rust, requires the endpoint URL,
+    rejects unsupported transport settings, sorts the credential, combines the
+    tuning into a config, resolves the isolation switch, and returns a
+    :class:`RustBackend`. If core-python, it returns ``None``.
 
     The keyword settings are only consulted for the Rust branch, where they are
-    folded into the client config the backend carries to the driver.
+    combined into the client config the backend carries to the driver.
     ``strict_isolation`` (kwarg > the ``COSMOS_RUST_STRICT_ISOLATION`` env var >
     off) controls whether a second client to an account with a different config
     raises instead of silently getting its own isolated engine. The transport/TLS
     settings (``proxy_config`` / ``proxies`` / ``connection_verify`` /
-    ``connection_cert`` / ``ssl_config`` / ``transport``) are not folded into the
+    ``connection_cert`` / ``ssl_config`` / ``transport``) are not combined into the
     config -- the Rust path still can't honor explicit proxy/transport objects, so
     they are rejected here; they are ignored entirely on the core-python branch,
     which honors them as before. ``proxy_allowed`` is the Rust-path proxy switch

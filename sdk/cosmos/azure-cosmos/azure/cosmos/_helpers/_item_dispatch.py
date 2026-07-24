@@ -37,8 +37,8 @@ def merge_create_item_explicit_kwargs(
 ) -> None:
     """Copy every non-None explicit ``create_item`` kwarg into ``kwargs``.
 
-    Folds the ``if X is not None: kwargs['X'] = X`` boilerplate that
-    the two ``Container.create_item`` methods used to inline. Both the
+    Folds the ``if X is not None: kwargs['X'] = X`` boilerplate that both
+    ``Container.create_item`` methods would otherwise repeat inline. Both the
     sync and async ``create_item`` declare ``response_hook`` as an
     explicit keyword-only parameter and forward it here.
     ``availability_strategy`` is passed through the hedging-strategy
@@ -70,13 +70,12 @@ def pick_backend(client_connection: Any) -> Optional[CosmosBackend]:
     """Return the stored backend selection: a rust backend, or ``None``.
 
     ``None`` means core-python was selected. This is the raw, ``Optional``
-    selection stored at client construction. Every family coordinator (the item
-    helper, and the throughput / feed-range coordinators) no longer treats
-    ``None`` as "call legacy" directly: each coerces this selection to an
-    explicit :class:`~azure.cosmos._backend.legacy.LegacyBackend` (via
-    :func:`~azure.cosmos._backend.legacy.coerce_backend`) so it holds one
-    backend by interface. The selection is made once at construction and never
-    reconsidered per call.
+    selection stored at client construction. Every family coordinator coerces
+    this selection to an explicit
+    :class:`~azure.cosmos._backend.legacy.LegacyBackend` (via
+    :func:`~azure.cosmos._backend.legacy.coerce_backend`) so it holds one backend
+    by interface and never branches on ``None``. The selection is made once at
+    construction and never reconsidered per call.
 
     :param client_connection: The connection that owns the ``_backend``
         attribute. A missing attribute is tolerated.

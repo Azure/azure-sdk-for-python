@@ -81,7 +81,7 @@ type FeedRangeFromPartitionKeyInputs = (String, String);
 /// modifiers) plus a *required* item id off the PreparedRequest. Used by the
 /// bodiless ops (delete, read), where the id comes from the request. Without a
 /// single shared extractor each op would re-derive the same inputs and could
-/// drift apart on which fields it reads or which error it raises.
+/// diverge on which fields it reads or which error it raises.
 fn extract_item_inputs(
     prepared: &Bound<'_, PyAny>,
     error_message: &'static str,
@@ -142,7 +142,7 @@ fn extract_query_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<QueryInputs> {
 /// Inputs for `replace_offer`: per-request modifiers, the offer RID (required, from
 /// `PreparedRequest.item_id`), and the mutated offer document body. Offers are an
 /// account-level, non-partitioned resource, so the container link and partition-key
-/// header on the PreparedRequest are unused here (mirrors `read_offer`).
+/// header on the PreparedRequest are unused here (matches `read_offer`).
 fn extract_replace_offer_inputs(prepared: &Bound<'_, PyAny>) -> PyResult<OfferReplaceInputs> {
     let (_container_link, _partition_key_header, modifiers): CommonInputs =
         extract_common_prepared_inputs(prepared)?;
@@ -177,7 +177,7 @@ fn extract_feed_range_from_partition_key_inputs(
 // Async entry points
 // ---------------------------------------------------------------------------
 //
-// One `*_item_async` per operation, mirroring the sync six above. Input
+// One `*_item_async` per operation, matching the sync six above. Input
 // extraction is byte-for-byte identical; the ONLY difference is the runner
 // (`run_item_operation_async` instead of `run_item_operation`) and the return
 // type: a Python awaitable instead of a ready tuple.

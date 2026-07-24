@@ -34,11 +34,11 @@ pub(super) fn tuple_from_result<'py>(
             {
                 Ok(raw_http_error)
             } else {
-                // No wire response: fold any attached diagnostics into the
+                // No wire response: combine any attached diagnostics into the
                 // process-wide attempt counters so timeouts and transport
                 // failures are counted alongside successful operations.
                 record_diagnostics_for_responseless(&cosmos_error);
-                // Surface a typed transport error (Display preserves the
+                // Report a typed transport error (Display preserves the
                 // Cosmos status) the Python layer maps to
                 // ServiceResponseError, rather than a bare RuntimeError.
                 Err(DriverTransportError::new_err(format!(
@@ -99,7 +99,7 @@ pub(super) fn tuple_from_partition_key_ranges_result<'py>(
             let response_headers = PyDict::new_bound(py);
             response_headers.set_item("content-type", "application/json")?;
             // Match the wire contract observed on core-python for pkranges:
-            // this feed response surfaces x-ms-item-count as "0".
+            // this feed response reports x-ms-item-count as "0".
             response_headers.set_item("x-ms-item-count", "0")?;
             let body = partition_key_ranges_to_response_body(&ranges)?;
             backend_response_tuple(py, 200, 0, response_headers, &body, None)
@@ -238,7 +238,7 @@ fn backend_response_tuple<'py>(
 }
 
 /// Build the reply tuple for a successful point operation: read status and
-/// sub-status, fold this operation's wire attempts into the diagnostics counters,
+/// sub-status, combine this operation's wire attempts into the diagnostics counters,
 /// copy the response headers under their wire names, and convert the body.
 fn backend_response_tuple_from_success<'py>(
     py: Python<'py>,
@@ -248,9 +248,9 @@ fn backend_response_tuple_from_success<'py>(
     let status_code = u16::from(status.status_code()) as i64;
     // SubStatusCode wraps a u16; use ``.value()`` to read it.
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    // Fold this operation's per-attempt wire diagnostics into the process-wide
+    // Combine this operation's per-attempt wire diagnostics into the process-wide
     // attempt/retry counters before stringifying them (see BINDING_ATTEMPT_COUNT).
-    // `diagnostics()` is a cheap Arc clone; the walk touches only in-memory records.
+    // `diagnostics()` is a low-cost Arc clone; the read touches only in-memory records.
     let diagnostics = record_diagnostics(response.diagnostics());
     // dict keyed by the actual `x-ms-...` wire-header names. This is what
     // the Python parser (`_helpers/_response_parse.py`) reads to populate
@@ -302,7 +302,7 @@ fn backend_response_tuple_from_feed_success<'py>(
 /// always produces a single payload (or no payload when the caller passed
 /// `no_response=True`), so we never expect the `Items` feed-shape here.
 /// We concatenate it as a defensive fallback rather than panic — if it ever
-/// fires the test harness will surface a body mismatch that's easier to
+/// fires the test harness will show a body mismatch that's easier to
 /// diagnose than an unwrap panic from inside the binding.
 fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
     match body {
@@ -317,8 +317,8 @@ fn response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
 
 /// Wrap the driver's query results into the `{"Documents":[ ... ]}` JSON envelope
 /// the Python query parser expects — the same shape the Cosmos REST service
-/// returns for a query. The driver hands back the rows as a list of item bytes
-/// (or raw bytes, or nothing); this stitches them into that envelope so the parser
+/// returns for a query. The driver returns the rows as a list of item bytes
+/// (or raw bytes, or nothing); this assembles them into that envelope so the parser
 /// can read a Rust-served page without knowing it came from Rust. No rows becomes
 /// `{"Documents":[]}`.
 fn query_response_body_to_vec(body: ResponseBody) -> PyResult<Vec<u8>> {
@@ -459,7 +459,7 @@ fn feed_range_to_response_body(payload: &FeedRangeFromPartitionKeyPayload) -> Py
     })
 }
 
-/// Fold attempt counters for a response-less `CosmosError` that still carries
+/// Combine attempt counters for a response-less `CosmosError` that still carries
 /// `DiagnosticsContext` (for example, a client-side end-to-end timeout that
 /// tracked wire attempts before the deadline fired).
 ///
@@ -490,7 +490,7 @@ fn backend_response_tuple_from_cosmos_error<'py>(
     let status = response.status();
     let status_code = u16::from(status.status_code()) as i64;
     let sub_status = status.sub_status().map(|s| s.value() as i64).unwrap_or(0);
-    // Wire-error responses still made real attempts -- fold them in too so the
+    // Wire-error responses still made real attempts -- combine them in too so the
     // counters cover the full round-trip count, not just successes.
     let diagnostics = record_diagnostics(response.diagnostics());
 
@@ -625,7 +625,7 @@ fn write_response_headers(
     // results, the tentative-writes flag, and index-transformation /
     // lazy-indexing progress.
     // x-ms-alt-content-path / x-ms-content-path are still pub(crate) on the
-    // driver (owner_full_name / owner_id) and will surface here once the
+    // driver (owner_full_name / owner_id) and will appear here once the
     // driver makes them public.
     if let Some(v) = h.gateway_version.as_ref() {
         out.set_item("x-ms-gatewayversion", v.as_str())?;

@@ -26,7 +26,7 @@ change this file.
 * ``execute_batch`` -- a transactional batch, one result per operation
   (``BatchResponse``). Reserved; not implemented yet.
 
-The operation kind (create_item, read_item, query_items, …) rides on the
+The operation kind (create_item, read_item, query_items, …) is carried on the
 ``PreparedRequest`` / ``PreparedQuery`` ``op`` field. Adding a single-reply
 operation is one new ``op`` value plus one new branch in each backend's
 ``execute``; adding a query/read-many operation is the same for
@@ -91,7 +91,7 @@ OP_TO_BINDING_METHOD = {
 }
 
 
-# ``PreparedQuery.op`` -> binding function name, mirroring ``OP_TO_BINDING_METHOD``
+# ``PreparedQuery.op`` -> binding function name, matching ``OP_TO_BINDING_METHOD``
 # for the query and read-many operations. A backend's ``execute_pages`` reads this
 # (never ``OP_TO_BINDING_METHOD``) so a query op can never be reached through the
 # single-reply ``execute`` path by accident.
@@ -99,7 +99,7 @@ QUERY_TO_BINDING_METHOD = {
     OP_QUERY_ITEMS: "query_items",
     OP_READ_ALL_ITEMS: "read_all_items",
 }
-# Reserved lookup for the batch operation, mirroring ``OP_TO_BINDING_METHOD``.
+# Reserved lookup for the batch operation, matching ``OP_TO_BINDING_METHOD``.
 # Empty until that operation is added; adding a row does not change the
 # dispatch code.
 BATCH_TO_BINDING_METHOD: dict[str, str] = {}
@@ -158,7 +158,7 @@ class LegacyOperation:
     predicate, ...) that a wire-shaped ``PreparedRequest`` has no fields for and
     cannot carry losslessly. So a backend cannot safely reconstruct the legacy
     call from ``PreparedRequest`` alone, and this is *not* an arbitrary callable
-    smuggled onto that request object -- ``PreparedRequest`` never carries one.
+    attached to that request object -- ``PreparedRequest`` never carries one.
     Instead the coordinator builds one of these -- a small, named, typed request
     object -- and hands it to :meth:`CosmosBackend.run_operation` as its own
     argument, separate from ``PreparedRequest``: ``op`` names which operation is
@@ -213,7 +213,7 @@ class PreparedClientConfig:
     preferred_locations: tuple[str, ...] = ()
 
     #: Region names to keep out of routing entirely (the ``excluded_locations``
-    #: kwarg, e.g. ``("Central US",)``). The mirror of ``preferred_locations``;
+    #: kwarg, e.g. ``("Central US",)``). The counterpart of ``preferred_locations``;
     #: an empty tuple means "no exclusions". Carried to the driver's
     #: ``OperationOptions.excluded_regions`` at the account level.
     excluded_locations: tuple[str, ...] = ()
@@ -466,7 +466,7 @@ class CosmosBackend(abc.ABC):
     on ``prepared.op``; the backend branches on it.
 
     ``execute`` is the wire-level primitive (build one prepared request, send
-    it, hand back the raw reply) that the rust path uses; the query/feed-range/
+    it, return the raw reply) that the rust path uses; the query/feed-range/
     offer routing helpers call it directly. The core-python
     :class:`~azure.cosmos._backend.legacy.LegacyBackend` is **not**
     ``PreparedRequest``-driven -- its work is the original public call arguments,
@@ -515,7 +515,7 @@ class CosmosBackend(abc.ABC):
         dependency on the helper layer (it never imports ``parse_backend_response``)
         and keep :class:`PreparedRequest` data-oriented -- the legacy call is a
         separate, typed argument here (see :class:`LegacyOperation`), never
-        something smuggled onto the request object:
+        something attached to the request object:
 
         * ``build_prepared`` builds the ``PreparedRequest``; it is invoked only
           on the rust path, so a core-python client never does the extra
@@ -587,8 +587,8 @@ class CosmosBackend(abc.ABC):
 # Response-header normalisation (binding dict -> CaseInsensitiveDict)
 # ---------------------------------------------------------------------------
 #
-# The binding hands back a plain dict keyed by the gateway's wire
-# header names. The legacy core-python path surfaces azure-core's
+# The binding returns a plain dict keyed by the gateway's wire
+# header names. The legacy core-python path returns azure-core's
 # ``CaseInsensitiveDict`` (it just does ``copy.copy(response.headers)`` --
 # the raw gateway headers, no renaming or aliasing). To keep
 # ``last_response_headers`` lookups case-insensitive and identical across
@@ -603,7 +603,7 @@ def normalize_response_headers(
     """Wrap the binding's response-header dict in a ``CaseInsensitiveDict``.
 
     A pure type-normalisation step: every key from the input is copied
-    through unchanged so the rust path surfaces the same gateway header
+    through unchanged so the rust path returns the same gateway header
     names the legacy path does. ``None`` or empty input returns ``None``.
     """
     if not headers:

@@ -5,15 +5,12 @@
 # -------------------------------------------------------------------------
 """The explicit core-python (legacy) backend for the single-item path.
 
-Historically the "core-python" selection was represented by the *absence* of a
-backend: the factory returned ``None`` and the item helper read "no backend" as
-"call the legacy ``client_connection.<Op>Item`` method directly". That made
-``None`` mean two different things at once (no backend / run legacy) and forced
-every item method to branch on it.
-
-``LegacyBackend`` makes the core-python engine a first-class
-:class:`~azure.cosmos._backend.base.CosmosBackend`, so every family coordinator
-(``ItemHelper``, ``ThroughputHelper``, ``FeedRangeHelper``) always holds one
+``LegacyBackend`` makes the core-python engine a full
+:class:`~azure.cosmos._backend.base.CosmosBackend` rather than the *absence* of a
+backend. Representing core-python as ``None`` instead would make ``None`` mean two
+things at once (no backend / run legacy) and force every coordinator to branch on
+it. With an explicit backend, every family coordinator (``ItemHelper``,
+``ThroughputHelper``, ``FeedRangeHelper``, ``DatabaseHelper``) always holds one
 backend by interface and never interprets ``None``. Selecting rust gives a
 :class:`~azure.cosmos._backend.rust.RustBackend`; selecting core-python (or
 forcing legacy for a single call) gives this backend. The item family runs
@@ -24,7 +21,7 @@ original public call arguments (``document_link`` / ``options`` / body / kwargs)
 which a wire-shaped ``PreparedRequest`` does not carry. So this backend does not
 implement the wire primitive ``execute``; it runs the :class:`LegacyOperation`
 the coordinator hands to ``run_operation``. ``LegacyOperation`` is a small, named,
-typed request/context object (not a bare callable smuggled onto
+typed request/context object (not a bare callable attached to
 ``PreparedRequest``) -- see its docstring in ``base`` for why a fully generic
 reconstruction from wire-shaped fields is not safe here: the six legacy item
 calls (``CreateItem`` / ``DeleteItem`` / ...) take differently-shaped positional

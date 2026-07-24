@@ -25,7 +25,7 @@ use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
 /// Sync runner shared by all six point operations (`documents/items.rs` sync entries).
-/// Steps: bump the binding-invocation counter, look up the rust driver by handle,
+/// Steps: increment the binding-invocation counter, look up the rust driver by handle,
 /// parse the container link and partition key, then -- with the GIL released --
 /// block the calling thread on the shared Tokio runtime until the driver resolves
 /// the container, builds and runs the operation, and returns. Turn the driver's
@@ -47,7 +47,7 @@ pub(crate) fn run_item_operation<'py>(
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send,
 ) -> PyResult<Bound<'py, PyTuple>> {
     // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Bumped on entry so it reflects every op routed into the
+    // BINDING_OP_COUNT). Incremented on entry so it reflects every op routed into the
     // binding on the sync path.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     let driver = lookup_driver(handle)?;
@@ -105,10 +105,10 @@ pub(crate) fn run_item_operation_async<'py>(
     build_op: impl FnOnce(ItemReference) -> CosmosOperation + Send + 'static,
 ) -> PyResult<Bound<'py, PyAny>> {
     // Count that the rust binding actually ran this operation (see
-    // BINDING_OP_COUNT). Bumped on entry, async path.
+    // BINDING_OP_COUNT). Incremented on entry, async path.
     BINDING_OP_COUNT.fetch_add(1, Ordering::Relaxed);
     // Synchronous extraction (GIL held) -- identical to the sync path. Errors
-    // here surface when the coroutine is created, before it is awaited.
+    // here appear when the coroutine is created, before it is awaited.
     let driver = lookup_driver(handle)?;
     let (database_name, container_name) = parse_container_link(container_link)?;
     let partition_key = parse_partition_key_header(partition_key_header)?;

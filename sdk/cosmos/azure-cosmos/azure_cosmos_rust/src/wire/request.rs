@@ -112,13 +112,13 @@ pub(crate) fn extract_required_item_id<'py>(
 // session token, no_response, excluded_regions, end-to-end timeout).
 // Everything else goes through the driver's custom_headers passthrough.
 
-/// Option-keys that legitimately ride in the ``PreparedRequest.headers`` dict
+/// Option-keys that legitimately appear in the ``PreparedRequest.headers`` dict
 /// but are NOT wire headers: they are consumed elsewhere in the Python prep
-/// (``disableAutomaticIdGeneration`` -> id minting) or lifted to a typed
+/// (``disableAutomaticIdGeneration`` -> id minting) or moved to a typed
 /// driver field (``partitionKey`` -> the partition-key argument), so
 /// `extract_op_modifiers` correctly drops them. Listed here only so the
 /// ``COSMOS_WIRE_STRICT`` diagnostic does not flag these expected drops as
-/// drift. Compared against the lowercased key.
+/// divergence. Compared against the lowercased key.
 const INTENTIONALLY_IGNORED_OPTION_KEYS: &[&str] =
     &["disableautomaticidgeneration", "partitionkey"];
 
@@ -128,7 +128,7 @@ fn is_intentionally_ignored_option_key(lower: &str) -> bool {
 
 /// ``COSMOS_WIRE_STRICT=1`` (or ``true``) turns the silent drop of an
 /// unrecognized option-key in `extract_op_modifiers` into a hard error, so a
-/// Python-side wire knob that was never wired into Rust is caught in tests/CI
+/// Python-side wire option that was never wired into Rust is caught in tests/CI
 /// instead of producing wrong wire bytes with green tests. Unset by default
 /// => production behavior is unchanged (lenient silent drop). Read only when a
 /// genuinely unrecognized, non-allowlisted key is encountered (rare/never in
@@ -270,7 +270,7 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
         // every entry is a customer-supplied header and is forwarded as-is,
         // including non-``x-ms-`` names the option-key translation below would
         // otherwise drop. Keeping them separate from the option-key stream also
-        // means COSMOS_WIRE_STRICT still guards genuine option-key drift.
+        // means COSMOS_WIRE_STRICT still guards genuine option-key divergence.
         if lower == "initialheaders" {
             let inner: &Bound<'_, PyDict> = value.downcast().map_err(|e| {
                 PyValueError::new_err(format!(
@@ -318,18 +318,18 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
             other if other.starts_with("x-ms-") || other == "prefer" => None,
             // Unrecognized key. In normal operation a handful of
             // prep-internal option-keys (e.g. ``disableAutomaticIdGeneration``
-            // on every create/upsert/replace, ``partitionKey``) ride in the
+            // on every create/upsert/replace, ``partitionKey``) are carried in the
             // headers dict but are NOT wire headers -- they are consumed
-            // elsewhere in the Python prep (id minting) or lifted to a typed
+            // elsewhere in the Python prep (id minting) or moved to a typed
             // driver field (partition key), so dropping them here is correct
             // and matches the legacy path.
             //
-            // The hazard (the silent-correctness landmine) is a *new* wire
-            // knob added on the Python side (``flatten_options_to_headers`` /
+            // The hazard (a silent-correctness bug) is a *new* wire
+            // option added on the Python side (``flatten_options_to_headers`` /
             // ``COMMON_OPTIONS``) without a matching arm above: it would be
             // dropped here, producing wrong wire bytes with green tests.
             // ``COSMOS_WIRE_STRICT=1`` (for tests / CI / local dev) turns an
-            // unrecognized, non-allowlisted key into a hard error so the drift
+            // unrecognized, non-allowlisted key into a hard error so the divergence
             // is caught immediately. Production leaves the env unset and keeps
             // the lenient silent drop, so there is ZERO behavior change unless
             // the flag is set. The allowlist check runs first so the hot path
@@ -855,15 +855,15 @@ mod tests {
 
     #[test]
     fn ignored_allowlist_covers_prep_internal_keys_only() {
-        // Prep-internal flags that legitimately ride in the headers dict but are
+        // Prep-internal flags that legitimately appear in the headers dict but are
         // NOT wire headers must be on the allowlist, so COSMOS_WIRE_STRICT does
-        // not flag the expected silent drop as drift. Keys are compared lowered.
+        // not flag the expected silent drop as divergence. Keys are compared lowered.
         assert!(is_intentionally_ignored_option_key(
             "disableautomaticidgeneration"
         ));
         assert!(is_intentionally_ignored_option_key("partitionkey"));
-        // A would-be new wire knob (or any real wire-name key) must NOT be on the
-        // allowlist, so strict mode can catch Python<->Rust drift on it.
+        // A would-be new wire option (or any real wire-name key) must NOT be on the
+        // allowlist, so strict mode can catch Python<->Rust divergence on it.
         assert!(!is_intentionally_ignored_option_key("indexingdirective"));
         assert!(!is_intentionally_ignored_option_key("somenewknob"));
         assert!(!is_intentionally_ignored_option_key(

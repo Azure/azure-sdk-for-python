@@ -5,20 +5,20 @@
 # -------------------------------------------------------------------------
 """Async backend-neutral coordination for account-level database operations.
 
-Async twin of :mod:`azure.cosmos._helpers.database_helper`. The public method
-The async ``create_database`` and ``create_database_if_not_exists`` methods
-delegate here. This module runs each operation through the selected engine and
-returns the final database properties.
+Async twin of :mod:`azure.cosmos._helpers.database_helper`. The async
+``create_database`` and ``create_database_if_not_exists`` methods delegate here.
+This module runs each operation through the selected engine and returns the final
+database properties.
 
 A "database" is the top-level container-of-containers a customer makes once per
 tenant or app. Creating one is an account-level write, so there is no container
 and no partition key involved.
 
 Why this module exists (public methods must not know which engine runs): the
-public methods coerce the client's backend selection to a concrete
-backend (``coerce_async_backend`` -> the rust backend or the explicit async
-``LegacyBackend``, never ``None``) and drives the create through
-:meth:`~azure.cosmos.aio._backend.base.AsyncCosmosBackend.run_operation`, so the
+public methods coerce the client's backend selection to a concrete backend
+(``coerce_async_backend`` -> the rust backend or the explicit async
+``LegacyBackend``, never ``None``) and drive the create through
+:meth:`~azure.cosmos.aio._backend.base.AsyncCosmosBackend.run_operation`, so a
 public method names no engine. Without this module that branching would live in
 the public methods.
 """

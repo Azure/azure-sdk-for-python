@@ -16,14 +16,13 @@ customer makes once per tenant or app. Creating one is an account-level write, s
 unlike an item write there is no container and no partition key involved.
 
 Why this module exists (public methods must not know which engine runs):
-before this migration, the public methods called the legacy client directly.
-Here it coerces the client's backend selection to a concrete backend
+without it, that engine branching would live in the public client methods. Here
+it coerces the client's backend selection to a concrete backend
 (``coerce_backend`` -> the rust backend or the explicit ``LegacyBackend``, never
 ``None``) and drives the create through
 :meth:`~azure.cosmos._backend.base.CosmosBackend.run_operation`, so the public
 method is a thin delegate that names no engine. This mirrors ``ItemHelper`` and
-the throughput and feed-range coordinators. Without this module that engine
-branching would live in the public client methods.
+the throughput and feed-range coordinators.
 """
 from __future__ import annotations
 

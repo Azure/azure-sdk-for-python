@@ -24,8 +24,8 @@ use super::response::tuple_from_result;
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
-/// Shared scaffolding for a sync database operation:
-/// bump the binding counter, look up the driver, block on the future.
+/// Shared setup for a sync database operation:
+/// increment the binding counter, look up the driver, block on the future.
 fn run_database_sync<'py, F, Fut>(
     py: Python<'py>,
     handle: &str,
@@ -44,8 +44,8 @@ where
     tuple_from_result(py, response_result)
 }
 
-/// Shared scaffolding for an async database operation:
-/// bump the binding counter, spawn the future, wrap in an abort guard.
+/// Shared setup for an async database operation:
+/// increment the binding counter, spawn the future, wrap in an abort guard.
 fn run_database_async<'py, F, Fut>(
     py: Python<'py>,
     handle: &str,
@@ -77,7 +77,7 @@ where
 }
 
 /// Sync runner for the account-level `create_database` operation (the sync entry
-/// in `documents/databases.rs`). Bumps the binding-invocation counter, looks up
+/// in `documents/databases.rs`). Increments the binding-invocation counter, looks up
 /// the rust driver by handle, then -- with the GIL released -- blocks the calling
 /// thread on the shared Tokio runtime until the driver signs, sends, and resolves
 /// the create, and turns the driver's response into the `BackendResponse` tuple
@@ -172,10 +172,10 @@ async fn run_create_database_future(
 /// (404) does it send the create. An existing database is returned as-is with
 /// no create sent, so re-running setup for a name that already exists is safe
 /// instead of failing with a 409 "already exists". A create that loses a
-/// concurrent race still surfaces its 409 -- the binding never hides it behind
+/// concurrent race still returns its 409 -- the binding never hides it behind
 /// a second read. Both legs share one absolute deadline (computed once, below)
 /// so the read-plus-create pair can't outlive the customer's timeout, and the
-/// throughput provisioning headers ride only the create leg. Being native here
+/// throughput provisioning headers are sent only on the create leg. Being native here
 /// is what lets this operation run on the rust driver at all; without it every
 /// such call would fall back to the legacy Python read/404/create path.
 async fn run_create_database_if_not_exists_future(
@@ -319,7 +319,7 @@ fn remaining_policy_with_deadline(
 /// Runs `read_future`; if it fails the `is_not_found` check, runs `create` and
 /// `merge`s its outcome with the read error so the read's diagnostics are kept.
 /// Any other read error is returned unchanged, and a create error (such as a
-/// concurrent-create 409) is propagated, never swallowed. Sharing this keeps
+/// concurrent-create 409) is propagated, never hidden. Sharing this keeps
 /// the "existing wins, 404 creates, everything else propagates" behavior
 /// identical for every operation that needs it.
 async fn read_then_create<T, E, ReadFuture, Create, CreateFuture, IsNotFound, Merge>(
@@ -347,7 +347,7 @@ mod tests {
     //! Locks in the read-then-create rule and the shared-deadline math behind
     //! "create database if not exists": existing database wins with no create,
     //! a 404 read triggers the create, any other read error stops, and a
-    //! concurrent-create 409 is propagated (never swallowed).
+    //! concurrent-create 409 is propagated (never hidden).
     use super::{build_policy_with_deadline, read_then_create, remaining_policy_with_deadline};
     use azure_data_cosmos_driver::options::EndToEndOperationLatencyPolicy;
     use std::sync::{
@@ -424,7 +424,7 @@ mod tests {
     #[tokio::test]
     async fn create_conflict_is_propagated() {
         // Concurrent-create race: read is 404, but another caller wins so the
-        // create returns 409 -- that 409 is surfaced, not hidden.
+        // create returns 409 -- that 409 is returned, not hidden.
         let create_count = Arc::new(AtomicUsize::new(0));
         let result = execute(
             Err(TestError::NotFound),

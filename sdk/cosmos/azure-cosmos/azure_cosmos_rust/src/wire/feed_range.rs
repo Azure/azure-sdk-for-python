@@ -150,7 +150,7 @@ pub(crate) fn run_read_feed_ranges_operation_async<'py>(
     })
 }
 
-/// Entry point that computes the feed-range envelope for one partition key.
+/// Entry point that computes the feed range one partition key falls into.
 pub(crate) fn run_feed_range_from_partition_key_operation<'py>(
     py: Python<'py>,
     handle: &str,
@@ -238,7 +238,7 @@ async fn run_read_feed_ranges_future(
 }
 
 /// Driver work for `feed_range_from_partition_key`: resolve container metadata,
-/// compute the effective-partition-key envelope for the supplied partition key,
+/// compute the effective-partition-key range for the supplied partition key,
 /// and return it in the legacy Python feed-range shape.
 async fn run_feed_range_from_partition_key_future(
     driver: Arc<CosmosDriver>,

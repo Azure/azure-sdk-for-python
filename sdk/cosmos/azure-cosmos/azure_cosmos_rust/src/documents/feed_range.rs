@@ -20,8 +20,7 @@ pub(crate) fn read_feed_ranges<'py>(
     )
 }
 
-/// feed_range_from_partition_key: compute the feed-range envelope for one partition key.
-/// Async twin of `read_feed_ranges`.
+/// feed_range_from_partition_key: compute the feed range that one partition key falls into.
 #[pyfunction]
 pub(crate) fn feed_range_from_partition_key<'py>(
     py: Python<'py>,

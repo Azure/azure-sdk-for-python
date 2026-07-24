@@ -39,7 +39,7 @@
 //!   * `upsert_item(handle, prepared) -> (status, sub_status,
 //!                                         headers, body, diagnostics)`
 //!         Same input/output shape as `create_item` (write-with-body:
-//!         the document id rides inside `body_bytes`). The only
+//!         the document id is carried inside `body_bytes`). The only
 //!         difference is the operation kind —
 //!         `CosmosOperation::upsert_item` — which makes the driver
 //!         pipeline stamp `x-ms-documentdb-is-upsert: true` and POST to
@@ -64,7 +64,7 @@
 //!                                         headers, body, diagnostics)`
 //!         Same shape as `create_item` but builds a
 //!         `CosmosOperation::delete_item` with no body. The document
-//!         id rides on `PreparedRequest.item_id` because there is no
+//!         id is carried on `PreparedRequest.item_id` because there is no
 //!         body to extract it from. On success the driver returns
 //!         HTTP 204 with an empty body.
 //!
@@ -74,7 +74,7 @@
 //!         id on `PreparedRequest.item_id`). On success returns HTTP
 //!         200 with the document JSON. Conditional reads
 //!         (`If-None-Match` driven by Python's `etag` +
-//!         `MatchConditions.IfModified`) surface as **HTTP 304** with
+//!         `MatchConditions.IfModified`) appear as **HTTP 304** with
 //!         an empty body when the customer's cached etag still
 //!         matches the server version — the Python parser treats 304
 //!         as a non-error and returns an empty `CosmosDict`.
@@ -118,7 +118,7 @@
 //!
 //!   * `feed_range_from_partition_key(handle, prepared) -> (status, sub_status,
 //!                                                     headers, body, diagnostics)`
-//!         Computes the feed-range envelope for one partition key and returns body
+//!         Computes the feed range one partition key falls into and returns body
 //!         shape `{"Range":{"min","max","isMinInclusive","isMaxInclusive"}}`.
 //!
 //!   * `read_offer(handle, prepared) -> (status, sub_status,
@@ -133,8 +133,8 @@
 //!                                          headers, body, diagnostics)`
 //!         Replaces a container's provisioned throughput by PUTting the mutated
 //!         offer document to `/offers/{rid}` (an account-level, non-partitioned
-//!         resource). The offer RID rides in `PreparedRequest.item_id`; the mutated
-//!         offer document rides in the body. Unlike the read path there is no query
+//!         resource). The offer RID is carried in `PreparedRequest.item_id`; the mutated
+//!         offer document is sent in the body. Unlike the read path there is no query
 //!         `Content-Type` to force -- a replace carries a resource body and the
 //!         driver defaults `Content-Type` to `application/json`. Returns the single
 //!         updated offer document.
@@ -207,7 +207,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
     add_pyfn!(m, wire::operation_count);
     // Per-attempt wire-diagnostics counters: total attempts and driver-issued
-    // retries/failovers/hedges folded from each response's DiagnosticsContext.
+    // retries/failovers/hedges combined from each response's DiagnosticsContext.
     // Read by the perf harness as `_rust.attempt_count()` / `_rust.retry_count()`
     // to distinguish operations requested from wire round trips actually made
     // (e.g. PATCH ~= 2 attempts/op via client-side Read-Modify-Write; a nonzero
