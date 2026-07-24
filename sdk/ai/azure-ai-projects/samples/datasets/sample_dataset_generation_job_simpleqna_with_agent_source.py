@@ -53,7 +53,6 @@ USAGE:
 """
 
 import os
-import time
 import uuid
 from datetime import datetime, timezone
 

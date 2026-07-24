@@ -27,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -88,7 +88,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-teams_connection_name = os.environ["TEAMS_CONNECTION_NAME"]
+teams_connection_name = os.environ.get("TEAMS_CONNECTION_NAME", "teams-conn")
 teams_channel_url = os.environ["TEAMS_CHANNEL_URL"]
 teams_group_id, teams_channel_id = parse_teams_channel_url(teams_channel_url)
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
