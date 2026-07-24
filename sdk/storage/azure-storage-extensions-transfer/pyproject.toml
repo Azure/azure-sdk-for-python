@@ -1,0 +1,60 @@
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "azure-storage-extensions-transfer"
+authors = [
+  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
+]
+description = "Azure Storage Transfer Extensions (Rust-based acceleration)"
+license = "MIT"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Rust",
+]
+requires-python = ">=3.10"
+dependencies = []
+keywords = ["azure", "azure sdk"]
+dynamic = ["version", "readme"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/storage/azure-storage-extensions-transfer"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+module-name = "azure.storage.extensions.transfer._native"
+python-source = "."
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.storage.extensions.transfer._version.VERSION" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
+
+[tool.azure-sdk-build]
+mypy = false
+pyright = false
+type_check_samples = false
+verifytypes = false
+pylint = false
+sphinx = false
+verifysdist = false
+verifywhl = false
+sdist = false
+breaking = false
+suppressed_skip_warnings = ["*"]
+
+[tool.azure-sdk-conda]
+in_bundle = false
