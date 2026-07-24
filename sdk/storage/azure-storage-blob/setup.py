@@ -86,5 +86,8 @@ setup(
         "ext-checksums": [
             "azure-storage-extensions>=0.1.0,<1.0.0",
         ],
+        "ext-transfer": [
+            "azure-storage-extensions-transfer>=0.1.0,<1.0.0",
+        ],
     },
 )
