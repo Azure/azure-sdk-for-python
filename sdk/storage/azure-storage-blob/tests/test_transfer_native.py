@@ -23,11 +23,7 @@ class TestNativeAvailability(unittest.TestCase):
 
     def test_not_available_when_not_installed(self):
         """The native extension should report unavailable when not installed."""
-        import azure.storage.blob._transfer_native as mod
-
-        mod._native_available = None  # Reset cached state
         with patch.dict("sys.modules", {"azure.storage.extensions.transfer": None}):
-            mod._native_available = None
             result = _is_native_available()
             # Will be False since the module is not importable
             self.assertFalse(result)

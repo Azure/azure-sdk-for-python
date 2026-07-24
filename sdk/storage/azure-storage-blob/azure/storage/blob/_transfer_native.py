@@ -23,21 +23,15 @@ _STORAGE_SCOPE = "https://storage.azure.com/.default"
 
 _LOGGER = logging.getLogger(__name__)
 
-# Lazy-loaded flag for whether the native extension is available
-_native_available: Optional[bool] = None
-
 
 def _is_native_available() -> bool:
     """Check if the native transfer extension is installed and importable."""
-    global _native_available  # pylint: disable=global-statement
-    if _native_available is None:
-        try:
-            from azure.storage.extensions.transfer import is_available  # pylint: disable=import-outside-toplevel
+    try:
+        from azure.storage.extensions.transfer import is_available  # pylint: disable=import-outside-toplevel
 
-            _native_available = is_available()
-        except ImportError:
-            _native_available = False
-    return _native_available
+        return is_available()
+    except ImportError:
+        return False
 
 
 def _extract_access_token(credential: Any) -> Optional[str]:
@@ -231,17 +225,17 @@ def try_native_upload(
             upload_blob as native_upload,
         )
 
-        # Prepare data as bytes
+        # Prepare data as a buffer-protocol object. The native module accepts bytes,
+        # bytearray, and contiguous memoryview directly (via PyBuffer), so we avoid an
+        # extra Python-side copy for the non-bytes buffer types. Only str needs encoding.
         if isinstance(data, str):
             encoding = kwargs.get("encoding", "UTF-8")
             upload_data = data.encode(encoding)
-        elif isinstance(data, (bytearray, memoryview)):
-            upload_data = bytes(data)
-        elif isinstance(data, bytes):
+        elif isinstance(data, (bytes, bytearray, memoryview)):
             upload_data = data
         elif hasattr(data, "read"):
             upload_data = data.read()
-            if not isinstance(upload_data, bytes):
+            if not isinstance(upload_data, (bytes, bytearray, memoryview)):
                 _LOGGER.debug("Native upload data is a non-bytes stream; using Python upload path.")
                 return None  # Can't handle non-bytes streams natively
         else:
