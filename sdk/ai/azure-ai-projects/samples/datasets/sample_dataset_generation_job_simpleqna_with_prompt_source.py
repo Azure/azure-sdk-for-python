@@ -11,20 +11,21 @@ DESCRIPTION:
 
       1. Creates a `DataGenerationJob` (scenario=EVALUATION, type=simple_qna) that
          synthesizes question/answer pairs from an inline prompt and writes them
-         to a new versioned Dataset.
-      2. Polls the job to completion and resolves the resulting `DatasetVersion`.
+         to a new versioned Dataset. Uses `begin_create_generation_job` which returns
+         `LROPoller[DataGenerationJobResult]`; `.result()` polls automatically.
+      2. Resolves the resulting `DatasetVersion` from the job result.
       3. Creates an OpenAI evaluation (`client.evals.create`) with builtin
          Azure AI evaluators.
       4. Runs the evaluation against the generated dataset by passing the
          dataset's id as the run's `file_id`.
-      5. Cleans up the evaluation, the generated dataset, and the data generation job.
+      5. Cleans up the evaluation and the generated dataset.
 
 USAGE:
     python sample_dataset_generation_job_simpleqna_with_prompt_source.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -66,7 +67,6 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
-    JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
@@ -79,9 +79,6 @@ model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-generation-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
-
 def main() -> None:
     with (
         DefaultAzureCredential() as credential,
@@ -92,7 +89,6 @@ def main() -> None:
         # ------------------------------------------------------------------
         # 1. Generate a QnA evaluation dataset from an inline prompt.
         # ------------------------------------------------------------------
-        print("Create a data generation job.")
         job = DataGenerationJob(
             inputs=DataGenerationJobInputs(
                 name="qna-from-policy-prompt",
@@ -120,33 +116,21 @@ def main() -> None:
                 ),
             ),
         )
-        job = project_client.beta.datasets.create_generation_job(job=job)
-        print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
-
-        print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-        while True:
-            job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-            if job.status in TERMINAL_STATUSES:
-                break
-            time.sleep(poll_interval_seconds)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{job.status}`.")
-
-        if job.status != JobStatus.SUCCEEDED:
-            message = job.error.message if job.error is not None else "<no error message>"
-            raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+        print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
+        job_result = project_client.beta.datasets.begin_create_generation_job(
+            job=job, polling_interval=poll_interval_seconds,
+        ).result()
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""
         output_version: str = ""
-        for output in (job.result.outputs if job.result is not None else None) or []:
+        for output in job_result.outputs or []:
             if isinstance(output, DatasetDataGenerationJobOutput):
                 output_name = output.name or ""
                 output_version = output.version or ""
                 break
         if not output_name or not output_version:
-            raise RuntimeError(f"Job `{job.id}` did not produce a dataset output.")
+            raise RuntimeError("The data generation job did not produce a dataset output.")
 
         # Resolve the DatasetVersion so we can use its id as the eval run's file_id.
         dataset: DatasetVersion = project_client.datasets.get(name=output_name, version=output_version)
@@ -272,9 +256,6 @@ def main() -> None:
 
         print(f"Delete the generated dataset `{dataset.name}` v{dataset.version}.")
         project_client.datasets.delete(name=dataset.name or "", version=dataset.version or "")
-
-        print(f"Delete the data generation job `{job.id}`.")
-        project_client.beta.datasets.delete_generation_job(job_id=job.id)
 
 
 if __name__ == "__main__":

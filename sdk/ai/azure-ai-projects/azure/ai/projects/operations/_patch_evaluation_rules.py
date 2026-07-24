@@ -11,9 +11,8 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 from typing import Union, Any, IO, overload
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
-from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations
+from ._operations import EvaluationRulesOperations as GeneratedEvaluationRulesOperations, JSON
 from .. import models as _models
-from .. import types as _types
 from ..models._enums import _FoundryFeaturesOptInKeys
 from ..models._patch import (
     _FOUNDRY_FEATURES_HEADER_NAME,
@@ -54,16 +53,14 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
     @overload
     def create_or_update(
-        self, id: str, evaluation_rule: _types.EvaluationRule, *, content_type: str = "application/json", **kwargs: Any
+        self, id: str, evaluation_rule: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
-
-        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
 
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
         :param evaluation_rule: Evaluation rule resource. Required.
-        :type evaluation_rule: ~azure.ai.projects.types.EvaluationRule
+        :type evaluation_rule: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -94,18 +91,15 @@ class EvaluationRulesOperations(GeneratedEvaluationRulesOperations):
 
     @distributed_trace
     def create_or_update(
-        self, id: str, evaluation_rule: Union[_models.EvaluationRule, _types.EvaluationRule, IO[bytes]], **kwargs: Any
+        self, id: str, evaluation_rule: Union[_models.EvaluationRule, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.EvaluationRule:
         """Create or update an evaluation rule.
 
-        Creates a new evaluation rule, or replaces the existing rule when the identifier matches.
-
         :param id: Unique identifier for the evaluation rule. Required.
         :type id: str
-        :param evaluation_rule: Evaluation rule resource. Is either a EvaluationRule type or a
-         IO[bytes] type. Required.
-        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or
-         ~azure.ai.projects.types.EvaluationRule or IO[bytes]
+        :param evaluation_rule: Evaluation rule resource. Is one of the following types:
+         EvaluationRule, JSON, IO[bytes] Required.
+        :type evaluation_rule: ~azure.ai.projects.models.EvaluationRule or JSON or IO[bytes]
         :return: EvaluationRule. The EvaluationRule is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:

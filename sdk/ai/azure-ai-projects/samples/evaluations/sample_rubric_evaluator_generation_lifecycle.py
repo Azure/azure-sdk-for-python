@@ -9,8 +9,9 @@ DESCRIPTION:
     End-to-end scenario showing the lifecycle of rubric evaluator generation
     jobs. The sample exercises:
 
-      * `create_generation_job` with `operation_id` for idempotent re-submits.
-      * `get_generation_job` to poll a single job to completion.
+      * `begin_create_generation_job` with `operation_id` for idempotent re-submits;
+        returns `LROPoller[EvaluatorVersion]` — the SDK polls automatically and
+        `.result()` blocks until the job reaches a terminal state.
       * `list_generation_jobs` to enumerate recent jobs in the project.
       * `delete_generation_job` to remove a finished job record.
       * `delete_version` to remove the persisted evaluator that the job produced.
@@ -27,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -40,7 +41,6 @@ USAGE:
 
 import os
 import itertools
-import time
 import uuid
 from datetime import datetime, timezone
 from typing import cast
@@ -53,6 +53,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
     EvaluatorGenerationJob,
+    EvaluatorVersion,
     JobStatus,
     PageOrder,
     PromptEvaluatorGenerationJobSource,
@@ -69,8 +70,6 @@ ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 evaluator_name = f"lifecycle-demo-{ts}-{short}"
 operation_id = f"rubric-lifecycle-{short}"
-
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Shared job used both for the initial create and the idempotency replay.
 job_body = EvaluatorGenerationJob(
@@ -92,28 +91,28 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # 1. Create the generation job. `operation_id` makes the call idempotent -
-    # re-submitting with the same id returns the existing job.
-    job = project_client.beta.evaluators.create_generation_job(job=job_body, operation_id=operation_id)
-    print(f"Created generation job `{job.id}`.")
+    # 1. Start the generation job LRO. `operation_id` makes the call idempotent -
+    # re-submitting with the same id returns a poller attached to the existing job.
+    poller = project_client.beta.evaluators.begin_create_generation_job(
+        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
+    )
+    print("Generation job started; LRO polling in progress.")
 
-    replay = project_client.beta.evaluators.create_generation_job(job=job_body, operation_id=operation_id)
-    assert replay.id == job.id  # idempotent replay returns the same job
+    # Idempotency: a second call with the same operation_id attaches to the same job.
+    replay_poller = project_client.beta.evaluators.begin_create_generation_job(
+        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
+    )
 
-    # 2. Poll the job to completion.
-    print(f"Waiting for job `{job.id}` to complete...")
-    while job.status not in TERMINAL_STATUSES:
-        time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
-    print(f"Job finished with status `{cast(JobStatus, job.status).value}`.")
+    # 2. Block until the LRO finishes. The SDK polls automatically; `.result()` returns
+    # the produced EvaluatorVersion once the job reaches a terminal state.
+    print("Waiting for the generation job to complete (polling is handled by the SDK)...")
+    evaluator: EvaluatorVersion = poller.result()
+    print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
+          f"(job `{evaluator.generation_job_id}`).")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
-
-    evaluator = job.result
-    assert evaluator is not None
-    print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}`.")
+    # Verify the idempotency: the replay poller resolves to the same underlying job.
+    replay_evaluator: EvaluatorVersion = replay_poller.result()
+    assert replay_evaluator.generation_job_id == evaluator.generation_job_id
 
     # 3. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
@@ -132,6 +131,7 @@ with (
     print("Cleaning up.")
     project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
-        project_client.beta.evaluators.delete_generation_job(job.id)
+        if evaluator.generation_job_id is not None:
+            project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:
         pass  # already removed by the delete_version cascade
