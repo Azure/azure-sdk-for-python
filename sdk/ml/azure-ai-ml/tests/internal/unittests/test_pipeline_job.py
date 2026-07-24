@@ -428,6 +428,30 @@ class TestPipelineJob:
             }
         }
 
+    def test_interactive_services_in_internal_command_node(self):
+        # regression test for ICM 822596251 / Bug 5466757: internal Command node dropped
+        # node-level interactive services (ssh/jupyterlab/etc.) during serialization.
+        from azure.ai.ml.entities import JupyterLabJobService, SshJobService
+
+        yaml_path = "./tests/test_configs/internal/command-component-ls/ls_command_component.yaml"
+        node_func: CommandComponent = load_component(yaml_path)
+        node = node_func()
+        node.services = {
+            "my_ssh": SshJobService(),
+            "my_jupyter": JupyterLabJobService(),
+        }
+
+        rest_obj = node._to_rest_object()
+        assert rest_obj["services"] == {
+            "my_ssh": {"job_service_type": "SSH"},
+            "my_jupyter": {"job_service_type": "JupyterLab"},
+        }
+
+        # services should round-trip back into typed JobService objects
+        init_params = Command._from_rest_object_to_init_params(dict(rest_obj))
+        assert isinstance(init_params["services"]["my_ssh"], SshJobService)
+        assert isinstance(init_params["services"]["my_jupyter"], JupyterLabJobService)
+
     def test_load_pipeline_job_with_internal_components_as_node(self):
         yaml_path = Path("./tests/test_configs/internal/helloworld/helloworld_component_scope.yml")
         scope_internal_func = load_component(source=yaml_path)
