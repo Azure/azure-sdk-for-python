@@ -174,21 +174,22 @@ class CodeOperations(_ScopeDependentOperations):
 
             code_version_resource = code._to_rest_object()
 
-            result = (
-                CodeVersionData._deserialize(
-                    begin_create_or_update_registry_versioned_asset(
-                        self._registry_service_client,
-                        "codes",
-                        name,
-                        version,
-                        self._operation_scope.resource_group_name,
-                        self._registry_name,
-                        code_version_resource,
-                    ),
-                    [],
+            if self._registry_name:
+                registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "codes",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    code_version_resource,
                 )
-                if self._registry_name
-                else self._version_operation.create_or_update(
+                # The registry create LRO can complete with an empty body; only deserialize a
+                # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                result = CodeVersionData._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+            else:
+                result = self._version_operation.create_or_update(
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
@@ -196,7 +197,6 @@ class CodeOperations(_ScopeDependentOperations):
                     body=code_version_resource,
                     **self._init_kwargs,
                 )
-            )
 
             if not result:
                 return self.get(name=name, version=version)

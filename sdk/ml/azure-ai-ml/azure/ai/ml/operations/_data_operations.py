@@ -405,28 +405,28 @@ class DataOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
             else:
-                result = (
-                    DataVersionBase._deserialize(
-                        begin_create_or_update_registry_versioned_asset(
-                            self._registry_service_client,
-                            "data",
-                            name,
-                            version,
-                            self._operation_scope.resource_group_name,
-                            self._registry_name,
-                            data_version_resource,
-                        ),
-                        [],
+                if self._registry_name:
+                    registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                        self._registry_service_client,
+                        "data",
+                        name,
+                        version,
+                        self._operation_scope.resource_group_name,
+                        self._registry_name,
+                        data_version_resource,
                     )
-                    if self._registry_name
-                    else self._operation.create_or_update(
+                    # The registry create LRO can complete with an empty body; only deserialize a
+                    # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                    # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                    result = DataVersionBase._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+                else:
+                    result = self._operation.create_or_update(
                         name=name,
                         version=version,
                         workspace_name=self._workspace_name,
                         body=data_version_resource,
                         **self._scope_kwargs,
                     )
-                )
 
             if not result and self._registry_name:
                 result = self._get(name=name, version=version)
