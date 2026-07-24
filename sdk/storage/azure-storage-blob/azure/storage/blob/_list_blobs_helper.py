@@ -522,7 +522,7 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
     def __init__(self, *args: Any, deserializer: Any = None, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._deserializer = deserializer
-        self._arrow_response: Optional[Tuple[Optional[str], List[BlobProperties]]] = None
+        self._arrow_response: Optional[Tuple[Optional[str], List[Union[BlobProperties, GenBlobPrefix]]]] = None
 
     def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
         try:
@@ -554,8 +554,9 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
     def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[BlobProperties]]:
         if self._arrow_response is not None:
             self.location_mode, _ = cast(Tuple[Optional[str], Any], get_next_return)
-            next_marker, self.current_page = self._arrow_response
+            next_marker, page = self._arrow_response
             self._arrow_response = None
+            self.current_page = cast(List[BlobProperties], page)
             return next_marker or None, self.current_page or []
         return super()._extract_data_cb(get_next_return)
 
