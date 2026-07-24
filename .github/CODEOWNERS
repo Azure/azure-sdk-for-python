@@ -246,7 +246,7 @@
 # AzureSdkOwners: @rajeshka @shankarsama
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/    @rajeshka @shankarsama
+/sdk/eventgrid/    @rajeshka @shankarsama @Nishanth-MS
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
