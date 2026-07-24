@@ -84,15 +84,71 @@ pub(crate) fn retry_count() -> u64 {
 /// The caller should hold the `DiagnosticsContext` only long enough to call this
 /// function; the `Arc` clone inside `diagnostics()` is cheap (no I/O).
 ///
-/// Returns the `Display` string of the diagnostics so the caller can pass it
-/// directly to `backend_response_tuple` without an extra `to_string()` call.
+/// Returns the compact `Display` string with one ordered
+/// `pipeline_type/transport_kind` pair per wire attempt. This keeps the
+/// Python-visible diagnostics inexpensive while proving whether each data-plane
+/// attempt used Gateway V2.
 pub(super) fn record_diagnostics(diag: Arc<DiagnosticsContext>) -> String {
     BINDING_ATTEMPT_COUNT.fetch_add(diag.request_count() as u64, Ordering::Relaxed);
-    let retries = diag
-        .requests()
+    let requests = diag.requests();
+    let retries = requests
         .iter()
         .filter(|req| req.execution_context().as_str() != "initial")
         .count() as u64;
     BINDING_RETRY_COUNT.fetch_add(retries, Ordering::Relaxed);
-    diag.to_string()
+
+    let mut summary = diag.to_string();
+    append_transport_summary(
+        &mut summary,
+        requests.iter().map(|request| {
+            (
+                request.pipeline_type().as_str(),
+                request.transport_kind().as_str(),
+            )
+        }),
+    );
+    summary
+}
+
+fn append_transport_summary<'a>(
+    summary: &mut String,
+    attempts: impl IntoIterator<Item = (&'a str, &'a str)>,
+) {
+    summary.push_str(" transports=[");
+    for (index, (pipeline_type, transport_kind)) in attempts.into_iter().enumerate() {
+        if index > 0 {
+            summary.push(',');
+        }
+        summary.push_str(pipeline_type);
+        summary.push('/');
+        summary.push_str(transport_kind);
+    }
+    summary.push(']');
+}
+
+#[cfg(test)]
+mod tests {
+    use super::append_transport_summary;
+
+    #[test]
+    fn transport_summary_preserves_attempt_order_and_pipeline() {
+        let mut summary = "activity=test requests=2".to_string();
+        append_transport_summary(
+            &mut summary,
+            [("metadata", "gateway"), ("data_plane", "gateway_v2")],
+        );
+
+        assert_eq!(
+            summary,
+            "activity=test requests=2 transports=[metadata/gateway,data_plane/gateway_v2]"
+        );
+    }
+
+    #[test]
+    fn transport_summary_marks_operations_without_wire_attempts() {
+        let mut summary = "activity=test requests=0".to_string();
+        append_transport_summary(&mut summary, std::iter::empty());
+
+        assert_eq!(summary, "activity=test requests=0 transports=[]");
+    }
 }

@@ -152,6 +152,10 @@ class TestSuccessWithBody(unittest.TestCase):
         """Diagnostics payload from backend is surfaced via response headers and hooks."""
         cc = _FakeClientConnection()
         captured = []
+        diagnostics = (
+            "activity=abc duration=8ms requests=2 charge=1RU status=200 "
+            "transports=[metadata/gateway,data_plane/gateway_v2]"
+        )
 
         def hook(headers, parsed):
             captured.append((headers, parsed))
@@ -160,15 +164,15 @@ class TestSuccessWithBody(unittest.TestCase):
             _make_response(
                 status_code=201,
                 body=b'{"id":"x"}',
-                diagnostics={"summary": "diag-line"},
+                diagnostics=diagnostics,
             ),
             client_connection=cc,
             response_hook=hook,
         )
         response_headers = result.get_response_headers()
-        self.assertEqual(response_headers["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
-        self.assertEqual(cc.last_response_headers["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
-        self.assertEqual(captured[0][0]["x-ms-cosmos-sdk-diagnostics"], "{'summary': 'diag-line'}")
+        self.assertEqual(response_headers["x-ms-cosmos-sdk-diagnostics"], diagnostics)
+        self.assertEqual(cc.last_response_headers["x-ms-cosmos-sdk-diagnostics"], diagnostics)
+        self.assertEqual(captured[0][0]["x-ms-cosmos-sdk-diagnostics"], diagnostics)
 
 
 # ---------------------------------------------------------------------------
