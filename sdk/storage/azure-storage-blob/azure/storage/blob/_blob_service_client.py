@@ -363,7 +363,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             process_storage_error(error)
 
     @distributed_trace
-    def set_service_properties(
+    def set_service_properties(  # pylint: disable=protected-access
         self,
         analytics_logging: Optional["BlobAnalyticsLogging"] = None,
         hour_metrics: Optional["Metrics"] = None,

@@ -1185,7 +1185,7 @@ class AccessPolicy(_BackCompatMixin):
         )
 
 
-class SignedIdentifier(object):
+class SignedIdentifier(object):  # pylint: disable=protected-access
     """A stored access policy identifier for container access policies.
 
     :param str id: The identifier name of the stored access policy.
@@ -1201,16 +1201,18 @@ class SignedIdentifier(object):
         self.access_policy = access_policy
 
     def _to_generated(self) -> GenSignedIdentifier:
+        # pylint: disable-next=protected-access
+        generated_access_policy = self.access_policy._to_generated() if self.access_policy is not None else None
         return GenSignedIdentifier(
             id=self.id,
-            access_policy=self.access_policy._to_generated() if self.access_policy is not None else None,
+            access_policy=generated_access_policy,
         )
 
     @classmethod
     def _from_generated(cls, generated: GenSignedIdentifier) -> "SignedIdentifier":
         return cls(
             id=generated.id,
-            access_policy=AccessPolicy._from_generated(generated.access_policy),
+            access_policy=AccessPolicy._from_generated(generated.access_policy),  # pylint: disable=protected-access
         )
 
 

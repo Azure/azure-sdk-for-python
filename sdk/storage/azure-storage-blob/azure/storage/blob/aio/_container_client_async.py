@@ -711,7 +711,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         except HttpResponseError as error:
             process_storage_error(error)
         items = identifiers.items_property if hasattr(identifiers, "items_property") else identifiers
-        signed_identifiers = [SignedIdentifier._from_generated(si) for si in (items or [])]
+        signed_identifiers = [
+            SignedIdentifier._from_generated(si) for si in (items or [])  # pylint: disable=protected-access
+        ]
         return {
             "public_access": response.get("blob_public_access"),
             "signed_identifiers": signed_identifiers,
@@ -788,9 +790,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             return cast(
                 Dict[str, Union[str, datetime]],
                 await self._client.container.set_access_policy(
-                    container_acl=GenSignedIdentifiers(items_property=signed_identifiers)
-                    if signed_identifiers
-                    else None,
+                    container_acl=(
+                        GenSignedIdentifiers(items_property=signed_identifiers) if signed_identifiers else None
+                    ),
                     timeout=timeout,
                     access=public_access,
                     cls=return_response_headers,

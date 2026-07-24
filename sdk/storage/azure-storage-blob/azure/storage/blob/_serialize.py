@@ -88,20 +88,20 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_lease_id(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[str]:
-    try:
-        lease_id = cast(str, lease.id)  # type: ignore[attr-defined]
-    except AttributeError:
-        lease_id = cast(Optional[str], lease)
-    return lease_id
+def get_lease_id(lease: Optional[Union["BlobLeaseClient", str]] = None) -> Optional[str]:
+    if lease is None:
+        return None
+    if isinstance(lease, str):
+        return lease
+    return lease.id
 
 
 def _pop_etag_match_condition(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     result: Dict[str, Any] = {}
-    match_condition = kwargs.pop("match_condition", None)
-    etag = kwargs.pop("etag", None)
-    if_match = kwargs.pop("if_match", None)
-    if_none_match = kwargs.pop("if_none_match", None)
+    match_condition: Optional[MatchConditions] = kwargs.pop("match_condition", None)
+    etag: Optional[str] = kwargs.pop("etag", None)
+    if_match: Optional[str] = kwargs.pop("if_match", None)
+    if_none_match: Optional[str] = kwargs.pop("if_none_match", None)
 
     # Convert legacy if_match/if_none_match to etag/match_condition if not already set
     if match_condition is None and etag is None:

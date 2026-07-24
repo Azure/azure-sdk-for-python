@@ -320,9 +320,7 @@ def _download_blob_options(
     return options
 
 
-def _quick_query_options(
-    query_expression: str, **kwargs: Any
-) -> Tuple[Dict[str, Any], str]:
+def _quick_query_options(query_expression: str, **kwargs: Any) -> Tuple[Dict[str, Any], str]:
     delimiter = "\n"
     input_format = kwargs.pop("blob_format", None)
     if input_format == QuickQueryDialect.DelimitedJson:
@@ -1212,4 +1210,3 @@ def _from_blob_url(
         else:
             path_snapshot = snapshot
     return (account_url, container_name, blob_name, path_snapshot)
-
