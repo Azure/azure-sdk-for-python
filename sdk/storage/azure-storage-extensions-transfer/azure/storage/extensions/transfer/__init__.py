@@ -34,7 +34,7 @@ def upload_blob(
     account_url: str,
     container: str,
     blob: str,
-    data: bytes,
+    data: "bytes | bytearray | memoryview",
     *,
     access_token: "str | None" = None,
     overwrite: bool = False,
@@ -50,7 +50,9 @@ def upload_blob(
         May include a SAS token in the query string.
     :param str container: The container name.
     :param str blob: The blob name.
-    :param bytes data: The blob content to upload.
+    :param data: The blob content to upload. Accepts any C-contiguous buffer-protocol
+        object (``bytes``, ``bytearray``, or ``memoryview``); no copy to ``bytes`` is required.
+    :type data: bytes or bytearray or memoryview
     :keyword str access_token: An OAuth access token for authentication.
         Not needed if account_url contains a SAS token.
     :keyword bool overwrite: Whether to overwrite an existing blob. Defaults to False.
