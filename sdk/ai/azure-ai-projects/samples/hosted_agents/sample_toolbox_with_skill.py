@@ -55,7 +55,7 @@ from util import zip_directory
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     SkillInlineContent,
-    ToolboxSearchPreviewToolboxTool,
+    ToolSearchToolboxTool,
     ToolboxSkillReference,
 )
 
@@ -105,7 +105,7 @@ def main() -> None:
         toolbox_version = project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description="Toolbox exposing a shipping-cost skill.",
-            tools=[ToolboxSearchPreviewToolboxTool()],
+            tools=[ToolSearchToolboxTool()],
             skills=[ToolboxSkillReference(name=skill_version.name, version=skill_version.version)],
         )
         print(f"Created toolbox: {toolbox_version.name} version={toolbox_version.version}")
