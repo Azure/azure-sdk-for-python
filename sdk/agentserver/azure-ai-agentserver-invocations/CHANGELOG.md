@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b7 (2026-07-22)
 
 ### Features Added
 
@@ -9,6 +9,10 @@
   constructor args, served at `GET /invocations/docs/asyncapi.json` and
   `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
   returns `404` if not registered. See README for details.
+
+### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
 
 ## 1.0.0b6 (2026-06-28)
 

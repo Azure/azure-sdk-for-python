@@ -130,8 +130,10 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
                 raise ValueError("To use the uAMQP transport, please install `uamqp>=1.6.3,<2.0.0`.") from None
 
         self._amqp_transport = amqp_transport
-        # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        # Keep the port for the non-TLS emulator; strip scheme/port/path otherwise.
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
+            fully_qualified_namespace.strip(), strip_port=kwargs.get("use_tls", True)
+        )
         self._credential = credential
         self._config = Configuration(
             retry_total=retry_total,
