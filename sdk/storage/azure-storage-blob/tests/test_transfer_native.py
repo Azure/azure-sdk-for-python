@@ -10,9 +10,9 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from azure.storage.blob._transfer_native import (
+    _build_token_provider,
     _can_use_native_download,
     _can_use_native_upload,
-    _extract_access_token,
     _extract_account_url,
     _is_native_available,
 )
@@ -188,29 +188,88 @@ class TestCanUseNativeDownload(unittest.TestCase):
         self.assertFalse(result)
 
 
-class TestExtractAccessToken(unittest.TestCase):
-    """Tests for OAuth token extraction."""
+class TestBuildTokenProvider(unittest.TestCase):
+    """Tests for the on-demand token provider used by the native extension."""
 
     def test_returns_none_for_none_credential(self):
-        self.assertIsNone(_extract_access_token(None))
+        self.assertIsNone(_build_token_provider(None))
 
     def test_returns_none_without_get_token(self):
         cred = MagicMock(spec=[])
-        self.assertIsNone(_extract_access_token(cred))
+        self.assertIsNone(_build_token_provider(cred))
 
-    def test_extracts_token(self):
+    def test_provider_returns_token_and_int_expiry(self):
         cred = MagicMock()
         token_result = MagicMock()
         token_result.token = "test-access-token"
+        token_result.expires_on = 1_700_000_000.9  # float -> coerced to int
         cred.get_token.return_value = token_result
-        result = _extract_access_token(cred)
-        self.assertEqual(result, "test-access-token")
 
-    def test_returns_none_on_exception(self):
+        provider = _build_token_provider(cred)
+        self.assertIsNotNone(provider)
+        token, expires_on = provider(["https://storage.azure.com/.default"])
+        self.assertEqual(token, "test-access-token")
+        self.assertEqual(expires_on, 1_700_000_000)
+        self.assertIsInstance(expires_on, int)
+
+    def test_provider_calls_get_token_fresh_each_time(self):
+        """The provider must not cache; each call fetches a fresh token."""
         cred = MagicMock()
-        cred.get_token.side_effect = Exception("auth failed")
-        result = _extract_access_token(cred)
-        self.assertIsNone(result)
+        tokens = [MagicMock(token="tok-1", expires_on=1), MagicMock(token="tok-2", expires_on=2)]
+        cred.get_token.side_effect = tokens
+
+        provider = _build_token_provider(cred)
+        first = provider(["scope"])
+        second = provider(["scope"])
+
+        self.assertEqual(cred.get_token.call_count, 2)
+        self.assertEqual(first, ("tok-1", 1))
+        self.assertEqual(second, ("tok-2", 2))
+
+    def test_provider_defaults_scope_when_empty(self):
+        cred = MagicMock()
+        cred.get_token.return_value = MagicMock(token="t", expires_on=1)
+        provider = _build_token_provider(cred)
+        provider([])
+        cred.get_token.assert_called_once_with("https://storage.azure.com/.default")
+
+    def test_provider_is_thread_safe(self):
+        """Concurrent invocations are serialized and all succeed."""
+        import threading
+
+        counter = {"value": 0}
+        state_lock = threading.Lock()
+
+        cred = MagicMock()
+
+        def _get_token(*_scopes, **_kwargs):
+            with state_lock:
+                counter["value"] += 1
+                current = counter["value"]
+            return MagicMock(token=f"tok-{current}", expires_on=current)
+
+        cred.get_token.side_effect = _get_token
+        provider = _build_token_provider(cred)
+
+        results = []
+        results_lock = threading.Lock()
+
+        def _worker():
+            token, expires_on = provider(["scope"])
+            with results_lock:
+                results.append((token, expires_on))
+
+        threads = [threading.Thread(target=_worker) for _ in range(20)]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        self.assertEqual(len(results), 20)
+        self.assertEqual(cred.get_token.call_count, 20)
+        for token, expires_on in results:
+            self.assertTrue(token.startswith("tok-"))
+            self.assertIsInstance(expires_on, int)
 
 
 class TestExtractAccountUrl(unittest.TestCase):
