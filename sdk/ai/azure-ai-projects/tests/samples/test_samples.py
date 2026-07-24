@@ -273,13 +273,6 @@ class TestSamples(AzureRecordedTestCase):
                 },
             ),
             AdditionalSampleTestDetail(
-                test_id="sample_toolbox_with_skill",
-                sample_filename="sample_toolbox_with_skill.py",
-                env_vars={
-                    "ZIP_FILE_PATH": "tests/samples/assets/toolbox-agent.zip",
-                },
-            ),
-            AdditionalSampleTestDetail(
                 test_id="sample_agent_user_identity_isolation",
                 sample_filename="sample_agent_user_identity_isolation.py",
                 env_vars={
@@ -295,7 +288,7 @@ class TestSamples(AzureRecordedTestCase):
         get_sample_paths(
             "hosted_agents",
             samples_to_skip=[
-                "sample_toolbox_with_skill.py",  # Specified through AdditionalSampleTestDetail
+                "sample_toolbox_with_skill.py",  # Skip due to RBAC assignment that cannot be recorded
                 "sample_create_hosted_agent_from_code.py",  # Specified through AdditionalSampleTestDetail
                 "sample_agent_user_identity_isolation.py",  # Specified through AdditionalSampleTestDetail
                 "sample_session_log_stream.py",  # Specified through AdditionalSampleTestDetail
@@ -305,6 +298,8 @@ class TestSamples(AzureRecordedTestCase):
                 "sample_routines_with_schedule_trigger.py",  # 500
                 "sample_routines_with_timer_trigger.py",  # Timer is used causing request response not matched
                 "sample_routines_with_github_issue_trigger.py",  # Cannot run without interact on Github
+                "sample_routines_with_teams_message_trigger.py",  # Cannot run without live Teams event
+                "sample_toolbox_with_reminder_preview.py",  # Skip due to RBAC assignment that cannot be recorded
             ],
         ),
     )
