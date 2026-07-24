@@ -1,0 +1,1 @@
+-e ../../../eng/tools/azure-sdk-tools
