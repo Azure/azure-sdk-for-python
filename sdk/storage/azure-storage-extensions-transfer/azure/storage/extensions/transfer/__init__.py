@@ -13,6 +13,8 @@ install it via the `ext-transfer` extra on `azure-storage-blob`:
     pip install azure-storage-blob[ext-transfer]
 """
 
+from typing import Callable
+
 from ._version import VERSION
 
 __version__ = VERSION
@@ -36,7 +38,7 @@ def upload_blob(
     blob: str,
     data: "bytes | bytearray | memoryview",
     *,
-    access_token: "str | None" = None,
+    token_provider: "Callable[[list], tuple] | None" = None,
     overwrite: bool = False,
     content_type: "str | None" = None,
     metadata: "dict[str, str] | None" = None,
@@ -56,8 +58,13 @@ def upload_blob(
         file-like streams. Large or streamed uploads should use the ``azure-storage-blob``
         Python upload path, which streams data in fixed-size chunks.
     :type data: bytes or bytearray or memoryview
-    :keyword str access_token: An OAuth access token for authentication.
-        Not needed if account_url contains a SAS token.
+    :keyword token_provider: A callable invoked on demand to obtain an OAuth bearer token.
+        It is called as ``token_provider(scopes: list[str])`` and must return a
+        ``(token: str, expires_on: int)`` tuple, where ``expires_on`` is a Unix timestamp in
+        seconds. The extension calls it whenever a fresh token is needed (including on
+        refresh), so token expiry during long transfers is handled transparently. Not
+        needed if ``account_url`` contains a SAS token.
+    :paramtype token_provider: callable or None
     :keyword bool overwrite: Whether to overwrite an existing blob. Defaults to False.
     :keyword str content_type: The content type of the blob.
     :keyword dict metadata: Name-value pairs associated with the blob as metadata.
@@ -78,7 +85,7 @@ def upload_blob(
         container,
         blob,
         data,
-        access_token=access_token,
+        token_provider=token_provider,
         overwrite=overwrite,
         content_type=content_type,
         metadata=metadata,
@@ -93,7 +100,7 @@ def download_blob(
     container: str,
     blob: str,
     *,
-    access_token: "str | None" = None,
+    token_provider: "Callable[[list], tuple] | None" = None,
     offset: "int | None" = None,
     length: "int | None" = None,
     max_concurrency: "int | None" = None,
@@ -105,8 +112,13 @@ def download_blob(
         May include a SAS token in the query string.
     :param str container: The container name.
     :param str blob: The blob name.
-    :keyword str access_token: An OAuth access token for authentication.
-        Not needed if account_url contains a SAS token.
+    :keyword token_provider: A callable invoked on demand to obtain an OAuth bearer token.
+        It is called as ``token_provider(scopes: list[str])`` and must return a
+        ``(token: str, expires_on: int)`` tuple, where ``expires_on`` is a Unix timestamp in
+        seconds. The extension calls it whenever a fresh token is needed (including on
+        refresh), so token expiry during long transfers is handled transparently. Not
+        needed if ``account_url`` contains a SAS token.
+    :paramtype token_provider: callable or None
     :keyword int offset: Start of byte range to download.
     :keyword int length: Number of bytes to download from offset.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
@@ -124,7 +136,7 @@ def download_blob(
         account_url,
         container,
         blob,
-        access_token=access_token,
+        token_provider=token_provider,
         offset=offset,
         length=length,
         max_concurrency=max_concurrency,
