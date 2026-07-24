@@ -181,18 +181,17 @@ class TestSamples(AzureRecordedTestCase):
         # fails the test).
 
     @servicePreparer()
-    # TODO: Howie to re-record this test. Darren is able to run the sample live fine, but when running live as a test, LLM validation part fails for some reason.
-    # @additionalSampleTests(
-    #     [
-    #         AdditionalSampleTestDetail(
-    #             test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
-    #             sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
-    #             env_vars={
-    #                 "POLL_INTERVAL_SECONDS": "60",
-    #             },
-    #         ),
-    #     ]
-    # )
+    @additionalSampleTests(
+        [
+            AdditionalSampleTestDetail(
+                test_id="sample_dataset_generation_job_simpleqna_with_prompt_source",
+                sample_filename="sample_dataset_generation_job_simpleqna_with_prompt_source.py",
+                env_vars={
+                    "POLL_INTERVAL_SECONDS": "60",
+                },
+            ),
+        ]
+    )
     @pytest.mark.parametrize(
         "sample_path",
         get_sample_paths(
