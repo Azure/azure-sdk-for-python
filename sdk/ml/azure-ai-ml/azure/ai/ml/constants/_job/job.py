@@ -8,6 +8,8 @@ class DistributionType:
     TENSORFLOW = "tensorflow"
     PYTORCH = "pytorch"
     RAY = "ray"
+    # Legacy alias for backwards compatibility with AML SDK v1.5
+    TORCH_DISTRIBUTED = "torch.distributed"
 
 
 class JobType(object):
