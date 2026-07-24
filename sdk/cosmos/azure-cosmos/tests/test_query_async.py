@@ -140,6 +140,50 @@ class TestQueryAsync(unittest.IsolatedAsyncioTestCase):
 
         self._delete_container_for_test(container_id)
 
+    async def test_partition_scoped_count_is_index_only_async(self):
+        container_id = "query_count_metrics_test_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(
+            container_id, PartitionKey(path="/documentType")
+        )
+        try:
+            for i in range(25):
+                await created_collection.create_item({
+                    "id": f"power-cut-{i}",
+                    "documentType": "PowerCut",
+                    "value": i,
+                })
+            await created_collection.create_item({
+                "id": "other-document-type",
+                "documentType": "Other",
+            })
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key="PowerCut",
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = []
+            async for page in pager:
+                pages.append([item async for item in page])
+
+            assert pages == [[25]]
+            assert pager.continuation_token is None
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            assert int(metrics["retrievedDocumentCount"]) == 0
+            assert int(metrics["retrievedDocumentSize"]) == 0
+            assert float(metrics["indexUtilizationRatio"]) == 1.0
+            assert float(response_headers[http_constants.HttpHeaders.RequestCharge]) < 20.0
+        finally:
+            self._delete_container_for_test(container_id)
+
     async def test_populate_index_metrics_async(self):
         container_id = "index_metrics_test" + str(uuid.uuid4())
         created_collection = self._create_container_for_test(container_id, PartitionKey(path="/pk"))

@@ -101,6 +101,47 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
         self._delete_container_for_test(created_collection.id)
 
+    def test_partition_scoped_count_is_index_only(self):
+        container_id = "query_count_metrics_test_" + str(uuid.uuid4())
+        created_collection = self._create_container_for_test(container_id, PartitionKey(path="/documentType"))
+        try:
+            for i in range(25):
+                created_collection.create_item({
+                    "id": f"power-cut-{i}",
+                    "documentType": "PowerCut",
+                    "value": i,
+                })
+            created_collection.create_item({
+                "id": "other-document-type",
+                "documentType": "Other",
+            })
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key="PowerCut",
+                enable_cross_partition_query=False,
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = [list(page) for page in pager]
+
+            self.assertEqual([[25]], pages)
+            self.assertIsNone(pager.continuation_token)
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            self.assertEqual(0, int(metrics["retrievedDocumentCount"]))
+            self.assertEqual(0, int(metrics["retrievedDocumentSize"]))
+            self.assertEqual(1.0, float(metrics["indexUtilizationRatio"]))
+            self.assertLess(float(response_headers[http_constants.HttpHeaders.RequestCharge]), 20.0)
+        finally:
+            self._delete_container_for_test(container_id)
+
     def test_populate_index_metrics(self):
         created_collection = self._create_container_for_test("query_index_test",
                                                               PartitionKey(path="/pk"))

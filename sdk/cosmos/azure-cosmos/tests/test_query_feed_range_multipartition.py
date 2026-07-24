@@ -308,6 +308,37 @@ class TestFeedRangeMultiPartition:
             ]
             fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
             assert baseline_ids == fetched_ids
+
+            # A single-partition feed-range query emits a legacy opaque
+            # continuation token; that token must still resume on the
+            # partition-key request path and return the same remaining items.
+            feed_range = created_container.feed_range_from_partition_key(full_key)
+            epk_pager = created_container.query_items(
+                query=query,
+                feed_range=feed_range,
+                max_item_count=7,
+            ).by_page()
+            epk_first_page = list(next(epk_pager))
+            assert epk_first_page
+            legacy_token = epk_pager.continuation_token
+            assert legacy_token
+            assert _decode_token(legacy_token) is None
+
+            expected_epk_remaining_ids = [
+                item['id']
+                for page in epk_pager
+                for item in page
+            ]
+            resumed_via_partition_key_ids = [
+                item['id']
+                for page in created_container.query_items(
+                    query=query,
+                    partition_key=full_key,
+                    max_item_count=7,
+                ).by_page(legacy_token)
+                for item in page
+            ]
+            assert expected_epk_remaining_ids == resumed_via_partition_key_ids
         finally:
             db.delete_container(created_container.id)
 

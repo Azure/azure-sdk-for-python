@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`.
 
 #### Other Changes
 

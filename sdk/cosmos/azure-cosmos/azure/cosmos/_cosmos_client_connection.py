@@ -93,7 +93,6 @@ from ._routing.feed_range_continuation import (
 from ._inference_service import _InferenceService
 from .documents import ConnectionPolicy, DatabaseAccount
 from .partition_key import (
-    _build_partition_key_from_properties,
     _Undefined,
     _Empty,
     _PartitionKeyKind,
@@ -3369,8 +3368,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # Check if the overlapping ranges can be populated
         feed_range_epk = None
-        container_properties = kwargs.pop("container_properties", None)
-        is_full_pk_scope = False
+        kwargs.pop("container_properties", None)
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()
@@ -3379,27 +3377,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             prefix_partition_key_value: _SequentialPartitionKeyType = kwargs.pop("prefix_partition_key_value")
             feed_range_epk = (
                 prefix_partition_key_obj._get_epk_range_for_prefix_partition_key(prefix_partition_key_value))
-        elif options.get("partitionKey") is not None and container_properties is not None:
-            partition_key_value = options["partitionKey"]
-            partition_key_obj = _build_partition_key_from_properties(container_properties)
-            if not partition_key_obj._is_prefix_partition_key(partition_key_value):
-                # Full-PK returns a single-value inclusive range; normalize to
-                # [min, max) before routing-map overlap resolution.
-                #
-                # NOTE: do NOT pop the PartitionKey header here. The pop is
-                # deferred to the `if pagination_state is not None:` block
-                # below, i.e. until we've confirmed the new feed-range
-                # routing path is actually taking over. If routing comes back
-                # with zero overlaps (stale cache, mid-split, etc.) we fall
-                # through to the regular __Post path, and that fallthrough
-                # must still carry the legacy PK header — otherwise the
-                # backend gets a request with no partition scoping and either
-                # raises BAD_REQUEST (cross-partition disabled) or silently
-                # runs an unscoped cross-partition query (wrong results).
-                feed_range_epk = partition_key_obj._get_epk_range_for_partition_key(
-                    partition_key_value
-                ).to_normalized_range()
-                is_full_pk_scope = True
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
@@ -3446,21 +3423,17 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 return cached_is_single_partition
 
             if inbound_serialized_continuation and inbound_token_payload is None:
-                scope_is_single_partition = False
-                if not is_full_pk_scope:
-                    scope_is_single_partition = _is_input_scope_single_partition()
+                scope_is_single_partition = _is_input_scope_single_partition()
                 if _should_bridge_legacy_continuation(
                     inbound_serialized_continuation,
                     inbound_token_payload,
-                    is_full_pk_scope,
                     scope_is_single_partition,
                 ):
                     legacy_bridge_in_use = True
-                    # Hot path: legacy is the normal inbound shape for full-PK
-                    # and currently-single-partition feed-range queries (we
-                    # just emitted one). The bridge wires the legacy string
-                    # into the internal pagination queue; the outbound token
-                    # format on the next page is unchanged.
+                    # Hot path: legacy is the normal inbound shape for currently
+                    # single-partition feed-range queries. The bridge wires the
+                    # string into the internal pagination queue; the outbound
+                    # token format on the next page is unchanged.
                     _LOGGER.debug(
                         "Bridging inbound legacy continuation into internal pagination state; "
                         "outbound token format will remain unchanged (legacy single-string)."
@@ -3510,13 +3483,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     )
 
             if pagination_state is not None:
-                if is_full_pk_scope:
-                    # Drop the legacy partition-key header now that the
-                    # feed-range routing path is taking over. The inner POSTs
-                    # in the loop set PartitionKeyRangeID / StartEpkString /
-                    # EndEpkString explicitly; sending both routing styles on
-                    # one request is undefined on the service side.
-                    req_headers.pop(http_constants.HttpHeaders.PartitionKey, None)
                 results: dict[str, Any] = {}
                 feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                 consecutive_no_progress_pages = 0
@@ -3532,8 +3498,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                             resource_id_str,
                             query,
                             feed_range_epk,
-                            is_full_pk_scope,
-                            (not is_full_pk_scope) and _is_input_scope_single_partition(),
+                            _is_input_scope_single_partition(),
                         )
                     except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
                         _LOGGER.warning(
@@ -3701,8 +3666,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     resource_id_str,
                     query,
                     feed_range_epk,
-                    is_full_pk_scope,
-                    (not is_full_pk_scope) and _is_input_scope_single_partition(),
+                    _is_input_scope_single_partition(),
                 )
                 # End feed_range pagination block.
                 self.last_response_headers = feedrange_response_headers
