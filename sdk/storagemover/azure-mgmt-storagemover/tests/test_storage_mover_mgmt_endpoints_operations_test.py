@@ -9,6 +9,7 @@
 Mirrors .NET EndpointTests at:
   https://github.com/Azure/azure-sdk-for-net/blob/main/sdk/storagemover/Azure.ResourceManager.StorageMover/tests/Scenario/EndpointTests.cs
 """
+
 import os
 
 import pytest

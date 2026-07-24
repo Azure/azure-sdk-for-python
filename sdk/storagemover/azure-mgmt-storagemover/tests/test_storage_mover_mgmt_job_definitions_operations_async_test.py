@@ -20,6 +20,7 @@ floors pinned by the `mindependency` CI leg) lack the `.aio` submodule — we
 use `pytest.importorskip` so collection skips this whole module cleanly in
 that environment.
 """
+
 import asyncio
 import os
 import uuid

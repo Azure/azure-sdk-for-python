@@ -8,6 +8,7 @@
 See the sync sibling (test_storage_mover_mgmt_connections_operations_test.py)
 for the full rationale.
 """
+
 import os
 
 import pytest

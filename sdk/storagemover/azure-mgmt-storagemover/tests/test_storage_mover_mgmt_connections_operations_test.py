@@ -20,6 +20,7 @@ Intentionally does NOT assert on ``properties.connection_status``: it'll be
 async. Approval is covered by matrix row #31
 (``JobDefinitionJobRunTests.StartC2CJobWithPrivateSourceTest``).
 """
+
 import os
 
 import pytest
