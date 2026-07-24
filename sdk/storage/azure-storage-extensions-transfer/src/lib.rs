@@ -48,15 +48,16 @@ impl From<azure_core::Error> for AzureError {
     }
 }
 
-/// Build a `BlobClient` from the provided URL components and optional access token.
+/// Build a `BlobClient` from the provided URL components and optional token provider.
 ///
-/// If `access_token` is provided, a simple bearer-token credential is used.
-/// If the `account_url` contains a SAS token in the query string, pass `access_token=None`.
+/// If `token_provider` is provided, a Python-callback credential is used that fetches a
+/// fresh token on demand. If the `account_url` contains a SAS token in the query string,
+/// pass `token_provider=None`.
 fn build_blob_client(
     account_url: &str,
     container: &str,
     blob: &str,
-    access_token: Option<&str>,
+    token_provider: Option<Py<PyAny>>,
 ) -> Result<BlobClient, AzureError> {
     let base = account_url.trim_end_matches('/');
     let blob_url_str = format!("{}/{}/{}", base, container, blob);
@@ -67,8 +68,8 @@ fn build_blob_client(
         )
     })?;
 
-    let credential: Option<Arc<dyn TokenCredential>> = match access_token {
-        Some(token) => Some(Arc::new(StaticTokenCredential::new(token.to_string()))),
+    let credential: Option<Arc<dyn TokenCredential>> = match token_provider {
+        Some(provider) => Some(Arc::new(PyCallbackCredential::new(provider))),
         None => None,
     };
 
@@ -77,31 +78,68 @@ fn build_blob_client(
     Ok(client)
 }
 
-/// A simple TokenCredential that returns a fixed access token.
-/// The Python side extracts the token and passes just the string across FFI.
+/// A `TokenCredential` that delegates to a Python callable on every request.
+///
+/// Rather than caching a single token string, we hold a Python "token provider"
+/// (`Py<PyAny>`) and invoke it whenever the `azure_core` bearer-token policy needs a
+/// token — including when the cached token nears expiry. This lets token refresh flow
+/// all the way back to the real Python credential (e.g. `DefaultAzureCredential`), which
+/// owns caching and refresh.
+///
+/// The provider has the signature `provider(scopes: list[str]) -> (token: str, expires_on: int)`
+/// where `expires_on` is a Unix timestamp in seconds.
+///
+/// Thread-safety: the struct holds only an immutable `Py<PyAny>` (which is `Send + Sync`);
+/// each `get_token` call independently re-acquires the GIL, which serializes the actual
+/// Python execution. The Python-side provider additionally serializes calls with a lock.
+/// The `azure_core` bearer policy already serializes refreshes via a `RwLock`, so under
+/// parallel chunked transfers only one refresh runs at a time per client.
 #[derive(Debug)]
-struct StaticTokenCredential {
-    token: String,
+struct PyCallbackCredential {
+    provider: Py<PyAny>,
 }
 
-impl StaticTokenCredential {
-    fn new(token: String) -> Self {
-        Self { token }
+impl PyCallbackCredential {
+    fn new(provider: Py<PyAny>) -> Self {
+        Self { provider }
     }
 }
 
 #[async_trait::async_trait]
-impl TokenCredential for StaticTokenCredential {
+impl TokenCredential for PyCallbackCredential {
     async fn get_token(
         &self,
-        _scopes: &[&str],
+        scopes: &[&str],
         _options: Option<TokenRequestOptions<'_>>,
     ) -> azure_core::Result<AccessToken> {
-        Ok(AccessToken::new(
-            Secret::new(self.token.clone()),
-            // Token expires far in the future — the Python SDK handles refresh
-            azure_core::time::OffsetDateTime::now_utc() + azure_core::time::Duration::hours(1),
-        ))
+        // Re-acquire the GIL (valid to do inside the outer `allow_threads`) and call the
+        // Python token provider to obtain a fresh token and its real expiry.
+        Python::with_gil(|py| {
+            let scope_list: Vec<String> = scopes.iter().map(|s| s.to_string()).collect();
+            let result = self.provider.bind(py).call1((scope_list,)).map_err(|e| {
+                azure_core::Error::with_message(
+                    azure_core::error::ErrorKind::Credential,
+                    format!("Python token provider call failed: {}", e),
+                )
+            })?;
+            let (token, expires_on): (String, i64) = result.extract().map_err(|e| {
+                azure_core::Error::with_message(
+                    azure_core::error::ErrorKind::Credential,
+                    format!(
+                        "Python token provider returned an unexpected value (expected (str, int)): {}",
+                        e
+                    ),
+                )
+            })?;
+            let expires = azure_core::time::OffsetDateTime::from_unix_timestamp(expires_on)
+                .map_err(|e| {
+                    azure_core::Error::with_message(
+                        azure_core::error::ErrorKind::Credential,
+                        format!("Python token provider returned an invalid expiry: {}", e),
+                    )
+                })?;
+            Ok(AccessToken::new(Secret::new(token), expires))
+        })
     }
 }
 
@@ -116,7 +154,7 @@ impl TokenCredential for StaticTokenCredential {
     blob,
     data,
     *,
-    access_token = None,
+    token_provider = None,
     overwrite = false,
     content_type = None,
     metadata = None,
@@ -130,7 +168,7 @@ fn upload_blob<'py>(
     container: &str,
     blob: &str,
     data: &Bound<'py, PyAny>,
-    access_token: Option<&str>,
+    token_provider: Option<Py<PyAny>>,
     overwrite: bool,
     content_type: Option<&str>,
     metadata: Option<HashMap<String, String>>,
@@ -138,7 +176,7 @@ fn upload_blob<'py>(
     _max_single_put_size: Option<u64>,
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let blob_client = build_blob_client(account_url, container, blob, access_token)?;
+    let blob_client = build_blob_client(account_url, container, blob, token_provider)?;
 
     // We copy the payload once into a Rust-owned `Bytes` here, while the GIL is held.
     //
@@ -212,7 +250,7 @@ fn upload_blob<'py>(
     container,
     blob,
     *,
-    access_token = None,
+    token_provider = None,
     offset = None,
     length = None,
     max_concurrency = None,
@@ -223,13 +261,13 @@ fn download_blob<'py>(
     account_url: &str,
     container: &str,
     blob: &str,
-    access_token: Option<&str>,
+    token_provider: Option<Py<PyAny>>,
     offset: Option<u64>,
     length: Option<u64>,
     max_concurrency: Option<usize>,
     expected_size: Option<usize>,
 ) -> PyResult<Bound<'py, PyBytes>> {
-    let blob_client = build_blob_client(account_url, container, blob, access_token)?;
+    let blob_client = build_blob_client(account_url, container, blob, token_provider)?;
 
     let mut options = BlobClientDownloadOptions::default();
 
