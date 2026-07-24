@@ -11,6 +11,7 @@ import re
 import tempfile
 import json
 import time
+from threading import Lock
 from typing import Any, Callable, Dict, Iterable, Iterator, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from openai import OpenAI, AzureOpenAI
@@ -1396,7 +1397,7 @@ def emit_eval_result_events_to_app_insights(
 
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
-    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor, LogExportResult
     from opentelemetry.sdk.resources import Resource
     from opentelemetry.semconv.resource import ResourceAttributes
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
@@ -1422,11 +1423,18 @@ def emit_eval_result_events_to_app_insights(
 
         # Create Azure Monitor log exporter
         azure_log_exporter = AzureMonitorLogExporter(**exporter_options)
+        export_result_tracker: Optional["_ExportResultTrackingLogExporter"] = None
+        log_exporter: Any = azure_log_exporter
+        if use_entra_authentication:
+            export_result_tracker = _ExportResultTrackingLogExporter(
+                azure_log_exporter, LogExportResult.FAILURE
+            )
+            log_exporter = export_result_tracker
 
         # Add the Azure Monitor exporter to the logger provider
         # Set export_timeout_millis to prevent individual batch exports from hanging
         logger_provider.add_log_record_processor(
-            BatchLogRecordProcessor(azure_log_exporter, export_timeout_millis=60000)
+            BatchLogRecordProcessor(log_exporter, export_timeout_millis=60000)
         )
 
         # Create event logger
@@ -1461,6 +1469,8 @@ def emit_eval_result_events_to_app_insights(
         # Force flush to ensure events are sent, with a timeout to prevent hanging
         flush_timeout_millis = 60000  # 60 seconds
         flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
+        if export_result_tracker is not None and export_result_tracker.export_failed:
+            raise RuntimeError("Failed to export evaluation results to App Insights.")
         if not flush_success:
             timeout_message = (
                 f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
@@ -1495,6 +1505,40 @@ class _AzureMonitorScopedCredential:  # pylint: disable=too-few-public-methods
     def get_token(self, *_scopes: str, **kwargs: Any) -> AccessToken:
         """Request a fresh Azure Monitor token from the configured credential."""
         return self._credential.get_token(AZURE_MONITOR_SCOPE, **kwargs)
+
+
+class _ExportResultTrackingLogExporter:  # pylint: disable=too-few-public-methods
+    """Track failures returned by a log exporter running on a worker thread."""
+
+    def __init__(self, exporter: Any, failure_result: Any) -> None:
+        self._exporter = exporter
+        self._failure_result = failure_result
+        self._export_failed = False
+        self._lock = Lock()
+
+    @property
+    def export_failed(self) -> bool:
+        """Return whether any batch export failed."""
+        with self._lock:
+            return self._export_failed
+
+    def export(self, batch: Any) -> Any:
+        """Delegate a batch export and retain its failure status."""
+        try:
+            result = self._exporter.export(batch)
+        except Exception:
+            with self._lock:
+                self._export_failed = True
+            raise
+
+        if result == self._failure_result:
+            with self._lock:
+                self._export_failed = True
+        return result
+
+    def shutdown(self) -> None:
+        """Shut down the wrapped exporter."""
+        self._exporter.shutdown()
 
 
 def _get_app_insights_exporter_options(

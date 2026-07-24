@@ -3713,6 +3713,45 @@ class TestAppInsightsAuthentication:
         mock_lp_cls.return_value.shutdown.assert_called_once()
 
     @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_project_managed_identity_batch_export_failure_is_surfaced(
+        self, mock_lp_cls
+    ):
+        from opentelemetry.sdk._logs.export import LogExportResult
+
+        mock_lp_cls.return_value.force_flush.return_value = True
+        credential = MagicMock(spec=TokenCredential)
+        exporter = MagicMock()
+        exporter.export.return_value = LogExportResult.FAILURE
+        exporter_module = MagicMock()
+        exporter_module.AzureMonitorLogExporter.return_value = exporter
+
+        def create_processor(tracked_exporter, **_kwargs):
+            tracked_exporter.export([])
+            return MagicMock()
+
+        with patch.dict(
+            "sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}
+        ), patch(
+            "opentelemetry.sdk._logs.export.BatchLogRecordProcessor",
+            side_effect=create_processor,
+        ):
+            with pytest.raises(
+                RuntimeError, match="Failed to export evaluation results"
+            ):
+                emit_eval_result_events_to_app_insights(
+                    {
+                        "connection_string": "InstrumentationKey=fake-key",
+                        "credential_type": "ProjectManagedIdentity",
+                        "credential": credential,
+                    },
+                    self._RESULTS,
+                )
+
+        exporter.export.assert_called_once_with([])
+        mock_lp_cls.return_value.force_flush.assert_called_once()
+        mock_lp_cls.return_value.shutdown.assert_called_once()
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
     def test_project_managed_identity_flush_timeout_is_surfaced(self, mock_lp_cls):
         mock_lp_cls.return_value.force_flush.return_value = False
         credential = MagicMock(spec=TokenCredential)
