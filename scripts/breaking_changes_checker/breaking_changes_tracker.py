@@ -149,6 +149,22 @@ class BreakingChangesTracker:
                 return True
         return False
 
+    def is_operation_group(self, module_name: Any, class_name: Any) -> bool:
+        """Determine whether a class should be treated as an operation group.
+
+        Operation group classes follow the codegen convention of a name ending
+        with ``Operations`` (case-insensitive, which also covers the default
+        ``Operations`` class) and being defined in an operations module (module
+        namespace ending with ``operations``). This mirrors the existing
+        ``attr_type.lower().endswith("operations")`` heuristic used elsewhere to
+        recognize operation group properties on clients.
+        """
+        if isinstance(class_name, jsondiff.Symbol) or not isinstance(class_name, str):
+            return False
+        if isinstance(module_name, jsondiff.Symbol) or not isinstance(module_name, str):
+            return False
+        return class_name.lower().endswith("operations") and module_name.endswith("operations")
+
     def run_post_processing(self) -> None:
         # Remove duplicate reporting of changes that apply to both sync and async package components
         self.run_async_cleanup(self.breaking_changes)

@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -43,12 +42,10 @@ def main():
                     "certificateAkvDetails": {
                         "certificateKeyVaultUri": "https://REDACTED.vault.azure.net/",
                         "certificateName": "my-certificate",
-                        "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1",
                     },
                     "credentialsAkvDetails": {
                         "credentialsKeyVaultUri": "https://REDACTED.vault.azure.net/",
                         "secretName": "my-secret",
-                        "userAssignedIdentity": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myRG/providers/Microsoft.ManagedIdentity/userAssignedIdentities/identity1",
                     },
                 },
                 "permissions": "ReadOnly",
@@ -59,6 +56,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-15-preview/Buckets_UpdateWithAkv.json
+# x-ms-original-file: 2026-05-01/Buckets_UpdateWithAkv.json
 if __name__ == "__main__":
     main()

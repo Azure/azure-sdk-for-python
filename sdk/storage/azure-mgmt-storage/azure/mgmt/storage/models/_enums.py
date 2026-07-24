@@ -71,6 +71,24 @@ class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """COMPUTER."""
 
 
+class AdvancedPlatformMetricsFilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of filter applied to the advanced platform metrics rule."""
+
+    ALL_CONTAINERS_FILTER = "AllContainersFilter"
+    """Filter applies to all containers."""
+    CONTAINER_PREFIX_FILTER = "ContainerPrefixFilter"
+    """Filter applies to containers matching a prefix."""
+    CONTAINER_LIST_FILTER = "ContainerListFilter"
+    """Filter applies to a specific list of containers."""
+
+
+class AdvancedPlatformMetricsRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the advanced platform metrics rule."""
+
+    CONTAINER_LEVEL_CAPACITY_METRICS = "ContainerLevelCapacityMetrics"
+    """Container level capacity metrics rule type."""
+
+
 class AllowedCopyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the
     same VNet.
@@ -503,6 +521,15 @@ class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     DEFAULT = "default"
     """DEFAULT."""
+
+
+class MetricsEmitted(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The metrics emitted by the advanced platform metrics rule."""
+
+    CONTAINER_BLOB_COUNT = "ContainerBlobCount"
+    """Container blob count metric."""
+    CONTAINER_USED_SIZE = "ContainerUsedSize"
+    """Container used size metric."""
 
 
 class MigrationName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
