@@ -53,7 +53,6 @@ from azure.ai.projects.models import (
     DataGenerationJobOutputOptions,
     DataGenerationJobScenario,
     FileDataGenerationJobOutput,
-    JobStatus,
     PromptAgentDefinition,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
@@ -95,9 +94,6 @@ run_id = f"{datetime.now(tz=timezone.utc).strftime('%y%m%d%H%M%S')}-{uuid.uuid4(
 output_name = f"{DATASET_NAME}-{run_id}"
 agent_name = f"{DATASET_NAME}-{run_id}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
@@ -106,7 +102,6 @@ with (
 
     created_agent = None
     created_conversation_ids: List[str] = []
-    submitted_job_ids: List[str] = []
     created_file_ids: List[str] = []
 
     try:

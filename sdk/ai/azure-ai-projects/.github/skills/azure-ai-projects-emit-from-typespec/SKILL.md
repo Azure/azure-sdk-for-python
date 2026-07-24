@@ -34,6 +34,7 @@ Run these checks in order:
 Run:
 
 ```
+pwsh --version
 git --version
 gh --version
 python --version
@@ -94,15 +95,15 @@ gh auth login
 Run:
 
 ```
-git config --global user.name
-git config --global user.email
+git config user.name
+git config user.email
 ```
 
 If either value is empty, stop and ask the user to run:
 
 ```
-git config --global user.name "<your-name>"
-git config --global user.email "<your-email>"
+git config user.name "<your-name>"
+git config user.email "<your-email>"
 ```
 
 ### 1f. Confirm repository is clean
