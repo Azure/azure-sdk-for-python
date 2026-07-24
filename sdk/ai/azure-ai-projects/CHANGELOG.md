@@ -4,15 +4,22 @@
 
 ### Features Added
 
-* Placeholder
+* New stable toolbox tool `ToolSearchToolboxTool` (discriminator `toolbox_search`) for storing a tool-search tool in a toolbox.
+This replaces `ToolboxSearchPreviewToolboxTool`, which is still present but will be removed in a future release of the package. Please migrate your code to use the stable tool.
+* New class `TaskGenerationDataGenerationJobOptions` (discriminator `task_generation`) with data generation job options for multi-turn evaluation scenarios.
+* Support for non-fatal input-quality advisories from rubric evaluator generation. See new class `RubricGenerationInputQualityWarning` and new enums `RubricGenerationInputQualityWarningCode`, `RubricGenerationInputQualityWarningSeverity`, and `RubricGenerationInputQualityWarningSource`.
+* New enum `GenerationWarningType`.
+* New enum `AgentIdentityStatus` and new optional `status` property on class `AgentIdentity`.
+* New read-only property `input_quality_warnings` on class `EvaluatorGenerationJob`.
+* New read-only properties `generation_job_id` and `warnings` on class `EvaluatorVersion`.
+* New optional property `max_stalls` on class `OptimizationOptions`.
 
 ### Breaking Changes
 
-* Placeholder
-
-### Bugs Fixed
-
-* Placeholder
+Breaking changes in beta methods:
+* Method `.beta.evaluators.create_generation_job` renamed to `.beta.evaluators.begin_create_generation_job` and is now a long-running operation returning `LROPoller[EvaluatorVersion]` (previously returned `EvaluatorGenerationJob`).
+* Method `.beta.datasets.create_generation_job` renamed to `.beta.datasets.begin_create_generation_job` and is now a long-running operation returning `LROPoller[DataGenerationJobResult]`.
+* Method `.beta.agents.create_optimization_job` renamed to `.beta.agents.begin_create_optimization_job` and is now a long-running operation returning `LROPoller[OptimizationJobResult]`.
 
 ### Sample updates
 
