@@ -35,7 +35,6 @@ from ..._backend.base import (
 from ..._constants import _Constants as Constants
 from ..._cosmos_responses import CosmosDict
 from ..._helpers._request_prep import (
-    build_create_database_if_not_exists_prepared,
     build_create_database_prepared,
 )
 from ..._helpers._response_parse import parse_backend_response
@@ -111,10 +110,10 @@ class AsyncDatabaseHelper:
         Same retry-safe behavior: read the named database first and create it
         only when the read returns "not found" (404), so re-running setup for a
         name that already exists returns that database instead of failing. Same
-        stripping of provisioning options from the read and the same
-        ``read_timeout`` engine fallback. ``response_hook`` fires once on
-        success with the response headers and the resulting database, matching
-        the legacy async connection contract.
+        stripping of provisioning options from the read. The Python
+        coordinator owns this compound workflow because the public Rust driver
+        exposes the individual primitives, but not a database get-or-create
+        primitive. ``response_hook`` fires once on success.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -124,10 +123,6 @@ class AsyncDatabaseHelper:
         read_options.pop("offerThroughput", None)
         read_options.pop("autoUpgradePolicy", None)
         database_link = "dbs/{}".format(database["id"])
-        read_timeout = request_options.get(Constants.Kwargs.READ_TIMEOUT)
-        if read_timeout is None:
-            read_timeout = operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT)
-
         async def invoke_legacy() -> Mapping[str, Any]:
             try:
                 return await self._client_connection.ReadDatabase(
@@ -143,7 +138,7 @@ class AsyncDatabaseHelper:
                 )
 
         async def build_prepared():
-            return build_create_database_if_not_exists_prepared(
+            return build_create_database_prepared(
                 database,
                 request_options,
                 kwargs=operation_kwargs,
@@ -159,7 +154,7 @@ class AsyncDatabaseHelper:
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=read_timeout is None,
+            rust_eligible=False,
         )
         if response_hook is not None:
             response_hook(self._client_connection.last_response_headers, result)

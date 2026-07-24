@@ -39,7 +39,6 @@ from .._backend.legacy import coerce_backend
 from .._constants import _Constants as Constants
 from .._cosmos_responses import CosmosDict
 from .._helpers._request_prep import (
-    build_create_database_if_not_exists_prepared,
     build_create_database_prepared,
 )
 from .._helpers._response_parse import parse_backend_response
@@ -114,14 +113,11 @@ class DatabaseHelper:
         that database instead of failing with "already exists". Provisioning
         options (``offerThroughput``, ``autoUpgradePolicy``) are dropped from
         the read so they ride only the create -- the existence check must not
-        try to set throughput. Engine selection and the ``read_timeout``
-        fallback match ``create_database``: a per-call ``read_timeout`` the
-        rust path can't honor yet keeps the whole read-then-create on the
-        legacy path, so both legs run on one engine and the timeout is never
-        split or silently dropped. ``response_hook`` is invoked once on success
-        with the response headers and the resulting database. Without this
-        method the caller would hand-write the read/404/create sequence and
-        risk mishandling the concurrent-create race.
+        try to set throughput. The Python coordinator owns this compound
+        workflow because the public Rust driver exposes the individual
+        primitives, but not a database get-or-create primitive.
+        ``response_hook`` is invoked once on success with the response headers
+        and the resulting database.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -131,10 +127,6 @@ class DatabaseHelper:
         read_options.pop("offerThroughput", None)
         read_options.pop("autoUpgradePolicy", None)
         database_link = "dbs/{}".format(database["id"])
-        read_timeout = request_options.get(Constants.Kwargs.READ_TIMEOUT)
-        if read_timeout is None:
-            read_timeout = operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT)
-
         def invoke_legacy() -> Mapping[str, Any]:
             try:
                 return self._client_connection.ReadDatabase(
@@ -150,7 +142,7 @@ class DatabaseHelper:
                 )
 
         result = self._backend.run_operation(
-            build_prepared=lambda: build_create_database_if_not_exists_prepared(
+            build_prepared=lambda: build_create_database_prepared(
                 database,
                 request_options,
                 kwargs=operation_kwargs,
@@ -163,7 +155,7 @@ class DatabaseHelper:
                 response,
                 client_connection=self._client_connection,
             ),
-            rust_eligible=read_timeout is None,
+            rust_eligible=False,
         )
         if response_hook is not None:
             response_hook(self._client_connection.last_response_headers, result)

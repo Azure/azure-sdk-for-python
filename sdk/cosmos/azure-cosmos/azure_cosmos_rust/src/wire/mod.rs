@@ -85,10 +85,7 @@ mod items;
 mod offers;
 mod query;
 
-pub(crate) use databases::{
-    run_create_database_if_not_exists_operation, run_create_database_if_not_exists_operation_async,
-    run_create_database_operation, run_create_database_operation_async,
-};
+pub(crate) use databases::{run_create_database_operation, run_create_database_operation_async};
 pub(crate) use feed_range::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,

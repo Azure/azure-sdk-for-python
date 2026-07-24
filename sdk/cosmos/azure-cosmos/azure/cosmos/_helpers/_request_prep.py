@@ -64,7 +64,6 @@ from .._base import _validate_resource
 from .._availability_strategy_config import DEFAULT_THRESHOLD_MS
 from .._backend.base import (
     OP_CREATE_DATABASE,
-    OP_CREATE_DATABASE_IF_NOT_EXISTS,
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
@@ -217,27 +216,6 @@ def build_create_database_prepared(
     """Build the request for a plain account-level create-database."""
     return _build_create_database_prepared(
         OP_CREATE_DATABASE,
-        database,
-        request_options,
-        kwargs=kwargs,
-    )
-
-
-def build_create_database_if_not_exists_prepared(
-    database: Dict[str, Any],
-    request_options: Mapping[str, Any],
-    *,
-    kwargs: Optional[Mapping[str, Any]] = None,
-) -> PreparedRequest:
-    """Build the request for the retry-safe create.
-
-    The request body and headers are identical to ``create_database``; only the
-    op tag differs. That tag is what tells the rust backend to run the
-    existence-read-then-create instead of a plain create, so both public methods
-    can share one request-prep path.
-    """
-    return _build_create_database_prepared(
-        OP_CREATE_DATABASE_IF_NOT_EXISTS,
         database,
         request_options,
         kwargs=kwargs,

@@ -26,7 +26,6 @@ from azure.cosmos._backend.base import (
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._request_prep import (
-    build_create_database_if_not_exists_prepared,
     build_create_database_prepared,
 )
 from azure.cosmos._helpers.database_helper import DatabaseHelper
@@ -54,20 +53,10 @@ def test_create_database_is_registered_as_single_response_operation():
     assert OP_TO_BINDING_METHOD[OP_CREATE_DATABASE] == "create_database"
 
 
-def test_create_database_if_not_exists_is_registered_and_carries_database_id():
-    """The retry-safe create is wired to the binding's own
-    ``create_database_if_not_exists`` entry point, and the prepared request carries
-    the database id the existence read needs to look the database up."""
-    assert (
-        OP_TO_BINDING_METHOD[OP_CREATE_DATABASE_IF_NOT_EXISTS]
-        == "create_database_if_not_exists"
-    )
-    prepared = build_create_database_if_not_exists_prepared(
-        {"id": "db1"},
-        {"offerThroughput": 400},
-    )
-    assert prepared.op == OP_CREATE_DATABASE_IF_NOT_EXISTS
-    assert prepared.item_id == "db1"
+def test_create_database_if_not_exists_is_not_registered_in_the_binding():
+    """The compound read/404/create workflow stays in the Python coordinator until
+    the public Rust driver owns an equivalent primitive."""
+    assert OP_CREATE_DATABASE_IF_NOT_EXISTS not in OP_TO_BINDING_METHOD
 
 
 def test_create_database_prepared_request_preserves_body_and_options():
@@ -220,11 +209,14 @@ def test_sync_helper_maps_conflict_to_resource_exists():
     assert hook_calls == []
 
 
-def test_sync_if_not_exists_routes_combined_operation_to_rust():
-    """On the rust engine the whole read-then-create runs as one backend operation
-    tagged ``create_database_if_not_exists``; on success ``response_hook`` fires once
-    with the response headers and the resulting database."""
-    connection = SimpleNamespace(last_response_headers={})
+def test_sync_if_not_exists_uses_python_coordinator_with_rust_selected():
+    """Selecting the Rust backend does not move compound orchestration into the
+    binding; Python reads first and returns the existing database."""
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "existing"}),
+        CreateDatabase=MagicMock(),
+        last_response_headers={"x-ms-request-charge": "1.0"},
+    )
     backend = _RustBackend()
     hooks = []
 
@@ -234,13 +226,14 @@ def test_sync_if_not_exists_routes_combined_operation_to_rust():
         response_hook=lambda headers, body: hooks.append((headers, body)),
     )
 
-    assert result["_rid"] == "rid1"
-    assert backend.prepared.op == OP_CREATE_DATABASE_IF_NOT_EXISTS
-    assert backend.prepared.item_id == "db1"
+    assert result["_rid"] == "existing"
+    assert backend.prepared is None
+    connection.ReadDatabase.assert_called_once()
+    connection.CreateDatabase.assert_not_called()
     assert hooks == [
         (
-            {"x-ms-request-charge": "5.25"},
-            {"id": "db1", "_rid": "rid1"},
+            {"x-ms-request-charge": "1.0"},
+            {"id": "db1", "_rid": "existing"},
         )
     ]
 
@@ -567,10 +560,13 @@ def test_async_public_create_database_returns_proxy_and_properties():
 def test_public_create_database_if_not_exists_returns_final_properties_sync_and_async():
     """End-to-end through the public method (sync and async): with
     ``return_properties=True`` the customer gets back the ``DatabaseProxy`` handle plus
-    the final database properties, and the request is tagged
-    ``create_database_if_not_exists``."""
+    the final database properties while orchestration remains in Python."""
     sync_client = object.__new__(CosmosClient)
-    sync_client.client_connection = SimpleNamespace(last_response_headers={})
+    sync_client.client_connection = SimpleNamespace(
+        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "existing"}),
+        CreateDatabase=MagicMock(),
+        last_response_headers={},
+    )
     sync_backend = _RustBackend()
     sync_client._backend = sync_backend
 
@@ -579,12 +575,16 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         return_properties=True,
     )
     assert proxy.id == "db1"
-    assert properties["_rid"] == "rid1"
-    assert sync_backend.prepared.op == OP_CREATE_DATABASE_IF_NOT_EXISTS
+    assert properties["_rid"] == "existing"
+    assert sync_backend.prepared is None
 
     async def run():
         async_client = object.__new__(AsyncCosmosClient)
-        async_client.client_connection = SimpleNamespace(last_response_headers={})
+        async_client.client_connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "existing"}),
+            CreateDatabase=AsyncMock(),
+            last_response_headers={},
+        )
         async_backend = _AsyncRustBackend()
         async_client._backend = async_backend
         async_proxy, async_properties = await async_client.create_database_if_not_exists(
@@ -592,8 +592,8 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
             return_properties=True,
         )
         assert async_proxy.id == "db1"
-        assert async_properties["_rid"] == "rid1"
-        assert async_backend.prepared.op == OP_CREATE_DATABASE_IF_NOT_EXISTS
+        assert async_properties["_rid"] == "existing"
+        assert async_backend.prepared is None
 
     asyncio.run(run())
 
@@ -608,7 +608,11 @@ def test_sync_database_operations_really_ignore_inapplicable_conditions(method_n
     conditions on the wire -- a customer who passes them gets a heads-up, not a
     silently conditional create."""
     client = object.__new__(CosmosClient)
-    client.client_connection = SimpleNamespace(last_response_headers={})
+    client.client_connection = SimpleNamespace(
+        ReadDatabase=MagicMock(return_value={"id": "db1"}),
+        CreateDatabase=MagicMock(),
+        last_response_headers={},
+    )
     backend = _RustBackend()
     client._backend = backend
 
@@ -621,8 +625,14 @@ def test_sync_database_operations_really_ignore_inapplicable_conditions(method_n
         )
 
     assert len(warnings_seen) == 3
-    assert "sessionToken" not in backend.prepared.headers
-    assert "accessCondition" not in backend.prepared.headers
+    if method_name == "create_database":
+        assert "sessionToken" not in backend.prepared.headers
+        assert "accessCondition" not in backend.prepared.headers
+    else:
+        assert backend.prepared is None
+        read_options = client.client_connection.ReadDatabase.call_args.kwargs["options"]
+        assert "sessionToken" not in read_options
+        assert "accessCondition" not in read_options
 
 
 @pytest.mark.parametrize(
@@ -634,7 +644,11 @@ def test_async_database_operations_really_ignore_inapplicable_conditions(method_
     ``test_sync_database_operations_really_ignore_inapplicable_conditions``."""
     async def run():
         client = object.__new__(AsyncCosmosClient)
-        client.client_connection = SimpleNamespace(last_response_headers={})
+        client.client_connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(return_value={"id": "db1"}),
+            CreateDatabase=AsyncMock(),
+            last_response_headers={},
+        )
         backend = _AsyncRustBackend()
         client._backend = backend
 
@@ -647,8 +661,14 @@ def test_async_database_operations_really_ignore_inapplicable_conditions(method_
             )
 
         assert len(warnings_seen) == 3
-        assert "sessionToken" not in backend.prepared.headers
-        assert "accessCondition" not in backend.prepared.headers
+        if method_name == "create_database":
+            assert "sessionToken" not in backend.prepared.headers
+            assert "accessCondition" not in backend.prepared.headers
+        else:
+            assert backend.prepared is None
+            read_options = client.client_connection.ReadDatabase.call_args.kwargs["options"]
+            assert "sessionToken" not in read_options
+            assert "accessCondition" not in read_options
 
     asyncio.run(run())
 
@@ -682,12 +702,15 @@ def test_public_create_database_if_not_exists_does_not_orchestrate_backends(clie
 # ---------------------------------------------------------------------------
 
 
-def test_async_if_not_exists_routes_to_rust_and_hook_fires_once():
-    """Async twin of ``test_sync_if_not_exists_routes_combined_operation_to_rust``:
-    the combined operation dispatches to the Rust backend and the async
-    ``response_hook`` fires exactly once with the response headers and result."""
+def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
+    """Async twin: the selected Rust backend is bypassed for compound
+    orchestration and the Python coordinator owns the existence read."""
     async def run():
-        connection = SimpleNamespace(last_response_headers={"x-ms-request-charge": "5.25"})
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "existing"}),
+            CreateDatabase=AsyncMock(),
+            last_response_headers={"x-ms-request-charge": "1.0"},
+        )
         backend = _AsyncRustBackend()
         hook_calls = []
 
@@ -697,13 +720,14 @@ def test_async_if_not_exists_routes_to_rust_and_hook_fires_once():
             response_hook=lambda headers, body: hook_calls.append((headers, body)),
         )
 
-        assert result["_rid"] == "rid1"
-        assert backend.prepared.op == OP_CREATE_DATABASE_IF_NOT_EXISTS
-        assert backend.prepared.item_id == "db1"
+        assert result["_rid"] == "existing"
+        assert backend.prepared is None
+        connection.ReadDatabase.assert_awaited_once()
+        connection.CreateDatabase.assert_not_awaited()
         assert hook_calls == [
             (
-                {"x-ms-request-charge": "5.25"},
-                {"id": "db1", "_rid": "rid1"},
+                {"x-ms-request-charge": "1.0"},
+                {"id": "db1", "_rid": "existing"},
             )
         ]
 

@@ -76,7 +76,6 @@ OP_REPLACE_OFFER = "replace_offer"
 # never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
-    OP_CREATE_DATABASE_IF_NOT_EXISTS: "create_database_if_not_exists",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",
