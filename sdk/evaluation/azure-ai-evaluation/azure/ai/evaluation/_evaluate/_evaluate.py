@@ -1543,7 +1543,12 @@ def _get_app_insights_exporter_options(
     if credential_type is None or credential_type == "ApiKey":
         return exporter_options
     if credential_type != "ProjectManagedIdentity":
-        raise ValueError(f"Unsupported App Insights credential type: {credential_type}.")
+        raise EvaluationException(
+            message=f"Unsupported App Insights credential type: {credential_type}.",
+            target=ErrorTarget.EVALUATE,
+            category=ErrorCategory.INVALID_VALUE,
+            blame=ErrorBlame.SYSTEM_ERROR,
+        )
 
     credential = app_insights_config.get("credential")
     if credential is None:

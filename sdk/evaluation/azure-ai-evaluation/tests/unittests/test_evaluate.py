@@ -62,7 +62,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
 from azure.ai.evaluation._evaluators._eci._eci import ECIEvaluator
-from azure.ai.evaluation._exceptions import EvaluationException
+from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._legacy._adapters._check import MISSING_LEGACY_SDK
 
 
@@ -3775,7 +3775,7 @@ class TestAppInsightsAuthentication:
         mock_default_credential.assert_not_called()
 
     def test_unknown_credential_type_does_not_fall_back_to_api_key(self):
-        with pytest.raises(ValueError, match="Unsupported App Insights credential type"):
+        with pytest.raises(EvaluationException, match="Unsupported App Insights credential type") as exc_info:
             emit_eval_result_events_to_app_insights(
                 {
                     "connection_string": "InstrumentationKey=fake-key",
@@ -3783,6 +3783,9 @@ class TestAppInsightsAuthentication:
                 },
                 self._RESULTS,
             )
+        assert exc_info.value.target == ErrorTarget.EVALUATE
+        assert exc_info.value.category == ErrorCategory.INVALID_VALUE
+        assert exc_info.value.blame == ErrorBlame.SYSTEM_ERROR
 
     @pytest.mark.parametrize("credential_type", [None, "ApiKey"])
     @patch("opentelemetry.sdk._logs.LoggerProvider")
