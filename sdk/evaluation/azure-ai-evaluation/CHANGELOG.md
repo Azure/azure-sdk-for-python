@@ -1,5 +1,18 @@
 # Release History
 
+## 1.18.2 (2026-07-21)
+
+### Features Added
+
+- Added support for admin-connected (BYO) judge models in prompty-based evaluators. Models configured
+  with `byo_model` and `project_endpoint` are routed through the Foundry project Responses API, which
+  resolves the connection and its authentication.
+
+### Bugs Fixed
+
+- Updated `TaskNavigationEfficiencyEvaluator` validation errors to name both accepted input aliases:
+  `response` / `actions` and `ground_truth` / `expected_actions`.
+
 ## 1.18.1 (2026-07-09)
 
 ### Bugs Fixed
