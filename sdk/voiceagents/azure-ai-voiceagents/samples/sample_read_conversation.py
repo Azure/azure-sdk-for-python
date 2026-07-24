@@ -30,6 +30,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -42,7 +43,7 @@ def read_conversation() -> None:
     endpoint = os.environ["AZURE_VOICE_AGENTS_ENDPOINT"]
     agent_name = os.environ["AZURE_VOICE_AGENTS_AGENT_NAME"]
     conversation_id = os.environ["AZURE_VOICE_AGENTS_CONVERSATION_ID"]
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     with VoiceAgentsClient(endpoint=endpoint, credential=DefaultAzureCredential()) as client:
         conversations = client.agent_endpoint_conversations

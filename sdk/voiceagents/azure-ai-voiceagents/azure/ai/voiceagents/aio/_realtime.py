@@ -340,7 +340,7 @@ class AsyncRealtimeConnectionManager:
         except BaseException:
             await session.close()
             raise
-        self._connection = AsyncRealtimeConnection(connection, session)
+        self._connection = AsyncRealtimeConnection(connection, session)  # type: ignore[arg-type]
         return self._connection
 
     async def __aexit__(self, *exc_details: Any) -> None:
@@ -394,7 +394,8 @@ class AsyncRealtime:
 
         :keyword str agent_name: The name of the voice agent to connect to.
         :keyword foundry_features: Preview opt-in value for the ``Foundry-Features`` header,
-         e.g. ``"VOICE_AGENTS_V1_PREVIEW"``. Default value is None.
+         e.g. ``AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW`` or
+         ``"VoiceAgents=V1Preview"``. Default value is None.
         :paramtype foundry_features: str or None
         :keyword extra_query: Additional query-string parameters for the handshake.
         :paramtype extra_query: Mapping[str, str] or None

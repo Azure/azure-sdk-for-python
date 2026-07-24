@@ -35,19 +35,19 @@ and audio recordings).
 
 | File | Description |
 | ---- | ----------- |
-| [sample_create_and_manage_voice_agent.py](sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
-| [sample_create_voice_agent_with_tools.py](sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
-| [sample_generate_voice_agent.py](sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
-| [sample_manage_voice_agent_versions.py](sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
-| [async_samples/sample_create_and_manage_voice_agent_async.py](async_samples/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
+| [sample_create_and_manage_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
+| [sample_create_voice_agent_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
+| [sample_generate_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
+| [sample_manage_voice_agent_versions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
+| [async_samples/sample_create_and_manage_voice_agent_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/async_samples/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
 
 **Read conversations** — these need an existing agent and a conversation id from
 a completed live session (see [Getting a conversation id](#getting-a-conversation-id)).
 
 | File | Description |
 | ---- | ----------- |
-| [sample_read_conversation.py](sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
-| [sample_read_conversation_audio.py](sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
+| [sample_read_conversation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
+| [sample_read_conversation_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
 
 ## Prerequisites
 
@@ -119,4 +119,6 @@ python sample_create_and_manage_voice_agent.py
 
 > [!NOTE]
 > The management samples create and delete **real resources** in your project and
-> may incur cost. Each sample cleans up the agent it creates.
+> may incur cost. Each sample deletes the agent it creates on the success path
+> only; if a sample fails partway through, it may leave the agent behind, so
+> check your project and delete any leftover agents manually.

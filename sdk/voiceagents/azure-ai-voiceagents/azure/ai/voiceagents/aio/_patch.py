@@ -7,7 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Optional
+from typing import Optional
 
 from ._client import VoiceAgentsClient as _GeneratedVoiceAgentsClient
 from ._realtime import (
@@ -18,15 +18,14 @@ from ._realtime import (
 
 
 class VoiceAgentsClient(_GeneratedVoiceAgentsClient):
-    """VoiceAgentsClient with realtime (WebSocket) streaming support.
+    """VoiceAgentsClient with an interface-only realtime namespace.
 
-    Adds the :attr:`realtime` namespace on top of the generated HTTP client,
-    following the OpenAI ``client.realtime.connect(...)`` pattern.
+    Adds the :attr:`realtime` namespace on top of the generated HTTP client.
+    Realtime connections are not yet available and ``connect()`` currently raises
+    :class:`NotImplementedError`.
     """
 
-    def __init__(self, endpoint: str, credential: Any, **kwargs: Any) -> None:
-        super().__init__(endpoint, credential, **kwargs)
-        self._realtime: Optional[AsyncRealtime] = None
+    _realtime: Optional[AsyncRealtime] = None
 
     @property
     def realtime(self) -> AsyncRealtime:

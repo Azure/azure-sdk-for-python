@@ -30,6 +30,7 @@ USAGE:
 
 import asyncio
 import os
+from typing import Final
 
 from azure.identity.aio import DefaultAzureCredential
 
@@ -41,10 +42,10 @@ async def create_and_manage_voice_agent() -> None:
     endpoint = os.environ["AZURE_VOICE_AGENTS_ENDPOINT"]
     model = os.environ.get("AZURE_VOICE_AGENTS_MODEL", "gpt-realtime")
     agent_name = "sample-voice-agent-async"
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     credential = DefaultAzureCredential()
-    async with VoiceAgentsClient(endpoint=endpoint, credential=credential) as client:
+    async with credential, VoiceAgentsClient(endpoint=endpoint, credential=credential) as client:
         created = await client.voice_agents.create_voice_agent(
             name=agent_name,
             definition=VoiceAgentDefinition(
@@ -68,8 +69,6 @@ async def create_and_manage_voice_agent() -> None:
 
         await client.voice_agents.delete_voice_agent(agent_name, foundry_features=preview)
         print(f"Deleted voice agent: {agent_name}")
-
-    await credential.close()
 
 
 if __name__ == "__main__":

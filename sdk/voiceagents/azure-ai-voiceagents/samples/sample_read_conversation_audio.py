@@ -33,6 +33,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
@@ -45,7 +46,7 @@ def read_conversation_audio() -> None:
     endpoint = os.environ["AZURE_VOICE_AGENTS_ENDPOINT"]
     agent_name = os.environ["AZURE_VOICE_AGENTS_AGENT_NAME"]
     conversation_id = os.environ["AZURE_VOICE_AGENTS_CONVERSATION_ID"]
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     with VoiceAgentsClient(endpoint=endpoint, credential=DefaultAzureCredential()) as client:
         conversations = client.agent_endpoint_conversations
@@ -93,9 +94,11 @@ def read_first_item_audio(conversations, agent_name, conversation_id, preview) -
             metadata = conversations.get_agent_conversation_item_audio(
                 agent_name, conversation_id, item_id, foundry_features=preview
             )
-        except HttpResponseError:
-            # This item has no persisted audio (e.g. a text-only turn); try the next one.
-            continue
+        except HttpResponseError as e:
+            # A 404 means this item has no persisted audio (for example, a text-only turn).
+            if e.status_code == 404:
+                continue
+            raise
 
         print(f"Item {item_id}: role={metadata.role}, duration_ms={metadata.duration_ms}")
         if metadata.blob_path:

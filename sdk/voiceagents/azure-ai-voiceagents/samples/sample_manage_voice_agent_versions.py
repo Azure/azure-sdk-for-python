@@ -29,6 +29,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.identity import DefaultAzureCredential
 
@@ -40,7 +41,7 @@ def manage_voice_agent_versions() -> None:
     endpoint = os.environ["AZURE_VOICE_AGENTS_ENDPOINT"]
     model = os.environ.get("AZURE_VOICE_AGENTS_MODEL", "gpt-realtime")
     agent_name = "sample-versioned-voice-agent"
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     def definition(instructions: str) -> VoiceAgentDefinition:
         # Each version differs only by its instructions; the rest is identical.

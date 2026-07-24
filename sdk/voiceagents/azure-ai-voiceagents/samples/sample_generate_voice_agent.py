@@ -30,6 +30,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.identity import DefaultAzureCredential
 
@@ -40,7 +41,7 @@ from azure.ai.voiceagents.models import AgentDefinitionOptInKeys, VoiceAgentType
 def generate_voice_agent() -> None:
     endpoint = os.environ["AZURE_VOICE_AGENTS_ENDPOINT"]
     model = os.environ.get("AZURE_VOICE_AGENTS_MODEL", "gpt-realtime")
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     with VoiceAgentsClient(endpoint=endpoint, credential=DefaultAzureCredential()) as client:
         agent = client.voice_agents.generate_voice_agent(

@@ -29,6 +29,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.identity import DefaultAzureCredential
 
@@ -49,7 +50,7 @@ def create_and_manage_voice_agent() -> None:
     agent_name = "sample-voice-agent"
 
     # Voice agent preview operations require this feature-flag opt-in.
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     definition = VoiceAgentDefinition(
         # `managed` uses a service-hosted model; use `self_deployed` with a Foundry
@@ -83,13 +84,17 @@ def create_and_manage_voice_agent() -> None:
             print(f"  - {item.name}")
 
         # Update the agent. Each update that changes the definition produces a new version.
+        # Preserve the audio and output-modality configuration from the original
+        # definition so the new version keeps the same voice behavior.
         updated = client.voice_agents.update_voice_agent(
             agent_name,
             definition=VoiceAgentDefinition(
                 model_type="managed",
                 model=model,
                 instructions="You are a friendly voice assistant. Always greet the caller warmly.",
-                store=True,
+                audio=definition.audio,
+                output_modalities=definition.output_modalities,
+                store=definition.store,
             ),
             description="Updated instructions.",
             foundry_features=preview,

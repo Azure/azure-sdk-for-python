@@ -39,6 +39,7 @@ USAGE:
 """
 
 import os
+from typing import Final
 
 from azure.identity import DefaultAzureCredential
 
@@ -73,7 +74,7 @@ def create_voice_agent_with_tools() -> None:
     agent_name = "sample-voice-agent-with-tools"
 
     # Voice agent preview operations require this feature-flag opt-in.
-    preview = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     # A client-executed tool: the service forwards the function call to your app,
     # and your app returns the result over the live session.
@@ -94,7 +95,7 @@ def create_voice_agent_with_tools() -> None:
     # An MCP tool is executed by the service against a remote MCP server you own.
     # It references an external server, so it is constructed here for illustration
     # and not attached below. Provide one of server_url, connector_id, or tunnel_id.
-    example_mcp_tool = MCPTool(
+    _example_mcp_tool = MCPTool(
         server_label="my-mcp-server",
         server_url="https://example.com/mcp",
         require_approval="never",
@@ -102,7 +103,7 @@ def create_voice_agent_with_tools() -> None:
 
     # A toolbox tool references a versioned Foundry toolbox you have created. It is
     # constructed here for illustration; attach it only if the toolbox exists.
-    example_toolbox_tool = VoiceToolboxTool(toolbox_name="my-toolbox", toolbox_version="1")
+    _example_toolbox_tool = VoiceToolboxTool(toolbox_name="my-toolbox", toolbox_version="1")
 
     definition = VoiceAgentDefinition(
         model_type=model_type,
@@ -128,7 +129,7 @@ def create_voice_agent_with_tools() -> None:
             output=VoiceAudioOutputConfig(voice=AzureVoice(type="azure-standard", name="en-US-AvaNeural")),
         ),
         output_modalities=[VoiceOutputModality.AUDIO],
-        # Attach the self-contained tools. `example_mcp_tool` and `example_toolbox_tool`
+        # Attach the self-contained tools. `_example_mcp_tool` and `_example_toolbox_tool`
         # reference external resources you must own, so they are left out here.
         tools=[get_weather, end_call],
         store=True,
