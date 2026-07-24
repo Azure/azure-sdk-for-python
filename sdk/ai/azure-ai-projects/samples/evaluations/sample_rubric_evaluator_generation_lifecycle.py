@@ -107,8 +107,10 @@ with (
     # the produced EvaluatorVersion once the job reaches a terminal state.
     print("Waiting for the generation job to complete (polling is handled by the SDK)...")
     evaluator: EvaluatorVersion = poller.result()
-    print(f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
-          f"(job `{evaluator.generation_job_id}`).")
+    print(
+        f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
+        f"(job `{evaluator.generation_job_id}`)."
+    )
 
     # Verify the idempotency: the replay poller resolves to the same underlying job.
     replay_evaluator: EvaluatorVersion = replay_poller.result()

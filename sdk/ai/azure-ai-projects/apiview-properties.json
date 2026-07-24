@@ -348,8 +348,6 @@
         "azure.ai.projects.models.VersionIndicator": "Azure.AI.Projects.VersionIndicator",
         "azure.ai.projects.models.VersionRefIndicator": "Azure.AI.Projects.VersionRefIndicator",
         "azure.ai.projects.models.VersionSelector": "Azure.AI.Projects.VersionSelector",
-        "azure.ai.projects.models.WebIQPreviewTool": "Azure.AI.Projects.WebIQPreviewTool",
-        "azure.ai.projects.models.WebIQPreviewToolboxTool": "Azure.AI.Projects.WebIQPreviewToolboxTool",
         "azure.ai.projects.models.WebSearchApproximateLocation": "OpenAI.WebSearchApproximateLocation",
         "azure.ai.projects.models.WebSearchConfiguration": "Azure.AI.Projects.WebSearchConfiguration",
         "azure.ai.projects.models.WebSearchPreviewTool": "OpenAI.WebSearchPreviewTool",
@@ -550,5 +548,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "b8e732af7c5e"
+    "CrossLanguageVersion": "856df4c68403"
 }

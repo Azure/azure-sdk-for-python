@@ -79,6 +79,7 @@ model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-generation-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
+
 def main() -> None:
     with (
         DefaultAzureCredential() as credential,
@@ -118,7 +119,8 @@ def main() -> None:
         )
         print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
         job_result = project_client.beta.datasets.begin_create_generation_job(
-            job=job, polling_interval=poll_interval_seconds,
+            job=job,
+            polling_interval=poll_interval_seconds,
         ).result()
 
         # Locate the Dataset output produced by the job.

@@ -161,17 +161,16 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam,
-    WebIQPreviewTool, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebSearchTool,
+    WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "work_iq_preview", "fabric_iq_preview", "web_iq_preview", "toolbox_search_preview",
-     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -182,7 +181,7 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\", \"web_iq_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
      \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
      \"capture_structured_outputs\", and \"openapi\"."""
 
@@ -269,13 +268,12 @@ class ToolboxTool(_Model):
     A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationPreviewToolboxTool,
     CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
     OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolSearchToolboxTool,
-    ToolboxSearchPreviewToolboxTool, WebIQPreviewToolboxTool, WebSearchToolboxTool,
-    WorkIQPreviewToolboxTool
+    ToolboxSearchPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "web_iq_preview", "toolbox_search",
-     and "toolbox_search_preview".
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search", and
+     "toolbox_search_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -292,7 +290,7 @@ class ToolboxTool(_Model):
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", \"web_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -15631,125 +15629,6 @@ class VersionSelector(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class WebIQPreviewTool(Tool, discriminator="web_iq_preview"):
-    """A WebIQ server-side tool.
-
-    :ivar type: The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
-    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
-    :vartype project_connection_id: str
-    :ivar server_label: The label of the WebIQ MCP server to connect to.
-    :vartype server_label: str
-    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
-     connection will be used.
-    :vartype server_url: str
-    :ivar require_approval: Whether the agent requires approval before executing actions. Default
-     is always. Is either a MCPToolRequireApproval type or a str type.
-    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
-    """
-
-    type: Literal[ToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The object type, which is always 'web_iq_preview'. Required. WEB_IQ_PREVIEW."""
-    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the WebIQ project connection. Required."""
-    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The label of the WebIQ MCP server to connect to."""
-    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
-     used."""
-    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether the agent requires approval before executing actions. Default is always. Is either a
-     MCPToolRequireApproval type or a str type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_connection_id: str,
-        server_label: Optional[str] = None,
-        server_url: Optional[str] = None,
-        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.WEB_IQ_PREVIEW  # type: ignore
-
-
-class WebIQPreviewToolboxTool(ToolboxTool, discriminator="web_iq_preview"):
-    """A WebIQ tool stored in a toolbox.
-
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
-     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
-     are silently ignored at runtime.
-    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
-    :ivar type: Required. WEB_IQ_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.WEB_IQ_PREVIEW
-    :ivar project_connection_id: The ID of the WebIQ project connection. Required.
-    :vartype project_connection_id: str
-    :ivar server_label: The label of the WebIQ MCP server to connect to.
-    :vartype server_label: str
-    :ivar server_url: The URL of the WebIQ MCP server. If not provided, the URL from the project
-     connection will be used.
-    :vartype server_url: str
-    :ivar require_approval: Whether the agent requires approval before executing actions. Default
-     is always. Is either a MCPToolRequireApproval type or a str type.
-    :vartype require_approval: ~azure.ai.projects.models.MCPToolRequireApproval or str
-    """
-
-    type: Literal[ToolboxToolType.WEB_IQ_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. WEB_IQ_PREVIEW."""
-    project_connection_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The ID of the WebIQ project connection. Required."""
-    server_label: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The label of the WebIQ MCP server to connect to."""
-    server_url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The URL of the WebIQ MCP server. If not provided, the URL from the project connection will be
-     used."""
-    require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether the agent requires approval before executing actions. Default is always. Is either a
-     MCPToolRequireApproval type or a str type."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        project_connection_id: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
-        server_label: Optional[str] = None,
-        server_url: Optional[str] = None,
-        require_approval: Optional[Union["_models.MCPToolRequireApproval", str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolboxToolType.WEB_IQ_PREVIEW  # type: ignore
 
 
 class WebSearchApproximateLocation(_Model):
