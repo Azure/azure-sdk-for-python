@@ -5,6 +5,7 @@
 from typing import Any, Dict, List, Literal, TypedDict, Union
 
 from typing_extensions import NotRequired
+from azure.core.credentials import TokenCredential
 from ._evaluator_definition import EvaluatorDefinition
 from typing import Dict, List, Optional, Any
 
@@ -175,6 +176,8 @@ class EvaluationResult(TypedDict):
 
 class AppInsightsConfig(TypedDict):
     connection_string: str
+    credential_type: NotRequired[Literal["ApiKey", "ProjectManagedIdentity"]]
+    credential: NotRequired[TokenCredential]
     project_id: NotRequired[str]
     run_type: NotRequired[str]
     schedule_type: NotRequired[str]

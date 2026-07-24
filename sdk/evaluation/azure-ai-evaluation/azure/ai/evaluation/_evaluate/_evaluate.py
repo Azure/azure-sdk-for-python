@@ -18,6 +18,7 @@ from azure.ai.evaluation._legacy._adapters._constants import LINE_NUMBER
 from azure.ai.evaluation._legacy._adapters.entities import Run
 import pandas as pd
 
+from azure.core.credentials import AccessToken, TokenCredential
 from azure.ai.evaluation._common.math import list_mean_nan_safe, apply_transform_nan_safe
 from azure.ai.evaluation._common.utils import validate_azure_ai_project, is_onedp_project
 from azure.ai.evaluation._evaluators._common._base_eval import EvaluatorBase
@@ -64,6 +65,7 @@ from ._evaluate_aoai import (
 )
 
 LOGGER = logging.getLogger(__name__)
+AZURE_MONITOR_SCOPE = "https://monitor.azure.com/.default"
 
 # For metrics (aggregates) whose metric names intentionally differ from their
 # originating column name, usually because the aggregation of the original value
@@ -1383,6 +1385,15 @@ def emit_eval_result_events_to_app_insights(
     :type results: List[Dict]
     """
 
+    if not results:
+        LOGGER.debug("No results to log to App Insights")
+        return
+
+    exporter_options = _get_app_insights_exporter_options(app_insights_config)
+    use_entra_authentication = (
+        app_insights_config.get("credential_type") == "ProjectManagedIdentity"
+    )
+
     from opentelemetry import _logs
     from opentelemetry.sdk._logs import LoggerProvider
     from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
@@ -1391,10 +1402,6 @@ def emit_eval_result_events_to_app_insights(
     from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter
     from opentelemetry._events import get_event_logger
     from opentelemetry.sdk._events import EventLoggerProvider
-
-    if not results:
-        LOGGER.debug("No results to log to App Insights")
-        return
 
     logger_provider = None
     try:
@@ -1414,7 +1421,7 @@ def emit_eval_result_events_to_app_insights(
         _logs.set_logger_provider(logger_provider)
 
         # Create Azure Monitor log exporter
-        azure_log_exporter = AzureMonitorLogExporter(connection_string=app_insights_config["connection_string"])
+        azure_log_exporter = AzureMonitorLogExporter(**exporter_options)
 
         # Add the Azure Monitor exporter to the logger provider
         # Set export_timeout_millis to prevent individual batch exports from hanging
@@ -1454,16 +1461,21 @@ def emit_eval_result_events_to_app_insights(
         # Force flush to ensure events are sent, with a timeout to prevent hanging
         flush_timeout_millis = 60000  # 60 seconds
         flush_success = logger_provider.force_flush(timeout_millis=flush_timeout_millis)
-        if flush_success:
-            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
-        else:
-            LOGGER.warning(
+        if not flush_success:
+            timeout_message = (
                 f"App Insights force_flush timed out after {flush_timeout_millis}ms. "
                 "Some evaluation events may not have been sent."
             )
+            if use_entra_authentication:
+                raise TimeoutError(timeout_message)
+            LOGGER.warning(timeout_message)
+        else:
+            LOGGER.info(f"Successfully logged {len(results)} evaluation results to App Insights")
 
-    except Exception as e:
-        LOGGER.error(f"Failed to emit evaluation results to App Insights: {e}")
+    except Exception as ex:
+        if use_entra_authentication:
+            raise
+        LOGGER.error("Failed to emit evaluation results to App Insights: %s", ex)
     finally:
         # Shut down the logger provider to stop background threads (e.g. OneSettings
         # configuration poller) that would otherwise keep the process alive indefinitely.
@@ -1472,6 +1484,41 @@ def emit_eval_result_events_to_app_insights(
                 logger_provider.shutdown()
             except Exception:
                 pass
+
+
+class _AzureMonitorScopedCredential:  # pylint: disable=too-few-public-methods
+    """Delegate token acquisition with Azure Monitor's required scope."""
+
+    def __init__(self, credential: TokenCredential) -> None:
+        self._credential = credential
+
+    def get_token(self, *_scopes: str, **kwargs: Any) -> AccessToken:
+        """Request a fresh Azure Monitor token from the configured credential."""
+        return self._credential.get_token(AZURE_MONITOR_SCOPE, **kwargs)
+
+
+def _get_app_insights_exporter_options(
+    app_insights_config: AppInsightsConfig,
+) -> Dict[str, Any]:
+    exporter_options: Dict[str, Any] = {
+        "connection_string": app_insights_config["connection_string"]
+    }
+    credential_type = app_insights_config.get("credential_type")
+    if credential_type is None or credential_type == "ApiKey":
+        return exporter_options
+    if credential_type != "ProjectManagedIdentity":
+        raise ValueError(
+            f"Unsupported App Insights credential type: {credential_type}."
+        )
+
+    credential = app_insights_config.get("credential")
+    if credential is None:
+        raise ValueError(
+            "App Insights ProjectManagedIdentity authentication requires a TokenCredential."
+        )
+    exporter_options["credential"] = _AzureMonitorScopedCredential(credential)
+    exporter_options["credential_scopes"] = [AZURE_MONITOR_SCOPE]
+    return exporter_options
 
 
 def _preprocess_data(
