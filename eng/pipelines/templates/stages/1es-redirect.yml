@@ -65,7 +65,7 @@ extends:
         ${{ if eq(parameters.EnableCompiledCodeql, true) }}:
           # "cpp" covers both C and C++ code. Language is specified because 
           # checkout happens after the injected "CodeQL Initialize" step
-          language: cpp
+          language: cpp,python
           compiled:
             enabled: true
         ${{ else }}:

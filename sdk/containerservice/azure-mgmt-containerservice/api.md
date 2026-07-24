@@ -3,19 +3,11 @@ namespace azure.mgmt.containerservice
 
     class azure.mgmt.containerservice.ContainerServiceClient: implements ContextManager 
         agent_pools: AgentPoolsOperations
-        alert_configurations: AlertConfigurationsOperations
-        container_service: ContainerServiceOperations
         identity_bindings: IdentityBindingsOperations
-        jwt_authenticators: JWTAuthenticatorsOperations
-        load_balancers: LoadBalancersOperations
         machines: MachinesOperations
         maintenance_configurations: MaintenanceConfigurationsOperations
-        maintenance_windows: MaintenanceWindowsOperations
-        managed_cluster_snapshots: ManagedClusterSnapshotsOperations
         managed_clusters: ManagedClustersOperations
         managed_namespaces: ManagedNamespacesOperations
-        mesh_memberships: MeshMembershipsOperations
-        operation_status_result: OperationStatusResultOperations
         operations: Operations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
@@ -23,7 +15,6 @@ namespace azure.mgmt.containerservice
         snapshots: SnapshotsOperations
         trusted_access_role_bindings: TrustedAccessRoleBindingsOperations
         trusted_access_roles: TrustedAccessRolesOperations
-        vm_skus: VmSkusOperations
 
         def __init__(
                 self, 
@@ -52,19 +43,11 @@ namespace azure.mgmt.containerservice.aio
 
     class azure.mgmt.containerservice.aio.ContainerServiceClient: implements AsyncContextManager 
         agent_pools: AgentPoolsOperations
-        alert_configurations: AlertConfigurationsOperations
-        container_service: ContainerServiceOperations
         identity_bindings: IdentityBindingsOperations
-        jwt_authenticators: JWTAuthenticatorsOperations
-        load_balancers: LoadBalancersOperations
         machines: MachinesOperations
         maintenance_configurations: MaintenanceConfigurationsOperations
-        maintenance_windows: MaintenanceWindowsOperations
-        managed_cluster_snapshots: ManagedClusterSnapshotsOperations
         managed_clusters: ManagedClustersOperations
         managed_namespaces: ManagedNamespacesOperations
-        mesh_memberships: MeshMembershipsOperations
-        operation_status_result: OperationStatusResultOperations
         operations: Operations
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
@@ -72,7 +55,6 @@ namespace azure.mgmt.containerservice.aio
         snapshots: SnapshotsOperations
         trusted_access_role_bindings: TrustedAccessRoleBindingsOperations
         trusted_access_roles: TrustedAccessRolesOperations
-        vm_skus: VmSkusOperations
 
         def __init__(
                 self, 
@@ -109,16 +91,6 @@ namespace azure.mgmt.containerservice.aio.operations
 
         @distributed_trace_async
         async def begin_abort_latest_operation(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
@@ -260,132 +232,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 **kwargs: Any
             ) -> AsyncItemPaged[AgentPool]: ...
 
-        @overload
-        async def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        async def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        async def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.AlertConfigurationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: AlertConfiguration, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[AlertConfiguration]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: AlertConfiguration, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[AlertConfiguration]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[AlertConfiguration]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                **kwargs: Any
-            ) -> AlertConfiguration: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[AlertConfiguration]: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.ContainerServiceOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list_node_image_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[NodeImageVersion]: ...
-
 
     class azure.mgmt.containerservice.aio.operations.IdentityBindingsOperations:
 
@@ -432,7 +278,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[IdentityBinding]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -442,7 +288,7 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[None]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -452,161 +298,13 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[IdentityBinding]: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.JWTAuthenticatorsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: JWTAuthenticator, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[JWTAuthenticator]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: JWTAuthenticator, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[JWTAuthenticator]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[JWTAuthenticator]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                **kwargs: Any
-            ) -> JWTAuthenticator: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[JWTAuthenticator]: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.LoadBalancersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: LoadBalancer, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: LoadBalancer, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[LoadBalancer]: ...
 
 
     class azure.mgmt.containerservice.aio.operations.MachinesOperations:
@@ -616,51 +314,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: Machine, 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Machine]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: Machine, 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Machine]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[Machine]: ...
 
         @distributed_trace_async
         async def get(
@@ -753,216 +406,6 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[MaintenanceConfiguration]: ...
 
 
-    class azure.mgmt.containerservice.aio.operations.MaintenanceWindowsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: MaintenanceWindowResource, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MaintenanceWindowResource]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: MaintenanceWindowResource, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MaintenanceWindowResource]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MaintenanceWindowResource]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MaintenanceWindowResource]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> AsyncItemPaged[MaintenanceWindowResource]: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.ManagedClusterSnapshotsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: ManagedClusterSnapshot, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: ManagedClusterSnapshot, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        async def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-05-02-preview'])
-        async def delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(self, **kwargs: Any) -> AsyncItemPaged[ManagedClusterSnapshot]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ManagedClusterSnapshot]: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        async def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-
     class azure.mgmt.containerservice.aio.operations.ManagedClustersOperations:
 
         def __init__(
@@ -1019,48 +462,13 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncLROPoller[ManagedCluster]: ...
 
         @distributed_trace_async
-        @api_version_validation(params_added_on={'2026-05-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-05-02-preview'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                ignore_pod_disruption_budget: Optional[bool] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: RebalanceLoadBalancersRequestBody, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: RebalanceLoadBalancersRequestBody, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @overload
-        async def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
@@ -1261,14 +669,6 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> Optional[RunCommandResult]: ...
 
         @distributed_trace_async
-        async def get_guardrails_versions(
-                self, 
-                location: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> GuardrailsAvailableVersion: ...
-
-        @distributed_trace_async
         async def get_mesh_revision_profile(
                 self, 
                 location: str, 
@@ -1284,14 +684,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 mode: str, 
                 **kwargs: Any
             ) -> MeshUpgradeProfile: ...
-
-        @distributed_trace_async
-        async def get_safeguards_versions(
-                self, 
-                location: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SafeguardsAvailableVersion: ...
 
         @distributed_trace_async
         async def get_upgrade_profile(
@@ -1342,13 +734,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 **kwargs: Any
             ) -> CredentialResults: ...
 
-        @distributed_trace
-        def list_guardrails_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[GuardrailsAvailableVersion]: ...
-
         @distributed_trace_async
         async def list_kubernetes_versions(
                 self, 
@@ -1378,13 +763,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 resource_name: str, 
                 **kwargs: Any
             ) -> AsyncItemPaged[OutboundEnvironmentEndpoint]: ...
-
-        @distributed_trace
-        def list_safeguards_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[SafeguardsAvailableVersion]: ...
 
 
     class azure.mgmt.containerservice.aio.operations.ManagedNamespacesOperations:
@@ -1501,119 +879,6 @@ namespace azure.mgmt.containerservice.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ManagedNamespace: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.MeshMembershipsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: MeshMembership, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MeshMembership]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: MeshMembership, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MeshMembership]: ...
-
-        @overload
-        async def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> AsyncLROPoller[MeshMembership]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-05-02-preview'])
-        async def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                **kwargs: Any
-            ) -> AsyncLROPoller[None]: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                **kwargs: Any
-            ) -> MeshMembership: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[MeshMembership]: ...
-
-
-    class azure.mgmt.containerservice.aio.operations.OperationStatusResultOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-        @distributed_trace_async
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        async def get_by_agent_pool(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> AsyncItemPaged[OperationStatusResult]: ...
 
 
     class azure.mgmt.containerservice.aio.operations.Operations:
@@ -1946,24 +1211,6 @@ namespace azure.mgmt.containerservice.aio.operations
             ) -> AsyncItemPaged[TrustedAccessRole]: ...
 
 
-    class azure.mgmt.containerservice.aio.operations.VmSkusOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                location: str, 
-                *, 
-                include_extended_locations: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> AsyncItemPaged[ResourceSku]: ...
-
-
 namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AbsoluteMonthlySchedule(_Model):
@@ -1999,11 +1246,6 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AddonAutoscaling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
 
 
     class azure.mgmt.containerservice.models.AdoptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2195,26 +1437,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.AgentPoolBlueGreenUpgradeSettings(_Model):
-        batch_soak_duration_in_minutes: Optional[int]
-        drain_batch_size: Optional[str]
-        drain_timeout_in_minutes: Optional[int]
-        final_soak_duration_in_minutes: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                batch_soak_duration_in_minutes: Optional[int] = ..., 
-                drain_batch_size: Optional[str] = ..., 
-                drain_timeout_in_minutes: Optional[int] = ..., 
-                final_soak_duration_in_minutes: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.AgentPoolDeleteMachinesParameter(_Model):
         machine_names: list[str]
 
@@ -2255,7 +1477,6 @@ namespace azure.mgmt.containerservice.models
         enable_encryption_at_host: Optional[bool]
         enable_fips: Optional[bool]
         enable_node_public_ip: Optional[bool]
-        enable_os_disk_full_caching: Optional[bool]
         enable_ultra_ssd: Optional[bool]
         gateway_profile: Optional[AgentPoolGatewayProfile]
         gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]]
@@ -2272,7 +1493,6 @@ namespace azure.mgmt.containerservice.models
         mode: Optional[Union[str, AgentPoolMode]]
         network_profile: Optional[AgentPoolNetworkProfile]
         node_image_version: Optional[str]
-        node_initialization_taints: Optional[list[str]]
         node_labels: Optional[dict[str, str]]
         node_public_ip_prefix_id: Optional[str]
         node_taints: Optional[list[str]]
@@ -2284,7 +1504,6 @@ namespace azure.mgmt.containerservice.models
         pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]]
         pod_subnet_id: Optional[str]
         power_state: Optional[PowerState]
-        prepared_image_specification_profile: Optional[PreparedImageSpecificationProfile]
         provisioning_state: Optional[str]
         proximity_placement_group_id: Optional[str]
         scale_down_mode: Optional[Union[str, ScaleDownMode]]
@@ -2296,8 +1515,6 @@ namespace azure.mgmt.containerservice.models
         tags: Optional[dict[str, str]]
         type_properties_type: Optional[Union[str, AgentPoolType]]
         upgrade_settings: Optional[AgentPoolUpgradeSettings]
-        upgrade_settings_blue_green: Optional[AgentPoolBlueGreenUpgradeSettings]
-        upgrade_strategy: Optional[Union[str, UpgradeStrategy]]
         virtual_machine_nodes_status: Optional[list[VirtualMachineNodes]]
         virtual_machines_profile: Optional[VirtualMachinesProfile]
         vm_size: Optional[str]
@@ -2318,7 +1535,6 @@ namespace azure.mgmt.containerservice.models
                 enable_encryption_at_host: Optional[bool] = ..., 
                 enable_fips: Optional[bool] = ..., 
                 enable_node_public_ip: Optional[bool] = ..., 
-                enable_os_disk_full_caching: Optional[bool] = ..., 
                 enable_ultra_ssd: Optional[bool] = ..., 
                 gateway_profile: Optional[AgentPoolGatewayProfile] = ..., 
                 gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]] = ..., 
@@ -2335,7 +1551,6 @@ namespace azure.mgmt.containerservice.models
                 mode: Optional[Union[str, AgentPoolMode]] = ..., 
                 network_profile: Optional[AgentPoolNetworkProfile] = ..., 
                 node_image_version: Optional[str] = ..., 
-                node_initialization_taints: Optional[list[str]] = ..., 
                 node_labels: Optional[dict[str, str]] = ..., 
                 node_public_ip_prefix_id: Optional[str] = ..., 
                 node_taints: Optional[list[str]] = ..., 
@@ -2347,7 +1562,6 @@ namespace azure.mgmt.containerservice.models
                 pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]] = ..., 
                 pod_subnet_id: Optional[str] = ..., 
                 power_state: Optional[PowerState] = ..., 
-                prepared_image_specification_profile: Optional[PreparedImageSpecificationProfile] = ..., 
                 proximity_placement_group_id: Optional[str] = ..., 
                 scale_down_mode: Optional[Union[str, ScaleDownMode]] = ..., 
                 scale_set_eviction_policy: Optional[Union[str, ScaleSetEvictionPolicy]] = ..., 
@@ -2358,8 +1572,6 @@ namespace azure.mgmt.containerservice.models
                 tags: Optional[dict[str, str]] = ..., 
                 type_properties_type: Optional[Union[str, AgentPoolType]] = ..., 
                 upgrade_settings: Optional[AgentPoolUpgradeSettings] = ..., 
-                upgrade_settings_blue_green: Optional[AgentPoolBlueGreenUpgradeSettings] = ..., 
-                upgrade_strategy: Optional[Union[str, UpgradeStrategy]] = ..., 
                 virtual_machine_nodes_status: Optional[list[VirtualMachineNodes]] = ..., 
                 virtual_machines_profile: Optional[VirtualMachinesProfile] = ..., 
                 vm_size: Optional[str] = ..., 
@@ -2374,41 +1586,14 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AgentPoolMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         GATEWAY = "Gateway"
-        MACHINES = "Machines"
-        MANAGED_SYSTEM = "ManagedSystem"
         SYSTEM = "System"
         USER = "User"
-
-
-    class azure.mgmt.containerservice.models.AgentPoolNetworkInterface(_Model):
-        enable_accelerated_networking: Optional[bool]
-        type: Optional[Union[str, AgentPoolNetworkInterfaceType]]
-        vnet_subnet_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_accelerated_networking: Optional[bool] = ..., 
-                type: Optional[Union[str, AgentPoolNetworkInterfaceType]] = ..., 
-                vnet_subnet_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AgentPoolNetworkInterfaceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DYNAMIC = "Dynamic"
-        STANDARD = "Standard"
 
 
     class azure.mgmt.containerservice.models.AgentPoolNetworkProfile(_Model):
         allowed_host_ports: Optional[list[PortRange]]
         application_security_groups: Optional[list[str]]
-        node_public_ip_prefix_i_ds: Optional[list[str]]
         node_public_ip_tags: Optional[list[IPTag]]
-        secondary_network_interfaces: Optional[list[AgentPoolNetworkInterface]]
 
         @overload
         def __init__(
@@ -2416,9 +1601,7 @@ namespace azure.mgmt.containerservice.models
                 *, 
                 allowed_host_ports: Optional[list[PortRange]] = ..., 
                 application_security_groups: Optional[list[str]] = ..., 
-                node_public_ip_prefix_i_ds: Optional[list[str]] = ..., 
-                node_public_ip_tags: Optional[list[IPTag]] = ..., 
-                secondary_network_interfaces: Optional[list[AgentPoolNetworkInterface]] = ...
+                node_public_ip_tags: Optional[list[IPTag]] = ...
             ) -> None: ...
 
         @overload
@@ -2445,7 +1628,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AgentPoolSSHAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "Disabled"
-        ENTRA_ID = "EntraId"
         LOCAL_USER = "LocalUser"
 
 
@@ -2473,7 +1655,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         AVAILABILITY_SET = "AvailabilitySet"
-        FLEX_NODES = "FlexNodes"
         VIRTUAL_MACHINES = "VirtualMachines"
         VIRTUAL_MACHINE_SCALE_SETS = "VirtualMachineScaleSets"
 
@@ -2505,7 +1686,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.AgentPoolUpgradeProfileProperties(_Model):
-        components_by_releases: Optional[list[ComponentsByRelease]]
         kubernetes_version: str
         latest_node_image_version: Optional[str]
         os_type: Union[str, OSType]
@@ -2516,7 +1696,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                components_by_releases: Optional[list[ComponentsByRelease]] = ..., 
                 kubernetes_version: str, 
                 latest_node_image_version: Optional[str] = ..., 
                 os_type: Union[str, OSType], 
@@ -2528,7 +1707,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.AgentPoolUpgradeProfilePropertiesUpgradesItem(_Model):
-        is_out_of_support: Optional[bool]
         is_preview: Optional[bool]
         kubernetes_version: Optional[str]
 
@@ -2536,7 +1714,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                is_out_of_support: Optional[bool] = ..., 
                 is_preview: Optional[bool] = ..., 
                 kubernetes_version: Optional[str] = ...
             ) -> None: ...
@@ -2547,7 +1724,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.AgentPoolUpgradeSettings(_Model):
         drain_timeout_in_minutes: Optional[int]
-        max_blocked_nodes: Optional[str]
         max_surge: Optional[str]
         max_unavailable: Optional[str]
         node_soak_duration_in_minutes: Optional[int]
@@ -2558,7 +1734,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 drain_timeout_in_minutes: Optional[int] = ..., 
-                max_blocked_nodes: Optional[str] = ..., 
                 max_surge: Optional[str] = ..., 
                 max_unavailable: Optional[str] = ..., 
                 node_soak_duration_in_minutes: Optional[int] = ..., 
@@ -2577,85 +1752,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 disable_outbound_nat: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AlertConfiguration(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[AlertConfigurationProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[AlertConfigurationProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AlertConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        MANAGED = "Managed"
-
-
-    class azure.mgmt.containerservice.models.AlertConfigurationProperties(_Model):
-        mode: Union[str, AlertConfigurationMode]
-        notification: AlertNotification
-        provisioning_state: Optional[Union[str, AlertConfigurationProvisioningState]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                mode: Union[str, AlertConfigurationMode], 
-                notification: AlertNotification
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AlertConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CREATING = "Creating"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-        UPDATING = "Updating"
-
-
-    class azure.mgmt.containerservice.models.AlertNotification(_Model):
-        action_group_id: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                action_group_id: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.AllowedSubject(_Model):
-        namespace_selector: LabelSelector
-        service_account_selector: Optional[LabelSelector]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                namespace_selector: LabelSelector, 
-                service_account_selector: Optional[LabelSelector] = ...
             ) -> None: ...
 
         @overload
@@ -2708,76 +1804,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.BackendPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NODE_IP = "NodeIP"
         NODE_IP_CONFIGURATION = "NodeIPConfiguration"
-        POD_IP = "PodIP"
-
-
-    class azure.mgmt.containerservice.models.BastionProfile(_Model):
-        bastion_id: Optional[str]
-        enabled: Optional[bool]
-        public_ip_address_id: Optional[str]
-        scale_units: Optional[int]
-        sku: Optional[Union[str, BastionSku]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                public_ip_address_id: Optional[str] = ..., 
-                scale_units: Optional[int] = ..., 
-                sku: Optional[Union[str, BastionSku]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.BastionSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PREMIUM = "Premium"
-        STANDARD = "Standard"
-
-
-    class azure.mgmt.containerservice.models.BootstrapAzureConfig(_Model):
-        bootstrap_token: Optional[BootstrapTokenInfo]
-        resource_manager_endpoint: Optional[str]
-        target_agent_pool_name: Optional[str]
-        target_cluster: Optional[BootstrapTargetCluster]
-
-
-    class azure.mgmt.containerservice.models.BootstrapComponentVersions(_Model):
-        containerd: Optional[str]
-        kubernetes: Optional[str]
-        runc: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.BootstrapKubeletConfig(_Model):
-        ca_cert_data: Optional[str]
-        cluster_fqdn: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.BootstrapNetworkingConfig(_Model):
-        cni_version: Optional[str]
-        dns_service_ip: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.BootstrapNodeConfig(_Model):
-        kubelet: Optional[BootstrapKubeletConfig]
-        labels: Optional[dict[str, str]]
-        max_pods: Optional[int]
-        taints: Optional[list[str]]
-
-
-    class azure.mgmt.containerservice.models.BootstrapTargetCluster(_Model):
-        resource_id: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.BootstrapTokenInfo(_Model):
-        token: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.ClusterServiceLoadBalancerHealthProbeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        SERVICE_NODE_PORT = "ServiceNodePort"
-        SHARED = "Shared"
 
 
     class azure.mgmt.containerservice.models.ClusterUpgradeSettings(_Model):
@@ -2824,50 +1850,11 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.Component(_Model):
-        has_breaking_changes: Optional[bool]
-        name: Optional[str]
-        version: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                has_breaking_changes: Optional[bool] = ..., 
-                name: Optional[str] = ..., 
-                version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ComponentsByRelease(_Model):
-        components: Optional[list[Component]]
-        kubernetes_version: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                components: Optional[list[Component]] = ..., 
-                kubernetes_version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPROVED = "Approved"
         DISCONNECTED = "Disconnected"
         PENDING = "Pending"
         REJECTED = "Rejected"
-
-
-    class azure.mgmt.containerservice.models.ContainerNetworkLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
 
 
     class azure.mgmt.containerservice.models.ContainerServiceLinuxProfile(_Model):
@@ -2888,13 +1875,10 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ContainerServiceNetworkProfile(_Model):
         advanced_networking: Optional[AdvancedNetworking]
-        bastion_profile: Optional[BastionProfile]
         dns_service_ip: Optional[str]
         ip_families: Optional[list[Union[str, IPFamily]]]
-        kube_proxy_config: Optional[ContainerServiceNetworkProfileKubeProxyConfig]
         load_balancer_profile: Optional[ManagedClusterLoadBalancerProfile]
         load_balancer_sku: Optional[Union[str, LoadBalancerSku]]
-        nat_gateway_id: Optional[str]
         nat_gateway_profile: Optional[ManagedClusterNATGatewayProfile]
         network_dataplane: Optional[Union[str, NetworkDataplane]]
         network_mode: Optional[Union[str, NetworkMode]]
@@ -2904,7 +1888,6 @@ namespace azure.mgmt.containerservice.models
         outbound_type: Optional[Union[str, OutboundType]]
         pod_cidr: Optional[str]
         pod_cidrs: Optional[list[str]]
-        pod_link_local_access: Optional[Union[str, PodLinkLocalAccess]]
         service_cidr: Optional[str]
         service_cidrs: Optional[list[str]]
         static_egress_gateway_profile: Optional[ManagedClusterStaticEgressGatewayProfile]
@@ -2914,13 +1897,10 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 advanced_networking: Optional[AdvancedNetworking] = ..., 
-                bastion_profile: Optional[BastionProfile] = ..., 
                 dns_service_ip: Optional[str] = ..., 
                 ip_families: Optional[list[Union[str, IPFamily]]] = ..., 
-                kube_proxy_config: Optional[ContainerServiceNetworkProfileKubeProxyConfig] = ..., 
                 load_balancer_profile: Optional[ManagedClusterLoadBalancerProfile] = ..., 
                 load_balancer_sku: Optional[Union[str, LoadBalancerSku]] = ..., 
-                nat_gateway_id: Optional[str] = ..., 
                 nat_gateway_profile: Optional[ManagedClusterNATGatewayProfile] = ..., 
                 network_dataplane: Optional[Union[str, NetworkDataplane]] = ..., 
                 network_mode: Optional[Union[str, NetworkMode]] = ..., 
@@ -2930,48 +1910,9 @@ namespace azure.mgmt.containerservice.models
                 outbound_type: Optional[Union[str, OutboundType]] = ..., 
                 pod_cidr: Optional[str] = ..., 
                 pod_cidrs: Optional[list[str]] = ..., 
-                pod_link_local_access: Optional[Union[str, PodLinkLocalAccess]] = ..., 
                 service_cidr: Optional[str] = ..., 
                 service_cidrs: Optional[list[str]] = ..., 
                 static_egress_gateway_profile: Optional[ManagedClusterStaticEgressGatewayProfile] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ContainerServiceNetworkProfileKubeProxyConfig(_Model):
-        enabled: Optional[bool]
-        ipvs_config: Optional[ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig]
-        mode: Optional[Union[str, Mode]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                ipvs_config: Optional[ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig] = ..., 
-                mode: Optional[Union[str, Mode]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(_Model):
-        scheduler: Optional[Union[str, IpvsScheduler]]
-        tcp_fin_timeout_seconds: Optional[int]
-        tcp_timeout_seconds: Optional[int]
-        udp_timeout_seconds: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                scheduler: Optional[Union[str, IpvsScheduler]] = ..., 
-                tcp_fin_timeout_seconds: Optional[int] = ..., 
-                tcp_timeout_seconds: Optional[int] = ..., 
-                udp_timeout_seconds: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -3004,12 +1945,6 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ControlPlaneScalingSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        H2 = "H2"
-        H4 = "H4"
-        H8 = "H8"
 
 
     class azure.mgmt.containerservice.models.CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3095,16 +2030,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.DeletePolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DELETE = "Delete"
         KEEP = "Keep"
-
-
-    class azure.mgmt.containerservice.models.DriftAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        RECREATE = "Recreate"
-        SYNCED = "Synced"
-
-
-    class azure.mgmt.containerservice.models.DriverType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CUDA = "CUDA"
-        GRID = "GRID"
 
 
     class azure.mgmt.containerservice.models.EndpointDependency(_Model):
@@ -3217,16 +2142,12 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.GPUProfile(_Model):
         driver: Optional[Union[str, GPUDriver]]
-        driver_type: Optional[Union[str, DriverType]]
-        nvidia: Optional[NvidiaGPUProfile]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                driver: Optional[Union[str, GPUDriver]] = ..., 
-                driver_type: Optional[Union[str, DriverType]] = ..., 
-                nvidia: Optional[NvidiaGPUProfile] = ...
+                driver: Optional[Union[str, GPUDriver]] = ...
             ) -> None: ...
 
         @overload
@@ -3236,52 +2157,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.GatewayAPIIstioEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "Disabled"
         ENABLED = "Enabled"
-
-
-    class azure.mgmt.containerservice.models.GuardrailsAvailableVersion(ProxyResource):
-        id: str
-        name: str
-        properties: GuardrailsAvailableVersionsProperties
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: GuardrailsAvailableVersionsProperties
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.GuardrailsAvailableVersionsProperties(_Model):
-        is_default_version: Optional[bool]
-        support: Optional[Union[str, GuardrailsSupport]]
-
-
-    class azure.mgmt.containerservice.models.GuardrailsSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PREVIEW = "Preview"
-        STABLE = "Stable"
-
-
-    class azure.mgmt.containerservice.models.HardEvictionThreshold(_Model):
-        memory_available: Optional[str]
-        node_fs_available: Optional[str]
-        node_fs_inodes_free: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                memory_available: Optional[str] = ..., 
-                node_fs_available: Optional[str] = ..., 
-                node_fs_inodes_free: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.IPFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -3346,7 +2221,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.IdentityBindingProperties(_Model):
-        allowed_subjects: Optional[list[AllowedSubject]]
         managed_identity: IdentityBindingManagedIdentityProfile
         oidc_issuer: Optional[IdentityBindingOidcIssuerProfile]
         provisioning_state: Optional[Union[str, IdentityBindingProvisioningState]]
@@ -3355,7 +2229,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                allowed_subjects: Optional[list[AllowedSubject]] = ..., 
                 managed_identity: IdentityBindingManagedIdentityProfile
             ) -> None: ...
 
@@ -3370,16 +2243,6 @@ namespace azure.mgmt.containerservice.models
         FAILED = "Failed"
         SUCCEEDED = "Succeeded"
         UPDATING = "Updating"
-
-
-    class azure.mgmt.containerservice.models.InfrastructureEncryption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DISABLED = "Disabled"
-        ENABLED = "Enabled"
-
-
-    class azure.mgmt.containerservice.models.IpvsScheduler(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        LEAST_CONNECTION = "LeastConnection"
-        ROUND_ROBIN = "RoundRobin"
 
 
     class azure.mgmt.containerservice.models.IstioCertificateAuthority(_Model):
@@ -3495,155 +2358,9 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.JWTAuthenticator(ProxyResource):
-        id: str
-        name: str
-        properties: JWTAuthenticatorProperties
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: JWTAuthenticatorProperties
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorClaimMappingExpression(_Model):
-        expression: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                expression: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorClaimMappings(_Model):
-        extra: Optional[list[JWTAuthenticatorExtraClaimMappingExpression]]
-        groups: Optional[JWTAuthenticatorClaimMappingExpression]
-        uid: Optional[JWTAuthenticatorClaimMappingExpression]
-        username: JWTAuthenticatorClaimMappingExpression
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                extra: Optional[list[JWTAuthenticatorExtraClaimMappingExpression]] = ..., 
-                groups: Optional[JWTAuthenticatorClaimMappingExpression] = ..., 
-                uid: Optional[JWTAuthenticatorClaimMappingExpression] = ..., 
-                username: JWTAuthenticatorClaimMappingExpression
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorExtraClaimMappingExpression(_Model):
-        key: str
-        value_expression: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                key: str, 
-                value_expression: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorIssuer(_Model):
-        audiences: list[str]
-        url: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                audiences: list[str], 
-                url: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorProperties(_Model):
-        claim_mappings: JWTAuthenticatorClaimMappings
-        claim_validation_rules: Optional[list[JWTAuthenticatorValidationRule]]
-        issuer: JWTAuthenticatorIssuer
-        provisioning_state: Optional[Union[str, JWTAuthenticatorProvisioningState]]
-        user_validation_rules: Optional[list[JWTAuthenticatorValidationRule]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                claim_mappings: JWTAuthenticatorClaimMappings, 
-                claim_validation_rules: Optional[list[JWTAuthenticatorValidationRule]] = ..., 
-                issuer: JWTAuthenticatorIssuer, 
-                user_validation_rules: Optional[list[JWTAuthenticatorValidationRule]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CREATING = "Creating"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-        UPDATING = "Updating"
-
-
-    class azure.mgmt.containerservice.models.JWTAuthenticatorValidationRule(_Model):
-        expression: str
-        message: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                expression: str, 
-                message: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.KeyVaultNetworkAccessTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         PRIVATE = "Private"
         PUBLIC = "Public"
-
-
-    class azure.mgmt.containerservice.models.KubeReserved(_Model):
-        cpu_millicores: Optional[int]
-        memory_mb: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                cpu_millicores: Optional[int] = ..., 
-                memory_mb: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.KubeletConfig(_Model):
@@ -3654,12 +2371,9 @@ namespace azure.mgmt.containerservice.models
         cpu_cfs_quota_period: Optional[str]
         cpu_manager_policy: Optional[str]
         fail_swap_on: Optional[bool]
-        hard_eviction_threshold: Optional[HardEvictionThreshold]
         image_gc_high_threshold: Optional[int]
         image_gc_low_threshold: Optional[int]
-        kube_reserved: Optional[KubeReserved]
         pod_max_pids: Optional[int]
-        seccomp_default: Optional[Union[str, SeccompDefault]]
         topology_manager_policy: Optional[str]
 
         @overload
@@ -3673,12 +2387,9 @@ namespace azure.mgmt.containerservice.models
                 cpu_cfs_quota_period: Optional[str] = ..., 
                 cpu_manager_policy: Optional[str] = ..., 
                 fail_swap_on: Optional[bool] = ..., 
-                hard_eviction_threshold: Optional[HardEvictionThreshold] = ..., 
                 image_gc_high_threshold: Optional[int] = ..., 
                 image_gc_low_threshold: Optional[int] = ..., 
-                kube_reserved: Optional[KubeReserved] = ..., 
                 pod_max_pids: Optional[int] = ..., 
-                seccomp_default: Optional[Union[str, SeccompDefault]] = ..., 
                 topology_manager_policy: Optional[str] = ...
             ) -> None: ...
 
@@ -3699,20 +2410,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 upgrades: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.KubernetesResourceObjectEncryptionProfile(_Model):
-        infrastructure_encryption: Optional[Union[str, InfrastructureEncryption]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                infrastructure_encryption: Optional[Union[str, InfrastructureEncryption]] = ...
             ) -> None: ...
 
         @overload
@@ -3774,40 +2471,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.LabelSelector(_Model):
-        match_expressions: Optional[list[LabelSelectorRequirement]]
-        match_labels: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                match_expressions: Optional[list[LabelSelectorRequirement]] = ..., 
-                match_labels: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.LabelSelectorRequirement(_Model):
-        key: Optional[str]
-        operator: Optional[Union[str, Operator]]
-        values_property: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                key: Optional[str] = ..., 
-                operator: Optional[Union[str, Operator]] = ..., 
-                values_property: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.LicenseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         NONE = "None"
         WINDOWS_SERVER = "Windows_Server"
@@ -3833,61 +2496,8 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.ListBootstrapDataRequest(_Model):
-
-
-    class azure.mgmt.containerservice.models.LoadBalancer(ProxyResource):
-        id: str
-        name: str
-        properties: Optional[LoadBalancerProperties]
-        system_data: SystemData
-        type: str
-
-        def __getattr__(self, name: str) -> Any: ...
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: Optional[LoadBalancerProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-        def __setattr__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.LoadBalancerProperties(_Model):
-        allow_service_placement: Optional[bool]
-        node_selector: Optional[LabelSelector]
-        primary_agent_pool_name: str
-        provisioning_state: Optional[str]
-        service_label_selector: Optional[LabelSelector]
-        service_namespace_selector: Optional[LabelSelector]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                allow_service_placement: Optional[bool] = ..., 
-                node_selector: Optional[LabelSelector] = ..., 
-                primary_agent_pool_name: str, 
-                service_label_selector: Optional[LabelSelector] = ..., 
-                service_namespace_selector: Optional[LabelSelector] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         BASIC = "basic"
-        SERVICE = "service"
         STANDARD = "standard"
 
 
@@ -3988,42 +2598,7 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                properties: Optional[MachineProperties] = ..., 
-                zones: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineBillingProfile(_Model):
-        spot_max_price: Optional[float]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                spot_max_price: Optional[float] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineHardwareProfile(_Model):
-        gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]]
-        gpu_profile: Optional[GPUProfile]
-        ultra_ssd_enabled: Optional[bool]
-        vm_size: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]] = ..., 
-                gpu_profile: Optional[GPUProfile] = ..., 
-                ultra_ssd_enabled: Optional[bool] = ..., 
-                vm_size: Optional[str] = ...
+                properties: Optional[MachineProperties] = ...
             ) -> None: ...
 
         @overload
@@ -4035,168 +2610,13 @@ namespace azure.mgmt.containerservice.models
         ip: Optional[str]
 
 
-    class azure.mgmt.containerservice.models.MachineKubernetesProfile(_Model):
-        artifact_streaming_profile: Optional[AgentPoolArtifactStreamingProfile]
-        current_orchestrator_version: Optional[str]
-        kubelet_config: Optional[KubeletConfig]
-        kubelet_disk_type: Optional[Union[str, KubeletDiskType]]
-        max_pods: Optional[int]
-        node_initialization_taints: Optional[list[str]]
-        node_labels: Optional[dict[str, str]]
-        node_name: Optional[str]
-        node_taints: Optional[list[str]]
-        orchestrator_version: Optional[str]
-        workload_runtime: Optional[Union[str, WorkloadRuntime]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                artifact_streaming_profile: Optional[AgentPoolArtifactStreamingProfile] = ..., 
-                kubelet_config: Optional[KubeletConfig] = ..., 
-                kubelet_disk_type: Optional[Union[str, KubeletDiskType]] = ..., 
-                max_pods: Optional[int] = ..., 
-                node_initialization_taints: Optional[list[str]] = ..., 
-                node_labels: Optional[dict[str, str]] = ..., 
-                node_taints: Optional[list[str]] = ..., 
-                orchestrator_version: Optional[str] = ..., 
-                workload_runtime: Optional[Union[str, WorkloadRuntime]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.MachineNetworkProperties(_Model):
-        enable_node_public_ip: Optional[bool]
         ip_addresses: Optional[list[MachineIpAddress]]
-        node_public_ip_prefix_id: Optional[str]
-        node_public_ip_tags: Optional[list[IPTag]]
-        pod_subnet_id: Optional[str]
-        vnet_subnet_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_node_public_ip: Optional[bool] = ..., 
-                node_public_ip_prefix_id: Optional[str] = ..., 
-                node_public_ip_tags: Optional[list[IPTag]] = ..., 
-                pod_subnet_id: Optional[str] = ..., 
-                vnet_subnet_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineOSProfile(_Model):
-        enable_fips: Optional[bool]
-        linux_profile: Optional[MachineOSProfileLinuxProfile]
-        os_disk_size_gb: Optional[int]
-        os_disk_type: Optional[Union[str, OSDiskType]]
-        os_sku: Optional[Union[str, _models.OSSKU]]
-        os_type: Optional[Union[str, OSType]]
-        windows_profile: Optional[AgentPoolWindowsProfile]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_fips: Optional[bool] = ..., 
-                linux_profile: Optional[MachineOSProfileLinuxProfile] = ..., 
-                os_disk_size_gb: Optional[int] = ..., 
-                os_disk_type: Optional[Union[str, OSDiskType]] = ..., 
-                os_sku: Optional[Union[str, _models.OSSKU]] = ..., 
-                os_type: Optional[Union[str, OSType]] = ..., 
-                windows_profile: Optional[AgentPoolWindowsProfile] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineOSProfileLinuxProfile(_Model):
-        linux_os_config: Optional[LinuxOSConfig]
-        message_of_the_day: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                linux_os_config: Optional[LinuxOSConfig] = ..., 
-                message_of_the_day: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.MachineProperties(_Model):
-        billing: Optional[MachineBillingProfile]
-        e_tag: Optional[str]
-        eviction_policy: Optional[Union[str, ScaleSetEvictionPolicy]]
-        hardware: Optional[MachineHardwareProfile]
-        kubernetes: Optional[MachineKubernetesProfile]
-        local_dns_profile: Optional[LocalDNSProfile]
-        mode: Optional[Union[str, AgentPoolMode]]
         network: Optional[MachineNetworkProperties]
-        node_image_version: Optional[str]
-        operating_system: Optional[MachineOSProfile]
-        priority: Optional[Union[str, ScaleSetPriority]]
-        provisioning_state: Optional[str]
         resource_id: Optional[str]
-        security: Optional[MachineSecurityProfile]
-        status: Optional[MachineStatus]
-        tags: Optional[dict[str, str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                billing: Optional[MachineBillingProfile] = ..., 
-                eviction_policy: Optional[Union[str, ScaleSetEvictionPolicy]] = ..., 
-                hardware: Optional[MachineHardwareProfile] = ..., 
-                kubernetes: Optional[MachineKubernetesProfile] = ..., 
-                local_dns_profile: Optional[LocalDNSProfile] = ..., 
-                mode: Optional[Union[str, AgentPoolMode]] = ..., 
-                network: Optional[MachineNetworkProperties] = ..., 
-                operating_system: Optional[MachineOSProfile] = ..., 
-                priority: Optional[Union[str, ScaleSetPriority]] = ..., 
-                security: Optional[MachineSecurityProfile] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineSecurityProfile(_Model):
-        enable_encryption_at_host: Optional[bool]
-        enable_secure_boot: Optional[bool]
-        enable_vtpm: Optional[bool]
-        ssh_access: Optional[Union[str, AgentPoolSSHAccess]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_encryption_at_host: Optional[bool] = ..., 
-                enable_secure_boot: Optional[bool] = ..., 
-                enable_vtpm: Optional[bool] = ..., 
-                ssh_access: Optional[Union[str, AgentPoolSSHAccess]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MachineStatus(_Model):
-        creation_timestamp: Optional[datetime]
-        drift_action: Optional[Union[str, DriftAction]]
-        drift_reason: Optional[str]
-        provisioning_error: Optional[ErrorDetail]
-        vm_state: Optional[Union[str, VmState]]
 
 
     class azure.mgmt.containerservice.models.MaintenanceConfiguration(ProxyResource):
@@ -4227,7 +2647,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.MaintenanceConfigurationProperties(_Model):
         maintenance_window: Optional[MaintenanceWindow]
-        maintenance_window_id: Optional[str]
         not_allowed_time: Optional[list[TimeSpan]]
         time_in_week: Optional[list[TimeInWeek]]
 
@@ -4236,7 +2655,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 maintenance_window: Optional[MaintenanceWindow] = ..., 
-                maintenance_window_id: Optional[str] = ..., 
                 not_allowed_time: Optional[list[TimeSpan]] = ..., 
                 time_in_week: Optional[list[TimeInWeek]] = ...
             ) -> None: ...
@@ -4248,53 +2666,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.MaintenanceWindow(_Model):
         duration_hours: int
         not_allowed_dates: Optional[list[DateSpan]]
-        schedule: Schedule
-        start_date: Optional[date]
-        start_time: str
-        utc_offset: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                duration_hours: int, 
-                not_allowed_dates: Optional[list[DateSpan]] = ..., 
-                schedule: Schedule, 
-                start_date: Optional[date] = ..., 
-                start_time: str, 
-                utc_offset: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MaintenanceWindowResource(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: Optional[MaintenanceWindowResourceProperties]
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: Optional[MaintenanceWindowResourceProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MaintenanceWindowResourceProperties(_Model):
-        duration_hours: int
-        not_allowed_dates: Optional[list[DateSpan]]
-        provisioning_state: Optional[Union[str, ResourceProvisioningState]]
         schedule: Schedule
         start_date: Optional[date]
         start_time: str
@@ -4498,7 +2869,6 @@ namespace azure.mgmt.containerservice.models
         enable_encryption_at_host: bool
         enable_fips: bool
         enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
         enable_ultra_ssd: bool
         gateway_profile: AgentPoolGatewayProfile
         gpu_instance_profile: Union[str, GPUInstanceProfile]
@@ -4516,7 +2886,6 @@ namespace azure.mgmt.containerservice.models
         name: str
         network_profile: AgentPoolNetworkProfile
         node_image_version: str
-        node_initialization_taints: list[str]
         node_labels: dict[str, str]
         node_public_ip_prefix_id: str
         node_taints: list[str]
@@ -4528,7 +2897,6 @@ namespace azure.mgmt.containerservice.models
         pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
         pod_subnet_id: str
         power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
         provisioning_state: str
         proximity_placement_group_id: str
         scale_down_mode: Union[str, ScaleDownMode]
@@ -4540,8 +2908,6 @@ namespace azure.mgmt.containerservice.models
         tags: dict[str, str]
         type: Union[str, AgentPoolType]
         upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
         virtual_machine_nodes_status: list[VirtualMachineNodes]
         virtual_machines_profile: VirtualMachinesProfile
         vm_size: str
@@ -4562,7 +2928,6 @@ namespace azure.mgmt.containerservice.models
                 enable_encryption_at_host: Optional[bool] = ..., 
                 enable_fips: Optional[bool] = ..., 
                 enable_node_public_ip: Optional[bool] = ..., 
-                enable_os_disk_full_caching: Optional[bool] = ..., 
                 enable_ultra_ssd: Optional[bool] = ..., 
                 gateway_profile: Optional[AgentPoolGatewayProfile] = ..., 
                 gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]] = ..., 
@@ -4580,7 +2945,6 @@ namespace azure.mgmt.containerservice.models
                 name: str, 
                 network_profile: Optional[AgentPoolNetworkProfile] = ..., 
                 node_image_version: Optional[str] = ..., 
-                node_initialization_taints: Optional[list[str]] = ..., 
                 node_labels: Optional[dict[str, str]] = ..., 
                 node_public_ip_prefix_id: Optional[str] = ..., 
                 node_taints: Optional[list[str]] = ..., 
@@ -4592,7 +2956,6 @@ namespace azure.mgmt.containerservice.models
                 pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]] = ..., 
                 pod_subnet_id: Optional[str] = ..., 
                 power_state: Optional[PowerState] = ..., 
-                prepared_image_specification_profile: Optional[PreparedImageSpecificationProfile] = ..., 
                 proximity_placement_group_id: Optional[str] = ..., 
                 scale_down_mode: Optional[Union[str, ScaleDownMode]] = ..., 
                 scale_set_eviction_policy: Optional[Union[str, ScaleSetEvictionPolicy]] = ..., 
@@ -4603,8 +2966,6 @@ namespace azure.mgmt.containerservice.models
                 tags: Optional[dict[str, str]] = ..., 
                 type: Optional[Union[str, AgentPoolType]] = ..., 
                 upgrade_settings: Optional[AgentPoolUpgradeSettings] = ..., 
-                upgrade_settings_blue_green: Optional[AgentPoolBlueGreenUpgradeSettings] = ..., 
-                upgrade_strategy: Optional[Union[str, UpgradeStrategy]] = ..., 
                 virtual_machine_nodes_status: Optional[list[VirtualMachineNodes]] = ..., 
                 virtual_machines_profile: Optional[VirtualMachinesProfile] = ..., 
                 vm_size: Optional[str] = ..., 
@@ -4629,7 +2990,6 @@ namespace azure.mgmt.containerservice.models
         enable_encryption_at_host: Optional[bool]
         enable_fips: Optional[bool]
         enable_node_public_ip: Optional[bool]
-        enable_os_disk_full_caching: Optional[bool]
         enable_ultra_ssd: Optional[bool]
         gateway_profile: Optional[AgentPoolGatewayProfile]
         gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]]
@@ -4646,7 +3006,6 @@ namespace azure.mgmt.containerservice.models
         mode: Optional[Union[str, AgentPoolMode]]
         network_profile: Optional[AgentPoolNetworkProfile]
         node_image_version: Optional[str]
-        node_initialization_taints: Optional[list[str]]
         node_labels: Optional[dict[str, str]]
         node_public_ip_prefix_id: Optional[str]
         node_taints: Optional[list[str]]
@@ -4658,7 +3017,6 @@ namespace azure.mgmt.containerservice.models
         pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]]
         pod_subnet_id: Optional[str]
         power_state: Optional[PowerState]
-        prepared_image_specification_profile: Optional[PreparedImageSpecificationProfile]
         provisioning_state: Optional[str]
         proximity_placement_group_id: Optional[str]
         scale_down_mode: Optional[Union[str, ScaleDownMode]]
@@ -4670,8 +3028,6 @@ namespace azure.mgmt.containerservice.models
         tags: Optional[dict[str, str]]
         type: Optional[Union[str, AgentPoolType]]
         upgrade_settings: Optional[AgentPoolUpgradeSettings]
-        upgrade_settings_blue_green: Optional[AgentPoolBlueGreenUpgradeSettings]
-        upgrade_strategy: Optional[Union[str, UpgradeStrategy]]
         virtual_machine_nodes_status: Optional[list[VirtualMachineNodes]]
         virtual_machines_profile: Optional[VirtualMachinesProfile]
         vm_size: Optional[str]
@@ -4692,7 +3048,6 @@ namespace azure.mgmt.containerservice.models
                 enable_encryption_at_host: Optional[bool] = ..., 
                 enable_fips: Optional[bool] = ..., 
                 enable_node_public_ip: Optional[bool] = ..., 
-                enable_os_disk_full_caching: Optional[bool] = ..., 
                 enable_ultra_ssd: Optional[bool] = ..., 
                 gateway_profile: Optional[AgentPoolGatewayProfile] = ..., 
                 gpu_instance_profile: Optional[Union[str, GPUInstanceProfile]] = ..., 
@@ -4709,7 +3064,6 @@ namespace azure.mgmt.containerservice.models
                 mode: Optional[Union[str, AgentPoolMode]] = ..., 
                 network_profile: Optional[AgentPoolNetworkProfile] = ..., 
                 node_image_version: Optional[str] = ..., 
-                node_initialization_taints: Optional[list[str]] = ..., 
                 node_labels: Optional[dict[str, str]] = ..., 
                 node_public_ip_prefix_id: Optional[str] = ..., 
                 node_taints: Optional[list[str]] = ..., 
@@ -4721,7 +3075,6 @@ namespace azure.mgmt.containerservice.models
                 pod_ip_allocation_mode: Optional[Union[str, PodIPAllocationMode]] = ..., 
                 pod_subnet_id: Optional[str] = ..., 
                 power_state: Optional[PowerState] = ..., 
-                prepared_image_specification_profile: Optional[PreparedImageSpecificationProfile] = ..., 
                 proximity_placement_group_id: Optional[str] = ..., 
                 scale_down_mode: Optional[Union[str, ScaleDownMode]] = ..., 
                 scale_set_eviction_policy: Optional[Union[str, ScaleSetEvictionPolicy]] = ..., 
@@ -4732,8 +3085,6 @@ namespace azure.mgmt.containerservice.models
                 tags: Optional[dict[str, str]] = ..., 
                 type: Optional[Union[str, AgentPoolType]] = ..., 
                 upgrade_settings: Optional[AgentPoolUpgradeSettings] = ..., 
-                upgrade_settings_blue_green: Optional[AgentPoolBlueGreenUpgradeSettings] = ..., 
-                upgrade_strategy: Optional[Union[str, UpgradeStrategy]] = ..., 
                 virtual_machine_nodes_status: Optional[list[VirtualMachineNodes]] = ..., 
                 virtual_machines_profile: Optional[VirtualMachinesProfile] = ..., 
                 vm_size: Optional[str] = ..., 
@@ -4778,7 +3129,6 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfile(_Model):
         app_monitoring: Optional[ManagedClusterAzureMonitorProfileAppMonitoring]
-        container_insights: Optional[ManagedClusterAzureMonitorProfileContainerInsights]
         metrics: Optional[ManagedClusterAzureMonitorProfileMetrics]
 
         @overload
@@ -4786,7 +3136,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 app_monitoring: Optional[ManagedClusterAzureMonitorProfileAppMonitoring] = ..., 
-                container_insights: Optional[ManagedClusterAzureMonitorProfileContainerInsights] = ..., 
                 metrics: Optional[ManagedClusterAzureMonitorProfileMetrics] = ...
             ) -> None: ...
 
@@ -4796,16 +3145,12 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoring(_Model):
         auto_instrumentation: Optional[ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation]
-        open_telemetry_logs_and_traces: Optional[ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces]
-        open_telemetry_metrics: Optional[ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                auto_instrumentation: Optional[ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation] = ..., 
-                open_telemetry_logs_and_traces: Optional[ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces] = ..., 
-                open_telemetry_metrics: Optional[ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics] = ...
+                auto_instrumentation: Optional[ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation] = ...
             ) -> None: ...
 
         @overload
@@ -4820,66 +3165,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 enabled: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_Model):
-        enabled: Optional[bool]
-        grpc_port: Optional[int]
-        http_port: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                grpc_port: Optional[int] = ..., 
-                http_port: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model):
-        enabled: Optional[bool]
-        grpc_port: Optional[int]
-        http_port: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                grpc_port: Optional[int] = ..., 
-                http_port: Optional[int] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileContainerInsights(_Model):
-        container_network_logs: Optional[Union[str, ContainerNetworkLogs]]
-        disable_custom_metrics: Optional[bool]
-        disable_prometheus_metrics_scraping: Optional[bool]
-        enabled: Optional[bool]
-        log_analytics_workspace_resource_id: Optional[str]
-        syslog_port: Optional[int]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                container_network_logs: Optional[Union[str, ContainerNetworkLogs]] = ..., 
-                disable_custom_metrics: Optional[bool] = ..., 
-                disable_prometheus_metrics_scraping: Optional[bool] = ..., 
-                enabled: Optional[bool] = ..., 
-                log_analytics_workspace_resource_id: Optional[str] = ..., 
-                syslog_port: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -4950,20 +3235,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.ManagedClusterControlPlaneScalingProfile(_Model):
-        scaling_size: Union[str, ControlPlaneScalingSize]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                scaling_size: Union[str, ControlPlaneScalingSize]
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.ManagedClusterCostAnalysis(_Model):
         enabled: Optional[bool]
 
@@ -4979,7 +3250,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.ManagedClusterHTTPProxyConfig(_Model):
-        effective_no_proxy: Optional[list[str]]
         enabled: Optional[bool]
         http_proxy: Optional[str]
         https_proxy: Optional[str]
@@ -4995,22 +3265,6 @@ namespace azure.mgmt.containerservice.models
                 https_proxy: Optional[str] = ..., 
                 no_proxy: Optional[list[str]] = ..., 
                 trusted_ca: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterHealthMonitorProfile(_Model):
-        enable_continuous_control_plane_and_addon_monitor: Optional[bool]
-        enable_on_demand_monitor: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enable_continuous_control_plane_and_addon_monitor: Optional[bool] = ..., 
-                enable_on_demand_monitor: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -5055,23 +3309,7 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.ManagedClusterIngressDefaultDomainProfile(_Model):
-        domain_name: Optional[str]
-        enabled: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.ManagedClusterIngressProfile(_Model):
-        application_load_balancer: Optional[ManagedClusterIngressProfileApplicationLoadBalancer]
         gateway_api: Optional[ManagedClusterIngressProfileGatewayConfiguration]
         web_app_routing: Optional[ManagedClusterIngressProfileWebAppRouting]
 
@@ -5079,24 +3317,8 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                application_load_balancer: Optional[ManagedClusterIngressProfileApplicationLoadBalancer] = ..., 
                 gateway_api: Optional[ManagedClusterIngressProfileGatewayConfiguration] = ..., 
                 web_app_routing: Optional[ManagedClusterIngressProfileWebAppRouting] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterIngressProfileApplicationLoadBalancer(_Model):
-        enabled: Optional[bool]
-        identity: Optional[UserAssignedIdentity]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ...
             ) -> None: ...
 
         @overload
@@ -5132,7 +3354,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.ManagedClusterIngressProfileWebAppRouting(_Model):
-        default_domain: Optional[ManagedClusterIngressDefaultDomainProfile]
         dns_zone_resource_ids: Optional[list[str]]
         enabled: Optional[bool]
         gateway_api_implementations: Optional[ManagedClusterWebAppRoutingGatewayAPIImplementations]
@@ -5143,7 +3364,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                default_domain: Optional[ManagedClusterIngressDefaultDomainProfile] = ..., 
                 dns_zone_resource_ids: Optional[list[str]] = ..., 
                 enabled: Optional[bool] = ..., 
                 gateway_api_implementations: Optional[ManagedClusterWebAppRoutingGatewayAPIImplementations] = ..., 
@@ -5157,7 +3377,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.ManagedClusterLoadBalancerProfile(_Model):
         allocated_outbound_ports: Optional[int]
         backend_pool_type: Optional[Union[str, BackendPoolType]]
-        cluster_service_load_balancer_health_probe_mode: Optional[Union[str, ClusterServiceLoadBalancerHealthProbeMode]]
         effective_outbound_i_ps: Optional[list[ResourceReference]]
         enable_multiple_standard_load_balancers: Optional[bool]
         idle_timeout_in_minutes: Optional[int]
@@ -5171,7 +3390,6 @@ namespace azure.mgmt.containerservice.models
                 *, 
                 allocated_outbound_ports: Optional[int] = ..., 
                 backend_pool_type: Optional[Union[str, BackendPoolType]] = ..., 
-                cluster_service_load_balancer_health_probe_mode: Optional[Union[str, ClusterServiceLoadBalancerHealthProbeMode]] = ..., 
                 enable_multiple_standard_load_balancers: Optional[bool] = ..., 
                 idle_timeout_in_minutes: Optional[int] = ..., 
                 managed_outbound_i_ps: Optional[ManagedClusterLoadBalancerProfileManagedOutboundIPs] = ..., 
@@ -5229,14 +3447,12 @@ namespace azure.mgmt.containerservice.models
 
     class azure.mgmt.containerservice.models.ManagedClusterManagedOutboundIPProfile(_Model):
         count: Optional[int]
-        count_i_pv6: Optional[int]
 
         @overload
         def __init__(
                 self, 
                 *, 
-                count: Optional[int] = ..., 
-                count_i_pv6: Optional[int] = ...
+                count: Optional[int] = ...
             ) -> None: ...
 
         @overload
@@ -5261,45 +3477,13 @@ namespace azure.mgmt.containerservice.models
         effective_outbound_i_ps: Optional[list[ResourceReference]]
         idle_timeout_in_minutes: Optional[int]
         managed_outbound_ip_profile: Optional[ManagedClusterManagedOutboundIPProfile]
-        outbound_i_ps: Optional[ManagedClusterNATGatewayProfileOutboundIPs]
-        outbound_ip_prefixes: Optional[ManagedClusterNATGatewayProfileOutboundIpPrefixes]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 idle_timeout_in_minutes: Optional[int] = ..., 
-                managed_outbound_ip_profile: Optional[ManagedClusterManagedOutboundIPProfile] = ..., 
-                outbound_i_ps: Optional[ManagedClusterNATGatewayProfileOutboundIPs] = ..., 
-                outbound_ip_prefixes: Optional[ManagedClusterNATGatewayProfileOutboundIpPrefixes] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfileOutboundIPs(_Model):
-        public_i_ps: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                public_i_ps: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfileOutboundIpPrefixes(_Model):
-        public_ip_prefixes: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                public_ip_prefixes: Optional[list[str]] = ...
+                managed_outbound_ip_profile: Optional[ManagedClusterManagedOutboundIPProfile] = ...
             ) -> None: ...
 
         @overload
@@ -5469,7 +3653,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfile(_Model):
-        components_by_releases: Optional[list[ComponentsByRelease]]
         kubernetes_version: str
         name: Optional[str]
         os_type: Union[str, OSType]
@@ -5479,7 +3662,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                components_by_releases: Optional[list[ComponentsByRelease]] = ..., 
                 kubernetes_version: str, 
                 name: Optional[str] = ..., 
                 os_type: Union[str, OSType], 
@@ -5491,7 +3673,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.ManagedClusterPoolUpgradeProfileUpgradesItem(_Model):
-        is_out_of_support: Optional[bool]
         is_preview: Optional[bool]
         kubernetes_version: Optional[str]
 
@@ -5499,7 +3680,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(
                 self, 
                 *, 
-                is_out_of_support: Optional[bool] = ..., 
                 is_preview: Optional[bool] = ..., 
                 kubernetes_version: Optional[str] = ...
             ) -> None: ...
@@ -5519,18 +3699,13 @@ namespace azure.mgmt.containerservice.models
         azure_monitor_profile: Optional[ManagedClusterAzureMonitorProfile]
         azure_portal_fqdn: Optional[str]
         bootstrap_profile: Optional[ManagedClusterBootstrapProfile]
-        control_plane_scaling_profile: Optional[ManagedClusterControlPlaneScalingProfile]
-        creation_data: Optional[CreationData]
         current_kubernetes_version: Optional[str]
         disable_local_accounts: Optional[bool]
         disk_encryption_set_id: Optional[str]
         dns_prefix: Optional[str]
-        enable_fips: Optional[bool]
-        enable_namespace_resources: Optional[bool]
         enable_rbac: Optional[bool]
         fqdn: Optional[str]
         fqdn_subdomain: Optional[str]
-        health_monitor_profile: Optional[ManagedClusterHealthMonitorProfile]
         hosted_system_profile: Optional[ManagedClusterHostedSystemProfile]
         http_proxy_config: Optional[ManagedClusterHTTPProxyConfig]
         identity_profile: Optional[dict[str, UserAssignedIdentity]]
@@ -5540,7 +3715,6 @@ namespace azure.mgmt.containerservice.models
         max_agent_pools: Optional[int]
         metrics_profile: Optional[ManagedClusterMetricsProfile]
         network_profile: Optional[ContainerServiceNetworkProfile]
-        node_disruption_profile: Optional[NodeDisruptionProfile]
         node_provisioning_profile: Optional[ManagedClusterNodeProvisioningProfile]
         node_resource_group: Optional[str]
         node_resource_group_profile: Optional[ManagedClusterNodeResourceGroupProfile]
@@ -5576,16 +3750,11 @@ namespace azure.mgmt.containerservice.models
                 auto_upgrade_profile: Optional[ManagedClusterAutoUpgradeProfile] = ..., 
                 azure_monitor_profile: Optional[ManagedClusterAzureMonitorProfile] = ..., 
                 bootstrap_profile: Optional[ManagedClusterBootstrapProfile] = ..., 
-                control_plane_scaling_profile: Optional[ManagedClusterControlPlaneScalingProfile] = ..., 
-                creation_data: Optional[CreationData] = ..., 
                 disable_local_accounts: Optional[bool] = ..., 
                 disk_encryption_set_id: Optional[str] = ..., 
                 dns_prefix: Optional[str] = ..., 
-                enable_fips: Optional[bool] = ..., 
-                enable_namespace_resources: Optional[bool] = ..., 
                 enable_rbac: Optional[bool] = ..., 
                 fqdn_subdomain: Optional[str] = ..., 
-                health_monitor_profile: Optional[ManagedClusterHealthMonitorProfile] = ..., 
                 hosted_system_profile: Optional[ManagedClusterHostedSystemProfile] = ..., 
                 http_proxy_config: Optional[ManagedClusterHTTPProxyConfig] = ..., 
                 identity_profile: Optional[dict[str, UserAssignedIdentity]] = ..., 
@@ -5594,7 +3763,6 @@ namespace azure.mgmt.containerservice.models
                 linux_profile: Optional[ContainerServiceLinuxProfile] = ..., 
                 metrics_profile: Optional[ManagedClusterMetricsProfile] = ..., 
                 network_profile: Optional[ContainerServiceNetworkProfile] = ..., 
-                node_disruption_profile: Optional[NodeDisruptionProfile] = ..., 
                 node_provisioning_profile: Optional[ManagedClusterNodeProvisioningProfile] = ..., 
                 node_resource_group: Optional[str] = ..., 
                 node_resource_group_profile: Optional[ManagedClusterNodeResourceGroupProfile] = ..., 
@@ -5670,13 +3838,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.ManagedClusterPropertiesForSnapshot(_Model):
-        enable_rbac: Optional[bool]
-        kubernetes_version: Optional[str]
-        network_profile: Optional[NetworkProfileForSnapshot]
-        sku: Optional[ManagedClusterSKU]
-
-
     class azure.mgmt.containerservice.models.ManagedClusterSKU(_Model):
         name: Optional[Union[str, ManagedClusterSKUName]]
         tier: Optional[Union[str, ManagedClusterSKUTier]]
@@ -5709,10 +3870,6 @@ namespace azure.mgmt.containerservice.models
         custom_ca_trust_certificates: Optional[list[bytes]]
         defender: Optional[ManagedClusterSecurityProfileDefender]
         image_cleaner: Optional[ManagedClusterSecurityProfileImageCleaner]
-        image_integrity: Optional[ManagedClusterSecurityProfileImageIntegrity]
-        kubernetes_resource_object_encryption_profile: Optional[KubernetesResourceObjectEncryptionProfile]
-        node_restriction: Optional[ManagedClusterSecurityProfileNodeRestriction]
-        service_account_image_pull_profile: Optional[ServiceAccountImagePullProfile]
         workload_identity: Optional[ManagedClusterSecurityProfileWorkloadIdentity]
 
         @overload
@@ -5723,10 +3880,6 @@ namespace azure.mgmt.containerservice.models
                 custom_ca_trust_certificates: Optional[list[bytes]] = ..., 
                 defender: Optional[ManagedClusterSecurityProfileDefender] = ..., 
                 image_cleaner: Optional[ManagedClusterSecurityProfileImageCleaner] = ..., 
-                image_integrity: Optional[ManagedClusterSecurityProfileImageIntegrity] = ..., 
-                kubernetes_resource_object_encryption_profile: Optional[KubernetesResourceObjectEncryptionProfile] = ..., 
-                node_restriction: Optional[ManagedClusterSecurityProfileNodeRestriction] = ..., 
-                service_account_image_pull_profile: Optional[ServiceAccountImagePullProfile] = ..., 
                 workload_identity: Optional[ManagedClusterSecurityProfileWorkloadIdentity] = ...
             ) -> None: ...
 
@@ -5816,34 +3969,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.ManagedClusterSecurityProfileImageIntegrity(_Model):
-        enabled: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterSecurityProfileNodeRestriction(_Model):
-        enabled: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                enabled: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.ManagedClusterSecurityProfileWorkloadIdentity(_Model):
         enabled: Optional[bool]
 
@@ -5868,53 +3993,6 @@ namespace azure.mgmt.containerservice.models
                 *, 
                 client_id: str, 
                 secret: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterSnapshot(TrackedResource):
-        id: str
-        location: str
-        name: str
-        properties: Optional[ManagedClusterSnapshotProperties]
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-        def __getattr__(self, name: str) -> Any: ...
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                location: str, 
-                properties: Optional[ManagedClusterSnapshotProperties] = ..., 
-                tags: Optional[dict[str, str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-        def __setattr__(
-                self, 
-                key: str, 
-                value: Any
-            ) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ManagedClusterSnapshotProperties(_Model):
-        creation_data: Optional[CreationData]
-        managed_cluster_properties_read_only: Optional[ManagedClusterPropertiesForSnapshot]
-        snapshot_type: Optional[Union[str, SnapshotType]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                creation_data: Optional[CreationData] = ..., 
-                snapshot_type: Optional[Union[str, SnapshotType]] = ...
             ) -> None: ...
 
         @overload
@@ -6124,14 +4202,12 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):
-        addon_autoscaling: Optional[Union[str, AddonAutoscaling]]
         enabled: bool
 
         @overload
         def __init__(
                 self, 
                 *, 
-                addon_autoscaling: Optional[Union[str, AddonAutoscaling]] = ..., 
                 enabled: bool
             ) -> None: ...
 
@@ -6172,11 +4248,6 @@ namespace azure.mgmt.containerservice.models
         principal_id: Optional[str]
 
 
-    class azure.mgmt.containerservice.models.ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        MANAGED = "Managed"
-        UNMANAGED = "Unmanaged"
-
-
     class azure.mgmt.containerservice.models.ManualScaleProfile(_Model):
         count: Optional[int]
         size: Optional[str]
@@ -6191,68 +4262,6 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MeshMembership(ProxyResource):
-        e_tag: Optional[str]
-        id: str
-        managed_by: Optional[str]
-        name: str
-        properties: Optional[MeshMembershipProperties]
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                managed_by: Optional[str] = ..., 
-                properties: Optional[MeshMembershipProperties] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MeshMembershipPrivateConnectProfile(_Model):
-        private_ip_address: Optional[str]
-        subnet_resource_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                subnet_resource_id: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MeshMembershipProperties(_Model):
-        managed_mesh_id: str
-        private_connect_profile: Optional[MeshMembershipPrivateConnectProfile]
-        provisioning_state: Optional[Union[str, MeshMembershipProvisioningState]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                managed_mesh_id: str, 
-                private_connect_profile: Optional[MeshMembershipPrivateConnectProfile] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.MeshMembershipProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        CREATING = "Creating"
-        DELETING = "Deleting"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
-        UPDATING = "Updating"
 
 
     class azure.mgmt.containerservice.models.MeshRevision(_Model):
@@ -6341,18 +4350,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.MigStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        MIXED = "Mixed"
-        NONE = "None"
-        SINGLE = "Single"
-
-
-    class azure.mgmt.containerservice.models.Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        IPTABLES = "IPTABLES"
-        IPVS = "IPVS"
-        NFTABLES = "NFTABLES"
-
-
     class azure.mgmt.containerservice.models.NamespaceProperties(_Model):
         adoption_policy: Optional[Union[str, AdoptionPolicy]]
         annotations: Optional[dict[str, str]]
@@ -6431,73 +4428,11 @@ namespace azure.mgmt.containerservice.models
         NONE = "none"
 
 
-    class azure.mgmt.containerservice.models.NetworkProfileForSnapshot(_Model):
-        load_balancer_sku: Optional[Union[str, LoadBalancerSku]]
-        network_mode: Optional[Union[str, NetworkMode]]
-        network_plugin: Optional[Union[str, NetworkPlugin]]
-        network_plugin_mode: Optional[Union[str, NetworkPluginMode]]
-        network_policy: Optional[Union[str, NetworkPolicy]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                load_balancer_sku: Optional[Union[str, LoadBalancerSku]] = ..., 
-                network_mode: Optional[Union[str, NetworkMode]] = ..., 
-                network_plugin: Optional[Union[str, NetworkPlugin]] = ..., 
-                network_plugin_mode: Optional[Union[str, NetworkPluginMode]] = ..., 
-                network_policy: Optional[Union[str, NetworkPolicy]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.NginxIngressControllerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ANNOTATION_CONTROLLED = "AnnotationControlled"
         EXTERNAL = "External"
         INTERNAL = "Internal"
         NONE = "None"
-
-
-    class azure.mgmt.containerservice.models.NodeDisruptionPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        ALLOW = "Allow"
-        ALLOW_DURING_MAINTENANCE_WINDOW = "AllowDuringMaintenanceWindow"
-        BLOCK = "Block"
-
-
-    class azure.mgmt.containerservice.models.NodeDisruptionProfile(_Model):
-        node_disruption_policy: Optional[Union[str, NodeDisruptionPolicy]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                node_disruption_policy: Optional[Union[str, NodeDisruptionPolicy]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.NodeImageVersion(_Model):
-        full_name: Optional[str]
-        os: Optional[str]
-        sku: Optional[str]
-        version: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                full_name: Optional[str] = ..., 
-                os: Optional[str] = ..., 
-                sku: Optional[str] = ..., 
-                version: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.NodeOSUpgradeChannel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -6517,22 +4452,6 @@ namespace azure.mgmt.containerservice.models
         MANUAL = "Manual"
 
 
-    class azure.mgmt.containerservice.models.NvidiaGPUProfile(_Model):
-        management_mode: Optional[Union[str, ManagementMode]]
-        mig_strategy: Optional[Union[str, MigStrategy]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                management_mode: Optional[Union[str, ManagementMode]] = ..., 
-                mig_strategy: Optional[Union[str, MigStrategy]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.OSDiskType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         EPHEMERAL = "Ephemeral"
         MANAGED = "Managed"
@@ -6543,49 +4462,17 @@ namespace azure.mgmt.containerservice.models
         AZURE_LINUX = "AzureLinux"
         AZURE_LINUX3 = "AzureLinux3"
         CBL_MARINER = "CBLMariner"
-        FLATCAR = "Flatcar"
-        MARINER = "Mariner"
         UBUNTU = "Ubuntu"
         UBUNTU2204 = "Ubuntu2204"
         UBUNTU2404 = "Ubuntu2404"
         WINDOWS2019 = "Windows2019"
         WINDOWS2022 = "Windows2022"
         WINDOWS2025 = "Windows2025"
-        WINDOWS_ANNUAL = "WindowsAnnual"
 
 
     class azure.mgmt.containerservice.models.OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LINUX = "Linux"
         WINDOWS = "Windows"
-
-
-    class azure.mgmt.containerservice.models.OperationStatusResult(_Model):
-        end_time: Optional[datetime]
-        error: Optional[ErrorDetail]
-        id: Optional[str]
-        name: Optional[str]
-        operations: Optional[list[OperationStatusResult]]
-        percent_complete: Optional[float]
-        resource_id: Optional[str]
-        start_time: Optional[datetime]
-        status: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                end_time: Optional[datetime] = ..., 
-                error: Optional[ErrorDetail] = ..., 
-                id: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                operations: Optional[list[OperationStatusResult]] = ..., 
-                percent_complete: Optional[float] = ..., 
-                start_time: Optional[datetime] = ..., 
-                status: str
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.OperationValue(_Model):
@@ -6619,13 +4506,6 @@ namespace azure.mgmt.containerservice.models
         resource: Optional[str]
 
 
-    class azure.mgmt.containerservice.models.Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DOES_NOT_EXIST = "DoesNotExist"
-        EXISTS = "Exists"
-        IN = "In"
-        NOT_IN = "NotIn"
-
-
     class azure.mgmt.containerservice.models.OutboundEnvironmentEndpoint(_Model):
         category: Optional[str]
         endpoints: Optional[list[EndpointDependency]]
@@ -6645,7 +4525,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.OutboundType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         LOAD_BALANCER = "loadBalancer"
         MANAGED_NAT_GATEWAY = "managedNATGateway"
-        MANAGED_NAT_GATEWAY_V2 = "managedNATGatewayV2"
         NONE = "none"
         USER_ASSIGNED_NAT_GATEWAY = "userAssignedNATGateway"
         USER_DEFINED_ROUTING = "userDefinedRouting"
@@ -6656,22 +4535,10 @@ namespace azure.mgmt.containerservice.models
         STATIC_BLOCK = "StaticBlock"
 
 
-    class azure.mgmt.containerservice.models.PodLinkLocalAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        IMDS = "IMDS"
-        NONE = "None"
-
-
     class azure.mgmt.containerservice.models.PolicyRule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         ALLOW_ALL = "AllowAll"
         ALLOW_SAME_NAMESPACE = "AllowSameNamespace"
         DENY_ALL = "DenyAll"
-
-
-    class azure.mgmt.containerservice.models.PoolBootstrapData(_Model):
-        azure: Optional[BootstrapAzureConfig]
-        components: Optional[BootstrapComponentVersions]
-        networking: Optional[BootstrapNetworkingConfig]
-        node: Optional[BootstrapNodeConfig]
 
 
     class azure.mgmt.containerservice.models.PortRange(_Model):
@@ -6700,20 +4567,6 @@ namespace azure.mgmt.containerservice.models
                 self, 
                 *, 
                 code: Optional[Union[str, Code]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.PreparedImageSpecificationProfile(_Model):
-        prepared_image_specification_id: Optional[str]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                prepared_image_specification_id: Optional[str] = ...
             ) -> None: ...
 
         @overload
@@ -6872,21 +4725,6 @@ namespace azure.mgmt.containerservice.models
     class azure.mgmt.containerservice.models.PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "Disabled"
         ENABLED = "Enabled"
-        SECURED_BY_PERIMETER = "SecuredByPerimeter"
-
-
-    class azure.mgmt.containerservice.models.RebalanceLoadBalancersRequestBody(_Model):
-        load_balancer_names: Optional[list[str]]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                load_balancer_names: Optional[list[str]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.mgmt.containerservice.models.RelativeMonthlySchedule(_Model):
@@ -6918,12 +4756,6 @@ namespace azure.mgmt.containerservice.models
         NONE = "None"
         SYSTEM_ASSIGNED = "SystemAssigned"
         USER_ASSIGNED = "UserAssigned"
-
-
-    class azure.mgmt.containerservice.models.ResourceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        CANCELED = "Canceled"
-        FAILED = "Failed"
-        SUCCEEDED = "Succeeded"
 
 
     class azure.mgmt.containerservice.models.ResourceQuota(_Model):
@@ -6958,81 +4790,6 @@ namespace azure.mgmt.containerservice.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.ResourceSku(_Model):
-        api_versions: Optional[list[str]]
-        capabilities: Optional[list[ResourceSkuCapabilities]]
-        capacity: Optional[ResourceSkuCapacity]
-        costs: Optional[list[ResourceSkuCosts]]
-        family: Optional[str]
-        kind: Optional[str]
-        location_info: Optional[list[ResourceSkuLocationInfo]]
-        locations: Optional[list[str]]
-        name: Optional[str]
-        resource_type: Optional[str]
-        restrictions: Optional[list[ResourceSkuRestrictions]]
-        size: Optional[str]
-        tier: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuCapabilities(_Model):
-        name: Optional[str]
-        value: Optional[str]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuCapacity(_Model):
-        default: Optional[int]
-        maximum: Optional[int]
-        minimum: Optional[int]
-        scale_type: Optional[Union[str, ResourceSkuCapacityScaleType]]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuCapacityScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        AUTOMATIC = "Automatic"
-        MANUAL = "Manual"
-        NONE = "None"
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuCosts(_Model):
-        extended_unit: Optional[str]
-        meter_id: Optional[str]
-        quantity: Optional[int]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuLocationInfo(_Model):
-        extended_locations: Optional[list[str]]
-        location: Optional[str]
-        type: Optional[Union[str, ExtendedLocationTypes]]
-        zone_details: Optional[list[ResourceSkuZoneDetails]]
-        zones: Optional[list[str]]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuRestrictionInfo(_Model):
-        locations: Optional[list[str]]
-        zones: Optional[list[str]]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuRestrictions(_Model):
-        reason_code: Optional[Union[str, ResourceSkuRestrictionsReasonCode]]
-        restriction_info: Optional[ResourceSkuRestrictionInfo]
-        type: Optional[Union[str, ResourceSkuRestrictionsType]]
-        values_property: Optional[list[str]]
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
-        QUOTA_ID = "QuotaId"
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        LOCATION = "Location"
-        ZONE = "Zone"
-
-
-    class azure.mgmt.containerservice.models.ResourceSkuZoneDetails(_Model):
-        capabilities: Optional[list[ResourceSkuCapabilities]]
-        name: Optional[list[str]]
 
 
     class azure.mgmt.containerservice.models.RestrictionLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7079,34 +4836,6 @@ namespace azure.mgmt.containerservice.models
                 key: str, 
                 value: Any
             ) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.SafeguardsAvailableVersion(ProxyResource):
-        id: str
-        name: str
-        properties: SafeguardsAvailableVersionsProperties
-        system_data: SystemData
-        type: str
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                properties: SafeguardsAvailableVersionsProperties
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.mgmt.containerservice.models.SafeguardsAvailableVersionsProperties(_Model):
-        is_default_version: Optional[bool]
-        support: Optional[Union[str, SafeguardsSupport]]
-
-
-    class azure.mgmt.containerservice.models.SafeguardsSupport(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        PREVIEW = "Preview"
-        STABLE = "Stable"
 
 
     class azure.mgmt.containerservice.models.ScaleDownMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7193,27 +4922,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.SeccompDefault(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        RUNTIME_DEFAULT = "RuntimeDefault"
-        UNCONFINED = "Unconfined"
-
-
-    class azure.mgmt.containerservice.models.ServiceAccountImagePullProfile(_Model):
-        default_managed_identity_id: Optional[str]
-        enabled: Optional[bool]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                default_managed_identity_id: Optional[str] = ..., 
-                enabled: Optional[bool] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
     class azure.mgmt.containerservice.models.ServiceMeshMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         DISABLED = "Disabled"
         ISTIO = "Istio"
@@ -7288,7 +4996,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.SnapshotType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        MANAGED_CLUSTER = "ManagedCluster"
         NODE_POOL = "NodePool"
 
 
@@ -7451,7 +5158,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.TransitEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        M_TLS = "mTLS"
         NONE = "None"
         WIRE_GUARD = "WireGuard"
 
@@ -7558,11 +5264,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.UpgradeStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        BLUE_GREEN = "BlueGreen"
-        ROLLING = "Rolling"
-
-
     class azure.mgmt.containerservice.models.UserAssignedIdentity(_Model):
         client_id: Optional[str]
         object_id: Optional[str]
@@ -7611,11 +5312,6 @@ namespace azure.mgmt.containerservice.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
-    class azure.mgmt.containerservice.models.VmState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        DELETED = "Deleted"
-        RUNNING = "Running"
-
-
     class azure.mgmt.containerservice.models.WeekDay(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FRIDAY = "Friday"
         MONDAY = "Monday"
@@ -7661,7 +5357,6 @@ namespace azure.mgmt.containerservice.models
 
 
     class azure.mgmt.containerservice.models.WorkloadRuntime(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        KATA_MSHV_VM_ISOLATION = "KataMshvVmIsolation"
         KATA_VM_ISOLATION = "KataVmIsolation"
         OCI_CONTAINER = "OCIContainer"
         WASM_WASI = "WasmWasi"
@@ -7679,16 +5374,6 @@ namespace azure.mgmt.containerservice.operations
 
         @distributed_trace
         def begin_abort_latest_operation(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_complete_upgrade(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
@@ -7830,132 +5515,6 @@ namespace azure.mgmt.containerservice.operations
                 **kwargs: Any
             ) -> ItemPaged[AgentPool]: ...
 
-        @overload
-        def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: ListBootstrapDataRequest, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-        @overload
-        def list_bootstrap_data(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                body: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> PoolBootstrapData: ...
-
-
-    class azure.mgmt.containerservice.operations.AlertConfigurationsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: AlertConfiguration, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[AlertConfiguration]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: AlertConfiguration, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[AlertConfiguration]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[AlertConfiguration]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'configuration_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                configuration_name: str, 
-                **kwargs: Any
-            ) -> AlertConfiguration: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[AlertConfiguration]: ...
-
-
-    class azure.mgmt.containerservice.operations.ContainerServiceOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list_node_image_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> ItemPaged[NodeImageVersion]: ...
-
 
     class azure.mgmt.containerservice.operations.IdentityBindingsOperations:
 
@@ -8002,7 +5561,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[IdentityBinding]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name']}, api_versions_list=['2026-04-01', '2026-05-01'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -8012,7 +5571,7 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'identity_binding_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -8022,161 +5581,13 @@ namespace azure.mgmt.containerservice.operations
             ) -> IdentityBinding: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01', '2026-05-02-preview'])
+        @api_version_validation(method_added_on='2026-04-01', params_added_on={'2026-04-01': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-04-01', '2026-05-01'])
         def list_by_managed_cluster(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[IdentityBinding]: ...
-
-
-    class azure.mgmt.containerservice.operations.JWTAuthenticatorsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: JWTAuthenticator, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[JWTAuthenticator]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: JWTAuthenticator, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[JWTAuthenticator]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[JWTAuthenticator]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'jwt_authenticator_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                jwt_authenticator_name: str, 
-                **kwargs: Any
-            ) -> JWTAuthenticator: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[JWTAuthenticator]: ...
-
-
-    class azure.mgmt.containerservice.operations.LoadBalancersOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: LoadBalancer, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: LoadBalancer, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'load_balancer_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                load_balancer_name: str, 
-                **kwargs: Any
-            ) -> LoadBalancer: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[LoadBalancer]: ...
 
 
     class azure.mgmt.containerservice.operations.MachinesOperations:
@@ -8186,51 +5597,6 @@ namespace azure.mgmt.containerservice.operations
                 *args, 
                 **kwargs
             ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: Machine, 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[Machine]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: Machine, 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[Machine]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                machine_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                etag: Optional[str] = ..., 
-                match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[Machine]: ...
 
         @distributed_trace
         def get(
@@ -8323,216 +5689,6 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[MaintenanceConfiguration]: ...
 
 
-    class azure.mgmt.containerservice.operations.MaintenanceWindowsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: MaintenanceWindowResource, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MaintenanceWindowResource]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: MaintenanceWindowResource, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MaintenanceWindowResource]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                resource: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MaintenanceWindowResource]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'maintenance_window_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[MaintenanceWindowResource]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_subscription(self, **kwargs: Any) -> ItemPaged[MaintenanceWindowResource]: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                maintenance_window_name: str, 
-                properties: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> MaintenanceWindowResource: ...
-
-
-    class azure.mgmt.containerservice.operations.ManagedClusterSnapshotsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: ManagedClusterSnapshot, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: ManagedClusterSnapshot, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        def create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name']}, api_versions_list=['2026-05-02-preview'])
-        def delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(self, **kwargs: Any) -> ItemPaged[ManagedClusterSnapshot]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_resource_group(
-                self, 
-                resource_group_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[ManagedClusterSnapshot]: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: TagsObject, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-        @overload
-        def update_tags(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> ManagedClusterSnapshot: ...
-
-
     class azure.mgmt.containerservice.operations.ManagedClustersOperations:
 
         def __init__(
@@ -8589,48 +5745,13 @@ namespace azure.mgmt.containerservice.operations
             ) -> LROPoller[ManagedCluster]: ...
 
         @distributed_trace
-        @api_version_validation(params_added_on={'2026-05-02-preview': ['ignore_pod_disruption_budget']}, api_versions_list=['2025-10-01', '2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01', '2026-05-01', '2026-05-02-preview'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
                 resource_name: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                ignore_pod_disruption_budget: Optional[bool] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: RebalanceLoadBalancersRequestBody, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: RebalanceLoadBalancersRequestBody, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @overload
-        def begin_rebalance_load_balancers(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
@@ -8831,14 +5952,6 @@ namespace azure.mgmt.containerservice.operations
             ) -> Optional[RunCommandResult]: ...
 
         @distributed_trace
-        def get_guardrails_versions(
-                self, 
-                location: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> GuardrailsAvailableVersion: ...
-
-        @distributed_trace
         def get_mesh_revision_profile(
                 self, 
                 location: str, 
@@ -8854,14 +5967,6 @@ namespace azure.mgmt.containerservice.operations
                 mode: str, 
                 **kwargs: Any
             ) -> MeshUpgradeProfile: ...
-
-        @distributed_trace
-        def get_safeguards_versions(
-                self, 
-                location: str, 
-                version: str, 
-                **kwargs: Any
-            ) -> SafeguardsAvailableVersion: ...
 
         @distributed_trace
         def get_upgrade_profile(
@@ -8913,13 +6018,6 @@ namespace azure.mgmt.containerservice.operations
             ) -> CredentialResults: ...
 
         @distributed_trace
-        def list_guardrails_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> ItemPaged[GuardrailsAvailableVersion]: ...
-
-        @distributed_trace
         def list_kubernetes_versions(
                 self, 
                 location: str, 
@@ -8948,13 +6046,6 @@ namespace azure.mgmt.containerservice.operations
                 resource_name: str, 
                 **kwargs: Any
             ) -> ItemPaged[OutboundEnvironmentEndpoint]: ...
-
-        @distributed_trace
-        def list_safeguards_versions(
-                self, 
-                location: str, 
-                **kwargs: Any
-            ) -> ItemPaged[SafeguardsAvailableVersion]: ...
 
 
     class azure.mgmt.containerservice.operations.ManagedNamespacesOperations:
@@ -9071,119 +6162,6 @@ namespace azure.mgmt.containerservice.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> ManagedNamespace: ...
-
-
-    class azure.mgmt.containerservice.operations.MeshMembershipsOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: MeshMembership, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MeshMembership]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: MeshMembership, 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MeshMembership]: ...
-
-        @overload
-        def begin_create_or_update(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                parameters: IO[bytes], 
-                *, 
-                content_type: str = "application/json", 
-                **kwargs: Any
-            ) -> LROPoller[MeshMembership]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name']}, api_versions_list=['2026-05-02-preview'])
-        def begin_delete(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                **kwargs: Any
-            ) -> LROPoller[None]: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'mesh_membership_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                mesh_membership_name: str, 
-                **kwargs: Any
-            ) -> MeshMembership: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list_by_managed_cluster(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[MeshMembership]: ...
-
-
-    class azure.mgmt.containerservice.operations.OperationStatusResultOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'operation_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'agent_pool_name', 'operation_id', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def get_by_agent_pool(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                agent_pool_name: str, 
-                operation_id: str, 
-                **kwargs: Any
-            ) -> OperationStatusResult: ...
-
-        @distributed_trace
-        @api_version_validation(method_added_on='2026-05-02-preview', params_added_on={'2026-05-02-preview': ['api_version', 'subscription_id', 'resource_group_name', 'resource_name', 'accept']}, api_versions_list=['2026-05-02-preview'])
-        def list(
-                self, 
-                resource_group_name: str, 
-                resource_name: str, 
-                **kwargs: Any
-            ) -> ItemPaged[OperationStatusResult]: ...
 
 
     class azure.mgmt.containerservice.operations.Operations:
@@ -9516,24 +6494,6 @@ namespace azure.mgmt.containerservice.operations
             ) -> ItemPaged[TrustedAccessRole]: ...
 
 
-    class azure.mgmt.containerservice.operations.VmSkusOperations:
-
-        def __init__(
-                self, 
-                *args, 
-                **kwargs
-            ) -> None: ...
-
-        @distributed_trace
-        def list(
-                self, 
-                location: str, 
-                *, 
-                include_extended_locations: Optional[bool] = ..., 
-                **kwargs: Any
-            ) -> ItemPaged[ResourceSku]: ...
-
-
 namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.AbsoluteMonthlySchedule(TypedDict, total=False):
@@ -9596,17 +6556,6 @@ namespace azure.mgmt.containerservice.types
         enabled: bool
 
 
-    class azure.mgmt.containerservice.types.AgentPoolBlueGreenUpgradeSettings(TypedDict, total=False):
-        key "batchSoakDurationInMinutes": int
-        key "drainBatchSize": str
-        key "drainTimeoutInMinutes": int
-        key "finalSoakDurationInMinutes": int
-        batch_soak_duration_in_minutes: int
-        drain_batch_size: str
-        drain_timeout_in_minutes: int
-        final_soak_duration_in_minutes: int
-
-
     class azure.mgmt.containerservice.types.AgentPoolDeleteMachinesParameter(TypedDict, total=False):
         key "machineNames": Required[list[str]]
         machine_names: list[str]
@@ -9628,7 +6577,6 @@ namespace azure.mgmt.containerservice.types
         key "enableEncryptionAtHost": bool
         key "enableFIPS": bool
         key "enableNodePublicIP": bool
-        key "enableOSDiskFullCaching": bool
         key "enableUltraSSD": bool
         key "gatewayProfile": ForwardRef('AgentPoolGatewayProfile', module='types')
         key "gpuInstanceProfile": Union[str, GPUInstanceProfile]
@@ -9654,7 +6602,6 @@ namespace azure.mgmt.containerservice.types
         key "podIPAllocationMode": Union[str, PodIPAllocationMode]
         key "podSubnetID": str
         key "powerState": ForwardRef('PowerState', module='types')
-        key "preparedImageSpecificationProfile": ForwardRef('PreparedImageSpecificationProfile', module='types')
         key "provisioningState": str
         key "proximityPlacementGroupID": str
         key "scaleDownMode": Union[str, ScaleDownMode]
@@ -9665,8 +6612,6 @@ namespace azure.mgmt.containerservice.types
         key "status": ForwardRef('AgentPoolStatus', module='types')
         key "type": Union[str, AgentPoolType]
         key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
-        key "upgradeSettingsBlueGreen": ForwardRef('AgentPoolBlueGreenUpgradeSettings', module='types')
-        key "upgradeStrategy": Union[str, UpgradeStrategy]
         key "virtualMachinesProfile": ForwardRef('VirtualMachinesProfile', module='types')
         key "vmSize": str
         key "vnetSubnetID": str
@@ -9684,7 +6629,6 @@ namespace azure.mgmt.containerservice.types
         enable_encryption_at_host: bool
         enable_fips: bool
         enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
         enable_ultra_ssd: bool
         gateway_profile: AgentPoolGatewayProfile
         gpu_instance_profile: Union[str, GPUInstanceProfile]
@@ -9700,11 +6644,9 @@ namespace azure.mgmt.containerservice.types
         min_count: int
         mode: Union[str, AgentPoolMode]
         network_profile: AgentPoolNetworkProfile
-        nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
         nodeTaints: list[str]
         node_image_version: str
-        node_initialization_taints: list[str]
         node_labels: dict[str, str]
         node_public_ip_prefix_id: str
         node_taints: list[str]
@@ -9716,7 +6658,6 @@ namespace azure.mgmt.containerservice.types
         pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
         pod_subnet_id: str
         power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
         provisioning_state: str
         proximity_placement_group_id: str
         scale_down_mode: Union[str, ScaleDownMode]
@@ -9728,8 +6669,6 @@ namespace azure.mgmt.containerservice.types
         tags: dict[str, str]
         type_properties_type: Union[str, AgentPoolType]
         upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
         virtual_machine_nodes_status: list[VirtualMachineNodes]
         virtual_machines_profile: VirtualMachinesProfile
@@ -9739,26 +6678,13 @@ namespace azure.mgmt.containerservice.types
         workload_runtime: Union[str, WorkloadRuntime]
 
 
-    class azure.mgmt.containerservice.types.AgentPoolNetworkInterface(TypedDict, total=False):
-        key "enableAcceleratedNetworking": bool
-        key "type": Union[str, AgentPoolNetworkInterfaceType]
-        key "vnetSubnetId": str
-        enable_accelerated_networking: bool
-        type: Union[str, AgentPoolNetworkInterfaceType]
-        vnet_subnet_id: str
-
-
     class azure.mgmt.containerservice.types.AgentPoolNetworkProfile(TypedDict, total=False):
         allowedHostPorts: list[PortRange]
         allowed_host_ports: list[PortRange]
         applicationSecurityGroups: list[str]
         application_security_groups: list[str]
-        nodePublicIPPrefixIDs: list[str]
         nodePublicIPTags: list[IPTag]
-        node_public_ip_prefix_i_ds: list[str]
         node_public_ip_tags: list[IPTag]
-        secondaryNetworkInterfaces: list[AgentPoolNetworkInterface]
-        secondary_network_interfaces: list[AgentPoolNetworkInterface]
 
 
     class azure.mgmt.containerservice.types.AgentPoolSecurityProfile(TypedDict, total=False):
@@ -9777,13 +6703,11 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.AgentPoolUpgradeSettings(TypedDict, total=False):
         key "drainTimeoutInMinutes": int
-        key "maxBlockedNodes": str
         key "maxSurge": str
         key "maxUnavailable": str
         key "nodeSoakDurationInMinutes": int
         key "undrainableNodeBehavior": Union[str, UndrainableNodeBehavior]
         drain_timeout_in_minutes: int
-        max_blocked_nodes: str
         max_surge: str
         max_unavailable: str
         node_soak_duration_in_minutes: int
@@ -9793,40 +6717,6 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.AgentPoolWindowsProfile(TypedDict, total=False):
         key "disableOutboundNat": bool
         disable_outbound_nat: bool
-
-
-    class azure.mgmt.containerservice.types.AlertConfiguration(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('AlertConfigurationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: AlertConfigurationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerservice.types.AlertConfigurationProperties(TypedDict, total=False):
-        key "mode": Required[Union[str, AlertConfigurationMode]]
-        key "notification": Required[AlertNotification]
-        key "provisioningState": Union[str, AlertConfigurationProvisioningState]
-        mode: Union[str, AlertConfigurationMode]
-        notification: AlertNotification
-        provisioning_state: Union[str, AlertConfigurationProvisioningState]
-
-
-    class azure.mgmt.containerservice.types.AlertNotification(TypedDict, total=False):
-        key "actionGroupId": Required[str]
-        action_group_id: str
-
-
-    class azure.mgmt.containerservice.types.AllowedSubject(TypedDict, total=False):
-        key "namespaceSelector": Required[LabelSelector]
-        key "serviceAccountSelector": ForwardRef('LabelSelector', module='types')
-        namespace_selector: LabelSelector
-        service_account_selector: LabelSelector
 
 
     class azure.mgmt.containerservice.types.AutoScaleProfile(TypedDict, total=False):
@@ -9849,19 +6739,6 @@ namespace azure.mgmt.containerservice.types
         key_vault_resource_id: str
 
 
-    class azure.mgmt.containerservice.types.BastionProfile(TypedDict, total=False):
-        key "bastionId": str
-        key "enabled": bool
-        key "publicIpAddressId": str
-        key "scaleUnits": int
-        key "sku": Union[str, BastionSku]
-        bastion_id: str
-        enabled: bool
-        public_ip_address_id: str
-        scale_units: int
-        sku: Union[str, BastionSku]
-
-
     class azure.mgmt.containerservice.types.ClusterUpgradeSettings(TypedDict, total=False):
         key "overrideSettings": ForwardRef('UpgradeOverrideSettings', module='types')
         override_settings: UpgradeOverrideSettings
@@ -9876,12 +6753,9 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ContainerServiceNetworkProfile(TypedDict, total=False):
         key "advancedNetworking": ForwardRef('AdvancedNetworking', module='types')
-        key "bastionProfile": ForwardRef('BastionProfile', module='types')
         key "dnsServiceIP": str
-        key "kubeProxyConfig": ForwardRef('ContainerServiceNetworkProfileKubeProxyConfig', module='types')
         key "loadBalancerProfile": ForwardRef('ManagedClusterLoadBalancerProfile', module='types')
         key "loadBalancerSku": Union[str, LoadBalancerSku]
-        key "natGatewayId": str
         key "natGatewayProfile": ForwardRef('ManagedClusterNATGatewayProfile', module='types')
         key "networkDataplane": Union[str, NetworkDataplane]
         key "networkMode": Union[str, NetworkMode]
@@ -9890,18 +6764,14 @@ namespace azure.mgmt.containerservice.types
         key "networkPolicy": Union[str, NetworkPolicy]
         key "outboundType": Union[str, OutboundType]
         key "podCidr": str
-        key "podLinkLocalAccess": Union[str, PodLinkLocalAccess]
         key "serviceCidr": str
         key "staticEgressGatewayProfile": ForwardRef('ManagedClusterStaticEgressGatewayProfile', module='types')
         advanced_networking: AdvancedNetworking
-        bastion_profile: BastionProfile
         dns_service_ip: str
         ipFamilies: list[Union[str, IPFamily]]
         ip_families: list[Union[str, IPFamily]]
-        kube_proxy_config: ContainerServiceNetworkProfileKubeProxyConfig
         load_balancer_profile: ManagedClusterLoadBalancerProfile
         load_balancer_sku: Union[str, LoadBalancerSku]
-        nat_gateway_id: str
         nat_gateway_profile: ManagedClusterNATGatewayProfile
         network_dataplane: Union[str, NetworkDataplane]
         network_mode: Union[str, NetworkMode]
@@ -9912,31 +6782,10 @@ namespace azure.mgmt.containerservice.types
         podCidrs: list[str]
         pod_cidr: str
         pod_cidrs: list[str]
-        pod_link_local_access: Union[str, PodLinkLocalAccess]
         serviceCidrs: list[str]
         service_cidr: str
         service_cidrs: list[str]
         static_egress_gateway_profile: ManagedClusterStaticEgressGatewayProfile
-
-
-    class azure.mgmt.containerservice.types.ContainerServiceNetworkProfileKubeProxyConfig(TypedDict, total=False):
-        key "enabled": bool
-        key "ipvsConfig": ForwardRef('ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig', module='types')
-        key "mode": Union[str, Mode]
-        enabled: bool
-        ipvs_config: ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig
-        mode: Union[str, Mode]
-
-
-    class azure.mgmt.containerservice.types.ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(TypedDict, total=False):
-        key "scheduler": Union[str, IpvsScheduler]
-        key "tcpFinTimeoutSeconds": int
-        key "tcpTimeoutSeconds": int
-        key "udpTimeoutSeconds": int
-        scheduler: Union[str, IpvsScheduler]
-        tcp_fin_timeout_seconds: int
-        tcp_timeout_seconds: int
-        udp_timeout_seconds: int
 
 
     class azure.mgmt.containerservice.types.ContainerServiceSshConfiguration(TypedDict, total=False):
@@ -10005,20 +6854,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.GPUProfile(TypedDict, total=False):
         key "driver": Union[str, GPUDriver]
-        key "driverType": Union[str, DriverType]
-        key "nvidia": ForwardRef('NvidiaGPUProfile', module='types')
         driver: Union[str, GPUDriver]
-        driver_type: Union[str, DriverType]
-        nvidia: NvidiaGPUProfile
-
-
-    class azure.mgmt.containerservice.types.HardEvictionThreshold(TypedDict, total=False):
-        key "memoryAvailable": str
-        key "nodeFsAvailable": str
-        key "nodeFsInodesFree": str
-        memory_available: str
-        node_fs_available: str
-        node_fs_inodes_free: str
 
 
     class azure.mgmt.containerservice.types.IPTag(TypedDict, total=False):
@@ -10063,8 +6899,6 @@ namespace azure.mgmt.containerservice.types
         key "managedIdentity": Required[IdentityBindingManagedIdentityProfile]
         key "oidcIssuer": ForwardRef('IdentityBindingOidcIssuerProfile', module='types')
         key "provisioningState": Union[str, IdentityBindingProvisioningState]
-        allowedSubjects: list[AllowedSubject]
-        allowed_subjects: list[AllowedSubject]
         managed_identity: IdentityBindingManagedIdentityProfile
         oidc_issuer: IdentityBindingOidcIssuerProfile
         provisioning_state: Union[str, IdentityBindingProvisioningState]
@@ -10123,75 +6957,6 @@ namespace azure.mgmt.containerservice.types
         revisions: list[str]
 
 
-    class azure.mgmt.containerservice.types.JWTAuthenticator(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": Required[JWTAuthenticatorProperties]
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: JWTAuthenticatorProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorClaimMappingExpression(TypedDict, total=False):
-        key "expression": Required[str]
-        expression: str
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorClaimMappings(TypedDict, total=False):
-        key "groups": ForwardRef('JWTAuthenticatorClaimMappingExpression', module='types')
-        key "uid": ForwardRef('JWTAuthenticatorClaimMappingExpression', module='types')
-        key "username": Required[JWTAuthenticatorClaimMappingExpression]
-        extra: list[JWTAuthenticatorExtraClaimMappingExpression]
-        groups: JWTAuthenticatorClaimMappingExpression
-        uid: JWTAuthenticatorClaimMappingExpression
-        username: JWTAuthenticatorClaimMappingExpression
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorExtraClaimMappingExpression(TypedDict, total=False):
-        key "key": Required[str]
-        key "valueExpression": Required[str]
-        key: str
-        value_expression: str
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorIssuer(TypedDict, total=False):
-        key "audiences": Required[list[str]]
-        key "url": Required[str]
-        audiences: list[str]
-        url: str
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorProperties(TypedDict, total=False):
-        key "claimMappings": Required[JWTAuthenticatorClaimMappings]
-        key "issuer": Required[JWTAuthenticatorIssuer]
-        key "provisioningState": Union[str, JWTAuthenticatorProvisioningState]
-        claimValidationRules: list[JWTAuthenticatorValidationRule]
-        claim_mappings: JWTAuthenticatorClaimMappings
-        claim_validation_rules: list[JWTAuthenticatorValidationRule]
-        issuer: JWTAuthenticatorIssuer
-        provisioning_state: Union[str, JWTAuthenticatorProvisioningState]
-        userValidationRules: list[JWTAuthenticatorValidationRule]
-        user_validation_rules: list[JWTAuthenticatorValidationRule]
-
-
-    class azure.mgmt.containerservice.types.JWTAuthenticatorValidationRule(TypedDict, total=False):
-        key "expression": Required[str]
-        key "message": str
-        expression: str
-        message: str
-
-
-    class azure.mgmt.containerservice.types.KubeReserved(TypedDict, total=False):
-        key "cpuMillicores": int
-        key "memoryMB": int
-        cpu_millicores: int
-        memory_mb: int
-
-
     class azure.mgmt.containerservice.types.KubeletConfig(TypedDict, total=False):
         key "containerLogMaxFiles": int
         key "containerLogMaxSizeMB": int
@@ -10199,12 +6964,9 @@ namespace azure.mgmt.containerservice.types
         key "cpuCfsQuotaPeriod": str
         key "cpuManagerPolicy": str
         key "failSwapOn": bool
-        key "hardEvictionThreshold": ForwardRef('HardEvictionThreshold', module='types')
         key "imageGcHighThreshold": int
         key "imageGcLowThreshold": int
-        key "kubeReserved": ForwardRef('KubeReserved', module='types')
         key "podMaxPids": int
-        key "seccompDefault": Union[str, SeccompDefault]
         key "topologyManagerPolicy": str
         allowedUnsafeSysctls: list[str]
         allowed_unsafe_sysctls: list[str]
@@ -10214,34 +6976,10 @@ namespace azure.mgmt.containerservice.types
         cpu_cfs_quota_period: str
         cpu_manager_policy: str
         fail_swap_on: bool
-        hard_eviction_threshold: HardEvictionThreshold
         image_gc_high_threshold: int
         image_gc_low_threshold: int
-        kube_reserved: KubeReserved
         pod_max_pids: int
-        seccomp_default: Union[str, SeccompDefault]
         topology_manager_policy: str
-
-
-    class azure.mgmt.containerservice.types.KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):
-        key "infrastructureEncryption": Union[str, InfrastructureEncryption]
-        infrastructure_encryption: Union[str, InfrastructureEncryption]
-
-
-    class azure.mgmt.containerservice.types.LabelSelector(TypedDict, total=False):
-        matchExpressions: list[LabelSelectorRequirement]
-        matchLabels: list[str]
-        match_expressions: list[LabelSelectorRequirement]
-        match_labels: list[str]
-
-
-    class azure.mgmt.containerservice.types.LabelSelectorRequirement(TypedDict, total=False):
-        key "key": str
-        key "operator": Union[str, Operator]
-        key: str
-        operator: Union[str, Operator]
-        values: list[str]
-        values_property: list[str]
 
 
     class azure.mgmt.containerservice.types.LinuxOSConfig(TypedDict, total=False):
@@ -10253,37 +6991,6 @@ namespace azure.mgmt.containerservice.types
         sysctls: SysctlConfig
         transparent_huge_page_defrag: str
         transparent_huge_page_enabled: str
-
-
-    class azure.mgmt.containerservice.types.ListBootstrapDataRequest(TypedDict, total=False):
-
-
-    class azure.mgmt.containerservice.types.LoadBalancer(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('LoadBalancerProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: LoadBalancerProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerservice.types.LoadBalancerProperties(TypedDict, total=False):
-        key "allowServicePlacement": bool
-        key "nodeSelector": ForwardRef('LabelSelector', module='types')
-        key "primaryAgentPoolName": Required[str]
-        key "provisioningState": str
-        key "serviceLabelSelector": ForwardRef('LabelSelector', module='types')
-        key "serviceNamespaceSelector": ForwardRef('LabelSelector', module='types')
-        allow_service_placement: bool
-        node_selector: LabelSelector
-        primary_agent_pool_name: str
-        provisioning_state: str
-        service_label_selector: LabelSelector
-        service_namespace_selector: LabelSelector
 
 
     class azure.mgmt.containerservice.types.LocalDNSOverride(TypedDict, total=False):
@@ -10316,165 +7023,6 @@ namespace azure.mgmt.containerservice.types
         vnet_dns_overrides: dict[str, LocalDNSOverride]
 
 
-    class azure.mgmt.containerservice.types.Machine(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('MachineProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: MachineProperties
-        system_data: SystemData
-        type: str
-        zones: list[str]
-
-
-    class azure.mgmt.containerservice.types.MachineBillingProfile(TypedDict, total=False):
-        key "spotMaxPrice": float
-        spot_max_price: float
-
-
-    class azure.mgmt.containerservice.types.MachineHardwareProfile(TypedDict, total=False):
-        key "gpuInstanceProfile": Union[str, GPUInstanceProfile]
-        key "gpuProfile": ForwardRef('GPUProfile', module='types')
-        key "ultraSsdEnabled": bool
-        key "vmSize": str
-        gpu_instance_profile: Union[str, GPUInstanceProfile]
-        gpu_profile: GPUProfile
-        ultra_ssd_enabled: bool
-        vm_size: str
-
-
-    class azure.mgmt.containerservice.types.MachineIpAddress(TypedDict, total=False):
-        key "family": Union[str, IPFamily]
-        key "ip": str
-        family: Union[str, IPFamily]
-        ip: str
-
-
-    class azure.mgmt.containerservice.types.MachineKubernetesProfile(TypedDict, total=False):
-        key "artifactStreamingProfile": ForwardRef('AgentPoolArtifactStreamingProfile', module='types')
-        key "currentOrchestratorVersion": str
-        key "kubeletConfig": ForwardRef('KubeletConfig', module='types')
-        key "kubeletDiskType": Union[str, KubeletDiskType]
-        key "maxPods": int
-        key "nodeName": str
-        key "orchestratorVersion": str
-        key "workloadRuntime": Union[str, WorkloadRuntime]
-        artifact_streaming_profile: AgentPoolArtifactStreamingProfile
-        current_orchestrator_version: str
-        kubelet_config: KubeletConfig
-        kubelet_disk_type: Union[str, KubeletDiskType]
-        max_pods: int
-        nodeInitializationTaints: list[str]
-        nodeLabels: dict[str, str]
-        nodeTaints: list[str]
-        node_initialization_taints: list[str]
-        node_labels: dict[str, str]
-        node_name: str
-        node_taints: list[str]
-        orchestrator_version: str
-        workload_runtime: Union[str, WorkloadRuntime]
-
-
-    class azure.mgmt.containerservice.types.MachineNetworkProperties(TypedDict, total=False):
-        key "enableNodePublicIP": bool
-        key "nodePublicIPPrefixID": str
-        key "podSubnetID": str
-        key "vnetSubnetID": str
-        enable_node_public_ip: bool
-        ipAddresses: list[MachineIpAddress]
-        ip_addresses: list[MachineIpAddress]
-        nodePublicIPTags: list[IPTag]
-        node_public_ip_prefix_id: str
-        node_public_ip_tags: list[IPTag]
-        pod_subnet_id: str
-        vnet_subnet_id: str
-
-
-    class azure.mgmt.containerservice.types.MachineOSProfile(TypedDict, total=False):
-        key "enableFIPS": bool
-        key "linuxProfile": ForwardRef('MachineOSProfileLinuxProfile', module='types')
-        key "osDiskSizeGB": int
-        key "osDiskType": Union[str, OSDiskType]
-        key "osSKU": Union[str, OSSKU]
-        key "osType": Union[str, OSType]
-        key "windowsProfile": ForwardRef('AgentPoolWindowsProfile', module='types')
-        enable_fips: bool
-        linux_profile: MachineOSProfileLinuxProfile
-        os_disk_size_gb: int
-        os_disk_type: Union[str, OSDiskType]
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        windows_profile: AgentPoolWindowsProfile
-
-
-    class azure.mgmt.containerservice.types.MachineOSProfileLinuxProfile(TypedDict, total=False):
-        key "linuxOSConfig": ForwardRef('LinuxOSConfig', module='types')
-        key "messageOfTheDay": str
-        linux_os_config: LinuxOSConfig
-        message_of_the_day: str
-
-
-    class azure.mgmt.containerservice.types.MachineProperties(TypedDict, total=False):
-        key "billing": ForwardRef('MachineBillingProfile', module='types')
-        key "eTag": str
-        key "evictionPolicy": Union[str, ScaleSetEvictionPolicy]
-        key "hardware": ForwardRef('MachineHardwareProfile', module='types')
-        key "kubernetes": ForwardRef('MachineKubernetesProfile', module='types')
-        key "localDNSProfile": ForwardRef('LocalDNSProfile', module='types')
-        key "mode": Union[str, AgentPoolMode]
-        key "network": ForwardRef('MachineNetworkProperties', module='types')
-        key "nodeImageVersion": str
-        key "operatingSystem": ForwardRef('MachineOSProfile', module='types')
-        key "priority": Union[str, ScaleSetPriority]
-        key "provisioningState": str
-        key "resourceId": str
-        key "security": ForwardRef('MachineSecurityProfile', module='types')
-        key "status": ForwardRef('MachineStatus', module='types')
-        billing: MachineBillingProfile
-        e_tag: str
-        eviction_policy: Union[str, ScaleSetEvictionPolicy]
-        hardware: MachineHardwareProfile
-        kubernetes: MachineKubernetesProfile
-        local_dns_profile: LocalDNSProfile
-        mode: Union[str, AgentPoolMode]
-        network: MachineNetworkProperties
-        node_image_version: str
-        operating_system: MachineOSProfile
-        priority: Union[str, ScaleSetPriority]
-        provisioning_state: str
-        resource_id: str
-        security: MachineSecurityProfile
-        status: MachineStatus
-        tags: dict[str, str]
-
-
-    class azure.mgmt.containerservice.types.MachineSecurityProfile(TypedDict, total=False):
-        key "enableEncryptionAtHost": bool
-        key "enableSecureBoot": bool
-        key "enableVTPM": bool
-        key "sshAccess": Union[str, AgentPoolSSHAccess]
-        enable_encryption_at_host: bool
-        enable_secure_boot: bool
-        enable_vtpm: bool
-        ssh_access: Union[str, AgentPoolSSHAccess]
-
-
-    class azure.mgmt.containerservice.types.MachineStatus(TypedDict, total=False):
-        key "creationTimestamp": str
-        key "driftAction": Union[str, DriftAction]
-        key "driftReason": str
-        key "provisioningError": ForwardRef('ErrorDetail', module='types')
-        key "vmState": Union[str, VmState]
-        creation_timestamp: str
-        drift_action: Union[str, DriftAction]
-        drift_reason: str
-        provisioning_error: ErrorDetail
-        vm_state: Union[str, VmState]
-
-
     class azure.mgmt.containerservice.types.MaintenanceConfiguration(ProxyResource):
         key "id": str
         key "name": str
@@ -10490,9 +7038,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.MaintenanceConfigurationProperties(TypedDict, total=False):
         key "maintenanceWindow": ForwardRef('MaintenanceWindow', module='types')
-        key "maintenanceWindowId": str
         maintenance_window: MaintenanceWindow
-        maintenance_window_id: str
         notAllowedTime: list[TimeSpan]
         not_allowed_time: list[TimeSpan]
         timeInWeek: list[TimeInWeek]
@@ -10508,39 +7054,6 @@ namespace azure.mgmt.containerservice.types
         duration_hours: int
         notAllowedDates: list[DateSpan]
         not_allowed_dates: list[DateSpan]
-        schedule: Schedule
-        start_date: str
-        start_time: str
-        utc_offset: str
-
-
-    class azure.mgmt.containerservice.types.MaintenanceWindowResource(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": ForwardRef('MaintenanceWindowResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: MaintenanceWindowResourceProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.containerservice.types.MaintenanceWindowResourceProperties(TypedDict, total=False):
-        key "durationHours": Required[int]
-        key "provisioningState": Union[str, ResourceProvisioningState]
-        key "schedule": Required[Schedule]
-        key "startDate": str
-        key "startTime": Required[str]
-        key "utcOffset": str
-        duration_hours: int
-        notAllowedDates: list[DateSpan]
-        not_allowed_dates: list[DateSpan]
-        provisioning_state: Union[str, ResourceProvisioningState]
         schedule: Schedule
         start_date: str
         start_time: str
@@ -10640,7 +7153,6 @@ namespace azure.mgmt.containerservice.types
         key "enableEncryptionAtHost": bool
         key "enableFIPS": bool
         key "enableNodePublicIP": bool
-        key "enableOSDiskFullCaching": bool
         key "enableUltraSSD": bool
         key "gatewayProfile": ForwardRef('AgentPoolGatewayProfile', module='types')
         key "gpuInstanceProfile": Union[str, GPUInstanceProfile]
@@ -10667,7 +7179,6 @@ namespace azure.mgmt.containerservice.types
         key "podIPAllocationMode": Union[str, PodIPAllocationMode]
         key "podSubnetID": str
         key "powerState": ForwardRef('PowerState', module='types')
-        key "preparedImageSpecificationProfile": ForwardRef('PreparedImageSpecificationProfile', module='types')
         key "provisioningState": str
         key "proximityPlacementGroupID": str
         key "scaleDownMode": Union[str, ScaleDownMode]
@@ -10678,8 +7189,6 @@ namespace azure.mgmt.containerservice.types
         key "status": ForwardRef('AgentPoolStatus', module='types')
         key "type": Union[str, AgentPoolType]
         key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
-        key "upgradeSettingsBlueGreen": ForwardRef('AgentPoolBlueGreenUpgradeSettings', module='types')
-        key "upgradeStrategy": Union[str, UpgradeStrategy]
         key "virtualMachinesProfile": ForwardRef('VirtualMachinesProfile', module='types')
         key "vmSize": str
         key "vnetSubnetID": str
@@ -10697,7 +7206,6 @@ namespace azure.mgmt.containerservice.types
         enable_encryption_at_host: bool
         enable_fips: bool
         enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
         enable_ultra_ssd: bool
         gateway_profile: AgentPoolGatewayProfile
         gpu_instance_profile: Union[str, GPUInstanceProfile]
@@ -10714,11 +7222,9 @@ namespace azure.mgmt.containerservice.types
         mode: Union[str, AgentPoolMode]
         name: str
         network_profile: AgentPoolNetworkProfile
-        nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
         nodeTaints: list[str]
         node_image_version: str
-        node_initialization_taints: list[str]
         node_labels: dict[str, str]
         node_public_ip_prefix_id: str
         node_taints: list[str]
@@ -10730,7 +7236,6 @@ namespace azure.mgmt.containerservice.types
         pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
         pod_subnet_id: str
         power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
         provisioning_state: str
         proximity_placement_group_id: str
         scale_down_mode: Union[str, ScaleDownMode]
@@ -10742,8 +7247,6 @@ namespace azure.mgmt.containerservice.types
         tags: dict[str, str]
         type: Union[str, AgentPoolType]
         upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
         virtual_machine_nodes_status: list[VirtualMachineNodes]
         virtual_machines_profile: VirtualMachinesProfile
@@ -10764,7 +7267,6 @@ namespace azure.mgmt.containerservice.types
         key "enableEncryptionAtHost": bool
         key "enableFIPS": bool
         key "enableNodePublicIP": bool
-        key "enableOSDiskFullCaching": bool
         key "enableUltraSSD": bool
         key "gatewayProfile": ForwardRef('AgentPoolGatewayProfile', module='types')
         key "gpuInstanceProfile": Union[str, GPUInstanceProfile]
@@ -10790,7 +7292,6 @@ namespace azure.mgmt.containerservice.types
         key "podIPAllocationMode": Union[str, PodIPAllocationMode]
         key "podSubnetID": str
         key "powerState": ForwardRef('PowerState', module='types')
-        key "preparedImageSpecificationProfile": ForwardRef('PreparedImageSpecificationProfile', module='types')
         key "provisioningState": str
         key "proximityPlacementGroupID": str
         key "scaleDownMode": Union[str, ScaleDownMode]
@@ -10801,8 +7302,6 @@ namespace azure.mgmt.containerservice.types
         key "status": ForwardRef('AgentPoolStatus', module='types')
         key "type": Union[str, AgentPoolType]
         key "upgradeSettings": ForwardRef('AgentPoolUpgradeSettings', module='types')
-        key "upgradeSettingsBlueGreen": ForwardRef('AgentPoolBlueGreenUpgradeSettings', module='types')
-        key "upgradeStrategy": Union[str, UpgradeStrategy]
         key "virtualMachinesProfile": ForwardRef('VirtualMachinesProfile', module='types')
         key "vmSize": str
         key "vnetSubnetID": str
@@ -10820,7 +7319,6 @@ namespace azure.mgmt.containerservice.types
         enable_encryption_at_host: bool
         enable_fips: bool
         enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
         enable_ultra_ssd: bool
         gateway_profile: AgentPoolGatewayProfile
         gpu_instance_profile: Union[str, GPUInstanceProfile]
@@ -10836,11 +7334,9 @@ namespace azure.mgmt.containerservice.types
         min_count: int
         mode: Union[str, AgentPoolMode]
         network_profile: AgentPoolNetworkProfile
-        nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
         nodeTaints: list[str]
         node_image_version: str
-        node_initialization_taints: list[str]
         node_labels: dict[str, str]
         node_public_ip_prefix_id: str
         node_taints: list[str]
@@ -10852,7 +7348,6 @@ namespace azure.mgmt.containerservice.types
         pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
         pod_subnet_id: str
         power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
         provisioning_state: str
         proximity_placement_group_id: str
         scale_down_mode: Union[str, ScaleDownMode]
@@ -10864,8 +7359,6 @@ namespace azure.mgmt.containerservice.types
         tags: dict[str, str]
         type: Union[str, AgentPoolType]
         upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
         virtual_machine_nodes_status: list[VirtualMachineNodes]
         virtual_machines_profile: VirtualMachinesProfile
@@ -10889,58 +7382,19 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfile(TypedDict, total=False):
         key "appMonitoring": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoring', module='types')
-        key "containerInsights": ForwardRef('ManagedClusterAzureMonitorProfileContainerInsights', module='types')
         key "metrics": ForwardRef('ManagedClusterAzureMonitorProfileMetrics', module='types')
         app_monitoring: ManagedClusterAzureMonitorProfileAppMonitoring
-        container_insights: ManagedClusterAzureMonitorProfileContainerInsights
         metrics: ManagedClusterAzureMonitorProfileMetrics
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoring(TypedDict, total=False):
         key "autoInstrumentation": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation', module='types')
-        key "openTelemetryLogsAndTraces": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces', module='types')
-        key "openTelemetryMetrics": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics', module='types')
         auto_instrumentation: ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
-        open_telemetry_logs_and_traces: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces
-        open_telemetry_metrics: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(TypedDict, total=False):
         key "enabled": bool
         enabled: bool
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(TypedDict, total=False):
-        key "enabled": bool
-        key "grpcPort": int
-        key "httpPort": int
-        enabled: bool
-        grpc_port: int
-        http_port: int
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(TypedDict, total=False):
-        key "enabled": bool
-        key "grpcPort": int
-        key "httpPort": int
-        enabled: bool
-        grpc_port: int
-        http_port: int
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileContainerInsights(TypedDict, total=False):
-        key "containerNetworkLogs": Union[str, ContainerNetworkLogs]
-        key "disableCustomMetrics": bool
-        key "disablePrometheusMetricsScraping": bool
-        key "enabled": bool
-        key "logAnalyticsWorkspaceResourceId": str
-        key "syslogPort": int
-        container_network_logs: Union[str, ContainerNetworkLogs]
-        disable_custom_metrics: bool
-        disable_prometheus_metrics_scraping: bool
-        enabled: bool
-        log_analytics_workspace_resource_id: str
-        syslog_port: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileKubeStateMetrics(TypedDict, total=False):
@@ -10971,11 +7425,6 @@ namespace azure.mgmt.containerservice.types
         container_registry_id: str
 
 
-    class azure.mgmt.containerservice.types.ManagedClusterControlPlaneScalingProfile(TypedDict, total=False):
-        key "scalingSize": Required[Union[str, ControlPlaneScalingSize]]
-        scaling_size: Union[str, ControlPlaneScalingSize]
-
-
     class azure.mgmt.containerservice.types.ManagedClusterCostAnalysis(TypedDict, total=False):
         key "enabled": bool
         enabled: bool
@@ -10986,21 +7435,12 @@ namespace azure.mgmt.containerservice.types
         key "httpProxy": str
         key "httpsProxy": str
         key "trustedCa": str
-        effectiveNoProxy: list[str]
-        effective_no_proxy: list[str]
         enabled: bool
         http_proxy: str
         https_proxy: str
         noProxy: list[str]
         no_proxy: list[str]
         trusted_ca: str
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterHealthMonitorProfile(TypedDict, total=False):
-        key "enableContinuousControlPlaneAndAddonMonitor": bool
-        key "enableOnDemandMonitor": bool
-        enable_continuous_control_plane_and_addon_monitor: bool
-        enable_on_demand_monitor: bool
 
 
     class azure.mgmt.containerservice.types.ManagedClusterHostedSystemProfile(TypedDict, total=False):
@@ -11025,27 +7465,11 @@ namespace azure.mgmt.containerservice.types
         user_assigned_identities: dict[str, ManagedServiceIdentityUserAssignedIdentitiesValue]
 
 
-    class azure.mgmt.containerservice.types.ManagedClusterIngressDefaultDomainProfile(TypedDict, total=False):
-        key "domainName": str
-        key "enabled": bool
-        domain_name: str
-        enabled: bool
-
-
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfile(TypedDict, total=False):
-        key "applicationLoadBalancer": ForwardRef('ManagedClusterIngressProfileApplicationLoadBalancer', module='types')
         key "gatewayAPI": ForwardRef('ManagedClusterIngressProfileGatewayConfiguration', module='types')
         key "webAppRouting": ForwardRef('ManagedClusterIngressProfileWebAppRouting', module='types')
-        application_load_balancer: ManagedClusterIngressProfileApplicationLoadBalancer
         gateway_api: ManagedClusterIngressProfileGatewayConfiguration
         web_app_routing: ManagedClusterIngressProfileWebAppRouting
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterIngressProfileApplicationLoadBalancer(TypedDict, total=False):
-        key "enabled": bool
-        key "identity": ForwardRef('UserAssignedIdentity', module='types')
-        enabled: bool
-        identity: UserAssignedIdentity
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfileGatewayConfiguration(TypedDict, total=False):
@@ -11059,12 +7483,10 @@ namespace azure.mgmt.containerservice.types
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfileWebAppRouting(TypedDict, total=False):
-        key "defaultDomain": ForwardRef('ManagedClusterIngressDefaultDomainProfile', module='types')
         key "enabled": bool
         key "gatewayAPIImplementations": ForwardRef('ManagedClusterWebAppRoutingGatewayAPIImplementations', module='types')
         key "identity": ForwardRef('UserAssignedIdentity', module='types')
         key "nginx": ForwardRef('ManagedClusterIngressProfileNginx', module='types')
-        default_domain: ManagedClusterIngressDefaultDomainProfile
         dnsZoneResourceIds: list[str]
         dns_zone_resource_ids: list[str]
         enabled: bool
@@ -11076,7 +7498,6 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterLoadBalancerProfile(TypedDict, total=False):
         key "allocatedOutboundPorts": int
         key "backendPoolType": Union[str, BackendPoolType]
-        key "clusterServiceLoadBalancerHealthProbeMode": Union[str, ClusterServiceLoadBalancerHealthProbeMode]
         key "enableMultipleStandardLoadBalancers": bool
         key "idleTimeoutInMinutes": int
         key "managedOutboundIPs": ForwardRef('ManagedClusterLoadBalancerProfileManagedOutboundIPs', module='types')
@@ -11084,7 +7505,6 @@ namespace azure.mgmt.containerservice.types
         key "outboundIPs": ForwardRef('ManagedClusterLoadBalancerProfileOutboundIPs', module='types')
         allocated_outbound_ports: int
         backend_pool_type: Union[str, BackendPoolType]
-        cluster_service_load_balancer_health_probe_mode: Union[str, ClusterServiceLoadBalancerHealthProbeMode]
         effectiveOutboundIPs: list[ResourceReference]
         effective_outbound_i_ps: list[ResourceReference]
         enable_multiple_standard_load_balancers: bool
@@ -11113,9 +7533,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterManagedOutboundIPProfile(TypedDict, total=False):
         key "count": int
-        key "countIPv6": int
         count: int
-        count_i_pv6: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterMetricsProfile(TypedDict, total=False):
@@ -11126,24 +7544,10 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfile(TypedDict, total=False):
         key "idleTimeoutInMinutes": int
         key "managedOutboundIPProfile": ForwardRef('ManagedClusterManagedOutboundIPProfile', module='types')
-        key "outboundIPPrefixes": ForwardRef('ManagedClusterNATGatewayProfileOutboundIpPrefixes', module='types')
-        key "outboundIPs": ForwardRef('ManagedClusterNATGatewayProfileOutboundIPs', module='types')
         effectiveOutboundIPs: list[ResourceReference]
         effective_outbound_i_ps: list[ResourceReference]
         idle_timeout_in_minutes: int
         managed_outbound_ip_profile: ManagedClusterManagedOutboundIPProfile
-        outbound_i_ps: ManagedClusterNATGatewayProfileOutboundIPs
-        outbound_ip_prefixes: ManagedClusterNATGatewayProfileOutboundIpPrefixes
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfileOutboundIPs(TypedDict, total=False):
-        publicIPs: list[str]
-        public_i_ps: list[str]
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfileOutboundIpPrefixes(TypedDict, total=False):
-        publicIPPrefixes: list[str]
-        public_ip_prefixes: list[str]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNodeProvisioningProfile(TypedDict, total=False):
@@ -11229,18 +7633,13 @@ namespace azure.mgmt.containerservice.types
         key "azureMonitorProfile": ForwardRef('ManagedClusterAzureMonitorProfile', module='types')
         key "azurePortalFQDN": str
         key "bootstrapProfile": ForwardRef('ManagedClusterBootstrapProfile', module='types')
-        key "controlPlaneScalingProfile": ForwardRef('ManagedClusterControlPlaneScalingProfile', module='types')
-        key "creationData": ForwardRef('CreationData', module='types')
         key "currentKubernetesVersion": str
         key "disableLocalAccounts": bool
         key "diskEncryptionSetID": str
         key "dnsPrefix": str
-        key "enableFIPS": bool
-        key "enableNamespaceResources": bool
         key "enableRBAC": bool
         key "fqdn": str
         key "fqdnSubdomain": str
-        key "healthMonitorProfile": ForwardRef('ManagedClusterHealthMonitorProfile', module='types')
         key "hostedSystemProfile": ForwardRef('ManagedClusterHostedSystemProfile', module='types')
         key "httpProxyConfig": ForwardRef('ManagedClusterHTTPProxyConfig', module='types')
         key "ingressProfile": ForwardRef('ManagedClusterIngressProfile', module='types')
@@ -11249,7 +7648,6 @@ namespace azure.mgmt.containerservice.types
         key "maxAgentPools": int
         key "metricsProfile": ForwardRef('ManagedClusterMetricsProfile', module='types')
         key "networkProfile": ForwardRef('ContainerServiceNetworkProfile', module='types')
-        key "nodeDisruptionProfile": ForwardRef('NodeDisruptionProfile', module='types')
         key "nodeProvisioningProfile": ForwardRef('ManagedClusterNodeProvisioningProfile', module='types')
         key "nodeResourceGroup": str
         key "nodeResourceGroupProfile": ForwardRef('ManagedClusterNodeResourceGroupProfile', module='types')
@@ -11282,18 +7680,13 @@ namespace azure.mgmt.containerservice.types
         azure_monitor_profile: ManagedClusterAzureMonitorProfile
         azure_portal_fqdn: str
         bootstrap_profile: ManagedClusterBootstrapProfile
-        control_plane_scaling_profile: ManagedClusterControlPlaneScalingProfile
-        creation_data: CreationData
         current_kubernetes_version: str
         disable_local_accounts: bool
         disk_encryption_set_id: str
         dns_prefix: str
-        enable_fips: bool
-        enable_namespace_resources: bool
         enable_rbac: bool
         fqdn: str
         fqdn_subdomain: str
-        health_monitor_profile: ManagedClusterHealthMonitorProfile
         hosted_system_profile: ManagedClusterHostedSystemProfile
         http_proxy_config: ManagedClusterHTTPProxyConfig
         identityProfile: dict[str, UserAssignedIdentity]
@@ -11304,7 +7697,6 @@ namespace azure.mgmt.containerservice.types
         max_agent_pools: int
         metrics_profile: ManagedClusterMetricsProfile
         network_profile: ContainerServiceNetworkProfile
-        node_disruption_profile: NodeDisruptionProfile
         node_provisioning_profile: ManagedClusterNodeProvisioningProfile
         node_resource_group: str
         node_resource_group_profile: ManagedClusterNodeResourceGroupProfile
@@ -11372,17 +7764,6 @@ namespace azure.mgmt.containerservice.types
         skip_nodes_with_system_pods: str
 
 
-    class azure.mgmt.containerservice.types.ManagedClusterPropertiesForSnapshot(TypedDict, total=False):
-        key "enableRbac": bool
-        key "kubernetesVersion": str
-        key "networkProfile": ForwardRef('NetworkProfileForSnapshot', module='types')
-        key "sku": ForwardRef('ManagedClusterSKU', module='types')
-        enable_rbac: bool
-        kubernetes_version: str
-        network_profile: NetworkProfileForSnapshot
-        sku: ManagedClusterSKU
-
-
     class azure.mgmt.containerservice.types.ManagedClusterSKU(TypedDict, total=False):
         key "name": Union[str, ManagedClusterSKUName]
         key "tier": Union[str, ManagedClusterSKUTier]
@@ -11394,20 +7775,12 @@ namespace azure.mgmt.containerservice.types
         key "azureKeyVaultKms": ForwardRef('AzureKeyVaultKms', module='types')
         key "defender": ForwardRef('ManagedClusterSecurityProfileDefender', module='types')
         key "imageCleaner": ForwardRef('ManagedClusterSecurityProfileImageCleaner', module='types')
-        key "imageIntegrity": ForwardRef('ManagedClusterSecurityProfileImageIntegrity', module='types')
-        key "kubernetesResourceObjectEncryptionProfile": ForwardRef('KubernetesResourceObjectEncryptionProfile', module='types')
-        key "nodeRestriction": ForwardRef('ManagedClusterSecurityProfileNodeRestriction', module='types')
-        key "serviceAccountImagePullProfile": ForwardRef('ServiceAccountImagePullProfile', module='types')
         key "workloadIdentity": ForwardRef('ManagedClusterSecurityProfileWorkloadIdentity', module='types')
         azure_key_vault_kms: AzureKeyVaultKms
         customCATrustCertificates: list[str]
         custom_ca_trust_certificates: list[str]
         defender: ManagedClusterSecurityProfileDefender
         image_cleaner: ManagedClusterSecurityProfileImageCleaner
-        image_integrity: ManagedClusterSecurityProfileImageIntegrity
-        kubernetes_resource_object_encryption_profile: KubernetesResourceObjectEncryptionProfile
-        node_restriction: ManagedClusterSecurityProfileNodeRestriction
-        service_account_image_pull_profile: ServiceAccountImagePullProfile
         workload_identity: ManagedClusterSecurityProfileWorkloadIdentity
 
 
@@ -11447,16 +7820,6 @@ namespace azure.mgmt.containerservice.types
         interval_hours: int
 
 
-    class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileImageIntegrity(TypedDict, total=False):
-        key "enabled": bool
-        enabled: bool
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileNodeRestriction(TypedDict, total=False):
-        key "enabled": bool
-        enabled: bool
-
-
     class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileWorkloadIdentity(TypedDict, total=False):
         key "enabled": bool
         enabled: bool
@@ -11467,31 +7830,6 @@ namespace azure.mgmt.containerservice.types
         key "secret": str
         client_id: str
         secret: str
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterSnapshot(TrackedResource):
-        key "id": str
-        key "location": Required[str]
-        key "name": str
-        key "properties": ForwardRef('ManagedClusterSnapshotProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: ManagedClusterSnapshotProperties
-        system_data: SystemData
-        tags: dict[str, str]
-        type: str
-
-
-    class azure.mgmt.containerservice.types.ManagedClusterSnapshotProperties(TypedDict, total=False):
-        key "creationData": ForwardRef('CreationData', module='types')
-        key "managedClusterPropertiesReadOnly": ForwardRef('ManagedClusterPropertiesForSnapshot', module='types')
-        key "snapshotType": Union[str, SnapshotType]
-        creation_data: CreationData
-        managed_cluster_properties_read_only: ManagedClusterPropertiesForSnapshot
-        snapshot_type: Union[str, SnapshotType]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterStaticEgressGatewayProfile(TypedDict, total=False):
@@ -11566,9 +7904,7 @@ namespace azure.mgmt.containerservice.types
 
 
     class azure.mgmt.containerservice.types.ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(TypedDict, total=False):
-        key "addonAutoscaling": Union[str, AddonAutoscaling]
         key "enabled": Required[bool]
-        addon_autoscaling: Union[str, AddonAutoscaling]
         enabled: bool
 
 
@@ -11604,39 +7940,6 @@ namespace azure.mgmt.containerservice.types
         size: str
 
 
-    class azure.mgmt.containerservice.types.MeshMembership(ProxyResource):
-        key "eTag": str
-        key "id": str
-        key "managedBy": str
-        key "name": str
-        key "properties": ForwardRef('MeshMembershipProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        e_tag: str
-        id: str
-        managed_by: str
-        name: str
-        properties: MeshMembershipProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.containerservice.types.MeshMembershipPrivateConnectProfile(TypedDict, total=False):
-        key "privateIpAddress": str
-        key "subnetResourceId": str
-        private_ip_address: str
-        subnet_resource_id: str
-
-
-    class azure.mgmt.containerservice.types.MeshMembershipProperties(TypedDict, total=False):
-        key "managedMeshID": Required[str]
-        key "privateConnectProfile": ForwardRef('MeshMembershipPrivateConnectProfile', module='types')
-        key "provisioningState": Union[str, MeshMembershipProvisioningState]
-        managed_mesh_id: str
-        private_connect_profile: MeshMembershipPrivateConnectProfile
-        provisioning_state: Union[str, MeshMembershipProvisioningState]
-
-
     class azure.mgmt.containerservice.types.NamespaceProperties(TypedDict, total=False):
         key "adoptionPolicy": Union[str, AdoptionPolicy]
         key "defaultNetworkPolicy": ForwardRef('NetworkPolicies', module='types')
@@ -11661,31 +7964,6 @@ namespace azure.mgmt.containerservice.types
         ingress: Union[str, PolicyRule]
 
 
-    class azure.mgmt.containerservice.types.NetworkProfileForSnapshot(TypedDict, total=False):
-        key "loadBalancerSku": Union[str, LoadBalancerSku]
-        key "networkMode": Union[str, NetworkMode]
-        key "networkPlugin": Union[str, NetworkPlugin]
-        key "networkPluginMode": Union[str, NetworkPluginMode]
-        key "networkPolicy": Union[str, NetworkPolicy]
-        load_balancer_sku: Union[str, LoadBalancerSku]
-        network_mode: Union[str, NetworkMode]
-        network_plugin: Union[str, NetworkPlugin]
-        network_plugin_mode: Union[str, NetworkPluginMode]
-        network_policy: Union[str, NetworkPolicy]
-
-
-    class azure.mgmt.containerservice.types.NodeDisruptionProfile(TypedDict, total=False):
-        key "nodeDisruptionPolicy": Union[str, NodeDisruptionPolicy]
-        node_disruption_policy: Union[str, NodeDisruptionPolicy]
-
-
-    class azure.mgmt.containerservice.types.NvidiaGPUProfile(TypedDict, total=False):
-        key "managementMode": Union[str, ManagementMode]
-        key "migStrategy": Union[str, MigStrategy]
-        management_mode: Union[str, ManagementMode]
-        mig_strategy: Union[str, MigStrategy]
-
-
     class azure.mgmt.containerservice.types.PortRange(TypedDict, total=False):
         key "portEnd": int
         key "portStart": int
@@ -11698,11 +7976,6 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.PowerState(TypedDict, total=False):
         key "code": Union[str, Code]
         code: Union[str, Code]
-
-
-    class azure.mgmt.containerservice.types.PreparedImageSpecificationProfile(TypedDict, total=False):
-        key "preparedImageSpecificationId": str
-        prepared_image_specification_id: str
 
 
     class azure.mgmt.containerservice.types.PrivateEndpoint(TypedDict, total=False):
@@ -11763,11 +8036,6 @@ namespace azure.mgmt.containerservice.types
         name: str
         system_data: SystemData
         type: str
-
-
-    class azure.mgmt.containerservice.types.RebalanceLoadBalancersRequestBody(TypedDict, total=False):
-        loadBalancerNames: list[str]
-        load_balancer_names: list[str]
 
 
     class azure.mgmt.containerservice.types.RelativeMonthlySchedule(TypedDict, total=False):
@@ -11839,13 +8107,6 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.SchedulerProfile(TypedDict, total=False):
         key "upstream": ForwardRef('SchedulerInstanceProfile', module='types')
         upstream: SchedulerInstanceProfile
-
-
-    class azure.mgmt.containerservice.types.ServiceAccountImagePullProfile(TypedDict, total=False):
-        key "defaultManagedIdentityId": str
-        key "enabled": bool
-        default_managed_identity_id: str
-        enabled: bool
 
 
     class azure.mgmt.containerservice.types.ServiceMeshProfile(TypedDict, total=False):
