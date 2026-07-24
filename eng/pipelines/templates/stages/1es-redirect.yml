@@ -40,10 +40,7 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      ${{ if eq(variables['Build.DefinitionName'], 'python - pullrequest') }}:
-        networkIsolationPolicy: Permissive
-      ${{ else }}:
-        networkIsolationPolicy: Permissive, CFSClean
+      networkIsolationPolicy: Permissive
     ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
       featureFlags:
         autoBaseline: false
