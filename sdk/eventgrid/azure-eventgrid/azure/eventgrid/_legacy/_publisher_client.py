@@ -133,8 +133,9 @@ class EventGridPublisherClient(object):
             RetryPolicy(**kwargs),
             auth_policy,
             # Strip credential headers on cross-host redirects to avoid leaking them to
-            # a redirect target. The default policy only covers `Authorization`; the
-            # Event Grid SAS headers (`aeg-sas-key`/`aeg-sas-token`) must be added.
+            # a redirect target. `SensitiveHeaderCleanupPolicy` already covers
+            # `Authorization` and `x-ms-authorization-auxiliary` by default; the Event
+            # Grid SAS headers (`aeg-sas-key`/`aeg-sas-token`) are added here as well.
             SensitiveHeaderCleanupPolicy(
                 blocked_redirect_headers=[
                     "Authorization",
