@@ -129,11 +129,18 @@ class PipelineComponentBatchDeployment(BatchDeployment):
 
     @classmethod
     def _from_rest_object(cls, deployment: RestBatchDeployment) -> "PipelineComponentBatchDeployment":
+        # The arm_ml_service model is a MutableMapping and exposes untyped wire keys via ``.get``; the
+        # legacy msrest model exposed the same extra keys via ``additional_properties``.
+        deployment_config = (
+            deployment.properties.additional_properties.get("deploymentConfiguration", {})
+            if hasattr(deployment.properties, "additional_properties")
+            else deployment.properties.get("deploymentConfiguration", {})
+        )
         return PipelineComponentBatchDeployment(
             name=deployment.name,
             tags=deployment.tags,
-            component=deployment.properties.additional_properties["deploymentConfiguration"]["componentId"]["assetId"],
-            settings=deployment.properties.additional_properties["deploymentConfiguration"]["settings"],
+            component=deployment_config["componentId"]["assetId"],
+            settings=deployment_config["settings"],
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
         )
 

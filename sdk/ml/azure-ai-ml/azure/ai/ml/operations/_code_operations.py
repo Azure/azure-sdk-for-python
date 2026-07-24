@@ -198,7 +198,9 @@ class CodeOperations(_ScopeDependentOperations):
                     **self._init_kwargs,
                 )
 
-            if not result:
+            if not result or getattr(result, "id", None) is None:
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 return self.get(name=name, version=version)
             return Code._from_rest_object(result)
         except Exception as ex:

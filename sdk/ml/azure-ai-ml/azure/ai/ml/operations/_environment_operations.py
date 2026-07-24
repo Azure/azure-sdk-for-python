@@ -211,7 +211,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._scope_kwargs,
                     **self._kwargs,
                 )
-            if not env_rest_obj and self._registry_name:
+            if self._registry_name and (env_rest_obj is None or getattr(env_rest_obj, "id", None) is None):
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 env_rest_obj = self._get(name=str(environment.name), version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
         except Exception as ex:  # pylint: disable=W0718

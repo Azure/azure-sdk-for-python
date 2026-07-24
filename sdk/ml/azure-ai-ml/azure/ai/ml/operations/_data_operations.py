@@ -428,7 +428,9 @@ class DataOperations(_ScopeDependentOperations):
                         **self._scope_kwargs,
                     )
 
-            if not result and self._registry_name:
+            if self._registry_name and (result is None or getattr(result, "id", None) is None):
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 result = self._get(name=name, version=version)
 
             return Data._from_rest_object(result)

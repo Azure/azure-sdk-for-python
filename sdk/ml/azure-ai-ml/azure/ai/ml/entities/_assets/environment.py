@@ -47,6 +47,11 @@ def _to_rest_inference_config(inference_config: Any) -> Any:
     arm hybrid model serializes a plain dict verbatim, so the routes must be wrapped in the arm
     ``InferenceContainerProperties`` model to preserve the wire. If it is already an arm model
     (e.g. produced by ``InferenceConfigSchema``), it is returned unchanged.
+
+    :param inference_config: The environment's inference config as a raw dict or an arm model.
+    :type inference_config: Any
+    :return: An arm ``InferenceContainerProperties`` model, or the input returned unchanged.
+    :rtype: Any
     """
     if inference_config is None or not isinstance(inference_config, dict):
         return inference_config

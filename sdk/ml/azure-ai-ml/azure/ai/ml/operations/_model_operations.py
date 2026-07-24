@@ -880,7 +880,11 @@ class ModelOperations(_ScopeDependentOperations):
         elif hasattr(package_out, "target_environment_id"):
             environment_id = package_out.target_environment_id
         else:
-            environment_id = package_out.additional_properties["targetEnvironmentId"]
+            environment_id = (
+                package_out.additional_properties["targetEnvironmentId"]
+                if hasattr(package_out, "additional_properties")
+                else package_out.get("targetEnvironmentId")
+            )
 
         pattern = r"azureml://locations/(\w+)/workspaces/([\w-]+)/environments/([\w.-]+)/versions/(\d+)"
         parsed_id: Any = re.search(pattern, environment_id)  # type: ignore[arg-type]
