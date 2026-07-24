@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2026-05-02-preview/ManagedNamespacesDelete.json
+# x-ms-original-file: 2026-05-01/ManagedNamespacesDelete.json
 if __name__ == "__main__":
     main()
