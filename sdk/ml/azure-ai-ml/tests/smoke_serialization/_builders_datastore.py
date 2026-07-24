@@ -18,6 +18,8 @@ from azure.ai.ml.entities import (
     ServicePrincipalConfiguration,
 )
 from azure.ai.ml.entities._datastore.one_lake import LakeHouseArtifact, OneLakeDatastore
+from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
+from azure.ai.ml.entities._datastore._on_prem_credentials import KerberosPasswordCredentials
 
 
 def build_blob_datastore_account_key():
@@ -132,6 +134,21 @@ def build_blob_datastore_none_credential():
     )
 
 
+def build_hdfs_datastore_kerberos_password():
+    """HdfsDatastore (arm-absent, hand-built JSON-direct wire) with Kerberos password credentials."""
+    return HdfsDatastore(
+        name="smoke-hdfs-ds",
+        name_node_address="hdfs-namenode.smoke.local",
+        protocol="https",
+        credentials=KerberosPasswordCredentials(
+            kerberos_realm="SMOKE.LOCAL",
+            kerberos_kdc_address="kdc.smoke.local",
+            kerberos_principal="smoke@SMOKE.LOCAL",
+            kerberos_password="smoke-kerberos-password",
+        ),
+    )
+
+
 DATASTORE_BUILDERS = {
     "blob_datastore_account_key": build_blob_datastore_account_key,
     "blob_datastore_sas": build_blob_datastore_sas,
@@ -141,4 +158,5 @@ DATASTORE_BUILDERS = {
     "adls_gen2_datastore": build_adls_gen2_datastore,
     "adls_gen2_datastore_certificate": build_adls_gen2_datastore_certificate,
     "one_lake_datastore": build_one_lake_datastore,
+    "hdfs_datastore_kerberos_password": build_hdfs_datastore_kerberos_password,
 }
