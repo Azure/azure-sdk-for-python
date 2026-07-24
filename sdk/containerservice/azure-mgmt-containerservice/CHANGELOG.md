@@ -1,5 +1,19 @@
 # Release History
 
+## 41.4.0 (2026-07-24)
+
+### Features Added
+
+  - Model `ManagedClusterProperties` added property `scheduler_profile`
+  - Model `ManagedClusterSecurityProfileDefender` added property `security_gating`
+  - Model `ScaleProfile` added property `autoscale`
+  - Added model `AutoScaleProfile`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGating`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentity`
+  - Added enum `SchedulerConfigMode`
+  - Added model `SchedulerInstanceProfile`
+  - Added model `SchedulerProfile`
+
 ## 42.0.0 (2026-07-23)
 
 ### Breaking Changes
