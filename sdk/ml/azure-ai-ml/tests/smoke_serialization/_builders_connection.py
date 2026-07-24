@@ -16,8 +16,18 @@ from azure.ai.ml.entities import (
     AzureAISearchConnection,
     AzureAIServicesConnection,
 )
-from azure.ai.ml.entities._credentials import AccountKeyConfiguration
-from azure.ai.ml.entities._workspace.connections.connection_subtypes import AzureBlobStoreConnection
+from azure.ai.ml.entities._credentials import AadCredentialConfiguration, AccountKeyConfiguration
+from azure.ai.ml.entities._workspace.connections.connection_subtypes import (
+    APIKeyConnection,
+    AzureBlobStoreConnection,
+    AzureContentSafetyConnection,
+    AzureSpeechServicesConnection,
+    MicrosoftOneLakeConnection,
+    OpenAIConnection,
+    SerpConnection,
+    ServerlessConnection,
+)
+from azure.ai.ml.entities._workspace.connections.one_lake_artifacts import OneLakeConnectionArtifact
 
 
 def build_azure_open_ai_connection_api_key():
@@ -76,10 +86,74 @@ def build_azure_blob_store_connection():
     )
 
 
+def build_api_key_connection():
+    """APIKeyConnection to a generic API base."""
+    return APIKeyConnection(
+        name="smoke-apikey-conn",
+        api_base="https://smoke-api.example.com/v1",
+        api_key="smoke-generic-api-key",
+    )
+
+
+def build_open_ai_connection():
+    """OpenAIConnection (non-Azure OpenAI) with an API key."""
+    return OpenAIConnection(name="smoke-openai-conn", api_key="smoke-openai-api-key")
+
+
+def build_serp_connection():
+    """SerpConnection with an API key."""
+    return SerpConnection(name="smoke-serp-conn", api_key="smoke-serp-api-key")
+
+
+def build_serverless_connection():
+    """ServerlessConnection to a MaaS endpoint with an API key."""
+    return ServerlessConnection(
+        name="smoke-serverless-conn",
+        endpoint="https://smoke-maas.eastus.models.ai.azure.com",
+        api_key="smoke-serverless-api-key",
+    )
+
+
+def build_content_safety_connection():
+    """AzureContentSafetyConnection with an API key."""
+    return AzureContentSafetyConnection(
+        name="smoke-contentsafety-conn",
+        endpoint="https://smoke-contentsafety.cognitiveservices.azure.com/",
+        api_key="smoke-contentsafety-api-key",
+    )
+
+
+def build_speech_services_connection():
+    """AzureSpeechServicesConnection with an API key."""
+    return AzureSpeechServicesConnection(
+        name="smoke-speech-conn",
+        endpoint="https://smoke-speech.cognitiveservices.azure.com/",
+        api_key="smoke-speech-api-key",
+    )
+
+
+def build_one_lake_connection():
+    """MicrosoftOneLakeConnection with a OneLake artifact."""
+    return MicrosoftOneLakeConnection(
+        name="smoke-onelake-conn",
+        endpoint="https://onelake.dfs.fabric.microsoft.com",
+        one_lake_workspace_name="smoke-onelake-workspace",
+        artifact=OneLakeConnectionArtifact(name="smoke-lakehouse.Lakehouse"),
+        credentials=AadCredentialConfiguration(),
+    )
+
+
 CONNECTION_BUILDERS = {
     "connection_azure_open_ai_api_key": build_azure_open_ai_connection_api_key,
     "connection_azure_open_ai_entra": build_azure_open_ai_connection_entra,
     "connection_azure_ai_search": build_azure_ai_search_connection,
     "connection_azure_ai_services": build_azure_ai_services_connection,
     "connection_azure_blob_store": build_azure_blob_store_connection,
+    "connection_api_key": build_api_key_connection,
+    "connection_open_ai": build_open_ai_connection,
+    "connection_serp": build_serp_connection,
+    "connection_serverless": build_serverless_connection,
+    "connection_content_safety": build_content_safety_connection,
+    "connection_speech_services": build_speech_services_connection,
+    "connection_one_lake": build_one_lake_connection,
 }
