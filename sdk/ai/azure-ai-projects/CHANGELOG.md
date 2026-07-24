@@ -23,6 +23,8 @@ Breaking changes in beta methods:
 
 ### Sample updates
 
+* Added new optimization polling samples `sample_optimization_job_basic_polling.py` and `sample_optimization_job_basic_polling_async.py` under `samples/agents/optimization/`.
+* Added new evaluation samples `sample_endpoint_evaluator_with_api_key.py` and `sample_endpoint_evaluator_with_entra_id.py` under `samples/evaluations/`.
 * Added new Hosted Agent sample `sample_agent_user_identity_isolation.py` under `samples/hosted_agents/`, demonstrating per-user response-chain isolation with delegated end-user identities sent in the `x-ms-user-identity` header.
 * Added new Hosted Agent routine samples `sample_routines_with_github_issue_trigger.py` and `sample_routines_with_teams_message_trigger.py`, demonstrating GitHub issue and Microsoft Teams channel-message triggers for routines backed by a temporary Hosted Agent version.
 * Added new Hosted Agent sample `sample_toolbox_with_reminder_preview.py` under `samples/hosted_agents/`, demonstrating a Reminder Preview toolbox tool wired through a Foundry Toolbox MCP endpoint.
@@ -30,6 +32,7 @@ Breaking changes in beta methods:
 * Renamed the Hosted Agent image-based creation samples from `sample_create_hosted_agent.py` and `sample_create_hosted_agent_async.py` to `sample_create_hosted_agent_from_image.py` and `sample_create_hosted_agent_from_image_async.py`.
 * Relocated Hosted Agent routine trigger samples `sample_routines_with_dispatch.py`, `sample_routines_with_schedule_trigger.py`, and `sample_routines_with_timer_trigger.py` from `samples/routines/` to `samples/hosted_agents/`.
 * Removed Hosted Agent endpoint samples `sample_agent_endpoint.py` and `sample_agent_endpoint_async.py`.
+* Removed routine sample `samples/routines/sample_routines_crud.py`.
 * Removed prompt-agent toolbox skill sample `samples/agents/tools/sample_agent_toolbox_skill.py` because skill-in-toolbox is not yet supported in Prompt Agents.
 * Updated Hosted Agent toolbox samples to create temporary Hosted Agent versions for execution flows, assign Azure AI User RBAC before invoking Toolbox MCP endpoints, restore the prior endpoint, and clean up temporary resources during teardown.
 
