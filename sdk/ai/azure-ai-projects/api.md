@@ -8871,7 +8871,6 @@ namespace azure.ai.projects.models
         SHELL = "shell"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         TOOL_SEARCH = "tool_search"
-        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WEB_SEARCH_PREVIEW = "web_search_preview"
         WORK_IQ_PREVIEW = "work_iq_preview"
@@ -9010,7 +9009,6 @@ namespace azure.ai.projects.models
         REMINDER_PREVIEW = "reminder_preview"
         TOOLBOX_SEARCH = "toolbox_search"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
-        WEB_IQ_PREVIEW = "web_iq_preview"
         WEB_SEARCH = "web_search"
         WORK_IQ_PREVIEW = "work_iq_preview"
 
@@ -9282,54 +9280,6 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         FIXED_RATIO = "FixedRatio"
-
-
-    class azure.ai.projects.models.WebIQPreviewTool(Tool, discriminator='web_iq_preview'):
-        project_connection_id: str
-        require_approval: Optional[Union[MCPToolRequireApproval, str]]
-        server_label: Optional[str]
-        server_url: Optional[str]
-        type: Literal[ToolType.WEB_IQ_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
-                server_label: Optional[str] = ..., 
-                server_url: Optional[str] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
-
-
-    class azure.ai.projects.models.WebIQPreviewToolboxTool(ToolboxTool, discriminator='web_iq_preview'):
-        description: str
-        name: str
-        project_connection_id: str
-        require_approval: Optional[Union[MCPToolRequireApproval, str]]
-        server_label: Optional[str]
-        server_url: Optional[str]
-        tool_configs: dict[str, ToolConfig]
-        type: Literal[ToolboxToolType.WEB_IQ_PREVIEW]
-
-        @overload
-        def __init__(
-                self, 
-                *, 
-                description: Optional[str] = ..., 
-                name: Optional[str] = ..., 
-                project_connection_id: str, 
-                require_approval: Optional[Union[MCPToolRequireApproval, str]] = ..., 
-                server_label: Optional[str] = ..., 
-                server_url: Optional[str] = ..., 
-                tool_configs: Optional[dict[str, ToolConfig]] = ...
-            ) -> None: ...
-
-        @overload
-        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.WebSearchApproximateLocation(_Model):

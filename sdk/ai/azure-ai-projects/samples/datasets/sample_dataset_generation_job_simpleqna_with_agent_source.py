@@ -161,7 +161,8 @@ with (
         )
         print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
         job_result = project_client.beta.datasets.begin_create_generation_job(
-            job=job, polling_interval=poll_interval_seconds,
+            job=job,
+            polling_interval=poll_interval_seconds,
         ).result()
 
         # Locate the Dataset output produced by the job.

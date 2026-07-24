@@ -180,11 +180,7 @@ with (
     # `train_split=0.8` produces two Azure OpenAI files: a training partition
     # and a validation partition. Both are emitted as FileDataGenerationJobOutput
     # entries in `job_result.outputs`.
-    file_outputs = [
-        output
-        for output in (job_result.outputs or [])
-        if isinstance(output, FileDataGenerationJobOutput)
-    ]
+    file_outputs = [output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)]
     if not file_outputs:
         raise RuntimeError("The data generation job did not produce any file outputs.")
 
