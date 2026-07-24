@@ -126,3 +126,50 @@ async def test_credentials_not_leaked_on_cross_host_redirect_async(credential, c
 
     assert transport.redirected_headers is not None, "cross-host redirect was not followed"
     assert not transport.redirected_headers.get(cred_header)
+
+
+@pytest.mark.parametrize("credential, cred_header, cred_value", CREDENTIAL_CASES)
+def test_credentials_not_leaked_on_redirect_then_retry(credential, cred_header, cred_value):
+    """A retry after a cross-host redirect (301 -> 500 -> 200) must not re-leak the credential.
+
+    Requires azure-core >= 1.38.3, which persists the ``insecure_domain_change`` flag across
+    retries so the cleanup keeps stripping the credential re-added by the auth policy.
+    """
+
+    class MockTransport(HttpTransport):
+        def __init__(self):
+            self.calls = 0
+            self.post_redirect_headers = []
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def close(self):
+            pass
+
+        def open(self):
+            pass
+
+        def send(self, request, **kwargs):
+            self.calls += 1
+            if self.calls == 1:
+                assert request.headers.get(cred_header) == cred_value
+                return _redirect_response()
+            # Every request to the redirected host - including the retry - must be clean.
+            self.post_redirect_headers.append(request.headers.get(cred_header))
+            if self.calls == 2:
+                retryable = Response()
+                retryable.status_code = 500
+                return retryable
+            return _ok_response()
+
+    transport = MockTransport()
+    policies = EventGridPublisherClient._policies(credential, retry_backoff_factor=0)
+    pipeline = Pipeline(transport=transport, policies=policies)
+    pipeline.run(HttpRequest("POST", ORIGINAL_URL))
+
+    assert transport.calls >= 3, "expected a redirect followed by a retry"
+    assert not any(transport.post_redirect_headers)
