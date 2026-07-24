@@ -3367,6 +3367,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id)
 
         # Check if the overlapping ranges can be populated
+        #
+        # Complete partition keys are classified upstream in
+        # container.py::query_items and routed via the PartitionKey request
+        # header on __Post. Do NOT re-add an EPK conversion for complete keys
+        # here: it drops the PartitionKey header and defeats the server-side
+        # index-only aggregate (COUNT/etc.), causing a full partition scan.
+        # Only feed ranges and hierarchical-prefix keys belong on the EPK path
+        # below. Note the sync classifier lives in container.py while the async
+        # twin classifies inside __QueryFeed, so do not mirror the async branch
+        # into this file.
+        #
+        # The container_properties pop below is a no-op in production (nothing
+        # sets that kwarg anymore); it is retained solely as a test API shim.
         feed_range_epk = None
         kwargs.pop("container_properties", None)
         if "feed_range" in kwargs:

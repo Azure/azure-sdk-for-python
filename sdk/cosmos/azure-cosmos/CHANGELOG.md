@@ -7,7 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`.
+* Fixed complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`. See [PR 48237](https://github.com/Azure/azure-sdk-for-python/pull/48237)
 
 #### Other Changes
 
