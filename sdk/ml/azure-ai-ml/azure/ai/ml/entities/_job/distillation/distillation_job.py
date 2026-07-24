@@ -417,15 +417,27 @@ class DistillationJob(Job, JobIOMixin):
 
         self._add_distillation_properties(self.properties)
 
+        # The v2024_01 msrest FineTuningJob typed ``properties`` as Dict[str, str] and coerced every value
+        # to a string on the wire (e.g. True -> "True", 0.8 -> "0.8", 100 -> "100"). The shared
+        # arm_ml_service model preserves native value types, so stringify the whole bag here to keep the
+        # serialized body byte-identical. The in-memory entity keeps the native values; ``_from_rest_object``
+        # restores them via ``_coerce_property_value``.
+        rest_properties = (
+            {key: str(value) for key, value in self.properties.items()} if self.properties else self.properties
+        )
+
         finetuning_job = RestFineTuningJob(
             display_name=self.display_name,
             description=self.description,
             experiment_name=self.experiment_name,
             services=self.services,
             tags=self.tags,
-            properties=self.properties,
+            properties=rest_properties,
             fine_tuning_details=distillation,
             outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service model defaults is_archived to None (omitted on the wire), but the
+            # pre-migration msrest model emitted ``isArchived: false``; set it to stay byte-identical.
+            is_archived=False,
         )
 
         result = RestJobBase(properties=finetuning_job)
