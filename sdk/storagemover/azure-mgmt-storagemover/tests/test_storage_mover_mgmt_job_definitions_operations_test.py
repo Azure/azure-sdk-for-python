@@ -121,6 +121,7 @@ AWS_PUBLIC_S3_BUCKET_ID = (
 STORAGE_BLOB_DATA_CONTRIBUTOR_ROLE_DEF_GUID = "ba92f5b4-2d11-453d-a403-e96b0029c9fe"
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient)
@@ -181,7 +182,6 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     # Connection / PrivateLinkService approval — the public bucket is reachable
     # via the MCC directly.
 
-    @pytest.mark.live_test_only
     @_SKIP_IF_CROSS_SUB_CLIENTS_OLD
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy
@@ -395,7 +395,6 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     # ----- JobDefinitionScheduleTests.CreateJobDefinitionWithWeeklyScheduleTest -----
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_with_weekly_schedule(self, resource_group, **kwargs):
@@ -467,7 +466,6 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     # ----- JobDefinitionScheduleTests.CreateJobDefinitionWithDailyScheduleAndPreservePermissionsTest -----
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_with_daily_schedule_and_preserve_permissions(self, resource_group, **kwargs):
@@ -525,7 +523,6 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
 
     # ----- JobDefinitionScheduleTests.CreateJobDefinitionWithOnetimeScheduleTest -----
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_create_with_onetime_schedule(self, resource_group, **kwargs):
@@ -593,7 +590,6 @@ class TestStorageMoverMgmtJobDefinitionsOperations(AzureMgmtRecordedTestCase):
     # See the "Porter's reference" callout in the cross-language playbook
     # (storage-mover-scenario-tests-cross-language) for the canonical step-by-step.
 
-    @pytest.mark.live_test_only
     @_SKIP_IF_CROSS_SUB_CLIENTS_OLD
     @RandomNameResourceGroupPreparer(location=WCUS_LOCATION)
     @recorded_by_proxy

@@ -20,6 +20,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 AZURE_LOCATION = "eastus"
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(StorageMoverMgmtClient, is_async=True)
@@ -31,7 +32,6 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
             storage_mover={"location": AZURE_LOCATION},
         )
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_create_get_exists(self, resource_group):
@@ -75,7 +75,6 @@ class TestStorageMoverMgmtProjectsOperationsAsync(AzureMgmtRecordedTestCase):
                 project_name=project_name + "111",
             )
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_get_update_delete(self, resource_group):

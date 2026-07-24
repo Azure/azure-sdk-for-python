@@ -22,6 +22,7 @@ FAKE_STORAGE_ACCOUNT_ID = (
 )
 
 
+@pytest.mark.live_test_only
 class TestStorageMoverMgmtJobRunsOperations(AzureMgmtRecordedTestCase):
     """Read-only coverage for job_runs (list + get).
 
@@ -97,7 +98,6 @@ class TestStorageMoverMgmtJobRunsOperations(AzureMgmtRecordedTestCase):
     # cannot create one, so we cover the equivalent read paths: list returns an empty
     # page, and get on an unknown name raises ResourceNotFoundError.
 
-    @pytest.mark.live_test_only
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
     def test_get_exist(self, resource_group):
