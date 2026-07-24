@@ -101,6 +101,39 @@ class TestCanUseNativeUpload(unittest.TestCase):
         )
         self.assertFalse(result)
 
+    def test_rejects_stream_input(self):
+        """File-like stream inputs should fall back to the Python upload path."""
+        import io
+
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ):
+            result = _can_use_native_upload(
+                blob_type="BlockBlob",
+                encryption_options={},
+                validate_content=None,
+                data=io.BytesIO(b"test"),
+                credential=self._make_credential(),
+            )
+        self.assertFalse(result)
+
+    def test_accepts_in_memory_buffers(self):
+        """bytes/bytearray/memoryview/str payloads should be eligible for native upload."""
+        with patch(
+            "azure.storage.blob._transfer_native._is_native_available",
+            return_value=True,
+        ):
+            for data in (b"test", bytearray(b"test"), memoryview(b"test"), "test"):
+                result = _can_use_native_upload(
+                    blob_type="BlockBlob",
+                    encryption_options={},
+                    validate_content=None,
+                    data=data,
+                    credential=self._make_credential(),
+                )
+                self.assertTrue(result, f"expected {type(data).__name__} to be eligible")
+
 
 class TestCanUseNativeDownload(unittest.TestCase):
     """Tests for download acceleration eligibility checks."""
