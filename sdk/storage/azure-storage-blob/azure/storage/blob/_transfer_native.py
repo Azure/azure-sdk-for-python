@@ -130,15 +130,20 @@ def _can_use_native_upload(
     if kwargs.get("standard_blob_tier") or kwargs.get("premium_page_blob_tier"):
         return False
 
-    # Data must be convertible to bytes
-    if not isinstance(data, (bytes, bytearray, memoryview)):
-        if isinstance(data, str):
-            return True  # Will be encoded
-        if hasattr(data, "read"):
-            return True  # Readable stream
-        return False
+    # Native acceleration only handles data that is already fully in memory
+    # (bytes/bytearray/memoryview, or str which encodes to in-memory bytes).
+    # File-like streams are intentionally NOT eligible: reading them would
+    # materialize the entire payload in memory, which is unsafe for large blobs.
+    # The Python upload path streams such inputs in fixed-size chunks, so we
+    # fall back to it for anything that isn't already resident in memory.
+    if isinstance(data, (bytes, bytearray, memoryview, str)):
+        return True
 
-    return True
+    _LOGGER.debug(
+        "Native upload not eligible for %s input (streams use the Python upload path).",
+        type(data).__name__,
+    )
+    return False
 
 
 def _can_use_native_download(
@@ -228,16 +233,14 @@ def try_native_upload(
         # Prepare data as a buffer-protocol object. The native module accepts bytes,
         # bytearray, and contiguous memoryview directly (via PyBuffer), so we avoid an
         # extra Python-side copy for the non-bytes buffer types. Only str needs encoding.
+        # File-like streams are rejected by _can_use_native_upload (they use the Python
+        # path to avoid materializing large payloads in memory), so we don't handle them
+        # here.
         if isinstance(data, str):
             encoding = kwargs.get("encoding", "UTF-8")
             upload_data = data.encode(encoding)
         elif isinstance(data, (bytes, bytearray, memoryview)):
             upload_data = data
-        elif hasattr(data, "read"):
-            upload_data = data.read()
-            if not isinstance(upload_data, (bytes, bytearray, memoryview)):
-                _LOGGER.debug("Native upload data is a non-bytes stream; using Python upload path.")
-                return None  # Can't handle non-bytes streams natively
         else:
             _LOGGER.debug("Native upload data type unsupported; using Python upload path.")
             return None
