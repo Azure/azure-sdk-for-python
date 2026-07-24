@@ -20,6 +20,7 @@ from azure.core.pipeline.policies import (
     DistributedTracingPolicy,
     HttpLoggingPolicy,
     UserAgentPolicy,
+    SensitiveHeaderCleanupPolicy,
 )
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -131,6 +132,18 @@ class EventGridPublisherClient(object):
             RedirectPolicy(**kwargs),
             RetryPolicy(**kwargs),
             auth_policy,
+            # Strip credential headers on cross-host redirects to avoid leaking them to
+            # a redirect target. The default policy only covers `Authorization`; the
+            # Event Grid SAS headers (`aeg-sas-key`/`aeg-sas-token`) must be added.
+            SensitiveHeaderCleanupPolicy(
+                blocked_redirect_headers=[
+                    "Authorization",
+                    "x-ms-authorization-auxiliary",
+                    "aeg-sas-key",
+                    "aeg-sas-token",
+                ],
+                **kwargs,
+            ),
             CustomHookPolicy(**kwargs),
             NetworkTraceLoggingPolicy(**kwargs),
             DistributedTracingPolicy(**kwargs),
