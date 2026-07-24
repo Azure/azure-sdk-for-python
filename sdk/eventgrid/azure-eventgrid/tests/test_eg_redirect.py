@@ -33,6 +33,11 @@ class FakeTokenCredential(object):
         return AccessToken("fake-token", int(time.time()) + 3600)
 
 
+class AsyncFakeTokenCredential(object):
+    async def get_token(self, *scopes, **kwargs):
+        return AccessToken("fake-token", int(time.time()) + 3600)
+
+
 def _redirect_response():
     response = Response()
     response.status_code = 301
@@ -50,6 +55,14 @@ CREDENTIAL_CASES = [
     (AzureKeyCredential("my-secret-key"), "aeg-sas-key", "my-secret-key"),
     (AzureSasCredential("my-sas-token"), "aeg-sas-token", "my-sas-token"),
     (FakeTokenCredential(), "Authorization", "Bearer fake-token"),
+]
+
+# The async client wraps a `TokenCredential` in `AsyncBearerTokenCredentialPolicy`
+# which awaits `get_token`, so the async AAD case needs an async credential.
+ASYNC_CREDENTIAL_CASES = [
+    (AzureKeyCredential("my-secret-key"), "aeg-sas-key", "my-secret-key"),
+    (AzureSasCredential("my-sas-token"), "aeg-sas-token", "my-sas-token"),
+    (AsyncFakeTokenCredential(), "Authorization", "Bearer fake-token"),
 ]
 
 
@@ -91,7 +104,7 @@ def test_credentials_not_leaked_on_cross_host_redirect(credential, cred_header, 
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("credential, cred_header, cred_value", CREDENTIAL_CASES)
+@pytest.mark.parametrize("credential, cred_header, cred_value", ASYNC_CREDENTIAL_CASES)
 async def test_credentials_not_leaked_on_cross_host_redirect_async(credential, cred_header, cred_value):
     class MockAsyncTransport(AsyncHttpTransport):
         def __init__(self):
