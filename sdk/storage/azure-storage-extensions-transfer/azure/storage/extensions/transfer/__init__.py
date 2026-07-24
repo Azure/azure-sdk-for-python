@@ -52,6 +52,9 @@ def upload_blob(
     :param str blob: The blob name.
     :param data: The blob content to upload. Accepts any C-contiguous buffer-protocol
         object (``bytes``, ``bytearray``, or ``memoryview``); no copy to ``bytes`` is required.
+        The payload must already be fully in memory — this function does not accept
+        file-like streams. Large or streamed uploads should use the ``azure-storage-blob``
+        Python upload path, which streams data in fixed-size chunks.
     :type data: bytes or bytearray or memoryview
     :keyword str access_token: An OAuth access token for authentication.
         Not needed if account_url contains a SAS token.
