@@ -78,19 +78,21 @@ class AzureBlobStorage(GeneratedBlobClient):
 
         _endpoint = "{url}"
         self._config = BlobClientConfiguration(url=url, credential=credential, **kwargs)
+        # datalake uses a blob client pipeline, so we need to ensure that the RangeHeaderPolicy is present in the pipeline
         _impl_policies = list(pipeline._impl_policies)  # pylint: disable=protected-access
-        # ``_impl_policies`` holds ``_SansIOHTTPPolicyRunner`` wrappers, not the raw
-        # policies, so unwrap ``_policy`` before checking to avoid inserting a duplicate.
-        if not any(
+        has_range_header_policy = any(
             isinstance(getattr(policy, "_policy", policy), RangeHeaderPolicy)  # pylint: disable=protected-access
             for policy in _impl_policies
-        ):
-            _impl_policies.insert(0, RangeHeaderPolicy())
-        _wrapped_pipeline = Pipeline(
-            transport=pipeline._transport,  # pylint: disable=protected-access
-            policies=_impl_policies,
         )
-        self._client = PipelineClient(base_url=_endpoint, pipeline=_wrapped_pipeline)
+        if not has_range_header_policy:
+            _impl_policies.insert(0, RangeHeaderPolicy())
+        self._client = PipelineClient(
+            base_url=_endpoint,
+            pipeline=Pipeline(
+                transport=pipeline._transport,  # pylint: disable=protected-access
+                policies=_impl_policies,
+            ),
+        )
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
