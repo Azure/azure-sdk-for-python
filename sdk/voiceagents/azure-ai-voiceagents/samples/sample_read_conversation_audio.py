@@ -87,7 +87,7 @@ def read_merged_recording(conversations, agent_name, conversation_id, preview) -
 def read_first_item_audio(conversations, agent_name, conversation_id, preview) -> None:
     """Read the audio segment of the first conversation item that has one."""
     for item in conversations.list_agent_conversation_items(agent_name, conversation_id, foundry_features=preview):
-        item_id = getattr(item, "id", None)
+        item_id = item.get("id")
         if not item_id:
             continue
         try:
