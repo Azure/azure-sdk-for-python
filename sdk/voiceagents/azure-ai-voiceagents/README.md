@@ -10,11 +10,11 @@ The Azure AI Voice Agents client library lets Python applications create and man
 python -m pip install azure-ai-voiceagents
 ```
 
-#### Prequisites
+#### Prerequisites
 
 - Python 3.10 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
-- An existing Azure Ai Voiceagents instance.
+- An existing [Azure AI Foundry][azure_ai_foundry] project and its endpoint.
 
 ### Use with AI tools
 
@@ -107,5 +107,6 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[azure_ai_foundry]: https://learn.microsoft.com/azure/ai-foundry/
 [http_response_error]: https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror
 [samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/voiceagents/azure-ai-voiceagents/samples

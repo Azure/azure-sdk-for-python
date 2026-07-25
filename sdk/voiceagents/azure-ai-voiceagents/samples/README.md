@@ -18,9 +18,10 @@ and audio recordings).
 > [!NOTE]
 > These samples cover the **request/response (HTTP)** surface only —
 > voice-agent management and read-only conversation/audio playback. The
-> **live realtime voice session** (the streaming WebSocket call) is established
-> through a separate connect operation that is not part of this client library
-> today, so it is intentionally not shown here.
+> **live realtime voice session** (the streaming WebSocket call) is reached
+> through the `client.realtime.connect(...)` namespace, which is exposed as an
+> interface today and raises `NotImplementedError` until the streaming
+> transport ships, so it is intentionally not shown here.
 
 > [!IMPORTANT]
 > Voice agents are a **gated preview**. Every call opts in with the
@@ -114,7 +115,7 @@ python sample_create_and_manage_voice_agent.py
 | `HttpResponseError` 401 / 403 | Not signed in, or your identity lacks access to the project. Run `az login` and confirm project permissions. |
 | `ResourceNotFoundError` / 404 on a **management** call (create, list, generate) | The gated preview isn't enabled for your subscription, or isn't served on your project's endpoint/region yet. The request URL and auth are correct; the route just isn't provisioned. Confirm preview enablement and a supported region with your service contact. |
 | `HttpResponseError` 404 on a **read** sample | The conversation was not persisted (agent ran with `store = false`) or the id is wrong. |
-| `HttpResponseError` 409 on the audio sample | The session is still in progress, or the agent has no bring-your-own-storage account configured for audio. |
+| `HttpResponseError` 409 on the audio sample | Either the session is still in progress, or the recording lives in your own bring-your-own-storage (BYOS) account — its bytes aren't streamed through the service and must be downloaded directly from the `blob_path` returned by the metadata route. Foundry-managed audio streams normally. |
 | Model / deployment not found | The `gpt-realtime` default deployment doesn't exist in your project. Set `AZURE_VOICE_AGENTS_MODEL` to a valid realtime deployment name. |
 
 > [!NOTE]

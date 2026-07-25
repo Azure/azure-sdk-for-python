@@ -6,8 +6,10 @@
 """Hand-written async realtime (WebSocket) streaming client for voice agents.
 
 Realtime uses a fundamentally different transport (a persistent WebSocket)
-than the request/response HTTP surface, so it is exposed as a **dedicated
-standalone client** rather than a member of the HTTP ``VoiceAgentsClient``.
+than the request/response HTTP surface. It is exposed as the
+``VoiceAgentsClient.realtime`` namespace; the streaming implementation is
+interface-only today, so :meth:`AsyncRealtime.connect` raises
+``NotImplementedError`` until the transport ships.
 The connection ergonomics follow the OpenAI Python realtime client so that
 developers moving between the two libraries get a familiar surface:
 

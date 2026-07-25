@@ -20,8 +20,9 @@ DESCRIPTION:
       agent at your own Foundry model deployment instead of a service-managed model.
 
     The tools and audio settings are session defaults baked into the agent; the live
-    realtime session that actually invokes them is established through a separate
-    connect operation that is not part of this client library.
+    realtime session that actually invokes them is reached through the
+    `client.realtime.connect(...)` namespace, which is exposed as an interface today
+    and raises `NotImplementedError` until the streaming transport ships.
 
 USAGE:
     python sample_create_voice_agent_with_tools.py
