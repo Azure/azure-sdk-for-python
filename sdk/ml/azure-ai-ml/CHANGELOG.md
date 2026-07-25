@@ -54,6 +54,8 @@
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
 - Deployment templates `allowed_instance_types` now accepts a list instead of string.
 
+- Fixed issue where optional string inputs with `None` or empty string values would fail with "The Value field is required" error. Optional inputs with `None` or empty string values are now correctly excluded from REST API requests, allowing the backend to use default values from component definitions.
+
 ### Other Changes
 
 
