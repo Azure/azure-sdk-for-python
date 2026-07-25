@@ -14,7 +14,7 @@ name = "azure-ai-voiceagents"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Corporation Azure Ai Voiceagents Client Library for Python"
+description = "Microsoft Corporation Azure AI Voice Agents Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 4 - Beta",
