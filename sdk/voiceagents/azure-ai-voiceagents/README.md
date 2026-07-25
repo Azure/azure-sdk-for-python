@@ -1,4 +1,4 @@
-# Azure Ai Voiceagents client library for Python
+# Azure AI Voice Agents client library for Python
 
 The Azure AI Voice Agents client library lets Python applications create and manage voice agents and read persisted conversation, transcript, and audio data through an Azure AI Foundry project endpoint.
 
