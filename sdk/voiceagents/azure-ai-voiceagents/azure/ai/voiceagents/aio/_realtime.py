@@ -11,7 +11,7 @@ standalone client** rather than a member of the HTTP ``VoiceAgentsClient``.
 The connection ergonomics follow the OpenAI Python realtime client so that
 developers moving between the two libraries get a familiar surface:
 
-* :meth:`VoiceAgentsRealtimeClient.connect` returns an async context manager.
+* :meth:`AsyncRealtime.connect` returns an async context manager.
 * Entering the context yields an :class:`AsyncRealtimeConnection`.
 * The connection is async-iterable over inbound server events and exposes
   sub-namespaces (``session``, ``input_audio_buffer``, ``output_audio_buffer``,
