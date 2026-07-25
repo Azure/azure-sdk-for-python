@@ -233,7 +233,7 @@ def test_get_agent_conversation_item_audio_metadata():
 
 
 def test_get_agent_conversation_audio_content_streams_bytes():
-    payload = b"RIFF....WAVEfmt merged-call-audio"
+    payload = b"RIFF....WAVE....merged-call-audio"
 
     def handler(request):
         return 200, payload, {"content-type": "audio/wav"}
@@ -255,7 +255,7 @@ def test_get_agent_conversation_audio_content_streams_bytes():
 
 
 def test_get_agent_conversation_item_audio_content_streams_bytes():
-    payload = b"RIFF....WAVEfmt single-turn-audio"
+    payload = b"RIFF....WAVE....single-turn-audio"
 
     def handler(request):
         return 200, payload, {"content-type": "audio/wav"}
