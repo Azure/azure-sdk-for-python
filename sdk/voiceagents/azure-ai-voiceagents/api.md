@@ -89,7 +89,7 @@ namespace azure.ai.voiceagents.aio
         def __init__(
                 self, 
                 endpoint: str, 
-                credential: Any, 
+                credential: AsyncTokenCredential, 
                 **kwargs: Any
             ) -> None: ...
 
