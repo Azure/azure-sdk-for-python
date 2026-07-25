@@ -32,6 +32,8 @@ import asyncio
 import os
 from typing import Final
 
+import aiohttp
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.identity.aio import DefaultAzureCredential
 
 from azure.ai.voiceagents.aio import VoiceAgentsClient
@@ -45,7 +47,15 @@ async def create_and_manage_voice_agent() -> None:
     preview: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
     credential = DefaultAzureCredential()
-    async with credential, VoiceAgentsClient(endpoint=endpoint, credential=credential) as client:
+    # The Foundry endpoint can return Brotli-compressed responses (Content-Encoding: br),
+    # which azure-core's aiohttp transport does not decode. Ask only for gzip/deflate so
+    # the transport can decompress the response itself.
+    transport = AioHttpTransport(
+        session=aiohttp.ClientSession(auto_decompress=False, headers={"Accept-Encoding": "gzip, deflate"})
+    )
+    async with credential, VoiceAgentsClient(
+        endpoint=endpoint, credential=credential, transport=transport
+    ) as client:
         created = await client.voice_agents.create_voice_agent(
             name=agent_name,
             definition=VoiceAgentDefinition(

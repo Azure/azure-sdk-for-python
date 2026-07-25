@@ -10,6 +10,7 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, Callable, IO, Iterator, Literal, Optional, TYPE_CHECKING, TypeVar, Union, overload
+import urllib.parse
 
 from azure.core import PipelineClient
 from azure.core.exceptions import (

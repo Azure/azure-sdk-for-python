@@ -65,8 +65,24 @@ def test_list_voice_agents_paginates_and_propagates_cursor():
     async def run():
         def handler(request):
             if "after=agent-1" in request_query(request):
-                return 200, {"object": "list", "data": [{"object": "agent", "id": "agent-2", "name": "second", "versions": {}}], "last_id": None}, {}
-            return 200, {"object": "list", "data": [{"object": "agent", "id": "agent-1", "name": "first", "versions": {}}], "last_id": "agent-1"}, {}
+                return (
+                    200,
+                    {
+                        "object": "list",
+                        "data": [{"object": "agent", "id": "agent-2", "name": "second", "versions": {}}],
+                        "last_id": None,
+                    },
+                    {},
+                )
+            return (
+                200,
+                {
+                    "object": "list",
+                    "data": [{"object": "agent", "id": "agent-1", "name": "first", "versions": {}}],
+                    "last_id": "agent-1",
+                },
+                {},
+            )
 
         transport = AsyncMockTransport(handler)
         client = VoiceAgentsClient(ENDPOINT, FakeAsyncCredential(), transport=transport)
@@ -130,7 +146,11 @@ def test_delete_voice_agent_route_and_deserialization():
 def test_get_agent_conversation_route_and_deserialization():
     async def run():
         def handler(request):
-            return 200, {"id": "conv-1", "object": "voice.conversation", "status": "completed", "created_at": 1700000000}, {}
+            return (
+                200,
+                {"id": "conv-1", "object": "voice.conversation", "status": "completed", "created_at": 1700000000},
+                {},
+            )
 
         transport = AsyncMockTransport(handler)
         client = VoiceAgentsClient(ENDPOINT, FakeAsyncCredential(), transport=transport)
@@ -140,9 +160,7 @@ def test_get_agent_conversation_route_and_deserialization():
 
         request = transport.requests[0]
         assert request.method == "GET"
-        assert request_path(request).endswith(
-            "/agents/my-agent/endpoint/protocols/voice/conversations/conv-1"
-        )
+        assert request_path(request).endswith("/agents/my-agent/endpoint/protocols/voice/conversations/conv-1")
         assert request.headers.get("Foundry-Features") == FOUNDRY_FEATURES
         assert result.id == "conv-1"
 
@@ -177,13 +195,17 @@ def test_list_agent_conversation_items_paginates_and_propagates_cursor():
 def test_get_agent_conversation_item_audio_metadata():
     async def run():
         def handler(request):
-            return 200, {
-                "conversation_id": "conv-1",
-                "item_id": "item-1",
-                "format": "wav",
-                "codec": "pcm16",
-                "blob_path": "https://storage.example/blob.wav",
-            }, {}
+            return (
+                200,
+                {
+                    "conversation_id": "conv-1",
+                    "item_id": "item-1",
+                    "format": "wav",
+                    "codec": "pcm16",
+                    "blob_path": "https://storage.example/blob.wav",
+                },
+                {},
+            )
 
         transport = AsyncMockTransport(handler)
         client = VoiceAgentsClient(ENDPOINT, FakeAsyncCredential(), transport=transport)

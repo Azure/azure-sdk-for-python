@@ -5,7 +5,7 @@ additionalDirectories:
 - specification/ai-foundry/data-plane/Foundry/src/agents
 - specification/ai-foundry/data-plane/Foundry/src/common
 - specification/ai-foundry/data-plane/Foundry/src/memory-stores
-- specification/ai-foundry/data-plane/Foundry/src/openai/responses
+- specification/ai-foundry/data-plane/Foundry/src/openai
 - specification/ai-foundry/data-plane/Foundry/src/sdk-common
 - specification/ai-foundry/data-plane/Foundry/src/skills
 - specification/ai-foundry/data-plane/Foundry/src/tools

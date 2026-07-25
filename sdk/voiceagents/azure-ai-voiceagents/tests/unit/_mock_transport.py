@@ -38,15 +38,15 @@ class _InMemoryInternalResponse:
 
 
 def _build_response(request: Any, status: int, body: Any, headers: Optional[dict], is_async: bool):
-    hdrs = case_insensitive_dict(headers or {})
+    resolved_headers = case_insensitive_dict(headers or {})
     if isinstance(body, (bytes, bytearray)):
         content = bytes(body)
-        hdrs.setdefault("content-type", "application/octet-stream")
+        resolved_headers.setdefault("content-type", "application/octet-stream")
     elif body is None:
         content = b""
     else:
         content = json.dumps(body).encode("utf-8")
-        hdrs.setdefault("content-type", "application/json")
+        resolved_headers.setdefault("content-type", "application/json")
 
     response_cls = AsyncHttpResponseImpl if is_async else HttpResponseImpl
     response = response_cls(
@@ -54,8 +54,8 @@ def _build_response(request: Any, status: int, body: Any, headers: Optional[dict
         internal_response=None if is_async else _InMemoryInternalResponse(),
         status_code=status,
         reason="OK",
-        content_type=hdrs.get("content-type"),
-        headers=hdrs,
+        content_type=resolved_headers.get("content-type"),
+        headers=resolved_headers,
         stream_download_generator=None,
         block_size=4096,
     )
