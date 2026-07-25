@@ -163,7 +163,7 @@ class ConversationResource(_BaseResource):
 
     def __init__(self, connection: "AsyncRealtimeConnection") -> None:
         super().__init__(connection)
-        self.item = ConversationItemResource(connection)
+        self.item: ConversationItemResource = ConversationItemResource(connection)
 
 
 class ResponseResource(_BaseResource):
@@ -211,11 +211,11 @@ class AsyncRealtimeConnection:
     def __init__(self, connection: "ClientWebSocketResponse", session: "ClientSession") -> None:
         self._connection = connection
         self._session = session
-        self.session = SessionResource(self)
-        self.input_audio_buffer = InputAudioBufferResource(self)
-        self.output_audio_buffer = OutputAudioBufferResource(self)
-        self.conversation = ConversationResource(self)
-        self.response = ResponseResource(self)
+        self.session: SessionResource = SessionResource(self)
+        self.input_audio_buffer: InputAudioBufferResource = InputAudioBufferResource(self)
+        self.output_audio_buffer: OutputAudioBufferResource = OutputAudioBufferResource(self)
+        self.conversation: ConversationResource = ConversationResource(self)
+        self.response: ResponseResource = ResponseResource(self)
 
     async def __aenter__(self) -> "AsyncRealtimeConnection":
         return self

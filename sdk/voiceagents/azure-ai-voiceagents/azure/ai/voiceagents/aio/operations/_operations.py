@@ -10,7 +10,6 @@ from collections.abc import MutableMapping
 from io import IOBase
 import json
 from typing import Any, AsyncIterator, Callable, IO, Literal, Optional, TYPE_CHECKING, TypeVar, Union, overload
-import urllib.parse
 
 from azure.core import AsyncPipelineClient
 from azure.core.async_paging import AsyncItemPaged, AsyncList

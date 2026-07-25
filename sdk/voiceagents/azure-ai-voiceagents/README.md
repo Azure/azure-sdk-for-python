@@ -41,6 +41,19 @@ Use the returned token credential to authenticate the client:
 >>> client = VoiceAgentsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 ```
 
+## Key concepts
+
+- **Voice agent**: A configured agent that handles voice interactions. Use the
+  `voice_agents` operations on `VoiceAgentsClient` to create, retrieve, update,
+  list versions of, and delete voice agents.
+- **Conversation**: A persisted record of an interaction with a voice agent,
+  including status, timestamps, and aggregate usage. Use the
+  `agent_endpoint_conversations` operations to read conversations, transcripts,
+  and audio.
+- **Foundry project endpoint**: Voice agents are accessed through an Azure AI
+  Foundry project endpoint of the form
+  `https://<ai-services-account-name>.services.ai.azure.com/api/projects/<project-name>`.
+
 ## Examples
 
 ```python
@@ -55,6 +68,19 @@ Use the returned token credential to authenticate the client:
         print('service responds error: {}'.format(e.response.json()))
 
 ```
+
+## Troubleshooting
+
+Errors returned by the service are raised as
+[`azure.core.exceptions.HttpResponseError`][http_response_error]. The exception's
+`status_code` and `response` provide details about the failure. For example, a
+missing resource surfaces as a `404` status code, which you can inspect to decide
+whether to retry or skip the operation.
+
+## Next steps
+
+See the [samples][samples] for more complete examples of creating and managing
+voice agents and reading conversation data.
 
 ## Contributing
 
@@ -81,3 +107,5 @@ additional questions or comments.
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
 [pip]: https://pypi.org/project/pip/
 [azure_sub]: https://azure.microsoft.com/free/
+[http_response_error]: https://learn.microsoft.com/python/api/azure-core/azure.core.exceptions.httpresponseerror
+[samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/voiceagents/azure-ai-voiceagents/samples
