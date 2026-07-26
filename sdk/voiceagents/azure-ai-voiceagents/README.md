@@ -56,18 +56,36 @@ Use the returned token credential to authenticate the client:
 
 ## Examples
 
+Voice agents are a **gated preview**, so every request must opt in with the
+`VoiceAgents=V1Preview` feature flag, passed as `foundry_features`. Use the
+`AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW` constant for this value.
+
+The following example lists the voice agents in a Foundry project:
+
 ```python
->>> from azure.ai.voiceagents import VoiceAgentsClient
->>> from azure.identity import DefaultAzureCredential
->>> from azure.core.exceptions import HttpResponseError
+from azure.ai.voiceagents import VoiceAgentsClient
+from azure.ai.voiceagents.models import AgentDefinitionOptInKeys
+from azure.identity import DefaultAzureCredential
+from azure.core.exceptions import HttpResponseError
 
->>> client = VoiceAgentsClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
->>> try:
-        <!-- write test code here -->
-    except HttpResponseError as e:
-        print('service responds error: {}'.format(e.response.json()))
-
+client = VoiceAgentsClient(endpoint="<endpoint>", credential=DefaultAzureCredential())
+try:
+    for agent in client.voice_agents.list_voice_agents(
+        foundry_features=AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+    ):
+        print(agent.name)
+except HttpResponseError as e:
+    print("service responds error: {}".format(e.response.json()))
 ```
+
+> [!NOTE]
+> The live realtime voice session (the streaming WebSocket call) is reached
+> through `client.realtime.connect(...)` on the async client. It is exposed as
+> an interface today and raises `NotImplementedError` until the streaming
+> transport ships.
+
+See the [samples][samples] for more complete examples of creating and managing
+voice agents and reading conversation data.
 
 ## Troubleshooting
 
