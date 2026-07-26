@@ -304,7 +304,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     :param key: The key of the configuration setting.
     :type key: str
-    :param secret_id: The identity of the configuration setting.
+    :param secret_id: The identifier of the secret referenced by this configuration setting.
     :type secret_id: str
     """
 
