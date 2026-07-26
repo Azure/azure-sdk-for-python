@@ -9,10 +9,10 @@ from types import SimpleNamespace
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest
-from azure.appconfiguration._azure_appconfiguration_requests import (
+from azure.appconfiguration._azure_appconfiguration_requests import (  # pylint: disable=no-cross-package-private-import
     AppConfigRequestsCredentialsPolicy,
 )
-from azure.appconfiguration._utils import parse_connection_string
+from azure.appconfiguration._utils import parse_connection_string  # pylint: disable=no-cross-package-private-import
 
 
 def test_parse_connection_string_returns_http_endpoint():

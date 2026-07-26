@@ -46,7 +46,7 @@ from .._utils import (
 from .._audience_error_handling_policy import AudienceErrorHandlingPolicy
 
 
-class AzureAppConfigurationClient:
+class AzureAppConfigurationClient:  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Represents a client that calls restful API of Azure App Configuration service.
 
     :param str base_url: Base url of the service.

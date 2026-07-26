@@ -5,7 +5,7 @@
 # -------------------------------------------------------------------------
 import pytest
 from azure.core.exceptions import ClientAuthenticationError
-from azure.appconfiguration._audience_error_handling_policy import (
+from azure.appconfiguration._audience_error_handling_policy import (  # pylint: disable=no-cross-package-private-import
     AudienceErrorHandlingPolicy,
     AAD_AUDIENCE_ERROR_CODE,
     NO_AUDIENCE_ERROR_MESSAGE,

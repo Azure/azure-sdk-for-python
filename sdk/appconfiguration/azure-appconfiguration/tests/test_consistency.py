@@ -17,7 +17,7 @@ from azure.appconfiguration import (
     SecretReferenceConfigurationSetting,
     FILTER_PERCENTAGE,
 )
-from azure.appconfiguration._generated.models import (
+from azure.appconfiguration._generated.models import (  # pylint: disable=no-cross-package-private-import
     KeyValue,
     KeyValueFilter,
     Snapshot as GeneratedSnapshot,

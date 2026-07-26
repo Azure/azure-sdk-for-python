@@ -7,7 +7,9 @@
 import pytest
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline import PipelineRequest
-from azure.appconfiguration._query_param_policy import QueryParamPolicy
+from azure.appconfiguration._query_param_policy import (  # pylint: disable=no-cross-package-private-import
+    QueryParamPolicy,
+)
 
 TEST_URL = "https://example.com"
 

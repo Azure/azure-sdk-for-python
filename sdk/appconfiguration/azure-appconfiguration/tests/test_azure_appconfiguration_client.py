@@ -1324,7 +1324,9 @@ class TestAppConfigurationClientUnitTest:
         def new_method(request):
             request.http_request.headers["Authorization"] = str(uuid4())
 
-        from azure.appconfiguration._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
+        from azure.appconfiguration._azure_appconfiguration_requests import (  # pylint: disable=no-cross-package-private-import
+            AppConfigRequestsCredentialsPolicy,
+        )
 
         # Store the method to restore later
         temp = AppConfigRequestsCredentialsPolicy._signed_request

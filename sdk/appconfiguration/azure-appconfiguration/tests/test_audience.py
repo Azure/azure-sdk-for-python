@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from azure.appconfiguration._audience import get_audience
+from azure.appconfiguration._audience import get_audience  # pylint: disable=no-cross-package-private-import
 
 # Expected scope constants
 _EXPECTED_PUBLIC_CLOUD_AUDIENCE = "https://appconfig.azure.com/"
