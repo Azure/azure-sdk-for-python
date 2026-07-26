@@ -16,7 +16,7 @@ members = [
 resolver = "2"
 
 # -----------------------------------------------------------------------------
-# Workspace-level metadata. The driver crate inherits these via `.workspace = true`.
+# Workspace-level metadata inherited by the binding crate via `.workspace = true`.
 # -----------------------------------------------------------------------------
 [workspace.package]
 authors      = ["Microsoft <azpysdkhelp@microsoft.com>"]
@@ -35,18 +35,15 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(test_category, values("emu
 #
 # IMPORTANT: `azure_core` MUST resolve to the same crate instance the external
 # driver uses, otherwise azure_core-native types (e.g. `TokenCredential`,
-# `AccessToken`, `azure_core::Error`) end up duplicated and the binding fails to
-# compile with "two different versions of crate `azure_core`". The driver
-# (azure_data_cosmos_driver) depends on the published `azure_core 1.0.0` from
-# crates.io, so the binding pins the same published version here rather than the
-# sibling clone's unpublished path version (which is a different version and
-# would not unify). azure_identity is only needed by the driver's own dev-tests,
-# not the binding, so it stays a path dep.
+# `AccessToken`, `azure_core::Error`) are different Rust types. The binding
+# inherits this published crates.io version so it can unify with the driver.
+# azure_identity is only needed by the driver's own dev-tests, not the binding,
+# so it stays a path dep.
 # -----------------------------------------------------------------------------
 [workspace.dependencies]
 # --- azure-sdk-for-rust crates ---
-# azure_core pinned to the driver's published version so the two unify.
-azure_core     = "1.0.0"
+# azure_core aligned with the driver's published version so the two unify.
+azure_core     = "1.1.0"
 azure_identity = { path = "../../../../azure-sdk-for-rust/sdk/identity/azure_identity" }
 
 # --- crates.io deps the binding uses ---
@@ -61,4 +58,3 @@ tracing      = "0.1"
 url          = "2"
 uuid         = "1"
 tokio        = "1"
-

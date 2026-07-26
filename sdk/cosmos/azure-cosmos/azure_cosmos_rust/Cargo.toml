@@ -72,7 +72,6 @@ url = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 
-# Surfaced at the binding boundary when forwarding driver errors. Match the
-# driver's released azure_core dependency: Rust treats path and registry copies
-# as different types even when their APIs are otherwise identical.
-azure_core = "1.1.0"
+# Surfaced at the binding boundary when forwarding driver errors. Inherit the
+# workspace's driver-aligned crates.io version so the Rust types unify.
+azure_core = { workspace = true }
