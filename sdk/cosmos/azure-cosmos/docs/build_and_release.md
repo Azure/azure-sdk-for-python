@@ -9,10 +9,6 @@ native-package model: a compiled Rust extension with platform-specific wheels.
 Local development: Maturin builds the `azure_cosmos_rust` binding against a sibling
 `azure-sdk-for-rust` checkout for local development.
 
-The source baseline for the factual statements is Python migration commit
-`94d71b88c63408fa9920ed3ef53165491f7c6ebd` and Rust driver commit
-`5c170b53837bc01af5a7e28ef9189410f67f9d66`. The Python manifest does **not** pin
-that Rust commit; it is the revision inspected for this document.
 
 ---
 
