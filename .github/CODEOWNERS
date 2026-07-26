@@ -223,6 +223,13 @@
 # PRLabel: %Digital Twins
 /sdk/digitaltwins/    @Aashish93-stack @johngallardo @Satya-Kolluri @sjiherzig
 
+# AzureSdkOwners: @ahall-msft
+# ServiceLabel: %Discovery
+# ServiceOwners: @ahall-msft
+
+# PRLabel: %Discovery
+/sdk/discovery/    @ahall-msft
+
 # PRLabel: %Document Intelligence
 /sdk/documentintelligence/    @bojunehsu @yungshinlintw
 
