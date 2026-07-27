@@ -146,7 +146,7 @@ async def test_credentials_not_leaked_on_cross_host_redirect_async(credential, c
 
 @pytest.mark.parametrize("credential, cred_header, cred_value", CREDENTIAL_CASES)
 def test_credentials_not_leaked_on_redirect_then_retry(credential, cred_header, cred_value):
-    """A retry after a cross-host redirect (301 -> 500 -> 200) must not re-leak the credential.
+    """A retry after a cross-host redirect (307 -> 503 -> 200) must not re-leak the credential.
 
     Requires azure-core >= 1.38.3, which persists the ``insecure_domain_change`` flag across
     retries so the cleanup keeps stripping the credential re-added by the auth policy.
@@ -178,7 +178,11 @@ def test_credentials_not_leaked_on_redirect_then_retry(credential, cred_header, 
             self.post_redirect_headers.append(request.headers.get(cred_header))
             if self.calls == 2:
                 retryable = Response()
-                retryable.status_code = 500
+                retryable.status_code = 503
+                # ``Retry-After: 0`` forces a deterministic retry across all supported
+                # azure-core versions (independent of method-based retry heuristics) and
+                # avoids any real sleep in the test.
+                retryable.headers["Retry-After"] = "0"
                 return retryable
             return _ok_response()
 
