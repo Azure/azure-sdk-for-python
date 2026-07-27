@@ -209,10 +209,9 @@ def test_local_with_credential_uses_authenticated():
 
 
 def test_digital_worker_always_uses_anonymous_outbound():
-    """Digital-worker model always presents anonymous outbound claims: the Foundry
-    platform gateway performs the outbound Bot Connector auth, so the container
-    must not synchronously mint a token on the reply path (matches the
-    foundry-autopilot-agent sample)."""
+    """Digital-worker model always presents anonymous outbound claims: its
+    ``IdentityProxyManager`` connection is scoped to the agentic resource, not Bot
+    Connector, so it cannot mint the outbound reply token."""
     assert use_anonymous_outbound(digital_worker=True, bot_app_id="", is_hosted=False) is True
     assert use_anonymous_outbound(digital_worker=True, bot_app_id="blueprint-bbb", is_hosted=True) is True
 
