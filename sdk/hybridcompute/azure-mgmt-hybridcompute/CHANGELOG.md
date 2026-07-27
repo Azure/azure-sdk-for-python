@@ -225,7 +225,7 @@
   - Method `MachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `MachinesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `MachinesOperations.delete`
-  - Deleted or renamed model `HybridComputeManagementClientOperationsMixin`
+  - Renamed model `HybridComputeManagementClientOperationsMixin` to `_HybridComputeManagementClientOperationsMixin`
 
 ## 9.1.0b5 (2026-07-13)
 
