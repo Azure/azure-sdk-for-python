@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_crg.py
+    python managed_clusters_create_enable_managed_bastion.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -40,9 +39,8 @@ def main():
                 "addonProfiles": {},
                 "agentPoolProfiles": [
                     {
-                        "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/capacityReservationGroups/crg1",
                         "count": 3,
-                        "enableNodePublicIP": True,
+                        "enableEncryptionAtHost": True,
                         "mode": "System",
                         "name": "nodepool1",
                         "osType": "Linux",
@@ -50,17 +48,12 @@ def main():
                         "vmSize": "Standard_DS2_v2",
                     }
                 ],
+                "apiServerAccessProfile": {"enablePrivateCluster": True},
                 "autoScalerProfile": {"scale-down-delay-after-add": "15m", "scan-interval": "20s"},
-                "diskEncryptionSetID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/diskEncryptionSets/des",
                 "dnsPrefix": "dnsprefix1",
-                "enableRBAC": True,
                 "kubernetesVersion": "",
                 "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
-                "networkProfile": {
-                    "loadBalancerProfile": {"managedOutboundIPs": {"count": 2}},
-                    "loadBalancerSku": "standard",
-                    "outboundType": "loadBalancer",
-                },
+                "networkProfile": {"bastionProfile": {"enabled": True, "scaleUnits": 3, "sku": "Premium"}},
                 "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
                 "windowsProfile": {"adminPassword": "replacePassword1234$", "adminUsername": "azureuser"},
             },
@@ -71,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-05-01/ManagedClustersCreate_CRG.json
+# x-ms-original-file: 2026-05-02-preview/ManagedClustersCreate_EnableManagedBastion.json
 if __name__ == "__main__":
     main()
