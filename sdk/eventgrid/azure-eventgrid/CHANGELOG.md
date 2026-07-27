@@ -9,6 +9,7 @@
 ### Other Changes
 
 - Raised the minimum `azure-core` dependency to `1.38.3` so that credential headers remain stripped across retries following a cross-host redirect (`insecure_domain_change` flag persistence).
+- Increased the minimum supported Python version to 3.9, following `azure-core`'s minimum. Python 3.8 is no longer supported.
 
 ## 4.22.0 (2025-05-14)
 
