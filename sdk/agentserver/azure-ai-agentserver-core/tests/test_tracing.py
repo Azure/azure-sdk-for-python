@@ -196,24 +196,6 @@ class TestEntraAuthMode:
         assert kwargs["enable_azure_monitor"] is True
         assert "azure_monitor_exporter_credential" not in kwargs
 
-    def test_entra_auth_continues_when_azure_identity_missing(self) -> None:
-        # If azure-identity cannot be imported, tracing setup must not fail:
-        # Azure Monitor stays enabled (connection-string auth) and no credential
-        # is passed.
-        import builtins
-
-        real_import = builtins.__import__
-
-        def _fake_import(name, *args, **kwargs):
-            if name == "azure.identity":
-                raise ImportError("No module named 'azure.identity'")
-            return real_import(name, *args, **kwargs)
-
-        with mock.patch("builtins.__import__", side_effect=_fake_import):
-            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
-        assert kwargs["enable_azure_monitor"] is True
-        assert "azure_monitor_exporter_credential" not in kwargs
-
     def test_managed_identity_credential_has_no_client_id(self) -> None:
         with mock.patch("azure.identity.ManagedIdentityCredential") as mock_cred:
             self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})

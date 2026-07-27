@@ -249,20 +249,12 @@ def _setup_distro_export(
 
         # When Entra-based auth is requested, export to Azure Monitor using a
         # system-assigned managed identity (no client id) rather than the
-        # connection string's instrumentation key alone. azure-identity is
-        # normally available transitively via microsoft-opentelemetry; if it
-        # is missing we log and continue rather than failing tracing setup.
+        # connection string's instrumentation key alone.
         auth_mode = os.environ.get(Constants.APPLICATIONINSIGHTS_AUTH_MODE, "")
         if auth_mode.strip().lower() == "entra":
-            try:
-                from azure.identity import ManagedIdentityCredential
+            from azure.identity import ManagedIdentityCredential
 
-                kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
-            except ImportError:
-                logger.warning(
-                    "APPLICATIONINSIGHTS_AUTH_MODE=Entra requested but azure-identity is "
-                    "not installed — continuing with connection-string authentication."
-                )
+            kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
     if (
