@@ -13,6 +13,9 @@ without requiring Azure credentials or a live Service Bus namespace.
 """
 
 from unittest.mock import MagicMock, patch
+import asyncio
+import threading
+from datetime import datetime, timezone
 
 import pytest
 
@@ -126,6 +129,18 @@ def _paged_mgmt_stub(pages, skips):
     return _serve
 
 
+def _live_browser(cls):
+    """A browser instance whose liveness check is a no-op (not shut down).
+
+    `list_sessions` calls `self._check_live()` before every page; bypassing
+    `__init__` leaves no `_shutdown` event, so tests that exercise a live
+    browser stub it out. Shutdown behavior is covered separately.
+    """
+    browser = object.__new__(cls)
+    browser._check_live = lambda: None
+    return browser
+
+
 class TestListSessionsPagination:
     """Verify skip-based pagination yields every page and advances `skip`.
 
@@ -141,7 +156,7 @@ class TestListSessionsPagination:
         skips = []
         serve = _paged_mgmt_stub({0: page1, _PAGE_SIZE: page2}, skips)
 
-        browser = object.__new__(_SessionBrowser)
+        browser = _live_browser(_SessionBrowser)
         browser._mgmt_request_response_with_retry = lambda operation, message, callback, **kwargs: serve(
             message["skip"][VALUE]
         )
@@ -165,7 +180,7 @@ class TestListSessionsPaginationAsync:
         async def _mgmt(operation, message, callback, **kwargs):
             return serve(message["skip"][VALUE])
 
-        browser = object.__new__(_SessionBrowserAsync)
+        browser = _live_browser(_SessionBrowserAsync)
         browser._mgmt_request_response_with_retry = _mgmt
 
         result = [sid async for sid in browser.list_sessions()]
@@ -187,7 +202,7 @@ class TestListSessionsTimeoutBudget:
             seen.append(kwargs.get("timeout"))
             return pages.get(message["skip"][VALUE], [])
 
-        browser = object.__new__(_SessionBrowser)
+        browser = _live_browser(_SessionBrowser)
         browser._mgmt_request_response_with_retry = serve
         # monotonic() is called once for the deadline, then once per page.
         # base 1000 -> deadline 1010; page 1 at 1000 -> 10 left; page 2 at 1003 -> 7 left.
@@ -199,7 +214,7 @@ class TestListSessionsTimeoutBudget:
         assert seen == [10.0, 7.0]
 
     def test_exhausted_budget_raises_before_next_page(self):
-        browser = object.__new__(_SessionBrowser)
+        browser = _live_browser(_SessionBrowser)
 
         def _should_not_run(*args, **kwargs):
             raise AssertionError("management request should not be issued after the budget is spent")
@@ -210,4 +225,79 @@ class TestListSessionsTimeoutBudget:
         with patch("azure.servicebus._session_browser.time.monotonic", lambda: next(clock)):
             with pytest.raises(OperationTimeoutError):
                 list(browser.list_sessions(timeout=5))
+
+
+def _capture_last_updated_ms(browser):
+    """Run one page and return the `last-updated-time` ms value sent on the wire."""
+    captured = {}
+
+    def _serve(operation, message, callback, **kwargs):
+        captured["ms"] = message["last-updated-time"][VALUE]
+        return []
+
+    browser._mgmt_request_response_with_retry = _serve
+    return captured
+
+
+class TestUpdatedAfterSentinelBoundary:
+    """An explicit filter timestamp must never collide with the active-messages sentinel.
+
+    `datetime.max` in UTC is 1 ms below `_MAX_DATETIME_MS`. Float `timestamp() * 1000`
+    rounds it up onto the sentinel, which would silently switch the request into
+    active-messages mode. Integer arithmetic must keep it at `_MAX_DATETIME_MS - 1`.
+    """
+
+    def test_datetime_max_stays_below_sentinel(self):
+        browser = _live_browser(_SessionBrowser)
+        captured = _capture_last_updated_ms(browser)
+        list(browser.list_sessions(state_updated_after=datetime.max.replace(tzinfo=timezone.utc)))
+        assert captured["ms"] == _MAX_DATETIME_MS - 1
+        assert captured["ms"] != _MAX_DATETIME_MS
+
+    @pytest.mark.asyncio
+    async def test_datetime_max_stays_below_sentinel_async(self):
+        browser = _live_browser(_SessionBrowserAsync)
+        captured = {}
+
+        async def _serve(operation, message, callback, **kwargs):
+            captured["ms"] = message["last-updated-time"][VALUE]
+            return []
+
+        browser._mgmt_request_response_with_retry = _serve
+        _ = [sid async for sid in browser.list_sessions(
+            state_updated_after=datetime.max.replace(tzinfo=timezone.utc))]
+        assert captured["ms"] == _MAX_DATETIME_MS - 1
+        assert captured["ms"] != _MAX_DATETIME_MS
+
+
+class TestBrowserShutdownGuard:
+    """A paused iterator must not reopen a connection after the client is closed."""
+
+    def test_shutdown_browser_does_not_request_pages(self):
+        browser = object.__new__(_SessionBrowser)
+        browser._shutdown = threading.Event()
+        browser._shutdown.set()
+        requested = []
+        browser._mgmt_request_response_with_retry = lambda *a, **k: requested.append(1) or []
+
+        with pytest.raises(ValueError, match="already been shutdown"):
+            list(browser.list_sessions())
+        assert requested == []  # no page request issued after shutdown
+
+    @pytest.mark.asyncio
+    async def test_shutdown_browser_does_not_request_pages_async(self):
+        browser = object.__new__(_SessionBrowserAsync)
+        browser._shutdown = asyncio.Event()
+        browser._shutdown.set()
+        requested = []
+
+        async def _mgmt(*a, **k):
+            requested.append(1)
+            return []
+
+        browser._mgmt_request_response_with_retry = _mgmt
+        with pytest.raises(ValueError, match="already been shutdown"):
+            _ = [sid async for sid in browser.list_sessions()]
+        assert requested == []
+
 

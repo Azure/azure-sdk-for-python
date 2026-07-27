@@ -5,7 +5,7 @@
 import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import AsyncIterator, Optional
 
 from ._base_handler_async import BaseHandler as AsyncBaseHandler
@@ -13,7 +13,7 @@ from .._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from .._common import mgmt_handlers
-from .._session_browser import _amqp_int_value, _MAX_DATETIME_MS, _PAGE_SIZE
+from .._session_browser import _amqp_int_value, _EPOCH, _MAX_DATETIME_MS, _PAGE_SIZE
 from .._pyamqp.types import AMQPTypes, TYPE, VALUE
 from ..exceptions import OperationTimeoutError
 from ._async_utils import create_authentication
@@ -97,7 +97,13 @@ class _SessionBrowserAsync(AsyncBaseHandler):
                 normalized = state_updated_after.replace(tzinfo=timezone.utc)
             else:
                 normalized = state_updated_after.astimezone(timezone.utc)
-            last_updated_time_ms = int(normalized.timestamp() * 1000)
+            # Compute milliseconds with integer timedelta arithmetic rather than
+            # float `timestamp() * 1000`. The float path rounds the maximum
+            # representable datetime up to _MAX_DATETIME_MS, which would silently
+            # switch an explicit filter into active-messages mode, and truncates
+            # pre-epoch fractional milliseconds toward zero. Floor division keeps
+            # datetime.max at 253402300799999 and rounds consistently downward.
+            last_updated_time_ms = (normalized - _EPOCH) // timedelta(milliseconds=1)
 
         skip = 0
         # `timeout` is the total operation budget across every page. Compute one
@@ -106,6 +112,10 @@ class _SessionBrowserAsync(AsyncBaseHandler):
         deadline = None if timeout is None else time.monotonic() + timeout
 
         while True:
+            # A paused iterator must not reopen the connection after the owning
+            # ServiceBusClient has been closed. _check_live() raises once the
+            # handler is shut down, before _open() could resurrect resources.
+            self._check_live()
             if deadline is None:
                 page_timeout = None
             else:

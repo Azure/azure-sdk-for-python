@@ -4,7 +4,7 @@
 # --------------------------------------------------------------------------------------------
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Iterator, Optional
 
 from ._base_handler import BaseHandler
@@ -24,6 +24,7 @@ from .exceptions import OperationTimeoutError
 # SessionBrowser.MAXDATE = new Date(253402300800000L).
 _MAX_DATETIME_MS = 253402300800000
 _PAGE_SIZE = 100
+_EPOCH = datetime(1970, 1, 1, tzinfo=timezone.utc)
 
 
 def _amqp_int_value(value):
@@ -114,7 +115,13 @@ class _SessionBrowser(BaseHandler):
                 normalized = state_updated_after.replace(tzinfo=timezone.utc)
             else:
                 normalized = state_updated_after.astimezone(timezone.utc)
-            last_updated_time_ms = int(normalized.timestamp() * 1000)
+            # Compute milliseconds with integer timedelta arithmetic rather than
+            # float `timestamp() * 1000`. The float path rounds the maximum
+            # representable datetime up to _MAX_DATETIME_MS, which would silently
+            # switch an explicit filter into active-messages mode, and truncates
+            # pre-epoch fractional milliseconds toward zero. Floor division keeps
+            # datetime.max at 253402300799999 and rounds consistently downward.
+            last_updated_time_ms = (normalized - _EPOCH) // timedelta(milliseconds=1)
 
         skip = 0
         # `timeout` is the total operation budget across every page. Compute one
@@ -123,6 +130,10 @@ class _SessionBrowser(BaseHandler):
         deadline = None if timeout is None else time.monotonic() + timeout
 
         while True:
+            # A paused iterator must not reopen the connection after the owning
+            # ServiceBusClient has been closed. _check_live() raises once the
+            # handler is shut down, before _open() could resurrect resources.
+            self._check_live()
             if deadline is None:
                 page_timeout = None
             else:
