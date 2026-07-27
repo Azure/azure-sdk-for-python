@@ -1,5 +1,19 @@
 # Release History
 
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed digital-worker outbound replies hanging: the digital-worker model now presents anonymous outbound claims so the M365 adapter does not synchronously mint a Bot Connector token on the reply path from the `IdentityProxyManager` connection (which is scoped to the agentic resource, not Bot Connector). This matches the `foundry-autopilot-agent` sample.
+
+### Other Changes
+
+- Raised the Microsoft 365 Agents SDK dependency floors to `>=1.1.0` (`microsoft-agents-hosting-core`, `microsoft-agents-authentication-msal`, `microsoft-agents-activity`): the digital-worker `IdentityProxyManager` connection auth type is only available from `1.1.0`.
+
 ## 1.0.0b1 (2026-07-22)
 
 ### Features Added
@@ -12,7 +26,7 @@
 - Pre-built injection: `ActivityAgentServerHost(agent_app=app)`, plus build options on the default constructor (`digital_worker`, `storage`, `connection_manager`, `adapter`, `authorization`, `connection_config`).
 - Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). Values are available to handler and tool code via `azure.ai.agentserver.core.get_request_context()`.
 - Module-level `get_hosted_agent_env(*, digital_worker=False)` helper that returns a config mapping (`os.environ` overlaid with the derived `CONNECTIONS__*` settings from the Foundry-native `FOUNDRY_AGENT_*` env vars) **without mutating the process environment**.
-- Digital-worker (MAIB) auth uses the M365 Agents SDK's native `IdentityProxyManager` connection auth type, which performs the federated-identity (FMI) token exchange internally — no MSAL monkeypatching.
+- MSAL auth patches for Foundry container MAIB auth (applied internally for the digital-worker model).
 - Session ID resolution (query param → header → config → UUID fallback).
 - Activity ID and session ID sanitization for header-injection defense.
 - OpenTelemetry distributed tracing and W3C Baggage propagation.
