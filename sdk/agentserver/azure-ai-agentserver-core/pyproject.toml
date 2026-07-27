@@ -62,6 +62,7 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
+mindependency = false
 pylint = true
 type_check_samples = false
 
