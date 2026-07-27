@@ -733,6 +733,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             subscription_name=subscription_name,
             **kwargs,
         )
+        self._handlers.add(browser)
         return browser
 
     def list_queue_sessions(

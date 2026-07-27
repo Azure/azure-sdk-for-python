@@ -5,7 +5,8 @@
 # --------------------------------------------------------------------------
 
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
+import time
 
 import pytest
 
@@ -137,31 +138,40 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # Capture the filter timestamp slightly in the past so the
-            # service-side "updated after" filter is safely earlier than
-            # the session state update, even with coarse resolution.
-            before_update = datetime.now(timezone.utc) - timedelta(minutes=1)
-
-            session_id = str(uuid.uuid4())
+            # Session A is updated first; the cutoff is captured AFTER it, so A
+            # predates the cutoff and must be EXCLUDED. Asserting only inclusion
+            # would pass even if state_updated_after were ignored, so the
+            # exclusion assertion is what actually exercises the filter.
+            old_session_id = str(uuid.uuid4())
             with sb_client.get_queue_sender(servicebus_queue.name) as sender:
-                sender.send_messages(ServiceBusMessage(
-                    "test session_state_updated_after", session_id=session_id))
-
-            # The service-side filter is "session state updated after
-            # <timestamp>", so explicitly update the session state.
-            # Sending a message alone does not necessarily register as
-            # a session state update on every entity.
+                sender.send_messages(ServiceBusMessage("old session", session_id=old_session_id))
             with sb_client.get_queue_receiver(
-                servicebus_queue.name, session_id=session_id,
-                max_wait_time=5,
+                servicebus_queue.name, session_id=old_session_id, max_wait_time=5,
             ) as receiver:
-                receiver.session.set_state("updated-state")
+                receiver.session.set_state("old-state")
+
+            # Cutoff strictly between the two session-state updates. Sleep on
+            # each side so the service-side timestamps land on either side of
+            # the cutoff even with client/server clock skew.
+            time.sleep(10)
+            cutoff = datetime.now(timezone.utc)
+            time.sleep(10)
+
+            # Session B is updated after the cutoff and must be INCLUDED.
+            new_session_id = str(uuid.uuid4())
+            with sb_client.get_queue_sender(servicebus_queue.name) as sender:
+                sender.send_messages(ServiceBusMessage("new session", session_id=new_session_id))
+            with sb_client.get_queue_receiver(
+                servicebus_queue.name, session_id=new_session_id, max_wait_time=5,
+            ) as receiver:
+                receiver.session.set_state("new-state")
 
             result = list(sb_client.list_queue_sessions(
-                servicebus_queue.name, state_updated_after=before_update))
+                servicebus_queue.name, state_updated_after=cutoff))
 
             assert isinstance(result, list)
-            assert session_id in result
+            assert new_session_id in result  # updated after cutoff
+            assert old_session_id not in result  # updated before cutoff -> excluded by the filter
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
@@ -210,27 +220,40 @@ class TestServiceBusListSessions(AzureMgmtRecordedTestCase):
             logging_enable=False,
             uamqp_transport=uamqp_transport,
         ) as sb_client:
-            # Capture the filter timestamp slightly in the past so the
-            # service-side "updated after" filter is safely earlier than
-            # the session state update, even with coarse resolution.
-            before_update = datetime.now(timezone.utc) - timedelta(minutes=1)
-
-            session_id = str(uuid.uuid4())
+            # Session A is updated first; the cutoff is captured AFTER it, so A
+            # predates the cutoff and must be EXCLUDED. Asserting only inclusion
+            # would pass even if state_updated_after were ignored, so the
+            # exclusion assertion is what actually exercises the filter.
+            old_session_id = str(uuid.uuid4())
             with sb_client.get_topic_sender(servicebus_topic.name) as sender:
-                sender.send_messages(ServiceBusMessage(
-                    "test session_state_updated_after", session_id=session_id))
-
-            # The service-side filter is "session state updated after
-            # <timestamp>", so explicitly update the session state.
+                sender.send_messages(ServiceBusMessage("old session", session_id=old_session_id))
             with sb_client.get_subscription_receiver(
                 servicebus_topic.name, servicebus_subscription.name,
-                session_id=session_id, max_wait_time=5,
+                session_id=old_session_id, max_wait_time=5,
             ) as receiver:
-                receiver.session.set_state("updated-state")
+                receiver.session.set_state("old-state")
+
+            # Cutoff strictly between the two session-state updates. Sleep on
+            # each side so the service-side timestamps land on either side of
+            # the cutoff even with client/server clock skew.
+            time.sleep(10)
+            cutoff = datetime.now(timezone.utc)
+            time.sleep(10)
+
+            # Session B is updated after the cutoff and must be INCLUDED.
+            new_session_id = str(uuid.uuid4())
+            with sb_client.get_topic_sender(servicebus_topic.name) as sender:
+                sender.send_messages(ServiceBusMessage("new session", session_id=new_session_id))
+            with sb_client.get_subscription_receiver(
+                servicebus_topic.name, servicebus_subscription.name,
+                session_id=new_session_id, max_wait_time=5,
+            ) as receiver:
+                receiver.session.set_state("new-state")
 
             result = list(sb_client.list_subscription_sessions(
                 servicebus_topic.name, servicebus_subscription.name,
-                state_updated_after=before_update))
+                state_updated_after=cutoff))
 
             assert isinstance(result, list)
-            assert session_id in result
+            assert new_session_id in result  # updated after cutoff
+            assert old_session_id not in result  # updated before cutoff -> excluded by the filter

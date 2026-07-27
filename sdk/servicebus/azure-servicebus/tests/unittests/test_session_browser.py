@@ -14,7 +14,11 @@ without requiring Azure credentials or a live Service Bus namespace.
 
 from unittest.mock import MagicMock
 
-from azure.servicebus._session_browser import _MAX_DATETIME_MS, _PAGE_SIZE
+import pytest
+
+from azure.servicebus._session_browser import _MAX_DATETIME_MS, _PAGE_SIZE, _SessionBrowser
+from azure.servicebus.aio._session_browser_async import _SessionBrowserAsync
+from azure.servicebus._pyamqp.types import VALUE
 from azure.servicebus._common.mgmt_handlers import list_sessions_op
 from azure.servicebus._common.constants import (
     ERROR_CODE_MESSAGE_NOT_FOUND,
@@ -107,3 +111,64 @@ class TestListSessionsOpHandler:
         transport = self._make_transport()
         list_sessions_op(404, msg, "Not found", transport)
         transport.handle_amqp_mgmt_error.assert_called_once()
+
+
+def _paged_mgmt_stub(pages, skips):
+    """Return a fake `_mgmt_request_response_with_retry` that serves `pages`
+    keyed by the requested `skip`, recording each requested skip in `skips`.
+    """
+
+    def _serve(skip):
+        skips.append(skip)
+        return pages.get(skip, [])
+
+    return _serve
+
+
+class TestListSessionsPagination:
+    """Verify skip-based pagination yields every page and advances `skip`.
+
+    Without this, a regression that truncates after the first page (e.g.
+    dropping the `skip += len(result)` advance or the full-page continue) would
+    still pass CI, because every live test creates at most three sessions and
+    never fills a 100-item page.
+    """
+
+    def test_paginates_full_first_page_then_partial_second(self):
+        page1 = [f"session-{i}" for i in range(_PAGE_SIZE)]  # full page -> fetch next
+        page2 = [f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 30)]  # partial -> stop
+        skips = []
+        serve = _paged_mgmt_stub({0: page1, _PAGE_SIZE: page2}, skips)
+
+        browser = object.__new__(_SessionBrowser)
+        browser._mgmt_request_response_with_retry = lambda operation, message, callback, **kwargs: serve(
+            message["skip"][VALUE]
+        )
+
+        result = list(browser.list_sessions())
+
+        assert result == page1 + page2  # every ID from both pages, in order
+        assert skips == [0, _PAGE_SIZE]  # skip advanced by len(page1)=100, stopped after the partial page
+
+
+class TestListSessionsPaginationAsync:
+    """Async mirror of the pagination coverage above."""
+
+    @pytest.mark.asyncio
+    async def test_paginates_full_first_page_then_partial_second(self):
+        page1 = [f"session-{i}" for i in range(_PAGE_SIZE)]
+        page2 = [f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 30)]
+        skips = []
+        serve = _paged_mgmt_stub({0: page1, _PAGE_SIZE: page2}, skips)
+
+        async def _mgmt(operation, message, callback, **kwargs):
+            return serve(message["skip"][VALUE])
+
+        browser = object.__new__(_SessionBrowserAsync)
+        browser._mgmt_request_response_with_retry = _mgmt
+
+        result = [sid async for sid in browser.list_sessions()]
+
+        assert result == page1 + page2
+        assert skips == [0, _PAGE_SIZE]
+
