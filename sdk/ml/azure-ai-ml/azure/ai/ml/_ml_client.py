@@ -22,13 +22,6 @@ from azure.ai.ml._azure_environments import (
 )
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient092020DataplanePreview,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
-from azure.ai.ml._restclient.v2024_04_01_preview import AzureMachineLearningWorkspaces as ServiceClient042024Preview
 from azure.ai.ml._restclient.workspace_dataplane import WorkspaceDataplaneClient as ServiceClientWorkspaceDataplane
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import configure_appinsights_logging
@@ -104,9 +97,19 @@ ServiceClient102023 = partial(MachineLearningServicesMgmtClient, api_version="20
 ServiceClient022022Preview = partial(MachineLearningServicesMgmtClient, api_version="2022-02-01-preview")
 ServiceClient102022Preview = partial(MachineLearningServicesMgmtClient, api_version="2022-10-01-preview")
 ServiceClient022023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-02-01-preview")
+ServiceClient042023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-04-01-preview")
 ServiceClient062023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-06-01-preview")
+ServiceClient082023Preview = partial(MachineLearningServicesMgmtClient, api_version="2023-08-01-preview")
 ServiceClient012025Preview = partial(MachineLearningServicesMgmtClient, api_version="2025-01-01-preview")
 ServiceClient102024PreviewTsp = partial(MachineLearningServicesMgmtClient, api_version="2024-10-01-preview")
+# arm_ml_service-backed client pinned to the 2024-04-01-preview wire api-version. Used by the workspace
+# connections operation, and (via send_request for arm-absent ops) by compute enable_sso and the Azure OpenAI
+# deployment list. The legacy v2024_04_01_preview msrest client has been fully retired.
+ServiceClient042024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-04-01-preview")
+# arm_ml_service-backed client pinned to the 2024-01-01-preview wire api-version. Operations whose entities now
+# build arm_ml_service bodies are being repointed onto this shared arm client (marketplace subscriptions,
+# serverless endpoints, ...) so their responses deserialize into the arm_ml_service models.
+ServiceClient012024PreviewArm = partial(MachineLearningServicesMgmtClient, api_version="2024-01-01-preview")
 
 module_logger = logging.getLogger(__name__)
 
@@ -251,6 +254,7 @@ class MLClient:
                 resource_group_name,
                 subscription_id,
                 self._service_client_model_dataplane,
+                self._service_client_registry_arm,
             ) = get_registry_client(
                 self._credential,
                 registry_name if registry_name else registry_reference,
@@ -302,13 +306,6 @@ class MLClient:
         if base_url:
             ops_kwargs["enforce_https"] = _is_https_url(base_url)
 
-        self._service_client_09_2020_dataplanepreview = ServiceClient092020DataplanePreview(
-            subscription_id=self._operation_scope._subscription_id,
-            credential=self._credential,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_workspace_dataplane = ServiceClientWorkspaceDataplane(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
@@ -356,20 +353,6 @@ class MLClient:
         )
 
         self._service_client_10_2023 = ServiceClient102023(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_01_2024_preview = ServiceClient012024Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
-        self._service_client_04_2024_preview = ServiceClient042024Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,
             base_url=base_url,
@@ -471,7 +454,9 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_01_2024_preview = ServiceClient012024Preview(
+        # arm_ml_service-backed client at the 2024-04-01-preview wire api-version, used only by the workspace
+        # connections operation so it deserializes responses into the shared arm_ml_service models it now builds.
+        self._service_client_04_2024_preview_arm = ServiceClient042024PreviewArm(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -482,7 +467,10 @@ class MLClient:
             **kwargs,
         )
 
-        self._service_client_04_2024_preview = ServiceClient042024Preview(
+        # arm_ml_service-backed client at the 2024-01-01-preview wire api-version. Operations whose entities now
+        # build arm_ml_service bodies (marketplace subscriptions, serverless endpoints, ...) use this so their
+        # responses deserialize into the arm_ml_service models.
+        self._service_client_01_2024_preview_arm = ServiceClient012024PreviewArm(
             credential=self._credential,
             subscription_id=(
                 self._ws_operation_scope._subscription_id
@@ -523,7 +511,7 @@ class MLClient:
         self._connections = WorkspaceConnectionsOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
             self._operation_container,
             self._credential,
         )
@@ -547,14 +535,13 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_08_2023_preview,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
         self._datastores = DatastoreOperations(
             operation_scope=self._operation_scope,
             operation_config=self._operation_config,
             serviceclient_2024_10_01_preview=self._service_client_10_2024_preview_tsp,
-            serviceclient_2024_01_01_preview=self._service_client_01_2024_preview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.DATASTORE, self._datastores)
@@ -562,7 +549,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
@@ -573,6 +560,7 @@ class MLClient:
             control_plane_client=self._service_client_08_2023_preview,
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             registry_reference=registry_reference,
         )
         # Evaluators
@@ -580,7 +568,7 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             (
-                self._service_client_10_2021_dataplanepreview
+                self._service_client_registry_arm
                 if registry_name or registry_reference
                 else self._service_client_08_2023_preview
             ),
@@ -590,6 +578,7 @@ class MLClient:
             control_plane_client=self._service_client_08_2023_preview,
             workspace_rg=self._ws_rg,
             workspace_sub=self._ws_sub,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             registry_reference=registry_reference,
         )
 
@@ -597,16 +586,18 @@ class MLClient:
         self._code = CodeOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023),
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023),
             self._datastores,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),  # type: ignore[arg-type]
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.CODE, self._code)
         self._environments = EnvironmentOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023_preview),
             self._operation_container,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.ENVIRONMENT, self._environments)
@@ -629,7 +620,6 @@ class MLClient:
             self._operation_container,
             self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.BATCH_ENDPOINT, self._batch_endpoints)
@@ -646,11 +636,10 @@ class MLClient:
         self._batch_deployments = BatchDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
             self._operation_container,
             credentials=self._credential,
             requests_pipeline=self._requests_pipeline,
-            service_client_09_2020_dataplanepreview=self._service_client_09_2020_dataplanepreview,
             service_client_02_2023_preview=self._service_client_02_2023_preview,
             **ops_kwargs,
         )
@@ -668,20 +657,21 @@ class MLClient:
         self._data = DataOperations(
             self._ws_operation_scope if registry_reference else self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_04_2023_preview),
-            self._service_client_01_2024_preview,
+            (self._service_client_registry_arm if registry_name else self._service_client_04_2023_preview),
             self._datastores,
             requests_pipeline=self._requests_pipeline,
             all_operations=self._operation_container,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),
             **ops_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.DATA, self._data)
         self._components = ComponentOperations(
             self._operation_scope,
             self._operation_config,
-            (self._service_client_10_2021_dataplanepreview if registry_name else self._service_client_01_2024_preview),
+            (self._service_client_registry_arm if registry_name else self._service_client_01_2024_preview_arm),
             self._operation_container,
             self._preflight,
+            registry_service_client=getattr(self, "_service_client_registry_arm", None),  # type: ignore[arg-type]
             **ops_kwargs,  # type: ignore[arg-type]
         )
         self._operation_container.add(AzureMLResourceType.COMPONENT, self._components)
@@ -693,7 +683,7 @@ class MLClient:
             self._credential,
             _service_client_kwargs=kwargs,
             requests_pipeline=self._requests_pipeline,
-            service_client_01_2024_preview=self._service_client_01_2024_preview,
+            service_client_01_2024_preview_arm=self._service_client_01_2024_preview_arm,
             service_client_10_2024_preview=self._service_client_10_2024_preview_tsp,
             service_client_01_2025_preview=self._service_client_01_2025_preview,
             **ops_kwargs,
@@ -703,7 +693,6 @@ class MLClient:
             self._operation_scope,
             self._operation_config,
             self._service_client_06_2023_preview,
-            self._service_client_01_2024_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -764,20 +753,20 @@ class MLClient:
         self._azure_openai_deployments = AzureOpenAIDeploymentOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_04_2024_preview,
+            self._service_client_04_2024_preview_arm,
             self._connections,
         )
 
         self._serverless_endpoints = ServerlessEndpointOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
             self._operation_container,
         )
         self._marketplace_subscriptions = MarketplaceSubscriptionOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_01_2024_preview,
+            self._service_client_01_2024_preview_arm,
         )
         self._operation_container.add(AzureMLResourceType.FEATURE_STORE, self._featurestores)  # type: ignore[arg-type]
         self._operation_container.add(AzureMLResourceType.FEATURE_SET, self._featuresets)
