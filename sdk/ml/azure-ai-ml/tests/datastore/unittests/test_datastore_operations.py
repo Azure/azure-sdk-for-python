@@ -12,6 +12,7 @@ from azure.ai.ml.operations import DatastoreOperations
 
 IS_CPYTHON = platform.python_implementation() == "CPython"
 IS_PYPY = platform.python_implementation() == "PyPy"
+IS_MACOS_ARM64 = sys.platform == "darwin" and platform.machine() == "arm64"
 
 
 @pytest.fixture
@@ -103,8 +104,8 @@ class TestDatastoreOperations:
         json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)
 
     @pytest.mark.skipif(
-        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
-        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)) or IS_MACOS_ARM64,
+        reason="Skipping because azureml.dataprep.rslex is unavailable: CPython>=3.13, PyPy>=3.10, or macOS arm64 (no wheel).",
     )
     def test_mount_persistent(
         self,
@@ -128,8 +129,8 @@ class TestDatastoreOperations:
             mock_datastore_operation._compute_operation.update_data_mounts.assert_called_once()
 
     @pytest.mark.skipif(
-        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)),
-        reason="Skipping because CPython version is >=3.13 or PyPy version is >=3.10. azureml.dataprep.rslex do not support it",
+        (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)) or IS_MACOS_ARM64,
+        reason="Skipping because azureml.dataprep.rslex is unavailable: CPython>=3.13, PyPy>=3.10, or macOS arm64 (no wheel).",
     )
     def test_mount_non_persistent(
         self,
