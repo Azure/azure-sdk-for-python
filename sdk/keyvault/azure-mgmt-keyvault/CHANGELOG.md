@@ -14,7 +14,7 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `ManagedHsmSkuName`
+  - Deleted or renamed enum `ManagedHsmSkuName`
 
 ## 14.0.1 (2026-03-27)
 
