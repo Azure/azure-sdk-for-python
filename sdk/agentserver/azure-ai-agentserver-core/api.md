@@ -652,7 +652,7 @@ namespace azure.ai.agentserver.core.tasks
                 input: Any, 
                 input_id: str | None = ..., 
                 task_id: str
-            ) -> Any: ...
+            ) -> Output: ...
 
         async def start(
                 self, 
