@@ -304,8 +304,7 @@ class NodeInput(InputOutputBase):
             of current pipeline. Input is introduced to support case like
             TODO: new examples
             component.inputs.xxx = Input(path="arm_id")
-        :paramtype data: Union[int, bool, float, str
-                          azure.ai.ml.Output,
+        :paramtype data: Union[int, bool, float, str,                          azure.ai.ml.Output,
                           azure.ai.ml.Input]
         :keyword owner: The owner component of the input, used to calculate binding.
         :paramtype owner: Union[azure.ai.ml.entities.BaseNode, azure.ai.ml.entities.PipelineJob]
@@ -484,9 +483,9 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         :param name: The name used to register NodeOutput/PipelineOutput data.
         :type name: str
         :param version: The version used to register NodeOutput/PipelineOutput data.
-        :ype version: str
+        :type version: str
         :keyword data: The output data. Valid types include str, Output
-        :paramtype data: Union[str
+        :paramtype data: Union[str,
                           azure.ai.ml.entities.Output]
         :param mode: The mode of the output.
         :type mode: str

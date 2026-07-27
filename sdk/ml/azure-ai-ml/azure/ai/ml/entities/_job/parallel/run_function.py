@@ -33,7 +33,7 @@ class RunFunction(ParallelTask):
         are processed.
     :paramtype entry_script: str
     :keyword program_arguments: The arguments of the parallel task.
-    :type args: str
+    :paramtype program_arguments: str
     :keyword model: The model of the parallel task.
     :paramtype model: str
     :keyword append_row_to: All values output by run() method invocations will be aggregated into

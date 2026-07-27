@@ -41,7 +41,7 @@ class DataColumn(RestTranslatableMixin):
     :keyword name: The column name
     :paramtype name: str
     :keyword type: The column data type. Defaults to None.
-    :paramtype type: Optional[union[str, ~azure.ai.ml.entities.DataColumnType]]
+    :paramtype type: Optional[Union[str, ~azure.ai.ml.entities.DataColumnType]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     :raises ValidationException: Raised if type is specified and is not a valid DataColumnType or str.

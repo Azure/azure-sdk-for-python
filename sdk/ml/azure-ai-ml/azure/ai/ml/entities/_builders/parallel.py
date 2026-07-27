@@ -68,7 +68,7 @@ class Parallel(BaseNode, NodeWithGroupInputMixin):  # pylint: disable=too-many-i
     :paramtype retry_settings: BatchRetrySettings
     :keyword logging_level: A string of the logging level name
     :paramtype logging_level: str
-    :keyword max_concurrency_per_instance: The max parallellism that each compute instance has
+    :keyword max_concurrency_per_instance: The max parallelism that each compute instance has
     :paramtype max_concurrency_per_instance: int
     :keyword error_threshold: The number of item processing failures should be ignored
     :paramtype error_threshold: int

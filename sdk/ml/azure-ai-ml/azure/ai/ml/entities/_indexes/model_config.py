@@ -25,8 +25,8 @@ class ModelConfiguration:
     :paramtype api_version: Optional[str]
     :keyword model_name: The name of the model.
     :paramtype model_name: Optional[str]
-    :keyword model_name: The deployment name of the model.
-    :paramtype model_name: Optional[str]
+    :keyword deployment_name: The deployment name of the model.
+    :paramtype deployment_name: Optional[str]
     :keyword connection_name: The name of the workspace connection of this model.
     :paramtype connection_name: Optional[str]
     :keyword connection_type: The type of the workspace connection of this model.

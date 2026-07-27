@@ -24,9 +24,9 @@ class ColumnTransformer(RestTranslatableMixin):
     """Column transformer settings.
 
     :keyword fields: The fields on which to perform custom featurization
-    :type field: List[str]
+    :paramtype fields: List[str]
     :keyword parameters: parameters used for custom featurization
-    :paramtype parameters: Dict[str, Optional[str, float]]
+    :paramtype parameters: Optional[Dict[str, Union[str, float]]]
     """
 
     def __init__(

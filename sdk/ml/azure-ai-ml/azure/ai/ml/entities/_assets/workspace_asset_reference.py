@@ -21,7 +21,7 @@ class WorkspaceAssetReference(Asset):
     :keyword version: Model version
     :paramtype version: str
     :keyword asset_id: Model asset id
-    :paramtype version: str
+    :paramtype asset_id: str
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """

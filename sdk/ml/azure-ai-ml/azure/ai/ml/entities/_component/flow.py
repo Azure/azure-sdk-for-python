@@ -185,7 +185,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :keyword flow: The path to the flow directory or flow definition file. Defaults to None and base path of this
         component will be used as flow directory.
     :paramtype flow: Optional[Union[str, Path]]
-    :keyword column_mappings: The column mapping for the flow. Defaults to None.
+    :keyword column_mapping: The column mapping for the flow. Defaults to None.
     :paramtype column_mapping: Optional[dict[str, str]]
     :keyword variant: The variant of the flow. Defaults to None.
     :paramtype variant: Optional[str]
@@ -194,7 +194,7 @@ class FlowComponent(Component, AdditionalIncludesMixin):
     :keyword environment_variables: The environment variables for the flow. Defaults to None.
     :paramtype environment_variables: Optional[dict[str, str]]
     :keyword environment: The environment for the flow component. Defaults to None.
-    :paramtype environment: Optional[Union[str, Environment])
+    :paramtype environment: Optional[Union[str, Environment]]
     :keyword is_deterministic: Specifies whether the Flow will return the same output given the same input.
         Defaults to True. When True, if a Flow (component) is deterministic and has been run before in the
         current workspace with the same input and settings, it will reuse results from a previous submitted job

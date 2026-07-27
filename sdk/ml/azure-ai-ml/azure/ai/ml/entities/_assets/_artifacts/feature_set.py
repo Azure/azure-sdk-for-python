@@ -37,7 +37,7 @@ class FeatureSet(Artifact):
     :paramtype entities: list[str]
     :keyword specification: Specifies the feature set spec details.
     :paramtype specification: ~azure.ai.ml.entities.FeatureSetSpecification
-    :keyword stage: Feature set stage. Allowed values: Development, Production, Archived. Defatuls to Development.
+    :keyword stage: Feature set stage. Allowed values: Development, Production, Archived. Defaults to Development.
     :paramtype stage: Optional[str]
     :keyword description: The description of the Feature Set resource. Defaults to None.
     :paramtype description: Optional[str]

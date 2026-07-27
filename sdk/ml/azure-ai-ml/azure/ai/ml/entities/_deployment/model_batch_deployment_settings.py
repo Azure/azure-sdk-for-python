@@ -15,7 +15,7 @@ class ModelBatchDeploymentSettings:
 
     :keyword mini_batch_size: Size of the mini-batch passed to each batch invocation, defaults to 10
     :paramtype mini_batch_size: int
-    :keyword instance_count: Number of instances the interfering will run on. Equivalent to resources.instance_count.
+    :keyword instance_count: Number of instances the inference will run on. Equivalent to resources.instance_count.
     :paramtype instance_count: int
     :keyword output_action: Indicates how the output will be organized. Possible values include:
      "summary_only", "append_row". Defaults to "append_row"
