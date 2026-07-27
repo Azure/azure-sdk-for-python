@@ -100,11 +100,7 @@ def test_preview_api_with_stable_sdk_version_adds_changelog_warning(tmp_path):
         api_version="2026-01-01-preview",
     )
     assert changelog_content.count(expected_warning) == 1
-    assert (
-        "## 1.0.0 (2026-07-27)\n\n"
-        f"{expected_warning}\n\n"
-        "### Features Added"
-    ) in changelog_content
+    assert ("## 1.0.0 (2026-07-27)\n\n" f"{expected_warning}\n\n" "### Features Added") in changelog_content
 
 
 def test_stable_api_with_stable_sdk_version_does_not_add_changelog_warning(tmp_path):
