@@ -35,10 +35,10 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @paulshealy1 @singankit @trrwilson
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @trrwilson @howieleung
 
 # ServiceLabel: %AI
-# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
