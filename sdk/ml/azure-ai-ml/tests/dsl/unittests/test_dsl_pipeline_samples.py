@@ -14,6 +14,7 @@ from test_utilities.utils import omit_with_wildcard
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.exceptions import ValidationException
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -26,9 +27,9 @@ sys.path.insert(0, str(tests_root_dir / "test_configs"))
 
 def assert_dsl_curated(pipeline, job_yaml, omit_fields):
     omit_fields.extend(["properties.jobs.*._source", "properties.settings._source"])
-    dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
+    dsl_pipeline_job_dict = as_attribute_dict(pipeline._to_rest_object())
     pipeline_from_yaml = load_job(source=job_yaml)
-    pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()
+    pipeline_job_dict = as_attribute_dict(pipeline_from_yaml._to_rest_object())
 
     dsl_pipeline_job_dict = omit_with_wildcard(dsl_pipeline_job_dict, *omit_fields)
     pipeline_job_dict = omit_with_wildcard(pipeline_job_dict, *omit_fields)
@@ -58,7 +59,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_basic_component(self) -> None:
-        from test_configs.dsl_pipeline.basic_component.pipeline import generate_dsl_pipeline as basic_component
+        from test_configs.dsl_pipeline.basic_component.pipeline import (
+            generate_dsl_pipeline as basic_component,
+        )
 
         pipeline = basic_component()
         job_yaml = str(samples_dir / "basic_component/pipeline.yml")
@@ -87,7 +90,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_basic_pipeline(self) -> None:
-        from test_configs.dsl_pipeline.basic_pipeline.pipeline import generate_dsl_pipeline as basic_pipeline
+        from test_configs.dsl_pipeline.basic_pipeline.pipeline import (
+            generate_dsl_pipeline as basic_pipeline,
+        )
 
         pipeline = basic_pipeline()
         job_yaml = str(samples_dir / "basic_pipeline/pipeline.yml")
@@ -100,7 +105,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_pipeline_with_data(self) -> None:
-        from test_configs.dsl_pipeline.pipline_with_data.pipeline import generate_dsl_pipeline as pipline_with_data
+        from test_configs.dsl_pipeline.pipline_with_data.pipeline import (
+            generate_dsl_pipeline as pipline_with_data,
+        )
 
         pipeline = pipline_with_data()
         job_yaml = str(samples_dir / "pipline_with_data/pipeline.yml")
@@ -114,7 +121,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_local_data_input(self) -> None:
-        from test_configs.dsl_pipeline.local_data_input.pipeline import generate_dsl_pipeline as local_data_input
+        from test_configs.dsl_pipeline.local_data_input.pipeline import (
+            generate_dsl_pipeline as local_data_input,
+        )
 
         pipeline = local_data_input()
         job_yaml = str(samples_dir / "local_data_input/pipeline.yml")
@@ -158,7 +167,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_dataset_input(self, mock_machinelearning_client: MLClient) -> None:
-        from test_configs.dsl_pipeline.dataset_input.pipeline import generate_dsl_pipeline as dataset_input
+        from test_configs.dsl_pipeline.dataset_input.pipeline import (
+            generate_dsl_pipeline as dataset_input,
+        )
 
         def get_dataset(*args, **kwargs):
             return "sampledata1235:2"
@@ -182,7 +193,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_web_url_input(self) -> None:
-        from test_configs.dsl_pipeline.web_url_input.pipeline import generate_dsl_pipeline as web_url_input
+        from test_configs.dsl_pipeline.web_url_input.pipeline import (
+            generate_dsl_pipeline as web_url_input,
+        )
 
         pipeline = web_url_input()
         job_yaml = str(samples_dir / "web_url_input/pipeline.yml")
@@ -210,7 +223,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_env_registered(self) -> None:
-        from test_configs.dsl_pipeline.env_registered.pipeline import generate_dsl_pipeline as env_registered
+        from test_configs.dsl_pipeline.env_registered.pipeline import (
+            generate_dsl_pipeline as env_registered,
+        )
 
         pipeline = env_registered()
         job_yaml = str(samples_dir / "env_registered/pipeline.yml")
@@ -223,7 +238,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_env_conda_file(self) -> None:
-        from test_configs.dsl_pipeline.env_conda_file.pipeline import generate_dsl_pipeline as env_conda_file
+        from test_configs.dsl_pipeline.env_conda_file.pipeline import (
+            generate_dsl_pipeline as env_conda_file,
+        )
 
         pipeline = env_conda_file()
         job_yaml = str(samples_dir / "env_conda_file/pipeline.yml")
@@ -236,7 +253,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_tf_hello_world(self) -> None:
-        from test_configs.dsl_pipeline.tf_hello_world.pipeline import generate_dsl_pipeline as tf_hello_world
+        from test_configs.dsl_pipeline.tf_hello_world.pipeline import (
+            generate_dsl_pipeline as tf_hello_world,
+        )
 
         pipeline = tf_hello_world()
         job_yaml = str(samples_dir / "tf_hello_world/pipeline.yml")
@@ -249,7 +268,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_mpi_hello_world(self) -> None:
-        from test_configs.dsl_pipeline.mpi_hello_world.pipeline import generate_dsl_pipeline as mpi_hello_world
+        from test_configs.dsl_pipeline.mpi_hello_world.pipeline import (
+            generate_dsl_pipeline as mpi_hello_world,
+        )
 
         pipeline = mpi_hello_world()
         job_yaml = str(samples_dir / "mpi_hello_world/pipeline.yml")
@@ -262,7 +283,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_pytorch_hello_world(self) -> None:
-        from test_configs.dsl_pipeline.pytorch_hello_world.pipeline import generate_dsl_pipeline as pytorch_hello_world
+        from test_configs.dsl_pipeline.pytorch_hello_world.pipeline import (
+            generate_dsl_pipeline as pytorch_hello_world,
+        )
 
         pipeline = pytorch_hello_world()
         job_yaml = str(samples_dir / "pytorch_hello_world/pipeline.yml")
@@ -290,7 +313,9 @@ class TestDSLPipelineSamples:
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
     def test_tf_mnist(self) -> None:
-        from test_configs.dsl_pipeline.tf_mnist.pipeline import generate_dsl_pipeline as tf_mnist
+        from test_configs.dsl_pipeline.tf_mnist.pipeline import (
+            generate_dsl_pipeline as tf_mnist,
+        )
 
         pipeline = tf_mnist()
         job_yaml = str(samples_dir / "tf_mnist/pipeline.yml")
@@ -504,7 +529,9 @@ class TestDSLPipelineSamples:
         ]
         assert_dsl_curated(pipeline, job_yaml, omit_fields)
 
-    def test_data_transfer_import_stored_database_job_builder_with_inline_job(self) -> None:
+    def test_data_transfer_import_stored_database_job_builder_with_inline_job(
+        self,
+    ) -> None:
         from test_configs.dsl_pipeline.data_transfer_job_in_pipeline.import_stored_database.pipeline import (
             generate_dsl_pipeline_from_builder as data_transfer_job_in_pipeline,
         )
