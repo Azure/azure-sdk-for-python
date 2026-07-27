@@ -6,7 +6,7 @@
 
 from typing import List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     AutoForecastHorizon,
     AutoSeasonality,
     AutoTargetLags,
@@ -17,10 +17,10 @@ from azure.ai.ml._restclient.v2023_04_01_preview.models import (
     CustomTargetRollingWindowSize,
     ForecastHorizonMode,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ForecastingSettings as RestForecastingSettings,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     SeasonalityMode,
     TargetLagsMode,
     TargetRollingWindowSizeMode,
@@ -276,7 +276,7 @@ class ForecastingSettings(RestTranslatableMixin):
             target_lags = AutoTargetLags()
         elif self.target_lags:
             lags = [self.target_lags] if not isinstance(self.target_lags, list) else self.target_lags
-            target_lags = CustomTargetLags(values=lags)
+            target_lags = CustomTargetLags(values_property=lags)
 
         target_rolling_window_size = None
         if isinstance(self.target_rolling_window_size, str):
@@ -298,7 +298,7 @@ class ForecastingSettings(RestTranslatableMixin):
         if isinstance(self.features_unknown_at_forecast_time, str) and self.features_unknown_at_forecast_time:
             features_unknown_at_forecast_time = [self.features_unknown_at_forecast_time]
 
-        return RestForecastingSettings(
+        rest_obj = RestForecastingSettings(
             country_or_region_for_holidays=self.country_or_region_for_holidays,
             cv_step_size=self.cv_step_size,
             forecast_horizon=forecast_horizon,
@@ -312,8 +312,12 @@ class ForecastingSettings(RestTranslatableMixin):
             short_series_handling_config=self.short_series_handling_config,
             target_aggregate_function=self.target_aggregate_function,
             time_series_id_column_names=time_series_id_column_names,
-            features_unknown_at_forecast_time=features_unknown_at_forecast_time,
         )
+        # ``featuresUnknownAtForecastTime`` exists on the 2023-04 wire contract but was dropped from
+        # the arm_ml_service (2025-12) model; preserve it via wire-key assignment.
+        if features_unknown_at_forecast_time is not None:
+            rest_obj["featuresUnknownAtForecastTime"] = features_unknown_at_forecast_time
+        return rest_obj
 
     @classmethod
     def _from_rest_object(cls, obj: RestForecastingSettings) -> "ForecastingSettings":
@@ -328,7 +332,7 @@ class ForecastingSettings(RestTranslatableMixin):
         if rest_target_lags and rest_target_lags.mode == TargetLagsMode.AUTO:
             target_lags = rest_target_lags.mode.lower()
         elif rest_target_lags:
-            target_lags = rest_target_lags.values
+            target_lags = rest_target_lags.values_property
 
         target_rolling_window_size = None
         if obj.target_rolling_window_size and obj.target_rolling_window_size.mode == TargetRollingWindowSizeMode.AUTO:
@@ -356,7 +360,7 @@ class ForecastingSettings(RestTranslatableMixin):
             target_aggregate_function=obj.target_aggregate_function,
             time_column_name=obj.time_column_name,
             time_series_id_column_names=obj.time_series_id_column_names,
-            features_unknown_at_forecast_time=obj.features_unknown_at_forecast_time,
+            features_unknown_at_forecast_time=obj.get("featuresUnknownAtForecastTime"),
         )
 
     def __eq__(self, other: object) -> bool:

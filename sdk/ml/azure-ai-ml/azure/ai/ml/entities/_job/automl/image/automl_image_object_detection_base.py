@@ -6,14 +6,13 @@
 
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     LearningRateScheduler,
-    LogTrainingMetrics,
-    LogValidationLoss,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
+from azure.ai.ml.constants._job.automl import LogTrainingMetrics, LogValidationLoss
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl import SearchSpace
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage

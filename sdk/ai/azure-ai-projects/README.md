@@ -24,9 +24,8 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Model Context Protocol (MCP)
   * OpenAPI
   * Reminder Tool (Preview)
-  * Toolbox Search (Preview)
+  * Toolbox Search
   * Web Search
-  * Web Search (Preview)
   * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
 * **Create and version toolboxes** that bundle collections of tools and skills for your agents, using `.toolboxes` operations.

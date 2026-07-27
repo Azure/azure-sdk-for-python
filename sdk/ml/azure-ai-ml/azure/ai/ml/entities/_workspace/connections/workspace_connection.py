@@ -10,16 +10,18 @@ from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Type, Union, cast
 
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     WorkspaceConnectionPropertiesV2BasicResource as RestWorkspaceConnection,
 )
-from azure.ai.ml._restclient.v2024_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ConnectionCategory,
     NoneAuthTypeWorkspaceConnectionProperties,
     AADAuthTypeWorkspaceConnectionProperties,
 )
 
-from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
+from azure.ai.ml._schema.workspace.connections.workspace_connection import (
+    WorkspaceConnectionSchema,
+)
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
@@ -48,15 +50,30 @@ from azure.ai.ml.entities._util import load_from_dict
 
 
 CONNECTION_CATEGORY_TO_CREDENTIAL_MAP = {
-    ConnectionCategory.AZURE_BLOB: [AccessKeyConfiguration, SasTokenConfiguration, AadCredentialConfiguration],
+    ConnectionCategory.AZURE_BLOB: [
+        AccessKeyConfiguration,
+        SasTokenConfiguration,
+        AadCredentialConfiguration,
+    ],
     ConnectionTypes.AZURE_DATA_LAKE_GEN_2: [
         ServicePrincipalConfiguration,
         AadCredentialConfiguration,
         ManagedIdentityConfiguration,
     ],
-    ConnectionCategory.GIT: [PatTokenConfiguration, NoneCredentialConfiguration, UsernamePasswordConfiguration],
-    ConnectionCategory.PYTHON_FEED: [UsernamePasswordConfiguration, PatTokenConfiguration, NoneCredentialConfiguration],
-    ConnectionCategory.CONTAINER_REGISTRY: [ManagedIdentityConfiguration, UsernamePasswordConfiguration],
+    ConnectionCategory.GIT: [
+        PatTokenConfiguration,
+        NoneCredentialConfiguration,
+        UsernamePasswordConfiguration,
+    ],
+    ConnectionCategory.PYTHON_FEED: [
+        UsernamePasswordConfiguration,
+        PatTokenConfiguration,
+        NoneCredentialConfiguration,
+    ],
+    ConnectionCategory.CONTAINER_REGISTRY: [
+        ManagedIdentityConfiguration,
+        UsernamePasswordConfiguration,
+    ],
 }
 
 DATASTORE_CONNECTIONS = {
@@ -65,7 +82,13 @@ DATASTORE_CONNECTIONS = {
     ConnectionCategory.AZURE_ONE_LAKE,
 }
 
-CONNECTION_ALTERNATE_TARGET_NAMES = ["target", "api_base", "url", "azure_endpoint", "endpoint"]
+CONNECTION_ALTERNATE_TARGET_NAMES = [
+    "target",
+    "api_base",
+    "url",
+    "azure_endpoint",
+    "endpoint",
+]
 
 
 # Dev note: The acceptable strings for the type field are all snake_cased versions of the string constants defined
@@ -153,7 +176,10 @@ class WorkspaceConnection(Resource):
         target = None
         for target_name in CONNECTION_ALTERNATE_TARGET_NAMES:
             target = kwargs.pop(target_name, target)
-        if target is None and type not in {ConnectionCategory.SERP, ConnectionCategory.Open_AI}:
+        if target is None and type not in {
+            ConnectionCategory.SERP,
+            ConnectionCategory.Open_AI,
+        }:
             raise ValueError("target is a required field for Connection.")
 
         tags = kwargs.pop("tags", None)
@@ -490,7 +516,7 @@ class WorkspaceConnection(Resource):
         else:
             properties = connection_properties_class(
                 target=self.target,
-                credentials=self.credentials._to_workspace_connection_rest_object() if self._credentials else None,
+                credentials=(self.credentials._to_workspace_connection_rest_object() if self._credentials else None),
                 metadata=self.metadata,
                 category=_snake_to_camel(conn_type),
                 is_shared_to_all=self.is_shared,
@@ -534,11 +560,11 @@ class WorkspaceConnection(Resource):
             "id": rest_obj.id,
             "name": rest_obj.name,
             "target": properties.target,
-            "creation_context": SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None,
+            "creation_context": (SystemData._from_rest_object(rest_obj.system_data) if rest_obj.system_data else None),
             "type": camel_to_snake(properties.category),
             "credentials": credentials,
             "metadata": metadata,
-            "is_shared": properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else True,
+            "is_shared": (properties.is_shared_to_all if hasattr(properties, "is_shared_to_all") else True),
         }
 
         for name in popped_metadata:

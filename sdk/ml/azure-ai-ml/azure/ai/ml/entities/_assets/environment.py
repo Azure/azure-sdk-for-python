@@ -11,11 +11,13 @@ from typing import Any, Dict, Optional, Union
 import yaml  # type: ignore[import]
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2023_04_01_preview.models import BuildContext as RestBuildContext
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import BuildContext as RestBuildContext
+from azure.ai.ml._restclient.arm_ml_service.models import (
     EnvironmentContainer,
     EnvironmentVersion,
     EnvironmentVersionProperties,
+    InferenceContainerProperties,
+    Route,
 )
 from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -28,6 +30,36 @@ from azure.ai.ml.entities._mixins import LocalizableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_sha256_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+
+
+def _to_rest_route(route: Any) -> Any:
+    if route is None or not isinstance(route, dict):
+        return route
+    return Route(**route)
+
+
+def _to_rest_inference_config(inference_config: Any) -> Any:
+    """Normalize ``inference_config`` for the arm_ml_service wire.
+
+    When an ``Environment`` is constructed directly in Python (not loaded via the schema), the
+    ``inference_config`` is a raw snake_case dict. The legacy msrest typed field implicitly mapped
+    such a dict to camelCase wire keys (``livenessRoute``/``readinessRoute``/``scoringRoute``); the
+    arm hybrid model serializes a plain dict verbatim, so the routes must be wrapped in the arm
+    ``InferenceContainerProperties`` model to preserve the wire. If it is already an arm model
+    (e.g. produced by ``InferenceConfigSchema``), it is returned unchanged.
+
+    :param inference_config: The environment's inference config as a raw dict or an arm model.
+    :type inference_config: Any
+    :return: An arm ``InferenceContainerProperties`` model, or the input returned unchanged.
+    :rtype: Any
+    """
+    if inference_config is None or not isinstance(inference_config, dict):
+        return inference_config
+    return InferenceContainerProperties(
+        liveness_route=_to_rest_route(inference_config.get("liveness_route")),
+        readiness_route=_to_rest_route(inference_config.get("readiness_route")),
+        scoring_route=_to_rest_route(inference_config.get("scoring_route")),
+    )
 
 
 class BuildContext:
@@ -225,10 +257,12 @@ class Environment(Asset, LocalizableMixin):
             environment_version.os_type = self.os_type
         if self.tags:
             environment_version.tags = self.tags
-        if self._is_anonymous:
-            environment_version.is_anonymous = self._is_anonymous
+        # The legacy msrest model serialized ``isAnonymous``/``isArchived`` (default False) on the
+        # wire; the arm_ml_service model omits None, so set them explicitly to preserve the wire.
+        environment_version.is_anonymous = self._is_anonymous or False
+        environment_version.is_archived = False
         if self.inference_config:
-            environment_version.inference_config = self.inference_config
+            environment_version.inference_config = _to_rest_inference_config(self.inference_config)
         if self.description:
             environment_version.description = self.description
         if self.properties:
@@ -252,15 +286,21 @@ class Environment(Asset, LocalizableMixin):
             creation_context=(
                 SystemData._from_rest_object(env_rest_object.system_data) if env_rest_object.system_data else None
             ),
-            is_anonymous=rest_env_version.is_anonymous,
+            is_anonymous=rest_env_version.is_anonymous or False,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
             inference_config=rest_env_version.inference_config,
             build=BuildContext._from_rest_object(rest_env_version.build) if rest_env_version.build else None,
             properties=rest_env_version.properties,
             intellectual_property=(
-                IntellectualProperty._from_rest_object(rest_env_version.intellectual_property)
-                if rest_env_version.intellectual_property
+                IntellectualProperty._from_rest_object(_ip)
+                if (
+                    _ip := (
+                        rest_env_version.get("intellectualProperty")
+                        if hasattr(rest_env_version, "get")
+                        else getattr(rest_env_version, "intellectual_property", None)
+                    )
+                )
                 else None
             ),
         )

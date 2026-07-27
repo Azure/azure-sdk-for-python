@@ -25,7 +25,6 @@ def mock_datastore_operation(
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
         serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
@@ -89,9 +88,9 @@ class TestDatastoreOperations:
         self, mock_from_rest, mock_datastore_operation: DatastoreOperations, path
     ) -> None:
         # Regression test (regressed in 1.34.0): the datastore operation was switched to the
-        # TypeSpec/arm_ml_service client, whose ``SdkJSONEncoder`` only serializes hybrid models. The entity
-        # ``_to_rest_object()`` still builds a legacy msrest Datastore model, so passing it as the request body
-        # raised ``TypeError: Object of type Datastore is not JSON serializable`` on every ``datastore create``.
+        # TypeSpec/arm_ml_service client, whose ``SdkJSONEncoder`` only serializes hybrid models. Passing a
+        # non-hybrid body raised ``TypeError: Object of type Datastore is not JSON serializable`` on every
+        # ``datastore create``. Durable fix: ``_to_rest_object()`` now returns an arm_ml_service hybrid model.
         # Guard: the body handed to the operation must serialize cleanly with the same encoder the client uses.
         import json
 
@@ -105,32 +104,39 @@ class TestDatastoreOperations:
 
     @pytest.mark.skipif(
         (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)) or IS_MACOS_ARM64,
-        reason="Skipping: azureml.dataprep.rslex is unavailable on CPython>=3.13, PyPy>=3.10, or macOS arm64.",
+        reason="Skipping because azureml.dataprep.rslex is unavailable: CPython>=3.13, PyPy>=3.10, or macOS arm64 (no wheel).",
     )
     def test_mount_persistent(
         self,
         mock_from_rest,
         mock_datastore_operation: DatastoreOperations,
     ):
-        mock_datastore_operation._compute_operation.get.return_value = Mock(
-            properties=Mock(
-                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
-            )
-        )
+        update_response = Mock(status_code=200)
+        get_response = Mock(status_code=200)
+        get_response.json.return_value = {
+            "properties": {
+                "properties": {"dataMounts": [{"mountName": "unified_mount_random_uuid", "mountState": "Mounted"}]}
+            }
+        }
+        mock_datastore_operation._service_client.send_request.side_effect = [update_response, get_response]
         with patch("uuid.uuid4", return_value="random_uuid"), patch(
             "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_datastore_uri"
         ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            # build_datastore_uri returns a str in production; the mount request now JSON-encodes this value
+            # into the HttpRequest body, so the mock must return a real string (a bare Mock would be fed to
+            # SdkJSONEncoder and recurse unboundedly).
+            mock_build_uri.return_value = "azureml://datastores/random_name/paths/random"
             mock_datastore_operation.mount(
                 path="azureml://datastores/random_name",
                 mount_point="/tmp/mount/random-local-path-for-datastore/",
                 persistent=True,
             )
             mock_build_uri.assert_called_once()
-            mock_datastore_operation._compute_operation.update_data_mounts.assert_called_once()
+            assert mock_datastore_operation._service_client.send_request.call_count == 2
 
     @pytest.mark.skipif(
         (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)) or IS_MACOS_ARM64,
-        reason="Skipping: azureml.dataprep.rslex is unavailable on CPython>=3.13, PyPy>=3.10, or macOS arm64.",
+        reason="Skipping because azureml.dataprep.rslex is unavailable: CPython>=3.13, PyPy>=3.10, or macOS arm64 (no wheel).",
     )
     def test_mount_non_persistent(
         self,

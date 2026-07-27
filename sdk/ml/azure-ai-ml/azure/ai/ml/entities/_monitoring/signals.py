@@ -11,7 +11,9 @@ from typing_extensions import Literal
 
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.arm_ml_service.models import AllFeatures as RestAllFeatures
-from azure.ai.ml._restclient.arm_ml_service.models import CustomMonitoringSignal as RestCustomMonitoringSignal
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    CustomMonitoringSignal as RestCustomMonitoringSignal,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     DataDriftMonitoringSignal as RestMonitoringDataDriftSignal,
 )
@@ -21,12 +23,18 @@ from azure.ai.ml._restclient.arm_ml_service.models import (
 from azure.ai.ml._restclient.arm_ml_service.models import (
     FeatureAttributionDriftMonitoringSignal as RestFeatureAttributionDriftMonitoringSignal,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import FeatureSubset as RestFeatureSubset
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    FeatureSubset as RestFeatureSubset,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     MonitoringFeatureFilterBase as RestMonitoringFeatureFilterBase,
 )
-from azure.ai.ml._restclient.arm_ml_service.models import MonitoringInputDataBase as RestMonitoringInputData
-from azure.ai.ml._restclient.arm_ml_service.models import MonitoringSignalBase as RestMonitoringSignalBase
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    MonitoringInputDataBase as RestMonitoringInputData,
+)
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    MonitoringSignalBase as RestMonitoringSignalBase,
+)
 from azure.ai.ml._restclient.arm_ml_service.models import (
     PredictionDriftMonitoringSignal as RestPredictionDriftMonitoringSignal,
 )
@@ -46,7 +54,11 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_dataset_literal_inputs,
 )
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.entities._monitoring.input_data import FixedInputData, StaticInputData, TrailingInputData
+from azure.ai.ml.entities._monitoring.input_data import (
+    FixedInputData,
+    StaticInputData,
+    TrailingInputData,
+)
 from azure.ai.ml.entities._monitoring.thresholds import (
     CustomMonitoringMetricThreshold,
     DataDriftMetricThreshold,
@@ -58,7 +70,12 @@ from azure.ai.ml.entities._monitoring.thresholds import (
     ModelPerformanceMetricThreshold,
     PredictionDriftMetricThreshold,
 )
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 
 class DataSegment(RestTranslatableMixin):
@@ -185,7 +202,8 @@ class ProductionData(RestTranslatableMixin):
         default_data_window_size = kwargs.get("default_data_window_size")
         if self.data_window is None:
             self.data_window = BaselineDataRange(
-                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+                lookback_window_size=default_data_window_size,
+                lookback_window_offset="P0D",
             )
         if self.data_window.lookback_window_size in ["default", None]:
             self.data_window.lookback_window_size = default_data_window_size
@@ -538,7 +556,8 @@ class DataDriftSignal(DataSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -569,7 +588,7 @@ class DataDriftSignal(DataSignal):
             feature_type_override=obj.feature_data_type_override,
             metric_thresholds=DataDriftMetricThreshold._from_rest_object(obj.metric_thresholds),
             alert_enabled=bool(obj.get("mode") == "Enabled"),
-            data_segment=DataSegment._from_rest_object(data_segment) if data_segment else None,
+            data_segment=(DataSegment._from_rest_object(data_segment) if data_segment else None),
             properties=obj.get("properties"),
         )
 
@@ -629,7 +648,8 @@ class PredictionDriftSignal(MonitoringSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -731,7 +751,8 @@ class DataQualitySignal(DataSignal):
             ),
             reference_data=(
                 self.reference_data._to_rest_object(
-                    default_data_window=default_data_window_size, ref_data_window_size=ref_data_window_size
+                    default_data_window=default_data_window_size,
+                    ref_data_window_size=ref_data_window_size,
                 )
                 if self.reference_data is not None
                 else None
@@ -805,7 +826,8 @@ class FADProductionData(RestTranslatableMixin):
         default_data_window_size = kwargs.get("default")
         if self.data_window is None:
             self.data_window = BaselineDataRange(
-                lookback_window_size=default_data_window_size, lookback_window_offset="P0D"
+                lookback_window_size=default_data_window_size,
+                lookback_window_offset="P0D",
             )
         if self.data_window.lookback_window_size == "default":
             self.data_window.lookback_window_size = default_data_window_size
@@ -890,7 +912,8 @@ class FeatureAttributionDriftSignal(RestTranslatableMixin):
                 else None
             ),
             reference_data=self.reference_data._to_rest_object(
-                default_data_window=default_window_size, ref_data_window_size=ref_data_window_size
+                default_data_window=default_window_size,
+                ref_data_window_size=ref_data_window_size,
             ),
             metric_threshold=self.metric_thresholds._to_rest_object(),
         )
@@ -963,10 +986,11 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             "signalType": "ModelPerformance",
             "productionData": [self.production_data._to_rest_object(default_data_window_size=default_data_window_size)],
             "referenceData": self.reference_data._to_rest_object(
-                default_data_window_size=default_data_window_size, ref_data_window_size=ref_data_window_size
+                default_data_window_size=default_data_window_size,
+                ref_data_window_size=ref_data_window_size,
             ),
             "metricThreshold": self.metric_thresholds._to_rest_object(),
-            "dataSegment": self.data_segment._to_rest_object() if self.data_segment else None,
+            "dataSegment": (self.data_segment._to_rest_object() if self.data_segment else None),
             "mode": "Enabled" if self.alert_enabled else "Disabled",
             "properties": self.properties,
         }
@@ -979,7 +1003,7 @@ class ModelPerformanceSignal(RestTranslatableMixin):
             production_data=ProductionData._from_rest_object(obj["productionData"][0]),
             reference_data=ReferenceData._from_rest_object(obj["referenceData"]),
             metric_thresholds=ModelPerformanceMetricThreshold._from_rest_object(obj["metricThreshold"]),
-            data_segment=DataSegment._from_rest_object(data_segment) if data_segment else None,
+            data_segment=(DataSegment._from_rest_object(data_segment) if data_segment else None),
             alert_enabled=bool(obj.get("mode") == "Enabled"),
         )
 
@@ -1068,11 +1092,12 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     def _to_rest_object(self, **kwargs: Any) -> RestCustomMonitoringSignal:  # pylint:disable=unused-argument
         if self.connection is None:
             self.connection = Connection()
-        # ``inputs`` come from the shared v2023_04 msrest dataset-literal helper; serialize them to plain
-        # wire dicts so they fit inside the arm_ml_service signal envelope without changing the wire body.
+        # ``inputs`` come from the shared arm_ml_service dataset-literal helper; emit their camelCase wire
+        # dicts (``as_dict`` on the hybrid model) so they fit inside the arm_ml_service signal envelope
+        # without changing the wire body.
         rest_inputs = to_rest_dataset_literal_inputs(self.inputs, job_type=None) if self.inputs else None
         if rest_inputs is not None:
-            rest_inputs = {name: value.serialize() for name, value in rest_inputs.items()}
+            rest_inputs = {name: value.as_dict() for name, value in rest_inputs.items()}
         rest_signal = RestCustomMonitoringSignal(
             component_id=self.component_id,
             metric_thresholds=[threshold._to_rest_object() for threshold in self.metric_thresholds],
@@ -1094,7 +1119,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
     def _from_rest_object(cls, obj: RestCustomMonitoringSignal) -> "CustomMonitoringSignal":
         workspace_connection = obj.get("workspaceConnection")
         return cls(
-            inputs=from_rest_inputs_to_dataset_literal(obj.inputs) if obj.inputs else None,
+            inputs=(from_rest_inputs_to_dataset_literal(obj.inputs) if obj.inputs else None),
             input_data={key: ReferenceData._from_rest_object(data) for key, data in obj.input_assets.items()},
             metric_thresholds=[
                 CustomMonitoringMetricThreshold._from_rest_object(metric) for metric in obj.metric_thresholds
@@ -1102,7 +1127,7 @@ class CustomMonitoringSignal(RestTranslatableMixin):
             component_id=obj.component_id,
             alert_enabled=bool(obj.get("mode") == "Enabled"),
             properties=obj.get("properties"),
-            connection=Connection._from_rest_object(workspace_connection) if workspace_connection else None,
+            connection=(Connection._from_rest_object(workspace_connection) if workspace_connection else None),
         )
 
 
