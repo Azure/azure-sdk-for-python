@@ -16,22 +16,6 @@
 
   - Deleted or renamed model `ManagedHsmSkuName`
 
-## 15.0.0 (2026-07-22)
-
-### Features Added
-
-  - Enum `JsonWebKeyType` added member `OCT_HSM`
-  - Model `VaultPatchProperties` added property `token_binding_parameters`
-  - Model `VaultProperties` added property `token_binding_parameters`
-  - Added enum `ManagedHsmSkuNameV2`
-  - Added enum `TokenBindingMode`
-  - Added model `TokenBindingParameters`
-  - Added enum `TokenBindingStrength`
-
-### Breaking Changes
-
-  - Deleted or renamed model `ManagedHsmSkuName`
-
 ## 14.0.1 (2026-03-27)
 
 ### Bugs Fixed
