@@ -366,7 +366,7 @@ def test_build_m365_app_builds_real_stack(monkeypatch):
 
     connection_config = get_hosted_agent_env(digital_worker=False)
     app, adapter = bridge.build_m365_app(
-        digital_worker=False, connection_config=connection_config, storage=MemoryStorage()
+        connection_config=connection_config, storage=MemoryStorage()
     )
 
     from microsoft_agents.hosting.core import AgentApplication, HttpAdapterBase
@@ -383,7 +383,7 @@ def test_build_m365_app_fast_path_returns_injected_app():
         adapter = object()
 
     injected = _App()
-    app, adapter = bridge.build_m365_app(digital_worker=False, connection_config={}, storage=None, agent_app=injected)
+    app, adapter = bridge.build_m365_app(connection_config={}, storage=None, agent_app=injected)
 
     assert app is injected
     assert adapter is injected.adapter

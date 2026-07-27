@@ -42,7 +42,6 @@ BridgeHandler = Callable[[Request], Awaitable[Response]]
 
 def build_m365_app(
     *,
-    digital_worker: bool,
     connection_config: Mapping[str, str],
     storage: Optional[Storage] = None,
     connection_manager: Optional[MsalConnectionManager] = None,
@@ -56,10 +55,11 @@ def build_m365_app(
     from caller-supplied components. Any component left as ``None`` is created
     from the resolved connection config.
 
-    :keyword digital_worker: When ``True``, configure the connection for the
-        digital-worker (``IdentityProxyManager``) model. The M365 SDK performs
-        the federated-identity token exchange natively; no patching is needed.
-    :paramtype digital_worker: bool
+    The outbound-auth model (simple vs digital worker) is already encoded in
+    ``connection_config`` by :func:`~._config.get_hosted_agent_env` (for example
+    the ``IdentityProxyManager`` auth type for the digital-worker model), so this
+    function does not need to know which model is in effect.
+
     :keyword connection_config: The resolved M365 ``CONNECTIONS__*`` mapping.
     :paramtype connection_config: Mapping[str, str]
     :keyword storage: The storage backend for the built stack. Required when
