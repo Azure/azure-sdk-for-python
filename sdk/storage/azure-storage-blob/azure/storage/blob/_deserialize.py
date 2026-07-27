@@ -90,41 +90,46 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
 
 
 # iter_bytes and iter_raw return generators
-class _DownloadResponse:
-    """Wrapper for download response that holds the stream, properties, and content length.
+class _StreamWrapper:
+    """Wraps a bytes iterator (sync or async) so that properties can be attached."""
 
-    The generated download operation returns ``response.iter_bytes()`` (a generator)
-    as the deserialized body. ``StorageStreamDownloader`` expects to access
-    ``.properties``, ``.content_length``, and iteration on the response object, so
-    this wrapper bundles them together.
-    """
-
-    def __init__(
-        self,
-        stream: Any,
-        properties: BlobProperties,
-        response: "PipelineResponse",
-    ) -> None:
+    def __init__(self, stream: Any):
         self._stream = stream
-        self.properties = properties
-        self.response = response.http_response
-        self.content_length = int(response.http_response.headers.get("Content-Length", 0))
+        self.properties: Optional[BlobProperties] = None
+        self.response: Optional[Any] = None
+        self.content_length: int = 0
 
     def __iter__(self):
         return iter(self._stream)
 
+    def __next__(self):
+        return next(self._stream)
+
     def __aiter__(self):
         return self._stream.__aiter__()
+
+    async def __anext__(self):
+        return await self._stream.__anext__()
 
 
 def deserialize_blob_stream(
     response: "PipelineResponse",
     obj: Any,
     headers: Dict[str, Any],
-) -> Tuple["LocationMode", "_DownloadResponse"]:
+) -> Tuple["LocationMode", Any]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
-    download_response = _DownloadResponse(obj, blob_properties, response)
-    return response.http_response.location_mode, download_response
+    http_response = response.http_response
+    # The TypeSpec-generated download returns a raw bytes iterator or a structured-message
+    # decoder rather than a response object that exposes .properties. When the stream can't
+    # carry our metadata, wrap it so callers can still reach .properties/.response/.content_length.
+    if not hasattr(obj, "properties"):
+        stream = _StreamWrapper(obj)
+        stream.properties = blob_properties
+        stream.response = http_response
+        stream.content_length = int(http_response.headers.get("Content-Length", 0))
+        return http_response.location_mode, stream
+    obj.properties = blob_properties
+    return http_response.location_mode, obj
 
 
 def deserialize_container_properties(
