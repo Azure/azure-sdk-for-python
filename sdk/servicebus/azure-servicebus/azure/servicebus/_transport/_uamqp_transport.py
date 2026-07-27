@@ -776,10 +776,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = receiver._inner_next()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopIteration:
                     break
                 finally:
@@ -870,6 +874,15 @@ try:
             :rtype: None
             """
             handler.message_handler.reset_link_credit(link_credit)
+
+        @staticmethod
+        def drain_and_release_messages(handler: "ReceiveClient") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default). uamqp is deprecated.
+            :param ~uamqp.ReceiveClient handler: The handler.
+            :rtype: None
+            """
 
         # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
