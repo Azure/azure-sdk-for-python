@@ -193,3 +193,52 @@ def test_credentials_not_leaked_on_redirect_then_retry(credential, cred_header, 
 
     assert transport.calls >= 3, "expected a redirect followed by a retry"
     assert not any(transport.post_redirect_headers)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("credential, cred_header, cred_value", ASYNC_CREDENTIAL_CASES)
+async def test_credentials_not_leaked_on_redirect_then_retry_async(credential, cred_header, cred_value):
+    """Async counterpart: a retry after a cross-host redirect (307 -> 503 -> 200) must not re-leak the credential.
+
+    Requires azure-core >= 1.38.3, which persists the ``insecure_domain_change`` flag across
+    retries so the cleanup keeps stripping the credential re-added by the async auth policy.
+    """
+
+    class MockAsyncTransport(AsyncHttpTransport):
+        def __init__(self):
+            self.calls = 0
+            self.post_redirect_headers = []
+
+        async def __aenter__(self):
+            return self
+
+        async def __aexit__(self, *args):
+            pass
+
+        async def close(self):
+            pass
+
+        async def open(self):
+            pass
+
+        async def send(self, request, **kwargs):
+            self.calls += 1
+            if self.calls == 1:
+                assert request.headers.get(cred_header) == cred_value
+                return _redirect_response()
+            # Every request to the redirected host - including the retry - must be clean.
+            self.post_redirect_headers.append(request.headers.get(cred_header))
+            if self.calls == 2:
+                retryable = Response()
+                retryable.status_code = 503
+                retryable.headers["Retry-After"] = "0"
+                return retryable
+            return _ok_response()
+
+    transport = MockAsyncTransport()
+    policies = EventGridPublisherClientAsync._policies(credential, retry_backoff_factor=0)
+    pipeline = AsyncPipeline(transport=transport, policies=policies)
+    await pipeline.run(HttpRequest("POST", ORIGINAL_URL))
+
+    assert transport.calls >= 3, "expected a redirect followed by a retry"
+    assert not any(transport.post_redirect_headers)
