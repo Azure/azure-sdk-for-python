@@ -30,7 +30,7 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .http_challenge import HttpChallenge
 from . import http_challenge_cache as ChallengeCache
-from .challenge_auth_policy import _enforce_tls, _has_claims, _update_challenge
+from .challenge_auth_policy import _enforce_tls, _has_claims, _update_challenge, _REQUEST_COPY_KEY
 
 if sys.version_info < (3, 9):
     from typing import Awaitable
@@ -80,7 +80,6 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         self._credential: AsyncTokenProvider = credential
         self._token: Optional[Union["AccessToken", "AccessTokenInfo"]] = None
         self._verify_challenge_resource = kwargs.pop("verify_challenge_resource", True)
-        self._request_copy: Optional[HttpRequest] = None
 
     async def send(self, request: PipelineRequest[HttpRequest]) -> PipelineResponse[HttpRequest, AsyncHttpResponse]:
         """Authorize request with a bearer token and send it to the next policy.
@@ -171,8 +170,10 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
         # saving it for later. Key Vault will reject the request as unauthorized and respond with a challenge.
         # on_challenge will parse that challenge, use the original request including the body, authorize the
         # request, and tell super to send it again.
-        if request.http_request.content:
-            self._request_copy = request.http_request
+        # The original request is stashed on the request's context (per-request), so it cannot leak into a later
+        # request made by the same client. Don't overwrite a previously stashed copy if this is a retry.
+        if request.http_request.content and _REQUEST_COPY_KEY not in request.context:
+            request.context[_REQUEST_COPY_KEY] = request.http_request
             bodiless_request = HttpRequest(
                 method=request.http_request.method,
                 url=request.http_request.url,
@@ -214,9 +215,10 @@ class AsyncChallengeAuthPolicy(AsyncBearerTokenCredentialPolicy):
                     "See https://aka.ms/azsdk/blog/vault-uri for more information."
                 )
 
-        # If we had created a request copy in on_request, use it now to send along the original body content
-        if self._request_copy:
-            request.http_request = self._request_copy
+        # If we stashed the original request in on_request, use it now to send along the original body content
+        request_copy = request.context.get(_REQUEST_COPY_KEY)
+        if request_copy:
+            request.http_request = request_copy
 
         # The tenant parsed from AD FS challenges is "adfs"; we don't actually need a tenant for AD FS authentication
         # For AD FS we skip cross-tenant authentication per https://github.com/Azure/azure-sdk-for-python/issues/28648

@@ -1,5 +1,11 @@
 # Release History
 
+## 5.15.2 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed a bug where the async pure-Python AMQP transport failed to connect with `[Errno 22] Invalid argument` (`amqp:socket-error`) inside containerized/virtualized environments such as Docker Desktop on macOS. The transport no longer reads back and re-applies platform-negotiated TCP options (e.g. `TCP_MAXSEG`) that some platforms reject via `setsockopt`. Also fixed the async transport to apply default TCP socket settings even when no custom `socket_settings` are provided. ([#45394](https://github.com/Azure/azure-sdk-for-python/issues/45394))
+
 ## 5.15.1 (2025-11-11)
 
 ### Bugs Fixed

@@ -178,9 +178,12 @@ def test_keep_alive__does_not_disrupt_event_stream_integrity() -> None:
 
     event_types = [e["type"] for e in events]
     assert "response.created" in event_types
-    # Sequence numbers should still be monotonically increasing
+    # Sequence numbers must be present, unique, and strictly increasing.
     seq_nums = [e["data"].get("sequence_number") for e in events if "sequence_number" in e["data"]]
-    assert seq_nums == sorted(seq_nums)
+    assert len(seq_nums) >= 2
+    assert all(isinstance(n, int) for n in seq_nums)
+    assert len(set(seq_nums)) == len(seq_nums), f"sequence numbers not unique: {seq_nums}"
+    assert all(b > a for a, b in zip(seq_nums, seq_nums[1:])), f"sequence numbers not strictly increasing: {seq_nums}"
 
 
 def test_keep_alive__no_comments_after_stream_ends() -> None:

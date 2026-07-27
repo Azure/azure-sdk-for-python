@@ -1,10 +1,11 @@
 {
-  "apiVersion": "2025-09-16-preview",
+  "apiVersion": "2026-06-16-preview",
   "apiVersions": {
-    "Microsoft.HybridCompute": "2025-09-16-preview"
+    "Microsoft.HybridCompute": "2026-06-16-preview"
   },
-  "commit": "ecd420c9534d0dab69be38027c1723031504b081",
+  "commit": "ac0d84ebb3f50b37259806b55d9088e4ea930093",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute",
-  "emitterVersion": "0.62.1"
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.1"
 }

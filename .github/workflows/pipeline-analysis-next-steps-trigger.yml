@@ -1,0 +1,104 @@
+# Pipeline Analysis - Next Steps (trigger / dispatcher)
+#
+# Plain GitHub Actions workflow that watches for a pull request's Azure DevOps CI to finish
+# in a failure state, then dispatches the agentic workflow `pipeline-analysis-next-steps.md`
+# (compiled to `pipeline-analysis-next-steps.lock.yml`) to analyze the failure and post a
+# "Pipeline Analysis Next Steps" comment.
+#
+# Why a separate trigger workflow (mirrors azure-sdk-for-net's mgmt-review):
+#   * `check_run` is not a pull_request event, so the agentic workflow cannot resolve the
+#     target PR on its own. This job extracts the PR number and passes it as an explicit
+#     workflow_dispatch input (and `aw_context`) so the agent comments on the right PR.
+#   * Keeps the privileged Copilot run (copilot-requests) isolated in the agentic workflow;
+#     this dispatcher only needs `actions: write` to start it.
+#
+# CI note: azure-sdk-for-python's PR builds roll up into a single Azure Pipelines check run
+# named `python - pullrequest` per commit (its per-stage jobs are `python - pullrequest (...)`,
+# which do NOT end in `- pullrequest`). We trigger on `check_run` and gate on the name ending
+# in `- pullrequest` plus a failing conclusion, so the analysis fires once per failing PR CI
+# run and ignores unrelated checks. This mirrors azure-sdk-for-net's `net - pullrequest` gate.
+name: Pipeline Analysis - Next Steps Trigger
+
+on:
+  check_run:
+    types: [completed]
+
+permissions:
+  actions: write # dispatch the agentic (lock) workflow
+  contents: read
+  pull-requests: read
+
+jobs:
+  dispatch-next-steps:
+    # Only react to a failing Azure DevOps PR-CI check run whose name ends in `- pullrequest`;
+    # ignore every other check run (github-actions, policy service, SDL sub-jobs, and this
+    # workflow's own runs).
+    if: >
+      github.event.check_run.check_suite.app.slug == 'azure-pipelines' &&
+      endsWith(github.event.check_run.name, '- pullrequest') &&
+      github.event.check_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch pipeline next-steps analysis
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          PR_NUMBER: ${{ github.event.check_run.pull_requests[0].number }}
+          CI_CONCLUSION: ${{ github.event.check_run.conclusion }}
+          CI_HEAD_SHA: ${{ github.event.check_run.head_sha }}
+        run: |
+          set -euo pipefail
+
+          # Fork PRs do not populate check_run.pull_requests; fall back to matching an open
+          # PR by head SHA (same-repo branches only).
+          find_open_pr_for_head_sha() {
+            local head_sha="$1"
+            [ -z "$head_sha" ] && return 0
+            gh api --paginate "repos/$REPOSITORY/pulls?state=open&per_page=100" \
+              --jq ".[] | select(.head.sha == \"$head_sha\") | [.updated_at, .number] | @tsv" |
+              sort -r |
+              sed -n '1s/^[^\t]*\t//p'
+          }
+
+          dispatch_next_steps() {
+            local pr_number="$1"
+            local conclusion="$2"
+            local head_sha="$3"
+
+            if [ -z "$pr_number" ]; then
+              echo "No pull request associated with this check run; nothing to do."
+              return 0
+            fi
+
+            if [ "$(gh pr view "$pr_number" --repo "$REPOSITORY" --json isDraft --jq '.isDraft')" = "true" ]; then
+              echo "Skipping draft PR #$pr_number."
+              return 0
+            fi
+
+            # Do not analyze a superseded commit: if the completed check run's SHA no longer
+            # matches the PR head, the author has already pushed newer code.
+            local current_head_sha
+            current_head_sha="$(gh pr view "$pr_number" --repo "$REPOSITORY" --json headRefOid --jq '.headRefOid')"
+            if [ -n "$head_sha" ] && [ "$head_sha" != "$current_head_sha" ]; then
+              echo "Skipping PR #$pr_number; check run SHA $head_sha no longer matches head $current_head_sha."
+              return 0
+            fi
+
+            local aw_context
+            aw_context="$(printf '{"item_type":"pull_request","item_number":%s}' "$pr_number")"
+
+            gh workflow run pipeline-analysis-next-steps.lock.yml \
+              --repo "$REPOSITORY" \
+              --ref "$DEFAULT_BRANCH" \
+              -f aw_context="$aw_context" \
+              -f pr_number="$pr_number" \
+              -f ci_conclusion="$conclusion" \
+              -f ci_head_sha="$head_sha"
+            echo "Dispatched pipeline next-steps analysis for PR #$pr_number."
+          }
+
+          if [ -z "$PR_NUMBER" ]; then
+            PR_NUMBER="$(find_open_pr_for_head_sha "$CI_HEAD_SHA")"
+          fi
+          dispatch_next_steps "$PR_NUMBER" "$CI_CONCLUSION" "$CI_HEAD_SHA"

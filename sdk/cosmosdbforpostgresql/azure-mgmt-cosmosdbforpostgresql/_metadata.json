@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2023-03-02-preview",
+  "apiVersions": {
+    "Microsoft.DBforPostgreSQL": "2023-03-02-preview"
+  },
+  "commit": "a7bdbe741c0ef1f1b159d8569b173757bd823ae9",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/postgresqlhsc/resource-manager/Microsoft.DBforPostgreSQL/PostgresqlHsc",
+  "emitterVersion": "0.63.2",
+  "httpClientPythonVersion": "^0.34.0"
+}

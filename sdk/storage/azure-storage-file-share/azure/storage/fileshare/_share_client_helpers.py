@@ -64,7 +64,7 @@ def _from_share_url(share_url: str, snapshot: Optional[Union[str, Dict[str, Any]
 
 def _create_permission_for_share_options(file_permission: str, **kwargs: Any) -> Dict[str, Any]:
     options = {
-        "share_permission": SharePermission(permission=file_permission),
+        "permission": SharePermission(permission=file_permission),
         "cls": deserialize_permission_key,
         "timeout": kwargs.pop("timeout", None),
     }
