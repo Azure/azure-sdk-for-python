@@ -61,6 +61,9 @@ from azure.monitor.opentelemetry.exporter._quickpulse._utils import (
 from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
+from azure.monitor.opentelemetry.exporter.export._base import (
+    _get_authentication_credential,
+)
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _ticks_since_dot_net_epoch,
@@ -106,7 +109,7 @@ class _QuickpulseExporter(MetricExporter):
 
         self._live_endpoint = parsed_connection_string.live_endpoint
         self._instrumentation_key = parsed_connection_string.instrumentation_key
-        self._credential = kwargs.get("credential")
+        self._credential = _get_authentication_credential(**kwargs)
         self.aad_audience = parsed_connection_string.aad_audience
         # Do not pass credential to config; auth is handled explicitly via _get_auth_policy
         config = LiveMetricsClientConfiguration()
