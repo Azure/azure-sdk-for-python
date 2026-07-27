@@ -19,9 +19,20 @@
 # are compared exactly; only the member-name position is normalized to snake_case, because the
 # `types` TypedDicts expose wire names (e.g. `serviceTreeId`) while the `models` classes expose
 # the Python attribute names (e.g. `service_tree_id`).
+#
+# There is one additional case: the emitter only generates a `TypedDict` for a model that is
+# reachable as request input. When a model stops being used as input (e.g. it becomes
+# output-only), its `TypedDict` disappears from `types` while the real class stays in `models`.
+# That is not an API removal, but the sibling `models` module reports no change at all, so the
+# match-based rule above cannot suppress it. Such class removals are dropped when the class is
+# still present in the sibling `models` module of the current API surface.
 # --------------------------------------------------------------------------------------------
 
 import re
+
+# Mirrors BreakingChangeType.REMOVED_OR_RENAMED_CLASS; duplicated as a literal to keep this
+# post-processing checker free of a dependency on the tracker module.
+_REMOVED_OR_RENAMED_CLASS = "RemovedOrRenamedClass"
 
 
 def _to_snake_case(name):
@@ -41,7 +52,16 @@ def _hashable(value):
 
 
 class ShadowTypesModuleChecker:
-    def run_check(self, breaking_changes: list, features_added: list, *, diff: dict, stable_nodes: dict, current_nodes: dict, **kwargs) -> tuple[list, list]:
+    def run_check(
+        self,
+        breaking_changes: list,
+        features_added: list,
+        *,
+        diff: dict,
+        stable_nodes: dict,
+        current_nodes: dict,
+        **kwargs
+    ) -> tuple[list, list]:
         def _sibling_models_module(module_name):
             if not isinstance(module_name, str):
                 return None
@@ -60,6 +80,15 @@ class ShadowTypesModuleChecker:
             )
             return (change[1], module) + normalized_args
 
+        def _still_in_models(change, sibling_models):
+            # The `types` TypedDict for a model is only emitted while that model is reachable as
+            # request input. Its disappearance is not an API removal when the class itself is
+            # still exposed by the sibling `models` module.
+            if change[1] != _REMOVED_OR_RENAMED_CLASS:
+                return False
+            class_name = change[3]
+            return class_name in current_nodes.get(sibling_models, {}).get("class_nodes", {})
+
         def _filter(changes_list):
             # Pre-index the match key of every change once so each `types` entry can be checked
             # with a single O(1) set lookup instead of rescanning the whole list (avoids O(n^2)).
@@ -72,7 +101,9 @@ class ShadowTypesModuleChecker:
                 if (
                     sibling_models is not None
                     and len(change) > 3
-                    and _match_key(change, sibling_models) in candidate_keys
+                    and (
+                        _match_key(change, sibling_models) in candidate_keys or _still_in_models(change, sibling_models)
+                    )
                 ):
                     continue
                 result.append(change)

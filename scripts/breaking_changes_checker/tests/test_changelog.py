@@ -299,6 +299,30 @@ def test_shadow_types_module_breaking_change_preserved_for_unmatched_member():
     assert fa_out[0][2] == "azure.mgmt.computelimit.models"
 
 
+def test_shadow_types_module_class_removal_dropped_when_still_in_models():
+    # The emitter only generates a `TypedDict` for a model reachable as request input. When a
+    # model becomes output-only its `TypedDict` disappears from `types` while the real class
+    # stays in `models` -- that is not an API removal and must not be reported.
+    checker = ShadowTypesModuleChecker()
+    breaking_changes = [
+        ("Deleted model `{}`", "RemovedOrRenamedClass", "azure.mgmt.computelimit.types", "OutputOnlyResult"),
+        ("Deleted model `{}`", "RemovedOrRenamedClass", "azure.mgmt.computelimit.types", "TrulyGoneModel"),
+    ]
+    current_nodes = {
+        "azure.mgmt.computelimit.models": {"class_nodes": {"OutputOnlyResult": {}}},
+        "azure.mgmt.computelimit.types": {"class_nodes": {}},
+    }
+
+    bc_out, _ = checker.run_check(
+        breaking_changes, [], diff={}, stable_nodes={}, current_nodes=current_nodes
+    )
+
+    # `OutputOnlyResult` still exists in `models` -> dropped. `TrulyGoneModel` is gone from both
+    # modules -> preserved.
+    assert len(bc_out) == 1
+    assert bc_out[0][3] == "TrulyGoneModel"
+
+
 def test_shadow_types_module_member_change_preserved_when_not_mirrored():
     # An unmatched *member* change on a class that exists in both modules must be preserved:
     # `RealModel` loses `orphanProp` only on the `types` side, `models` reports nothing.
