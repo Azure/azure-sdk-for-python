@@ -102,7 +102,9 @@ class _QuickpulseExporter(MetricExporter):
 
         :param str connection_string: The connection string used for your Application Insights resource.
         :keyword TokenCredential credential: Token credential, such as ManagedIdentityCredential or
-            ClientSecretCredential, used for Azure Active Directory (AAD) authentication. Defaults to None.
+            ClientSecretCredential, used for Azure Active Directory (AAD) authentication. If omitted, the
+            credential is resolved from the ``APPLICATIONINSIGHTS_AUTHENTICATION_STRING`` environment variable
+            (the App Service / Functions AAD convention); if that variable is also absent, it will default to None.
         :rtype: None
         """
         parsed_connection_string = ConnectionStringParser(kwargs.get("connection_string"))
