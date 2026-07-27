@@ -70,6 +70,8 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
      None. Default value is None. If not set, the operation's default API version will be used. Note
      that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(

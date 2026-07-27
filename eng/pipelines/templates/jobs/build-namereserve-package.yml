@@ -2,9 +2,6 @@ parameters:
   - name: NameForReservation
     type: string
     default: 'auto'
-  - name: VersionForReservation
-    type: string
-    default: '0.0.0b1'
 
 jobs:
   - job: generate_namereserve_package
@@ -30,7 +27,7 @@ jobs:
         - pwsh: |
             python eng/scripts/discover_unpublished_packages.py `
               --output-dir "$(Build.ArtifactStagingDirectory)" `
-              --version "${{ parameters.VersionForReservation }}"
+              --version "0.0.0b1"
           name: generatePackages
           displayName: Discover and Generate Name Reservation Packages
 
@@ -41,7 +38,7 @@ jobs:
             $PSNativeCommandUseErrorActionPreference = $true
 
             generate_namereserve_package `
-              --package_version "${{ parameters.VersionForReservation }}" `
+              --package_version "0.0.0b1" `
               --output_dir "$(Build.ArtifactStagingDirectory)" `
               "${{ parameters.NameForReservation }}"
           name: generatePackages
