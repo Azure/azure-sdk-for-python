@@ -4,9 +4,9 @@
 # pylint: disable=protected-access
 from datetime import datetime, timezone
 from typing import Any, Iterable, List, Optional, Tuple, cast
+from urllib.parse import quote
 
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient062023Preview
-from azure.ai.ml._restclient.v2024_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012024Preview
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -29,11 +29,12 @@ from azure.ai.ml.entities._monitoring.signals import (
 from azure.ai.ml.entities._monitoring.target import MonitoringTarget
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ScheduleException
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 
 from .._restclient.arm_ml_service.models import ScheduleListViewType
-from .._restclient.v2024_01_01_preview.models import TriggerOnceRequest
 from .._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId, is_ARM_id_for_parented_resource
 from .._utils._azureml_polling import AzureMLPolling
 from .._utils.utils import snake_to_camel
@@ -77,7 +78,6 @@ class ScheduleOperations(_ScopeDependentOperations):
         operation_scope: OperationScope,
         operation_config: OperationConfig,
         service_client_06_2023_preview: ServiceClient062023Preview,
-        service_client_01_2024_preview: ServiceClient012024Preview,
         all_operations: OperationsContainer,
         credential: TokenCredential,
         **kwargs: Any,
@@ -85,9 +85,12 @@ class ScheduleOperations(_ScopeDependentOperations):
         super(ScheduleOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self.service_client = service_client_06_2023_preview.schedules
-        # Note: Trigger once is supported since 24_01, we don't upgrade other operations' client because there are
-        # some breaking changes, for example: AzMonMonitoringAlertNotificationSettings is removed.
-        self.schedule_trigger_service_client = service_client_01_2024_preview.schedules
+        # Trigger-once is only available from the 2024-01-01-preview wire api-version. The shared
+        # arm_ml_service client has no generated ``schedules.trigger`` method, so the trigger request is
+        # issued directly against that api-version via ``send_request`` (see ``trigger`` below). Other
+        # schedule operations stay on the 2023-06-preview wire (upgrading them has breaking changes, e.g.
+        # AzMonMonitoringAlertNotificationSettings was removed).
+        self._service_client = service_client_06_2023_preview
         self._all_operations = all_operations
         self._stream_logs_until_completion = stream_logs_until_completion
         # Dataplane service clients are lazily created as they are needed
@@ -322,14 +325,29 @@ class ScheduleOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.ScheduleTriggerResult
         """
         schedule_time = kwargs.pop("schedule_time", datetime.now(timezone.utc).isoformat())
-        return self.schedule_trigger_service_client.trigger(
-            name=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            body=TriggerOnceRequest(schedule_time=schedule_time),
-            cls=lambda _, obj, __: ScheduleTriggerResult._from_rest_object(obj),
-            **kwargs,
+        # The shared arm_ml_service client has no generated ``schedules.trigger`` method (trigger-once is
+        # only modeled on the 2024-01-01-preview wire), so issue the request directly against that
+        # api-version. The URL/body match the generated 2024-01-01-preview ``build_trigger_request``.
+        url = (
+            "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/"
+            "Microsoft.MachineLearningServices/workspaces/{workspaceName}/schedules/{name}/trigger"
+        ).format(
+            subscriptionId=quote(self._subscription_id, safe=""),
+            resourceGroupName=quote(self._operation_scope.resource_group_name, safe=""),
+            workspaceName=quote(self._workspace_name, safe=""),
+            name=quote(name, safe=""),
         )
+        request = HttpRequest(
+            method="POST",
+            url=url,
+            params={"api-version": "2024-01-01-preview"},
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            json={"scheduleTime": schedule_time},
+        )
+        response = self._service_client.send_request(request, **kwargs)
+        if response.status_code != 200:
+            raise HttpResponseError(response=response)
+        return ScheduleTriggerResult._from_rest_object(response.json())
 
     def _resolve_monitor_schedule_arm_id(  # pylint:disable=too-many-branches,too-many-statements,too-many-locals
         self, schedule: MonitorSchedule
