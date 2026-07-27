@@ -39,8 +39,11 @@ class AsyncFakeTokenCredential(object):
 
 
 def _redirect_response():
+    # 307/308 preserve the original method (POST) and are followed by azure-core's
+    # RedirectPolicy; a 301/302 would only be followed for GET/HEAD, so a POST publish
+    # is exposed to the cross-host leak specifically via a method-preserving redirect.
     response = Response()
-    response.status_code = 301
+    response.status_code = 307
     response.headers["location"] = REDIRECT_URL
     return response
 
