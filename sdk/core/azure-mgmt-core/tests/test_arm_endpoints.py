@@ -42,3 +42,8 @@ def test_arm_endpoints():
     cloud_meta = get_arm_endpoints(cloud_setting)
     assert cloud_meta["resource_manager"] == "https://management.chinacloudapi.cn/"
     assert cloud_meta["credential_scopes"] == ["https://management.chinacloudapi.cn/.default"]
+
+    cloud_setting = AzureClouds.AZURE_BLEUCLOUD
+    cloud_meta = get_arm_endpoints(cloud_setting)
+    assert cloud_meta["resource_manager"] == "https://management.sovcloud-api.fr/"
+    assert cloud_meta["credential_scopes"] == ["https://management.sovcloud-api.fr/.default"]

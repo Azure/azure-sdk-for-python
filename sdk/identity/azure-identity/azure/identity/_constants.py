@@ -31,6 +31,7 @@ class AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
     These are used to construct authority URLs for various Azure environments.
     """
 
+    AZURE_BLEUCLOUD = "login.sovcloud-identity.fr"
     AZURE_CHINA = "login.chinacloudapi.cn"
     AZURE_GOVERNMENT = "login.microsoftonline.us"
     AZURE_PUBLIC_CLOUD = "login.microsoftonline.com"

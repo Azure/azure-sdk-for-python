@@ -1,6 +1,10 @@
 # Release History
 
-## 1.6.1 (Unreleased)
+## 1.7.0 (Unreleased)
+
+### Features Added
+
+- `get_arm_endpoints` now supports `AzureClouds.AZURE_BLEUCLOUD`, returning the Azure Resource Manager endpoint and credential scopes for the Bleu national partner cloud (France).
 
 ### Bugs Fixed
 

@@ -4,9 +4,22 @@
 # ------------------------------------
 from unittest.mock import patch
 
+from azure.identity import AzureAuthorityHosts
 from azure.identity._constants import EnvironmentVariables, KnownAuthorities
 from azure.identity._internal import get_default_authority, normalize_authority
 import pytest
+
+
+def test_well_known_authority_hosts():
+    """AzureAuthorityHosts constants should have the expected values"""
+
+    assert AzureAuthorityHosts.AZURE_BLEUCLOUD == "login.sovcloud-identity.fr"
+    assert AzureAuthorityHosts.AZURE_CHINA == "login.chinacloudapi.cn"
+    assert AzureAuthorityHosts.AZURE_GOVERNMENT == "login.microsoftonline.us"
+    assert AzureAuthorityHosts.AZURE_PUBLIC_CLOUD == "login.microsoftonline.com"
+
+    # KnownAuthorities is an alias of AzureAuthorityHosts
+    assert KnownAuthorities.AZURE_BLEUCLOUD == AzureAuthorityHosts.AZURE_BLEUCLOUD
 
 
 def test_get_default_authority():

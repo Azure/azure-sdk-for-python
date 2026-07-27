@@ -76,7 +76,7 @@ Sets the Azure cloud environment used by SDK clients.
 |---|---|
 | **Used by** | `azure.core.settings.Settings.azure_cloud` |
 | **Default** | `AZURE_PUBLIC_CLOUD` |
-| **Accepted values** | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT` (case-sensitive)|
+| **Accepted values** | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT`, `AZURE_BLEUCLOUD` (case-sensitive)|
 
 **Example:**
 
