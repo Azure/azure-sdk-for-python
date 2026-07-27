@@ -6,6 +6,8 @@ reports=no
 # PYLINT DIRECTORY BLACKLIST.
 ignore-paths=
     (?:.*[/\\]|^).*[/\\](projects|agents)[/\\](models/_models.py|_model_base.py|operations/_operations.py|aio/operations/_operations.py)$,
+    # Exclude Event Grid's top-level generated files (older code generator; pending regeneration onto the current template that emits the required lint suppressions)
+    (?:.*[/\\]|^)azure[/\\]eventgrid[/\\](_model_base|_serialization)\.py$,
     # Exclude any path that contains the following directory names
     (?:.*[/\\]|^)(?:_vendor|_generated|_restclient|samples|examples|test|tests|doc|\.tox)(?:[/\\]|$)
 
