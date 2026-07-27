@@ -67,7 +67,7 @@ with (
     # ------------------------------------------------------------------
     # 3. List jobs filtered by status.
     # ------------------------------------------------------------------
-    print(f"Listing succeeded jobs (limit=5):")
+    print("Listing succeeded jobs (limit=5):")
     count = 0
     for job_list_item in project_client.beta.agents.list_optimization_jobs(status=JobStatus.SUCCEEDED, limit=5):
         print(f"  {job_list_item.id}")

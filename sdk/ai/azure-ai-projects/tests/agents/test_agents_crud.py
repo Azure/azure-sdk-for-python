@@ -182,7 +182,7 @@ class TestAgentCrud(TestBase):
 
         # Disable the agent
         project_client.agents.disable(agent_name=agent_name)
-        print(f"Agent disabled")
+        print("Agent disabled")
 
         # Verify requests fail when agent is disabled
         error_raised = False
@@ -198,7 +198,7 @@ class TestAgentCrud(TestBase):
 
         # Enable the agent
         project_client.agents.enable(agent_name=agent_name)
-        print(f"Agent enabled")
+        print("Agent enabled")
 
         # Verify the agent can respond to requests again
         response = openai_client.responses.create(
@@ -211,7 +211,7 @@ class TestAgentCrud(TestBase):
         # Cleanup - delete the agent
         result = project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
         assert result.deleted
-        print(f"Agent deleted")
+        print("Agent deleted")
 
     # To run this test:
     # pytest tests\agents\test_agents_crud.py::TestAgentCrud::test_prompt_agent_endpoint_responses -s

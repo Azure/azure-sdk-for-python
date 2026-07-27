@@ -161,7 +161,7 @@ with (
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
                 ).result()
-                print(f"Data generation job succeeded.")
+                print("Data generation job succeeded.")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 if attempt == MAX_JOB_ATTEMPTS:
