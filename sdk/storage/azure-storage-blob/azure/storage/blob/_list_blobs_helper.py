@@ -223,7 +223,7 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         return item
 
 
-class BlobPrefix(ItemPaged, DictMixin):
+class BlobPrefix(ItemPaged[BlobProperties], DictMixin):
     """An Iterable of Blob properties.
 
     Returned from walk_blobs when a delimiter is used.

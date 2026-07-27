@@ -1491,7 +1491,7 @@ class ArrowDialect(_BackCompatMixin):
 
     _xml_map = {"name": "Field"}
 
-    def __init__(self, type, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(self, type: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         self.type = type
         self.name = kwargs.get("name")
         self.precision = kwargs.get("precision")
