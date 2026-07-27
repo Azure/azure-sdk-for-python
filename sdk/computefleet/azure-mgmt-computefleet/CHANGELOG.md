@@ -8,7 +8,7 @@
   - Model `VirtualMachine` added property `vm_size`
   - Model `VirtualMachine` added property `zone`
 
-## 2.0.0b2 (2026-05-28)
+## 2.0.0b2 (2026-07-29)
 
 ### Features Added
 
