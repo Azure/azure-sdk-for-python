@@ -8,6 +8,7 @@ namespace azure.mgmt.eventhub
         consumer_groups: ConsumerGroupsOperations
         disaster_recovery_configs: DisasterRecoveryConfigsOperations
         event_hubs: EventHubsOperations
+        fabric_shortcuts: FabricShortcutsOperations
         namespaces: NamespacesOperations
         network_security_perimeter_configuration: NetworkSecurityPerimeterConfigurationOperations
         network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
@@ -15,6 +16,7 @@ namespace azure.mgmt.eventhub
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
         schema_registry: SchemaRegistryOperations
+        upgrade_preferences_operations: UpgradePreferencesOperationsOperations
 
         def __init__(
                 self, 
@@ -48,6 +50,7 @@ namespace azure.mgmt.eventhub.aio
         consumer_groups: ConsumerGroupsOperations
         disaster_recovery_configs: DisasterRecoveryConfigsOperations
         event_hubs: EventHubsOperations
+        fabric_shortcuts: FabricShortcutsOperations
         namespaces: NamespacesOperations
         network_security_perimeter_configuration: NetworkSecurityPerimeterConfigurationOperations
         network_security_perimeter_configurations: NetworkSecurityPerimeterConfigurationsOperations
@@ -55,6 +58,7 @@ namespace azure.mgmt.eventhub.aio
         private_endpoint_connections: PrivateEndpointConnectionsOperations
         private_link_resources: PrivateLinkResourcesOperations
         schema_registry: SchemaRegistryOperations
+        upgrade_preferences_operations: UpgradePreferencesOperationsOperations
 
         def __init__(
                 self, 
@@ -736,6 +740,108 @@ namespace azure.mgmt.eventhub.aio.operations
             ) -> AccessKeys: ...
 
 
+    class azure.mgmt.eventhub.aio.operations.FabricShortcutsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        async def approve(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: FabricShortcut, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: FabricShortcut, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name']}, api_versions_list=['2026-07-01-preview'])
+        async def delete(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def list_by_event_hub(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                **kwargs: Any
+            ) -> AsyncItemPaged[FabricShortcut]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        async def reject(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+
     class azure.mgmt.eventhub.aio.operations.NamespacesOperations:
 
         def __init__(
@@ -1269,6 +1375,66 @@ namespace azure.mgmt.eventhub.aio.operations
                 top: Optional[int] = ..., 
                 **kwargs: Any
             ) -> AsyncItemPaged[SchemaGroup]: ...
+
+
+    class azure.mgmt.eventhub.aio.operations.UpgradePreferencesOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: UpgradePreferences, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: UpgradePreferences, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @overload
+        async def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        async def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        async def upgrade_now(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> Optional[UpgradePreferences]: ...
 
 
 namespace azure.mgmt.eventhub.models
@@ -2011,6 +2177,108 @@ namespace azure.mgmt.eventhub.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.eventhub.models.ExceptionWindow(_Model):
+        action: Union[str, ExceptionWindowAction]
+        date: date
+        duration_minutes: int
+        start_time_of_day: timedelta
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                action: Union[str, ExceptionWindowAction], 
+                date: date, 
+                duration_minutes: int, 
+                start_time_of_day: timedelta
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.ExceptionWindowAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ALLOW = "Allow"
+        BLOCK = "Block"
+
+
+    class azure.mgmt.eventhub.models.FabricShortcut(ProxyResource):
+        id: str
+        location: Optional[str]
+        name: str
+        properties: Optional[FabricShortcutProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[FabricShortcutProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.FabricShortcutConfiguration(_Model):
+        artifact_id: str
+        artifact_name: Optional[str]
+        log_analytics_resource_id: Optional[str]
+        premium_capacity_id: Optional[str]
+        tenant_id: str
+        workspace_id: str
+        workspace_name: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                artifact_id: str, 
+                artifact_name: Optional[str] = ..., 
+                log_analytics_resource_id: Optional[str] = ..., 
+                premium_capacity_id: Optional[str] = ..., 
+                tenant_id: str, 
+                workspace_id: str, 
+                workspace_name: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.FabricShortcutProperties(_Model):
+        configuration: FabricShortcutConfiguration
+        created_at: Optional[datetime]
+        modified_at: Optional[datetime]
+        shortcut_status: Optional[Union[str, FabricShortcutStatus]]
+        shortcut_type: Optional[Union[str, FabricShortcutType]]
+        status_description: Optional[str]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                configuration: FabricShortcutConfiguration, 
+                shortcut_status: Optional[Union[str, FabricShortcutStatus]] = ..., 
+                shortcut_type: Optional[Union[str, FabricShortcutType]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.FabricShortcutStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        APPROVED = "Approved"
+        PENDING = "Pending"
+        REJECTED = "Rejected"
+
+
+    class azure.mgmt.eventhub.models.FabricShortcutType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ENTITY = "Entity"
+        NETWORK = "Network"
+
+
     class azure.mgmt.eventhub.models.FailOver(_Model):
         properties: Optional[FailOverProperties]
 
@@ -2112,6 +2380,24 @@ namespace azure.mgmt.eventhub.models
                 key_name: Optional[str] = ..., 
                 key_vault_uri: Optional[str] = ..., 
                 key_version: Optional[str] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.MaintenanceWindow(_Model):
+        day_of_week: Union[str, UpgradePreferenceDayOfWeek]
+        duration_minutes: int
+        start_time_of_day: timedelta
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                day_of_week: Union[str, UpgradePreferenceDayOfWeek], 
+                duration_minutes: int, 
+                start_time_of_day: timedelta
             ) -> None: ...
 
         @overload
@@ -2919,6 +3205,69 @@ namespace azure.mgmt.eventhub.models
         TOO_MANY_NAMESPACE_IN_CURRENT_SUBSCRIPTION = "TooManyNamespaceInCurrentSubscription"
 
 
+    class azure.mgmt.eventhub.models.UpgradePreferenceDayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        FRIDAY = "Friday"
+        MONDAY = "Monday"
+        SATURDAY = "Saturday"
+        SUNDAY = "Sunday"
+        THURSDAY = "Thursday"
+        TUESDAY = "Tuesday"
+        WEDNESDAY = "Wednesday"
+
+
+    class azure.mgmt.eventhub.models.UpgradePreferences(ProxyResource):
+        id: str
+        name: str
+        properties: Optional[UpgradePreferencesProperties]
+        system_data: SystemData
+        type: str
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                properties: Optional[UpgradePreferencesProperties] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.UpgradePreferencesProperties(_Model):
+        exception_windows: Optional[list[ExceptionWindow]]
+        maintenance_windows: Optional[list[MaintenanceWindow]]
+        upgrade_status: Optional[UpgradeStatus]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                exception_windows: Optional[list[ExceptionWindow]] = ..., 
+                maintenance_windows: Optional[list[MaintenanceWindow]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.eventhub.models.UpgradeStatus(_Model):
+        completes_at: Optional[datetime]
+        in_progress: bool
+        pending_upgrade: bool
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                completes_at: Optional[datetime] = ..., 
+                in_progress: bool, 
+                pending_upgrade: bool
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.mgmt.eventhub.models.UserAssignedIdentity(_Model):
         client_id: Optional[str]
         principal_id: Optional[str]
@@ -3595,6 +3944,108 @@ namespace azure.mgmt.eventhub.operations
             ) -> AccessKeys: ...
 
 
+    class azure.mgmt.eventhub.operations.FabricShortcutsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def approve(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: FabricShortcut, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: FabricShortcut, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name']}, api_versions_list=['2026-07-01-preview'])
+        def delete(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def list_by_event_hub(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                **kwargs: Any
+            ) -> ItemPaged[FabricShortcut]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'namespace_name', 'event_hub_name', 'fabric_shortcut_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def reject(
+                self, 
+                resource_group_name: str, 
+                namespace_name: str, 
+                event_hub_name: str, 
+                fabric_shortcut_name: str, 
+                **kwargs: Any
+            ) -> FabricShortcut: ...
+
+
     class azure.mgmt.eventhub.operations.NamespacesOperations:
 
         def __init__(
@@ -4130,24 +4581,67 @@ namespace azure.mgmt.eventhub.operations
             ) -> ItemPaged[SchemaGroup]: ...
 
 
+    class azure.mgmt.eventhub.operations.UpgradePreferencesOperationsOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: UpgradePreferences, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: UpgradePreferences, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @overload
+        def create_or_update(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                resource: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def get(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> UpgradePreferences: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2026-07-01-preview', params_added_on={'2026-07-01-preview': ['api_version', 'subscription_id', 'resource_group_name', 'cluster_name', 'accept']}, api_versions_list=['2026-07-01-preview'])
+        def upgrade_now(
+                self, 
+                resource_group_name: str, 
+                cluster_name: str, 
+                **kwargs: Any
+            ) -> Optional[UpgradePreferences]: ...
+
+
 namespace azure.mgmt.eventhub.types
-
-    class azure.mgmt.eventhub.types.AccessKeys(TypedDict, total=False):
-        key "aliasPrimaryConnectionString": str
-        key "aliasSecondaryConnectionString": str
-        key "keyName": str
-        key "primaryConnectionString": str
-        key "primaryKey": str
-        key "secondaryConnectionString": str
-        key "secondaryKey": str
-        alias_primary_connection_string: str
-        alias_secondary_connection_string: str
-        key_name: str
-        primary_connection_string: str
-        primary_key: str
-        secondary_connection_string: str
-        secondary_key: str
-
 
     class azure.mgmt.eventhub.types.ApplicationGroup(ProxyResource):
         key "id": str
@@ -4235,15 +4729,6 @@ namespace azure.mgmt.eventhub.types
         rights: list[Union[str, AccessRights]]
 
 
-    class azure.mgmt.eventhub.types.AvailableCluster(TypedDict, total=False):
-        key "location": str
-        location: str
-
-
-    class azure.mgmt.eventhub.types.AvailableClustersList(TypedDict, total=False):
-        value: list[AvailableCluster]
-
-
     class azure.mgmt.eventhub.types.CaptureDescription(TypedDict, total=False):
         key "destination": ForwardRef('Destination', module='types')
         key "enabled": bool
@@ -4269,15 +4754,6 @@ namespace azure.mgmt.eventhub.types
     class azure.mgmt.eventhub.types.CheckNameAvailabilityParameter(TypedDict, total=False):
         key "name": Required[str]
         name: str
-
-
-    class azure.mgmt.eventhub.types.CheckNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": Union[str, UnavailableReason]
-        message: str
-        name_available: bool
-        reason: Union[str, UnavailableReason]
 
 
     class azure.mgmt.eventhub.types.Cluster(ProxyResource):
@@ -4408,15 +4884,6 @@ namespace azure.mgmt.eventhub.types
         type: str
 
 
-    class azure.mgmt.eventhub.types.EHNamespaceIdContainer(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.eventhub.types.EHNamespaceIdListResult(TypedDict, total=False):
-        value: list[EHNamespaceIdContainer]
-
-
     class azure.mgmt.eventhub.types.EHNamespaceProperties(TypedDict, total=False):
         key "alternateName": str
         key "clusterArmId": str
@@ -4469,30 +4936,6 @@ namespace azure.mgmt.eventhub.types
         require_infrastructure_encryption: bool
 
 
-    class azure.mgmt.eventhub.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.eventhub.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.eventhub.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
-
-
     class azure.mgmt.eventhub.types.Eventhub(ProxyResource):
         key "id": str
         key "location": str
@@ -4533,6 +4976,64 @@ namespace azure.mgmt.eventhub.types
         user_metadata: str
 
 
+    class azure.mgmt.eventhub.types.ExceptionWindow(TypedDict, total=False):
+        key "action": Required[Union[str, ExceptionWindowAction]]
+        key "date": Required[str]
+        key "durationMinutes": Required[int]
+        key "startTimeOfDay": Required[str]
+        action: Union[str, ExceptionWindowAction]
+        date: str
+        duration_minutes: int
+        start_time_of_day: str
+
+
+    class azure.mgmt.eventhub.types.FabricShortcut(ProxyResource):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('FabricShortcutProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: FabricShortcutProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.eventhub.types.FabricShortcutConfiguration(TypedDict, total=False):
+        key "artifactId": Required[str]
+        key "artifactName": str
+        key "logAnalyticsResourceId": str
+        key "premiumCapacityId": str
+        key "tenantId": Required[str]
+        key "workspaceId": Required[str]
+        key "workspaceName": str
+        artifact_id: str
+        artifact_name: str
+        log_analytics_resource_id: str
+        premium_capacity_id: str
+        tenant_id: str
+        workspace_id: str
+        workspace_name: str
+
+
+    class azure.mgmt.eventhub.types.FabricShortcutProperties(TypedDict, total=False):
+        key "configuration": Required[FabricShortcutConfiguration]
+        key "createdAt": str
+        key "modifiedAt": str
+        key "shortcutStatus": Union[str, FabricShortcutStatus]
+        key "shortcutType": Union[str, FabricShortcutType]
+        key "statusDescription": str
+        configuration: FabricShortcutConfiguration
+        created_at: str
+        modified_at: str
+        shortcut_status: Union[str, FabricShortcutStatus]
+        shortcut_type: Union[str, FabricShortcutType]
+        status_description: str
+
+
     class azure.mgmt.eventhub.types.FailOver(TypedDict, total=False):
         key "properties": ForwardRef('FailOverProperties', module='types')
         properties: FailOverProperties
@@ -4571,6 +5072,15 @@ namespace azure.mgmt.eventhub.types
         key_name: str
         key_vault_uri: str
         key_version: str
+
+
+    class azure.mgmt.eventhub.types.MaintenanceWindow(TypedDict, total=False):
+        key "dayOfWeek": Required[Union[str, UpgradePreferenceDayOfWeek]]
+        key "durationMinutes": Required[int]
+        key "startTimeOfDay": Required[str]
+        day_of_week: Union[str, UpgradePreferenceDayOfWeek]
+        duration_minutes: int
+        start_time_of_day: str
 
 
     class azure.mgmt.eventhub.types.MessageTimestampDescription(TypedDict, total=False):
@@ -4618,13 +5128,6 @@ namespace azure.mgmt.eventhub.types
         type: str
 
 
-    class azure.mgmt.eventhub.types.NetworkRuleSetListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[NetworkRuleSet]]
-        next_link: str
-        value: list[NetworkRuleSet]
-
-
     class azure.mgmt.eventhub.types.NetworkRuleSetProperties(TypedDict, total=False):
         key "defaultAction": Union[str, DefaultAction]
         key "publicNetworkAccess": Union[str, PublicNetworkAccessFlag]
@@ -4636,123 +5139,6 @@ namespace azure.mgmt.eventhub.types
         trusted_service_access_enabled: bool
         virtualNetworkRules: list[NWRuleSetVirtualNetworkRules]
         virtual_network_rules: list[NWRuleSetVirtualNetworkRules]
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeter(TypedDict, total=False):
-        key "id": str
-        key "location": str
-        key "perimeterGuid": str
-        id: str
-        location: str
-        perimeter_guid: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfiguration(ProxyResource):
-        key "id": str
-        key "location": str
-        key "name": str
-        key "properties": ForwardRef('NetworkSecurityPerimeterConfigurationProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        location: str
-        name: str
-        properties: NetworkSecurityPerimeterConfigurationProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationList(TypedDict, total=False):
-        value: list[NetworkSecurityPerimeterConfiguration]
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationProperties(TypedDict, total=False):
-        key "isBackingResource": bool
-        key "networkSecurityPerimeter": ForwardRef('NetworkSecurityPerimeter', module='types')
-        key "parentAssociationName": str
-        key "profile": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesProfile', module='types')
-        key "provisioningState": Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        key "resourceAssociation": ForwardRef('NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation', module='types')
-        key "sourceResourceId": str
-        applicableFeatures: list[str]
-        applicable_features: list[str]
-        is_backing_resource: bool
-        network_security_perimeter: NetworkSecurityPerimeter
-        parent_association_name: str
-        profile: NetworkSecurityPerimeterConfigurationPropertiesProfile
-        provisioningIssues: list[ProvisioningIssue]
-        provisioning_issues: list[ProvisioningIssue]
-        provisioning_state: Union[str, NetworkSecurityPerimeterConfigurationProvisioningState]
-        resource_association: NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation
-        source_resource_id: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationPropertiesProfile(TypedDict, total=False):
-        key "accessRulesVersion": str
-        key "name": str
-        accessRules: list[NspAccessRule]
-        access_rules: list[NspAccessRule]
-        access_rules_version: str
-        name: str
-
-
-    class azure.mgmt.eventhub.types.NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation(TypedDict, total=False):
-        key "accessMode": Union[str, ResourceAssociationAccessMode]
-        key "name": str
-        access_mode: Union[str, ResourceAssociationAccessMode]
-        name: str
-
-
-    class azure.mgmt.eventhub.types.NspAccessRule(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('NspAccessRuleProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: NspAccessRuleProperties
-        type: str
-
-
-    class azure.mgmt.eventhub.types.NspAccessRuleProperties(TypedDict, total=False):
-        key "direction": Union[str, NspAccessRuleDirection]
-        addressPrefixes: list[str]
-        address_prefixes: list[str]
-        direction: Union[str, NspAccessRuleDirection]
-        fullyQualifiedDomainNames: list[str]
-        fully_qualified_domain_names: list[str]
-        networkSecurityPerimeters: list[NetworkSecurityPerimeter]
-        network_security_perimeters: list[NetworkSecurityPerimeter]
-        subscriptions: list[NspAccessRulePropertiesSubscriptionsItem]
-
-
-    class azure.mgmt.eventhub.types.NspAccessRulePropertiesSubscriptionsItem(TypedDict, total=False):
-        key "id": str
-        id: str
-
-
-    class azure.mgmt.eventhub.types.Operation(TypedDict, total=False):
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": str
-        key "properties": Any
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: str
-        properties: Any
-
-
-    class azure.mgmt.eventhub.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
 
 
     class azure.mgmt.eventhub.types.PlatformCapabilities(TypedDict, total=False):
@@ -4787,47 +5173,6 @@ namespace azure.mgmt.eventhub.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: ConnectionState
         provisioning_state: Union[str, EndPointProvisioningState]
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResource(TypedDict, total=False):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        type: str
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
-    class azure.mgmt.eventhub.types.PrivateLinkResourcesListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PrivateLinkResource]]
-        next_link: str
-        value: list[PrivateLinkResource]
-
-
-    class azure.mgmt.eventhub.types.ProvisioningIssue(TypedDict, total=False):
-        key "name": str
-        key "properties": ForwardRef('ProvisioningIssueProperties', module='types')
-        name: str
-        properties: ProvisioningIssueProperties
-
-
-    class azure.mgmt.eventhub.types.ProvisioningIssueProperties(TypedDict, total=False):
-        key "description": str
-        key "issueType": str
-        description: str
-        issue_type: str
 
 
     class azure.mgmt.eventhub.types.ProxyResource(Resource):
@@ -4938,6 +5283,37 @@ namespace azure.mgmt.eventhub.types
         name: str
         rate_limit_threshold: int
         type: Literal[ApplicationGroupPolicyType.THROTTLING_POLICY]
+
+
+    class azure.mgmt.eventhub.types.UpgradePreferences(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('UpgradePreferencesProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: UpgradePreferencesProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.eventhub.types.UpgradePreferencesProperties(TypedDict, total=False):
+        key "upgradeStatus": ForwardRef('UpgradeStatus', module='types')
+        exceptionWindows: list[ExceptionWindow]
+        exception_windows: list[ExceptionWindow]
+        maintenanceWindows: list[MaintenanceWindow]
+        maintenance_windows: list[MaintenanceWindow]
+        upgrade_status: UpgradeStatus
+
+
+    class azure.mgmt.eventhub.types.UpgradeStatus(TypedDict, total=False):
+        key "completesAt": str
+        key "inProgress": Required[bool]
+        key "pendingUpgrade": Required[bool]
+        completes_at: str
+        in_progress: bool
+        pending_upgrade: bool
 
 
     class azure.mgmt.eventhub.types.UserAssignedIdentity(TypedDict, total=False):
