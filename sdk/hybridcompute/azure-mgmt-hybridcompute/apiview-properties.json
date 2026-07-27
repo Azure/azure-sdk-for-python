@@ -35,7 +35,6 @@
         "azure.mgmt.hybridcompute.models.HardwareProfile": "Microsoft.HybridCompute.HardwareProfile",
         "azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScope": "Microsoft.HybridCompute.HybridComputePrivateLinkScope",
         "azure.mgmt.hybridcompute.models.HybridComputePrivateLinkScopeProperties": "Microsoft.HybridCompute.HybridComputePrivateLinkScopeProperties",
-        "azure.mgmt.hybridcompute.models.Identity": "Azure.ResourceManager.CommonTypes.Identity",
         "azure.mgmt.hybridcompute.models.IpAddress": "Microsoft.HybridCompute.IpAddress",
         "azure.mgmt.hybridcompute.models.License": "Microsoft.HybridCompute.License",
         "azure.mgmt.hybridcompute.models.LicenseDetails": "Microsoft.HybridCompute.LicenseDetails",
@@ -76,6 +75,7 @@
         "azure.mgmt.hybridcompute.models.MachineRunCommandScriptSource": "Microsoft.HybridCompute.MachineRunCommandScriptSource",
         "azure.mgmt.hybridcompute.models.MachineUpdate": "Microsoft.HybridCompute.MachineUpdate",
         "azure.mgmt.hybridcompute.models.MachineUpdateProperties": "Microsoft.HybridCompute.MachineUpdateProperties",
+        "azure.mgmt.hybridcompute.models.ManagedServiceIdentity": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentity",
         "azure.mgmt.hybridcompute.models.NetworkInterface": "Microsoft.HybridCompute.NetworkInterface",
         "azure.mgmt.hybridcompute.models.NetworkProfile": "Microsoft.HybridCompute.NetworkProfile",
         "azure.mgmt.hybridcompute.models.NetworkSecurityPerimeter": "Microsoft.HybridCompute.NetworkSecurityPerimeter",
@@ -118,6 +118,7 @@
         "azure.mgmt.hybridcompute.models.Subnet": "Microsoft.HybridCompute.Subnet",
         "azure.mgmt.hybridcompute.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.hybridcompute.models.TagsResource": "Microsoft.HybridCompute.TagsResource",
+        "azure.mgmt.hybridcompute.models.UserAssignedIdentity": "Azure.ResourceManager.CommonTypes.UserAssignedIdentity",
         "azure.mgmt.hybridcompute.models.VolumeLicenseDetails": "Microsoft.HybridCompute.VolumeLicenseDetails",
         "azure.mgmt.hybridcompute.models.WindowsParameters": "Microsoft.HybridCompute.WindowsParameters",
         "azure.mgmt.hybridcompute.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
@@ -140,10 +141,11 @@
         "azure.mgmt.hybridcompute.models.LicenseAssignmentState": "Microsoft.HybridCompute.LicenseAssignmentState",
         "azure.mgmt.hybridcompute.models.LicenseProfileSubscriptionStatus": "Microsoft.HybridCompute.LicenseProfileSubscriptionStatus",
         "azure.mgmt.hybridcompute.models.LicenseProfileProductType": "Microsoft.HybridCompute.LicenseProfileProductType",
+        "azure.mgmt.hybridcompute.models.MachineStatusReason": "Microsoft.HybridCompute.MachineStatusReason",
         "azure.mgmt.hybridcompute.models.StatusTypes": "Microsoft.HybridCompute.StatusTypes",
         "azure.mgmt.hybridcompute.models.IdentityKeyStore": "Microsoft.HybridCompute.IdentityKeyStore",
         "azure.mgmt.hybridcompute.models.StatusLevelTypes": "Microsoft.HybridCompute.StatusLevelTypes",
-        "azure.mgmt.hybridcompute.models.ResourceIdentityType": "Azure.ResourceManager.CommonTypes.ResourceIdentityType",
+        "azure.mgmt.hybridcompute.models.ManagedServiceIdentityType": "Azure.ResourceManager.CommonTypes.ManagedServiceIdentityType",
         "azure.mgmt.hybridcompute.models.ArcKindEnum": "Microsoft.HybridCompute.ArcKindEnum",
         "azure.mgmt.hybridcompute.models.InstanceViewTypes": "Microsoft.HybridCompute.InstanceViewTypes",
         "azure.mgmt.hybridcompute.models.PatchOperationStatus": "Microsoft.HybridCompute.PatchOperationStatus",
@@ -295,5 +297,5 @@
         "azure.mgmt.hybridcompute.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions",
         "azure.mgmt.hybridcompute.aio.HybridComputeManagementClient.begin_setup_extensions": "Microsoft.HybridCompute.Machines.setupExtensions"
     },
-    "CrossLanguageVersion": "c3f7cfc7efb3"
+    "CrossLanguageVersion": "ff51d258037c"
 }

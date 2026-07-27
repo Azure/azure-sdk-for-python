@@ -252,8 +252,10 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
     ) -> None:
         self._amqp_transport = kwargs.pop("amqp_transport", PyamqpTransport)
 
-        # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        # Keep the port for the non-TLS emulator; strip scheme/port/path otherwise.
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
+            fully_qualified_namespace.strip(), strip_port=kwargs.get("use_tls", True)
+        )
         self._entity_name = entity_name
 
         subscription_name = kwargs.get("subscription_name")
