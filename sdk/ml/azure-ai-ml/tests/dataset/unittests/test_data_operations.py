@@ -61,7 +61,6 @@ def mock_data_operations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
-        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
@@ -81,10 +80,10 @@ def mock_data_operations_in_registry(
         operation_scope=mock_registry_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2022_10_01,
-        service_client_012024_preview=mock_aml_services_2024_01_01_preview,
         datastore_operations=mock_datastore_operation,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
         all_operations=mock_machinelearning_client._operation_container,
+        registry_service_client=mock_aml_services_2022_10_01,
     )
 
 
@@ -121,27 +120,14 @@ class TestDataOperations:
         mock_data_operations._operation.list.assert_called_once()
 
     def test_list_in_registry(self, mock_data_operations_in_registry: DataOperations) -> None:
-        mock_data_operations_in_registry._operation.list.return_value = [Mock(Data) for _ in range(10)]
-        mock_data_operations_in_registry._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
-        mock_data_operations_in_registry.list(name="random_name")
-        mock_data_operations_in_registry._operation.list.assert_called_once_with(
-            name="random_name",
-            resource_group_name=Test_Resource_Group,
-            registry_name=Test_Registry_Name,
-            list_view_type=ANY,
-            cls=ANY,
-        )
+        with patch("azure.ai.ml.operations._data_operations.list_registry_assets") as mock_list:
+            mock_data_operations_in_registry.list(name="random_name")
+        mock_list.assert_called_once()
 
     def test_list_in_registry_no_name(self, mock_data_operations_in_registry: DataOperations) -> None:
-        mock_data_operations_in_registry._operation.list.return_value = [Mock(Data) for _ in range(10)]
-        mock_data_operations_in_registry._container_operation.list.return_value = [Mock(Data) for _ in range(10)]
-        mock_data_operations_in_registry.list()
-        mock_data_operations_in_registry._container_operation.list.assert_called_once_with(
-            resource_group_name=Test_Resource_Group,
-            registry_name=Test_Registry_Name,
-            list_view_type=ANY,
-            cls=ANY,
-        )
+        with patch("azure.ai.ml.operations._data_operations.list_registry_assets") as mock_list:
+            mock_data_operations_in_registry.list()
+        mock_list.assert_called_once()
 
     def test_get_with_version(self, mock_data_operations: DataOperations) -> None:
         name_only = "some_name"
@@ -157,11 +143,14 @@ class TestDataOperations:
         name_only = "some_name"
         version = "1"
         data_asset = Data(name=name_only, version=version)
-        with patch.object(ItemPaged, "next"), patch.object(Data, "_from_rest_object", return_value=data_asset):
+        with patch("azure.ai.ml.operations._data_operations.get_registry_versioned_asset") as mock_get, patch(
+            "azure.ai.ml.operations._data_operations.DataVersionBase._deserialize", return_value=Mock()
+        ), patch.object(Data, "_from_rest_object", return_value=data_asset):
             mock_data_operations_in_registry.get(name_only, version)
-        mock_data_operations_in_registry._operation.get.assert_called_once_with(
-            name=name_only, version=version, resource_group_name=Test_Resource_Group, registry_name=Test_Registry_Name
-        )
+        mock_get.assert_called_once()
+        get_call_args_str = str(mock_get.call_args)
+        assert name_only in get_call_args_str
+        assert "'1'" in get_call_args_str
 
     def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
         name = "random_name"
@@ -222,16 +211,14 @@ class TestDataOperations:
             return_value=(data, "indicatorfile.txt"),
         ), patch("azure.ai.ml.operations._data_operations.Data._from_rest_object", return_value=data), patch(
             "azure.ai.ml.operations._data_operations.get_sas_uri_for_registry_asset", return_value="test_sas_uri"
-        ) as mock_sas_uri:
+        ) as mock_sas_uri, patch(
+            "azure.ai.ml.operations._data_operations.begin_create_or_update_registry_versioned_asset"
+        ) as mock_create, patch(
+            "azure.ai.ml.operations._data_operations.DataVersionBase._deserialize", return_value=Mock()
+        ):
             mock_data_operations_in_registry.create_or_update(data)
             mock_sas_uri.assert_called_once()
-            mock_data_operations_in_registry._operation.begin_create_or_update.assert_called_once_with(
-                name="testFileData",
-                version="1",
-                registry_name=Test_Registry_Name,
-                resource_group_name=Test_Resource_Group,
-                body=ANY,
-            )
+            mock_create.assert_called_once()
 
     def test_create_with_mltable_pattern_path(
         self,
@@ -590,21 +577,28 @@ class TestDataOperations:
         self,
         mock_data_operations: DataOperations,
     ):
-        mock_data_operations._compute_operation.get.return_value = Mock(
-            properties=Mock(
-                properties=Mock(data_mounts=[Mock(mount_name="unified_mount_random_uuid", mount_state="Mounted")])
-            )
-        )
+        update_response = Mock(status_code=200)
+        get_response = Mock(status_code=200)
+        get_response.json.return_value = {
+            "properties": {
+                "properties": {"dataMounts": [{"mountName": "unified_mount_random_uuid", "mountState": "Mounted"}]}
+            }
+        }
+        mock_data_operations._service_client.send_request.side_effect = [update_response, get_response]
         with patch("uuid.uuid4", return_value="random_uuid"), patch(
             "azureml.dataprep.rslex_fuse_subprocess_wrapper.build_data_asset_uri"
         ) as mock_build_uri, patch.dict(os.environ, {"CI_NAME": "random_ci"}):
+            # build_data_asset_uri returns a str in production; the mount request now JSON-encodes this
+            # value into the HttpRequest body, so the mock must return a real string (a bare Mock would be
+            # fed to SdkJSONEncoder and recurse unboundedly).
+            mock_build_uri.return_value = "azureml://datastores/workspaceblobstore/paths/random_name/random_version"
             mock_data_operations.mount(
                 path="azureml:random_name:random_version",
                 mount_point="/tmp/mount/random-local-path-for-data/",
                 persistent=True,
             )
             mock_build_uri.assert_called_once()
-            mock_data_operations._compute_operation.update_data_mounts.assert_called_once()
+            assert mock_data_operations._service_client.send_request.call_count == 2
 
     @pytest.mark.skipif(
         (IS_CPYTHON and sys.version_info >= (3, 13)) or (IS_PYPY and sys.version_info >= (3, 10)) or IS_MACOS_ARM64,

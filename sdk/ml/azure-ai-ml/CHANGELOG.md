@@ -13,6 +13,7 @@
 - Fixed `models.get(name, label="latest")` returning a `Model` whose `default_deployment_template` / `allowed_deployment_templates` references had `asset_id=None`. Label resolution goes through the version list endpoint (`top=1`), whose items omit the deployment-template references; for registry models the resolved version is now re-fetched through the get endpoint, so the label path hydrates these references identically to the explicit `version=` path.
 
 ### Other Changes
+- Migrated SDK entities and their consumers off the per-version msrest REST clients onto the shared `arm_ml_service` hybrid client. This is an internal change; the on-the-wire request/response contract is unchanged.
 
 ## 1.34.1 (2026-07-15)
 
