@@ -20,10 +20,8 @@ from azure.ai.ml._artifacts._constants import (
     CHANGED_ASSET_PATH_MSG_NO_PERSONAL_DATA,
 )
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
 from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient042023
+from azure.ai.ml._restclient.arm_ml_service.models import CodeVersion as CodeVersionData
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
@@ -32,7 +30,12 @@ from azure.ai.ml._utils._asset_utils import (
     get_storage_info_for_non_registry_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_storage, get_sas_uri_for_registry_asset
+from azure.ai.ml._utils._registry_utils import (
+    begin_create_or_update_registry_versioned_asset,
+    get_asset_body_for_registry_storage,
+    get_registry_versioned_asset,
+    get_sas_uri_for_registry_asset,
+)
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import (
@@ -63,10 +66,8 @@ class CodeOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace resources.
-    :type service_client: typing.Union[
-        ~azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces,
-        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient]
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     """
@@ -75,13 +76,14 @@ class CodeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient102021Dataplane, ServiceClient042023],
+        service_client: ServiceClient042023,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
         super(CodeOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_filter()
         self._service_client = service_client
+        self._registry_service_client = kwargs.pop("registry_service_client", None)
         self._version_operation = service_client.code_versions
         self._container_operation = service_client.code_containers
         self._datastore_operation = datastore_operations
@@ -120,7 +122,7 @@ class CodeOperations(_ScopeDependentOperations):
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
+                    service_client=self._registry_service_client,
                     name=name,
                     version=version,
                     resource_group=self._resource_group_name,
@@ -172,17 +174,22 @@ class CodeOperations(_ScopeDependentOperations):
 
             code_version_resource = code._to_rest_object()
 
-            result = (
-                self._version_operation.begin_create_or_update(
-                    name=name,
-                    version=version,
-                    registry_name=self._registry_name,
-                    resource_group_name=self._operation_scope.resource_group_name,
-                    body=code_version_resource,
-                    **self._init_kwargs,
-                ).result()
-                if self._registry_name
-                else self._version_operation.create_or_update(
+            if self._registry_name:
+                registry_rest_obj = begin_create_or_update_registry_versioned_asset(
+                    self._registry_service_client,
+                    "codes",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                    code_version_resource,
+                )
+                # The registry create LRO can complete with an empty body; only deserialize a
+                # non-None result, otherwise fall through to the re-fetch guard below (a bare
+                # ``_deserialize(None, [])`` would raise ``'NoneType' object has no attribute 'items'``).
+                result = CodeVersionData._deserialize(registry_rest_obj, []) if registry_rest_obj else None
+            else:
+                result = self._version_operation.create_or_update(
                     name=name,
                     version=version,
                     workspace_name=self._workspace_name,
@@ -190,9 +197,10 @@ class CodeOperations(_ScopeDependentOperations):
                     body=code_version_resource,
                     **self._init_kwargs,
                 )
-            )
 
-            if not result:
+            if not result or getattr(result, "id", None) is None:
+                # The registry create LRO body can be incomplete (missing the asset id, which
+                # ``_from_rest_object`` parses via AMLVersionedArmId); re-fetch the full resource.
                 return self.get(name=name, version=version)
             return Code._from_rest_object(result)
         except Exception as ex:
@@ -286,12 +294,16 @@ class CodeOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         code_version_resource = (
-            self._version_operation.get(
-                name=name,
-                version=version,
-                resource_group_name=self._operation_scope.resource_group_name,
-                registry_name=self._registry_name,
-                **self._init_kwargs,
+            CodeVersionData._deserialize(
+                get_registry_versioned_asset(
+                    self._registry_service_client,
+                    "codes",
+                    name,
+                    version,
+                    self._operation_scope.resource_group_name,
+                    self._registry_name,
+                ),
+                [],
             )
             if self._registry_name
             else self._version_operation.get(

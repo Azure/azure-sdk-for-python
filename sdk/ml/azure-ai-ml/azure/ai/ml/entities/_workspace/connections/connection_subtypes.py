@@ -5,7 +5,7 @@
 import re
 from typing import Any, Dict, List, Optional, Type, Union
 
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionCategory
 from azure.ai.ml._schema.workspace.connections.connection_subtypes import (
     APIKeyConnectionSchema,
     AzureAISearchConnectionSchema,
@@ -31,7 +31,10 @@ from azure.ai.ml.constants._common import (
     CognitiveServiceKinds,
     ConnectionTypes,
 )
-from azure.ai.ml.entities._credentials import AadCredentialConfiguration, ApiKeyConfiguration
+from azure.ai.ml.entities._credentials import (
+    AadCredentialConfiguration,
+    ApiKeyConfiguration,
+)
 
 from .one_lake_artifacts import OneLakeConnectionArtifact
 from .workspace_connection import WorkspaceConnection
@@ -353,7 +356,11 @@ class AzureOpenAIConnection(ApiOrAadConnection):
 
     @classmethod
     def _get_required_metadata_fields(cls) -> List[str]:
-        return [CONNECTION_API_VERSION_KEY, CONNECTION_API_TYPE_KEY, CONNECTION_RESOURCE_ID_KEY]
+        return [
+            CONNECTION_API_VERSION_KEY,
+            CONNECTION_API_TYPE_KEY,
+            CONNECTION_RESOURCE_ID_KEY,
+        ]
 
     @classmethod
     def _get_schema_class(cls) -> Type:
