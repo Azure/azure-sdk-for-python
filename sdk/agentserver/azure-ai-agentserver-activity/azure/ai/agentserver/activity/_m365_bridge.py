@@ -55,11 +55,6 @@ def build_m365_app(
     from caller-supplied components. Any component left as ``None`` is created
     from the resolved connection config.
 
-    The outbound-auth model (simple vs digital worker) is already encoded in
-    ``connection_config`` by :func:`~._config.get_hosted_agent_env` (for example
-    the ``IdentityProxyManager`` auth type for the digital-worker model), so this
-    function does not need to know which model is in effect.
-
     :keyword connection_config: The resolved M365 ``CONNECTIONS__*`` mapping.
     :paramtype connection_config: Mapping[str, str]
     :keyword storage: The storage backend for the built stack. Required when
@@ -216,15 +211,9 @@ def _build_outbound_claims(
     :rtype: ~microsoft_agents.hosting.core.ClaimsIdentity
     """
     if digital_worker:
-        # Digital-worker model: present anonymous outbound claims. The M365
-        # adapter reply path keys off the claims' authentication type: anonymous
-        # claims set ``use_anonymous`` so the reply is delivered through the
-        # Foundry platform gateway (which performs the outbound Bot Connector
-        # auth on the container's behalf). This matches the known-good
-        # foundry-autopilot-agent sample. Presenting *authenticated* claims here
-        # instead forces the adapter to synchronously mint an
-        # ``IdentityProxyManager`` token on every reply, which hangs behind the
-        # gateway (multi-second timeouts, platform-classified reply failures).
+        # The DW SERVICE_CONNECTION (IdentityProxyManager) is scoped to the agentic
+        # resource, not Bot Connector, so authenticated claims would make the
+        # adapter attempt a reply-token mint that stalls the turn.
         return claims_cls({}, is_authenticated=False, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
 
     if use_anonymous_outbound(digital_worker=digital_worker, is_hosted=is_hosted, bot_app_id=bot_app_id):

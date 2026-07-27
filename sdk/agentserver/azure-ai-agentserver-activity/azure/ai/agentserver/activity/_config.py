@@ -82,18 +82,12 @@ def get_hosted_agent_env(*, digital_worker: bool = False) -> dict[str, str]:
 
 
 def use_anonymous_outbound(*, digital_worker: bool, is_hosted: bool, bot_app_id: str) -> bool:
-    """Whether outbound replies should use anonymous (empty-token) auth.
+    """Whether the outbound reply should use anonymous (empty-token) auth.
 
-    Pure decision over the resolved values (no process-global reads). The
-    digital-worker model always uses anonymous outbound claims: the Foundry
-    platform gateway performs the outbound Bot Connector auth on the container's
-    behalf, so the container must not synchronously mint a token on the reply
-    path. For the simple model, a managed-identity Bot Connector token
-    can only be minted inside a hosted container; running outside a hosted
-    container **and** with no Bot Connector credential configured falls back to
-    anonymous claims so local runs can round-trip through local test channels
-    (for example the Microsoft 365 Agents Playground ``emulator`` channel)
-    without a Bot registration.
+    Digital worker: always ``True`` — its ``IdentityProxyManager`` connection is
+    scoped to the agentic resource, not Bot Connector, so it can't mint a reply
+    token. Simple: mint directly when hosted; fall back to anonymous only for 
+    local dev without a Bot credential.
 
     :keyword digital_worker: The selected outbound-auth model.
     :paramtype digital_worker: bool
