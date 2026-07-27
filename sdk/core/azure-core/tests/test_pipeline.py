@@ -73,6 +73,7 @@ def test_default_http_logging_policy(http_request):
     assert "WWW-Authenticate" in http_logging_policy.allowed_header_names
     assert "x-vss-e2eid" in http_logging_policy.allowed_header_names
     assert "x-msedge-ref" in http_logging_policy.allowed_header_names
+    assert "azure-deprecating" in http_logging_policy.allowed_header_names
     # Testing I can replace the set entirely
     HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
     HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
