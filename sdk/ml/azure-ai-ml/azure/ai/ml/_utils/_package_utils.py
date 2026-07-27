@@ -5,19 +5,10 @@
 # pylint: disable=try-except-raise
 
 import logging
+from typing import Any
 
 
 from azure.ai.ml.entities import BatchDeployment, OnlineDeployment, Deployment
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
-    PackageRequest,
-    CodeConfiguration,
-    BaseEnvironmentId,
-    AzureMLOnlineInferencingServer,
-    AzureMLBatchInferencingServer,
-)
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    PackageRequest as DataPlanePackageRequest,
-)
 from azure.ai.ml.constants._common import REGISTRY_URI_FORMAT
 
 from azure.ai.ml._utils._logger_utils import initialize_logger_info
@@ -32,54 +23,49 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
     model_name = model_str.split("/")[-3]
     target_environment_name = "packaged-env"
 
-    if deployment.code_configuration:
-        code_configuration = CodeConfiguration(
-            code_id=deployment.code_configuration.code,
-            scoring_script=deployment.code_configuration.scoring_script,
-        )
-    else:
-        code_configuration = None
+    is_registry = model_str.startswith(REGISTRY_URI_FORMAT)
 
+    # The model-package models are not on the shared arm_ml_service client, so build every part of the
+    # request as a JSON-direct wire dict. These are byte-identical to the legacy v2023_04 msrest models
+    # (``AzureML*InferencingServer`` / ``BaseEnvironmentId`` / ``PackageRequest``) they replace.
+    inferencing_server: Any = None
     if isinstance(deployment, OnlineDeployment):
-        inferencing_server = AzureMLOnlineInferencingServer(code_configuration=code_configuration)
+        inferencing_server = {"serverType": "AzureMLOnline"}
     elif isinstance(deployment, BatchDeployment):
-        inferencing_server = AzureMLBatchInferencingServer(code_configuration=code_configuration)
-    else:
-        inferencing_server = None
+        inferencing_server = {"serverType": "AzureMLBatch"}
 
+    if deployment.code_configuration and inferencing_server is not None:
+        code_id = (
+            deployment.code_configuration.code
+            if deployment.code_configuration.code.startswith(REGISTRY_URI_FORMAT)
+            else "azureml:/" + deployment.code_configuration.code
+        )
+        code_wire: Any = {"codeId": code_id}
+        if deployment.code_configuration.scoring_script is not None:
+            code_wire["scoringScript"] = deployment.code_configuration.scoring_script
+        inferencing_server["codeConfiguration"] = code_wire
+
+    base_environment_source: Any = None
     if deployment.environment:
-        base_environment_source = BaseEnvironmentId(
-            base_environment_source_type="EnvironmentAsset", resource_id=deployment.environment
-        )
+        base_environment_source = {
+            "baseEnvironmentSourceType": "EnvironmentAsset",
+            "resourceId": (deployment.environment if is_registry else "azureml:/" + deployment.environment),
+        }
+
+    package_request: Any = None
+    if is_registry:
+        package_request = {}
+        if base_environment_source is not None:
+            package_request["baseEnvironmentSource"] = base_environment_source
+        if inferencing_server is not None:
+            package_request["inferencingServer"] = inferencing_server
+        package_request["targetEnvironmentId"] = target_environment_name
     else:
-        base_environment_source = None
-
-    package_request = (
-        PackageRequest(
-            target_environment_name=target_environment_name,
-            base_environment_source=base_environment_source,
-            inferencing_server=inferencing_server,
-        )
-        if not model_str.startswith(REGISTRY_URI_FORMAT)
-        else DataPlanePackageRequest(
-            inferencing_server=inferencing_server,
-            target_environment_id=target_environment_name,
-            base_environment_source=base_environment_source,
-        )
-    )
-
-    if deployment.environment:
-        if not model_str.startswith(REGISTRY_URI_FORMAT):
-            package_request.base_environment_source.resource_id = "azureml:/" + deployment.environment
-        else:
-            package_request.base_environment_source.resource_id = deployment.environment
-    if deployment.code_configuration:
-        if not deployment.code_configuration.code.startswith(REGISTRY_URI_FORMAT):
-            package_request.inferencing_server.code_configuration.code_id = (
-                "azureml:/" + deployment.code_configuration.code
-            )
-        else:
-            package_request.inferencing_server.code_configuration.code_id = deployment.code_configuration.code
+        package_request = {"targetEnvironmentName": target_environment_name}
+        if base_environment_source is not None:
+            package_request["baseEnvironmentSource"] = base_environment_source
+        if inferencing_server is not None:
+            package_request["inferencingServer"] = inferencing_server
 
     try:
         packaged_env = model_ops.package(
@@ -91,7 +77,11 @@ def package_deployment(deployment: Deployment, model_ops) -> Deployment:
         if not model_str.startswith(REGISTRY_URI_FORMAT):
             deployment.environment = packaged_env.id
         else:
-            deployment.environment = packaged_env.target_environment_id
+            deployment.environment = (
+                packaged_env.get("targetEnvironmentId")
+                if isinstance(packaged_env, dict)
+                else packaged_env.target_environment_id
+            )
         deployment.model = None
         deployment.code_configuration = None
     except Exception:
