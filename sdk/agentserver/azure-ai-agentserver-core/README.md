@@ -183,7 +183,7 @@ The `@task` decorator builds crash-resilient agents that survive container resta
 ```python
 from azure.ai.agentserver.core.tasks import task, TaskContext
 
-@task
+@task(name="process_document")
 async def process_document(ctx: TaskContext[dict]) -> dict:
     # ctx.entry_mode is "fresh" | "resumed" | "recovered".
     # The framework re-invokes the handler from the top after a
@@ -194,7 +194,7 @@ async def process_document(ctx: TaskContext[dict]) -> dict:
 result = await process_document.run(
     task_id="doc-42", input={"document_url": "..."},
 )
-print(result.output)  # {"summary": "..."}
+print(result)  # {"summary": "..."}
 ```
 
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.

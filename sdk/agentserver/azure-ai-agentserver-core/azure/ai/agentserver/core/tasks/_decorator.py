@@ -1615,7 +1615,7 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         input: Any,  # noqa: A002
         input_id: str | None = None,
         if_last_input_id: str | None = None,
-    ) -> Any:
+    ) -> Output:
         """Run one turn on the chain identified by ``task_id``.
 
         :keyword task_id: The chain identifier (mandatory).
@@ -1625,7 +1625,7 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
         :keyword if_last_input_id: Optional ``If-Match``-style
             precondition on the chain's last-accepted ``input_id``.
         :return: The handler's return value for this turn.
-        :rtype: Any
+        :rtype: Output
         """
         # Multi-turn identity rule: each turn gets its OWN unique input_id.
         # When the caller omits one (and isn't running an If-Match precondition,

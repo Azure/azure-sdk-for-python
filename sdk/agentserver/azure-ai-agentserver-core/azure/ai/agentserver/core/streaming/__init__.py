@@ -14,8 +14,6 @@ API, backings, per-turn id convention, exception/wire mapping,
 third-party-impl peer-registry pattern).
 """
 
-from __future__ import annotations
-
 from ._protocol import (
     EventStream,
     EventStreamClosedError,
