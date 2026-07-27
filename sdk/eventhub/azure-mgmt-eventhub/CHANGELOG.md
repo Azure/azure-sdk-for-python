@@ -1,6 +1,6 @@
 # Release History
 
-## 12.0.0b3 (2026-07-22)
+## 12.0.0b3 (2026-07-27)
 
 ### Features Added
 
@@ -25,13 +25,17 @@
 
   - Deleted or renamed model `AccessKeys`
   - Deleted or renamed model `AvailableCluster`
+  - Deleted or renamed model `AvailableClustersList`
   - Deleted or renamed model `CheckNameAvailabilityResult`
   - Deleted or renamed model `EHNamespaceIdContainer`
+  - Deleted or renamed model `EHNamespaceIdListResult`
   - Deleted or renamed model `ErrorAdditionalInfo`
   - Deleted or renamed model `ErrorDetail`
   - Deleted or renamed model `ErrorResponse`
+  - Deleted or renamed model `NetworkRuleSetListResult`
   - Deleted or renamed model `NetworkSecurityPerimeter`
   - Deleted or renamed model `NetworkSecurityPerimeterConfiguration`
+  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationList`
   - Deleted or renamed model `NetworkSecurityPerimeterConfigurationProperties`
   - Deleted or renamed model `NetworkSecurityPerimeterConfigurationPropertiesProfile`
   - Deleted or renamed model `NetworkSecurityPerimeterConfigurationPropertiesResourceAssociation`
@@ -42,13 +46,9 @@
   - Deleted or renamed model `OperationDisplay`
   - Deleted or renamed model `PrivateLinkResource`
   - Deleted or renamed model `PrivateLinkResourceProperties`
+  - Deleted or renamed model `PrivateLinkResourcesListResult`
   - Deleted or renamed model `ProvisioningIssue`
   - Deleted or renamed model `ProvisioningIssueProperties`
-  - Deleted model `AvailableClustersList`
-  - Deleted model `EHNamespaceIdListResult`
-  - Deleted model `NetworkRuleSetListResult`
-  - Deleted model `NetworkSecurityPerimeterConfigurationList`
-  - Deleted model `PrivateLinkResourcesListResult`
 
 ## 12.0.0b2 (2026-07-07)
 
