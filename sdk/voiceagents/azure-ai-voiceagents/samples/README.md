@@ -10,18 +10,28 @@ urlFragment: voiceagents-samples
 
 # Samples for the Azure AI Voice Agents client library for Python
 
-These code samples show common HTTP-surface scenarios with the
-`azure-ai-voiceagents` client library: managing voice agents, working with
-agent versions, and reading back persisted conversations (transcript, items,
-and audio recordings).
+These code samples are organized **by scenario**:
+
+- **[`management/`](#management--manage-agents-and-read-conversations)** —
+  request/response scenarios with the `azure-ai-voiceagents` client: managing
+  voice agents, working with agent versions, and reading back persisted
+  conversations (transcript, items, and audio recordings). Each scenario
+  includes a sync sample and, where applicable, its async variant (files
+  suffixed `_async`).
+- **[`live/`](#live--hold-a-live-conversation)** — the live voice conversation
+  scenario: create an agent with `azure-ai-voiceagents`, hold a live session,
+  then read back and clean up with `azure-ai-voiceagents`.
 
 > [!NOTE]
-> These samples cover the **request/response (HTTP)** surface only —
-> voice-agent management and read-only conversation/audio playback. The
-> **live realtime voice session** (the streaming WebSocket call) is reached
-> through the `client.realtime.connect(...)` namespace, which is exposed as an
-> interface today and raises `NotImplementedError` until the streaming
-> transport ships, so it is intentionally not shown here.
+> The **management** scenarios cover voice-agent management and read-only
+> conversation/audio playback over request/response (HTTP). This library's own
+> `client.realtime.connect(...)` namespace is exposed as an interface today and
+> raises `NotImplementedError` until the streaming transport ships. To drive a
+> **live realtime voice session** today, the live sample uses the separate
+> [`azure-ai-voicelive`](https://pypi.org/project/azure-ai-voicelive/) SDK —
+> `live/sample_live_conversation_async.py` shows the full loop
+> (create an agent → hold a live conversation with VoiceLive → read the
+> persisted conversation back → delete everything).
 
 > [!IMPORTANT]
 > Voice agents are a **gated preview**. Every call opts in with the
@@ -32,23 +42,31 @@ and audio recordings).
 > yet. If you hit this, confirm preview enablement and a supported region with
 > your service contact rather than changing the sample code.
 
+## `management/` — manage agents and read conversations
+
 **Manage voice agents** — these run standalone; you only need an endpoint.
 
 | File | Description |
 | ---- | ----------- |
-| [sample_create_and_manage_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
-| [sample_create_voice_agent_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
-| [sample_generate_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
-| [sample_manage_voice_agent_versions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
-| [async_samples/sample_create_and_manage_voice_agent_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/async_samples/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
+| [management/sample_create_and_manage_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_and_manage_voice_agent.py) | Create (with a voice/audio config and conversation storage enabled), get, list, update, disable/enable, and delete a voice agent. |
+| [management/sample_create_and_manage_voice_agent_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_and_manage_voice_agent_async.py) | Async version of the create/manage lifecycle. |
+| [management/sample_create_voice_agent_with_tools.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_create_voice_agent_with_tools.py) | Create an agent with tools (`function`, `system`, `mcp`, `toolbox`), input-audio config (turn detection + transcription), and bring-your-own-model (`self_deployed`). |
+| [management/sample_generate_voice_agent.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_generate_voice_agent.py) | Guided authoring: generate and create a voice agent from a persona, use case, and a natural-language goal. |
+| [management/sample_manage_voice_agent_versions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_manage_voice_agent_versions.py) | Create and list immutable versions of a voice agent, including draft versions. |
 
 **Read conversations** — these need an existing agent and a conversation id from
 a completed live session (see [Getting a conversation id](#getting-a-conversation-id)).
 
 | File | Description |
 | ---- | ----------- |
-| [sample_read_conversation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
-| [sample_read_conversation_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
+| [management/sample_read_conversation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_read_conversation.py) | Read a persisted conversation, its responses (and per-response items), and its items (with single get by id). |
+| [management/sample_read_conversation_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/management/sample_read_conversation_audio.py) | Read the merged whole-call recording and a single turn's audio, streaming each to a WAV file. |
+
+## `live/` — hold a live conversation
+
+| File | Description |
+| ---- | ----------- |
+| [live/sample_live_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_conversation_async.py) | End to end: create an agent, publish a version, hold a live conversation via the `azure-ai-voicelive` SDK, read the persisted conversation back, then delete everything. |
 
 ## Prerequisites
 
@@ -58,8 +76,10 @@ a completed live session (see [Getting a conversation id](#getting-a-conversatio
 
   ```bash
   python -m pip install azure-ai-voiceagents azure-identity
-  # for the async sample, also install an async transport:
+  # for the async samples, also install an async transport:
   python -m pip install aiohttp
+  # for the end-to-end live-session sample, also install the VoiceLive SDK:
+  python -m pip install azure-ai-voicelive
   ```
 
 ## Setup
@@ -101,10 +121,15 @@ management samples turn this on). During the live session the service emits a
 `AZURE_VOICE_AGENTS_CONVERSATION_ID`. Audio additionally requires the session to
 have ended.
 
+The `live/sample_live_conversation_async.py` sample does this end
+to end for you: it creates an agent, opens a live session with the
+`azure-ai-voicelive` SDK, captures the conversation id from that session, and
+reads the conversation back — no manual id wiring required.
+
 ## Running a sample
 
 ```bash
-python sample_create_and_manage_voice_agent.py
+python management/sample_create_and_manage_voice_agent.py
 ```
 
 ## Troubleshooting
