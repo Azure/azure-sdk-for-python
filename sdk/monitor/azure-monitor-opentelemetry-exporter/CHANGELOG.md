@@ -13,6 +13,7 @@
   ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
 - Live Metrics now honors the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable for AAD
   authentication as a fallback when no explicit credential is supplied and local authentication is disabled.
+  ([#48284](https://github.com/Azure/azure-sdk-for-python/pull/48284))
 
 ### Other Changes
 
