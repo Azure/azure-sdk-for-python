@@ -3787,16 +3787,34 @@ class TestAppInsightsAuthentication:
         assert exc_info.value.category == ErrorCategory.INVALID_VALUE
         assert exc_info.value.blame == ErrorBlame.SYSTEM_ERROR
 
-    @pytest.mark.parametrize("credential_type", [None, "ApiKey"])
     @patch("opentelemetry.sdk._logs.LoggerProvider")
-    def test_api_key_configuration_remains_compatible(self, mock_lp_cls, credential_type):
+    def test_missing_credential_type_configuration_remains_compatible(self, mock_lp_cls):
         mock_lp_cls.return_value.force_flush.return_value = True
         exporter_module = MagicMock()
         config = {"connection_string": "InstrumentationKey=fake-key"}
-        if credential_type is not None:
-            config["credential_type"] = credential_type
 
         with patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
             emit_eval_result_events_to_app_insights(config, self._RESULTS)
 
         exporter_module.AzureMonitorLogExporter.assert_called_once_with(connection_string="InstrumentationKey=fake-key")
+
+    @patch("opentelemetry.sdk._logs.LoggerProvider")
+    def test_api_key_configuration_disables_environment_fallback(self, mock_lp_cls):
+        mock_lp_cls.return_value.force_flush.return_value = True
+        exporter_module = MagicMock()
+        config = {
+            "connection_string": "InstrumentationKey=fake-key",
+            "credential_type": "ApiKey",
+        }
+
+        with patch.dict(
+            os.environ,
+            {"APPLICATIONINSIGHTS_AUTHENTICATION_STRING": "Authorization=AAD"},
+            clear=False,
+        ), patch.dict("sys.modules", {"azure.monitor.opentelemetry.exporter": exporter_module}):
+            emit_eval_result_events_to_app_insights(config, self._RESULTS)
+
+        exporter_module.AzureMonitorLogExporter.assert_called_once_with(
+            connection_string="InstrumentationKey=fake-key",
+            credential=None,
+        )

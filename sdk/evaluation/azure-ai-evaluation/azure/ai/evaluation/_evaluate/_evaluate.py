@@ -1540,7 +1540,10 @@ def _get_app_insights_exporter_options(
 ) -> Dict[str, Any]:
     exporter_options: Dict[str, Any] = {"connection_string": app_insights_config["connection_string"]}
     credential_type = app_insights_config.get("credential_type")
-    if credential_type is None or credential_type == "ApiKey":
+    if credential_type is None:
+        return exporter_options
+    if credential_type == "ApiKey":
+        exporter_options["credential"] = None
         return exporter_options
     if credential_type != "ProjectManagedIdentity":
         raise EvaluationException(
