@@ -26,6 +26,7 @@ from .operations import (
     ConsumerGroupsOperations,
     DisasterRecoveryConfigsOperations,
     EventHubsOperations,
+    FabricShortcutsOperations,
     NamespacesOperations,
     NetworkSecurityPerimeterConfigurationOperations,
     NetworkSecurityPerimeterConfigurationsOperations,
@@ -33,6 +34,7 @@ from .operations import (
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
     SchemaRegistryOperations,
+    UpgradePreferencesOperationsOperations,
 )
 
 if sys.version_info >= (3, 11):
@@ -66,6 +68,11 @@ class EventHubManagementClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.eventhub.aio.operations.NetworkSecurityPerimeterConfigurationsOperations
     :ivar consumer_groups: ConsumerGroupsOperations operations
     :vartype consumer_groups: azure.mgmt.eventhub.aio.operations.ConsumerGroupsOperations
+    :ivar fabric_shortcuts: FabricShortcutsOperations operations
+    :vartype fabric_shortcuts: azure.mgmt.eventhub.aio.operations.FabricShortcutsOperations
+    :ivar upgrade_preferences_operations: UpgradePreferencesOperationsOperations operations
+    :vartype upgrade_preferences_operations:
+     azure.mgmt.eventhub.aio.operations.UpgradePreferencesOperationsOperations
     :ivar configuration: ConfigurationOperations operations
     :vartype configuration: azure.mgmt.eventhub.aio.operations.ConfigurationOperations
     :ivar namespaces: NamespacesOperations operations
@@ -90,9 +97,10 @@ class EventHubManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-01-01"
-     and None. Default value is None. If not set, the operation's default API version will be used.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-07-01-preview" and None. Default value is None. If not set, the operation's default API
+     version will be used. Note that overriding this default value may result in unsupported
+     behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -160,6 +168,12 @@ class EventHubManagementClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.consumer_groups = ConsumerGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fabric_shortcuts = FabricShortcutsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.upgrade_preferences_operations = UpgradePreferencesOperationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.configuration = ConfigurationOperations(self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.private_link_resources = PrivateLinkResourcesOperations(

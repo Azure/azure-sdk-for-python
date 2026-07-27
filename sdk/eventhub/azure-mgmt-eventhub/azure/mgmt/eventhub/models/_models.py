@@ -1878,6 +1878,230 @@ class EventhubProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ExceptionWindow(_Model):
+    """A date-specific exception to the recurring maintenance windows.
+
+    :ivar date: The UTC date on which the exception starts. Required.
+    :vartype date: ~datetime.date
+    :ivar action: Whether the exception blocks or allows upgrades. Required. Known values are:
+     "Block" and "Allow".
+    :vartype action: str or ~azure.mgmt.eventhub.models.ExceptionWindowAction
+    :ivar start_time_of_day: The UTC time of day at which the exception starts, represented as an
+     ISO 8601 duration since midnight. Required.
+    :vartype start_time_of_day: ~datetime.timedelta
+    :ivar duration_minutes: The exception duration in minutes. Allow exceptions must be between 480
+     and 1440 minutes in 60-minute increments. Block exceptions must be 1440 minutes. Required.
+    :vartype duration_minutes: int
+    """
+
+    date: datetime.date = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The UTC date on which the exception starts. Required."""
+    action: Union[str, "_models.ExceptionWindowAction"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the exception blocks or allows upgrades. Required. Known values are: \"Block\" and
+     \"Allow\"."""
+    start_time_of_day: datetime.timedelta = rest_field(
+        name="startTimeOfDay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC time of day at which the exception starts, represented as an ISO 8601 duration since
+     midnight. Required."""
+    duration_minutes: int = rest_field(
+        name="durationMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The exception duration in minutes. Allow exceptions must be between 480 and 1440 minutes in
+     60-minute increments. Block exceptions must be 1440 minutes. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        date: datetime.date,
+        action: Union[str, "_models.ExceptionWindowAction"],
+        start_time_of_day: datetime.timedelta,
+        duration_minutes: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcut(ProxyResource):
+    """A Microsoft Fabric shortcut attached to an Event Hub.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.eventhub.models.SystemData
+    :ivar properties: Properties of the Microsoft Fabric shortcut.
+    :vartype properties: ~azure.mgmt.eventhub.models.FabricShortcutProperties
+    :ivar location: The geo-location where the resource lives.
+    :vartype location: str
+    """
+
+    properties: Optional["_models.FabricShortcutProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Microsoft Fabric shortcut."""
+    location: Optional[str] = rest_field(visibility=["read"])
+    """The geo-location where the resource lives."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.FabricShortcutProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcutConfiguration(_Model):
+    """Microsoft Fabric workspace and artifact configuration.
+
+    :ivar tenant_id: The Microsoft Fabric tenant ID. Required.
+    :vartype tenant_id: str
+    :ivar workspace_id: The Microsoft Fabric workspace ID. Required.
+    :vartype workspace_id: str
+    :ivar artifact_id: The Microsoft Fabric artifact ID. Required.
+    :vartype artifact_id: str
+    :ivar premium_capacity_id: The Microsoft Fabric premium capacity ID.
+    :vartype premium_capacity_id: str
+    :ivar log_analytics_resource_id: The resource ID of the Log Analytics workspace.
+    :vartype log_analytics_resource_id: str
+    :ivar workspace_name: The Microsoft Fabric workspace name.
+    :vartype workspace_name: str
+    :ivar artifact_name: The Microsoft Fabric artifact name.
+    :vartype artifact_name: str
+    """
+
+    tenant_id: str = rest_field(name="tenantId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric tenant ID. Required."""
+    workspace_id: str = rest_field(name="workspaceId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric workspace ID. Required."""
+    artifact_id: str = rest_field(name="artifactId", visibility=["read", "create", "update", "delete", "query"])
+    """The Microsoft Fabric artifact ID. Required."""
+    premium_capacity_id: Optional[str] = rest_field(
+        name="premiumCapacityId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric premium capacity ID."""
+    log_analytics_resource_id: Optional[str] = rest_field(
+        name="logAnalyticsResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the Log Analytics workspace."""
+    workspace_name: Optional[str] = rest_field(
+        name="workspaceName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric workspace name."""
+    artifact_name: Optional[str] = rest_field(
+        name="artifactName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Microsoft Fabric artifact name."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tenant_id: str,
+        workspace_id: str,
+        artifact_id: str,
+        premium_capacity_id: Optional[str] = None,
+        log_analytics_resource_id: Optional[str] = None,
+        workspace_name: Optional[str] = None,
+        artifact_name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class FabricShortcutProperties(_Model):
+    """Properties of a Microsoft Fabric shortcut.
+
+    :ivar configuration: Microsoft Fabric workspace and artifact configuration. Required.
+    :vartype configuration: ~azure.mgmt.eventhub.models.FabricShortcutConfiguration
+    :ivar shortcut_type: The type of the shortcut. Known values are: "Entity" and "Network".
+    :vartype shortcut_type: str or ~azure.mgmt.eventhub.models.FabricShortcutType
+    :ivar shortcut_status: The current shortcut status. Only Pending can be supplied on create or
+     update. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype shortcut_status: str or ~azure.mgmt.eventhub.models.FabricShortcutStatus
+    :ivar status_description: A description of the current shortcut status.
+    :vartype status_description: str
+    :ivar created_at: The UTC time when the shortcut was created.
+    :vartype created_at: ~datetime.datetime
+    :ivar modified_at: The UTC time when the shortcut was last modified.
+    :vartype modified_at: ~datetime.datetime
+    """
+
+    configuration: "_models.FabricShortcutConfiguration" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Microsoft Fabric workspace and artifact configuration. Required."""
+    shortcut_type: Optional[Union[str, "_models.FabricShortcutType"]] = rest_field(
+        name="shortcutType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the shortcut. Known values are: \"Entity\" and \"Network\"."""
+    shortcut_status: Optional[Union[str, "_models.FabricShortcutStatus"]] = rest_field(
+        name="shortcutStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current shortcut status. Only Pending can be supplied on create or update. Known values
+     are: \"Pending\", \"Approved\", and \"Rejected\"."""
+    status_description: Optional[str] = rest_field(name="statusDescription", visibility=["read"])
+    """A description of the current shortcut status."""
+    created_at: Optional[datetime.datetime] = rest_field(name="createdAt", visibility=["read"], format="rfc3339")
+    """The UTC time when the shortcut was created."""
+    modified_at: Optional[datetime.datetime] = rest_field(name="modifiedAt", visibility=["read"], format="rfc3339")
+    """The UTC time when the shortcut was last modified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        configuration: "_models.FabricShortcutConfiguration",
+        shortcut_type: Optional[Union[str, "_models.FabricShortcutType"]] = None,
+        shortcut_status: Optional[Union[str, "_models.FabricShortcutStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class FailOver(_Model):
     """FailOver.
 
@@ -2088,6 +2312,57 @@ class KeyVaultProperties(_Model):
         key_vault_uri: Optional[str] = None,
         key_version: Optional[str] = None,
         identity: Optional["_models.UserAssignedIdentityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceWindow(_Model):
+    """A recurring weekly maintenance window in UTC.
+
+    :ivar day_of_week: The UTC day of the week on which the maintenance window starts. Required.
+     Known values are: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", and
+     "Saturday".
+    :vartype day_of_week: str or ~azure.mgmt.eventhub.models.UpgradePreferenceDayOfWeek
+    :ivar start_time_of_day: The UTC time of day at which the maintenance window starts,
+     represented as an ISO 8601 duration since midnight. Required.
+    :vartype start_time_of_day: ~datetime.timedelta
+    :ivar duration_minutes: The maintenance window duration in minutes. The value must be between
+     480 and 1440 in 60-minute increments. Required.
+    :vartype duration_minutes: int
+    """
+
+    day_of_week: Union[str, "_models.UpgradePreferenceDayOfWeek"] = rest_field(
+        name="dayOfWeek", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC day of the week on which the maintenance window starts. Required. Known values are:
+     \"Sunday\", \"Monday\", \"Tuesday\", \"Wednesday\", \"Thursday\", \"Friday\", and \"Saturday\"."""
+    start_time_of_day: datetime.timedelta = rest_field(
+        name="startTimeOfDay", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The UTC time of day at which the maintenance window starts, represented as an ISO 8601 duration
+     since midnight. Required."""
+    duration_minutes: int = rest_field(
+        name="durationMinutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maintenance window duration in minutes. The value must be between 480 and 1440 in 60-minute
+     increments. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        day_of_week: Union[str, "_models.UpgradePreferenceDayOfWeek"],
+        start_time_of_day: datetime.timedelta,
+        duration_minutes: int,
     ) -> None: ...
 
     @overload
@@ -3742,6 +4017,135 @@ class ThrottlingPolicy(ApplicationGroupPolicy, discriminator="ThrottlingPolicy")
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ApplicationGroupPolicyType.THROTTLING_POLICY  # type: ignore
+
+
+class UpgradePreferences(ProxyResource):
+    """Upgrade preferences for an Event Hubs Dedicated cluster.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.eventhub.models.SystemData
+    :ivar properties: Upgrade preference properties for the Event Hubs Dedicated cluster.
+    :vartype properties: ~azure.mgmt.eventhub.models.UpgradePreferencesProperties
+    """
+
+    properties: Optional["_models.UpgradePreferencesProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Upgrade preference properties for the Event Hubs Dedicated cluster."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.UpgradePreferencesProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradePreferencesProperties(_Model):
+    """Upgrade preference properties for an Event Hubs Dedicated cluster.
+
+    :ivar maintenance_windows: Recurring weekly maintenance windows in UTC. At least one window
+     must be supplied when preferences are created or updated. A maximum of two windows can be
+     configured, and their combined duration must be at least 16 hours per week.
+    :vartype maintenance_windows: list[~azure.mgmt.eventhub.models.MaintenanceWindow]
+    :ivar exception_windows: Date-specific exceptions to the recurring maintenance windows.
+    :vartype exception_windows: list[~azure.mgmt.eventhub.models.ExceptionWindow]
+    :ivar upgrade_status: The current cluster upgrade status.
+    :vartype upgrade_status: ~azure.mgmt.eventhub.models.UpgradeStatus
+    """
+
+    maintenance_windows: Optional[list["_models.MaintenanceWindow"]] = rest_field(
+        name="maintenanceWindows", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Recurring weekly maintenance windows in UTC. At least one window must be supplied when
+     preferences are created or updated. A maximum of two windows can be configured, and their
+     combined duration must be at least 16 hours per week."""
+    exception_windows: Optional[list["_models.ExceptionWindow"]] = rest_field(
+        name="exceptionWindows", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Date-specific exceptions to the recurring maintenance windows."""
+    upgrade_status: Optional["_models.UpgradeStatus"] = rest_field(name="upgradeStatus", visibility=["read"])
+    """The current cluster upgrade status."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        maintenance_windows: Optional[list["_models.MaintenanceWindow"]] = None,
+        exception_windows: Optional[list["_models.ExceptionWindow"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UpgradeStatus(_Model):
+    """The current upgrade orchestration state for the cluster.
+
+    :ivar pending_upgrade: Whether at least one deferred upgrade is waiting for the cluster.
+     Required.
+    :vartype pending_upgrade: bool
+    :ivar in_progress: Whether an upgrade-now override is currently active. Required.
+    :vartype in_progress: bool
+    :ivar completes_at: The estimated UTC time when the current upgrade will complete.
+    :vartype completes_at: ~datetime.datetime
+    """
+
+    pending_upgrade: bool = rest_field(
+        name="pendingUpgrade", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether at least one deferred upgrade is waiting for the cluster. Required."""
+    in_progress: bool = rest_field(name="inProgress", visibility=["read", "create", "update", "delete", "query"])
+    """Whether an upgrade-now override is currently active. Required."""
+    completes_at: Optional[datetime.datetime] = rest_field(
+        name="completesAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The estimated UTC time when the current upgrade will complete."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pending_upgrade: bool,
+        in_progress: bool,
+        completes_at: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class UserAssignedIdentity(_Model):
