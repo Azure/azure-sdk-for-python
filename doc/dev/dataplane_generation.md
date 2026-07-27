@@ -175,6 +175,6 @@ If adding a new module group (new sub-folder under `sdk/`), add an entry to [COD
 
 See the [Release Checklist](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/8/Release-Checklist?anchor=prepare-release-script). Before submitting a PR:
 
-- **Update CHANGELOG.md** with the changes for the new version and an approximate release date (e.g., `1.0.0b1 (2022-02-02)`).
+- **Update CHANGELOG.md** with the changes for the new version and an approximate release date (e.g., `1.0.0b1 (2025-07-01)`).
 - **Update the version number** according to the [package version rule](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/package_version/package_version_rule.md).
 - **Fix CI failures** — see [CI Troubleshooting](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md).

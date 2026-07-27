@@ -52,14 +52,14 @@ There are several ways to authenticate to Azure, but to be able to record test H
 ### Get a token with Active Directory application and service principal
 
 Follow this detailed tutorial to set up an Active Directory application and service principal:
-https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
+https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal
 
 To use the credentials from Python, you need:
 * Application ID (a.k.a. client ID)
 * Authentication key (a.k.a. client secret)
 * Tenant ID
 * Subscription ID from the Azure portal
-[This section of the above tutorial](https://docs.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
+[This section of the above tutorial](https://learn.microsoft.com/azure/active-directory/develop/howto-create-service-principal-portal#get-tenant-and-app-id-values-for-signing-in) describes where to find them (besides the subscription ID, which is in the "Overview" section of the "Subscriptions" blade.)
 
 The recommended practice is to store these three values in environment variables called `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET`. To set an environment variable use the following commands:
 ```Shell
@@ -76,9 +76,9 @@ import os
 from azure.identity import ClientSecretCredential
 
 credentials = ClientSecretCredential(
-    client_id = os.environ['AZURE_CLIENT_ID'],
-    secret = os.environ['AZURE_CLIENT_SECRET'],
-    tenant = os.environ['AZURE_TENANT_ID']
+    client_id=os.environ['AZURE_CLIENT_ID'],
+    client_secret=os.environ['AZURE_CLIENT_SECRET'],
+    tenant_id=os.environ['AZURE_TENANT_ID']
 )
 ```
 Or you can use `DefaultAzureCredential`, which we prefer.
@@ -121,27 +121,17 @@ These two methods are used by the authentication methods within `AzureTestCase` 
 
 ## Running tests in live mode
 
-To configure the tests to run in live mode, you have two options:
-* Set the environment variable `AZURE_TEST_RUN_LIVE` to "true" or "yes".
-* Create the `eng/tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file and copy and paste the following line:
-    ```
-    live-mode: true
-    ```
-(`testsettings_local.cfg` is listed in `.gitignore` and not present in the repo; if it's missing, the tests default to playback mode.)
+To configure the tests to run in live mode, set the environment variable `AZURE_TEST_RUN_LIVE` to `"true"` or `"yes"`.
 
 Now you can run tests using the same method described in [Running the tests](#running-the-tests). You would be well-advised to specify a limited number of tests to run. Running every existing test in live mode will take a very long time and produce a great deal of changes to recording files in your Git repository. However, for changes in the client code, the recordings will need to be committed to the Git repository.
 
 ## Running tests in playback mode
 Now that the tests have been run against live resources and generated the HTTP recordings, you can run your tests in playback mode. There are two options for changing from live mode to playback mode:
-* Set the environment variable `AZURE_TEST_RUN_LIVE` to "false" or "no".
-* Change the `eng/tools/azure-sdk-tools/devtools_testutils/testsettings_local.cfg` file to:
-    ```
-    live-mode: false
-    ```
+To revert to playback mode, set the environment variable `AZURE_TEST_RUN_LIVE` to `"false"` or `"no"`.
 
 # Writing new tests
 
-Code in the [`azure-sdk-tools/devtools_testutils`][devtools_testutils] directory provides concrete implementations of the features provided in `scenario_tests` that are oriented around use in SDK testing and that you can use directly in your unit tests.
+Code in the [`azure-sdk-tools/devtools_testutils`][devtools_testutils] directory provides concrete implementations of the features oriented around use in SDK testing that you can use directly in your unit tests.
 
 ## Test structure
 
@@ -343,7 +333,7 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
 ```
 
 <!-- LINKS -->
-[arm_apis]: https://docs.microsoft.com/rest/api/resources/
+[arm_apis]: https://learn.microsoft.com/rest/api/resources/
 [azure_sdk_tools]: https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools
 [azure_portal]: https://portal.azure.com/
 [decorators]: https://www.python.org/dev/peps/pep-0318/
