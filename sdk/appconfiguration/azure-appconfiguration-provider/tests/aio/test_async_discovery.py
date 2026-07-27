@@ -114,7 +114,8 @@ class TestDiscovery:
     async def test_find_origin(self, mock_request_record):
         endpoint = "https://fake.endpoint"
         mock_request_record.return_value = None
-        assert not await _find_origin(endpoint)
+        with pytest.raises(TimeoutError):
+            await _find_origin(endpoint)
         mock_request_record.assert_called_once_with("_origin._tcp.fake.endpoint")
 
         mock_request_record.reset_mock()
@@ -212,3 +213,12 @@ class TestDiscovery:
             await find_auto_failover_endpoints(endpoint, True)
         mock_find_origin.assert_called_once_with(endpoint)
         mock_find_replicas.assert_called_once_with("fake.appconfig.io")
+
+        # A timeout while resolving the origin is surfaced as a TimeoutError
+        mock_find_origin.reset_mock()
+        mock_find_replicas.reset_mock()
+        mock_find_origin.side_effect = TimeoutError("timeout")
+        with pytest.raises(TimeoutError):
+            await find_auto_failover_endpoints(endpoint, True)
+        mock_find_origin.assert_called_once_with(endpoint)
+        mock_find_replicas.assert_not_called()

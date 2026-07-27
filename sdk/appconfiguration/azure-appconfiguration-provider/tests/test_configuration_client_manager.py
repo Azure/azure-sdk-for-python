@@ -30,9 +30,10 @@ class MockClient:
         self.credential = credential
         self.retry_total = retry_total
         self.retry_backoff = retry_backoff
+        self.closed = False
 
     def close(self):
-        pass
+        self.closed = True
 
 
 @pytest.mark.usefixtures("caplog")
@@ -206,6 +207,32 @@ class TestConfigurationClientManager(unittest.TestCase):
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         assert len(manager._replica_clients) == 2
         mock_client.assert_not_called()
+
+    @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
+    @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_credential")
+    def test_refresh_clients_closes_removed_replicas(self, mock_client, mock_update_failover_endpoints):
+        endpoint = "https://fake.endpoint"
+        mock_update_failover_endpoints.return_value = []
+        mock_client.return_value = MockClient(endpoint, "", "fake-credential", 0, 0)
+        manager = ConfigurationClientManager(None, endpoint, _create_mock_credential(), "", 0, 0, True, 0, 0, False)
+
+        original_client = MockClient(endpoint, "", "fake-credential", 0, 0)
+        retained_replica = MockClient("https://fake.endpoint2", "", "fake-credential", 0, 0)
+        removed_replica = MockClient("https://fake.endpoint3", "", "fake-credential", 0, 0)
+        manager._original_client = original_client
+        manager._replica_clients = [original_client, retained_replica, removed_replica]
+
+        # endpoint3 is no longer part of the failover set, so its client must be closed and dropped.
+        mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
+        manager._next_update_time = 0
+        manager.refresh_clients()
+
+        assert removed_replica.closed is True
+        assert retained_replica.closed is False
+        assert original_client.closed is False
+        assert removed_replica not in manager._replica_clients
+        assert retained_replica in manager._replica_clients
+        assert original_client in manager._replica_clients
 
     @patch("azure.appconfiguration.provider._client_manager.find_auto_failover_endpoints")
     @patch("azure.appconfiguration.provider._client_manager._ConfigurationClientWrapper.from_connection_string")
