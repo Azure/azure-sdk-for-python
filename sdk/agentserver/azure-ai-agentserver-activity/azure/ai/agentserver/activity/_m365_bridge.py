@@ -210,26 +210,22 @@ def _build_outbound_claims(
     :return: The claims identity to present to the adapter for the outbound reply.
     :rtype: ~microsoft_agents.hosting.core.ClaimsIdentity
     """
-    if digital_worker:
-        # The DW SERVICE_CONNECTION (IdentityProxyManager) is scoped to the agentic
-        # resource, not Bot Connector, so authenticated claims would make the
-        # adapter attempt a reply-token mint that stalls the turn.
-        return claims_cls({}, is_authenticated=False, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
-
     if use_anonymous_outbound(digital_worker=digital_worker, is_hosted=is_hosted, bot_app_id=bot_app_id):
-        # Simple model, running locally with no Bot Connector credential: no
-        # managed identity exists off-box to mint a Bot Connector token, so use
-        # anonymous claims (the adapter then skips outbound token minting). This
-        # enables local round-trips via local test channels (for example the
-        # Microsoft 365 Agents Playground emulator channel) without a Bot
-        # registration.
-        logger.warning(
-            "LOCAL DEV: FOUNDRY_HOSTING_ENVIRONMENT is unset and no Bot Connector "
-            "credential (%s) is configured; using anonymous outbound auth. This is "
-            "NOT valid for production and only works with local test channels such "
-            "as the Microsoft 365 Agents Playground 'emulator' channel.",
-            OutboundAuth.CLAIM_APP_ID,
-        )
+        # Anonymous claims -> the adapter skips outbound token minting.
+        # - Digital worker: its SERVICE_CONNECTION (IdentityProxyManager) is scoped
+        #   to the agentic resource, not Bot Connector, so authenticated claims
+        #   would make the adapter attempt a reply-token mint that stalls the turn.
+        # - Simple, local dev: no managed identity exists off-box to mint a Bot
+        #   Connector token, so anonymous enables local test channels (e.g. the
+        #   Microsoft 365 Agents Playground emulator) without a Bot registration.
+        if not digital_worker:
+            logger.warning(
+                "LOCAL DEV: FOUNDRY_HOSTING_ENVIRONMENT is unset and no Bot Connector "
+                "credential (%s) is configured; using anonymous outbound auth. This is "
+                "NOT valid for production and only works with local test channels such "
+                "as the Microsoft 365 Agents Playground 'emulator' channel.",
+                OutboundAuth.CLAIM_APP_ID,
+            )
         return claims_cls({}, is_authenticated=False, authentication_type=OutboundAuth.AUTH_TYPE_ANONYMOUS)
 
     # Simple model: present authenticated claims whose appid matches the
