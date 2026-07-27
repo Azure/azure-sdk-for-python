@@ -13,35 +13,21 @@
   - Client `HybridComputeManagementClient` added operation group `gateways`
   - Client `HybridComputeManagementClient` added operation group `machine_run_commands`
   - Client `HybridComputeManagementClient` added operation group `settings`
-  - Model `AccessRule` added property `properties`
-  - Model `ExtensionValue` added property `properties`
   - Model `HybridComputePrivateLinkScopeProperties` added property `service_extensions`
-  - Model `License` added property `properties`
-  - Model `LicenseProfile` added property `properties`
   - Model `LicenseProfileMachineInstanceView` added property `product_profile`
-  - Model `LicenseProfileMachineInstanceView` added property `software_assurance`
-  - Model `LicenseProfileUpdate` added property `properties`
   - Enum `LicenseTarget` added member `WINDOWS_SERVER2016`
-  - Model `LicenseUpdate` added property `properties`
-  - Model `Machine` added property `properties`
-  - Model `MachineExtensionUpdate` added property `properties`
-  - Model `MachineUpdate` added property `properties`
   - Model `NetworkInterface` added property `id`
   - Model `NetworkInterface` added property `mac_address`
   - Model `NetworkInterface` added property `name`
-  - Model `NetworkSecurityPerimeterConfiguration` added property `properties`
   - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
-  - Model `ProvisioningIssue` added property `properties`
   - Enum `StatusTypes` added member `AWAITING_CONNECTION`
   - Model `WindowsParameters` added property `patch_name_masks_to_exclude`
   - Model `WindowsParameters` added property `patch_name_masks_to_include`
-  - Added model `AccessRuleProperties`
   - Added model `Disk`
   - Added model `EsuProfileUpdateProperties`
   - Added enum `ExecutionState`
   - Added model `ExtensionPublisher`
   - Added model `ExtensionType`
-  - Added model `ExtensionValueProperties`
   - Added model `ExtensionValueV2`
   - Added model `ExtensionValueV2Properties`
   - Added model `FirmwareProfile`
@@ -53,29 +39,18 @@
   - Added model `HardwareProfile`
   - Added enum `IdentityKeyStore`
   - Added model `LicenseProfileArmProductProfileProperties`
-  - Added model `LicenseProfileMachineInstanceViewSoftwareAssurance`
-  - Added model `LicenseProfileProperties`
   - Added model `LicenseProfilePropertiesSoftwareAssurance`
-  - Added model `LicenseProfileUpdateProperties`
   - Added model `LicenseProfileUpdatePropertiesSoftwareAssurance`
-  - Added model `LicenseProperties`
-  - Added model `LicenseUpdateProperties`
   - Added model `LicenseUpdatePropertiesLicenseDetails`
-  - Added model `MachineExtensionUpdateProperties`
-  - Added model `MachineProperties`
   - Added model `MachineRunCommand`
   - Added model `MachineRunCommandInstanceView`
   - Added model `MachineRunCommandProperties`
   - Added model `MachineRunCommandScriptSource`
   - Added enum `MachineStatusReason`
-  - Added model `MachineUpdateProperties`
   - Added model `ManagedServiceIdentity`
   - Added enum `ManagedServiceIdentityType`
-  - Added model `NetworkSecurityPerimeterConfigurationProperties`
-  - Added model `PatchSettings`
   - Added model `Processor`
   - Added model `ProductProfileUpdateProperties`
-  - Added model `ProvisioningIssueProperties`
   - Added model `RunCommandInputParameter`
   - Added model `RunCommandManagedIdentity`
   - Added model `ServiceExtension`
@@ -86,8 +61,8 @@
   - Added model `SetupExtensionRequest`
   - Added model `StorageProfile`
   - Added model `UserAssignedIdentity`
-  - Model `MachinesOperations` added method `begin_delete`
-  - Model `MachinesOperations` added method `create_or_update`
+  - Operation group `MachinesOperations` added method `begin_delete`
+  - Operation group `MachinesOperations` added method `create_or_update`
   - Added operation group `ExtensionMetadataV2Operations`
   - Added operation group `ExtensionPublisherOperations`
   - Added operation group `ExtensionTypeOperations`
@@ -97,135 +72,32 @@
 
 ### Breaking Changes
 
-  - Model `AccessRule` deleted or renamed its instance variable `address_prefixes`
-  - Model `AccessRule` deleted or renamed its instance variable `direction`
-  - Model `ExtensionValue` deleted or renamed its instance variable `extension_type`
-  - Model `ExtensionValue` deleted or renamed its instance variable `publisher`
-  - Model `ExtensionValue` deleted or renamed its instance variable `version`
-  - Model `License` deleted or renamed its instance variable `license_details`
-  - Model `License` deleted or renamed its instance variable `license_type`
-  - Model `License` deleted or renamed its instance variable `provisioning_state`
-  - Model `License` deleted or renamed its instance variable `tenant_id`
-  - Model `LicenseProfile` deleted or renamed its instance variable `assigned_license`
-  - Model `LicenseProfile` deleted or renamed its instance variable `assigned_license_immutable_id`
-  - Model `LicenseProfile` deleted or renamed its instance variable `billing_end_date`
-  - Model `LicenseProfile` deleted or renamed its instance variable `billing_start_date`
-  - Model `LicenseProfile` deleted or renamed its instance variable `disenrollment_date`
-  - Model `LicenseProfile` deleted or renamed its instance variable `enrollment_date`
-  - Model `LicenseProfile` deleted or renamed its instance variable `error`
-  - Model `LicenseProfile` deleted or renamed its instance variable `esu_eligibility`
-  - Model `LicenseProfile` deleted or renamed its instance variable `esu_key_state`
-  - Model `LicenseProfile` deleted or renamed its instance variable `esu_keys`
-  - Model `LicenseProfile` deleted or renamed its instance variable `product_features`
-  - Model `LicenseProfile` deleted or renamed its instance variable `product_type`
-  - Model `LicenseProfile` deleted or renamed its instance variable `provisioning_state`
-  - Model `LicenseProfile` deleted or renamed its instance variable `server_type`
-  - Model `LicenseProfile` deleted or renamed its instance variable `software_assurance_customer`
-  - Model `LicenseProfile` deleted or renamed its instance variable `subscription_status`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `billing_end_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `billing_start_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `disenrollment_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `enrollment_date`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `error`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `product_features`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `product_type`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `software_assurance_customer`
-  - Model `LicenseProfileMachineInstanceView` deleted or renamed its instance variable `subscription_status`
-  - Model `LicenseProfileUpdate` deleted or renamed its instance variable `assigned_license`
-  - Model `LicenseProfileUpdate` deleted or renamed its instance variable `product_features`
-  - Model `LicenseProfileUpdate` deleted or renamed its instance variable `product_type`
-  - Model `LicenseProfileUpdate` deleted or renamed its instance variable `software_assurance_customer`
-  - Model `LicenseProfileUpdate` deleted or renamed its instance variable `subscription_status`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `edition`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `license_type`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `processors`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `state`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `target`
-  - Model `LicenseUpdate` deleted or renamed its instance variable `type`
-  - Model `Machine` deleted or renamed its instance variable `ad_fqdn`
-  - Model `Machine` deleted or renamed its instance variable `agent_configuration`
-  - Model `Machine` deleted or renamed its instance variable `agent_upgrade`
-  - Model `Machine` deleted or renamed its instance variable `agent_version`
-  - Model `Machine` deleted or renamed its instance variable `client_public_key`
-  - Model `Machine` deleted or renamed its instance variable `cloud_metadata`
-  - Model `Machine` deleted or renamed its instance variable `detected_properties`
-  - Model `Machine` deleted or renamed its instance variable `display_name`
-  - Model `Machine` deleted or renamed its instance variable `dns_fqdn`
-  - Model `Machine` deleted or renamed its instance variable `domain_name`
-  - Model `Machine` deleted or renamed its instance variable `error_details`
-  - Model `Machine` deleted or renamed its instance variable `extensions`
-  - Model `Machine` deleted or renamed its instance variable `last_status_change`
-  - Model `Machine` deleted or renamed its instance variable `license_profile`
-  - Model `Machine` deleted or renamed its instance variable `location_data`
-  - Model `Machine` deleted or renamed its instance variable `machine_fqdn`
-  - Model `Machine` deleted or renamed its instance variable `mssql_discovered`
-  - Model `Machine` deleted or renamed its instance variable `network_profile`
-  - Model `Machine` deleted or renamed its instance variable `os_edition`
-  - Model `Machine` deleted or renamed its instance variable `os_name`
-  - Model `Machine` deleted or renamed its instance variable `os_profile`
-  - Model `Machine` deleted or renamed its instance variable `os_sku`
-  - Model `Machine` deleted or renamed its instance variable `os_type`
-  - Model `Machine` deleted or renamed its instance variable `os_version`
-  - Model `Machine` deleted or renamed its instance variable `parent_cluster_resource_id`
-  - Model `Machine` deleted or renamed its instance variable `private_link_scope_resource_id`
-  - Model `Machine` deleted or renamed its instance variable `provisioning_state`
-  - Model `Machine` deleted or renamed its instance variable `service_statuses`
-  - Model `Machine` deleted or renamed its instance variable `status`
-  - Model `Machine` deleted or renamed its instance variable `vm_id`
-  - Model `Machine` deleted or renamed its instance variable `vm_uuid`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `auto_upgrade_minor_version`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `enable_automatic_upgrade`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `force_update_tag`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `protected_settings`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `publisher`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `settings`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `type`
-  - Model `MachineExtensionUpdate` deleted or renamed its instance variable `type_handler_version`
-  - Model `MachineUpdate` deleted or renamed its instance variable `agent_upgrade`
-  - Model `MachineUpdate` deleted or renamed its instance variable `cloud_metadata`
-  - Model `MachineUpdate` deleted or renamed its instance variable `location_data`
-  - Model `MachineUpdate` deleted or renamed its instance variable `os_profile`
-  - Model `MachineUpdate` deleted or renamed its instance variable `parent_cluster_resource_id`
-  - Model `MachineUpdate` deleted or renamed its instance variable `private_link_scope_resource_id`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `network_security_perimeter`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `profile`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_issues`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `resource_association`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `assessment_mode`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `enable_hotpatching`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `patch_mode`
-  - Model `OSProfileLinuxConfiguration` deleted or renamed its instance variable `status`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `assessment_mode`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `enable_hotpatching`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `patch_mode`
-  - Model `OSProfileWindowsConfiguration` deleted or renamed its instance variable `status`
-  - Model `ProvisioningIssue` deleted or renamed its instance variable `description`
-  - Model `ProvisioningIssue` deleted or renamed its instance variable `issue_type`
-  - Model `ProvisioningIssue` deleted or renamed its instance variable `severity`
-  - Model `ProvisioningIssue` deleted or renamed its instance variable `suggested_access_rules`
-  - Model `ProvisioningIssue` deleted or renamed its instance variable `suggested_resource_ids`
-  - Deleted or renamed model `ExtensionValueListResult`
-  - Deleted or renamed model `HybridComputePrivateLinkScopeListResult`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AccessRule` moved instance variable `address_prefixes` and `direction` under property `properties` whose type is `AccessRuleProperties`
+  - Model `ExtensionValue` moved instance variable `extension_type`, `publisher` and `version` under property `properties` whose type is `ExtensionValueProperties`
+  - Model `License` moved instance variable `license_details`, `license_type`, `provisioning_state` and `tenant_id` under property `properties` whose type is `LicenseProperties`
+  - Model `LicenseProfile` moved instance variable `assigned_license`, `assigned_license_immutable_id`, `billing_end_date`, `billing_start_date`, `disenrollment_date`, `enrollment_date`, `error`, `esu_eligibility`, `esu_key_state`, `esu_keys`, `product_features`, `product_type`, `provisioning_state`, `server_type`, `software_assurance_customer` and `subscription_status` under property `properties` whose type is `LicenseProfileProperties`
+  - Model `LicenseProfileMachineInstanceView` moved instance variable `billing_end_date`, `billing_start_date`, `disenrollment_date`, `enrollment_date`, `error`, `product_features`, `product_type`, `software_assurance_customer` and `subscription_status` under property `software_assurance` whose type is `LicenseProfileMachineInstanceViewSoftwareAssurance`
+  - Model `LicenseProfileUpdate` moved instance variable `assigned_license`, `product_features`, `product_type`, `software_assurance_customer` and `subscription_status` under property `properties` whose type is `LicenseProfileUpdateProperties`
+  - Model `LicenseUpdate` moved instance variable `edition`, `license_type`, `processors`, `state`, `target` and `type` under property `properties` whose type is `LicenseUpdateProperties`
+  - Model `Machine` moved instance variable `ad_fqdn`, `agent_configuration`, `agent_upgrade`, `agent_version`, `client_public_key`, `cloud_metadata`, `detected_properties`, `display_name`, `dns_fqdn`, `domain_name`, `error_details`, `extensions`, `last_status_change`, `license_profile`, `location_data`, `machine_fqdn`, `mssql_discovered`, `network_profile`, `os_edition`, `os_name`, `os_profile`, `os_sku`, `os_type`, `os_version`, `parent_cluster_resource_id`, `private_link_scope_resource_id`, `provisioning_state`, `service_statuses`, `status`, `vm_id` and `vm_uuid` under property `properties` whose type is `MachineProperties`
+  - Model `MachineExtensionUpdate` moved instance variable `auto_upgrade_minor_version`, `enable_automatic_upgrade`, `force_update_tag`, `protected_settings`, `publisher`, `settings`, `type` and `type_handler_version` under property `properties` whose type is `MachineExtensionUpdateProperties`
+  - Model `MachineUpdate` moved instance variable `agent_upgrade`, `cloud_metadata`, `location_data`, `os_profile`, `parent_cluster_resource_id` and `private_link_scope_resource_id` under property `properties` whose type is `MachineUpdateProperties`
+  - Model `NetworkSecurityPerimeterConfiguration` moved instance variable `network_security_perimeter`, `profile`, `provisioning_issues`, `provisioning_state` and `resource_association` under property `properties` whose type is `NetworkSecurityPerimeterConfigurationProperties`
+  - Model `OSProfileLinuxConfiguration` moved instance variable `assessment_mode`, `enable_hotpatching`, `patch_mode` and `status` under property `patch_settings` whose type is `PatchSettings`
+  - Model `OSProfileWindowsConfiguration` moved instance variable `assessment_mode`, `enable_hotpatching`, `patch_mode` and `status` under property `patch_settings` whose type is `PatchSettings`
+  - Model `ProvisioningIssue` moved instance variable `description`, `issue_type`, `severity`, `suggested_access_rules` and `suggested_resource_ids` under property `properties` whose type is `ProvisioningIssueProperties`
   - Deleted or renamed model `Identity`
-  - Deleted or renamed model `KeyDetails`
-  - Deleted or renamed model `KeyProperties`
-  - Deleted or renamed model `LicenseProfilesListResult`
-  - Deleted or renamed model `LicensesListResult`
-  - Deleted or renamed model `MachineExtensionsListResult`
-  - Deleted or renamed model `MachineListResult`
-  - Deleted or renamed model `NetworkSecurityPerimeterConfigurationListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionListResult`
-  - Deleted or renamed model `PrivateLinkResourceListResult`
-  - Deleted or renamed model `PrivateLinkScopesResource`
-  - Deleted or renamed model `ProxyResourceAutoGenerated`
-  - Deleted or renamed model `ResourceAutoGenerated`
   - Method `MachineExtensionsOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `MachinesOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `MachinesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Deleted or renamed method `MachinesOperations.delete`
-  - Renamed model `HybridComputeManagementClientOperationsMixin` to `_HybridComputeManagementClientOperationsMixin`
+
+### Other Changes
+
+  - Deleted model `ExtensionValueListResult`/`HybridComputePrivateLinkScopeListResult`/`KeyDetails`/`KeyProperties`/`LicenseProfilesListResult`/`LicensesListResult`/`MachineExtensionsListResult`/`MachineListResult`/`NetworkSecurityPerimeterConfigurationListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`PrivateLinkResourceListResult`/`PrivateLinkScopesResource`/`ProxyResourceAutoGenerated`/`ResourceAutoGenerated` which actually were not used by SDK users
+  - Renamed operation group `HybridComputeManagementClientOperationsMixin` to `_HybridComputeManagementClientOperationsMixin`
 
 ## 9.1.0b5 (2026-07-13)
 
