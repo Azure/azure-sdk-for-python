@@ -52,9 +52,6 @@ def upload_data_chunks(
 ):
 
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
-        # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
     if parallel:
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)
@@ -96,9 +93,6 @@ def upload_substream_blocks(
     **kwargs,
 ):
     parallel = max_concurrency > 1
-    if parallel and "modified_access_conditions" in kwargs:
-        # Access conditions do not work with parallelism
-        kwargs["modified_access_conditions"] = None
     if parallel:
         # Access conditions do not work with parallelism
         kwargs.pop("etag", None)

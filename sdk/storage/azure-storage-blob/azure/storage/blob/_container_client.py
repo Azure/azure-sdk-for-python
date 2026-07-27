@@ -320,7 +320,8 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 access=public_access,
                 cls=return_response_headers,
                 headers=headers,
-                **container_cpk_scope_info,
+                default_encryption_scope=container_cpk_scope_info.get("default_encryption_scope"),
+                prevent_encryption_scope_override=container_cpk_scope_info.get("prevent_encryption_scope_override"),
                 **kwargs,
             )
         except HttpResponseError as error:
