@@ -4,5 +4,9 @@
 azure-mgmt-resource==22.0.0
 ../azure-mgmt-eventgrid
 azure-storage-queue
+# Pin to cloudevents 1.x: 2.0.0 is a backwards-incompatible rewrite that removed the
+# `cloudevents.http` module the CNCF tests/samples import. This is a test-only dependency
+# (not in install_requires); the `<=2.0.0` pin was a latent issue that broke once 2.0.0
+# shipped. TODO: migrate the CNCF tests/samples to the cloudevents 2.x API and relax this pin.
 cloudevents<2.0.0; python_version >= "3.7"
 aiohttp>=3.0
