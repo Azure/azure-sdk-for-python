@@ -104,7 +104,7 @@ def build_m365_app(
             "ActivityAgentServerHost requires the M365 Agents SDK for the default "
             "and injected-agent_app construction paths. Install: pip install "
             "microsoft-agents-hosting-core microsoft-agents-authentication-msal "
-            "microsoft-agents-activity azure-identity."
+            "microsoft-agents-activity."
         ) from exc
 
     logger.info("Initializing M365 Agents SDK...")

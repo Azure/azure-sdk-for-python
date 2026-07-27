@@ -86,7 +86,7 @@ def use_anonymous_outbound(*, digital_worker: bool, is_hosted: bool, bot_app_id:
 
     Digital worker: always ``True`` — its ``IdentityProxyManager`` connection is
     scoped to the agentic resource, not Bot Connector, so it can't mint a reply
-    token. Simple: mint directly when hosted; fall back to anonymous only for 
+    token. Simple: mint directly when hosted; fall back to anonymous only for
     local dev without a Bot credential.
 
     :keyword digital_worker: The selected outbound-auth model.
