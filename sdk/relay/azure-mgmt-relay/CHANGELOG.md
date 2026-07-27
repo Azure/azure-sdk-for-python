@@ -5,34 +5,26 @@
 ### Features Added
 
   - Model `AuthorizationRule` added property `location`
-  - Model `AuthorizationRule` added property `properties`
   - Model `AuthorizationRule` added property `system_data`
   - Model `HybridConnection` added property `location`
-  - Model `HybridConnection` added property `properties`
   - Model `HybridConnection` added property `system_data`
   - Model `Operation` added property `action_type`
   - Model `Operation` added property `is_data_action`
   - Model `Operation` added property `origin`
   - Model `OperationDisplay` added property `description`
-  - Model `RelayNamespace` added property `properties`
   - Model `RelayNamespace` added property `system_data`
-  - Model `RelayUpdateParameters` added property `properties`
   - Model `RelayUpdateParameters` added property `system_data`
   - Model `Resource` added property `system_data`
   - Model `ResourceNamespacePatch` added property `system_data`
   - Model `TrackedResource` added property `system_data`
   - Model `WcfRelay` added property `location`
-  - Model `WcfRelay` added property `properties`
   - Model `WcfRelay` added property `system_data`
   - Added enum `ActionType`
-  - Added model `AuthorizationRuleProperties`
   - Added model `ConnectionState`
   - Added enum `CreatedByType`
   - Added enum `DefaultAction`
   - Added enum `EndPointProvisioningState`
   - Added model `ErrorAdditionalInfo`
-  - Added model `ErrorDetail`
-  - Added model `HybridConnectionProperties`
   - Added model `NWRuleSetIpRules`
   - Added enum `NetworkRuleIPAction`
   - Added model `NetworkRuleSet`
@@ -47,52 +39,30 @@
   - Added model `PrivateLinkResourcesListResult`
   - Added model `ProxyResource`
   - Added enum `PublicNetworkAccess`
-  - Added model `RelayNamespaceProperties`
   - Added enum `SkuName`
   - Added enum `SkuTier`
   - Added model `SystemData`
   - Added enum `TlsVersion`
-  - Added model `WcfRelayProperties`
-  - Model `NamespacesOperations` added method `create_or_update_network_rule_set`
-  - Model `NamespacesOperations` added method `get_network_rule_set`
+  - Operation group `NamespacesOperations` added method `create_or_update_network_rule_set`
+  - Operation group `NamespacesOperations` added method `get_network_rule_set`
   - Added operation group `PrivateEndpointConnectionsOperations`
   - Added operation group `PrivateLinkResourcesOperations`
 
 ### Breaking Changes
 
-  - Deleted or renamed model `RelayAPI`
-  - Model `AuthorizationRule` deleted or renamed its instance variable `rights`
-  - Model `ErrorResponse` deleted or renamed its instance variable `code`
-  - Model `ErrorResponse` deleted or renamed its instance variable `message`
-  - Model `HybridConnection` deleted or renamed its instance variable `created_at`
-  - Model `HybridConnection` deleted or renamed its instance variable `listener_count`
-  - Model `HybridConnection` deleted or renamed its instance variable `requires_client_authorization`
-  - Model `HybridConnection` deleted or renamed its instance variable `updated_at`
-  - Model `HybridConnection` deleted or renamed its instance variable `user_metadata`
-  - Model `RelayNamespace` deleted or renamed its instance variable `created_at`
-  - Model `RelayNamespace` deleted or renamed its instance variable `metric_id`
-  - Model `RelayNamespace` deleted or renamed its instance variable `provisioning_state`
-  - Model `RelayNamespace` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `RelayNamespace` deleted or renamed its instance variable `updated_at`
-  - Model `RelayUpdateParameters` deleted or renamed its instance variable `created_at`
-  - Model `RelayUpdateParameters` deleted or renamed its instance variable `metric_id`
-  - Model `RelayUpdateParameters` deleted or renamed its instance variable `provisioning_state`
-  - Model `RelayUpdateParameters` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `RelayUpdateParameters` deleted or renamed its instance variable `updated_at`
-  - Model `WcfRelay` deleted or renamed its instance variable `created_at`
-  - Model `WcfRelay` deleted or renamed its instance variable `is_dynamic`
-  - Model `WcfRelay` deleted or renamed its instance variable `listener_count`
-  - Model `WcfRelay` deleted or renamed its instance variable `relay_type`
-  - Model `WcfRelay` deleted or renamed its instance variable `requires_client_authorization`
-  - Model `WcfRelay` deleted or renamed its instance variable `requires_transport_security`
-  - Model `WcfRelay` deleted or renamed its instance variable `updated_at`
-  - Model `WcfRelay` deleted or renamed its instance variable `user_metadata`
-  - Deleted or renamed model `AuthorizationRuleListResult`
-  - Deleted or renamed model `HybridConnectionListResult`
-  - Deleted or renamed model `OperationListResult`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `RelayAPI` to `RelayAPIMgmtClient`
+  - Model `AuthorizationRule` moved instance variable `rights` under property `properties` whose type is `AuthorizationRuleProperties`
+  - Model `ErrorResponse` moved instance variable `code` and `message` under property `error` whose type is `ErrorDetail`
+  - Model `HybridConnection` moved instance variable `created_at`, `listener_count`, `requires_client_authorization`, `updated_at` and `user_metadata` under property `properties` whose type is `HybridConnectionProperties`
+  - Model `RelayNamespace` moved instance variable `created_at`, `metric_id`, `provisioning_state`, `service_bus_endpoint` and `updated_at` under property `properties` whose type is `RelayNamespaceProperties`
+  - Model `RelayUpdateParameters` moved instance variable `created_at`, `metric_id`, `provisioning_state`, `service_bus_endpoint` and `updated_at` under property `properties` whose type is `RelayNamespaceProperties`
+  - Model `WcfRelay` moved instance variable `created_at`, `is_dynamic`, `listener_count`, `relay_type`, `requires_client_authorization`, `requires_transport_security`, `updated_at` and `user_metadata` under property `properties` whose type is `WcfRelayProperties`
   - Deleted or renamed model `ProvisioningStateEnum`
-  - Deleted or renamed model `RelayNamespaceListResult`
-  - Deleted or renamed model `WcfRelaysListResult`
+
+### Other Changes
+
+  - Deleted model `AuthorizationRuleListResult`/`HybridConnectionListResult`/`OperationListResult`/`RelayNamespaceListResult`/`WcfRelaysListResult` which actually were not used by SDK users
 
 ## 2.0.0b2 (2026-07-06)
 
