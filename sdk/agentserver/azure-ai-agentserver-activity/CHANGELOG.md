@@ -2,12 +2,6 @@
 
 ## 1.0.0b2 (2026-07-27)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Digital-worker (MAIB) outbound auth now uses the M365 Agents SDK's native `IdentityProxyManager` connection auth type instead of a custom MSAL monkeypatch (`_apply_msal_patches`), which previously overrode `MsalAuth.get_agentic_application_token` to perform the federated-identity (FMI) token exchange. The M365 SDK performs that exchange natively from `1.1.0`.
