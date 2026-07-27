@@ -24,7 +24,7 @@
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @xirzec @chlowell @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -35,10 +35,10 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @paulshealy1 @singankit @trrwilson
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @trrwilson @howieleung
 
 # ServiceLabel: %AI
-# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
@@ -265,12 +265,12 @@
 /sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
-/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
+/sdk/agentserver/    @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 # PRLabel: %Hosted Agents
 /sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
-# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
+# ServiceOwners: @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 
 # ServiceLabel: %Image Analysis %Service Attention
 # PRLabel: %Image Analysis

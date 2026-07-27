@@ -33,18 +33,18 @@ def main():
 
     response = client.occurrences.begin_delay(
         resource_group_name="rgcomputeschedule",
-        scheduled_action_name="myScheduledAction",
-        occurrence_id="CB26D7CB-3E27-465F-99C8-EAF7A4118245",
+        scheduled_action_name="scheduled-action-01",
+        occurrence_id="11111111-1111-1111-1111-111111111111",
         body={
-            "delay": "2025-05-22T17:00:00.000-07:00",
+            "delay": "2026-03-12T02:39:48.148Z",
             "resourceIds": [
-                "/subscriptions/CB26D7CB-3E27-465F-99C8-EAF7A4118245/resourceGroups/myRg/providers/Microsoft.Compute/virtualMachines/myVm"
+                "/subscriptions/11111111-1111-1111-1111-111111111111/resourceGroups/rgcomputeschedule/providers/Microsoft.Compute/virtualMachines/vm1"
             ],
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/Occurrences_Delay_MaximumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/Occurrences_Delay_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -341,3 +341,23 @@ class SystemData(TypedDict, total=False):
      \"Application\", \"ManagedIdentity\", and \"Key\"."""
     lastModifiedAt: str
     """The timestamp of resource last modification (UTC)."""
+
+
+class TrustedHostSubscription(ProxyResource):
+    """A host subscription that a guest subscription trusts for sharing compute limits. A guest
+    subscription can trust multiple host subscriptions; establishing trust does not by itself
+    associate the guest with a host. Guest-to-host association happens at check-in time, where a
+    subscription can be a guest of at most one host per region.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: "SystemData"
+    """

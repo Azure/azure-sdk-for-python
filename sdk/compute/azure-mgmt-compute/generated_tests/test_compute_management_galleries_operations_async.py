@@ -25,7 +25,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.galleries.get(
             resource_group_name=resource_group.name,
             gallery_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
 
         # please add some check logic here by yourself
@@ -81,7 +81,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -129,7 +129,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -143,7 +143,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.galleries.begin_delete(
                 resource_group_name=resource_group.name,
                 gallery_name="str",
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -155,7 +155,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_galleries_list_by_resource_group(self, resource_group):
         response = self.client.galleries.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -165,7 +165,7 @@ class TestComputeManagementGalleriesOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_galleries_list(self, resource_group):
         response = self.client.galleries.list(
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

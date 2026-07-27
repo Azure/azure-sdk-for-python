@@ -24,9 +24,8 @@ resources in your [Microsoft Foundry](https://ai.azure.com/) Project. Use it to:
   * Model Context Protocol (MCP)
   * OpenAPI
   * Reminder Tool (Preview)
-  * Toolbox Search (Preview)
+  * Toolbox Search
   * Web Search
-  * Web Search (Preview)
   * Work IQ (Preview)
 * **Get an OpenAI client** using `.get_openai_client()` method to run Responses, Conversations, Evaluations and Fine-Tuning operations with your Agent.
 * **Create and version toolboxes** that bundle collections of tools and skills for your agents, using `.toolboxes` operations.
@@ -186,7 +185,7 @@ The table below lists the operation groups supported by the client library, with
 | Models (preview) | | `samples/models/` |
 | Red teams (preview) | | `samples/red_team/` |
 | Responses | [Responses API](https://platform.openai.com/docs/api-reference/responses) | `samples/responses/` |
-| Routines (preview) | [Routines overview](https://learn.microsoft.com/azure/foundry/agents/concepts/routines) | `samples/routines/` |
+| Routines (preview) | [Routines overview](https://learn.microsoft.com/azure/foundry/agents/concepts/routines) | `samples/hosted_agents/` |
 | Sessions | [Manage hosted sessions](https://learn.microsoft.com/azure/foundry/agents/how-to/manage-hosted-sessions?pivots=python) | `samples/hosted_agents/` |
 | Skills (preview) | | `samples/skills/` |
 | Toolboxes | [Curate intent-based toolbox in Foundry](https://learn.microsoft.com/azure/foundry/agents/how-to/tools/toolbox?pivots=python) | `samples/hosted_agents/`, `samples/toolboxes/` |

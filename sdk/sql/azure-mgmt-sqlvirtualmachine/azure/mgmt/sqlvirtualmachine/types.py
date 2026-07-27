@@ -29,7 +29,6 @@ if TYPE_CHECKING:
         FullBackupFrequencyType,
         IdentityType,
         LeastPrivilegeMode,
-        OperationOrigin,
         OsType,
         ReadableSecondary,
         Role,
@@ -348,59 +347,6 @@ class DiskConfigAssessmentRequest(TypedDict, total=False):
     """Boolean to run disk config Assessment. Use false to fetch past Assessment."""
 
 
-class ErrorAdditionalInfo(TypedDict, total=False):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: Any
-    """
-
-    type: str
-    """The additional info type."""
-    info: Any
-    """The additional info."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """The error detail.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list["ErrorDetail"]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list["ErrorAdditionalInfo"]
-    """
-
-    code: str
-    """The error code."""
-    message: str
-    """The error message."""
-    target: str
-    """The error target."""
-    details: list["ErrorDetail"]
-    """The error details."""
-    additionalInfo: list["ErrorAdditionalInfo"]
-    """The error additional info."""
-
-
-class ErrorResponse(TypedDict, total=False):
-    """Error response.
-
-    :ivar error: The error object.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: "ErrorDetail"
-    """The error object."""
-
-
 class KeyVaultCredentialSettings(TypedDict, total=False):
     """Configure your SQL virtual machine to be able to connect to the Azure Key Vault service.
 
@@ -472,60 +418,6 @@ class MultiSubnetIpConfiguration(TypedDict, total=False):
     sqlVirtualMachineInstance: Required[str]
     """SQL virtual machine instance resource id that are enrolled into the availability group
      listener. Required."""
-
-
-class Operation(TypedDict, total=False):
-    """Result of the request to list SQL operations.
-
-    :ivar name: The name of the operation being performed on this particular object.".
-    :vartype name: str
-    :ivar display: he localized display information for this particular operation / action.
-    :vartype display: "OperationDisplay"
-    :ivar origin: The intended executor of the operation.". Known values are: "user" and "system".
-    :vartype origin: Union[str, "OperationOrigin"]
-    :ivar properties: Additional descriptions for the operation.
-    :vartype properties: dict[str, Any]
-    """
-
-    name: str
-    """The name of the operation being performed on this particular object.\"."""
-    display: "OperationDisplay"
-    """he localized display information for this particular operation / action."""
-    origin: Union[str, "OperationOrigin"]
-    """The intended executor of the operation.\". Known values are: \"user\" and \"system\"."""
-    properties: dict[str, Any]
-    """Additional descriptions for the operation."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Display metadata associated with the operation.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    provider: str
-    """The localized friendly form of the resource provider name, e.g. \"Microsoft Monitoring
-     Insights\" or \"Microsoft Compute\"."""
-    resource: str
-    """The localized friendly name of the resource type related to this operation. E.g. \"Virtual
-     Machines\" or \"Job Schedule Collections\"."""
-    operation: str
-    """The concise, localized friendly name for the operation; suitable for dropdowns. E.g. \"Create
-     or Update Virtual Machine\", \"Restart Virtual Machine\"."""
-    description: str
-    """The short, localized friendly description of the operation; suitable for tool tips and detailed
-     views."""
 
 
 class PrivateIPAddress(TypedDict, total=False):
