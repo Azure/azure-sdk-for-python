@@ -30,7 +30,7 @@ from .._shared.uploads_async import (
     upload_substream_blocks,
 )
 from .._shared.validation import CV_TYPE_PARSED
-from .._upload_helpers import _any_conditions, _convert_mod_error, _pop_content_settings
+from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
@@ -52,17 +52,35 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
     **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
-        # Stage block generated operation does not accept access conditions or content headers
-        # upload and commit_block_list do accept those
-        # so we need to pop them from kwargs before staging blocks
-        blob_kwargs = kwargs.pop("blob_kwargs", {})
-        if not overwrite and not _any_conditions(blob_kwargs):
-            blob_kwargs["match_condition"] = MatchConditions.IfMissing
+        # Stage block generated operation does not accept access conditions.
+        # upload and commit_block_list do accept those, so strip them before staging blocks.
+        access_condition_kwargs = {
+            "if_modified_since": kwargs.pop("if_modified_since", None),
+            "if_unmodified_since": kwargs.pop("if_unmodified_since", None),
+            "match_condition": kwargs.pop("match_condition", None),
+            "etag": kwargs.pop("etag", None),
+            "if_tags": kwargs.pop("if_tags", None),
+        }
+        access_condition_kwargs = {k: v for k, v in access_condition_kwargs.items() if v is not None}
+        if_modified_since = access_condition_kwargs.get("if_modified_since")
+        if_unmodified_since = access_condition_kwargs.get("if_unmodified_since")
+        match_condition = access_condition_kwargs.get("match_condition")
+        etag = access_condition_kwargs.get("etag")
+        if_tags = access_condition_kwargs.get("if_tags")
+        if not overwrite and not _any_conditions(access_condition_kwargs):
+            match_condition = MatchConditions.IfMissing
+            access_condition_kwargs["match_condition"] = match_condition
         adjusted_count = length
         if (encryption_options.get("key") is not None) and (adjusted_count is not None):
             adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options["version"])
         tier = kwargs.pop("standard_blob_tier", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         immutability_policy = kwargs.pop("immutability_policy", None)
         immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
@@ -99,7 +117,17 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                     immutability_policy_expiry=immutability_policy_expiry,
                     immutability_policy_mode=immutability_policy_mode,
                     legal_hold=legal_hold,
-                    **blob_kwargs,
+                    blob_cache_control=blob_cache_control,
+                    blob_content_type=blob_content_type,
+                    blob_content_md5=blob_content_md5,
+                    blob_content_encoding=blob_content_encoding,
+                    blob_content_language=blob_content_language,
+                    blob_content_disposition=blob_content_disposition,
+                    if_modified_since=if_modified_since,
+                    if_unmodified_since=if_unmodified_since,
+                    match_condition=match_condition,
+                    etag=etag,
+                    if_tags=if_tags,
                     **kwargs,
                 ),
             )
@@ -183,7 +211,17 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
-                **blob_kwargs,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                match_condition=match_condition,
+                etag=etag,
+                if_tags=if_tags,
                 **kwargs,
             ),
         )
@@ -209,9 +247,6 @@ async def upload_page_blob(
     **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
-        # Page/append blob operations accept all access conditions as named params,
-        # so merge blob_kwargs back into kwargs.
-        kwargs.update(kwargs.pop("blob_kwargs", {}))
         if not overwrite and not _any_conditions(kwargs):
             kwargs["match_condition"] = MatchConditions.IfMissing
         if length is None or length < 0:
@@ -234,7 +269,13 @@ async def upload_page_blob(
 
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
-        content_settings_kwargs = _pop_content_settings(kwargs)
+        # Content settings are only valid for create(), so strip them before chunk uploads.
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         response = cast(
             Dict[str, Any],
@@ -246,7 +287,12 @@ async def upload_page_blob(
                 tier=tier,
                 cls=return_response_headers,
                 headers=headers,
-                **content_settings_kwargs,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
                 **kwargs,
             ),
         )
@@ -299,15 +345,18 @@ async def upload_append_blob(  # pylint: disable=unused-argument
     **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
-        # Page/append blob operations accept all access conditions as named params,
-        # so merge blob_kwargs back into kwargs.
-        kwargs.update(kwargs.pop("blob_kwargs", {}))
         if length == 0:
             return {}
         maxsize_condition = kwargs.pop("maxsize_condition", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
         progress_hook = kwargs.pop("progress_hook", None)
-        content_settings_kwargs = _pop_content_settings(kwargs)
+        # Content settings are only valid for create(), so strip them before chunk uploads.
+        blob_cache_control = kwargs.pop("blob_cache_control", None)
+        blob_content_type = kwargs.pop("blob_content_type", None)
+        blob_content_md5 = kwargs.pop("blob_content_md5", None)
+        blob_content_encoding = kwargs.pop("blob_content_encoding", None)
+        blob_content_language = kwargs.pop("blob_content_language", None)
+        blob_content_disposition = kwargs.pop("blob_content_disposition", None)
 
         try:
             if overwrite:
@@ -315,7 +364,12 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                     content_length=0,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
-                    **content_settings_kwargs,
+                    blob_cache_control=blob_cache_control,
+                    blob_content_type=blob_content_type,
+                    blob_content_md5=blob_content_md5,
+                    blob_content_encoding=blob_content_encoding,
+                    blob_content_language=blob_content_language,
+                    blob_content_disposition=blob_content_disposition,
                     **kwargs,
                 )
             return cast(
@@ -349,7 +403,12 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 content_length=0,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
-                **content_settings_kwargs,
+                blob_cache_control=blob_cache_control,
+                blob_content_type=blob_content_type,
+                blob_content_md5=blob_content_md5,
+                blob_content_encoding=blob_content_encoding,
+                blob_content_language=blob_content_language,
+                blob_content_disposition=blob_content_disposition,
                 **kwargs,
             )
             return cast(

@@ -162,20 +162,14 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     mod_conditions = get_modify_conditions(kwargs)
     kwargs.update(get_cpk_scope_info(kwargs))
 
-    # Build the dict of kwargs that apply to the blob as a whole (access conditions,
-    # content headers). For block blobs these only go to upload (single put) and
-    # commit_block_list — NOT stage_block. For page/append blobs all operations
-    # accept these, so they get merged back into kwargs.
-    blob_kwargs: Dict[str, Any] = {}
-    blob_kwargs.update(mod_conditions)
+    kwargs.update(mod_conditions)
     if content_settings:
-        blob_kwargs["blob_cache_control"] = content_settings.cache_control
-        blob_kwargs["blob_content_type"] = content_settings.content_type
-        blob_kwargs["blob_content_md5"] = content_settings.content_md5
-        blob_kwargs["blob_content_encoding"] = content_settings.content_encoding
-        blob_kwargs["blob_content_language"] = content_settings.content_language
-        blob_kwargs["blob_content_disposition"] = content_settings.content_disposition
-    kwargs["blob_kwargs"] = blob_kwargs
+        kwargs["blob_cache_control"] = content_settings.cache_control
+        kwargs["blob_content_type"] = content_settings.content_type
+        kwargs["blob_content_md5"] = content_settings.content_md5
+        kwargs["blob_content_encoding"] = content_settings.content_encoding
+        kwargs["blob_content_language"] = content_settings.content_language
+        kwargs["blob_content_disposition"] = content_settings.content_disposition
     kwargs["blob_tags_string"] = serialize_blob_tags_header(kwargs.pop("tags", None))
     kwargs["stream"] = stream
     kwargs["length"] = length
