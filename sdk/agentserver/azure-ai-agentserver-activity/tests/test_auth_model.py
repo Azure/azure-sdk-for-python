@@ -5,14 +5,15 @@
 
 ``ActivityAgentServerHost`` defaults to the *simple* Teams agent model (the
 agent instance identity mints the Bot Connector token directly). Passing
-``digital_worker=True`` switches to the blueprint + federated-identity model.
-These tests pin the connection env vars and bridge flag each mode produces.
+``digital_worker=True`` switches to the blueprint + federated-identity model
+(the ``IdentityProxyManager`` connection auth type, handled natively by the
+M365 Agents SDK). These tests pin the connection env vars and bridge flag each
+mode produces.
 """
 
 import pytest
 
 from azure.ai.agentserver.activity import ActivityAgentServerHost
-from azure.ai.agentserver.activity import _m365_bridge as bridge
 from azure.ai.agentserver.activity._config import get_hosted_agent_env, use_anonymous_outbound
 
 _CONN_PREFIX = "CONNECTIONS"
@@ -99,30 +100,30 @@ def test_default_keyword_matches_explicit_false(monkeypatch):
     assert host._digital_worker is False
 
 
-def test_simple_mode_does_not_apply_fmi_patch(monkeypatch):
-    """In simple mode the MSAL FMI/DefaultAzureCredential patch must not run."""
-    applied = {"called": False}
+def test_simple_mode_uses_user_managed_identity(monkeypatch):
+    """Simple mode selects the UserManagedIdentity connection auth type."""
+    from azure.ai.agentserver.activity import get_hosted_agent_env
 
-    def _fake_patch():
-        applied["called"] = True
+    monkeypatch.setenv("FOUNDRY_AGENT_INSTANCE_CLIENT_ID", "instance-aaa")
+    monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
 
-    monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    bridge.build_m365_app(digital_worker=False, connection_config={}, storage=None, agent_app=_StubAgentApp())
+    env = get_hosted_agent_env(digital_worker=False)
 
-    assert applied["called"] is False
+    assert env[_AUTHTYPE] == "UserManagedIdentity"
 
 
-def test_digital_worker_applies_fmi_patch(monkeypatch):
-    """In digital-worker mode the MSAL FMI patch is applied during build."""
-    applied = {"called": False}
+def test_digital_worker_uses_identity_proxy_manager(monkeypatch):
+    """Digital-worker mode selects the IdentityProxyManager connection auth
+    type, which performs the federated-identity exchange natively in the M365
+    SDK (no MSAL monkeypatching)."""
+    from azure.ai.agentserver.activity import get_hosted_agent_env
 
-    def _fake_patch():
-        applied["called"] = True
+    monkeypatch.setenv("FOUNDRY_AGENT_BLUEPRINT_CLIENT_ID", "blueprint-bbb")
+    monkeypatch.setenv("FOUNDRY_AGENT_TENANT_ID", "tenant-ccc")
 
-    monkeypatch.setattr(bridge, "_apply_msal_patches", _fake_patch)
-    bridge.build_m365_app(digital_worker=True, connection_config={}, storage=None, agent_app=_StubAgentApp())
+    env = get_hosted_agent_env(digital_worker=True)
 
-    assert applied["called"] is True
+    assert env[_AUTHTYPE] == "IdentityProxyManager"
 
 
 def test_get_hosted_agent_env_public_helper(monkeypatch):
@@ -158,6 +159,7 @@ def test_get_hosted_agent_env_digital_worker(monkeypatch):
 
     assert env[_CLIENTID] == "blueprint-bbb"
     assert env[_SCOPE0] == _AGENTIC_SCOPE
+    assert env[_AUTHTYPE] == "IdentityProxyManager"
 
 
 def test_get_hosted_agent_env_does_not_overwrite(monkeypatch):
@@ -206,10 +208,13 @@ def test_local_with_credential_uses_authenticated():
     assert use_anonymous_outbound(digital_worker=False, bot_app_id="some-client-id", is_hosted=False) is False
 
 
-def test_digital_worker_never_uses_anonymous_fallback():
-    """Digital-worker model must never take the local anonymous fallback path
-    (its FMI patch supplies the outbound token)."""
-    assert use_anonymous_outbound(digital_worker=True, bot_app_id="", is_hosted=False) is False
+def test_digital_worker_always_uses_anonymous_outbound():
+    """Digital-worker model always presents anonymous outbound claims: the Foundry
+    platform gateway performs the outbound Bot Connector auth, so the container
+    must not synchronously mint a token on the reply path (matches the
+    foundry-autopilot-agent sample)."""
+    assert use_anonymous_outbound(digital_worker=True, bot_app_id="", is_hosted=False) is True
+    assert use_anonymous_outbound(digital_worker=True, bot_app_id="blueprint-bbb", is_hosted=True) is True
 
 
 def test_outbound_bot_app_id_derived_from_env(monkeypatch):

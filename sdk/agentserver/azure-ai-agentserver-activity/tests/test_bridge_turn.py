@@ -6,8 +6,7 @@
 Covers the request delegation (``StarletteCloudAdapter.process`` -> ``HttpAdapterBase.process_request``),
 the Starlette request adapter (``_StarletteRequestAdapter``), the response
 converter (``StarletteCloudAdapter._to_starlette_response``), the outbound-claims construction
-(``_build_outbound_claims``), the handler factory (``build_bridge_handler``), and
-the idempotent MSAL patch (``_apply_msal_patches``).
+(``_build_outbound_claims``), and the handler factory (``build_bridge_handler``).
 
 These exercise the real M365 ``ClaimsIdentity`` / ``HttpResponse`` types with a
 stub adapter + agent app, so no live Bot Connector or network is required.
@@ -22,7 +21,7 @@ from starlette.responses import JSONResponse, Response
 from azure.ai.agentserver.activity import get_hosted_agent_env
 from azure.ai.agentserver.activity import _cloud_adapter as cloud
 from azure.ai.agentserver.activity import _m365_bridge as bridge
-from azure.ai.agentserver.activity._constants import ErrorCode, MsalPatch, OutboundAuth
+from azure.ai.agentserver.activity._constants import ErrorCode, OutboundAuth
 
 # The M365 Agents SDK is an optional dependency; skip this whole module (rather
 # than error at collection) when it is not installed, so the package's tests
@@ -350,134 +349,6 @@ def test_build_bridge_handler_returns_working_handler():
     assert passed_agent is agent_app
     # Digital-worker model -> anonymous outbound claims bound into the request.
     assert adapted_request.get_claims_identity().is_authenticated is False
-
-
-# ---------------------------------------------------------------------------
-# _apply_msal_patches — idempotent.
-# ---------------------------------------------------------------------------
-
-
-def test_apply_msal_patches_is_idempotent():
-    """Applying the MSAL patch twice sets the flag once and stays a no-op after."""
-    from microsoft_agents.authentication.msal.msal_auth import MsalAuth
-
-    # Ensure a clean starting state for this test.
-    if hasattr(MsalAuth, MsalPatch.PATCH_FLAG):
-        delattr(MsalAuth, MsalPatch.PATCH_FLAG)
-    original = MsalAuth.get_agentic_application_token
-    try:
-        bridge._apply_msal_patches()
-        assert getattr(MsalAuth, MsalPatch.PATCH_FLAG) is True
-        patched = MsalAuth.get_agentic_application_token
-        assert patched is not original
-
-        # Second call must not re-patch (same function object retained).
-        bridge._apply_msal_patches()
-        assert MsalAuth.get_agentic_application_token is patched
-    finally:
-        MsalAuth.get_agentic_application_token = original
-        if hasattr(MsalAuth, MsalPatch.PATCH_FLAG):
-            delattr(MsalAuth, MsalPatch.PATCH_FLAG)
-
-
-# ---------------------------------------------------------------------------
-# _apply_msal_patches — the patched FMI token-exchange closure.
-# ---------------------------------------------------------------------------
-
-
-class _FakeToken:
-    def __init__(self, token):
-        self.token = token
-
-
-class _FakeCredential:
-    """Captures constructor kwargs and returns a scripted token or raises."""
-
-    last_kwargs: dict = {}
-
-    def __init__(self, **kwargs):
-        type(self).last_kwargs = kwargs
-        self.closed = False
-
-    async def get_token(self, scope):
-        return _FakeToken("fmi-token-123")
-
-    async def close(self):
-        self.closed = True
-
-
-class _RaisingCredential(_FakeCredential):
-    async def get_token(self, scope):
-        raise RuntimeError("token exchange failed")
-
-
-@pytest.fixture
-def _patched_msal_auth():
-    """Apply the FMI patch on a clean MsalAuth and restore it afterwards."""
-    from microsoft_agents.authentication.msal.msal_auth import MsalAuth
-
-    if hasattr(MsalAuth, MsalPatch.PATCH_FLAG):
-        delattr(MsalAuth, MsalPatch.PATCH_FLAG)
-    original = MsalAuth.get_agentic_application_token
-    bridge._apply_msal_patches()
-    try:
-        yield MsalAuth
-    finally:
-        MsalAuth.get_agentic_application_token = original
-        if hasattr(MsalAuth, MsalPatch.PATCH_FLAG):
-            delattr(MsalAuth, MsalPatch.PATCH_FLAG)
-
-
-def test_fmi_token_exchange_success(monkeypatch, _patched_msal_auth, caplog):
-    """The patched token method mints a token via ManagedIdentityCredential, logs
-    an INFO acquisition line, passes the FMI path, and closes the credential."""
-    import logging
-
-    import azure.identity.aio as aio
-
-    monkeypatch.setattr(aio, "ManagedIdentityCredential", _FakeCredential)
-    _FakeCredential.last_kwargs = {}
-
-    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver.activity.bridge"):
-        token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
-
-    assert token == "fmi-token-123"
-    assert _FakeCredential.last_kwargs["identity_config"] == {MsalPatch.FMI_PATH_KEY: "agent-instance-1"}
-    assert any("agent-instance-1" in r.message for r in caplog.records)
-
-
-def test_fmi_token_exchange_includes_client_id_when_configured(monkeypatch, _patched_msal_auth):
-    """When the MSAL configuration carries a client id, it is forwarded as the
-    managed identity client id."""
-    import azure.identity.aio as aio
-
-    monkeypatch.setattr(aio, "ManagedIdentityCredential", _FakeCredential)
-    _FakeCredential.last_kwargs = {}
-
-    msal_config = types.SimpleNamespace(**{MsalPatch.MSAL_CLIENT_ID_ATTR: "mi-client-77"})
-    fake_self = types.SimpleNamespace(**{MsalPatch.MSAL_CONFIGURATION_ATTR: msal_config})
-
-    token = _run(_patched_msal_auth.get_agentic_application_token(fake_self, "tenant-x", "agent-instance-1"))
-
-    assert token == "fmi-token-123"
-    assert _FakeCredential.last_kwargs["client_id"] == "mi-client-77"
-
-
-def test_fmi_token_exchange_requires_instance_id(_patched_msal_auth):
-    """An empty agent app instance id raises ValueError (cannot mint a token)."""
-    with pytest.raises(ValueError):
-        _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", ""))
-
-
-def test_fmi_token_exchange_returns_none_on_error(monkeypatch, _patched_msal_auth):
-    """A credential failure is swallowed and returns None (no token minted)."""
-    import azure.identity.aio as aio
-
-    monkeypatch.setattr(aio, "ManagedIdentityCredential", _RaisingCredential)
-
-    token = _run(_patched_msal_auth.get_agentic_application_token(object(), "tenant-x", "agent-instance-1"))
-
-    assert token is None
 
 
 # ---------------------------------------------------------------------------

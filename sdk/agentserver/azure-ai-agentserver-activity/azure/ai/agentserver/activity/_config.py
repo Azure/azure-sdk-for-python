@@ -54,9 +54,11 @@ def get_hosted_agent_env(*, digital_worker: bool = False) -> dict[str, str]:
     if digital_worker:
         scope = OutboundAuth.AGENTIC_SCOPE
         client_id = resolve_agent_blueprint_id().strip()
+        auth_type = ConnectionSettings.AUTH_TYPE_IDENTITY_PROXY_MANAGER
     else:
         scope = OutboundAuth.BOTFRAMEWORK_SCOPE
         client_id = os.environ.get(FoundryEnv.INSTANCE_CLIENT_ID, "").strip()
+        auth_type = ConnectionSettings.AUTH_TYPE_USER_MANAGED_IDENTITY
 
     settings: dict[str, str] = dict(os.environ)
 
@@ -64,7 +66,7 @@ def get_hosted_agent_env(*, digital_worker: bool = False) -> dict[str, str]:
         if value and not settings.get(name, "").strip():
             settings[name] = value
 
-    set_if_missing(ConnectionSettings.AUTH_TYPE, ConnectionSettings.AUTH_TYPE_USER_MANAGED_IDENTITY)
+    set_if_missing(ConnectionSettings.AUTH_TYPE, auth_type)
     set_if_missing(ConnectionSettings.SCOPE_0, scope)
     set_if_missing(ConnectionSettings.MAP_0_SERVICE_URL, ConnectionSettings.MAP_SERVICE_URL_WILDCARD)
     set_if_missing(ConnectionSettings.MAP_0_CONNECTION, ConnectionSettings.SERVICE_CONNECTION_NAME)
@@ -83,8 +85,10 @@ def use_anonymous_outbound(*, digital_worker: bool, is_hosted: bool, bot_app_id:
     """Whether outbound replies should use anonymous (empty-token) auth.
 
     Pure decision over the resolved values (no process-global reads). The
-    digital-worker model never uses this path (its FMI patch supplies the
-    outbound token). For the simple model, a managed-identity Bot Connector token
+    digital-worker model always uses anonymous outbound claims: the Foundry
+    platform gateway performs the outbound Bot Connector auth on the container's
+    behalf, so the container must not synchronously mint a token on the reply
+    path. For the simple model, a managed-identity Bot Connector token
     can only be minted inside a hosted container; running outside a hosted
     container **and** with no Bot Connector credential configured falls back to
     anonymous claims so local runs can round-trip through local test channels
@@ -101,5 +105,5 @@ def use_anonymous_outbound(*, digital_worker: bool, is_hosted: bool, bot_app_id:
     :rtype: bool
     """
     if digital_worker:
-        return False
+        return True
     return not is_hosted and not bot_app_id
