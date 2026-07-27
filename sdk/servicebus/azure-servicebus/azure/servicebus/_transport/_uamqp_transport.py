@@ -753,10 +753,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = receiver._inner_next()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopIteration:
                     break
                 finally:

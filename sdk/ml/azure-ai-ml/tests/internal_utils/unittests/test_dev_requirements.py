@@ -8,6 +8,8 @@ PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX = "azureml-dataprep-rslex"
 PACKAGE_NAME_SCIKIT_IMAGE = "scikit-image"
 IS_CPYTHON = platform.python_implementation() == "CPython"
 IS_PYPY = platform.python_implementation() == "PyPy"
+# azureml-dataprep-rslex publishes no macOS arm64 wheel, so dev_requirements.txt excludes it there.
+IS_MACOS_ARM64 = sys.platform == "darwin" and platform.machine() == "arm64"
 
 
 def is_package_installed(package_name):
@@ -33,13 +35,22 @@ class TestPackageInstallation:
         ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should not be installed in CPython 3.13 or above environment."
 
     @pytest.mark.skipif(
-        not (IS_CPYTHON and sys.version_info < (3, 13)),
-        reason="Skipping because environment is not below cpython 3.13",
+        not (IS_CPYTHON and sys.version_info < (3, 13) and not IS_MACOS_ARM64),
+        reason="Skipping because environment is not below cpython 3.13, or is macOS arm64 (no rslex wheel)",
     )
     def test_package_installed_below_cpython_3_13(self):
         assert is_package_installed(
             PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
         ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should be installed in CPython < 3.13."
+
+    @pytest.mark.skipif(
+        not IS_MACOS_ARM64,
+        reason="Skipping because environment is not macOS arm64",
+    )
+    def test_package_not_installed_on_macos_arm64(self):
+        assert not is_package_installed(
+            PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX
+        ), f"{PACKAGE_NAME_AZURE_ML_DATAPREP_RSLEX} should not be installed on macOS arm64 (no wheel available)."
 
     @pytest.mark.skipif(
         not (IS_CPYTHON and sys.version_info < (3, 14)),
