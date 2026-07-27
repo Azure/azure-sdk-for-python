@@ -342,7 +342,7 @@ class StorageContentValidation(SansIOHTTPPolicy):
         # Since HTTP does not differentiate between no content and empty content,
         # we have to perform a None check.
         data = data or b""
-        md5 = hashlib.md5(usedforsecurity=False) # nosec
+        md5 = hashlib.md5() # nosec
         if isinstance(data, bytes):
             md5.update(data)
         elif hasattr(data, 'read'):
