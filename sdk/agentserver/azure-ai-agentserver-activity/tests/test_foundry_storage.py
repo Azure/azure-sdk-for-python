@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
@@ -125,6 +126,51 @@ async def test_write_only_ensures_the_store_exists_once(monkeypatch: pytest.Monk
 
 
 @pytest.mark.asyncio
+async def test_write_closes_unconfirmed_read_client_after_upgrade(monkeypatch: pytest.MonkeyPatch) -> None:
+    read_store = _fake_store()
+    write_store = _fake_store()
+    mock_cls = MagicMock(return_value=read_store)
+    mock_cls.get_or_create = AsyncMock(return_value=write_store)
+    monkeypatch.setattr(module, "FoundryStateStore", mock_cls)
+    storage = FoundryStorage()
+
+    await storage.read(["k"], target_cls=_TestStoreItem)
+    await storage.write({"k": _TestStoreItem({"turn": 1})})
+
+    read_store.aclose.assert_awaited_once()
+    write_store.set_item.assert_awaited_once_with("k", {"turn": 1})
+
+
+@pytest.mark.asyncio
+async def test_write_defers_replaced_client_close_until_active_read_finishes(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    read_store = _fake_store()
+    write_store = _fake_store()
+    read_started = asyncio.Event()
+    finish_read = asyncio.Event()
+
+    async def slow_get_item(key: str) -> None:
+        read_started.set()
+        await finish_read.wait()
+
+    read_store.get_item = AsyncMock(side_effect=slow_get_item)
+    mock_cls = MagicMock(return_value=read_store)
+    mock_cls.get_or_create = AsyncMock(return_value=write_store)
+    monkeypatch.setattr(module, "FoundryStateStore", mock_cls)
+    storage = FoundryStorage()
+
+    active_read = asyncio.create_task(storage.read(["k"], target_cls=_TestStoreItem))
+    await read_started.wait()
+    await storage.write({"k": _TestStoreItem({"turn": 1})})
+
+    read_store.aclose.assert_not_awaited()
+    finish_read.set()
+    await active_read
+    read_store.aclose.assert_awaited_once()
+
+
+@pytest.mark.asyncio
 async def test_delete_forwards_the_key_and_ignores_missing(monkeypatch: pytest.MonkeyPatch) -> None:
     store = _fake_store()
     store.delete_item = AsyncMock(side_effect=FoundryStorageNotFoundError("not found"))
@@ -152,6 +198,73 @@ async def test_user_scoped_keys_get_user_isolation(monkeypatch: pytest.MonkeyPat
 
     assert captured["teams/conversations/abc"]["user_isolation"] is False
     assert captured["teams/users/user-42"]["user_isolation"] is True
+
+
+@pytest.mark.asyncio
+async def test_sign_in_key_with_colon_user_id_gets_user_isolation(monkeypatch: pytest.MonkeyPatch) -> None:
+    captured: dict[str, Any] = {}
+    key = "auth:_SignInState:msteams:29:user-id"
+
+    def factory(store_name: str, **kwargs: Any) -> MagicMock:
+        captured[store_name] = kwargs
+        return _fake_store()
+
+    monkeypatch.setattr(module, "FoundryStateStore", MagicMock(side_effect=factory))
+    storage = FoundryStorage()
+
+    await storage.read([key], target_cls=_TestStoreItem)
+
+    assert captured[key]["user_isolation"] is True
+
+
+def test_bounded_store_name_distinguishes_long_keys_with_the_same_prefix() -> None:
+    common_prefix = "msteams/conversations/" + ("a" * 140)
+    first = module._bounded_store_name(f"{common_prefix}-first")
+    second = module._bounded_store_name(f"{common_prefix}-second")
+
+    assert len(first) == module._MAX_STORE_NAME_LEN
+    assert len(second) == module._MAX_STORE_NAME_LEN
+    assert first != second
+
+
+@pytest.mark.asyncio
+async def test_store_resolution_log_does_not_include_identifiers(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    key = "msteams/users/sensitive-user-id"
+    _patch_stores(monkeypatch, {key: _fake_store()})
+    storage = FoundryStorage()
+
+    with caplog.at_level("DEBUG", logger=module.__name__):
+        await storage.read([key], target_cls=_TestStoreItem)
+
+    assert key not in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_eviction_defers_close_until_active_operation_finishes(monkeypatch: pytest.MonkeyPatch) -> None:
+    first_store = _fake_store()
+    second_store = _fake_store()
+    read_started = asyncio.Event()
+    finish_read = asyncio.Event()
+
+    async def slow_get_item(key: str) -> None:
+        read_started.set()
+        await finish_read.wait()
+
+    first_store.get_item = AsyncMock(side_effect=slow_get_item)
+    _patch_stores(monkeypatch, {"first": first_store, "second": second_store})
+    storage = FoundryStorage()
+    storage._max_cached_stores = 1
+
+    first_read = asyncio.create_task(storage.read(["first"], target_cls=_TestStoreItem))
+    await read_started.wait()
+    await storage.read(["second"], target_cls=_TestStoreItem)
+
+    first_store.aclose.assert_not_awaited()
+    finish_read.set()
+    await first_read
+    first_store.aclose.assert_awaited_once()
 
 
 @pytest.mark.asyncio
