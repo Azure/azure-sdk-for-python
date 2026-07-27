@@ -14,6 +14,7 @@ from ._common.constants import (
 )
 from ._common import mgmt_handlers
 from ._pyamqp.types import AMQPTypes, TYPE, VALUE
+from .exceptions import OperationTimeoutError
 
 # The service checks `lastUpdatedTime != DateTime.MaxValue` (exact equality) to switch
 # between "active messages" mode and "updated since" mode. The .NET AMQP library encodes
@@ -116,8 +117,20 @@ class _SessionBrowser(BaseHandler):
             last_updated_time_ms = int(normalized.timestamp() * 1000)
 
         skip = 0
+        # `timeout` is the total operation budget across every page. Compute one
+        # deadline up front and pass each page the remaining time, so a multi-page
+        # enumeration cannot run for `timeout` seconds per page.
+        deadline = None if timeout is None else time.monotonic() + timeout
 
         while True:
+            if deadline is None:
+                page_timeout = None
+            else:
+                page_timeout = deadline - time.monotonic()
+                if page_timeout <= 0:
+                    raise OperationTimeoutError(
+                        message="Listing sessions did not complete within the specified timeout."
+                    )
             message = {
                 "last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
                 "skip": _amqp_int_value(skip),
@@ -128,7 +141,7 @@ class _SessionBrowser(BaseHandler):
                 message,
                 mgmt_handlers.list_sessions_op,
                 keep_alive_associated_link=False,
-                timeout=timeout,
+                timeout=page_timeout,
             )
             if not result:
                 break

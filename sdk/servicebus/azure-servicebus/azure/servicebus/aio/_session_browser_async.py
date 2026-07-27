@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 import asyncio  # pylint:disable=do-not-import-asyncio
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import AsyncIterator, Optional
@@ -14,6 +15,7 @@ from .._common.constants import (
 from .._common import mgmt_handlers
 from .._session_browser import _amqp_int_value, _MAX_DATETIME_MS, _PAGE_SIZE
 from .._pyamqp.types import AMQPTypes, TYPE, VALUE
+from ..exceptions import OperationTimeoutError
 from ._async_utils import create_authentication
 
 
@@ -98,8 +100,20 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             last_updated_time_ms = int(normalized.timestamp() * 1000)
 
         skip = 0
+        # `timeout` is the total operation budget across every page. Compute one
+        # deadline up front and pass each page the remaining time, so a multi-page
+        # enumeration cannot run for `timeout` seconds per page.
+        deadline = None if timeout is None else time.monotonic() + timeout
 
         while True:
+            if deadline is None:
+                page_timeout = None
+            else:
+                page_timeout = deadline - time.monotonic()
+                if page_timeout <= 0:
+                    raise OperationTimeoutError(
+                        message="Listing sessions did not complete within the specified timeout."
+                    )
             message = {
                 "last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
                 "skip": _amqp_int_value(skip),
@@ -110,7 +124,7 @@ class _SessionBrowserAsync(AsyncBaseHandler):
                 message,
                 mgmt_handlers.list_sessions_op,
                 keep_alive_associated_link=False,
-                timeout=timeout,
+                timeout=page_timeout,
             )
             if not result:
                 break

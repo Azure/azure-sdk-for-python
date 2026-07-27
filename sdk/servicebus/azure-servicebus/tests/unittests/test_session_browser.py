@@ -12,13 +12,14 @@ expects, and that the list_sessions_op handler covers all response branches,
 without requiring Azure credentials or a live Service Bus namespace.
 """
 
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from azure.servicebus._session_browser import _MAX_DATETIME_MS, _PAGE_SIZE, _SessionBrowser
 from azure.servicebus.aio._session_browser_async import _SessionBrowserAsync
 from azure.servicebus._pyamqp.types import VALUE
+from azure.servicebus.exceptions import OperationTimeoutError
 from azure.servicebus._common.mgmt_handlers import list_sessions_op
 from azure.servicebus._common.constants import (
     ERROR_CODE_MESSAGE_NOT_FOUND,
@@ -171,4 +172,42 @@ class TestListSessionsPaginationAsync:
 
         assert result == page1 + page2
         assert skips == [0, _PAGE_SIZE]
+
+
+class TestListSessionsTimeoutBudget:
+    """`timeout` is a single total budget spent across all pages, not reset per page."""
+
+    def test_timeout_shrinks_across_pages(self):
+        page1 = [f"session-{i}" for i in range(_PAGE_SIZE)]
+        page2 = [f"session-{i}" for i in range(_PAGE_SIZE, _PAGE_SIZE + 5)]
+        pages = {0: page1, _PAGE_SIZE: page2}
+        seen = []
+
+        def serve(operation, message, callback, **kwargs):
+            seen.append(kwargs.get("timeout"))
+            return pages.get(message["skip"][VALUE], [])
+
+        browser = object.__new__(_SessionBrowser)
+        browser._mgmt_request_response_with_retry = serve
+        # monotonic() is called once for the deadline, then once per page.
+        # base 1000 -> deadline 1010; page 1 at 1000 -> 10 left; page 2 at 1003 -> 7 left.
+        clock = iter([1000.0, 1000.0, 1003.0])
+        with patch("azure.servicebus._session_browser.time.monotonic", lambda: next(clock)):
+            list(browser.list_sessions(timeout=10))
+
+        # A per-page timeout would record [10, 10]; a shared budget shrinks.
+        assert seen == [10.0, 7.0]
+
+    def test_exhausted_budget_raises_before_next_page(self):
+        browser = object.__new__(_SessionBrowser)
+
+        def _should_not_run(*args, **kwargs):
+            raise AssertionError("management request should not be issued after the budget is spent")
+
+        browser._mgmt_request_response_with_retry = _should_not_run
+        # base 1000 -> deadline 1005; first page check at 1006 -> -1 remaining -> raise.
+        clock = iter([1000.0, 1006.0])
+        with patch("azure.servicebus._session_browser.time.monotonic", lambda: next(clock)):
+            with pytest.raises(OperationTimeoutError):
+                list(browser.list_sessions(timeout=5))
 
