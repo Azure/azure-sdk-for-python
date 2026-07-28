@@ -16,7 +16,7 @@ from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ._patch_models_async import BetaModelsOperations
-from ._patch_rle_async import RLEOperations
+from ._patch_rle_async import AsyncOpenEnvClient, AsyncRLEInstance, RLEOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaAgentsOperations,
@@ -86,6 +86,8 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "AsyncOpenEnvClient",
+    "AsyncRLEInstance",
     "BetaAgentsOperations",
     "BetaDatasetsOperations",
     "BetaEvaluationTaxonomiesOperations",

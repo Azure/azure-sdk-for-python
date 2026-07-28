@@ -24,7 +24,7 @@ from .._patch import (
     _resolve_openai_query_params,
 )
 from ._client import AIProjectClient as AIProjectClientGenerated
-from .operations._patch_rle_async import AsyncRLESandboxSession
+from .operations._patch_rle_async import AsyncOpenEnvClient, AsyncRLEInstance, AsyncRLESandboxSession
 from .operations import TelemetryOperations
 
 logger = logging.getLogger(__name__)
@@ -310,6 +310,8 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
 
 __all__: List[str] = [
     "AIProjectClient",
+    "AsyncOpenEnvClient",
+    "AsyncRLEInstance",
     "AsyncRLESandboxSession",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -17055,7 +17055,7 @@ def build_rl_environments_create_environment_request(  # pylint: disable=name-to
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/create"
+    _url = "/fine_tune/environments/create"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -17083,7 +17083,7 @@ def build_rl_environments_list_environments_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments"
+    _url = "/fine_tune/environments"
 
     # Construct parameters
     if name is not None:
@@ -17110,7 +17110,7 @@ def build_rl_environments_get_environment_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{name}"
+    _url = "/fine_tune/environments/{name}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -17140,7 +17140,7 @@ def build_rl_environments_get_environment_version_request(  # pylint: disable=na
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{name}/versions/{version}"
+    _url = "/fine_tune/environments/{name}/versions/{version}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
@@ -17169,7 +17169,7 @@ def build_rl_environments_delete_environment_version_request(  # pylint: disable
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/fine_tuning/environments/{name}/versions/{version}"
+    _url = "/fine_tune/environments/{name}/versions/{version}"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
@@ -17195,7 +17195,7 @@ def build_rl_environments_list_rl_environment_versions_request(  # pylint: disab
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{name}/versions"
+    _url = "/fine_tune/environments/{name}/versions"
     path_format_arguments = {
         "name": _SERIALIZER.url("name", name, "str"),
     }
@@ -17222,7 +17222,7 @@ def build_rle_sandboxes_lease_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/lease"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/lease"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
     }
@@ -17255,7 +17255,7 @@ def build_rle_sandboxes_list_sandboxes_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
     }
@@ -17289,7 +17289,7 @@ def build_rle_sandboxes_get_sandbox_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17320,7 +17320,7 @@ def build_rle_sandboxes_stop_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/stop"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/stop"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17351,7 +17351,7 @@ def build_rle_sandboxes_resume_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/resume"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/resume"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17380,7 +17380,7 @@ def build_rle_sandboxes_release_request(
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/release"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/release"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17411,7 +17411,7 @@ def build_rle_sandboxes_reset_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/reset"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/reset"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17445,7 +17445,7 @@ def build_rle_sandboxes_step_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/step"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/step"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17478,7 +17478,7 @@ def build_rle_sandboxes_state_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/state"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/state"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17509,7 +17509,7 @@ def build_rle_sandboxes_health_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/health"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/health"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17540,7 +17540,7 @@ def build_rle_sandboxes_get_metadata_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/metadata"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/metadata"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),
@@ -17571,7 +17571,7 @@ def build_rle_sandboxes_schema_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/fine_tuning/environments/{environmentId}/sandboxes/{sandboxId}/schema"
+    _url = "/fine_tune/environments/{environmentId}/sandboxes/{sandboxId}/schema"
     path_format_arguments = {
         "environmentId": _SERIALIZER.url("environment_id", environment_id, "str"),
         "sandboxId": _SERIALIZER.url("sandbox_id", sandbox_id, "str"),

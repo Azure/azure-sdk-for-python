@@ -7,17 +7,23 @@ import pytest
 
 from azure.core.exceptions import HttpResponseError
 
-from azure.ai.projects.aio.operations._patch_rle_async import AsyncRLESandboxSession
+from azure.ai.projects.aio.operations._patch_rle_async import (
+    AsyncOpenEnvClient,
+    AsyncRLEInstance,
+    AsyncRLESandboxSession,
+)
 from azure.ai.projects.models import (
     RLEnvironmentState,
     RLESandboxStatus,
     RLEStepResult,
 )
-from azure.ai.projects.models import CreateRLEnvironmentRequest
+from azure.ai.projects.models import CreateRLEnvironmentRequest, CreateRLESandboxRequest
 from azure.ai.projects.operations import RLEOperations
 from azure.ai.projects.operations._operations import RLEnvironmentsOperations as _GenEnvOps
 from azure.ai.projects.operations._patch_rle import (
     coerce_action,
+    OpenEnvClient,
+    RLEInstance,
     RLESandboxSession,
     RLEError,
     _RLE_FEATURE,
@@ -139,6 +145,7 @@ def _capture_env_ops(monkeypatch):
         def _inner(self, *args, **kwargs):
             calls[name] = {"args": args, "kwargs": kwargs}
             return name
+
         return _inner
 
     for m in (
@@ -339,5 +346,261 @@ def test_async_environment_leases_runs_and_releases():
         # reset, step, state each health-gate before running.
         assert sandboxes.health_calls == [("env-1", "sbx-1")] * 3
         assert sandboxes.released == ["sbx-1"]
+
+    asyncio.run(run())
+
+
+# ---------------------------------------------------------------------------
+# OpenEnv client / instance tests
+# ---------------------------------------------------------------------------
+
+
+class _PoolFakeSandboxes:
+    """Sandbox op-group fake that leases distinct running sandboxes for pool tests.
+
+    Each ``lease`` returns a fresh, already-``Running`` sandbox with its own id and data-plane URL,
+    so an :class:`OpenEnvClient` can reserve ``min_concurrency`` distinct instances without polling.
+    """
+
+    def __init__(self, *, fail_on=None):
+        self._next = 0
+        self._fail_on = fail_on
+        self.released = []
+        self.calls = []
+
+    def lease(self, environment_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        index = self._next
+        self._next += 1
+        if self._fail_on is not None and index == self._fail_on:
+            return _FakeSandbox(f"sbx-{index}", RLESandboxStatus.FAILED, error="boom")
+        return _FakeSandbox(f"sbx-{index}", RLESandboxStatus.RUNNING, base_url=f"https://dataplane/{index}")
+
+    def get_sandbox(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _FakeSandbox(sandbox_id, RLESandboxStatus.RUNNING)
+
+    def release(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.released.append(sandbox_id)
+
+    def reset(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.calls.append(("reset", environment_id, sandbox_id, {"seed": body.seed, "episode_id": body.episode_id}))
+        return RLEStepResult(observation={"ok": True})
+
+    def step(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.calls.append(("step", environment_id, sandbox_id, body.action))
+        return RLEStepResult(observation={"stepped": body.action})
+
+    def state(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return RLEnvironmentState(episode_id="e", step_count=1)
+
+
+def _make_openenv_client(min_concurrency=1, *, fail_on=None):
+    sandboxes = _PoolFakeSandboxes(fail_on=fail_on)
+    client = OpenEnvClient(
+        environment_id="env-1",
+        sandboxes=sandboxes,
+        min_concurrency=min_concurrency,
+        lease_request=CreateRLESandboxRequest(),
+        poll_interval_s=0,
+    )
+    return client, sandboxes
+
+
+def test_openenv_client_reserves_quota_in_advance():
+    client, sandboxes = _make_openenv_client(min_concurrency=3)
+    with client:
+        # Quota reserved up front: three distinct instances leased before any get_instance().
+        assert len(client.instances) == 3
+        ids = {inst.instance_id for inst in client.instances}
+        assert ids == {"sbx-0", "sbx-1", "sbx-2"}
+        assert sandboxes.released == []
+    # Closing the client releases every reserved instance.
+    assert sorted(sandboxes.released) == ["sbx-0", "sbx-1", "sbx-2"]
+
+
+def test_openenv_client_reserve_fails_fast_and_releases_partial():
+    # Second lease fails; the first (partially-leased) instance must be released, no queueing.
+    client, sandboxes = _make_openenv_client(min_concurrency=3, fail_on=1)
+    with pytest.raises(RLEError):
+        client.reserve()
+    assert sandboxes.released == ["sbx-0"]
+    assert client.instances == []
+
+
+def test_openenv_get_instance_is_bounded_by_quota():
+    client, _sandboxes = _make_openenv_client(min_concurrency=1)
+    with client:
+        instance = client.get_instance()
+        assert isinstance(instance, RLEInstance)
+        # Quota is exhausted; v1 fails fast instead of queueing.
+        with pytest.raises(RLEError):
+            client.get_instance()
+        # Returning it to the pool frees the quota for reuse (shared across episodes).
+        instance.checkin()
+        again = client.get_instance()
+        assert again is instance
+
+
+def test_openenv_instance_context_returns_to_pool():
+    client, _sandboxes = _make_openenv_client(min_concurrency=1)
+    with client:
+        with client.get_instance() as instance:
+            first_id = instance.instance_id
+        # Exiting the instance context returned it to the pool for the next episode.
+        with client.get_instance() as reused:
+            assert reused.instance_id == first_id
+
+
+def test_openenv_instance_exposes_dataplane_uri_and_forwards_ops():
+    client, sandboxes = _make_openenv_client(min_concurrency=1)
+    with client:
+        with client.get_instance() as instance:
+            assert instance.dataplane_uri == "https://dataplane/0"
+            assert instance.environment_id == "env-1"
+
+            assert isinstance(instance.reset(seed=42), RLEStepResult)
+            assert sandboxes.calls[0] == ("reset", "env-1", "sbx-0", {"seed": 42, "episode_id": None})
+
+            assert isinstance(instance.step({"code": "print(1)"}), RLEStepResult)
+            assert sandboxes.calls[1] == ("step", "env-1", "sbx-0", {"code": "print(1)"})
+
+            assert isinstance(instance.state(), RLEnvironmentState)
+
+
+def test_openenv_get_instance_requires_reserve_first():
+    client, _sandboxes = _make_openenv_client(min_concurrency=1)
+    with pytest.raises(RLEError):
+        client.get_instance()
+
+
+def test_get_openenv_client_resolves_environment_by_name(monkeypatch):
+    captured = {}
+
+    class _Env:
+        environment_id = "env-42"
+
+    def fake_get_environment(self, name, **kwargs):
+        captured["get_environment"] = name
+        return _Env()
+
+    def fake_get_environment_version(self, name, version, **kwargs):
+        captured["get_environment_version"] = (name, version)
+        return _Env()
+
+    monkeypatch.setattr(RLEOperations, "get_environment", fake_get_environment)
+    monkeypatch.setattr(RLEOperations, "get_environment_version", fake_get_environment_version)
+
+    ops = RLEOperations(object(), object(), object(), object())
+
+    client = ops.get_openenv_client(name="wordle-env", min_concurrency=5)
+    assert isinstance(client, OpenEnvClient)
+    assert client.environment_id == "env-42"
+    assert client.min_concurrency == 5
+    assert captured["get_environment"] == "wordle-env"
+
+    ops.get_openenv_client(name="wordle-env", version="1")
+    assert captured["get_environment_version"] == ("wordle-env", "1")
+
+
+def test_get_openenv_client_validates_arguments():
+    ops = RLEOperations(object(), object(), object(), object())
+    with pytest.raises(ValueError):
+        ops.get_openenv_client(name="")
+    with pytest.raises(ValueError):
+        ops.get_openenv_client(name="env", min_concurrency=0)
+
+
+class _AsyncPoolFakeSandboxes:
+    def __init__(self, *, fail_on=None):
+        self._next = 0
+        self._fail_on = fail_on
+        self.released = []
+        self.calls = []
+
+    async def lease(self, environment_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        index = self._next
+        self._next += 1
+        if self._fail_on is not None and index == self._fail_on:
+            return _FakeSandbox(f"sbx-{index}", RLESandboxStatus.FAILED, error="boom")
+        return _FakeSandbox(f"sbx-{index}", RLESandboxStatus.RUNNING, base_url=f"https://dataplane/{index}")
+
+    async def get_sandbox(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _FakeSandbox(sandbox_id, RLESandboxStatus.RUNNING)
+
+    async def release(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.released.append(sandbox_id)
+
+    async def reset(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.calls.append(("reset", sandbox_id, body.seed))
+        return RLEStepResult(observation={"ok": True})
+
+    async def step(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        self.calls.append(("step", sandbox_id, body.action))
+        return RLEStepResult(observation={"stepped": body.action})
+
+    async def state(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return RLEnvironmentState(episode_id="e", step_count=1)
+
+
+def _make_async_openenv_client(min_concurrency=1, *, fail_on=None):
+    sandboxes = _AsyncPoolFakeSandboxes(fail_on=fail_on)
+    client = AsyncOpenEnvClient(
+        environment_id="env-1",
+        sandboxes=sandboxes,
+        min_concurrency=min_concurrency,
+        lease_request=CreateRLESandboxRequest(),
+        poll_interval_s=0,
+    )
+    return client, sandboxes
+
+
+def test_async_openenv_client_reserves_and_runs():
+    async def run():
+        client, sandboxes = _make_async_openenv_client(min_concurrency=2)
+        async with client:
+            assert len(client.instances) == 2
+            async with await client.get_instance() as instance:
+                assert isinstance(instance, AsyncRLEInstance)
+                assert instance.dataplane_uri in {"https://dataplane/0", "https://dataplane/1"}
+                assert isinstance(await instance.reset(seed=7), RLEStepResult)
+                assert isinstance(await instance.step({"code": "x"}), RLEStepResult)
+                assert isinstance(await instance.state(), RLEnvironmentState)
+        assert sorted(sandboxes.released) == ["sbx-0", "sbx-1"]
+
+    asyncio.run(run())
+
+
+def test_async_openenv_get_instance_is_bounded_by_quota():
+    async def run():
+        client, _sandboxes = _make_async_openenv_client(min_concurrency=1)
+        async with client:
+            instance = await client.get_instance()
+            with pytest.raises(RLEError):
+                await client.get_instance()
+            await instance.checkin()
+            again = await client.get_instance()
+            assert again is instance
+
+    asyncio.run(run())
+
+
+def test_async_openenv_reserve_fails_fast_and_releases_partial():
+    async def run():
+        client, sandboxes = _make_async_openenv_client(min_concurrency=3, fail_on=1)
+        with pytest.raises(RLEError):
+            await client.reserve()
+        assert sandboxes.released == ["sbx-0"]
+        assert client.instances == []
 
     asyncio.run(run())
