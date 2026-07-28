@@ -421,7 +421,7 @@ class AgentServerHost(Starlette):
     def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
         """Register a synchronous callback to run on SIGTERM signal receipt.
 
-         Callbacks run from inside the SIGTERM signal handler,
+        Callbacks run from inside the SIGTERM signal handler,
         BEFORE Hypercorn begins its graceful drain. Use this to
         set asyncio events that long-running request handlers observe via
         their cancellation-polling loops, so they can return before

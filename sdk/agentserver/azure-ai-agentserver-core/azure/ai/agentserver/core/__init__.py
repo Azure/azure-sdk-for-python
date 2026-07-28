@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Azure AI AgentServerHost core framework — base :class:`AgentServerHost` and shared utilities for Azure AI Hosted Agent containers."""
+"""Azure AI AgentServerHost core framework: base :class:`AgentServerHost` and shared utilities for Hosted Agents."""
 
 # NOTE: keep this module docstring on a SINGLE line. The apiview-stub-generator
 # (apistub, pinned via eng/apiview_reqs.txt) namespace detector mis-parses a

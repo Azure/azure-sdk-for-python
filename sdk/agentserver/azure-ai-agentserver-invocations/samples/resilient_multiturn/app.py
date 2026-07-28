@@ -104,14 +104,18 @@ async def poll_invocation(request: Request) -> Response:
         return JSONResponse({"error": "Invocation not found"}, status_code=404)
 
     payload = info.payload or {}
-    if payload.get("invocation_id") != invocation_id:
+    # The handler writes per-invocation state through the default metadata
+    # namespace (``ctx.metadata[...]``), which the framework persists under
+    # the nested ``payload["metadata"]`` slot — not at the payload top level.
+    meta = payload.get("metadata") or {}
+    if meta.get("invocation_id") != invocation_id:
         return JSONResponse({"error": "Invocation not found for this session"}, status_code=404)
 
     return JSONResponse(
         {
             "invocation_id": invocation_id,
-            "status": payload.get("status", info.status),
-            "output": payload.get("output"),
+            "status": meta.get("status", info.status),
+            "output": meta.get("output"),
         }
     )
 

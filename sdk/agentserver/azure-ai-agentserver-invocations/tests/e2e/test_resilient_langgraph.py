@@ -34,6 +34,14 @@ pytest.importorskip("langgraph.checkpoint.sqlite", reason="langgraph sqlite chec
 
 from ._crash_harness import CrashHarness  # noqa: E402
 
+# CrashHarness drives real crash-recovery via POSIX process-group signals
+# (os.killpg / os.getpgid / start_new_session), which don't exist on Windows —
+# skip there, mirroring the other POSIX-only skips (``not hasattr(os, "fork")``).
+pytestmark = pytest.mark.skipif(
+    not hasattr(os, "fork"),
+    reason="CrashHarness uses POSIX process-group signals (os.killpg)",
+)
+
 _SAMPLES_DIR = Path(__file__).resolve().parent.parent.parent / "samples"
 
 

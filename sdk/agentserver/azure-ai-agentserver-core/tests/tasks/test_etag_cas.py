@@ -165,7 +165,7 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
             session_id="test-session",
             status="in_progress",
             title="stale",
-            payload={"input": "hi"},
+            payload={"input": "hi", "schema_version": "1"},
             tags={"task_name": "reclaim_etag_task"},
             source={"name": "reclaim_etag_task", "type": "agentserver.task"},
             lease_owner="test-agent|session:test-session",
@@ -192,7 +192,16 @@ async def test_both_reclaim_sites_carry_if_match(captured_local) -> None:
         mgr_mod._manager = None
 
     # Every reclaim PATCH (and any subsequent renewal/terminal) must
-    # carry if_match (/ C-LSE-2).
+    # carry if_match (/ C-LSE-2). Guard against a vacuous pass: the
+    # reclaim path MUST have issued at least one PATCH (a stale record
+    # lacking ``schema_version`` would instead be legacy-deleted before
+    # any reclaim, leaving this list empty and the loop below asserting
+    # nothing).
+    assert captured_local.update_calls, (
+        "reclaim path issued no PATCHes; the stale task was not reclaimed "
+        "(check the seeded payload carries schema_version), so the if_match "
+        "assertion below would be vacuous."
+    )
     for idx, (_task_id, _patch, if_match) in enumerate(captured_local.update_calls):
         assert if_match is not None, (
             f"reclaim-path PATCH {idx} missing if_match;  / "

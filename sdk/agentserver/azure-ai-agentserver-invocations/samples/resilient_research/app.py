@@ -279,7 +279,14 @@ async def handle_cancel(request: Request) -> Response:
     session_id: str = request.state.session_id
     task_id = f"research-{session_id}"
 
-    run = await deep_research.get_active_run(task_id)  # type: ignore[attr-defined]
+    # A multi-turn task's ``get_active_run`` requires the in-flight turn's
+    # ``input_id``; a session-level cancel doesn't know it. Use the manager's
+    # task_id-only accessor (what the one-shot ``Task.get_active_run``
+    # delegates to) to grab whichever turn is currently active, then
+    # cooperatively cancel it via ``run.cancel()``.
+    from azure.ai.agentserver.core.tasks._manager import get_task_manager
+
+    run = await get_task_manager().get_active_run(task_id)
     if run is None:
         return JSONResponse({"status": "not_found", "message": "No active task to cancel."})
 

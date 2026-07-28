@@ -187,8 +187,7 @@ class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attribut
                    transitions to ``suspended``).
                 4. Signals in-process awaiters with the standard cooperative-
                    cancel ``TaskCancelled`` result.
-                5. Preserves any queued steering inputs in the persisted state
-        .
+                5. Preserves any queued steering inputs in the persisted state.
 
                 The recovery scan on the next process startup re-enters the
                 handler with ``ctx.entry_mode == "recovered"``.

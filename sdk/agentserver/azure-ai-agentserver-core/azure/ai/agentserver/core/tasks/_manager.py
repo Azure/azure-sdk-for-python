@@ -352,7 +352,7 @@ class _ActiveTask:  # pylint: disable=too-many-instance-attributes
         self.input_type = input_type
         self.opts = opts
         self.retry = retry
-        # ``asyncio.get_event_loop().time()`` value at the last successful
+        # ``asyncio.get_running_loop().time()`` value at the last successful
         # lease refresh -- updated by the renewal loop AND by every
         # payload PATCH that piggybacks lease ownership (see
         # ``_lease_ext_kwargs`` / ``_note_lease_refreshed``). The
@@ -602,7 +602,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         :return: The registered future.
         :rtype: asyncio.Future[Any]
         """
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         future: asyncio.Future[Any] = loop.create_future()
         if task_id not in self._pending_steering_futures:
             self._pending_steering_futures[task_id] = []
@@ -810,10 +810,10 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         # blocks every shutdown for the full window even when tasks are
         # already done.
         if self._active_tasks:
-            deadline = asyncio.get_event_loop().time() + self._shutdown_grace_seconds
+            deadline = asyncio.get_running_loop().time() + self._shutdown_grace_seconds
             try:
                 while self._active_tasks:
-                    if asyncio.get_event_loop().time() >= deadline:
+                    if asyncio.get_running_loop().time() >= deadline:
                         break
                     # Drop entries whose execution_task already completed
                     # so we don't keep waiting for them.
@@ -1086,7 +1086,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             pending_count_provider=self._make_pending_count_provider(task_id),
             input_id=(initial_payload_extras or {}).get("last_input_id"),
         )
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
 
         # Start lease renewal
@@ -1512,7 +1512,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             input_id=(task_info.payload or {}).get("last_input_id"),
         )
 
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         result_future: asyncio.Future[Any] = loop.create_future()
 
         renewal_cancel = asyncio.Event()
@@ -3554,7 +3554,7 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if active is None:
             return
         try:
-            active.lease_last_refresh_monotonic = asyncio.get_event_loop().time()
+            active.lease_last_refresh_monotonic = asyncio.get_running_loop().time()
         except RuntimeError:  # no running loop (sync context)
             pass
 

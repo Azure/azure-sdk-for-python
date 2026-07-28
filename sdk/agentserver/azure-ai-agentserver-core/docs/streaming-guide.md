@@ -353,7 +353,7 @@ async def handle_request(request):
     return StreamingResponse(...)
 
 # Handler
-@task
+@task(name="my_task")
 async def my_task(ctx):
     inv_id = ctx.input["invocation_id"]
     stream = await streams.get_or_create(inv_id)          # 4 — same instance
@@ -396,7 +396,7 @@ streams.use_file_backed_replay(
     ttl_seconds=3600,
 )
 
-@task
+@task(name="producer")
 async def producer(ctx):
     inv_id = ctx.input["invocation_id"]
     stream = await streams.get_or_create(inv_id)
@@ -510,7 +510,7 @@ Consumers explicitly choose which registry they want:
 
 ## See also
 
-- [`tasks-guide.md`](./tasks-guide.md) — `@task` developer
+- [`tasks-guide.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) — `@task` developer
   guide; Pattern E shows the streaming integration end-to-end.
 - `samples/resilient_streaming/resilient_streaming.py` (in this package)
   — minimal standalone sample.

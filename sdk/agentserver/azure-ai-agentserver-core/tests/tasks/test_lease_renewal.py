@@ -83,7 +83,7 @@ async def test_every_patch_carries_lease_extension_trio(captured_local) -> None:
 
 
 @pytest.mark.asyncio
-async def test_dynamic_cadence_shadows_heartbeats(captured_local) -> None:
+async def test_dynamic_cadence_shadows_heartbeats(captured_local, monkeypatch) -> None:
     """/ SC-3 — under high metadata-flush traffic, the lease
     renewal loop's separate heartbeat PATCH count drops to 0 in the
     full-shadow regime: every flush PATCH carries the lease-extension
@@ -91,21 +91,36 @@ async def test_dynamic_cadence_shadows_heartbeats(captured_local) -> None:
     own scheduled tick.
 
     Test setup: a handler that issues a metadata flush every 100ms
-    for ~3 seconds. The lease renewal interval is much shorter than
-    the test window (default 30s — but tests can use a tighter
-    duration). We do NOT expect ANY PATCH that lacks a payload /
-    tags / attachments / status / error change — i.e., a pure
-    heartbeat-only PATCH (lease fields only, nothing else).
+    for ~4 seconds. The lease is shrunk (via the ``_DEFAULT_LEASE_SECONDS``
+    constant the manager reads when starting the renewal loop, plus the
+    validation floor) so the renewal interval is ``max(1, lease // 2) = 1s``
+    — well inside the test window, so the loop DOES tick several times and
+    would emit heartbeats if the shadow logic were broken. We do NOT expect
+    ANY PATCH that lacks a payload / tags / attachments / status / error
+    change — i.e., a pure heartbeat-only PATCH (lease fields only, nothing
+    else).
     """
 
     @multi_turn_task(name="dynamic_cadence")
     async def my_task(ctx: TaskContext[str]) -> str:
-        # Issue many flushes spaced << default renewal interval.
-        for i in range(20):
+        # Issue many flushes spaced well under the renewal interval so
+        # every scheduled heartbeat tick is shadowed by a recent flush.
+        for i in range(40):
             ctx.metadata[f"flush_{i}"] = i
             await ctx.metadata.flush()
-            await asyncio.sleep(0.05)
+            await asyncio.sleep(0.1)
         return "ok"
+
+    # Shrink the lease so the renewal interval (max(1, lease // 2) = 1s) is
+    # well inside the ~4s test window; the default 60s lease yields a 30s
+    # interval, so the loop would never tick and this test would pass
+    # vacuously. The lease-duration knob has no public setter, so patch the
+    # constant the manager reads plus the validation floor that would
+    # otherwise reject a sub-10s lease.
+    import azure.ai.agentserver.core.tasks._validation as val_mod
+
+    monkeypatch.setattr(val_mod, "LEASE_DURATION_MIN", 1)
+    monkeypatch.setattr(mgr_mod, "_DEFAULT_LEASE_SECONDS", 2)
 
     manager = TaskManager(config=_config_stub(), provider=captured_local)
     mgr_mod._manager = manager

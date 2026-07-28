@@ -10,6 +10,7 @@ and 11 (dead generation_results writes removed).
 from __future__ import annotations
 
 import asyncio
+import os
 from pathlib import Path
 
 import pytest
@@ -172,6 +173,10 @@ def test_generation_results_write_removed() -> None:
     assert "gen_results[" not in body
 
 
+@pytest.mark.skipif(
+    not hasattr(os, "fork"),
+    reason="shells out to the POSIX `grep` binary, which is absent on Windows",
+)
 def test_no_source_reference_to_generation_results() -> None:
     """Repo-grep regression guard: no source file outside build/ has an actual
     assignment or read of ``_steering["generation_results"]`` (comments and
