@@ -9,9 +9,10 @@ at import) went unnoticed. This test imports each sample module so any
 import-time / registration-time error fails CI.
 
 Samples that require an optional third-party dependency (``openai``,
-``langgraph``/``langchain-core``) are skipped when that dependency is not
-installed — a missing optional dep is not a sample bug. Any *other* import
-error (a real breakage) fails the test.
+``langgraph``/``langchain-core``/``aiosqlite``) or a sibling agent-server
+package (``azure.ai.agentserver.invocations``) are skipped when that
+dependency is not installed — a missing optional dep is not a sample bug.
+Any *other* import error (a real breakage) fails the test.
 """
 
 from __future__ import annotations
@@ -23,9 +24,16 @@ import pytest
 
 _SAMPLES_DIR = Path(__file__).resolve().parents[2] / "samples"
 
-# Optional third-party imports some samples need. A ModuleNotFoundError naming
-# one of these → skip (environment gap); anything else → real failure.
-_OPTIONAL_DEPS = {"openai", "langgraph", "langchain_core", "langgraph.checkpoint.sqlite"}
+# Optional imports some samples need. A ModuleNotFoundError naming one of these
+# (exactly, or as a dotted prefix) → skip (environment gap); anything else → a
+# real failure.
+_OPTIONAL_DEPS = {
+    "openai",
+    "langgraph",
+    "langchain_core",
+    "aiosqlite",
+    "azure.ai.agentserver.invocations",
+}
 
 _SAMPLE_FILES = sorted(p.name for p in _SAMPLES_DIR.glob("sample_*.py"))
 
@@ -41,8 +49,8 @@ def test_sample_module_imports_and_registers(sample_file: str) -> None:
     try:
         spec.loader.exec_module(module)
     except ModuleNotFoundError as exc:
-        missing = (exc.name or "").split(".")[0]
-        if missing in {d.split(".")[0] for d in _OPTIONAL_DEPS}:
+        missing = exc.name or ""
+        if any(missing == dep or missing.startswith(dep + ".") for dep in _OPTIONAL_DEPS):
             pytest.skip(f"optional dependency '{missing}' not installed")
         raise
 
