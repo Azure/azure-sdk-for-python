@@ -13,7 +13,8 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline import AsyncPipeline
 
 from ._client import DataLakeClient as GeneratedDataLakeClient
-from .._patch import DataLakeClientConfiguration, RangeHeaderPolicy
+from .._patch import DataLakeClientConfiguration
+from ..._shared.policies import RangeHeaderPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential

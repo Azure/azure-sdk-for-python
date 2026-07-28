@@ -15,18 +15,10 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 
 from ._client import DataLakeClient as GeneratedDataLakeClient
 from ._configuration import DataLakeClientConfiguration as GeneratedDataLakeClientConfiguration
+from .._shared.policies import RangeHeaderPolicy
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
-
-
-class RangeHeaderPolicy(SansIOHTTPPolicy):
-    """Policy that converts the 'Range' header to 'x-ms-range'."""
-
-    def on_request(self, request: PipelineRequest) -> None:
-        range_value = request.http_request.headers.pop("Range", None)
-        if range_value is not None:
-            request.http_request.headers["x-ms-range"] = range_value
 
 
 class DataLakeClientConfiguration(GeneratedDataLakeClientConfiguration):
