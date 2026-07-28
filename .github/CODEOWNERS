@@ -186,7 +186,10 @@
 
 # ServiceLabel: %Container Service
 # PRLabel: %Container Service
-/sdk/containerservice/    @zqingqing1
+/sdk/containerservice/    @elvazhu521 @FumingZhang
+
+# ServiceLabel: %Container Service
+# ServiceOwners: @elvazhu521 @FumingZhang
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
