@@ -35,5 +35,5 @@
         "azure.ai.translation.document.SingleDocumentTranslationClient.translate": "ClientCustomizations.SingleDocumentTranslationClient.documentTranslate",
         "azure.ai.translation.document.aio.SingleDocumentTranslationClient.translate": "ClientCustomizations.SingleDocumentTranslationClient.documentTranslate"
     },
-    "CrossLanguageVersion": "ca77ec2e341f"
+    "CrossLanguageVersion": "dad507433880"
 }

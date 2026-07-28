@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -13,7 +12,7 @@ from typing_extensions import Required, TypedDict
 from ._utils.utils import FileType
 
 if TYPE_CHECKING:
-    from .models import FileFormatType, Status, StorageInputType, TranslationErrorCode, TranslationStorageSource
+    from .models import StorageInputType, TranslationStorageSource
 
 
 class BatchOptions(TypedDict, total=False):
@@ -68,80 +67,6 @@ class DocumentFilter(TypedDict, total=False):
      most often use for file extensions."""
 
 
-class DocumentStatus(TypedDict, total=False):
-    """Document Status Response.
-
-    :ivar translated_document_url: Location of the document or folder.
-    :vartype translated_document_url: str
-    :ivar source_document_url: Location of the source document. Required.
-    :vartype source_document_url: str
-    :ivar created_on: Operation created date time. Required.
-    :vartype created_on: str
-    :ivar last_updated_on: Date time in which the operation's status has been updated. Required.
-    :vartype last_updated_on: str
-    :ivar status: List of possible statuses for job or document. Required. Known values are:
-     "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling", and
-     "ValidationFailed".
-    :vartype status: Union[str, "Status"]
-    :ivar translated_to: To language. Required.
-    :vartype translated_to: str
-    :ivar error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
-    :vartype error: "DocumentTranslationError"
-    :ivar translation_progress: Progress of the translation if available. Required.
-    :vartype translation_progress: float
-    :ivar id: Document Id. Required.
-    :vartype id: str
-    :ivar characters_charged: Character charged by the API.
-    :vartype characters_charged: int
-    :ivar total_image_scans_succeeded: Total image scans charged by the API.
-    :vartype total_image_scans_succeeded: int
-    :ivar total_image_scans_failed: Total image scans failed.
-    :vartype total_image_scans_failed: int
-    :ivar images_charged: Images charged by the API.
-    :vartype images_charged: int
-    :ivar image_characters_detected: Characters detected within images.
-    :vartype image_characters_detected: int
-    :ivar deployment_name: Deployment name of the custom translation model used for the
-     translation.
-    :vartype deployment_name: str
-    """
-
-    path: str
-    """Location of the document or folder."""
-    sourcePath: Required[str]
-    """Location of the source document. Required."""
-    createdDateTimeUtc: Required[str]
-    """Operation created date time. Required."""
-    lastActionDateTimeUtc: Required[str]
-    """Date time in which the operation's status has been updated. Required."""
-    status: Required[Union[str, "Status"]]
-    """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
-     \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
-     \"ValidationFailed\"."""
-    to: Required[str]
-    """To language. Required."""
-    error: "DocumentTranslationError"
-    """This contains an outer error with error code, message, details, target and an inner error with
-     more descriptive details."""
-    progress: Required[float]
-    """Progress of the translation if available. Required."""
-    id: Required[str]
-    """Document Id. Required."""
-    characterCharged: int
-    """Character charged by the API."""
-    totalImageScansSucceeded: int
-    """Total image scans charged by the API."""
-    totalImageScansFailed: int
-    """Total image scans failed."""
-    imageCharged: int
-    """Images charged by the API."""
-    imageCharacterDetected: int
-    """Characters detected within images."""
-    deploymentName: str
-    """Deployment name of the custom translation model used for the translation."""
-
-
 class DocumentTranslateContent(TypedDict, total=False):
     """Document Translate Request Content.
 
@@ -155,117 +80,6 @@ class DocumentTranslateContent(TypedDict, total=False):
     """Document to be translated in the form. Required."""
     glossary: list[FileType]
     """Glossary-translation memory will be used during translation in the form."""
-
-
-class DocumentTranslationError(TypedDict, total=False):
-    """This contains an outer error with error code, message, details, target and an inner error with
-    more descriptive details.
-
-    :ivar code: Enums containing high level error codes. Required. Known values are:
-     "InvalidRequest", "InvalidArgument", "InternalServerError", "ServiceUnavailable",
-     "ResourceNotFound", "Unauthorized", and "RequestRateTooHigh".
-    :vartype code: Union[str, "TranslationErrorCode"]
-    :ivar message: Gets high level error message. Required.
-    :vartype message: str
-    :ivar target: Gets the source of the error. For example it would be "documents" or "document
-     id" in case of invalid document.
-    :vartype target: str
-    :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
-     which is available at
-     `https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow
-     <https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow>`_.
-     This contains required properties ErrorCode, message and optional properties target,
-     details(key value pair), inner error(this can be nested).
-    :vartype inner_error: "InnerTranslationError"
-    """
-
-    code: Required[Union[str, "TranslationErrorCode"]]
-    """Enums containing high level error codes. Required. Known values are: \"InvalidRequest\",
-     \"InvalidArgument\", \"InternalServerError\", \"ServiceUnavailable\", \"ResourceNotFound\",
-     \"Unauthorized\", and \"RequestRateTooHigh\"."""
-    message: Required[str]
-    """Gets high level error message. Required."""
-    target: str
-    """Gets the source of the error. For example it would be \"documents\" or \"document id\" in case
-     of invalid document."""
-    innerError: "InnerTranslationError"
-    """New Inner Error format which conforms to Cognitive Services API Guidelines which is available
-     at
-     `https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow
-     <https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow>`_.
-     This contains required properties ErrorCode, message and optional properties target,
-     details(key value pair), inner error(this can be nested)."""
-
-
-class DocumentTranslationFileFormat(TypedDict, total=False):
-    """File Format.
-
-    :ivar file_format: Name of the format. Required.
-    :vartype file_format: str
-    :ivar file_extensions: Supported file extension for this format. Required.
-    :vartype file_extensions: list[str]
-    :ivar content_types: Supported Content-Types for this format. Required.
-    :vartype content_types: list[str]
-    :ivar default_format_version: Default version if none is specified.
-    :vartype default_format_version: str
-    :ivar format_versions: Supported Version.
-    :vartype format_versions: list[str]
-    :ivar type: Supported Type for this format. Known values are: "Document" and "Glossary".
-    :vartype type: Union[str, "FileFormatType"]
-    """
-
-    format: Required[str]
-    """Name of the format. Required."""
-    fileExtensions: Required[list[str]]
-    """Supported file extension for this format. Required."""
-    contentTypes: Required[list[str]]
-    """Supported Content-Types for this format. Required."""
-    defaultVersion: str
-    """Default version if none is specified."""
-    versions: list[str]
-    """Supported Version."""
-    type: Union[str, "FileFormatType"]
-    """Supported Type for this format. Known values are: \"Document\" and \"Glossary\"."""
-
-
-class InnerTranslationError(TypedDict, total=False):
-    """New Inner Error format which conforms to Cognitive Services API Guidelines which is available
-    at
-    `https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow
-    <https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow>`_.
-    This contains required properties ErrorCode, message and optional properties target,
-    details(key value pair), inner error(this can be nested).
-
-    :ivar code: Gets code error string. Required.
-    :vartype code: str
-    :ivar message: Gets high level error message. Required.
-    :vartype message: str
-    :ivar target: Gets the source of the error. For example it would be "documents" or "document
-     id" in case of invalid document.
-    :vartype target: str
-    :ivar inner_error: New Inner Error format which conforms to Cognitive Services API Guidelines
-     which is available at
-     `https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow
-     <https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow>`_.
-     This contains required properties ErrorCode, message and optional properties target,
-     details(key value pair), inner error(this can be nested).
-    :vartype inner_error: "InnerTranslationError"
-    """
-
-    code: Required[str]
-    """Gets code error string. Required."""
-    message: Required[str]
-    """Gets high level error message. Required."""
-    target: str
-    """Gets the source of the error. For example it would be \"documents\" or \"document id\" in case
-     of invalid document."""
-    innerError: "InnerTranslationError"
-    """New Inner Error format which conforms to Cognitive Services API Guidelines which is available
-     at
-     `https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow
-     <https://microsoft.sharepoint.com/%3Aw%3A/t/CognitiveServicesPMO/EUoytcrjuJdKpeOKIK_QRC8BPtUYQpKBi8JsWyeDMRsWlQ?e=CPq8ow>`_.
-     This contains required properties ErrorCode, message and optional properties target,
-     details(key value pair), inner error(this can be nested)."""
 
 
 class SourceInput(TypedDict, total=False):
@@ -308,17 +122,6 @@ class StartTranslationDetails(TypedDict, total=False):
     """The batch operation options."""
 
 
-class SupportedFileFormats(TypedDict, total=False):
-    """List of supported file formats.
-
-    :ivar value: list of objects. Required.
-    :vartype value: list["DocumentTranslationFileFormat"]
-    """
-
-    value: Required[list["DocumentTranslationFileFormat"]]
-    """list of objects. Required."""
-
-
 class TranslationGlossary(TypedDict, total=False):
     """Glossary / translation memory for the request.
 
@@ -350,90 +153,6 @@ class TranslationGlossary(TypedDict, total=False):
     """Optional Version.  If not specified, default is used."""
     storageSource: Union[str, "TranslationStorageSource"]
     """Storage Source. \"AzureBlob\""""
-
-
-class TranslationStatus(TypedDict, total=False):
-    """Translation job status response.
-
-    :ivar id: Id of the translation operation. Required.
-    :vartype id: str
-    :ivar created_on: Operation created date time. Required.
-    :vartype created_on: str
-    :ivar last_updated_on: Date time in which the operation's status has been updated. Required.
-    :vartype last_updated_on: str
-    :ivar status: List of possible statuses for job or document. Required. Known values are:
-     "NotStarted", "Running", "Succeeded", "Failed", "Cancelled", "Cancelling", and
-     "ValidationFailed".
-    :vartype status: Union[str, "Status"]
-    :ivar error: This contains an outer error with error code, message, details, target and an
-     inner error with more descriptive details.
-    :vartype error: "DocumentTranslationError"
-    :ivar summary: Status Summary. Required.
-    :vartype summary: "TranslationStatusSummary"
-    """
-
-    id: Required[str]
-    """Id of the translation operation. Required."""
-    createdDateTimeUtc: Required[str]
-    """Operation created date time. Required."""
-    lastActionDateTimeUtc: Required[str]
-    """Date time in which the operation's status has been updated. Required."""
-    status: Required[Union[str, "Status"]]
-    """List of possible statuses for job or document. Required. Known values are: \"NotStarted\",
-     \"Running\", \"Succeeded\", \"Failed\", \"Cancelled\", \"Cancelling\", and
-     \"ValidationFailed\"."""
-    error: "DocumentTranslationError"
-    """This contains an outer error with error code, message, details, target and an inner error with
-     more descriptive details."""
-    summary: Required["TranslationStatusSummary"]
-    """Status Summary. Required."""
-
-
-class TranslationStatusSummary(TypedDict, total=False):
-    """Status Summary.
-
-    :ivar total: Total count. Required.
-    :vartype total: int
-    :ivar failed: Failed count. Required.
-    :vartype failed: int
-    :ivar success: Number of Success. Required.
-    :vartype success: int
-    :ivar in_progress: Number of in progress. Required.
-    :vartype in_progress: int
-    :ivar not_yet_started: Count of not yet started. Required.
-    :vartype not_yet_started: int
-    :ivar canceled: Number of cancelled. Required.
-    :vartype canceled: int
-    :ivar total_characters_charged: Total characters charged by the API. Required.
-    :vartype total_characters_charged: int
-    :ivar total_image_scans_succeeded: Total image scans charged by the API.
-    :vartype total_image_scans_succeeded: int
-    :ivar total_image_scans_failed: Total image scans failed.
-    :vartype total_image_scans_failed: int
-    :ivar total_images_charged: Total images charged by the API.
-    :vartype total_images_charged: int
-    """
-
-    total: Required[int]
-    """Total count. Required."""
-    failed: Required[int]
-    """Failed count. Required."""
-    success: Required[int]
-    """Number of Success. Required."""
-    inProgress: Required[int]
-    """Number of in progress. Required."""
-    notYetStarted: Required[int]
-    """Count of not yet started. Required."""
-    cancelled: Required[int]
-    """Number of cancelled. Required."""
-    totalCharacterCharged: Required[int]
-    """Total characters charged by the API. Required."""
-    totalImageScansSucceeded: int
-    """Total image scans charged by the API."""
-    totalImageScansFailed: int
-    """Total image scans failed."""
-    totalImageCharged: int
-    """Total images charged by the API."""
 
 
 class TranslationTarget(TypedDict, total=False):
