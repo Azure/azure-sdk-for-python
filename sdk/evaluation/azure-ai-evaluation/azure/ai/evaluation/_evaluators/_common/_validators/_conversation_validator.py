@@ -30,8 +30,9 @@ class ConversationValidator(ValidatorInterface):
     # ``azure_ai_search``, ``azure_fabric``, and ``sharepoint_grounding`` are
     # accepted by default because the shared formatter JSON-encodes their
     # structured tool_result payloads (see ``_stringify_tool_result``).
-    # ``GroundednessConversationValidator`` overrides this list to keep
-    # rejecting them until a context-extractor helper lands.
+    # ``GroundednessConversationValidator`` now also allows
+    # ``bing_grounding``, ``bing_custom_search``, and ``openapi_call`` while
+    # keeping stricter guardrails for the remaining unsupported tool families.
     UNSUPPORTED_TOOLS: List[str] = [
         "bing_custom_search",
         "bing_grounding",
