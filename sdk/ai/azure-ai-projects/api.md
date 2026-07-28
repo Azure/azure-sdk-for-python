@@ -9,6 +9,7 @@ namespace azure.ai.projects
         deployments: DeploymentsOperations
         evaluation_rules: EvaluationRulesOperations
         indexes: IndexesOperations
+        toolboxes: ToolboxesOperations
 
         def __init__(
                 self, 
@@ -17,6 +18,7 @@ namespace azure.ai.projects
                 *, 
                 allow_preview: bool = False, 
                 api_version: str = ..., 
+                polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -99,6 +101,7 @@ namespace azure.ai.projects.aio
         deployments: DeploymentsOperations
         evaluation_rules: EvaluationRulesOperations
         indexes: IndexesOperations
+        toolboxes: ToolboxesOperations
 
         def __init__(
                 self, 
@@ -107,6 +110,7 @@ namespace azure.ai.projects.aio
                 *, 
                 allow_preview: bool = False, 
                 api_version: str = ..., 
+                polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -506,40 +510,40 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        async def cancel_optimization_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> OptimizationJob: ...
-
         @overload
-        async def create_optimization_job(
+        async def begin_create_optimization_job(
                 self, 
                 job: OptimizationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AsyncLROPoller[OptimizationJobResult]: ...
 
         @overload
-        async def create_optimization_job(
+        async def begin_create_optimization_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> AsyncLROPoller[OptimizationJobResult]: ...
 
         @overload
-        async def create_optimization_job(
+        async def begin_create_optimization_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[OptimizationJobResult]: ...
+
+        @distributed_trace_async
+        async def cancel_optimization_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> OptimizationJob: ...
 
@@ -578,40 +582,40 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        async def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: DataGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DataGenerationJob: ...
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
 
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DataGenerationJob: ...
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
 
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[DataGenerationJobResult]: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
@@ -740,40 +744,40 @@ namespace azure.ai.projects.aio.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace_async
-        async def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: EvaluatorGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
 
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
 
         @overload
-        async def create_generation_job(
+        async def begin_create_generation_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> AsyncLROPoller[EvaluatorVersion]: ...
+
+        @distributed_trace_async
+        async def cancel_generation_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 
@@ -3219,17 +3223,24 @@ namespace azure.ai.projects.models
     class azure.ai.projects.models.AgentIdentity(_Model):
         client_id: str
         principal_id: str
+        status: Optional[Union[str, AgentIdentityStatus]]
 
         @overload
         def __init__(
                 self, 
                 *, 
                 client_id: str, 
-                principal_id: str
+                principal_id: str, 
+                status: Optional[Union[str, AgentIdentityStatus]] = ...
             ) -> None: ...
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        ACTIVE = "active"
+        DISABLED = "disabled"
 
 
     class azure.ai.projects.models.AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -4852,6 +4863,7 @@ namespace azure.ai.projects.models
 
     class azure.ai.projects.models.DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         SIMPLE_QNA = "simple_qna"
+        TASK_GENERATION = "task_generation"
         TOOL_USE = "tool_use"
         TRACES = "traces"
 
@@ -5634,6 +5646,7 @@ namespace azure.ai.projects.models
         error: Optional[ApiError]
         finished_at: Optional[datetime]
         id: str
+        input_quality_warnings: Optional[list[RubricGenerationInputQualityWarning]]
         inputs: Optional[EvaluatorGenerationInputs]
         result: Optional[EvaluatorVersion]
         status: Union[str, JobStatus]
@@ -5739,6 +5752,7 @@ namespace azure.ai.projects.models
         display_name: Optional[str]
         evaluator_type: Union[str, EvaluatorType]
         generation_artifacts: Optional[EvaluatorGenerationArtifacts]
+        generation_job_id: Optional[str]
         id: Optional[str]
         metadata: Optional[dict[str, str]]
         modified_at: datetime
@@ -5746,6 +5760,7 @@ namespace azure.ai.projects.models
         supported_evaluation_levels: Optional[list[Union[str, EvaluationLevel]]]
         tags: Optional[dict[str, str]]
         version: str
+        warnings: Optional[list[Union[str, GenerationWarningType]]]
 
         @overload
         def __init__(
@@ -6179,6 +6194,10 @@ namespace azure.ai.projects.models
 
         @overload
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        INPUT_QUALITY = "input_quality"
 
 
     class azure.ai.projects.models.GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -7864,6 +7883,7 @@ namespace azure.ai.projects.models
         eval_model: Optional[str]
         evaluation_level: Optional[Union[str, EvaluationLevel]]
         max_candidates: Optional[int]
+        max_stalls: Optional[int]
         optimization_config: Optional[dict[str, Any]]
         optimization_model: Optional[str]
 
@@ -7874,6 +7894,7 @@ namespace azure.ai.projects.models
                 eval_model: Optional[str] = ..., 
                 evaluation_level: Optional[Union[str, EvaluationLevel]] = ..., 
                 max_candidates: Optional[int] = ..., 
+                max_stalls: Optional[int] = ..., 
                 optimization_config: Optional[dict[str, Any]] = ..., 
                 optimization_model: Optional[str] = ...
             ) -> None: ...
@@ -8685,6 +8706,50 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.RubricGenerationInputQualityWarning(_Model):
+        code: Union[str, RubricGenerationInputQualityWarningCode]
+        message: str
+        severity: Union[str, RubricGenerationInputQualityWarningSeverity]
+        source: Union[str, RubricGenerationInputQualityWarningSource]
+        source_index: Optional[int]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                code: Union[str, RubricGenerationInputQualityWarningCode], 
+                message: str, 
+                severity: Union[str, RubricGenerationInputQualityWarningSeverity], 
+                source: Union[str, RubricGenerationInputQualityWarningSource], 
+                source_index: Optional[int] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.ai.projects.models.RubricGenerationInputQualityWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        EMPTY_AGENT_INSTRUCTIONS = "empty_agent_instructions"
+        EMPTY_DATASET_CONTENT = "empty_dataset_content"
+        EMPTY_PROMPT = "empty_prompt"
+        INSUFFICIENT_TOTAL_INPUT = "insufficient_total_input"
+        LOW_TRACE_COUNT = "low_trace_count"
+        SHORT_AGENT_INSTRUCTIONS = "short_agent_instructions"
+        SHORT_DATASET_CONTENT = "short_dataset_content"
+        SHORT_PROMPT = "short_prompt"
+
+
+    class azure.ai.projects.models.RubricGenerationInputQualityWarningSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        WARNING = "warning"
+
+
+    class azure.ai.projects.models.RubricGenerationInputQualityWarningSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AGENT = "agent"
+        AGGREGATE = "aggregate"
+        DATASET = "dataset"
+        PROMPT = "prompt"
+
+
     class azure.ai.projects.models.SASCredentials(BaseCredentials, discriminator='SAS'):
         sas_token: Optional[str]
         type: Literal[CredentialType.SAS]
@@ -9071,6 +9136,25 @@ namespace azure.ai.projects.models
         key "source": Required[Union[SourceFileContent, SourceFileID]]
         key "target": Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
         key "type": Required[Literal["azure_ai_target_completions"]]
+
+
+    class azure.ai.projects.models.TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator='task_generation'):
+        max_samples: int
+        model_options: DataGenerationModelOptions
+        train_split: float
+        type: Literal[DataGenerationJobType.TASK_GENERATION]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                max_samples: int, 
+                model_options: Optional[DataGenerationModelOptions] = ..., 
+                train_split: Optional[float] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
     class azure.ai.projects.models.TaxonomyCategory(_Model):
@@ -9533,6 +9617,25 @@ namespace azure.ai.projects.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.ai.projects.models.ToolSearchToolboxTool(ToolboxTool, discriminator='toolbox_search'):
+        description: str
+        name: str
+        tool_configs: dict[str, ToolConfig]
+        type: Literal[ToolboxToolType.TOOLBOX_SEARCH]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                description: Optional[str] = ..., 
+                name: Optional[str] = ..., 
+                tool_configs: Optional[dict[str, ToolConfig]] = ...
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
     class azure.ai.projects.models.ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         A2A_PREVIEW = "a2a_preview"
         APPLY_PATCH = "apply_patch"
@@ -9696,6 +9799,7 @@ namespace azure.ai.projects.models
         MCP = "mcp"
         OPENAPI = "openapi"
         REMINDER_PREVIEW = "reminder_preview"
+        TOOLBOX_SEARCH = "toolbox_search"
         TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
         WEB_SEARCH = "web_search"
         WORK_IQ_PREVIEW = "work_iq_preview"
@@ -10492,40 +10596,40 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        def cancel_optimization_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> OptimizationJob: ...
-
         @overload
-        def create_optimization_job(
+        def begin_create_optimization_job(
                 self, 
                 job: OptimizationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> LROPoller[OptimizationJobResult]: ...
 
         @overload
-        def create_optimization_job(
+        def begin_create_optimization_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> OptimizationJob: ...
+            ) -> LROPoller[OptimizationJobResult]: ...
 
         @overload
-        def create_optimization_job(
+        def begin_create_optimization_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[OptimizationJobResult]: ...
+
+        @distributed_trace
+        def cancel_optimization_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> OptimizationJob: ...
 
@@ -10564,40 +10668,40 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> DataGenerationJob: ...
-
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: DataGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DataGenerationJob: ...
+            ) -> LROPoller[DataGenerationJobResult]: ...
 
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> DataGenerationJob: ...
+            ) -> LROPoller[DataGenerationJobResult]: ...
 
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[DataGenerationJobResult]: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> DataGenerationJob: ...
 
@@ -10726,40 +10830,40 @@ namespace azure.ai.projects.operations
                 **kwargs
             ) -> None: ...
 
-        @distributed_trace
-        def cancel_generation_job(
-                self, 
-                job_id: str, 
-                **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
-
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: EvaluatorGenerationJob, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
+            ) -> LROPoller[EvaluatorVersion]: ...
 
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: JSON, 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
                 **kwargs: Any
-            ) -> EvaluatorGenerationJob: ...
+            ) -> LROPoller[EvaluatorVersion]: ...
 
         @overload
-        def create_generation_job(
+        def begin_create_generation_job(
                 self, 
                 job: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 operation_id: Optional[str] = ..., 
+                **kwargs: Any
+            ) -> LROPoller[EvaluatorVersion]: ...
+
+        @distributed_trace
+        def cancel_generation_job(
+                self, 
+                job_id: str, 
                 **kwargs: Any
             ) -> EvaluatorGenerationJob: ...
 

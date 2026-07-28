@@ -61,7 +61,6 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
-    JobStatus,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
 )
@@ -110,8 +109,6 @@ SEED_REFERENCE_DOCUMENT = """# Widgets and Gizmos Reference
 - Sprocket unit: USD 14.99; ships from regional warehouses in 1-2 business days.
 - Standard support response: within one business day. Priority support response: within four hours.
 """
-
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
@@ -171,46 +168,31 @@ with (
             output_options=DataGenerationJobOutputOptions(name=output_name),
         ),
     )
-    job = project_client.beta.datasets.create_generation_job(job=job)
-    print(f"Created data generation job `{job.id}` (status: `{job.status}`).")
-
-    print(f"Poll job `{job.id}` until it reaches a terminal state.", end="", flush=True)
-    while True:
-        job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-        if job.status in TERMINAL_STATUSES:
-            break
-        time.sleep(poll_interval_seconds)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
-
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Job `{job.id}` ended with status `{job.status}`: {message}")
+    print("Create a fine-tuning data generation job and wait for it to complete.")
+    job_result = project_client.beta.datasets.begin_create_generation_job(
+        job=job,
+        polling_interval=poll_interval_seconds,
+    ).result()
 
     # ------------------------------------------------------------------
     # 3. Inspect the generated fine-tuning file outputs.
     # ------------------------------------------------------------------
     # `train_split=0.8` produces two Azure OpenAI files: a training partition
     # and a validation partition. Both are emitted as FileDataGenerationJobOutput
-    # entries in `job.result.outputs`.
-    file_outputs = [
-        output
-        for output in ((job.result.outputs if job.result is not None else None) or [])
-        if isinstance(output, FileDataGenerationJobOutput)
-    ]
+    # entries in `job_result.outputs`.
+    file_outputs = [output for output in (job_result.outputs or []) if isinstance(output, FileDataGenerationJobOutput)]
     if not file_outputs:
-        raise RuntimeError(f"Job `{job.id}` did not produce any file outputs.")
+        raise RuntimeError("The data generation job did not produce any file outputs.")
 
     print(f"Generated {len(file_outputs)} fine-tuning file(s):")
     for output in file_outputs:
         if not output.id:
-            raise RuntimeError(f"Job `{job.id}` returned a file output without an id.")
+            raise RuntimeError("A file output was returned without an id.")
         # Resolve the Azure OpenAI file to surface its real filename and size.
         file_info = openai_client.files.retrieve(file_id=output.id)
         print(f"  - filename=`{file_info.filename}` id=`{output.id}` bytes={file_info.bytes}")
-    if job.result is not None and job.result.generated_samples is not None:
-        print(f"Generated samples: {job.result.generated_samples}")
+    if job_result.generated_samples is not None:
+        print(f"Generated samples: {job_result.generated_samples}")
 
     # ------------------------------------------------------------------
     # 4. Clean up.
@@ -221,6 +203,3 @@ with (
 
     print(f"Delete the Azure OpenAI input file `{seed_file.id}`.")
     openai_client.files.delete(file_id=seed_file.id)
-
-    print(f"Delete the data generation job `{job.id}`.")
-    project_client.beta.datasets.delete_generation_job(job_id=job.id)

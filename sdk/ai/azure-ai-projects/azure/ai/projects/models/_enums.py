@@ -86,6 +86,17 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WebSocket-based protocol for hosted voice and real-time streaming agents."""
 
 
+class AgentIdentityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an agent identity, applicable to both the agent instance identity and the agent
+    blueprint.
+    """
+
+    ACTIVE = "active"
+    """The agent identity is active and can be used to access resources."""
+    DISABLED = "disabled"
+    """The agent identity is disabled and cannot be used to access resources."""
+
+
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of AgentKind."""
 
@@ -394,6 +405,8 @@ class DataGenerationJobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Single turn query and response from agent traces."""
     TOOL_USE = "tool_use"
     """Tool calling conversation between user and agent."""
+    TASK_GENERATION = "task_generation"
+    """Task generation for evaluation scenarios."""
 
 
 class DatasetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -609,6 +622,16 @@ class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitive
     """LOCAL."""
     CONTAINER_REFERENCE = "container_reference"
     """CONTAINER_REFERENCE."""
+
+
+class GenerationWarningType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Category of a warning surfaced on a generated evaluator version. Extensible so new warning
+    categories (e.g., safety, output quality) can be introduced without a breaking change.
+    """
+
+    INPUT_QUALITY = "input_quality"
+    """The paired EvaluatorGenerationJob emitted one or more input-quality advisories. Follow
+    ``generation_job_id`` to fetch the detailed warning payloads."""
 
 
 class GitHubIssueEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -914,6 +937,61 @@ class RoutineTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A one-shot timer trigger."""
 
 
+class RubricGenerationInputQualityWarningCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Stable searchable machine-readable warning code for a rubric-generation input-quality warning.
+    Values are ``snake_case``; clients must tolerate additional service-defined identifiers.
+    """
+
+    EMPTY_PROMPT = "empty_prompt"
+    """A prompt source was empty or whitespace-only."""
+    SHORT_PROMPT = "short_prompt"
+    """A prompt source was non-empty but below the recommended minimum signal threshold."""
+    EMPTY_AGENT_INSTRUCTIONS = "empty_agent_instructions"
+    """An agent source resolved successfully but had no usable instructions."""
+    SHORT_AGENT_INSTRUCTIONS = "short_agent_instructions"
+    """An agent source had instructions below the recommended minimum signal threshold."""
+    EMPTY_DATASET_CONTENT = "empty_dataset_content"
+    """A dataset source resolved but contained no usable content for rubric generation."""
+    SHORT_DATASET_CONTENT = "short_dataset_content"
+    """Dataset content was below the recommended minimum signal threshold."""
+    LOW_TRACE_COUNT = "low_trace_count"
+    """A row-structured dataset had very few rows, so the generated rubric may not generalize."""
+    INSUFFICIENT_TOTAL_INPUT = "insufficient_total_input"
+    """Combined resolved input across successfully resolved sources was below the recommended minimum
+    signal threshold."""
+
+
+class RubricGenerationInputQualityWarningSeverity(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Advisory severity for a rubric-generation input-quality warning. Initial value set:
+    ``warning``.
+    """
+
+    WARNING = "warning"
+    """Non-fatal advisory; generation succeeded but output quality may be lower."""
+
+
+class RubricGenerationInputQualityWarningSource(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Warning source attribution for a rubric-generation input-quality warning. Per-source values
+    (``prompt``, ``agent``, ``dataset``) match the source category visible to the generation
+    runtime. ``aggregate`` is a synthetic value used only for warnings computed across successfully
+    resolved sources. ``traces`` is not exposed because trace sources resolve into dataset content
+    upstream.
+    """
+
+    PROMPT = "prompt"
+    """The warning applies to an inline prompt source."""
+    AGENT = "agent"
+    """The warning applies to an agent source."""
+    DATASET = "dataset"
+    """The warning applies to a dataset source (including trace-derived datasets)."""
+    AGGREGATE = "aggregate"
+    """The warning is computed across all successfully resolved sources."""
+
+
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of sample used in the analysis."""
 
@@ -1053,6 +1131,8 @@ class ToolboxToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORK_IQ_PREVIEW."""
     FABRIC_IQ_PREVIEW = "fabric_iq_preview"
     """FABRIC_IQ_PREVIEW."""
+    TOOLBOX_SEARCH = "toolbox_search"
+    """TOOLBOX_SEARCH."""
     TOOLBOX_SEARCH_PREVIEW = "toolbox_search_preview"
     """TOOLBOX_SEARCH_PREVIEW."""
 

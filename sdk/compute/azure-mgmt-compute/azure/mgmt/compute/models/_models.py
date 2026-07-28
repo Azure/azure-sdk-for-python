@@ -5293,6 +5293,7 @@ class DiskRestorePoint(ProxyResource):
         "source_resource_location",
         "security_profile",
         "logical_sector_size",
+        "snapshot_access_state",
     ]
 
     @overload
@@ -5478,6 +5479,10 @@ class DiskRestorePointProperties(_Model):
     :ivar logical_sector_size: Logical sector size in bytes for disk restore points of UltraSSD_LRS
      and PremiumV2_LRS disks. Supported values are 512 and 4096. 4096 is the default.
     :vartype logical_sector_size: int
+    :ivar snapshot_access_state: The state of snapshot which determines the access availability of
+     the snapshot. Known values are: "Unknown", "Pending", "Available", "InstantAccess", and
+     "AvailableWithInstantAccess".
+    :vartype snapshot_access_state: str or ~azure.mgmt.compute.models.SnapshotAccessState
     """
 
     time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
@@ -5540,6 +5545,12 @@ class DiskRestorePointProperties(_Model):
     logical_sector_size: Optional[int] = rest_field(name="logicalSectorSize", visibility=["read"])
     """Logical sector size in bytes for disk restore points of UltraSSD_LRS and PremiumV2_LRS disks.
      Supported values are 512 and 4096. 4096 is the default."""
+    snapshot_access_state: Optional[Union[str, "_models.SnapshotAccessState"]] = rest_field(
+        name="snapshotAccessState", visibility=["read"]
+    )
+    """The state of snapshot which determines the access availability of the snapshot. Known values
+     are: \"Unknown\", \"Pending\", \"Available\", \"InstantAccess\", and
+     \"AvailableWithInstantAccess\"."""
 
     @overload
     def __init__(
@@ -5615,6 +5626,9 @@ class DiskSecurityProfile(_Model):
     :ivar secure_vm_disk_encryption_set_id: ResourceId of the disk encryption set associated to
      Confidential VM supported disk encrypted with customer managed key.
     :vartype secure_vm_disk_encryption_set_id: str
+    :ivar confidential_vm_version: Indicates the version of Confidential VM for the resource. Known
+     values are: "V1" and "V2".
+    :vartype confidential_vm_version: str or ~azure.mgmt.compute.models.ConfidentialVMVersion
     """
 
     security_type: Optional[Union[str, "_models.DiskSecurityTypes"]] = rest_field(
@@ -5629,6 +5643,10 @@ class DiskSecurityProfile(_Model):
     )
     """ResourceId of the disk encryption set associated to Confidential VM supported disk encrypted
      with customer managed key."""
+    confidential_vm_version: Optional[Union[str, "_models.ConfidentialVMVersion"]] = rest_field(
+        name="confidentialVMVersion", visibility=["read"]
+    )
+    """Indicates the version of Confidential VM for the resource. Known values are: \"V1\" and \"V2\"."""
 
     @overload
     def __init__(
@@ -10863,6 +10881,123 @@ class ImageVersionSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ImmutabilityPolicy(_Model):
+    """The immutability policy currently applied to a snapshot.
+
+    :ivar immutability_duration_days: The immutability duration for the snapshot, in number of
+     days.
+    :vartype immutability_duration_days: int
+    :ivar type: The type of the immutability policy. Known values are: "Unlocked" and "Locked".
+    :vartype type: str or ~azure.mgmt.compute.models.ImmutabilityPolicyType
+    :ivar policy_start_time: The time when the immutability policy was set on the snapshot.
+    :vartype policy_start_time: ~datetime.datetime
+    :ivar policy_expiration_time: The time when the immutability policy will expire on the
+     snapshot.
+    :vartype policy_expiration_time: ~datetime.datetime
+    :ivar is_policy_expired: Indicates whether the immutability policy has expired.
+    :vartype is_policy_expired: bool
+    """
+
+    immutability_duration_days: Optional[int] = rest_field(name="immutabilityDurationDays", visibility=["read"])
+    """The immutability duration for the snapshot, in number of days."""
+    type: Optional[Union[str, "_models.ImmutabilityPolicyType"]] = rest_field(visibility=["read"])
+    """The type of the immutability policy. Known values are: \"Unlocked\" and \"Locked\"."""
+    policy_start_time: Optional[datetime.datetime] = rest_field(
+        name="policyStartTime", visibility=["read"], format="rfc3339"
+    )
+    """The time when the immutability policy was set on the snapshot."""
+    policy_expiration_time: Optional[datetime.datetime] = rest_field(
+        name="policyExpirationTime", visibility=["read"], format="rfc3339"
+    )
+    """The time when the immutability policy will expire on the snapshot."""
+    is_policy_expired: Optional[bool] = rest_field(name="isPolicyExpired", visibility=["read"])
+    """Indicates whether the immutability policy has expired."""
+
+
+class ImmutabilityPolicyData(_Model):
+    """Data used for updating the immutability policy of a snapshot.
+
+    :ivar immutability_duration_days: The immutability duration for the snapshot, in number of
+     days. Required.
+    :vartype immutability_duration_days: int
+    :ivar type: The type of the immutability policy. 'Unlocked' allows the policy to be modified by
+     privileged users; 'Locked' prevents reduction of the immutability duration but allows extension
+     of the lock period. Required. Known values are: "Unlocked" and "Locked".
+    :vartype type: str or ~azure.mgmt.compute.models.ImmutabilityPolicyType
+    """
+
+    immutability_duration_days: int = rest_field(
+        name="immutabilityDurationDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The immutability duration for the snapshot, in number of days. Required."""
+    type: Union[str, "_models.ImmutabilityPolicyType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the immutability policy. 'Unlocked' allows the policy to be modified by privileged
+     users; 'Locked' prevents reduction of the immutability duration but allows extension of the
+     lock period. Required. Known values are: \"Unlocked\" and \"Locked\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        immutability_duration_days: int,
+        type: Union[str, "_models.ImmutabilityPolicyType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImmutabilityPolicyLockData(_Model):
+    """Data used for locking the immutability policy of a snapshot.
+
+    :ivar immutability_duration_days: The immutability duration for the snapshot, in number of
+     days. Required.
+    :vartype immutability_duration_days: int
+    :ivar type: The type of the immutability policy. 'Unlocked' allows the policy to be modified by
+     privileged users; 'Locked' prevents reduction of the immutability duration but allows extension
+     of the lock period. Required. Known values are: "Unlocked" and "Locked".
+    :vartype type: str or ~azure.mgmt.compute.models.ImmutabilityPolicyType
+    """
+
+    immutability_duration_days: int = rest_field(
+        name="immutabilityDurationDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The immutability duration for the snapshot, in number of days. Required."""
+    type: Union[str, "_models.ImmutabilityPolicyType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the immutability policy. 'Unlocked' allows the policy to be modified by privileged
+     users; 'Locked' prevents reduction of the immutability duration but allows extension of the
+     lock period. Required. Known values are: \"Unlocked\" and \"Locked\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        immutability_duration_days: int,
+        type: Union[str, "_models.ImmutabilityPolicyType"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class InnerError(_Model):
     """Inner error details.
 
@@ -15698,7 +15833,7 @@ class RollingUpgradeRunningStatus(_Model):
     """Information about the current running state of the overall upgrade.
 
     :ivar code: Code indicating the current status of the upgrade. Known values are:
-     "RollingForward", "Cancelled", "Completed", and "Faulted".
+     "RollingForward", "RollingBack", "Cancelled", "Completed", and "Faulted".
     :vartype code: str or ~azure.mgmt.compute.models.RollingUpgradeStatusCode
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
@@ -15711,7 +15846,7 @@ class RollingUpgradeRunningStatus(_Model):
 
     code: Optional[Union[str, "_models.RollingUpgradeStatusCode"]] = rest_field(visibility=["read"])
     """Code indicating the current status of the upgrade. Known values are: \"RollingForward\",
-     \"Cancelled\", \"Completed\", and \"Faulted\"."""
+     \"RollingBack\", \"Cancelled\", \"Completed\", and \"Faulted\"."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
     """Start time of the upgrade."""
     last_action: Optional[Union[str, "_models.RollingUpgradeActionType"]] = rest_field(
@@ -17546,6 +17681,7 @@ class Snapshot(TrackedResource):
         "copy_completion_error",
         "data_access_auth_mode",
         "snapshot_access_state",
+        "immutability_policy",
     ]
 
     @overload
@@ -17660,6 +17796,9 @@ class SnapshotProperties(_Model):
      the snapshot. Known values are: "Unknown", "Pending", "Available", "InstantAccess", and
      "AvailableWithInstantAccess".
     :vartype snapshot_access_state: str or ~azure.mgmt.compute.models.SnapshotAccessState
+    :ivar immutability_policy: The immutability policy currently applied to this snapshot. Present
+     only when an immutability policy has been configured.
+    :vartype immutability_policy: ~azure.mgmt.compute.models.ImmutabilityPolicy
     """
 
     time_created: Optional[datetime.datetime] = rest_field(name="timeCreated", visibility=["read"], format="rfc3339")
@@ -17760,6 +17899,11 @@ class SnapshotProperties(_Model):
     """The state of snapshot which determines the access availability of the snapshot. Known values
      are: \"Unknown\", \"Pending\", \"Available\", \"InstantAccess\", and
      \"AvailableWithInstantAccess\"."""
+    immutability_policy: Optional["_models.ImmutabilityPolicy"] = rest_field(
+        name="immutabilityPolicy", visibility=["read"]
+    )
+    """The immutability policy currently applied to this snapshot. Present only when an immutability
+     policy has been configured."""
 
     @overload
     def __init__(
@@ -19054,7 +19198,7 @@ class UpgradeOperationHistoryStatus(_Model):
     """Information about the current running state of the overall upgrade.
 
     :ivar code: Code indicating the current status of the upgrade. Known values are:
-     "RollingForward", "Cancelled", "Completed", and "Faulted".
+     "RollingForward", "RollingBack", "Cancelled", "Completed", and "Faulted".
     :vartype code: str or ~azure.mgmt.compute.models.UpgradeState
     :ivar start_time: Start time of the upgrade.
     :vartype start_time: ~datetime.datetime
@@ -19064,7 +19208,7 @@ class UpgradeOperationHistoryStatus(_Model):
 
     code: Optional[Union[str, "_models.UpgradeState"]] = rest_field(visibility=["read"])
     """Code indicating the current status of the upgrade. Known values are: \"RollingForward\",
-     \"Cancelled\", \"Completed\", and \"Faulted\"."""
+     \"RollingBack\", \"Cancelled\", \"Completed\", and \"Faulted\"."""
     start_time: Optional[datetime.datetime] = rest_field(name="startTime", visibility=["read"], format="rfc3339")
     """Start time of the upgrade."""
     end_time: Optional[datetime.datetime] = rest_field(name="endTime", visibility=["read"], format="rfc3339")

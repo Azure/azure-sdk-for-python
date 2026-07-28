@@ -1381,7 +1381,8 @@ class AgentsOperations:  # pylint: disable=too-many-public-methods
          * Can contain hyphens in the middle
          * Must not exceed 63 characters. Required.
         :type agent_name: str
-        :param content: Is either a _CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :param content: The content multipart request content. Is either a
+         _CreateAgentVersionFromCodeContent type or a JSON type. Required.
         :type content: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeContent or JSON
         :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
          detection (dedup) and integrity verification. Required.
@@ -3838,7 +3839,7 @@ class DatasetsOperations:
     async def get_credentials(self, name: str, version: str, **kwargs: Any) -> _models.DatasetCredential:
         """Get dataset credentials.
 
-        Gets the SAS credential to access the storage account associated with a Dataset version.
+        Retrieves the SAS credential to access the storage account associated with a dataset version.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -3922,7 +3923,7 @@ class DeploymentsOperations:
     async def get(self, name: str, **kwargs: Any) -> _models.Deployment:
         """Get a deployment.
 
-        Gets a deployed model.
+        Retrieves a deployed model.
 
         :param name: Name of the deployment. Required.
         :type name: str
@@ -5752,7 +5753,7 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
-        Update an evaluation taxonomy.
+        Modifies the specified evaluation taxonomy with the provided changes.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5772,7 +5773,7 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
-        Update an evaluation taxonomy.
+        Modifies the specified evaluation taxonomy with the provided changes.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5792,7 +5793,7 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
-        Update an evaluation taxonomy.
+        Modifies the specified evaluation taxonomy with the provided changes.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -5812,7 +5813,7 @@ class BetaEvaluationTaxonomiesOperations:
     ) -> _models.EvaluationTaxonomy:
         """Update an evaluation taxonomy.
 
-        Update an evaluation taxonomy.
+        Modifies the specified evaluation taxonomy with the provided changes.
 
         :param name: The name of the evaluation taxonomy. Required.
         :type name: str
@@ -6556,7 +6557,7 @@ class BetaEvaluatorsOperations:
         Initiates a new pending upload or retrieves an existing one for the specified evaluator
         version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6585,7 +6586,7 @@ class BetaEvaluatorsOperations:
         Initiates a new pending upload or retrieves an existing one for the specified evaluator
         version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6614,7 +6615,7 @@ class BetaEvaluatorsOperations:
         Initiates a new pending upload or retrieves an existing one for the specified evaluator
         version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6641,7 +6642,7 @@ class BetaEvaluatorsOperations:
         Initiates a new pending upload or retrieves an existing one for the specified evaluator
         version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6734,7 +6735,7 @@ class BetaEvaluatorsOperations:
         Retrieves SAS credentials for accessing the storage account associated with the specified
         evaluator version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6763,7 +6764,7 @@ class BetaEvaluatorsOperations:
         Retrieves SAS credentials for accessing the storage account associated with the specified
         evaluator version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6792,7 +6793,7 @@ class BetaEvaluatorsOperations:
         Retrieves SAS credentials for accessing the storage account associated with the specified
         evaluator version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6819,7 +6820,7 @@ class BetaEvaluatorsOperations:
         Retrieves SAS credentials for accessing the storage account associated with the specified
         evaluator version.
 
-        :param name: Required.
+        :param name: The name path parameter. Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -6897,105 +6898,13 @@ class BetaEvaluatorsOperations:
 
         return deserialized  # type: ignore
 
-    @overload
-    async def create_generation_job(
-        self,
-        job: _models.EvaluatorGenerationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_generation_job(
+    async def _create_generation_job_initial(
         self,
         job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.EvaluatorGenerationJob:
-        """Create an evaluator generation job.
-
-        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
-        from the provided source materials asynchronously.
-
-        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: EvaluatorGenerationJob. The EvaluatorGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.EvaluatorGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7008,7 +6917,7 @@ class BetaEvaluatorsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EvaluatorGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -7031,7 +6940,7 @@ class BetaEvaluatorsOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -7039,11 +6948,10 @@ class BetaEvaluatorsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -7055,15 +6963,173 @@ class BetaEvaluatorsOperations:
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.EvaluatorGenerationJob, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_generation_job(
+        self,
+        job: _models.EvaluatorGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_generation_job(
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_generation_job(
+        self,
+        job: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Required.
+        :type job: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_generation_job(
+        self,
+        job: Union[_models.EvaluatorGenerationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.EvaluatorVersion]:
+        """Create an evaluator generation job.
+
+        Creates an evaluator generation job. The service generates rubric-based evaluator definitions
+        from the provided source materials asynchronously.
+
+        :param job: The job to create. Is one of the following types: EvaluatorGenerationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.EvaluatorGenerationJob or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of AsyncLROPoller that returns EvaluatorVersion. The EvaluatorVersion is
+         compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.EvaluatorVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EvaluatorVersion] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_generation_job_initial(
+                job=job,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.EvaluatorVersion, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.EvaluatorVersion].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.EvaluatorVersion](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def get_generation_job(self, job_id: str, **kwargs: Any) -> _models.EvaluatorGenerationJob:
@@ -9768,8 +9834,7 @@ class BetaModelsOperations:
     async def delete(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete a model version.
 
-        Delete the specific version of the ModelVersion. The service returns 200 OK if the ModelVersion
-        was deleted successfully or if the ModelVersion does not exist.
+        Removes the specified model version. Returns 200 whether the version existed or not.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9830,7 +9895,7 @@ class BetaModelsOperations:
     ) -> _models.ModelVersion:
         """Update a model version.
 
-        Update an existing ModelVersion with the given version id.
+        Updates an existing model version identified by its version ID.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9859,7 +9924,7 @@ class BetaModelsOperations:
     ) -> _models.ModelVersion:
         """Update a model version.
 
-        Update an existing ModelVersion with the given version id.
+        Updates an existing model version identified by its version ID.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9888,7 +9953,7 @@ class BetaModelsOperations:
     ) -> _models.ModelVersion:
         """Update a model version.
 
-        Update an existing ModelVersion with the given version id.
+        Updates an existing model version identified by its version ID.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -9915,7 +9980,7 @@ class BetaModelsOperations:
     ) -> _models.ModelVersion:
         """Update a model version.
 
-        Update an existing ModelVersion with the given version id.
+        Updates an existing model version identified by its version ID.
 
         :param name: The name of the resource. Required.
         :type name: str
@@ -10176,7 +10241,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Required.
+        :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -10205,7 +10270,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Required.
+        :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -10234,7 +10299,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Required.
+        :param pending_upload_request: The pending upload request request body. Required.
         :type pending_upload_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -10261,8 +10326,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param pending_upload_request: Is one of the following types: ModelPendingUploadRequest, JSON,
-         IO[bytes] Required.
+        :param pending_upload_request: The pending upload request request body. Is one of the following
+         types: ModelPendingUploadRequest, JSON, IO[bytes] Required.
         :type pending_upload_request: ~azure.ai.projects.models.ModelPendingUploadRequest or JSON or
          IO[bytes]
         :return: ModelPendingUploadResponse. The ModelPendingUploadResponse is compatible with
@@ -10350,7 +10415,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Required.
+        :param credential_request: The credential request request body. Required.
         :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -10378,7 +10443,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Required.
+        :param credential_request: The credential request request body. Required.
         :type credential_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -10406,7 +10471,7 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Required.
+        :param credential_request: The credential request request body. Required.
         :type credential_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -10432,8 +10497,8 @@ class BetaModelsOperations:
         :type name: str
         :param version: Version of the model. Required.
         :type version: str
-        :param credential_request: Is one of the following types: ModelCredentialRequest, JSON,
-         IO[bytes] Required.
+        :param credential_request: The credential request request body. Is one of the following types:
+         ModelCredentialRequest, JSON, IO[bytes] Required.
         :type credential_request: ~azure.ai.projects.models.ModelCredentialRequest or JSON or IO[bytes]
         :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DatasetCredential
@@ -12701,7 +12766,7 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: Required.
+        :param content: The multipart request content. Required.
         :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
@@ -12716,7 +12781,7 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: Required.
+        :param content: The multipart request content. Required.
         :type content: JSON
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
@@ -12733,7 +12798,8 @@ class BetaSkillsOperations:
 
         :param name: The name of the skill. Required.
         :type name: str
-        :param content: Is either a CreateSkillVersionFromFilesBody type or a JSON type. Required.
+        :param content: The multipart request content. Is either a CreateSkillVersionFromFilesBody type
+         or a JSON type. Required.
         :type content: ~azure.ai.projects.models.CreateSkillVersionFromFilesBody or JSON
         :return: SkillVersion. The SkillVersion is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillVersion
@@ -13354,101 +13420,13 @@ class BetaDatasetsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @overload
-    async def create_generation_job(
-        self,
-        job: _models.DataGenerationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_generation_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_generation_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_generation_job(
+    async def _create_generation_job_initial(
         self,
         job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
         *,
         operation_id: Optional[str] = None,
         **kwargs: Any
-    ) -> _models.DataGenerationJob:
-        """Create a data generation job.
-
-        Submits a new data generation job for asynchronous execution.
-
-        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
-         IO[bytes] Required.
-        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: DataGenerationJob. The DataGenerationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DataGenerationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -13461,7 +13439,7 @@ class BetaDatasetsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DataGenerationJob] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -13484,7 +13462,7 @@ class BetaDatasetsOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -13492,11 +13470,10 @@ class BetaDatasetsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -13508,15 +13485,169 @@ class BetaDatasetsOperations:
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.DataGenerationJob, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def begin_create_generation_job(
+        self,
+        job: _models.DataGenerationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJob
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_generation_job(
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The job to create. Required.
+        :type job: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_generation_job(
+        self,
+        job: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The job to create. Required.
+        :type job: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_generation_job(
+        self,
+        job: Union[_models.DataGenerationJob, JSON, IO[bytes]],
+        *,
+        operation_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DataGenerationJobResult]:
+        """Create a data generation job.
+
+        Submits a new data generation job for asynchronous execution.
+
+        :param job: The job to create. Is one of the following types: DataGenerationJob, JSON,
+         IO[bytes] Required.
+        :type job: ~azure.ai.projects.models.DataGenerationJob or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of AsyncLROPoller that returns DataGenerationJobResult. The
+         DataGenerationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.DataGenerationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataGenerationJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_generation_job_initial(
+                job=job,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.DataGenerationJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.DataGenerationJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.DataGenerationJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @distributed_trace_async
     async def cancel_generation_job(self, job_id: str, **kwargs: Any) -> _models.DataGenerationJob:
@@ -15354,101 +15485,9 @@ class BetaAgentsOperations:
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    async def create_optimization_job(
-        self,
-        job: _models.OptimizationJob,
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_optimization_job(
-        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: JSON
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_optimization_job(
-        self,
-        job: IO[bytes],
-        *,
-        operation_id: Optional[str] = None,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Required.
-        :type job: IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_optimization_job(
+    async def _create_optimization_job_initial(
         self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
-    ) -> _models.OptimizationJob:
-        """Creates an agent optimization job.
-
-        Create an optimization job. Returns 201 with the queued job. Honours ``Operation-Id`` for
-        idempotent retry.
-
-        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
-         Required.
-        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
-        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
-         server creates the job unconditionally. Default value is None.
-        :paramtype operation_id: str
-        :return: OptimizationJob. The OptimizationJob is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.OptimizationJob
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
+    ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -15461,7 +15500,7 @@ class BetaAgentsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.OptimizationJob] = kwargs.pop("cls", None)
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -15484,7 +15523,7 @@ class BetaAgentsOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -15492,11 +15531,10 @@ class BetaAgentsOperations:
         response = pipeline_response.http_response
 
         if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
+            try:
+                await response.read()  # Load the body in memory and close the socket
+            except (StreamConsumedError, StreamClosedError):
+                pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -15508,21 +15546,175 @@ class BetaAgentsOperations:
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
         response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
 
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.OptimizationJob, response.json())
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
         return deserialized  # type: ignore
 
+    @overload
+    async def begin_create_optimization_job(
+        self,
+        job: _models.OptimizationJob,
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry.
+
+        :param job: The job to create. Required.
+        :type job: ~azure.ai.projects.models.OptimizationJob
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
+         OptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_optimization_job(
+        self, job: JSON, *, operation_id: Optional[str] = None, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry.
+
+        :param job: The job to create. Required.
+        :type job: JSON
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
+         OptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def begin_create_optimization_job(
+        self,
+        job: IO[bytes],
+        *,
+        operation_id: Optional[str] = None,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry.
+
+        :param job: The job to create. Required.
+        :type job: IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
+         OptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_create_optimization_job(
+        self, job: Union[_models.OptimizationJob, JSON, IO[bytes]], *, operation_id: Optional[str] = None, **kwargs: Any
+    ) -> AsyncLROPoller[_models.OptimizationJobResult]:
+        """Create an agent optimization job.
+
+        Creates an optimization job and returns the queued job. Honors ``Operation-Id`` for idempotent
+        retry.
+
+        :param job: The job to create. Is one of the following types: OptimizationJob, JSON, IO[bytes]
+         Required.
+        :type job: ~azure.ai.projects.models.OptimizationJob or JSON or IO[bytes]
+        :keyword operation_id: Client-generated unique ID for idempotent retries. When absent, the
+         server creates the job unconditionally. Default value is None.
+        :paramtype operation_id: str
+        :return: An instance of AsyncLROPoller that returns OptimizationJobResult. The
+         OptimizationJobResult is compatible with MutableMapping
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.OptimizationJobResult]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.OptimizationJobResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
+        if cont_token is None:
+            raw_result = await self._create_optimization_job_initial(
+                job=job,
+                operation_id=operation_id,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+            await raw_result.http_response.read()  # type: ignore
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            response_headers = {}
+            response = pipeline_response.http_response
+            response_headers["Operation-Location"] = self._deserialize(
+                "str", response.headers.get("Operation-Location")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
+            deserialized = _deserialize(_models.OptimizationJobResult, response.json().get("result", {}))
+            if cls:
+                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return deserialized
+
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method: AsyncPollingMethod = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return AsyncLROPoller[_models.OptimizationJobResult].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return AsyncLROPoller[_models.OptimizationJobResult](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
+
     @distributed_trace_async
     async def get_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
-        """Get info about an agent optimization job.
+        """Get an agent optimization job.
 
-        Get an optimization job by id.
+        Retrieves an optimization job by its identifier.
 
         :param job_id: The ID of the job. Required.
         :type job_id: str
@@ -15599,9 +15791,9 @@ class BetaAgentsOperations:
         agent_name: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.OptimizationJobListItem"]:
-        """Returns a list of agent optimization jobs.
+        """List agent optimization jobs.
 
-        List optimization jobs. Supports cursor pagination and optional status / agent_name filters.
+        Lists optimization jobs with cursor pagination and optional status or agent name filters.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -15692,10 +15884,10 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def cancel_optimization_job(self, job_id: str, **kwargs: Any) -> _models.OptimizationJob:
-        """Cancels an agent optimization job.
+        """Cancel an agent optimization job.
 
-        Request cancellation of a running or queued job. Returns an error if the job is already in a
-        terminal state.
+        Requests cancellation of a running or queued job and returns an error if the job is already in
+        a terminal state.
 
         :param job_id: The ID of the job to cancel. Required.
         :type job_id: str
@@ -15760,9 +15952,9 @@ class BetaAgentsOperations:
 
     @distributed_trace_async
     async def delete_optimization_job(self, job_id: str, **kwargs: Any) -> None:
-        """Deletes an agent optimization job.
+        """Delete an agent optimization job.
 
-        Delete the job and its candidate artifacts. Cancels first if non-terminal.
+        Deletes the job and its candidate artifacts, canceling the job first if it is non-terminal.
 
         :param job_id: The ID of the job to delete. Required.
         :type job_id: str

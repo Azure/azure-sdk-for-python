@@ -925,7 +925,14 @@ class Gateway(TrackedResource):
     )
     """Hybrid Compute Gateway properties."""
 
-    __flattened_items = ["provisioning_state", "gateway_id", "gateway_type", "gateway_endpoint", "allowed_features"]
+    __flattened_items = [
+        "provisioning_state",
+        "gateway_id",
+        "gateway_type",
+        "gateway_endpoint",
+        "allowed_features",
+        "gateway_bypass",
+    ]
 
     @overload
     def __init__(
@@ -980,6 +987,9 @@ class GatewayProperties(_Model):
     :vartype gateway_endpoint: str
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -1000,6 +1010,11 @@ class GatewayProperties(_Model):
         name="allowedFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of features that are enabled for this Gateway."""
+    gateway_bypass: Optional[list[str]] = rest_field(
+        name="gatewayBypass", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
     @overload
     def __init__(
@@ -1007,6 +1022,7 @@ class GatewayProperties(_Model):
         *,
         gateway_type: Optional[Union[str, "_models.GatewayType"]] = None,
         allowed_features: Optional[list[str]] = None,
+        gateway_bypass: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1049,7 +1065,7 @@ class ResourceUpdate(_Model):
 
 
 class GatewayUpdate(ResourceUpdate):
-    """Describes a License Update.
+    """Describes a Gateway Update.
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
@@ -1062,7 +1078,7 @@ class GatewayUpdate(ResourceUpdate):
     )
     """Gateway Update properties."""
 
-    __flattened_items = ["allowed_features"]
+    __flattened_items = ["allowed_features", "gateway_bypass"]
 
     @overload
     def __init__(
@@ -1106,18 +1122,27 @@ class GatewayUpdateProperties(_Model):
 
     :ivar allowed_features: Specifies the list of features that are enabled for this Gateway.
     :vartype allowed_features: list[str]
+    :ivar gateway_bypass: Specifies the list of domain names that should bypass the gateway. Each
+     entry must be a valid DNS hostname.
+    :vartype gateway_bypass: list[str]
     """
 
     allowed_features: Optional[list[str]] = rest_field(
         name="allowedFeatures", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the list of features that are enabled for this Gateway."""
+    gateway_bypass: Optional[list[str]] = rest_field(
+        name="gatewayBypass", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Specifies the list of domain names that should bypass the gateway. Each entry must be a valid
+     DNS hostname."""
 
     @overload
     def __init__(
         self,
         *,
         allowed_features: Optional[list[str]] = None,
+        gateway_bypass: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -1256,44 +1281,6 @@ class HybridComputePrivateLinkScopeProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
-    """Identity for the resource.
-
-    :ivar principal_id: The principal ID of resource identity. The value must be an UUID.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource. The value must be an UUID.
-    :vartype tenant_id: str
-    :ivar type: The identity type. "SystemAssigned"
-    :vartype type: str or ~azure.mgmt.hybridcompute.models.ResourceIdentityType
-    """
-
-    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
-    """The principal ID of resource identity. The value must be an UUID."""
-    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
-    """The tenant ID of resource. The value must be an UUID."""
-    type: Optional[Union[str, "_models.ResourceIdentityType"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identity type. \"SystemAssigned\""""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IpAddress(_Model):
     """Describes properties of the IP address.
 
@@ -1406,8 +1393,8 @@ class LicenseDetails(_Model):
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: str or ~azure.mgmt.hybridcompute.models.LicenseState
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: str or ~azure.mgmt.hybridcompute.models.LicenseTarget
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -1432,8 +1419,8 @@ class LicenseDetails(_Model):
     target: Optional[Union[str, "_models.LicenseTarget"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Optional[Union[str, "_models.LicenseEdition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2264,8 +2251,8 @@ class LicenseUpdatePropertiesLicenseDetails(_Model):
     :ivar state: Describes the state of the license. Known values are: "Activated" and
      "Deactivated".
     :vartype state: str or ~azure.mgmt.hybridcompute.models.LicenseState
-    :ivar target: Describes the license target server. Known values are: "Windows Server 2012" and
-     "Windows Server 2012 R2".
+    :ivar target: Describes the license target server. Known values are: "Windows Server 2012",
+     "Windows Server 2012 R2", and "Windows Server 2016".
     :vartype target: str or ~azure.mgmt.hybridcompute.models.LicenseTarget
     :ivar edition: Describes the edition of the license. The values are either Standard or
      Datacenter. Known values are: "Standard" and "Datacenter".
@@ -2284,8 +2271,8 @@ class LicenseUpdatePropertiesLicenseDetails(_Model):
     target: Optional[Union[str, "_models.LicenseTarget"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """Describes the license target server. Known values are: \"Windows Server 2012\" and \"Windows
-     Server 2012 R2\"."""
+    """Describes the license target server. Known values are: \"Windows Server 2012\", \"Windows
+     Server 2012 R2\", and \"Windows Server 2016\"."""
     edition: Optional[Union[str, "_models.LicenseEdition"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2436,7 +2423,7 @@ class Machine(TrackedResource):
     :ivar resources: The list of extensions affiliated to the machine.
     :vartype resources: list[~azure.mgmt.hybridcompute.models.MachineExtension]
     :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
+    :vartype identity: ~azure.mgmt.hybridcompute.models.ManagedServiceIdentity
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: str or ~azure.mgmt.hybridcompute.models.ArcKindEnum
@@ -2448,7 +2435,9 @@ class Machine(TrackedResource):
     """Hybrid Compute Machine properties."""
     resources: Optional[list["_models.MachineExtension"]] = rest_field(visibility=["read"])
     """The list of extensions affiliated to the machine."""
-    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identity for the resource."""
     kind: Optional[Union[str, "_models.ArcKindEnum"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -2467,6 +2456,7 @@ class Machine(TrackedResource):
         "agent_upgrade",
         "os_profile",
         "license_profile",
+        "status_reason",
         "provisioning_state",
         "status",
         "last_status_change",
@@ -2503,7 +2493,7 @@ class Machine(TrackedResource):
         location: str,
         tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.MachineProperties"] = None,
-        identity: Optional["_models.Identity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.ArcKindEnum"]] = None,
     ) -> None: ...
 
@@ -3227,6 +3217,9 @@ class MachineProperties(_Model):
     :vartype os_profile: ~azure.mgmt.hybridcompute.models.OSProfile
     :ivar license_profile: Specifies the License related properties for a machine.
     :vartype license_profile: ~azure.mgmt.hybridcompute.models.LicenseProfileMachineInstanceView
+    :ivar status_reason: Indicates whether the service has detected that this Arc machine is a
+     clone of another onboarded machine. Service-computed; not settable by the user. "Cloned"
+    :vartype status_reason: str or ~azure.mgmt.hybridcompute.models.MachineStatusReason
     :ivar provisioning_state: The provisioning state, which only appears in the response.
     :vartype provisioning_state: str
     :ivar status: The status of the hybrid machine agent. Known values are: "Connected",
@@ -3325,6 +3318,11 @@ class MachineProperties(_Model):
         name="licenseProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Specifies the License related properties for a machine."""
+    status_reason: Optional[Union[str, "_models.MachineStatusReason"]] = rest_field(
+        name="statusReason", visibility=["read"]
+    )
+    """Indicates whether the service has detected that this Arc machine is a clone of another
+     onboarded machine. Service-computed; not settable by the user. \"Cloned\""""
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
     """The provisioning state, which only appears in the response."""
     status: Optional[Union[str, "_models.StatusTypes"]] = rest_field(visibility=["read"])
@@ -3800,7 +3798,7 @@ class MachineUpdate(ResourceUpdate):
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar identity: Identity for the resource.
-    :vartype identity: ~azure.mgmt.hybridcompute.models.Identity
+    :vartype identity: ~azure.mgmt.hybridcompute.models.ManagedServiceIdentity
     :ivar kind: Indicates which kind of Arc machine placement on-premises, such as HCI, SCVMM or
      VMware etc. Known values are: "AVS", "HCI", "SCVMM", "VMware", "EPS", "GCP", and "AWS".
     :vartype kind: str or ~azure.mgmt.hybridcompute.models.ArcKindEnum
@@ -3808,7 +3806,9 @@ class MachineUpdate(ResourceUpdate):
     :vartype properties: ~azure.mgmt.hybridcompute.models.MachineUpdateProperties
     """
 
-    identity: Optional["_models.Identity"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """Identity for the resource."""
     kind: Optional[Union[str, "_models.ArcKindEnum"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -3836,7 +3836,7 @@ class MachineUpdate(ResourceUpdate):
         self,
         *,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
         kind: Optional[Union[str, "_models.ArcKindEnum"]] = None,
         properties: Optional["_models.MachineUpdateProperties"] = None,
     ) -> None: ...
@@ -3940,6 +3940,58 @@ class MachineUpdateProperties(_Model):
         private_link_scope_resource_id: Optional[str] = None,
         identity_key_store: Optional[str] = None,
         tpm_ek_certificate: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedServiceIdentity(_Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.hybridcompute.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.hybridcompute.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
     ) -> None: ...
 
     @overload
@@ -5512,6 +5564,21 @@ class TagsResource(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""
 
 
 class VolumeLicenseDetails(_Model):
