@@ -7,9 +7,7 @@
 
 Realtime uses a fundamentally different transport (a persistent WebSocket)
 than the request/response HTTP surface. It is exposed as the
-``VoiceAgentsClient.realtime`` namespace; the streaming implementation is
-interface-only today, so :meth:`AsyncRealtime.connect` raises
-``NotImplementedError`` until the transport ships.
+``VoiceAgentsClient.realtime`` namespace.
 The connection ergonomics follow the OpenAI Python realtime client so that
 developers moving between the two libraries get a familiar surface:
 
@@ -41,14 +39,6 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-_NOT_IMPLEMENTED_MESSAGE = (
-    "Realtime (WebSocket) streaming is not yet available for voice agents. This client is an "
-    "interface-only preview: the service-side streaming route is not wired up, so no streaming "
-    "functionality exists today. This surface is provided for early integration only and will "
-    "begin working in a future release; expect breaking changes until then."
-)
-
-
 __all__ = [
     "AsyncRealtime",
     "AsyncRealtimeConnection",
@@ -61,7 +51,7 @@ def _to_ws_url(endpoint: str, agent_name: str) -> str:
 
     :param str endpoint: The Foundry project endpoint (``https://.../api/projects/...``).
     :param str agent_name: The name of the voice agent to connect to.
-    :return: A ``wss://``/``ws://`` URL targeting the deferred realtime route.
+    :return: A ``wss://``/``ws://`` URL targeting the realtime route.
     :rtype: str
     """
     base = endpoint.rstrip("/")
@@ -294,6 +284,7 @@ class AsyncRealtimeConnectionManager:
         api_version: str,
         agent_name: str,
         foundry_features: Optional[str] = None,
+        connection_url: Optional[str] = None,
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
@@ -304,6 +295,7 @@ class AsyncRealtimeConnectionManager:
         self._api_version = api_version
         self._agent_name = agent_name
         self._foundry_features = foundry_features
+        self._connection_url = connection_url
         self._extra_query = dict(extra_query or {})
         self._extra_headers = dict(extra_headers or {})
         self._kwargs = kwargs
@@ -325,7 +317,10 @@ class AsyncRealtimeConnectionManager:
                 "The realtime client requires `aiohttp`. Install it with `pip install aiohttp`."
             ) from exc
 
-        url = _to_ws_url(self._endpoint, self._agent_name)
+        # ``connection_url`` fully overrides the computed route (scheme/host/path). This is the
+        # escape hatch used to reach the deployed data-plane route directly while the public
+        # endpoint's routing to agent orchestration is still rolling out.
+        url = self._connection_url or _to_ws_url(self._endpoint, self._agent_name)
 
         params: dict[str, str] = {"api-version": self._api_version}
         params.update(self._extra_query)
@@ -333,7 +328,11 @@ class AsyncRealtimeConnectionManager:
         token = await self._credential.get_token(*self._credential_scopes)
         headers: dict[str, str] = {"Authorization": f"Bearer {token.token}"}
         if self._foundry_features is not None:
-            headers["Foundry-Features"] = self._foundry_features
+            # Coerce enum members (e.g. ``AgentDefinitionOptInKeys``) to their string value so the
+            # header carries ``VoiceAgents=V1Preview`` rather than the enum's ``repr``/``str`` form,
+            # which the gateway rejects with a 403 during the WebSocket handshake.
+            foundry_features = getattr(self._foundry_features, "value", self._foundry_features)
+            headers["Foundry-Features"] = str(foundry_features)
         headers.update(self._extra_headers)
 
         session = aiohttp.ClientSession()
@@ -383,22 +382,29 @@ class AsyncRealtime:
         *,
         agent_name: str,
         foundry_features: Optional[str] = None,
+        connection_url: Optional[str] = None,
+        api_version: Optional[str] = None,
+        credential_scopes: Optional[List[str]] = None,
         extra_query: Optional[Mapping[str, str]] = None,
         extra_headers: Optional[Mapping[str, str]] = None,
         **kwargs: Any,
     ) -> AsyncRealtimeConnectionManager:
         """Open a realtime WebSocket connection to a voice agent.
 
-        .. note::
-           Realtime streaming is **not yet implemented**. This method currently
-           raises :class:`NotImplementedError`; the interface is exposed only for
-           early integration and will begin working in a future release.
-
         :keyword str agent_name: The name of the voice agent to connect to.
         :keyword foundry_features: Preview opt-in value for the ``Foundry-Features`` header,
          e.g. ``AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW`` or
          ``"VoiceAgents=V1Preview"``. Default value is None.
         :paramtype foundry_features: str or None
+        :keyword connection_url: Full ``wss://``/``ws://`` URL that overrides the route computed
+         from the client endpoint. Use this to target a specific data-plane host/path directly;
+         query parameters are still appended. Default value is None.
+        :paramtype connection_url: str or None
+        :keyword api_version: Overrides the client's API version for the handshake. Default value is None.
+        :paramtype api_version: str or None
+        :keyword credential_scopes: Overrides the client's token scopes for the handshake.
+         Default value is None.
+        :paramtype credential_scopes: list[str] or None
         :keyword extra_query: Additional query-string parameters for the handshake.
         :paramtype extra_query: Mapping[str, str] or None
         :keyword extra_headers: Additional headers for the handshake.
@@ -406,14 +412,14 @@ class AsyncRealtime:
         :return: An async context manager yielding an :class:`AsyncRealtimeConnection`.
         :rtype: AsyncRealtimeConnectionManager
         """
-        raise NotImplementedError(_NOT_IMPLEMENTED_MESSAGE)
-        return AsyncRealtimeConnectionManager(  # pylint: disable=unreachable
+        return AsyncRealtimeConnectionManager(
             endpoint=self._config.endpoint,
             credential=self._config.credential,
-            credential_scopes=self._config.credential_scopes,
-            api_version=self._config.api_version,
+            credential_scopes=credential_scopes or self._config.credential_scopes,
+            api_version=api_version or self._config.api_version,
             agent_name=agent_name,
             foundry_features=foundry_features,
+            connection_url=connection_url,
             extra_query=extra_query,
             extra_headers=extra_headers,
             **kwargs,

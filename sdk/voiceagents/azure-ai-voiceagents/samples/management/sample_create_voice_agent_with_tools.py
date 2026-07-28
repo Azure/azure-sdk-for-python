@@ -21,8 +21,7 @@ DESCRIPTION:
 
     The tools and audio settings are session defaults baked into the agent; the live
     realtime session that actually invokes them is reached through the
-    `client.realtime.connect(...)` namespace, which is exposed as an interface today
-    and raises `NotImplementedError` until the streaming transport ships.
+    `client.realtime.connect(...)` namespace (see the live sample).
 
 USAGE:
     python sample_create_voice_agent_with_tools.py

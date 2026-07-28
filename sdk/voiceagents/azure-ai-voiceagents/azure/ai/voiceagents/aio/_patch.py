@@ -18,11 +18,10 @@ from ._realtime import (
 
 
 class VoiceAgentsClient(_GeneratedVoiceAgentsClient):
-    """VoiceAgentsClient with an interface-only realtime namespace.
+    """VoiceAgentsClient with a realtime streaming namespace.
 
-    Adds the :attr:`realtime` namespace on top of the generated HTTP client.
-    Realtime connections are not yet available and ``connect()`` currently raises
-    :class:`NotImplementedError`.
+    Adds the :attr:`realtime` namespace on top of the generated HTTP client,
+    exposing ``connect(...)`` for realtime WebSocket sessions.
     """
 
     _realtime: Optional[AsyncRealtime] = None
