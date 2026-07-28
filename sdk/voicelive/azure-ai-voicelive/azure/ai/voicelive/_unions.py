@@ -10,8 +10,24 @@ from typing import TYPE_CHECKING, Union
 
 if TYPE_CHECKING:
     from . import models as _models
-Voice = Union[
-    str, "_models.OpenAIVoiceName", "_models.OpenAIVoice", "_models.AzureVoice", "_models.AzureRealtimeNativeVoice"
-]
-ToolChoice = Union[str, "_models.ToolChoiceLiteral", "_models.ToolChoiceSelection"]
+VoiceLiveMcpAuthorization = Union[str, "_models.AssignedManagedIdentity"]
+VoiceLiveMcpRequireApproval = Union[str, "_models.VoiceLiveMcpApprovalMode", "_models.VoiceLiveMcpApprovalRules"]
+VoiceLiveTool = Union["_models.FunctionTool", "_models.VoiceLiveMcpTool"]
+VoiceLiveToolChoice = Union[str, "_models.ToolChoiceOptions", "_models.ToolChoiceFunction", "_models.ToolChoiceMCP"]
 InterimResponseConfig = Union["_models.StaticInterimResponseConfig", "_models.LlmInterimResponseConfig"]
+ConversationRequestItem = Union[
+    "_models.MessageItem",
+    "_models.FunctionCallItem",
+    "_models.FunctionCallOutputItem",
+    "_models.RealtimeMCPApprovalResponse",
+]
+ResponseItem = Union[
+    "_models.AzureResponseItem",
+    "_models.MessageItem",
+    "_models.FunctionCallItem",
+    "_models.FunctionCallOutputItem",
+    "_models.RealtimeMCPToolCall",
+    "_models.RealtimeMCPListTools",
+    "_models.RealtimeMCPApprovalRequest",
+    "_models.RealtimeMCPApprovalResponse",
+]
