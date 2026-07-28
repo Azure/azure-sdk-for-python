@@ -124,5 +124,6 @@
         "azure.mgmt.mongocluster.aio.operations.UsersOperations.begin_delete": "Microsoft.DocumentDB.Users.delete",
         "azure.mgmt.mongocluster.operations.UsersOperations.list_by_mongo_cluster": "Microsoft.DocumentDB.Users.listByMongoCluster",
         "azure.mgmt.mongocluster.aio.operations.UsersOperations.list_by_mongo_cluster": "Microsoft.DocumentDB.Users.listByMongoCluster"
-    }
+    },
+    "CrossLanguageVersion": "8dd585f18763"
 }

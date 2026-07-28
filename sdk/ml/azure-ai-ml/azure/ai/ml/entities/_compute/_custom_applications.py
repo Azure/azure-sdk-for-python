@@ -5,15 +5,15 @@
 
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomService, Docker
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Endpoint as RestEndpoint
-from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariable as RestEnvironmentVariable
-from azure.ai.ml._restclient.v2022_10_01_preview.models import EnvironmentVariableType as RestEnvironmentVariableType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Image as RestImage
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ImageType as RestImageType
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Protocol
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinition as RestVolumeDefinition
-from azure.ai.ml._restclient.v2022_10_01_preview.models import VolumeDefinitionType as RestVolumeDefinitionType
+from azure.ai.ml._restclient.arm_ml_service.models import CustomService, Docker
+from azure.ai.ml._restclient.arm_ml_service.models import Endpoint as RestEndpoint
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVariable as RestEnvironmentVariable
+from azure.ai.ml._restclient.arm_ml_service.models import EnvironmentVariableType as RestEnvironmentVariableType
+from azure.ai.ml._restclient.arm_ml_service.models import Image as RestImage
+from azure.ai.ml._restclient.arm_ml_service.models import ImageType as RestImageType
+from azure.ai.ml._restclient.arm_ml_service.models import Protocol
+from azure.ai.ml._restclient.arm_ml_service.models import VolumeDefinition as RestVolumeDefinition
+from azure.ai.ml._restclient.arm_ml_service.models import VolumeDefinitionType as RestVolumeDefinitionType
 from azure.ai.ml.constants._compute import DUPLICATE_APPLICATION_ERROR, INVALID_VALUE_ERROR, CustomApplicationDefaults
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -160,15 +160,19 @@ class CustomApplications:
         if self.bind_mounts:
             volumes = [volume._to_rest_object() for volume in self.bind_mounts]
 
-        return CustomService(
+        custom_service = CustomService(
             name=self.name,
             image=self.image._to_rest_object(),
             endpoints=endpoints,
             environment_variables=environment_variables,
             volumes=volumes,
             docker=Docker(privileged=True),
-            additional_properties={**{"type": self.type}, **self.additional_properties},
         )
+        # ``type`` and any extra fields are not typed on the arm model; set them as wire fields.
+        custom_service["type"] = self.type
+        for key, value in self.additional_properties.items():
+            custom_service[key] = value
+        return custom_service
 
     @classmethod
     def _from_rest_object(cls, obj: CustomService) -> "CustomApplications":
@@ -187,14 +191,18 @@ class CustomApplications:
             for volume in obj.volumes:
                 bind_mounts.append(VolumeSettings._from_rest_object(volume))
 
+        # ``type`` and extra keys are stored as untyped wire fields on the arm model.
+        known_wire_fields = {"name", "image", "endpoints", "environmentVariables", "volumes", "docker"}
+        additional_properties = {key: value for key, value in dict(obj).items() if key not in known_wire_fields}
+
         return CustomApplications(
             name=obj.name,
             image=ImageSettings._from_rest_object(obj.image),
             endpoints=endpoints,
             environment_variables=environment_variables,
             bind_mounts=bind_mounts,
-            type=obj.additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
-            **obj.additional_properties,
+            type=additional_properties.pop("type", CustomApplicationDefaults.DOCKER),
+            **additional_properties,
         )
 
 

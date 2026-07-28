@@ -6,16 +6,20 @@
 
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ModelProvider as RestModelProvider,
     CustomModelFineTuning as RestCustomModelFineTuningVertical,
     FineTuningJob as RestFineTuningJob,
     JobBase as RestJobBase,
+    JobOutput as RestJobOutput,
+    JobResourceConfiguration as RestJobResourceConfiguration,
     MLFlowModelJobInput,
+    QueueSettings as RestQueueSettings,
     UriFileJobInput,
 )
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
 )
 from azure.ai.ml.entities._job.job_resources import JobResources
@@ -108,12 +112,22 @@ class CustomModelFineTuningJob(FineTuningVertical):
             properties=self.properties,
             compute_id=self.compute,
             fine_tuning_details=custom_finetuning_vertical,
-            outputs=to_rest_data_outputs(self.outputs),
+            # The shared arm_ml_service model defaults is_archived to None (omitted on the wire), but
+            # the legacy msrest model serialized isArchived=false on create. Set it explicitly to keep
+            # the wire body identical.
+            is_archived=False,
+            # The shared ``to_rest_data_outputs`` helper emits msrest models; convert to the
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
         )
         if self.resources:
-            finetuning_job.resources = self.resources._to_rest_object()
+            finetuning_job.resources = to_hybrid_rest_model(
+                self.resources._to_rest_object(), RestJobResourceConfiguration
+            )
         if self.queue_settings:
-            finetuning_job.queue_settings = self.queue_settings._to_rest_object()
+            finetuning_job.queue_settings = to_hybrid_rest_model(
+                self.queue_settings._to_rest_object(), RestQueueSettings
+            )
 
         result = RestJobBase(properties=finetuning_job)
         result.name = self.name

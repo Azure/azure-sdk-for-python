@@ -5,21 +5,21 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import FqdnOutboundRule as RestFqdnOutboundRule
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import FqdnOutboundRule as RestFqdnOutboundRule
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedNetworkProvisionStatus as RestManagedNetworkProvisionStatus,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ManagedNetworkSettings as RestManagedNetwork
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedNetworkSettings as RestManagedNetwork
+from azure.ai.ml._restclient.arm_ml_service.models import (
     PrivateEndpointDestination as RestPrivateEndpointOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     PrivateEndpointOutboundRule as RestPrivateEndpointOutboundRule,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ServiceTagDestination as RestServiceTagOutboundRuleDestination,
 )
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
+from azure.ai.ml._restclient.arm_ml_service.models import ServiceTagOutboundRule as RestServiceTagOutboundRule
 from azure.ai.ml.constants._workspace import IsolationMode, OutboundRuleCategory, OutboundRuleType
 
 

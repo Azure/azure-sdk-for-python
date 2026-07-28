@@ -157,6 +157,15 @@ class ConfidentialVMEncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """NON_PERSISTED_TPM."""
 
 
+class ConfidentialVMVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the version of Confidential VM for the resource."""
+
+    V1 = "V1"
+    """V1 indicates the resource does not have an associated Virtual Machine Metadata."""
+    V2 = "V2"
+    """V2 indicates the resource has an associated Virtual Machine Metadata."""
+
+
 class ConsistencyModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ConsistencyMode of the RestorePoint. Can be specified in the input while creating a restore
     point. For now, only CrashConsistent is accepted as a valid input. Please refer to
@@ -749,6 +758,19 @@ class ImageState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DEPRECATED."""
 
 
+class ImmutabilityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the immutability policy. 'Unlocked' allows the policy to be modified by privileged
+    users; 'Locked' prevents reduction of the immutability duration but allows extension of the
+    lock period.
+    """
+
+    UNLOCKED = "Unlocked"
+    """Privileged users can modify the snapshot's immutability policy, if it is unlocked type."""
+    LOCKED = "Locked"
+    """The snapshot immutability policy duration cannot be reduced but can be extended. The policy
+    cannot be removed until the lock period expires."""
+
+
 class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of InstanceViewTypes."""
 
@@ -758,6 +780,13 @@ class InstanceViewTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """USER_DATA."""
     RESILIENCY_VIEW = "resiliencyView"
     """RESILIENCY_VIEW."""
+
+
+class InterconnectBlockExpandTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The expand expression to apply on the operation for an Interconnect Block."""
+
+    INSTANCE_VIEW = "instanceView"
+    """Retrieve the runtime instance view of the Interconnect Block."""
 
 
 class IntervalInMins(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1392,6 +1421,8 @@ class RollingUpgradeStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ROLLING_FORWARD = "RollingForward"
     """ROLLING_FORWARD."""
+    ROLLING_BACK = "RollingBack"
+    """ROLLING_BACK."""
     CANCELLED = "Cancelled"
     """CANCELLED."""
     COMPLETED = "Completed"
@@ -1712,6 +1743,8 @@ class UpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ROLLING_FORWARD = "RollingForward"
     """ROLLING_FORWARD."""
+    ROLLING_BACK = "RollingBack"
+    """ROLLING_BACK."""
     CANCELLED = "Cancelled"
     """CANCELLED."""
     COMPLETED = "Completed"

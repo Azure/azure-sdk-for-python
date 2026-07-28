@@ -1,5 +1,53 @@
 # Release History
 
+## 38.2.0 (2026-07-15)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added operation group `shared_gallery_invites`
+  - Client `ComputeManagementClient` added operation group `tenant_level_shared_gallery_invites`
+  - Model `DiskRestorePointProperties` added property `snapshot_access_state`
+  - Model `DiskSecurityProfile` added property `confidential_vm_version`
+  - Enum `RollingUpgradeStatusCode` added member `ROLLING_BACK`
+  - Model `SnapshotProperties` added property `immutability_policy`
+  - Enum `UpgradeState` added member `ROLLING_BACK`
+  - Added enum `ConfidentialVMVersion`
+  - Added model `ImmutabilityPolicy`
+  - Added model `ImmutabilityPolicyData`
+  - Added model `ImmutabilityPolicyLockData`
+  - Added enum `ImmutabilityPolicyType`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy`
+  - Operation group `SnapshotsOperations` added method `begin_update_immutability_policy_lock`
+  - Added operation group `SharedGalleryInvitesOperations`
+  - Added operation group `TenantLevelSharedGalleryInvitesOperations`
+
+## 38.1.0 (2026-06-17)
+
+### Features Added
+
+  - Client `ComputeManagementClient` added operation group `interconnect_blocks`
+  - Model `NetworkProfile` added property `interconnect_group_profile`
+  - Model `SkuProfile` added property `automatic_sku_migration_policy`
+  - Model `VirtualMachineInstanceView` added property `interconnect_instance_view`
+  - Model `VirtualMachineProperties` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetNetworkProfile` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetUpdateNetworkProfile` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetUpdateVMProfile` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetVMInstanceView` added property `interconnect_instance_view`
+  - Model `VirtualMachineScaleSetVMNetworkProfileConfiguration` added property `interconnect_group_profile`
+  - Model `VirtualMachineScaleSetVMProfile` added property `interconnect_block_profile`
+  - Model `VirtualMachineScaleSetVMProperties` added property `interconnect_block_profile`
+  - Added model `AutomaticSkuMigrationPolicy`
+  - Added model `InterconnectBlock`
+  - Added enum `InterconnectBlockExpandTypes`
+  - Added model `InterconnectBlockInstanceView`
+  - Added model `InterconnectBlockProfile`
+  - Added model `InterconnectBlockProperties`
+  - Added model `InterconnectBlockUpdate`
+  - Added model `InterconnectGroupProfile`
+  - Added model `InterconnectInstanceView`
+  - Added operation group `InterconnectBlocksOperations`
+
 ## 38.0.0 (2026-04-21)
 
 ### Features Added

@@ -3,6 +3,7 @@ from pathlib import Path
 import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, omit_with_wildcard
+from azure.core.serialization import as_attribute_dict
 
 from azure.ai.ml import Input, MLClient, Output, load_component
 from azure.ai.ml.dsl import pipeline
@@ -808,7 +809,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         with include_private_preview_nodes_in_pipeline():
             pipeline_job = assert_job_cancel(pipeline_job, client)
 
-        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        dsl_pipeline_job_dict = omit_with_wildcard(as_attribute_dict(pipeline_job._to_rest_object()), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "parallel_body": {
                 "_source": "YAML.COMPONENT",

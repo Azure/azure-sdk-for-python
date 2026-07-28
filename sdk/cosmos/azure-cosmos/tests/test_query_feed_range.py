@@ -41,6 +41,8 @@ TEST_CONTAINERS_IDS = [SINGLE_PARTITION_CONTAINER_ID, MULTI_PARTITION_CONTAINER_
 TEST_OFFER_THROUGHPUTS = [CONFIG.THROUGHPUT_FOR_1_PARTITION, CONFIG.THROUGHPUT_FOR_5_PARTITIONS]
 PARTITION_KEY = CONFIG.TEST_CONTAINER_PARTITION_KEY
 PK_VALUES = ('pk1', 'pk2', 'pk3')
+RUN_MARKER_FIELD = "_run_marker"
+RUN_MARKER_VALUE = str(uuid.uuid4())
 def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[str]) -> None:
     if len(items) == 0:
         return
@@ -51,7 +53,15 @@ def add_all_pk_values_to_set(items: List[Mapping[str, str]], pk_value_set: Set[s
 @pytest.fixture(scope="class", autouse=True)
 def setup_and_teardown():
     print("Setup: This runs before any tests")
-    document_definitions = [{PARTITION_KEY: pk, 'id': str(uuid.uuid4()), 'value': 100} for pk in PK_VALUES]
+    document_definitions = [
+        {
+            PARTITION_KEY: pk,
+            'id': str(uuid.uuid4()),
+            'value': 100,
+            RUN_MARKER_FIELD: RUN_MARKER_VALUE,
+        }
+        for pk in PK_VALUES
+    ]
     key_db = CosmosClient(HOST, KEY).get_database_client(DATABASE_ID)
     data_db = test_config.TestConfig.create_data_client().get_database_client(DATABASE_ID)
 
@@ -164,7 +174,10 @@ class TestQueryFeedRange:
     def test_query_with_avg_aggregate_across_full_feed_range_raises(self, setup):
         """AVG over a feed_range spanning multiple partitions must raise."""
         container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
-        query = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+        query = (
+            f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
 
         # Full hash range covers every physical partition of the container.
         full_range = test_config.create_range(
@@ -176,7 +189,11 @@ class TestQueryFeedRange:
         feed_range = test_config.create_feed_range_in_dict(full_range)
 
         with pytest.raises(ValueError) as excinfo:
-            list(container.query_items(query=query, feed_range=feed_range))
+            list(container.query_items(
+                query=query,
+                feed_range=feed_range,
+                parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+            ))
 
         message = str(excinfo.value)
         assert "Unsupported query shape for range-scoped pagination" in message
@@ -186,10 +203,17 @@ class TestQueryFeedRange:
         """AVG scoped to a single-partition feed_range must still succeed."""
         # Multi-partition container, but the feed_range maps to one partition.
         container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
-        query = 'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"])'
+        query = (
+            f'SELECT VALUE AVG(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
 
         feed_range = container.feed_range_from_partition_key(PK_VALUES[0])
-        items = list(container.query_items(query=query, feed_range=feed_range))
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
 
         # Seed data has value=100 for every document.
         assert items, "Single-partition AVG must return at least one result row"
@@ -199,10 +223,182 @@ class TestQueryFeedRange:
         single_container = get_container(setup, SINGLE_PARTITION_CONTAINER_ID)
         single_feed_range = single_container.feed_range_from_partition_key(PK_VALUES[0])
         single_items = list(single_container.query_items(
-            query=query, feed_range=single_feed_range,
+            query=query,
+            feed_range=single_feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
         ))
         assert single_items, "Single-partition container AVG must return a row"
         assert single_items[0] == 100
+
+    # The next few tests run against a multi-partition container and check
+    # that combining partial results returns lists for plain projections and
+    # single values for MIN, MAX, SUM, and COUNT.
+
+    def test_query_value_numeric_field_across_full_feed_range_returns_list(self, setup):
+        """Numeric VALUE projections should return one row per document, not a sum."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE c["value"] FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        # All seeded docs have value=100; we expect one entry per doc.
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one value per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item == 100 for item in items), (
+            f"Expected every value to be 100; got {items}"
+        )
+        assert sum(items) == 100 * len(PK_VALUES)
+
+    def test_query_value_boolean_expression_across_full_feed_range_returns_list(self, setup):
+        """Boolean VALUE projections should return one boolean per document."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE c["value"] > 0 FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        assert len(items) == len(PK_VALUES), (
+            f"Expected one boolean per seeded doc ({len(PK_VALUES)}); got {len(items)}."
+        )
+        assert all(item is True for item in items), (
+            f"All seeded values are 100 > 0; expected every row to be True. Got {items}"
+        )
+
+    def test_query_value_min_across_full_feed_range_returns_scalar(self, setup):
+        """MIN over a multi-partition feed_range should return one value (the smallest)."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE MIN(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        assert len(items) == 1, (
+            f"MIN should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    def test_query_value_max_across_full_feed_range_returns_scalar(self, setup):
+        """MAX over a multi-partition feed_range should return one value (the largest)."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE MAX(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        assert len(items) == 1, (
+            f"MAX should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100
+
+    def test_query_value_sum_across_full_feed_range_still_sums(self, setup):
+        """SUM should still add per-partition totals together."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE SUM(c["value"]) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        assert len(items) == 1, (
+            f"SUM should return a single value across partitions; got {len(items)} rows: {items}"
+        )
+        assert items[0] == 100 * len(PK_VALUES)
+
+    def test_query_value_count_across_full_feed_range_still_counts(self, setup):
+        """COUNT should still return a single total across partitions."""
+        container = get_container(setup, MULTI_PARTITION_CONTAINER_ID)
+        query = (
+            f'SELECT VALUE COUNT(1) FROM c WHERE IS_DEFINED(c["value"]) '
+            f'AND c["{RUN_MARKER_FIELD}"] = @run_marker'
+        )
+
+        full_range = test_config.create_range(
+            range_min="",
+            range_max="FF",
+            is_min_inclusive=True,
+            is_max_inclusive=False,
+        )
+        feed_range = test_config.create_feed_range_in_dict(full_range)
+
+        items = list(container.query_items(
+            query=query,
+            feed_range=feed_range,
+            parameters=[{"name": "@run_marker", "value": RUN_MARKER_VALUE}],
+        ))
+
+        assert len(items) == 1
+        assert items[0] == len(PK_VALUES)
 
     @pytest.mark.parametrize('container_id', TEST_CONTAINERS_IDS)
     @pytest.mark.cosmosSplit
@@ -463,4 +659,3 @@ class TestQueryFeedRange:
 
 if __name__ == "__main__":
     unittest.main()
-

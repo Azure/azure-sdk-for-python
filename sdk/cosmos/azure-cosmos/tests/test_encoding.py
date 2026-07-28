@@ -77,6 +77,54 @@ class TestEncoding(unittest.TestCase):
         read_sp = self.key_container.scripts.get_stored_procedure(created_sp['id'])
         self.assertEqual(read_sp['body'], test_string_unicode)
 
+    # Round-trip tests for documents that contain 4-byte UTF-8
+    # characters (emoji). These exercise both writing and reading
+    # of multi-byte content.
+
+    def test_round_trip_emoji_document_through_full_sdk_stack(self):
+        """Writes a document containing emoji, reads it back, and
+        checks the read content matches the written content exactly."""
+        # Mixes 2-byte (é), 3-byte (日), and 4-byte (emoji) characters.
+        emoji_payload = u'celebration 🎉🎊 — café 日本 🌍'  # cspell:disable-line
+        doc_id = 'emoji-rt-' + str(uuid.uuid4())
+        document = {
+            'pk': 'pk',
+            'id': doc_id,
+            'multibyte_content': emoji_payload,
+        }
+
+        created = self.created_container.create_item(body=document)
+        # Sanity check on the write response itself.
+        self.assertEqual(created['multibyte_content'], emoji_payload)
+
+        read = self.created_container.read_item(item=doc_id, partition_key='pk')
+        self.assertEqual(read['multibyte_content'], emoji_payload)
+        # Also compare the raw UTF-8 bytes to be sure nothing changed.
+        self.assertEqual(
+            read['multibyte_content'].encode('utf-8'),
+            emoji_payload.encode('utf-8'),
+        )
+
+    def test_round_trip_emoji_document_via_query(self):
+        """Same content as the test above, but pulled back via a SQL
+        query instead of a point read."""
+        emoji_payload = u'query 🎉 — café 日本'  # cspell:disable-line
+        doc_id = 'emoji-q-' + str(uuid.uuid4())
+        document = {
+            'pk': 'pk',
+            'id': doc_id,
+            'multibyte_content': emoji_payload,
+        }
+        self.created_container.create_item(body=document)
+
+        results = list(self.created_container.query_items(
+            query="SELECT * FROM c WHERE c.id = @id",
+            parameters=[{"name": "@id", "value": doc_id}],
+            partition_key='pk',
+        ))
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['multibyte_content'], emoji_payload)
+
 
 if __name__ == "__main__":
     unittest.main()

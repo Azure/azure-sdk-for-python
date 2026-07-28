@@ -4,7 +4,7 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import SamplingAlgorithmType
 from azure.ai.ml._schema._sweep.search_space import (
     ChoiceSchema,
     NormalSchema,

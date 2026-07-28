@@ -311,7 +311,14 @@ function Set-EnvValue {
     $pattern = "(?m)^$([regex]::Escape($Key))=.*$"
     $replacement = "$Key=$Value"
     if ([regex]::IsMatch($content, $pattern)) {
-        $content = [regex]::Replace($content, $pattern, $replacement)
+        # Use a MatchEvaluator so $ and \ in user-supplied values (API keys,
+        # endpoints) are written literally instead of being interpreted as
+        # regex replacement metacharacters ($1, $&, $$, etc.).
+        $content = [regex]::Replace(
+            $content,
+            $pattern,
+            [System.Text.RegularExpressions.MatchEvaluator] { param($match) $replacement }
+        )
     } else {
         if ($content -and -not $content.EndsWith("`n")) { $content += "`n" }
         $content += "$replacement`n"

@@ -81,6 +81,21 @@ class BackupType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Scheduled backup."""
 
 
+class BreakthroughMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies whether the volume operates in Breakthrough Mode. When set to 'Enabled', the volume
+    runs on the resources configured for this mode, delivering improved performance and higher
+    throughput. If set to 'Disabled' or omitted, the volume uses the basic configuration. This
+    feature is available only in regions where it’s been configured and first-time users must
+    finish onboarding prior to using Breakthrough Mode.
+    """
+
+    ENABLED = "Enabled"
+    """The volume runs on the resources configured for Breakthrough mode which ensures consistent high
+    performance and a higher throughput."""
+    DISABLED = "Disabled"
+    """The volume uses configuration that provides basic performance and throughput."""
+
+
 class BucketPatchPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access permissions for the bucket. Either ReadOnly or ReadWrite."""
 
@@ -99,6 +114,17 @@ class BucketPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Read-only access to bucket."""
     READ_WRITE = "ReadWrite"
     """Read-write access to bucket."""
+
+
+class CacheFileAccessLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Flag indicating whether file access logs are enabled for the Cache, based on active diagnostic
+    settings present on the Cache.
+    """
+
+    ENABLED = "Enabled"
+    """fileAccessLogs are enabled."""
+    DISABLED = "Disabled"
+    """fileAccessLogs are not enabled."""
 
 
 class CacheLifeCycleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -269,7 +295,9 @@ class DesiredRansomwareProtectionState(str, Enum, metaclass=CaseInsensitiveEnumM
 
 
 class EnableSubvolumes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag indicating whether subvolume operations are enabled on the volume."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. This type
+    will be removed in a future API version.
+    """
 
     ENABLED = "Enabled"
     """subvolumes are enabled."""

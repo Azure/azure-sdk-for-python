@@ -12,7 +12,7 @@ from typing import List, Optional, Any
 from urllib.parse import urlparse
 import psutil
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, ServiceResponseError
 from azure.core.pipeline.policies import (
     ContentDecodePolicy,
     HttpLoggingPolicy,
@@ -52,6 +52,7 @@ from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
 from azure.monitor.opentelemetry.exporter._utils import (
     _get_auth_policy,
     _get_sha256_hash,
+    _get_retry_delay_from_headers,
 )
 from azure.monitor.opentelemetry.exporter.export._rate_limiter import (
     _TokenBucketRateLimiter,
@@ -112,6 +113,7 @@ class BaseExporter:
 
         # TODO: Uncomment configuration changes once testing is completed
         # Get the configuration manager
+        # from azure.monitor.opentelemetry.exporter._configuration._state import get_configuration_manager
         # self._configuration_manager = get_configuration_manager()
 
         self._api_version = kwargs.get("api_version") or _SERVICE_API_LATEST
@@ -163,6 +165,7 @@ class BaseExporter:
         )  # If set, indicates the exporter is instantiated via Azure monitor OpenTelemetry distro. Versions corresponds to distro version.
         # specifies whether current exporter is used for collection of instrumentation metrics
         self._instrumentation_collection = kwargs.get("instrumentation_collection", False)
+        self._retry_after_delay_seconds: Optional[int] = None
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
         policies = [
@@ -193,15 +196,23 @@ class BaseExporter:
             **kwargs,
         )
         # TODO: Uncomment configuration changes once testing is completed
+        # from azure.monitor.opentelemetry.exporter._utils import (
+        #     _get_os_name,
+        #     _get_rp_name,
+        #     _get_attach_type_name,
+        # )
+        # from azure.monitor.opentelemetry.exporter._version import VERSION as ext_version
+
         # if self._configuration_manager:
-        #    self._configuration_manager.initialize(
-        #        os=_get_os(),
-        #        rp=_get_rp(),
-        #        attach=_get_attach_type(),
-        #        component="ext",
-        #        version=ext_version,
-        #        region=self._region,
-        #    )
+        #     self._configuration_manager.initialize(
+        #         os=_get_os_name(),
+        #         rp=_get_rp_name(),
+        #         attach=_get_attach_type_name(),
+        #         component="ext",
+        #         version=ext_version,
+        #         region=self._region,
+        #         ikey=self._instrumentation_key,
+        #     )
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self.storage = LocalFileStorage(  # pyright: ignore
@@ -272,9 +283,15 @@ class BaseExporter:
         if self.storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
-                result_from_storage_put = self.storage.put(envelopes_to_store)
+                if self._retry_after_delay_seconds is not None:
+                    result_from_storage_put = self.storage.put(
+                        envelopes_to_store, lease_period=self._retry_after_delay_seconds
+                    )
+                else:
+                    result_from_storage_put = self.storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
+                self._retry_after_delay_seconds = None
             elif result == ExportResult.SUCCESS:
                 # Try to send any cached events
                 self._transmit_from_storage()
@@ -287,6 +304,7 @@ class BaseExporter:
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-nested-blocks
     # pylint: disable=too-many-statements
+    # pylint: disable=too-many-locals
     def _transmit(self, envelopes: List[TelemetryItem], _skip_rate_limit: bool = False) -> ExportResult:
         """
         Transmit the data envelopes to the ingestion service.
@@ -347,8 +365,20 @@ class BaseExporter:
             reach_ingestion = False
             start_time = time.time()
             final_result = None
+            retry_after_delay_seconds = None
             try:
-                track_response = self.client.track(envelopes)
+                track_result = self.client.track(
+                    envelopes,
+                    cls=lambda pipeline_response, deserialized, _: (
+                        deserialized,
+                        pipeline_response.http_response.headers,
+                    ),
+                )
+                response_headers: Any = {}
+                if isinstance(track_result, tuple) and len(track_result) == 2:
+                    track_response, response_headers = track_result
+                else:
+                    track_response = track_result
                 if not track_response.errors:  # 200
                     self._consecutive_redirects = 0
                     if not self._is_stats_exporter():
@@ -379,6 +409,11 @@ class BaseExporter:
                                     (envelopes[error.index] if error.index is not None else ""),
                                 )
                         elif _is_retryable_code(error.status_code):
+                            if error.status_code == 429 and response_headers != {}:
+                                delay = _get_retry_delay_from_headers(response_headers)
+                                if delay is not None and delay > 0:
+                                    retry_after_delay_seconds = delay
+
                             resend_envelopes.append(envelopes[error.index])  # type: ignore
                             # Track retried items in customer sdkstats
                             if self._should_collect_customer_sdkstats():
@@ -402,7 +437,12 @@ class BaseExporter:
                                 )
                     if self.storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
-                        result_from_storage = self.storage.put(envelopes_to_store, 0)
+                        lease_period = (
+                            retry_after_delay_seconds
+                            if retry_after_delay_seconds is not None
+                            else self._storage_min_retry_interval
+                        )
+                        result_from_storage = self.storage.put(envelopes_to_store, lease_period)
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
@@ -440,6 +480,11 @@ class BaseExporter:
                                 "has the correct `Monitoring Metrics Publisher` role assigned.",
                                 response_error.message,
                             )
+                        elif response_error.status_code == 429:
+                            headers = None
+                            if response_error.response and response_error.response.headers:  # type: ignore
+                                headers = response_error.response.headers  # type: ignore
+                            retry_after_delay_seconds = _get_retry_delay_from_headers(headers)
                 elif _is_throttle_code(response_error.status_code):
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
@@ -558,6 +603,21 @@ class BaseExporter:
                         exc_type = request_error.__class__.__name__  # type: ignore
                     _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
                 result = ExportResult.FAILED_RETRYABLE
+            except ServiceResponseError as response_error:
+                # The request was sent but the client failed to receive a response
+                # (e.g. read timeout).
+                logger.warning("Retrying due to server response error: %s.", response_error.message)
+
+                # Track retry items in customer sdkstats for client-side exceptions
+                if self._should_collect_customer_sdkstats():
+                    track_retry_items(envelopes, response_error)
+
+                if self._should_collect_stats():
+                    exc_type = response_error.exc_type
+                    if exc_type is None or exc_type is type(None):  # pylint: disable=unidiomatic-typecheck
+                        exc_type = response_error.__class__.__name__  # type: ignore
+                    _update_requests_map(_REQ_EXCEPTION_NAME[1], value=exc_type)
+                result = ExportResult.FAILED_RETRYABLE
             except Exception as ex:
                 logger.exception(  # pylint: disable=do-not-log-exceptions-if-not-debug, do-not-use-logging-exception
                     "Envelopes could not be exported and are not retryable: %s.", ex
@@ -597,6 +657,10 @@ class BaseExporter:
 
                 if final_result is None:
                     final_result = result
+                if final_result == ExportResult.FAILED_RETRYABLE:
+                    self._retry_after_delay_seconds = retry_after_delay_seconds
+                else:
+                    self._retry_after_delay_seconds = None
             return final_result
 
         # No spans to export

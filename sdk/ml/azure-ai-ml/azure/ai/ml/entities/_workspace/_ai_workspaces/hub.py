@@ -4,8 +4,8 @@
 
 from typing import Any, Dict, List, Optional
 
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import Workspace as RestWorkspace
-from azure.ai.ml._restclient.v2024_10_01_preview_tsp.models import WorkspaceHubConfig as RestWorkspaceHubConfig
+from azure.ai.ml._restclient.arm_ml_service.models import Workspace as RestWorkspace
+from azure.ai.ml._restclient.arm_ml_service.models import WorkspaceHubConfig as RestWorkspaceHubConfig
 from azure.ai.ml._schema.workspace import HubSchema
 from azure.ai.ml.constants._common import WorkspaceKind
 from azure.ai.ml.entities._credentials import IdentityConfiguration

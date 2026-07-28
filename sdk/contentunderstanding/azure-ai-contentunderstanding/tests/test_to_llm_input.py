@@ -287,8 +287,23 @@ class TestSingleDocument:
             ],
         )
         output = to_llm_input(_make_result([doc]))
-        assert "<!-- page 1 -->" in output
-        assert "<!-- page 2 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
+        assert "<!-- InputPageNumber: 2 -->" in output
+
+    def test_page_markers_not_duplicated_when_service_provides_markers(self):
+        doc = DocumentContent(
+            kind="document",
+            markdown="<!-- InputPageNumber: 1 -->\n\nFirst page text.\n\n<!-- InputPageNumber: 2 -->\n\nSecond page text.",
+            start_page_number=1,
+            end_page_number=2,
+            pages=[
+                DocumentPage(page_number=1, spans=[ContentSpan(offset=0, length=47)]),
+                DocumentPage(page_number=2, spans=[ContentSpan(offset=49, length=48)]),
+            ],
+        )
+        output = to_llm_input(_make_result([doc]))
+        assert output.count("<!-- InputPageNumber: 1 -->") == 1
+        assert output.count("<!-- InputPageNumber: 2 -->") == 1
 
     def test_page_markers_from_pagebreak_fallback(self):
         doc = DocumentContent(
@@ -298,8 +313,8 @@ class TestSingleDocument:
             end_page_number=2,
         )
         output = to_llm_input(_make_result([doc]))
-        assert "<!-- page 1 -->" in output
-        assert "<!-- page 2 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
+        assert "<!-- InputPageNumber: 2 -->" in output
         assert "<!-- PageBreak -->" not in output
 
     def test_page_markers_respect_start_page_number(self):
@@ -311,8 +326,8 @@ class TestSingleDocument:
             end_page_number=4,
         )
         output = to_llm_input(_make_result([doc]))
-        assert "<!-- page 3 -->" in output
-        assert "<!-- page 4 -->" in output
+        assert "<!-- InputPageNumber: 3 -->" in output
+        assert "<!-- InputPageNumber: 4 -->" in output
 
     def test_pages_single_page_format(self):
         doc = _make_invoice_doc(start_page_number=1, end_page_number=1)
@@ -867,6 +882,67 @@ class TestEdgeCases:
         output = to_llm_input(result, include_fields=False, include_markdown=False)
         assert "rai_warnings:" in output
 
+    def test_llm_stats_warning_filtered_from_rai_warnings(self):
+        from azure.core.exceptions import ODataV4Format
+        doc = _make_invoice_doc()
+        telemetry_warning = ODataV4Format(
+            {"code": "Telemetry", "message": "LLMStats: completion calls: 2; embedding calls: 1"}
+        )
+        real_warning = ODataV4Format({"code": "ContentWarning", "message": "Potentially sensitive content."})
+        result = AnalysisResult(contents=[doc], warnings=[telemetry_warning, real_warning])
+
+        output = to_llm_input(result)
+
+        assert "rai_warnings:" in output
+        assert "LLMStats:" not in output
+        assert "Potentially sensitive content." in output
+
+    def test_llm_stats_warning_only_omits_rai_warnings_block(self):
+        from azure.core.exceptions import ODataV4Format
+        doc = _make_invoice_doc()
+        warning = ODataV4Format({"code": "Telemetry", "message": "LLMStats: completion latency: 7.71s"})
+        result = AnalysisResult(contents=[doc], warnings=[warning])
+
+        output = to_llm_input(result)
+
+        assert "rai_warnings:" not in output
+        assert "LLMStats:" not in output
+
+    def test_llm_stats_filter_is_case_sensitive(self):
+        from azure.core.exceptions import ODataV4Format
+        doc = _make_invoice_doc()
+        warning = ODataV4Format({"code": "ContentWarning", "message": "llmstats: keep as a real warning"})
+        result = AnalysisResult(contents=[doc], warnings=[warning])
+
+        output = to_llm_input(result)
+
+        assert "rai_warnings:" in output
+        assert "llmstats: keep as a real warning" in output
+
+    def test_llm_stats_text_in_markdown_body_is_preserved(self):
+        from azure.core.exceptions import ODataV4Format
+        body_text = "A log excerpt:\n- LLMStats: keep this body text"
+        doc = _make_invoice_doc(markdown=body_text)
+        warning = ODataV4Format({"code": "Telemetry", "message": "LLMStats: remove this warning text"})
+        result = AnalysisResult(contents=[doc], warnings=[warning])
+
+        output = to_llm_input(result)
+
+        assert "rai_warnings:" not in output
+        assert "LLMStats: keep this body text" in output
+        assert "LLMStats: remove this warning text" not in output
+
+    def test_llm_stats_warning_filtered_with_leading_whitespace(self):
+        from azure.core.exceptions import ODataV4Format
+        doc = _make_invoice_doc()
+        warning = ODataV4Format({"code": "Telemetry", "message": "  LLMStats: completion calls: 2"})
+        result = AnalysisResult(contents=[doc], warnings=[warning])
+
+        output = to_llm_input(result)
+
+        assert "rai_warnings:" not in output
+        assert "LLMStats:" not in output
+
     def test_empty_string_field_value_quoted(self):
         doc = DocumentContent(
             kind="document",
@@ -1029,9 +1105,9 @@ class TestRealCUPatterns:
         )
         output = to_llm_input(_make_result([doc]))
         assert "<!-- PageBreak -->" not in output
-        assert "<!-- page 1 -->" in output
-        assert "<!-- page 2 -->" in output
-        assert "<!-- page 3 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
+        assert "<!-- InputPageNumber: 2 -->" in output
+        assert "<!-- InputPageNumber: 3 -->" in output
         assert "Page 1 content." in output
         assert "Page 2 content." in output
         assert "Page 3 content." in output
@@ -1048,7 +1124,7 @@ class TestRealCUPatterns:
         )
         output = to_llm_input(_make_result([doc]))
         # Should fall back to PageBreak method, which adds page 1 marker
-        assert "<!-- page 1 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
         assert "![image](pages/1)" in output
 
     def test_document_search_png_single_page_with_spans(self):
@@ -1063,7 +1139,7 @@ class TestRealCUPatterns:
             pages=[DocumentPage(page_number=1, spans=[ContentSpan(offset=0, length=len(markdown))])],
         )
         output = to_llm_input(_make_result([doc]))
-        assert "<!-- page 1 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
         assert "IAN HANSSON" in output
         assert "Summary: A resume document." in output
 
@@ -1082,8 +1158,8 @@ class TestRealCUPatterns:
         output = to_llm_input(_make_result([doc]))
         assert "contentType: document" in output
         assert "fields:" not in output
-        assert "<!-- page 1 -->" in output
-        assert "<!-- page 2 -->" in output
+        assert "<!-- InputPageNumber: 1 -->" in output
+        assert "<!-- InputPageNumber: 2 -->" in output
 
     def test_metadata_keys_with_yaml_special_chars(self):
         """Metadata keys with YAML-special characters must be quoted to produce valid YAML."""

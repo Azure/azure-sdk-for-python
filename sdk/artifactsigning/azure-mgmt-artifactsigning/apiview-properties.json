@@ -22,6 +22,7 @@
         "azure.mgmt.artifactsigning.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
         "azure.mgmt.artifactsigning.models.Revocation": "Microsoft.CodeSigning.Revocation",
         "azure.mgmt.artifactsigning.models.RevokeCertificate": "Microsoft.CodeSigning.RevokeCertificate",
+        "azure.mgmt.artifactsigning.models.RevokeCertificateList": "Microsoft.CodeSigning.RevokeCertificateList",
         "azure.mgmt.artifactsigning.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
         "azure.mgmt.artifactsigning.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.artifactsigning.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
@@ -57,7 +58,8 @@
         "azure.mgmt.artifactsigning.aio.operations.CertificateProfilesOperations.begin_delete": "Microsoft.CodeSigning.CertificateProfiles.delete",
         "azure.mgmt.artifactsigning.operations.CertificateProfilesOperations.list_by_code_signing_account": "Microsoft.CodeSigning.CertificateProfiles.listByCodeSigningAccount",
         "azure.mgmt.artifactsigning.aio.operations.CertificateProfilesOperations.list_by_code_signing_account": "Microsoft.CodeSigning.CertificateProfiles.listByCodeSigningAccount",
-        "azure.mgmt.artifactsigning.operations.CertificateProfilesOperations.revoke_certificate": "Microsoft.CodeSigning.CertificateProfiles.revokeCertificate",
-        "azure.mgmt.artifactsigning.aio.operations.CertificateProfilesOperations.revoke_certificate": "Microsoft.CodeSigning.CertificateProfiles.revokeCertificate"
-    }
+        "azure.mgmt.artifactsigning.operations.CertificateProfilesOperations.revoke_certificates": "Microsoft.CodeSigning.CertificateProfiles.revokeCertificates",
+        "azure.mgmt.artifactsigning.aio.operations.CertificateProfilesOperations.revoke_certificates": "Microsoft.CodeSigning.CertificateProfiles.revokeCertificates"
+    },
+    "CrossLanguageVersion": "1e58a76c105c"
 }

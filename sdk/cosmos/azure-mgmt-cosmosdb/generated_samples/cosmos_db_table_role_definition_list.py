@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-11-01-preview/tablerbac/CosmosDBTableRoleDefinitionList.json
+# x-ms-original-file: 2026-03-15/tablerbac/CosmosDBTableRoleDefinitionList.json
 if __name__ == "__main__":
     main()
