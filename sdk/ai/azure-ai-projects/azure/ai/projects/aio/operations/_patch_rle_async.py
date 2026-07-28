@@ -13,10 +13,12 @@ pipeline against the Foundry project endpoint, exactly like the other operation 
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import json
 import time
 from typing import Any, Dict, List, Mapping, Optional
 
-from azure.core.exceptions import HttpResponseError
+from azure.core.exceptions import HttpResponseError, map_error
+from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ...models import (
@@ -28,6 +30,7 @@ from ...models import (
     RLEStepResult,
     RLESandboxStatus,
 )
+from ..._utils.model_base import SdkJSONEncoder, _deserialize
 from ...operations._patch_rle import (
     _DEFAULT_CREATE_TIMEOUT_S,
     _DEFAULT_POLL_INTERVAL_S,
@@ -118,6 +121,7 @@ class AsyncOpenEnvInstance:
         self._sandbox = sandbox
         self._sandbox_id: str = sandbox.id
         self._sandboxes = sandboxes
+        self._client = getattr(sandboxes, "_client", None)
         self._owner = owner
 
     @property
@@ -163,11 +167,9 @@ class AsyncOpenEnvInstance:
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        await self._ensure_healthy()
         body = RLEResetRequest(seed=seed, episode_id=episode_id)
-        return await self._sandboxes.reset(
-            self._environment_id, self._sandbox_id, body, foundry_features=_RLE_FEATURE, **kwargs
-        )
+        response = await self._dataplane_request("POST", "/reset", body=body, **kwargs)
+        return _deserialize(RLEStepResult, response.json())
 
     @distributed_trace_async
     async def step(self, action: Any = None, **action_kwargs: Any) -> RLEStepResult:
@@ -178,9 +180,9 @@ class AsyncOpenEnvInstance:
         :return: The step result after applying the action.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        await self._ensure_healthy()
         body = RLEStepRequest(action=coerce_action(action, action_kwargs))
-        return await self._sandboxes.step(self._environment_id, self._sandbox_id, body, foundry_features=_RLE_FEATURE)
+        response = await self._dataplane_request("POST", "/step", body=body)
+        return _deserialize(RLEStepResult, response.json())
 
     @distributed_trace_async
     async def state(self) -> RLEnvironmentState:
@@ -189,8 +191,8 @@ class AsyncOpenEnvInstance:
         :return: The current environment state.
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
-        await self._ensure_healthy()
-        return await self._sandboxes.state(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        response = await self._dataplane_request("GET", "/state")
+        return _deserialize(RLEnvironmentState, response.json())
 
     @distributed_trace_async
     async def health(self) -> Dict[str, Any]:
@@ -199,7 +201,8 @@ class AsyncOpenEnvInstance:
         :return: Instance health information.
         :rtype: dict[str, any]
         """
-        return await self._sandboxes.health(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        response = await self._dataplane_request("GET", "/health")
+        return response.json()
 
     @distributed_trace_async
     async def metadata(self) -> Dict[str, Any]:
@@ -208,8 +211,8 @@ class AsyncOpenEnvInstance:
         :return: Instance metadata.
         :rtype: dict[str, any]
         """
-        await self._ensure_healthy()
-        return await self._sandboxes.get_metadata(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        response = await self._dataplane_request("GET", "/metadata")
+        return response.json()
 
     @distributed_trace_async
     async def schema(self) -> Dict[str, Any]:
@@ -218,16 +221,44 @@ class AsyncOpenEnvInstance:
         :return: The instance action and observation schema.
         :rtype: dict[str, any]
         """
-        await self._ensure_healthy()
-        return await self._sandboxes.schema(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        response = await self._dataplane_request("GET", "/schema")
+        return response.json()
 
-    async def _ensure_healthy(self) -> None:
-        """Confirm the instance reports healthy before issuing a runtime request.
+    async def _dataplane_request(self, method: str, route: str, *, body: Any = None, **kwargs: Any) -> Any:
+        """Issue an OpenEnv data-plane request against this instance's :attr:`dataplane_uri`.
 
-        A failed health probe surfaces as :class:`~azure.core.exceptions.HttpResponseError`,
-        consistent with the other operation groups.
+        The request flows through the owning project client's pipeline (auth, retries, tracing)
+        but targets the sandbox's data-plane base URL directly instead of the control plane.
+
+        :param method: HTTP method, e.g. ``"GET"`` or ``"POST"``.
+        :type method: str
+        :param route: OpenEnv route to append to the data-plane base URL, e.g. ``"/reset"``.
+        :type route: str
+        :keyword body: Optional request body model serialized as JSON.
+        :paramtype body: any
+        :return: The raw HTTP response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        await self._sandboxes.health(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+        base = self._sandbox.base_url
+        if not base:
+            raise RLEError("instance has no data-plane URI; the sandbox is not running")
+        if self._client is None:
+            raise RLEError("instance is not bound to a pipeline client")
+        url = base.rstrip("/") + route
+        headers = {"Accept": "application/json"}
+        content: Optional[str] = None
+        if body is not None:
+            headers["Content-Type"] = "application/json"
+            content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore[call-arg]
+        request = HttpRequest(method=method, url=url, headers=headers, content=content)
+        pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+        response = pipeline_response.http_response
+        if response.status_code not in (200,):
+            map_error(status_code=response.status_code, response=response, error_map={})
+            raise HttpResponseError(response=response)
+        return response
 
     async def _release(self) -> None:
         """Release the underlying sandbox, best effort."""
@@ -240,10 +271,10 @@ class AsyncOpenEnvInstance:
 class AsyncOpenEnvClient:
     """Async client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
-    Created via :meth:`RLEOperations.get_openenv_client`. On entering its context (or calling
-    :meth:`reserve`) the client leases ``num_instances`` running instances up front. This is the
-    v1 quota model: the customer's concurrency requirement is provided in advance and the request
-    fails immediately if the quota cannot be satisfied -- there is no queueing.
+    Created via :meth:`RLEOperations.get_openenv_client`. The environment is resolved lazily by
+    ``name`` (optionally pinned to ``version``) when the client is first entered. On entering its
+    context (or calling :meth:`reserve`) the client leases its reserved instances up front and fails
+    immediately if they cannot be provisioned -- there is no queueing.
 
     :meth:`get_instance` hands out one of the reserved :class:`AsyncOpenEnvInstance` objects. Closing the
     client releases every leased instance.
@@ -252,23 +283,29 @@ class AsyncOpenEnvClient:
     def __init__(
         self,
         *,
-        environment_id: str,
+        environments: _RLEnvironmentsOperationsGenerated,
         sandboxes: RLESandboxesOperations,
-        num_instances: int,
-        lease_request: CreateRLESandboxRequest,
+        name: str,
+        version: Optional[str] = None,
+        env_vars: Optional[Mapping[str, str]] = None,
+        num_instances: int = 1,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
     ) -> None:
-        if not environment_id:
-            raise ValueError("environment_id is required")
+        if not name:
+            raise ValueError("name is required")
         if num_instances < 1:
             raise ValueError("num_instances must be >= 1")
-        self._environment_id = environment_id
+        self._environments = environments
         self._sandboxes = sandboxes
+        self._name = name
+        self._version = version
+        self._env_vars = dict(env_vars) if env_vars else None
         self._num_instances = num_instances
-        self._lease_request = lease_request
         self._create_timeout_s = create_timeout_s
         self._poll_interval_s = poll_interval_s
+        self._environment_id: Optional[str] = None
+        self._lease_request: Optional[CreateRLESandboxRequest] = None
         self._pool: List[AsyncOpenEnvInstance] = []
         self._available: List[AsyncOpenEnvInstance] = []
         self._lock = asyncio.Lock()
@@ -276,8 +313,8 @@ class AsyncOpenEnvClient:
         self._closed = False
 
     @property
-    def environment_id(self) -> str:
-        """The hosted RLE environment ID instances are leased from."""
+    def environment_id(self) -> Optional[str]:
+        """The hosted RLE environment ID instances are leased from, once resolved (else ``None``)."""
         return self._environment_id
 
     @property
@@ -297,8 +334,25 @@ class AsyncOpenEnvClient:
     async def __aexit__(self, *exc: Any) -> None:
         await self.close()
 
+    async def _resolve_environment(self) -> None:
+        """Resolve ``name``/``version`` to a hosted environment id and build the lease request."""
+        if self._version is not None:
+            environment = await self._environments.get_environment_version(
+                self._name, self._version, foundry_features=_RLE_FEATURE
+            )
+        else:
+            environment = await self._environments.get_environment(self._name, foundry_features=_RLE_FEATURE)
+        environment_id = getattr(environment, "environment_id", None) or getattr(environment, "id", None)
+        if not environment_id:
+            raise RLEError(f"environment '{self._name}' did not resolve to an environment id")
+        self._environment_id = environment_id
+        self._lease_request = CreateRLESandboxRequest(
+            version=self._version,
+            env_vars=dict(self._env_vars) if self._env_vars else None,
+        )
+
     async def reserve(self) -> None:
-        """Lease ``num_instances`` running instances in advance.
+        """Resolve the environment and lease ``num_instances`` running instances in advance.
 
         Idempotent. If the quota cannot be satisfied, any partially-leased instances are released
         and an error is raised (v1 fails fast rather than queueing).
@@ -312,17 +366,21 @@ class AsyncOpenEnvClient:
                 return
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
+            if self._environment_id is None:
+                await self._resolve_environment()
+            environment_id = self._environment_id
+            lease_request = self._lease_request
             try:
                 for _ in range(self._num_instances):
                     sandbox = await _lease_running_sandbox(
                         self._sandboxes,
-                        self._environment_id,
-                        self._lease_request,
+                        environment_id,
+                        lease_request,
                         create_timeout_s=self._create_timeout_s,
                         poll_interval_s=self._poll_interval_s,
                     )
                     instance = AsyncOpenEnvInstance(
-                        self._environment_id, sandbox=sandbox, sandboxes=self._sandboxes, owner=self
+                        environment_id, sandbox=sandbox, sandboxes=self._sandboxes, owner=self
                     )
                     self._pool.append(instance)
                     self._available.append(instance)
@@ -331,29 +389,32 @@ class AsyncOpenEnvClient:
                 raise
             self._reserved = True
 
-    async def get_instance(self) -> AsyncOpenEnvInstance:
+    def get_instance(self) -> AsyncOpenEnvInstance:
         """Check out a reserved instance for one or more episodes.
 
         The returned :class:`AsyncOpenEnvInstance` is an async context manager; exiting its context
         returns it to the pool. In v1 the pool is bounded by ``num_instances`` and this method
         fails when every reserved instance is already checked out -- it does not queue.
 
+        This is a synchronous accessor (no awaiting) so callers can write
+        ``async with client.get_instance() as instance:`` symmetrically with the sync surface. It is
+        safe under a single-threaded event loop because it performs no ``await``.
+
         :return: A reserved instance ready to run episodes.
         :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvInstance
         """
-        async with self._lock:
-            if self._closed:
-                raise RLEError("OpenEnv client is closed")
-            if not self._reserved:
-                raise RLEError(
-                    "reserve quota first: enter the AsyncOpenEnvClient context or call reserve() before get_instance()"
-                )
-            if not self._available:
-                raise RLEError(
-                    f"no instance available within the reserved quota (num_instances={self._num_instances}); "
-                    "v1 does not queue for additional quota"
-                )
-            return self._available.pop()
+        if self._closed:
+            raise RLEError("OpenEnv client is closed")
+        if not self._reserved:
+            raise RLEError(
+                "reserve quota first: enter the AsyncOpenEnvClient context or call reserve() before get_instance()"
+            )
+        if not self._available:
+            raise RLEError(
+                f"no instance available within the reserved quota (num_instances={self._num_instances}); "
+                "v1 does not queue for additional quota"
+            )
+        return self._available.pop()
 
     async def _return_instance(self, instance: AsyncOpenEnvInstance) -> None:
         async with self._lock:
@@ -392,33 +453,31 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._sandboxes = RLESandboxesOperations(*args, **kwargs)
 
-    @distributed_trace_async
-    async def get_openenv_client(
+    def get_openenv_client(
         self,
         *,
         name: str,
         version: Optional[str] = None,
-        num_instances: int = 1,
         env_vars: Optional[Mapping[str, str]] = None,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
     ) -> AsyncOpenEnvClient:
-        """Create an :class:`AsyncOpenEnvClient` over a hosted RLE environment with a reserved quota.
+        """Create an :class:`AsyncOpenEnvClient` over a hosted RLE environment.
 
-        The environment is resolved by ``name`` (and ``version`` when supplied). The returned client
-        is an async context manager: entering it leases ``num_instances`` running instances up front
-        and fails fast if that quota cannot be satisfied (v1 does not queue).
+        This is a synchronous factory (no awaiting): it constructs the client without any network
+        I/O so callers can write ``async with client.rle.get_openenv_client(...) as openenv_client:``
+        symmetrically with the sync surface. The environment is resolved by ``name`` (and ``version``
+        when supplied) when the client is first entered, at which point it reserves its instances up
+        front and fails fast if that quota cannot be satisfied (v1 does not queue).
         :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved :class:`AsyncOpenEnvInstance`
-        objects to run episodes on.
+        objects to run episodes on. Runtime calls (reset/step/state/...) target each instance's
+        data-plane URI.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
         :paramtype name: str
         :keyword version: Optional environment image version. When set, the environment is resolved at
          that version and every instance is leased against it; otherwise the latest version is used.
         :paramtype version: str or None
-        :keyword num_instances: Number of instances to reserve in advance. The customer's concurrency
-         requirement, provided up front. Default value is 1.
-        :paramtype num_instances: int
         :keyword env_vars: Environment variables to inject into each instance.
         :paramtype env_vars: mapping[str, str] or None
         :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
@@ -431,24 +490,12 @@ class RLEOperations:
         """
         if not name:
             raise ValueError("name is required")
-        if num_instances < 1:
-            raise ValueError("num_instances must be >= 1")
-        if version is not None:
-            environment = await self._environments.get_environment_version(name, version, foundry_features=_RLE_FEATURE)
-        else:
-            environment = await self._environments.get_environment(name, foundry_features=_RLE_FEATURE)
-        environment_id = environment.environment_id
-        if not environment_id:
-            raise RLEError(f"environment '{name}' did not resolve to an environment id")
-        lease_request = CreateRLESandboxRequest(
-            version=version,
-            env_vars=dict(env_vars) if env_vars else None,
-        )
         return AsyncOpenEnvClient(
-            environment_id=environment_id,
+            environments=self._environments,
             sandboxes=self._sandboxes,
-            num_instances=num_instances,
-            lease_request=lease_request,
+            name=name,
+            version=version,
+            env_vars=env_vars,
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )

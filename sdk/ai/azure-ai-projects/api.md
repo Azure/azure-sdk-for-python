@@ -42,7 +42,7 @@ namespace azure.ai.projects
 
 
     class azure.ai.projects.OpenEnvClient: implements ContextManager 
-        property environment_id: str    # Read-only
+        property environment_id: Optional[str]    # Read-only
         property instances: List[OpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
@@ -50,11 +50,13 @@ namespace azure.ai.projects
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                environment_id: str, 
-                lease_request: CreateRLESandboxRequest, 
-                num_instances: int, 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
             ) -> None: ...
 
         def close(self) -> None: ...
@@ -155,7 +157,7 @@ namespace azure.ai.projects.aio
 
 
     class azure.ai.projects.aio.AsyncOpenEnvClient: implements AsyncContextManager 
-        property environment_id: str    # Read-only
+        property environment_id: Optional[str]    # Read-only
         property instances: List[AsyncOpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
@@ -163,16 +165,18 @@ namespace azure.ai.projects.aio
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                environment_id: str, 
-                lease_request: CreateRLESandboxRequest, 
-                num_instances: int, 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
             ) -> None: ...
 
         async def close(self) -> None: ...
 
-        async def get_instance(self) -> AsyncOpenEnvInstance: ...
+        def get_instance(self) -> AsyncOpenEnvInstance: ...
 
         async def reserve(self) -> None: ...
 
@@ -545,7 +549,7 @@ namespace azure.ai.projects.aio.operations
 
 
     class azure.ai.projects.aio.operations.AsyncOpenEnvClient: implements AsyncContextManager 
-        property environment_id: str    # Read-only
+        property environment_id: Optional[str]    # Read-only
         property instances: List[AsyncOpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
@@ -553,16 +557,18 @@ namespace azure.ai.projects.aio.operations
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                environment_id: str, 
-                lease_request: CreateRLESandboxRequest, 
-                num_instances: int, 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
             ) -> None: ...
 
         async def close(self) -> None: ...
 
-        async def get_instance(self) -> AsyncOpenEnvInstance: ...
+        def get_instance(self) -> AsyncOpenEnvInstance: ...
 
         async def reserve(self) -> None: ...
 
@@ -2404,14 +2410,12 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
-        async def get_openenv_client(
+        def get_openenv_client(
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 name: str, 
-                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> AsyncOpenEnvClient: ...
@@ -12263,7 +12267,7 @@ namespace azure.ai.projects.operations
 
 
     class azure.ai.projects.operations.OpenEnvClient: implements ContextManager 
-        property environment_id: str    # Read-only
+        property environment_id: Optional[str]    # Read-only
         property instances: List[OpenEnvInstance]    # Read-only
         property num_instances: int    # Read-only
 
@@ -12271,11 +12275,13 @@ namespace azure.ai.projects.operations
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                environment_id: str, 
-                lease_request: CreateRLESandboxRequest, 
-                num_instances: int, 
+                env_vars: Optional[Mapping[str, str]] = ..., 
+                environments: _RLEnvironmentsOperationsGenerated, 
+                name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations
+                sandboxes: RLESandboxesOperations, 
+                version: Optional[str] = ...
             ) -> None: ...
 
         def close(self) -> None: ...
@@ -12345,7 +12351,6 @@ namespace azure.ai.projects.operations
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 name: str, 
-                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> OpenEnvClient: ...
