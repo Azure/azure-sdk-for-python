@@ -774,80 +774,10 @@ namespace azure.ai.translation.document.types
         suffix: str
 
 
-    class azure.ai.translation.document.types.DocumentStatus(TypedDict, total=False):
-        key "characterCharged": int
-        key "createdDateTimeUtc": Required[str]
-        key "deploymentName": str
-        key "error": ForwardRef('DocumentTranslationError', module='types')
-        key "id": Required[str]
-        key "imageCharacterDetected": int
-        key "imageCharged": int
-        key "lastActionDateTimeUtc": Required[str]
-        key "path": str
-        key "progress": Required[float]
-        key "sourcePath": Required[str]
-        key "status": Required[Union[str, Status]]
-        key "to": Required[str]
-        key "totalImageScansFailed": int
-        key "totalImageScansSucceeded": int
-        characters_charged: int
-        created_on: str
-        deployment_name: str
-        error: DocumentTranslationError
-        id: str
-        image_characters_detected: int
-        images_charged: int
-        last_updated_on: str
-        source_document_url: str
-        status: Union[str, Status]
-        total_image_scans_failed: int
-        total_image_scans_succeeded: int
-        translated_document_url: str
-        translated_to: str
-        translation_progress: float
-
-
     class azure.ai.translation.document.types.DocumentTranslateContent(TypedDict, total=False):
         key "document": Required[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
         document: FileType
         glossary: list[Union[str, bytes, IO[str], IO[bytes], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]]], tuple[Optional[str], Union[str, bytes, IO[str], IO[bytes]], Optional[str]]]]
-
-
-    class azure.ai.translation.document.types.DocumentTranslationError(TypedDict, total=False):
-        key "code": Required[Union[str, TranslationErrorCode]]
-        key "innerError": ForwardRef('InnerTranslationError', module='types')
-        key "message": Required[str]
-        key "target": str
-        code: Union[str, TranslationErrorCode]
-        inner_error: InnerTranslationError
-        message: str
-        target: str
-
-
-    class azure.ai.translation.document.types.DocumentTranslationFileFormat(TypedDict, total=False):
-        key "contentTypes": Required[list[str]]
-        key "defaultVersion": str
-        key "fileExtensions": Required[list[str]]
-        key "format": Required[str]
-        key "type": Union[str, FileFormatType]
-        content_types: list[str]
-        default_format_version: str
-        file_extensions: list[str]
-        file_format: str
-        format_versions: list[str]
-        type: Union[str, FileFormatType]
-        versions: list[str]
-
-
-    class azure.ai.translation.document.types.InnerTranslationError(TypedDict, total=False):
-        key "code": Required[str]
-        key "innerError": ForwardRef('InnerTranslationError', module='types')
-        key "message": Required[str]
-        key "target": str
-        code: str
-        inner_error: InnerTranslationError
-        message: str
-        target: str
 
 
     class azure.ai.translation.document.types.SourceInput(TypedDict, total=False):
@@ -868,11 +798,6 @@ namespace azure.ai.translation.document.types
         options: BatchOptions
 
 
-    class azure.ai.translation.document.types.SupportedFileFormats(TypedDict, total=False):
-        key "value": Required[list[DocumentTranslationFileFormat]]
-        value: list[DocumentTranslationFileFormat]
-
-
     class azure.ai.translation.document.types.TranslationGlossary(TypedDict, total=False):
         key "format": Required[str]
         key "glossaryUrl": Required[str]
@@ -882,44 +807,6 @@ namespace azure.ai.translation.document.types
         format_version: str
         glossary_url: str
         storage_source: Union[str, TranslationStorageSource]
-
-
-    class azure.ai.translation.document.types.TranslationStatus(TypedDict, total=False):
-        key "createdDateTimeUtc": Required[str]
-        key "error": ForwardRef('DocumentTranslationError', module='types')
-        key "id": Required[str]
-        key "lastActionDateTimeUtc": Required[str]
-        key "status": Required[Union[str, Status]]
-        key "summary": Required[TranslationStatusSummary]
-        created_on: str
-        error: DocumentTranslationError
-        id: str
-        last_updated_on: str
-        status: Union[str, Status]
-        summary: TranslationStatusSummary
-
-
-    class azure.ai.translation.document.types.TranslationStatusSummary(TypedDict, total=False):
-        key "cancelled": Required[int]
-        key "failed": Required[int]
-        key "inProgress": Required[int]
-        key "notYetStarted": Required[int]
-        key "success": Required[int]
-        key "total": Required[int]
-        key "totalCharacterCharged": Required[int]
-        key "totalImageCharged": int
-        key "totalImageScansFailed": int
-        key "totalImageScansSucceeded": int
-        canceled: int
-        failed: int
-        in_progress: int
-        not_yet_started: int
-        success: int
-        total: int
-        total_characters_charged: int
-        total_image_scans_failed: int
-        total_image_scans_succeeded: int
-        total_images_charged: int
 
 
     class azure.ai.translation.document.types.TranslationTarget(TypedDict, total=False):
