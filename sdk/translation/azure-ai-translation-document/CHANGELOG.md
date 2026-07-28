@@ -37,6 +37,7 @@
 ### Other Changes
 
 - This version and all future versions will require Python 3.9+. Python 3.8 is no longer supported.
+- Bumped the minimum required `azure-core` version from `1.30.0` to `1.37.0`.
 
 ## 1.1.0 (2024-11-15)
 
