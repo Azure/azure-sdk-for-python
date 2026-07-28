@@ -92,7 +92,7 @@ def _get_rp():
         rp = "f"
     elif _is_on_app_service():
         rp = "a"
-    # TODO: Add VM scenario outside statsbeat
+    # TODO: Add VM scenario outside sdkstats
     # elif _is_on_vm():
     #     rp = 'v'
     elif _is_on_aks():
@@ -115,6 +115,41 @@ def _get_attach_type():
     if _is_attach_enabled():
         attach_type = "i"
     return attach_type
+
+
+# OneSettings
+
+# cspell:ignore appsvc
+# The OneSettings feature-flag schema expects full names for os/rp/attach (windows/linux/darwin,
+# appsvc/fn/aks, manual/integratedauto), unlike the short single-letter codes used for the statsbeat
+# SDK version prefix. These helpers are used only for the OneSettings _ConfigurationProfile.
+
+
+def _get_os_name():
+    system = platform.system()
+    if system == "Linux":
+        return "linux"
+    if system == "Windows":
+        return "windows"
+    if system == "Darwin":
+        return "darwin"
+    return "unknown"
+
+
+def _get_rp_name():
+    if _is_on_functions():
+        return "fn"
+    if _is_on_app_service():
+        return "appsvc"
+    if _is_on_aks():
+        return "aks"
+    return "unknown"
+
+
+def _get_attach_type_name():
+    if _is_attach_enabled():
+        return "integratedauto"
+    return "manual"
 
 
 def _get_sdk_version_prefix():
@@ -476,3 +511,33 @@ def _get_sha256_hash(input_str: str) -> str:
 def _get_application_id(connection_string: Optional[str]) -> Optional[str]:
     parsed_connection_string = ConnectionStringParser(connection_string)
     return parsed_connection_string.application_id
+
+
+def _get_retry_delay_from_headers(headers: Any) -> Optional[int]:
+    if headers is None:
+        return None
+
+    retry_after = None
+    for key, value in headers.items():
+        if key.lower() == "retry-after":
+            retry_after = value
+
+    if retry_after is None:
+        return None
+
+    if isinstance(retry_after, str) and retry_after.isdigit():
+        delay_seconds = int(retry_after)
+        if delay_seconds > 0:
+            return delay_seconds
+    try:
+        parsed = datetime.datetime.strptime(retry_after, "%a, %d %b %Y %H:%M:%S GMT")
+        parsed = parsed.replace(tzinfo=datetime.timezone.utc)
+
+        now = datetime.datetime.now(datetime.timezone.utc)
+
+        diff_seconds = int((parsed - now).total_seconds())
+        if diff_seconds > 0:
+            return diff_seconds
+    except ValueError:
+        return None
+    return None

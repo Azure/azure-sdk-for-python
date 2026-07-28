@@ -68,6 +68,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-08-01/StorageAccountCreateDnsEndpointTypeToAzureDnsZone.json
+# x-ms-original-file: 2026-04-01/StorageAccountCreateDnsEndpointTypeToAzureDnsZone.json
 if __name__ == "__main__":
     main()

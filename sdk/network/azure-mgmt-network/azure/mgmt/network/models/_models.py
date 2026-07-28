@@ -1104,6 +1104,18 @@ class AdvertisedPublicPrefixProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AfcConfiguration(_Model):
+    """AFC configuration for the Azure Firewall.
+
+    :ivar service_endpoint: The endpoint URL of the AFC control plane associated with this Azure
+     Firewall.
+    :vartype service_endpoint: str
+    """
+
+    service_endpoint: Optional[str] = rest_field(name="serviceEndpoint", visibility=["read"])
+    """The endpoint URL of the AFC control plane associated with this Azure Firewall."""
+
+
 class Resource(_Model):
     """Common resource representation.
 
@@ -3971,6 +3983,41 @@ class ApplicationGatewayLoadDistributionTargetPropertiesFormat(_Model):  # pylin
         super().__init__(*args, **kwargs)
 
 
+class ApplicationGatewayManagedHsm(_Model):
+    """Managed HSM properties of an application gateway.
+
+    :ivar key_id: Key identifier of a key stored in Managed HSM.
+    :vartype key_id: str
+    :ivar public_cert_data: Base-64 encoded value of a base-64 public certificate.
+    :vartype public_cert_data: str
+    """
+
+    key_id: Optional[str] = rest_field(name="keyId", visibility=["read", "create", "update", "delete", "query"])
+    """Key identifier of a key stored in Managed HSM."""
+    public_cert_data: Optional[str] = rest_field(
+        name="publicCertData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Base-64 encoded value of a base-64 public certificate."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        key_id: Optional[str] = None,
+        public_cert_data: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ApplicationGatewayOnDemandProbe(_Model):
     """Details of on demand test probe request.
 
@@ -6128,7 +6175,7 @@ class ApplicationGatewaySslCertificate(SubResource):
     type: Optional[str] = rest_field(visibility=["read"])
     """Type of the resource."""
 
-    __flattened_items = ["data", "password", "public_cert_data", "key_vault_secret_id", "provisioning_state"]
+    __flattened_items = ["data", "password", "public_cert_data", "key_vault_secret_id", "hsm", "provisioning_state"]
 
     @overload
     def __init__(
@@ -6181,6 +6228,8 @@ class ApplicationGatewaySslCertificatePropertiesFormat(_Model):  # pylint: disab
     :ivar key_vault_secret_id: Secret Id of (base-64 encoded unencrypted pfx) 'Secret' or
      'Certificate' object stored in KeyVault.
     :vartype key_vault_secret_id: str
+    :ivar hsm: Managed HSM properties of the Application Gateway resource.
+    :vartype hsm: ~azure.mgmt.network.models.ApplicationGatewayManagedHsm
     :ivar provisioning_state: The provisioning state of the SSL certificate resource. Known values
      are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -6198,6 +6247,10 @@ class ApplicationGatewaySslCertificatePropertiesFormat(_Model):  # pylint: disab
     )
     """Secret Id of (base-64 encoded unencrypted pfx) 'Secret' or 'Certificate' object stored in
      KeyVault."""
+    hsm: Optional["_models.ApplicationGatewayManagedHsm"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Managed HSM properties of the Application Gateway resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -6211,6 +6264,7 @@ class ApplicationGatewaySslCertificatePropertiesFormat(_Model):  # pylint: disab
         data: Optional[str] = None,
         password: Optional[str] = None,
         key_vault_secret_id: Optional[str] = None,
+        hsm: Optional["_models.ApplicationGatewayManagedHsm"] = None,
     ) -> None: ...
 
     @overload
@@ -7904,6 +7958,7 @@ class AzureFirewall(Resource):
         "sku",
         "additional_properties",
         "autoscale_configuration",
+        "afc_configuration",
     ]
 
     @overload
@@ -9015,6 +9070,8 @@ class AzureFirewallPropertiesFormat(_Model):
      azure firewall.
     :vartype autoscale_configuration:
      ~azure.mgmt.network.models.AzureFirewallAutoscaleConfiguration
+    :ivar afc_configuration: AFC configuration for the Azure Firewall.
+    :vartype afc_configuration: ~azure.mgmt.network.models.AfcConfiguration
     """
 
     application_rule_collections: Optional[list["_models.AzureFirewallApplicationRuleCollection"]] = rest_field(
@@ -9070,6 +9127,8 @@ class AzureFirewallPropertiesFormat(_Model):
         name="autoscaleConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """Properties to provide a custom autoscale configuration to this azure firewall."""
+    afc_configuration: Optional["_models.AfcConfiguration"] = rest_field(name="afcConfiguration", visibility=["read"])
+    """AFC configuration for the Azure Firewall."""
 
     @overload
     def __init__(
@@ -10363,6 +10422,7 @@ class BgpConnection(SubResourceModel):
         "hub_virtual_network_connection",
         "provisioning_state",
         "connection_state",
+        "routing_configuration",
     ]
 
     @overload
@@ -10419,6 +10479,9 @@ class BgpConnectionProperties(_Model):
     :ivar connection_state: The current state of the VirtualHub to Peer. Known values are:
      "Unknown", "Connecting", "Connected", and "NotConnected".
     :vartype connection_state: str or ~azure.mgmt.network.models.HubBgpConnectionStatus
+    :ivar routing_configuration: The routing configuration indicating the associated and propagated
+     route tables for this connection.
+    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     """
 
     peer_asn: Optional[int] = rest_field(name="peerAsn", visibility=["read", "create", "update", "delete", "query"])
@@ -10439,6 +10502,11 @@ class BgpConnectionProperties(_Model):
     )
     """The current state of the VirtualHub to Peer. Known values are: \"Unknown\", \"Connecting\",
      \"Connected\", and \"NotConnected\"."""
+    routing_configuration: Optional["_models.RoutingConfiguration"] = rest_field(
+        name="routingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routing configuration indicating the associated and propagated route tables for this
+     connection."""
 
     @overload
     def __init__(
@@ -10447,6 +10515,7 @@ class BgpConnectionProperties(_Model):
         peer_asn: Optional[int] = None,
         peer_ip: Optional[str] = None,
         hub_virtual_network_connection: Optional["_models.SubResource"] = None,
+        routing_configuration: Optional["_models.RoutingConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -10896,6 +10965,123 @@ class CloudErrorBody(_Model):
         message: Optional[str] = None,
         target: Optional[str] = None,
         details: Optional[list["_models.CloudErrorBody"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Commit(ChildResource):
+    """The commit resource.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar properties: The Commit properties.
+    :vartype properties: ~azure.mgmt.network.models.CommitProperties
+    :ivar system_data: The system metadata related to this resource.
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
+    """
+
+    properties: Optional["_models.CommitProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Commit properties."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """The system metadata related to this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.CommitProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class CommitProperties(_Model):
+    """Properties of commit.
+
+    :ivar description: A description of the commit.
+    :vartype description: str
+    :ivar provisioning_state: The provisioning state of the resource. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: Unique identifier for this resource.
+    :vartype resource_guid: str
+    :ivar commit_type: Commit Type. Required. Known values are: "SecurityAdmin", "Connectivity",
+     "SecurityUser", and "Routing".
+    :vartype commit_type: str or ~azure.mgmt.network.models.ConfigurationType
+    :ivar configuration_ids: List of configuration IDs.
+    :vartype configuration_ids: list[str]
+    :ivar target_locations: List of target locations. Required.
+    :vartype target_locations: list[str]
+    :ivar active_locations: List of active locations.
+    :vartype active_locations: list[str]
+    :ivar force_update_tag: A value that, when changed, forces the commit to be re-evaluated and
+     redeployed.
+    :vartype force_update_tag: str
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A description of the commit."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the resource. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
+    """Unique identifier for this resource."""
+    commit_type: Union[str, "_models.ConfigurationType"] = rest_field(
+        name="commitType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Commit Type. Required. Known values are: \"SecurityAdmin\", \"Connectivity\", \"SecurityUser\",
+     and \"Routing\"."""
+    configuration_ids: Optional[list[str]] = rest_field(
+        name="configurationIds", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of configuration IDs."""
+    target_locations: list[str] = rest_field(
+        name="targetLocations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of target locations. Required."""
+    active_locations: Optional[list[str]] = rest_field(name="activeLocations", visibility=["read"])
+    """List of active locations."""
+    force_update_tag: Optional[str] = rest_field(
+        name="forceUpdateTag", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value that, when changed, forces the commit to be re-evaluated and redeployed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        commit_type: Union[str, "_models.ConfigurationType"],
+        target_locations: list[str],
+        description: Optional[str] = None,
+        configuration_ids: Optional[list[str]] = None,
+        force_update_tag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -12209,6 +12395,101 @@ class ConnectionMonitorWorkspaceSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ConnectionPolicy(ProxyResource):
+    """ConnectionPolicy resource defined for VirtualHub.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    :ivar properties: Properties of the ConnectionPolicy resource.
+    :vartype properties: ~azure.mgmt.network.models.ConnectionPolicyProperties
+    """
+
+    properties: Optional["_models.ConnectionPolicyProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the ConnectionPolicy resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        properties: Optional["_models.ConnectionPolicyProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ConnectionPolicyProperties(_Model):
+    """Properties of the ConnectionPolicy resource.
+
+    :ivar enable_internet_security: Enable internet security.
+    :vartype enable_internet_security: bool
+    :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
+     route tables on this connection.
+    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
+    :ivar provisioning_state: The provisioning state of the ConnectionPolicy resource. Known values
+     are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar associated_connections: List of connection names (e.g. VpnConnection,
+     HubVirtualNetworkConnection) associated with this ConnectionPolicy. These are resource names,
+     not Azure resource IDs, consistent with the established VirtualWAN pattern used by
+     HubRouteTable.associatedConnections.
+    :vartype associated_connections: list[str]
+    """
+
+    enable_internet_security: Optional[bool] = rest_field(
+        name="enableInternetSecurity", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable internet security."""
+    routing_configuration: Optional["_models.RoutingConfiguration"] = rest_field(
+        name="routingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The Routing Configuration indicating the associated and propagated route tables on this
+     connection."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the ConnectionPolicy resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    associated_connections: Optional[list[str]] = rest_field(name="associatedConnections", visibility=["read"])
+    """List of connection names (e.g. VpnConnection, HubVirtualNetworkConnection) associated with this
+     ConnectionPolicy. These are resource names, not Azure resource IDs, consistent with the
+     established VirtualWAN pattern used by HubRouteTable.associatedConnections."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enable_internet_security: Optional[bool] = None,
+        routing_configuration: Optional["_models.RoutingConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ConnectionResetSharedKey(_Model):
     """The virtual network connection reset shared key.
 
@@ -13505,7 +13786,13 @@ class DdosCustomPolicy(Resource):
     etag: Optional[str] = rest_field(visibility=["read"])
     """A unique read-only string that changes whenever the resource is updated."""
 
-    __flattened_items = ["resource_guid", "provisioning_state", "detection_rules", "front_end_ip_configuration"]
+    __flattened_items = [
+        "resource_guid",
+        "provisioning_state",
+        "detection_rules",
+        "front_end_ip_configuration",
+        "public_ip_addresses",
+    ]
 
     @overload
     def __init__(
@@ -13561,6 +13848,9 @@ class DdosCustomPolicyPropertiesFormat(_Model):
     :ivar front_end_ip_configuration: The list of frontend IP configurations associated with the
      custom policy.
     :vartype front_end_ip_configuration: list[~azure.mgmt.network.models.SubResource]
+    :ivar public_ip_addresses: The list of public IP addresses associated with the custom policy.
+     This list is read-only.
+    :vartype public_ip_addresses: list[~azure.mgmt.network.models.SubResource]
     """
 
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
@@ -13580,6 +13870,10 @@ class DdosCustomPolicyPropertiesFormat(_Model):
         name="frontEndIpConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )
     """The list of frontend IP configurations associated with the custom policy."""
+    public_ip_addresses: Optional[list["_models.SubResource"]] = rest_field(
+        name="publicIPAddresses", visibility=["read"]
+    )
+    """The list of public IP addresses associated with the custom policy. This list is read-only."""
 
     @overload
     def __init__(
@@ -13697,6 +13991,36 @@ class DdosDetectionRulePropertiesFormat(_Model):
         *,
         detection_mode: Optional[Union[str, "_models.DdosDetectionMode"]] = None,
         traffic_detection_rule: Optional["_models.TrafficDetectionRule"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class DdosFrontendIpConfigurationSettings(_Model):
+    """DDoS protection settings for a frontend IP configuration.
+
+    :ivar ddos_custom_policy: The reference to the DDoS Custom Policy resource.
+    :vartype ddos_custom_policy: ~azure.mgmt.network.models.SubResource
+    """
+
+    ddos_custom_policy: Optional["_models.SubResource"] = rest_field(
+        name="ddosCustomPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The reference to the DDoS Custom Policy resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        ddos_custom_policy: Optional["_models.SubResource"] = None,
     ) -> None: ...
 
     @overload
@@ -13864,6 +14188,8 @@ class DdosSettings(_Model):
     :ivar protection_mode: The DDoS protection mode of the public IP. Known values are:
      "VirtualNetworkInherited", "Enabled", and "Disabled".
     :vartype protection_mode: str or ~azure.mgmt.network.models.DdosSettingsProtectionMode
+    :ivar ddos_custom_policy: The DDoS custom policy associated with the public IP.
+    :vartype ddos_custom_policy: ~azure.mgmt.network.models.SubResource
     :ivar ddos_protection_plan: The DDoS protection plan associated with the public IP. Can only be
      set if ProtectionMode is Enabled.
     :vartype ddos_protection_plan: ~azure.mgmt.network.models.SubResource
@@ -13874,6 +14200,10 @@ class DdosSettings(_Model):
     )
     """The DDoS protection mode of the public IP. Known values are: \"VirtualNetworkInherited\",
      \"Enabled\", and \"Disabled\"."""
+    ddos_custom_policy: Optional["_models.SubResource"] = rest_field(
+        name="ddosCustomPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The DDoS custom policy associated with the public IP."""
     ddos_protection_plan: Optional["_models.SubResource"] = rest_field(
         name="ddosProtectionPlan", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -13885,6 +14215,7 @@ class DdosSettings(_Model):
         self,
         *,
         protection_mode: Optional[Union[str, "_models.DdosSettingsProtectionMode"]] = None,
+        ddos_custom_policy: Optional["_models.SubResource"] = None,
         ddos_protection_plan: Optional["_models.SubResource"] = None,
     ) -> None: ...
 
@@ -15030,7 +15361,8 @@ class EffectiveRoute(_Model):
     :ivar next_hop_ip_address: The IP address of the next hop of the effective route.
     :vartype next_hop_ip_address: list[str]
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Known values are:
-     "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
+     "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", "VirtualApplianceEcmp",
+     and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.models.RouteNextHopType
     """
 
@@ -15061,7 +15393,8 @@ class EffectiveRoute(_Model):
         name="nextHopType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of Azure hop the packet should be sent to. Known values are:
-     \"VirtualNetworkGateway\", \"VnetLocal\", \"Internet\", \"VirtualAppliance\", and \"None\"."""
+     \"VirtualNetworkGateway\", \"VnetLocal\", \"Internet\", \"VirtualAppliance\",
+     \"VirtualApplianceEcmp\", and \"None\"."""
 
     @overload
     def __init__(
@@ -18283,6 +18616,376 @@ class ExpressRouteLink(SubResource):
             super().__setattr__(key, value)
 
 
+class ExpressRouteLinkFailoverAllTestsDetails(_Model):
+    """ExpressRoute circuit link failover test details for all tests.
+
+    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
+     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatus
+    :ivar start_time: Time when the test was started.
+    :vartype start_time: str
+    :ivar end_time: Time when the test was completed.
+    :vartype end_time: str
+    :ivar test_guid: The unique GUID associated with the test.
+    :vartype test_guid: str
+    :ivar test_type: The type of failover test. Known values are: "SingleSiteFailover",
+     "MultiSiteFailover", and "All".
+    :vartype test_type: str or ~azure.mgmt.network.models.FailoverTestType
+    :ivar issues: A list of all issues with the test.
+    :vartype issues: list[str]
+    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
+    :vartype was_simulation_successful: bool
+    :ivar circuit_test_category: The maintenance test category. Known values are: "BgpDisconnect"
+     and "ASPathPrepend".
+    :vartype circuit_test_category: str or ~azure.mgmt.network.models.MaintenanceTestCategory
+    :ivar link_type: The link type. Known values are: "Primary" and "Secondary".
+    :vartype link_type: str or ~azure.mgmt.network.models.ExpressRouteFailoverLinkType
+    :ivar bgp_status: The BGP status details.
+    :vartype bgp_status: list[~azure.mgmt.network.models.ExpressRouteLinkFailoverTestBgpStatus]
+    """
+
+    status: Optional[Union[str, "_models.FailoverTestStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current status of the test. Known values are: \"NotStarted\", \"Starting\", \"Running\",
+     \"StartFailed\", \"Stopping\", \"Completed\", \"StopFailed\", \"Invalid\", and \"Expired\"."""
+    start_time: Optional[str] = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    """Time when the test was started."""
+    end_time: Optional[str] = rest_field(name="endTime", visibility=["read", "create", "update", "delete", "query"])
+    """Time when the test was completed."""
+    test_guid: Optional[str] = rest_field(name="testGuid", visibility=["read", "create", "update", "delete", "query"])
+    """The unique GUID associated with the test."""
+    test_type: Optional[Union[str, "_models.FailoverTestType"]] = rest_field(
+        name="testType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of failover test. Known values are: \"SingleSiteFailover\", \"MultiSiteFailover\", and
+     \"All\"."""
+    issues: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A list of all issues with the test."""
+    was_simulation_successful: Optional[bool] = rest_field(
+        name="wasSimulationSuccessful", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the failover simulation was successful or not."""
+    circuit_test_category: Optional[Union[str, "_models.MaintenanceTestCategory"]] = rest_field(
+        name="circuitTestCategory", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maintenance test category. Known values are: \"BgpDisconnect\" and \"ASPathPrepend\"."""
+    link_type: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = rest_field(
+        name="linkType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The link type. Known values are: \"Primary\" and \"Secondary\"."""
+    bgp_status: Optional[list["_models.ExpressRouteLinkFailoverTestBgpStatus"]] = rest_field(
+        name="bgpStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The BGP status details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[Union[str, "_models.FailoverTestStatus"]] = None,
+        start_time: Optional[str] = None,
+        end_time: Optional[str] = None,
+        test_guid: Optional[str] = None,
+        test_type: Optional[Union[str, "_models.FailoverTestType"]] = None,
+        issues: Optional[list[str]] = None,
+        was_simulation_successful: Optional[bool] = None,
+        circuit_test_category: Optional[Union[str, "_models.MaintenanceTestCategory"]] = None,
+        link_type: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = None,
+        bgp_status: Optional[list["_models.ExpressRouteLinkFailoverTestBgpStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLinkFailoverRoute(_Model):
+    """Represents a failover route for an ExpressRoute link.
+
+    :ivar route: The route.
+    :vartype route: str
+    :ivar next_hop: The next hop.
+    :vartype next_hop: str
+    :ivar primary_as_path: The AS path for primary link.
+    :vartype primary_as_path: str
+    :ivar secondary_as_path: The AS path for secondary link.
+    :vartype secondary_as_path: str
+    """
+
+    route: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The route."""
+    next_hop: Optional[str] = rest_field(name="nextHop", visibility=["read", "create", "update", "delete", "query"])
+    """The next hop."""
+    primary_as_path: Optional[str] = rest_field(
+        name="primaryASPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AS path for primary link."""
+    secondary_as_path: Optional[str] = rest_field(
+        name="secondaryASPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The AS path for secondary link."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        route: Optional[str] = None,
+        next_hop: Optional[str] = None,
+        primary_as_path: Optional[str] = None,
+        secondary_as_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLinkFailoverRouteList(_Model):
+    """Represents a list of failover routes for an ExpressRoute link.
+
+    :ivar before_simulation: The routes before the simulation.
+    :vartype before_simulation: list[~azure.mgmt.network.models.ExpressRouteLinkFailoverRoute]
+    :ivar during_simulation: The routes during the simulation.
+    :vartype during_simulation: list[~azure.mgmt.network.models.ExpressRouteLinkFailoverRoute]
+    """
+
+    before_simulation: Optional[list["_models.ExpressRouteLinkFailoverRoute"]] = rest_field(
+        name="beforeSimulation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routes before the simulation."""
+    during_simulation: Optional[list["_models.ExpressRouteLinkFailoverRoute"]] = rest_field(
+        name="duringSimulation", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routes during the simulation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        before_simulation: Optional[list["_models.ExpressRouteLinkFailoverRoute"]] = None,
+        during_simulation: Optional[list["_models.ExpressRouteLinkFailoverRoute"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLinkFailoverSingleTestDetails(_Model):  # pylint: disable=name-too-long
+    """ExpressRoute circuit link failover single test details.
+
+    :ivar start_time_utc: Time when the test was started in UTC.
+    :vartype start_time_utc: str
+    :ivar end_time_utc: Time when the test was completed in UTC.
+    :vartype end_time_utc: str
+    :ivar status: The current status of the test. Known values are: "NotStarted", "Starting",
+     "Running", "StartFailed", "Stopping", "Completed", "StopFailed", "Invalid", and "Expired".
+    :vartype status: str or ~azure.mgmt.network.models.FailoverTestStatus
+    :ivar was_simulation_successful: Whether the failover simulation was successful or not.
+    :vartype was_simulation_successful: bool
+    :ivar link_type: The link type. Known values are: "Primary" and "Secondary".
+    :vartype link_type: str or ~azure.mgmt.network.models.ExpressRouteFailoverLinkType
+    :ivar circuit_test_category: The circuit test category. Known values are: "BgpDisconnect" and
+     "ASPathPrepend".
+    :vartype circuit_test_category: str or ~azure.mgmt.network.models.MaintenanceTestCategory
+    :ivar is_simulation_verified: Whether the simulation was verified.
+    :vartype is_simulation_verified: bool
+    :ivar redundant_routes: The redundant routes for link failover tests.
+    :vartype redundant_routes: ~azure.mgmt.network.models.ExpressRouteLinkFailoverRouteList
+    :ivar non_redundant_routes: The non-redundant routes for link failover tests.
+    :vartype non_redundant_routes: ~azure.mgmt.network.models.ExpressRouteLinkFailoverRouteList
+    :ivar bgp_status: The BGP status details.
+    :vartype bgp_status: list[~azure.mgmt.network.models.ExpressRouteLinkFailoverTestBgpStatus]
+    """
+
+    start_time_utc: Optional[str] = rest_field(
+        name="startTimeUtc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Time when the test was started in UTC."""
+    end_time_utc: Optional[str] = rest_field(
+        name="endTimeUtc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Time when the test was completed in UTC."""
+    status: Optional[Union[str, "_models.FailoverTestStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current status of the test. Known values are: \"NotStarted\", \"Starting\", \"Running\",
+     \"StartFailed\", \"Stopping\", \"Completed\", \"StopFailed\", \"Invalid\", and \"Expired\"."""
+    was_simulation_successful: Optional[bool] = rest_field(
+        name="wasSimulationSuccessful", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the failover simulation was successful or not."""
+    link_type: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = rest_field(
+        name="linkType", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The link type. Known values are: \"Primary\" and \"Secondary\"."""
+    circuit_test_category: Optional[Union[str, "_models.MaintenanceTestCategory"]] = rest_field(
+        name="circuitTestCategory", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The circuit test category. Known values are: \"BgpDisconnect\" and \"ASPathPrepend\"."""
+    is_simulation_verified: Optional[bool] = rest_field(
+        name="isSimulationVerified", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the simulation was verified."""
+    redundant_routes: Optional["_models.ExpressRouteLinkFailoverRouteList"] = rest_field(
+        name="redundantRoutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The redundant routes for link failover tests."""
+    non_redundant_routes: Optional["_models.ExpressRouteLinkFailoverRouteList"] = rest_field(
+        name="nonRedundantRoutes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The non-redundant routes for link failover tests."""
+    bgp_status: Optional[list["_models.ExpressRouteLinkFailoverTestBgpStatus"]] = rest_field(
+        name="bgpStatus", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The BGP status details."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start_time_utc: Optional[str] = None,
+        end_time_utc: Optional[str] = None,
+        status: Optional[Union[str, "_models.FailoverTestStatus"]] = None,
+        was_simulation_successful: Optional[bool] = None,
+        link_type: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = None,
+        circuit_test_category: Optional[Union[str, "_models.MaintenanceTestCategory"]] = None,
+        is_simulation_verified: Optional[bool] = None,
+        redundant_routes: Optional["_models.ExpressRouteLinkFailoverRouteList"] = None,
+        non_redundant_routes: Optional["_models.ExpressRouteLinkFailoverRouteList"] = None,
+        bgp_status: Optional[list["_models.ExpressRouteLinkFailoverTestBgpStatus"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLinkFailoverStopApiParameters(_Model):  # pylint: disable=name-too-long
+    """Parameters for stopping an ExpressRoute circuit link failover test.
+
+    :ivar circuit_test_category: The category of the circuit test.
+    :vartype circuit_test_category: str
+    :ivar link_type: The type of the link.
+    :vartype link_type: str
+    :ivar was_simulation_successful: Whether the simulation was successful.
+    :vartype was_simulation_successful: bool
+    :ivar is_verified: Whether the link is verified.
+    :vartype is_verified: bool
+    """
+
+    circuit_test_category: Optional[str] = rest_field(
+        name="circuitTestCategory", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The category of the circuit test."""
+    link_type: Optional[str] = rest_field(name="linkType", visibility=["read", "create", "update", "delete", "query"])
+    """The type of the link."""
+    was_simulation_successful: Optional[bool] = rest_field(
+        name="wasSimulationSuccessful", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the simulation was successful."""
+    is_verified: Optional[bool] = rest_field(
+        name="isVerified", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the link is verified."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        circuit_test_category: Optional[str] = None,
+        link_type: Optional[str] = None,
+        was_simulation_successful: Optional[bool] = None,
+        is_verified: Optional[bool] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExpressRouteLinkFailoverTestBgpStatus(_Model):
+    """Represents the BGP status of an ExpressRoute link failover test.
+
+    :ivar type: The address family type. Known values are: "IPv4" and "IPv6".
+    :vartype type: str or ~azure.mgmt.network.models.ExpressRouteFailoverBgpStatusAddressFamily
+    :ivar link: The link type. Known values are: "Primary" and "Secondary".
+    :vartype link: str or ~azure.mgmt.network.models.ExpressRouteFailoverLinkType
+    :ivar status: The BGP status. Known values are: "Undefined", "Connected", and "Disconnected".
+    :vartype status: str or ~azure.mgmt.network.models.ExpressRouteLinkFailoverBgpStatus
+    :ivar check_time_utc: The check time in UTC.
+    :vartype check_time_utc: str
+    """
+
+    type: Optional[Union[str, "_models.ExpressRouteFailoverBgpStatusAddressFamily"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The address family type. Known values are: \"IPv4\" and \"IPv6\"."""
+    link: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The link type. Known values are: \"Primary\" and \"Secondary\"."""
+    status: Optional[Union[str, "_models.ExpressRouteLinkFailoverBgpStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The BGP status. Known values are: \"Undefined\", \"Connected\", and \"Disconnected\"."""
+    check_time_utc: Optional[str] = rest_field(
+        name="checkTimeUtc", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The check time in UTC."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.ExpressRouteFailoverBgpStatusAddressFamily"]] = None,
+        link: Optional[Union[str, "_models.ExpressRouteFailoverLinkType"]] = None,
+        status: Optional[Union[str, "_models.ExpressRouteLinkFailoverBgpStatus"]] = None,
+        check_time_utc: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ExpressRouteLinkMacSecConfig(_Model):
     """Definition of ExpressRouteLink Mac Security configuration.
 
@@ -21186,6 +21889,7 @@ class FrontendIPConfiguration(SubResourceModel):
         "public_ip_prefix",
         "gateway_load_balancer",
         "provisioning_state",
+        "ddos_settings",
     ]
 
     @overload
@@ -21258,6 +21962,9 @@ class FrontendIPConfigurationPropertiesFormat(_Model):
     :ivar provisioning_state: The provisioning state of the frontend IP configuration resource.
      Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar ddos_settings: The DDoS protection settings associated with the frontend IP
+     configuration.
+    :vartype ddos_settings: ~azure.mgmt.network.models.DdosFrontendIpConfigurationSettings
     """
 
     inbound_nat_rules: Optional[list["_models.SubResource"]] = rest_field(name="inboundNatRules", visibility=["read"])
@@ -21302,6 +22009,10 @@ class FrontendIPConfigurationPropertiesFormat(_Model):
     )
     """The provisioning state of the frontend IP configuration resource. Known values are: \"Failed\",
      \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    ddos_settings: Optional["_models.DdosFrontendIpConfigurationSettings"] = rest_field(
+        name="ddosSettings", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The DDoS protection settings associated with the frontend IP configuration."""
 
     @overload
     def __init__(
@@ -21314,6 +22025,7 @@ class FrontendIPConfigurationPropertiesFormat(_Model):
         public_ip_address: Optional["_models.PublicIPAddress"] = None,
         public_ip_prefix: Optional["_models.SubResource"] = None,
         gateway_load_balancer: Optional["_models.SubResource"] = None,
+        ddos_settings: Optional["_models.DdosFrontendIpConfigurationSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -22602,6 +23314,7 @@ class HubVirtualNetworkConnection(SubResource):
         "remote_virtual_network",
         "allow_hub_to_remote_vnet_transit",
         "allow_remote_vnet_to_use_hub_vnet_gateways",
+        "connection_policy",
         "enable_internet_security",
         "routing_configuration",
         "provisioning_state",
@@ -22656,6 +23369,9 @@ class HubVirtualNetworkConnectionProperties(_Model):
     :ivar allow_remote_vnet_to_use_hub_vnet_gateways: Deprecated: Allow RemoteVnet to use Virtual
      Hub's gateways.
     :vartype allow_remote_vnet_to_use_hub_vnet_gateways: bool
+    :ivar connection_policy: The resource id of the ConnectionPolicy associated with this
+     HubVirtualNetworkConnection.
+    :vartype connection_policy: ~azure.mgmt.network.models.SubResource
     :ivar enable_internet_security: Enable internet security.
     :vartype enable_internet_security: bool
     :ivar routing_configuration: The Routing Configuration indicating the associated and propagated
@@ -22679,6 +23395,10 @@ class HubVirtualNetworkConnectionProperties(_Model):
         name="allowRemoteVnetToUseHubVnetGateways", visibility=["read", "create", "update", "delete", "query"]
     )
     """Deprecated: Allow RemoteVnet to use Virtual Hub's gateways."""
+    connection_policy: Optional["_models.SubResource"] = rest_field(
+        name="connectionPolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource id of the ConnectionPolicy associated with this HubVirtualNetworkConnection."""
     enable_internet_security: Optional[bool] = rest_field(
         name="enableInternetSecurity", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -22701,6 +23421,7 @@ class HubVirtualNetworkConnectionProperties(_Model):
         remote_virtual_network: Optional["_models.SubResource"] = None,
         allow_hub_to_remote_vnet_transit: Optional[bool] = None,
         allow_remote_vnet_to_use_hub_vnet_gateways: Optional[bool] = None,
+        connection_policy: Optional["_models.SubResource"] = None,
         enable_internet_security: Optional[bool] = None,
         routing_configuration: Optional["_models.RoutingConfiguration"] = None,
     ) -> None: ...
@@ -23404,6 +24125,137 @@ class IntentContent(_Model):
         destination_resource_id: str,
         ip_traffic: "_models.IPTraffic",
         description: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectGroup(Resource):
+    """An interconnect group resource.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Properties of the interconnect group.
+    :vartype properties: ~azure.mgmt.network.models.InterconnectGroupPropertiesFormat
+    :ivar etag: A unique read-only string that changes whenever the resource is updated.
+    :vartype etag: str
+    """
+
+    properties: Optional["_models.InterconnectGroupPropertiesFormat"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the interconnect group."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """A unique read-only string that changes whenever the resource is updated."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.InterconnectGroupPropertiesFormat"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectGroupNodeAvailability(_Model):
+    """Represents node availability information for subgroups within an interconnect group.
+
+    :ivar subgroups_node_availability: The list of subgroup node availability entries.
+    :vartype subgroups_node_availability:
+     list[~azure.mgmt.network.models.SubgroupNodeAvailabilityEntry]
+    """
+
+    subgroups_node_availability: Optional[list["_models.SubgroupNodeAvailabilityEntry"]] = rest_field(
+        name="subgroupsNodeAvailability", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of subgroup node availability entries."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subgroups_node_availability: Optional[list["_models.SubgroupNodeAvailabilityEntry"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class InterconnectGroupPropertiesFormat(_Model):
+    """Interconnect group properties.
+
+    :ivar scope: Scope of interconnect group resource. Known values are: "None" and "InfiniBand".
+    :vartype scope: str or ~azure.mgmt.network.models.InterconnectGroupScope
+    :ivar subgroups: A list of subgroups of the interconnect group.
+    :vartype subgroups: list[~azure.mgmt.network.models.Subgroup]
+    :ivar provisioning_state: The provisioning state of the interconnect group resource. Known
+     values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    :ivar resource_guid: The resource GUID property of the interconnect group resource.
+    :vartype resource_guid: str
+    :ivar subgroup_profile: The subgroup profile of the interconnect group resource. Required.
+    :vartype subgroup_profile: ~azure.mgmt.network.models.SubgroupProfile
+    """
+
+    scope: Optional[Union[str, "_models.InterconnectGroupScope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scope of interconnect group resource. Known values are: \"None\" and \"InfiniBand\"."""
+    subgroups: Optional[list["_models.Subgroup"]] = rest_field(visibility=["read"])
+    """A list of subgroups of the interconnect group."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the interconnect group resource. Known values are: \"Failed\",
+     \"Succeeded\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+    resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
+    """The resource GUID property of the interconnect group resource."""
+    subgroup_profile: "_models.SubgroupProfile" = rest_field(
+        name="subgroupProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The subgroup profile of the interconnect group resource. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        subgroup_profile: "_models.SubgroupProfile",
+        scope: Optional[Union[str, "_models.InterconnectGroupScope"]] = None,
     ) -> None: ...
 
     @overload
@@ -26266,6 +27118,7 @@ class NatGateway(Resource):
         "subnets",
         "source_virtual_network",
         "service_gateway",
+        "nat64",
         "resource_guid",
         "provisioning_state",
     ]
@@ -26335,6 +27188,9 @@ class NatGatewayPropertiesFormat(_Model):
     :vartype source_virtual_network: ~azure.mgmt.network.models.SubResource
     :ivar service_gateway: Reference to an existing service gateway.
     :vartype service_gateway: ~azure.mgmt.network.models.SubResource
+    :ivar nat64: Whether Nat64 is enabled for the NAT gateway resource. Known values are: "None",
+     "Enabled", and "Disabled".
+    :vartype nat64: str or ~azure.mgmt.network.models.Nat64State
     :ivar resource_guid: The resource GUID property of the NAT gateway resource.
     :vartype resource_guid: str
     :ivar provisioning_state: The provisioning state of the NAT gateway resource. Known values are:
@@ -26372,6 +27228,11 @@ class NatGatewayPropertiesFormat(_Model):
         name="serviceGateway", visibility=["read", "create", "update", "delete", "query"]
     )
     """Reference to an existing service gateway."""
+    nat64: Optional[Union[str, "_models.Nat64State"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether Nat64 is enabled for the NAT gateway resource. Known values are: \"None\", \"Enabled\",
+     and \"Disabled\"."""
     resource_guid: Optional[str] = rest_field(name="resourceGuid", visibility=["read"])
     """The resource GUID property of the NAT gateway resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -26391,6 +27252,7 @@ class NatGatewayPropertiesFormat(_Model):
         public_ip_prefixes_v6: Optional[list["_models.SubResource"]] = None,
         source_virtual_network: Optional["_models.SubResource"] = None,
         service_gateway: Optional["_models.SubResource"] = None,
+        nat64: Optional[Union[str, "_models.Nat64State"]] = None,
     ) -> None: ...
 
     @overload
@@ -28751,7 +29613,7 @@ class SecurityPerimeterResource(_Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
@@ -28762,7 +29624,7 @@ class SecurityPerimeterResource(_Model):
     type: Optional[str] = rest_field(visibility=["read"])
     """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
      \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SecurityPerimeterSystemData"] = rest_field(name="systemData", visibility=["read"])
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
     """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
@@ -28780,7 +29642,7 @@ class SecurityPerimeterTrackedResource(SecurityPerimeterResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -28824,7 +29686,7 @@ class NetworkSecurityPerimeter(SecurityPerimeterTrackedResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -29771,7 +30633,7 @@ class NextHopResult(_Model):
     """The information about next hop from the specified VM.
 
     :ivar next_hop_type: Next hop type. Known values are: "Internet", "VirtualAppliance",
-     "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", and "None".
+     "VirtualNetworkGateway", "VnetLocal", "HyperNetGateway", "VirtualApplianceEcmp", and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.models.NextHopType
     :ivar next_hop_ip_address: Next hop IP Address.
     :vartype next_hop_ip_address: str
@@ -29785,7 +30647,7 @@ class NextHopResult(_Model):
         name="nextHopType", visibility=["read", "create", "update", "delete", "query"]
     )
     """Next hop type. Known values are: \"Internet\", \"VirtualAppliance\", \"VirtualNetworkGateway\",
-     \"VnetLocal\", \"HyperNetGateway\", and \"None\"."""
+     \"VnetLocal\", \"HyperNetGateway\", \"VirtualApplianceEcmp\", and \"None\"."""
     next_hop_ip_address: Optional[str] = rest_field(
         name="nextHopIpAddress", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -29831,7 +30693,7 @@ class SecurityPerimeterProxyResource(SecurityPerimeterResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     """
 
 
@@ -29848,7 +30710,7 @@ class NspAccessRule(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the NSP access rule.
     :vartype properties: ~azure.mgmt.network.models.NspAccessRuleProperties
     """
@@ -30000,7 +30862,7 @@ class NspAssociation(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the NSP resource association.
     :vartype properties: ~azure.mgmt.network.models.NspAssociationProperties
     """
@@ -30122,7 +30984,7 @@ class NspLink(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the network security perimeter link resource.
     :vartype properties: ~azure.mgmt.network.models.NspLinkProperties
     """
@@ -30296,7 +31158,7 @@ class NspLinkReference(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the network security perimeter linkReference resource.
     :vartype properties: ~azure.mgmt.network.models.NspLinkReferenceProperties
     """
@@ -30462,7 +31324,7 @@ class NspLoggingConfiguration(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the NSP logging configuration.
     :vartype properties: ~azure.mgmt.network.models.NspLoggingConfigurationProperties
     """
@@ -30558,7 +31420,7 @@ class NspProfile(SecurityPerimeterProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar properties: Properties of the network security perimeter profile.
     :vartype properties: ~azure.mgmt.network.models.NspProfileProperties
     """
@@ -32693,7 +33555,15 @@ class PerimeterAssociableResource(_Model):
     type: Optional[str] = rest_field(visibility=["read"])
     """Resource type."""
 
-    __flattened_items = ["display_name", "resource_type", "public_dns_zones"]
+    __flattened_items = [
+        "display_name",
+        "resource_type",
+        "public_dns_zones",
+        "service_tags",
+        "readiness_state",
+        "outbound_supported",
+        "description",
+    ]
 
     @overload
     def __init__(
@@ -32741,6 +33611,15 @@ class PerimeterAssociableResourceProperties(_Model):
     :vartype resource_type: str
     :ivar public_dns_zones: Public DNS zone names of the resources.
     :vartype public_dns_zones: list[str]
+    :ivar service_tags: Service tags associated with the resource provider.
+    :vartype service_tags: list[str]
+    :ivar readiness_state: The readiness state of the resource type for NSP support. Known values
+     are: "Onboarding", "Preview", "GA", and "NotReady".
+    :vartype readiness_state: str or ~azure.mgmt.network.models.NspReadinessState
+    :ivar outbound_supported: Indicates whether the resource type supports outbound scenario.
+    :vartype outbound_supported: bool
+    :ivar description: Description of the PaaS resource type.
+    :vartype description: str
     """
 
     display_name: Optional[str] = rest_field(name="displayName", visibility=["read"])
@@ -32749,6 +33628,17 @@ class PerimeterAssociableResourceProperties(_Model):
     """Resource type/provider name."""
     public_dns_zones: Optional[list[str]] = rest_field(name="publicDnsZones", visibility=["read"])
     """Public DNS zone names of the resources."""
+    service_tags: Optional[list[str]] = rest_field(name="serviceTags", visibility=["read"])
+    """Service tags associated with the resource provider."""
+    readiness_state: Optional[Union[str, "_models.NspReadinessState"]] = rest_field(
+        name="readinessState", visibility=["read"]
+    )
+    """The readiness state of the resource type for NSP support. Known values are: \"Onboarding\",
+     \"Preview\", \"GA\", and \"NotReady\"."""
+    outbound_supported: Optional[bool] = rest_field(name="outboundSupported", visibility=["read"])
+    """Indicates whether the resource type supports outbound scenario."""
+    description: Optional[str] = rest_field(visibility=["read"])
+    """Description of the PaaS resource type."""
 
 
 class PerimeterBasedAccessRule(_Model):
@@ -32801,9 +33691,9 @@ class PolicySettings(_Model):
     :ivar js_challenge_cookie_expiration_in_mins: Web Application Firewall JavaScript Challenge
      Cookie Expiration time in minutes.
     :vartype js_challenge_cookie_expiration_in_mins: int
-    :ivar captcha_cookie_expiration_in_mins: Web Application Firewall CAPTCHA Cookie Expiration
-     time in minutes.
-    :vartype captcha_cookie_expiration_in_mins: int
+    :ivar captcha_expiration_in_mins: Web Application Firewall CAPTCHA Cookie Expiration time in
+     minutes.
+    :vartype captcha_expiration_in_mins: int
     """
 
     state: Optional[Union[str, "_models.WebApplicationFirewallEnabledState"]] = rest_field(
@@ -32855,8 +33745,8 @@ class PolicySettings(_Model):
         name="jsChallengeCookieExpirationInMins", visibility=["read", "create", "update", "delete", "query"]
     )
     """Web Application Firewall JavaScript Challenge Cookie Expiration time in minutes."""
-    captcha_cookie_expiration_in_mins: Optional[int] = rest_field(
-        name="captchaCookieExpirationInMins", visibility=["read", "create", "update", "delete", "query"]
+    captcha_expiration_in_mins: Optional[int] = rest_field(
+        name="captchaExpirationInMins", visibility=["read", "create", "update", "delete", "query"]
     )
     """Web Application Firewall CAPTCHA Cookie Expiration time in minutes."""
 
@@ -32876,7 +33766,7 @@ class PolicySettings(_Model):
         custom_block_response_body: Optional[str] = None,
         log_scrubbing: Optional["_models.PolicySettingsLogScrubbing"] = None,
         js_challenge_cookie_expiration_in_mins: Optional[int] = None,
-        captcha_cookie_expiration_in_mins: Optional[int] = None,
+        captcha_expiration_in_mins: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -33321,6 +34211,7 @@ class PrivateEndpoint(Resource):
         "application_security_groups",
         "ip_configurations",
         "custom_network_interface_name",
+        "billing_sku",
     ]
 
     @overload
@@ -33628,6 +34519,9 @@ class PrivateEndpointProperties(_Model):
     :ivar custom_network_interface_name: The custom name of the network interface attached to the
      private endpoint.
     :vartype custom_network_interface_name: str
+    :ivar billing_sku: The billing sku of the private endpoint. Known values are: "PayAsYouGo" and
+     "Fixed".
+    :vartype billing_sku: str or ~azure.mgmt.network.models.PrivateEndpointBillingSku
     """
 
     subnet: Optional["_models.Subnet"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -33672,6 +34566,10 @@ class PrivateEndpointProperties(_Model):
         name="customNetworkInterfaceName", visibility=["read", "create", "update", "delete", "query"]
     )
     """The custom name of the network interface attached to the private endpoint."""
+    billing_sku: Optional[Union[str, "_models.PrivateEndpointBillingSku"]] = rest_field(
+        name="billingSku", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The billing sku of the private endpoint. Known values are: \"PayAsYouGo\" and \"Fixed\"."""
 
     @overload
     def __init__(
@@ -33685,6 +34583,7 @@ class PrivateEndpointProperties(_Model):
         application_security_groups: Optional[list["_models.ApplicationSecurityGroup"]] = None,
         ip_configurations: Optional[list["_models.PrivateEndpointIPConfiguration"]] = None,
         custom_network_interface_name: Optional[str] = None,
+        billing_sku: Optional[Union[str, "_models.PrivateEndpointBillingSku"]] = None,
     ) -> None: ...
 
     @overload
@@ -36206,6 +37105,7 @@ class Route(SubResourceModel):
         "address_prefix",
         "next_hop_type",
         "next_hop_ip_address",
+        "next_hop",
         "provisioning_state",
         "has_bgp_override",
     ]
@@ -36651,17 +37551,53 @@ class RouteMapRule(_Model):
         super().__init__(*args, **kwargs)
 
 
+class RouteNextHopEcmp(_Model):
+    """The next hop definition for ECMP routes containing multiple next hop IP addresses.
+
+    :ivar next_hop_ip_addresses: List of next hop IP addresses for ECMP routing. Must contain
+     between 2 and 64 IP addresses. Required.
+    :vartype next_hop_ip_addresses: list[str]
+    """
+
+    next_hop_ip_addresses: list[str] = rest_field(
+        name="nextHopIpAddresses", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of next hop IP addresses for ECMP routing. Must contain between 2 and 64 IP addresses.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        next_hop_ip_addresses: list[str],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class RoutePropertiesFormat(_Model):
     """Route resource.
 
     :ivar address_prefix: The destination CIDR to which the route applies.
     :vartype address_prefix: str
     :ivar next_hop_type: The type of Azure hop the packet should be sent to. Required. Known values
-     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance", and "None".
+     are: "VirtualNetworkGateway", "VnetLocal", "Internet", "VirtualAppliance",
+     "VirtualApplianceEcmp", and "None".
     :vartype next_hop_type: str or ~azure.mgmt.network.models.RouteNextHopType
     :ivar next_hop_ip_address: The IP address packets should be forwarded to. Next hop values are
      only allowed in routes where the next hop type is VirtualAppliance.
     :vartype next_hop_ip_address: str
+    :ivar next_hop: The next hop definition containing ECMP next hop IP addresses. Only allowed
+     when nextHopType is VirtualApplianceEcmp.
+    :vartype next_hop: ~azure.mgmt.network.models.RouteNextHopEcmp
     :ivar provisioning_state: The provisioning state of the route resource. Known values are:
      "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -36678,12 +37614,18 @@ class RoutePropertiesFormat(_Model):
         name="nextHopType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of Azure hop the packet should be sent to. Required. Known values are:
-     \"VirtualNetworkGateway\", \"VnetLocal\", \"Internet\", \"VirtualAppliance\", and \"None\"."""
+     \"VirtualNetworkGateway\", \"VnetLocal\", \"Internet\", \"VirtualAppliance\",
+     \"VirtualApplianceEcmp\", and \"None\"."""
     next_hop_ip_address: Optional[str] = rest_field(
         name="nextHopIpAddress", visibility=["read", "create", "update", "delete", "query"]
     )
     """The IP address packets should be forwarded to. Next hop values are only allowed in routes where
      the next hop type is VirtualAppliance."""
+    next_hop: Optional["_models.RouteNextHopEcmp"] = rest_field(
+        name="nextHop", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The next hop definition containing ECMP next hop IP addresses. Only allowed when nextHopType is
+     VirtualApplianceEcmp."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -36699,6 +37641,7 @@ class RoutePropertiesFormat(_Model):
         next_hop_type: Union[str, "_models.RouteNextHopType"],
         address_prefix: Optional[str] = None,
         next_hop_ip_address: Optional[str] = None,
+        next_hop: Optional["_models.RouteNextHopEcmp"] = None,
     ) -> None: ...
 
     @overload
@@ -36777,7 +37720,14 @@ class RouteTable(Resource):
     etag: Optional[str] = rest_field(visibility=["read"])
     """A unique read-only string that changes whenever the resource is updated."""
 
-    __flattened_items = ["routes", "subnets", "disable_bgp_route_propagation", "provisioning_state", "resource_guid"]
+    __flattened_items = [
+        "routes",
+        "subnets",
+        "disable_bgp_route_propagation",
+        "disable_peering_route",
+        "provisioning_state",
+        "resource_guid",
+    ]
 
     @overload
     def __init__(
@@ -36828,6 +37778,10 @@ class RouteTablePropertiesFormat(_Model):
     :ivar disable_bgp_route_propagation: Whether to disable the routes learned by BGP on that route
      table. True means disable.
     :vartype disable_bgp_route_propagation: bool
+    :ivar disable_peering_route: Whether to disable the routes learned by peering on the route
+     table. 'None' means peering routes are enabled, 'All' means all peering routes are disabled.
+     Known values are: "None" and "All".
+    :vartype disable_peering_route: str or ~azure.mgmt.network.models.DisablePeeringRoute
     :ivar provisioning_state: The provisioning state of the route table resource. Known values are:
      "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -36843,6 +37797,12 @@ class RouteTablePropertiesFormat(_Model):
         name="disableBgpRoutePropagation", visibility=["read", "create", "update", "delete", "query"]
     )
     """Whether to disable the routes learned by BGP on that route table. True means disable."""
+    disable_peering_route: Optional[Union[str, "_models.DisablePeeringRoute"]] = rest_field(
+        name="disablePeeringRoute", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to disable the routes learned by peering on the route table. 'None' means peering
+     routes are enabled, 'All' means all peering routes are disabled. Known values are: \"None\" and
+     \"All\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -36857,6 +37817,7 @@ class RouteTablePropertiesFormat(_Model):
         *,
         routes: Optional[list["_models.Route"]] = None,
         disable_bgp_route_propagation: Optional[bool] = None,
+        disable_peering_route: Optional[Union[str, "_models.DisablePeeringRoute"]] = None,
     ) -> None: ...
 
     @overload
@@ -37889,73 +38850,6 @@ class SecurityPartnerProviderPropertiesFormat(_Model):
         *,
         security_provider_name: Optional[Union[str, "_models.SecurityProviderName"]] = None,
         virtual_hub: Optional["_models.SubResource"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SecurityPerimeterSystemData(_Model):
-    """Metadata pertaining to creation and last modification of the resource.
-
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: str or ~azure.mgmt.network.models.CreatedByType
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: ~datetime.datetime
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: str or ~azure.mgmt.network.models.CreatedByType
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: ~datetime.datetime
-    """
-
-    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read", "create", "update", "delete", "query"])
-    """The identity that created the resource."""
-    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="createdByType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of identity that created the resource. Known values are: \"User\", \"Application\",
-     \"ManagedIdentity\", and \"Key\"."""
-    created_at: Optional[datetime.datetime] = rest_field(
-        name="createdAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The timestamp of resource creation (UTC)."""
-    last_modified_by: Optional[str] = rest_field(
-        name="lastModifiedBy", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The identity that last modified the resource."""
-    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
-        name="lastModifiedByType", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of identity that last modified the resource. Known values are: \"User\",
-     \"Application\", \"ManagedIdentity\", and \"Key\"."""
-    last_modified_at: Optional[datetime.datetime] = rest_field(
-        name="lastModifiedAt", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
-    )
-    """The timestamp of resource last modification (UTC)."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        created_at: Optional[datetime.datetime] = None,
-        last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
-        last_modified_at: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -39172,7 +40066,7 @@ class ServiceGateway(SecurityPerimeterTrackedResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~azure.mgmt.network.models.SecurityPerimeterSystemData
+    :vartype system_data: ~azure.mgmt.network.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -40457,7 +41351,9 @@ class StaticRoutesConfig(_Model):
      ~azure.mgmt.network.models.VnetLocalRouteOverrideCriteria
     """
 
-    propagate_static_routes: Optional[bool] = rest_field(name="propagateStaticRoutes", visibility=["read"])
+    propagate_static_routes: Optional[bool] = rest_field(
+        name="propagateStaticRoutes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Boolean indicating whether static routes on this connection are automatically propagate to
      route tables which this connection propagates to."""
     vnet_local_route_override_criteria: Optional[Union[str, "_models.VnetLocalRouteOverrideCriteria"]] = rest_field(
@@ -40470,6 +41366,7 @@ class StaticRoutesConfig(_Model):
     def __init__(
         self,
         *,
+        propagate_static_routes: Optional[bool] = None,
         vnet_local_route_override_criteria: Optional[Union[str, "_models.VnetLocalRouteOverrideCriteria"]] = None,
     ) -> None: ...
 
@@ -40482,6 +41379,228 @@ class StaticRoutesConfig(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class StopCircuitLinkFailoverTestParameterBody(_Model):
+    """StopCircuitLinkFailoverTestParameterBody.
+
+    :ivar stop_parameters: Parameters supplied to stop the link failover simulation on the express
+     route circuit. Required.
+    :vartype stop_parameters: ~azure.mgmt.network.models.ExpressRouteLinkFailoverStopApiParameters
+    """
+
+    stop_parameters: "_models.ExpressRouteLinkFailoverStopApiParameters" = rest_field(
+        name="stopParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters supplied to stop the link failover simulation on the express route circuit.
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        stop_parameters: "_models.ExpressRouteLinkFailoverStopApiParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class StopSiteFailoverTestParameterBody(_Model):
+    """StopSiteFailoverTestParameterBody.
+
+    :ivar stop_parameters: Parameters supplied to stop the failover simulation on the express route
+     gateway. Required.
+    :vartype stop_parameters: ~azure.mgmt.network.models.ExpressRouteFailoverStopApiParameters
+    """
+
+    stop_parameters: "_models.ExpressRouteFailoverStopApiParameters" = rest_field(
+        name="stopParameters", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parameters supplied to stop the failover simulation on the express route gateway. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        stop_parameters: "_models.ExpressRouteFailoverStopApiParameters",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class Subgroup(SubResourceModel):
+    """A subgroup in an interconnect group.
+
+    :ivar id: Resource ID.
+    :vartype id: str
+    :ivar name: Name of the resource.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: Properties of the subgroup.
+    :vartype properties: ~azure.mgmt.network.models.SubgroupProperties
+    """
+
+    properties: Optional["_models.SubgroupProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the subgroup."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        properties: Optional["_models.SubgroupProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubgroupNodeAvailabilityEntry(_Model):
+    """Represents the node availability information for a single subgroup.
+
+    :ivar name: The subgroup name.
+    :vartype name: str
+    :ivar internal_subgroup_id: The unique identifier of the subgroup.
+    :vartype internal_subgroup_id: str
+    :ivar in_service_node_count: The number of nodes that are in service.
+    :vartype in_service_node_count: int
+    :ivar in_use_node_count: The number of nodes that are currently in use.
+    :vartype in_use_node_count: int
+    :ivar count: The total node count for the subgroup.
+    :vartype count: int
+    """
+
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The subgroup name."""
+    internal_subgroup_id: Optional[str] = rest_field(
+        name="internalSubgroupId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The unique identifier of the subgroup."""
+    in_service_node_count: Optional[int] = rest_field(
+        name="inServiceNodeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of nodes that are in service."""
+    in_use_node_count: Optional[int] = rest_field(
+        name="inUseNodeCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of nodes that are currently in use."""
+    count: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The total node count for the subgroup."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        internal_subgroup_id: Optional[str] = None,
+        in_service_node_count: Optional[int] = None,
+        in_use_node_count: Optional[int] = None,
+        count: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubgroupProfile(_Model):
+    """Subgroup profile of the interconnect group resource.
+
+    :ivar vm_size: VM size of the subgroup profile. Required.
+    :vartype vm_size: str
+    :ivar scope: Scope of the subgroup profile. Known values are: "None" and "VerticalConnect".
+    :vartype scope: str or ~azure.mgmt.network.models.SubgroupProfileScope
+    :ivar size: Size of the subgroup profile.
+    :vartype size: int
+    """
+
+    vm_size: str = rest_field(name="vmSize", visibility=["read", "create", "update", "delete", "query"])
+    """VM size of the subgroup profile. Required."""
+    scope: Optional[Union[str, "_models.SubgroupProfileScope"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Scope of the subgroup profile. Known values are: \"None\" and \"VerticalConnect\"."""
+    size: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Size of the subgroup profile."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        vm_size: str,
+        scope: Optional[Union[str, "_models.SubgroupProfileScope"]] = None,
+        size: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SubgroupProperties(_Model):
+    """Properties of subgroup.
+
+    :ivar internal_subgroup_id: The unique identifier of the subgroup.
+    :vartype internal_subgroup_id: str
+    :ivar interconnect_block: The reference to an interconnect block resource.
+    :vartype interconnect_block: ~azure.mgmt.network.models.SubResource
+    :ivar virtual_machines: A list of virtual machine references.
+    :vartype virtual_machines: list[~azure.mgmt.network.models.SubResource]
+    :ivar provisioning_state: The provisioning state of the subgroup. Known values are: "Failed",
+     "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
+    """
+
+    internal_subgroup_id: Optional[str] = rest_field(name="internalSubgroupId", visibility=["read"])
+    """The unique identifier of the subgroup."""
+    interconnect_block: Optional["_models.SubResource"] = rest_field(name="interconnectBlock", visibility=["read"])
+    """The reference to an interconnect block resource."""
+    virtual_machines: Optional[list["_models.SubResource"]] = rest_field(name="virtualMachines", visibility=["read"])
+    """A list of virtual machine references."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the subgroup. Known values are: \"Failed\", \"Succeeded\",
+     \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
 
 
 class Subnet(SubResourceModel):
@@ -43117,6 +44236,7 @@ class VirtualNetwork(Resource):
         "flow_logs",
         "private_endpoint_v_net_policies",
         "default_public_nat_gateway",
+        "summarized_gateway_prefixes",
     ]
 
     @overload
@@ -43185,7 +44305,14 @@ class VirtualNetworkAppliance(Resource):
     etag: Optional[str] = rest_field(visibility=["read"])
     """A unique read-only string that changes whenever the resource is updated."""
 
-    __flattened_items = ["bandwidth_in_gbps", "ip_configurations", "provisioning_state", "resource_guid", "subnet"]
+    __flattened_items = [
+        "bandwidth_in_gbps",
+        "ip_configurations",
+        "private_ip_address_version",
+        "provisioning_state",
+        "resource_guid",
+        "subnet",
+    ]
 
     @overload
     def __init__(
@@ -43364,10 +44491,14 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
     """VirtualNetworkAppliance properties.
 
     :ivar bandwidth_in_gbps: Bandwidth of the VirtualNetworkAppliance resource in Gbps.
-    :vartype bandwidth_in_gbps: str
+    :vartype bandwidth_in_gbps: float
     :ivar ip_configurations: A list of IPConfigurations of the virtual network appliance.
     :vartype ip_configurations:
      list[~azure.mgmt.network.models.VirtualNetworkApplianceIpConfiguration]
+    :ivar private_ip_address_version: Whether the specific virtual network appliance is IPv4 or
+     Dual Stack. Default is IPv4. Known values are: "IPv4" and "DualStack".
+    :vartype private_ip_address_version: str or
+     ~azure.mgmt.network.models.VirtualNetworkApplianceIpVersionType
     :ivar provisioning_state: The provisioning state of the virtual network appliance resource.
      Known values are: "Failed", "Succeeded", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or ~azure.mgmt.network.models.ProvisioningState
@@ -43377,7 +44508,7 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
     :vartype subnet: ~azure.mgmt.network.models.Subnet
     """
 
-    bandwidth_in_gbps: Optional[str] = rest_field(
+    bandwidth_in_gbps: Optional[float] = rest_field(
         name="bandwidthInGbps", visibility=["read", "create", "update", "delete", "query"]
     )
     """Bandwidth of the VirtualNetworkAppliance resource in Gbps."""
@@ -43385,6 +44516,11 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
         name="ipConfigurations", visibility=["read"]
     )
     """A list of IPConfigurations of the virtual network appliance."""
+    private_ip_address_version: Optional[Union[str, "_models.VirtualNetworkApplianceIpVersionType"]] = rest_field(
+        name="privateIPAddressVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether the specific virtual network appliance is IPv4 or Dual Stack. Default is IPv4. Known
+     values are: \"IPv4\" and \"DualStack\"."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
         name="provisioningState", visibility=["read"]
     )
@@ -43399,7 +44535,8 @@ class VirtualNetworkAppliancePropertiesFormat(_Model):
     def __init__(
         self,
         *,
-        bandwidth_in_gbps: Optional[str] = None,
+        bandwidth_in_gbps: Optional[float] = None,
+        private_ip_address_version: Optional[Union[str, "_models.VirtualNetworkApplianceIpVersionType"]] = None,
         subnet: Optional["_models.Subnet"] = None,
     ) -> None: ...
 
@@ -43747,6 +44884,7 @@ class VirtualNetworkGatewayConnection(Resource):
         "enable_private_link_fast_path",
         "authentication_type",
         "certificate_authentication",
+        "routing_configuration",
     ]
 
     @overload
@@ -43839,6 +44977,7 @@ class VirtualNetworkGatewayConnectionListEntity(Resource):  # pylint: disable=na
         "provisioning_state",
         "express_route_gateway_bypass",
         "enable_private_link_fast_path",
+        "routing_configuration",
     ]
 
     @overload
@@ -43947,6 +45086,9 @@ class VirtualNetworkGatewayConnectionListEntityPropertiesFormat(_Model):  # pyli
     :ivar enable_private_link_fast_path: Bypass the ExpressRoute gateway when accessing
      private-links. ExpressRoute FastPath (expressRouteGatewayBypass) must be enabled.
     :vartype enable_private_link_fast_path: bool
+    :ivar routing_configuration: The routing configuration indicating the associated and propagated
+     route tables for this connection.
+    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     """
 
     authorization_key: Optional[str] = rest_field(
@@ -44038,6 +45180,11 @@ class VirtualNetworkGatewayConnectionListEntityPropertiesFormat(_Model):  # pyli
     )
     """Bypass the ExpressRoute gateway when accessing private-links. ExpressRoute FastPath
      (expressRouteGatewayBypass) must be enabled."""
+    routing_configuration: Optional["_models.RoutingConfiguration"] = rest_field(
+        name="routingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routing configuration indicating the associated and propagated route tables for this
+     connection."""
 
     @overload
     def __init__(
@@ -44060,6 +45207,7 @@ class VirtualNetworkGatewayConnectionListEntityPropertiesFormat(_Model):  # pyli
         traffic_selector_policies: Optional[list["_models.TrafficSelectorPolicy"]] = None,
         express_route_gateway_bypass: Optional[bool] = None,
         enable_private_link_fast_path: Optional[bool] = None,
+        routing_configuration: Optional["_models.RoutingConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -44152,6 +45300,9 @@ class VirtualNetworkGatewayConnectionPropertiesFormat(_Model):  # pylint: disabl
     :ivar certificate_authentication: Certificate Authentication information for a certificate
      based authentication connection.
     :vartype certificate_authentication: ~azure.mgmt.network.models.CertificateAuthentication
+    :ivar routing_configuration: The routing configuration indicating the associated and propagated
+     route tables for this connection.
+    :vartype routing_configuration: ~azure.mgmt.network.models.RoutingConfiguration
     """
 
     authorization_key: Optional[str] = rest_field(
@@ -44269,6 +45420,11 @@ class VirtualNetworkGatewayConnectionPropertiesFormat(_Model):  # pylint: disabl
         name="certificateAuthentication", visibility=["read", "create", "update", "delete", "query"]
     )
     """Certificate Authentication information for a certificate based authentication connection."""
+    routing_configuration: Optional["_models.RoutingConfiguration"] = rest_field(
+        name="routingConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The routing configuration indicating the associated and propagated route tables for this
+     connection."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -44298,6 +45454,7 @@ class VirtualNetworkGatewayConnectionPropertiesFormat(_Model):  # pylint: disabl
         enable_private_link_fast_path: Optional[bool] = None,
         authentication_type: Optional[Union[str, "_models.ConnectionAuthenticationType"]] = None,
         certificate_authentication: Optional["_models.CertificateAuthentication"] = None,
+        routing_configuration: Optional["_models.RoutingConfiguration"] = None,
     ) -> None: ...
 
     @overload
@@ -45491,6 +46648,9 @@ class VirtualNetworkPropertiesFormat(_Model):
     :ivar default_public_nat_gateway: A reference to the default public nat gateway being used by
      this virtual network resource.
     :vartype default_public_nat_gateway: ~azure.mgmt.network.models.SubResource
+    :ivar summarized_gateway_prefixes: A configurable list of summarized gateway prefixes
+     advertised for the virtual network.
+    :vartype summarized_gateway_prefixes: ~azure.mgmt.network.models.AddressSpace
     """
 
     address_space: Optional["_models.AddressSpace"] = rest_field(
@@ -45555,6 +46715,10 @@ class VirtualNetworkPropertiesFormat(_Model):
         name="defaultPublicNatGateway", visibility=["read"]
     )
     """A reference to the default public nat gateway being used by this virtual network resource."""
+    summarized_gateway_prefixes: Optional["_models.AddressSpace"] = rest_field(
+        name="summarizedGatewayPrefixes", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A configurable list of summarized gateway prefixes advertised for the virtual network."""
 
     @overload
     def __init__(
@@ -45572,6 +46736,7 @@ class VirtualNetworkPropertiesFormat(_Model):
         encryption: Optional["_models.VirtualNetworkEncryption"] = None,
         ip_allocations: Optional[list["_models.SubResource"]] = None,
         private_endpoint_v_net_policies: Optional[Union[str, "_models.PrivateEndpointVNetPolicies"]] = None,
+        summarized_gateway_prefixes: Optional["_models.AddressSpace"] = None,
     ) -> None: ...
 
     @overload

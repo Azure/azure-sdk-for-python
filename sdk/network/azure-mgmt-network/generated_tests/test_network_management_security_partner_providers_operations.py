@@ -24,7 +24,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
         response = self.client.security_partner_providers.get(
             resource_group_name=resource_group.name,
             security_partner_provider_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             security_partner_provider_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -75,7 +75,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
         response = self.client.security_partner_providers.begin_delete(
             resource_group_name=resource_group.name,
             security_partner_provider_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
     def test_security_partner_providers_list_by_resource_group(self, resource_group):
         response = self.client.security_partner_providers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -96,7 +96,7 @@ class TestNetworkManagementSecurityPartnerProvidersOperations(AzureMgmtRecordedT
     @recorded_by_proxy
     def test_security_partner_providers_list(self, resource_group):
         response = self.client.security_partner_providers.list(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

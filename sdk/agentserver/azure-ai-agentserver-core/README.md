@@ -60,6 +60,36 @@ async def handle(request):
 app.run()
 ```
 
+### Per-request identity (multi-user sessions)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Each request carries `x-agent-user-id` (the user — partition state by it) and an opaque `x-agent-foundry-call-id` (the per-request caller identity). Read both via `get_request_context()`; the SDK forwards **only** the call ID on outbound Foundry calls — `x-agent-user-id` is never echoed. Forwarding the call ID lets a tool server resolve which user made the request and act on their behalf.
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+
+
+def foundry_headers() -> dict[str, str]:
+    # Echoes x-agent-foundry-call-id only; x-agent-user-id is never forwarded.
+    return dict(get_request_context().platform_headers())
+
+
+async def call_toolbox(query: str) -> str:
+    user_id = get_request_context().user_id  # for the container's OWN per-user state
+    # Attach the call ID PER CALL — a toolbox MCP session is long-lived and serves many
+    # users/turns, so never bake one call's ID into the client's static headers.
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **foundry_headers()},
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+    return resp.text  # the toolbox resolved the caller from the call ID and acted as that user
+```
+
 ### Subclassing AgentServerHost
 
 For custom protocol implementations, subclass `AgentServerHost` and add routes:

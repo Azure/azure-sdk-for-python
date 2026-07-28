@@ -26,7 +26,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
             resource_group_name=resource_group.name,
             express_route_port_name="str",
             authorization_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
                 resource_group_name=resource_group.name,
                 express_route_port_name="str",
                 authorization_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +80,7 @@ class TestNetworkManagementExpressRoutePortAuthorizationsOperationsAsync(AzureMg
         response = self.client.express_route_port_authorizations.list(
             resource_group_name=resource_group.name,
             express_route_port_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

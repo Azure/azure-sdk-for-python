@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -29,9 +32,19 @@ stages:
             displayName: 'Use Python 3.10'
             inputs:
               versionSpec: '3.10'
+
+          # Authenticate pip to the configured Azure DevOps feed before installs.
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'
+
+          - template: /eng/common/pipelines/templates/steps/login-to-github.yml
+
           - task: PythonScript@0
             displayName: 'Run Pylint Next'
             continueOnError: true
@@ -44,7 +57,7 @@ stages:
                 --disablecov
                 --filter-type="Omit_management"
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
 
           - task: PythonScript@0
             displayName: 'Run MyPy Next'
@@ -57,7 +70,7 @@ stages:
                 --checks="next-mypy"
                 --disablecov
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
 
           - task: PythonScript@0
             displayName: 'Run Pyright Next'
@@ -70,7 +83,7 @@ stages:
                 --checks="next-pyright"
                 --disablecov
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
 
           - script: |
               python -m pip install PyGithub>=1.59.0
@@ -86,7 +99,7 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --disablecov
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
           - task: UsePythonVersion@0
@@ -108,4 +121,4 @@ stages:
                 --service="${{ parameters.ServiceDirectory }}"
                 --checks="next-sphinx"
             env:
-              GH_TOKEN: $(azuresdk-github-pat)
+              GH_TOKEN: $(GH_TOKEN)

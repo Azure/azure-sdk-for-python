@@ -1,10 +1,11 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding: utf-8
 
-#-------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
-#--------------------------------------------------------------------------
+# --------------------------------------------------------------------------
 
 
 # TEST SCENARIO COVERAGE
@@ -22,16 +23,15 @@ import unittest
 import azure.mgmt.storagesync
 from devtools_testutils import AzureMgmtTestCase, ResourceGroupPreparer
 
-AZURE_LOCATION = 'eastus'
+AZURE_LOCATION = "eastus"
+
 
 class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
 
     def setUp(self):
         super(MgmtMicrosoftStorageSyncTest, self).setUp()
-        self.mgmt_client = self.create_mgmt_client(
-            azure.mgmt.storagesync.StorageSyncManagementClient
-        )
-    
+        self.mgmt_client = self.create_mgmt_client(azure.mgmt.storagesync.StorageSyncManagementClient)
+
     @unittest.skip("skip test")
     @ResourceGroupPreparer(location=AZURE_LOCATION)
     def test_storagesync(self, resource_group):
@@ -52,15 +52,14 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         LOCATION_NAME = AZURE_LOCATION
 
         # StorageSyncServices_Create[put]
-        BODY = {
-          "location": "WestUS",
-          "tags": {}
-        }
+        BODY = {"location": "WestUS", "tags": {}}
         result = self.mgmt_client.storage_sync_services.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, BODY)
 
         # SyncGroups_Create[put]
         BODY = {}
-        result = self.mgmt_client.sync_groups.create(resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, BODY)
+        result = self.mgmt_client.sync_groups.create(
+            resource_group.name, STORAGE_SYNC_SERVICE_NAME, SYNC_GROUP_NAME, BODY
+        )
 
         """
         # RegisteredServers_Create[put]
@@ -128,7 +127,9 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         """
 
         # SyncGroups_ListByStorageSyncService[get]
-        result = self.mgmt_client.sync_groups.list_by_storage_sync_service(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
+        result = self.mgmt_client.sync_groups.list_by_storage_sync_service(
+            resource_group.name, STORAGE_SYNC_SERVICE_NAME
+        )
 
         # Workflows_ListByStorageSyncService[get]
         result = self.mgmt_client.workflows.list_by_storage_sync_service(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
@@ -253,26 +254,15 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         """
 
         # StorageSyncServices_Update[patch]
-        BODY = {
-          "tags": {
-            "environment": "Test",
-            "dept": "IT"
-          }
-        }
+        BODY = {"tags": {"environment": "Test", "dept": "IT"}}
         result = self.mgmt_client.storage_sync_services.update(resource_group.name, STORAGE_SYNC_SERVICE_NAME, BODY)
 
         # StorageSyncServiceCheckNameAvailability_AlreadyExists[post]
-        BODY = {
-          "name": "newstoragesyncservicename",
-          "type": "Microsoft.StorageSync/storageSyncServices"
-        }
+        BODY = {"name": "newstoragesyncservicename", "type": "Microsoft.StorageSync/storageSyncServices"}
         result = self.mgmt_client.storage_sync_services.check_name_availability(LOCATION_NAME, BODY)
 
         # StorageSyncServiceCheckNameAvailability_Available[post]
-        BODY = {
-          "name": "newstoragesyncservicename",
-          "type": "Microsoft.StorageSync/storageSyncServices"
-        }
+        BODY = {"name": "newstoragesyncservicename", "type": "Microsoft.StorageSync/storageSyncServices"}
         result = self.mgmt_client.storage_sync_services.check_name_availability(LOCATION_NAME, BODY)
 
         """
@@ -296,6 +286,6 @@ class MgmtMicrosoftStorageSyncTest(AzureMgmtTestCase):
         result = self.mgmt_client.storage_sync_services.delete(resource_group.name, STORAGE_SYNC_SERVICE_NAME)
 
 
-#------------------------------------------------------------------------------
-if __name__ == '__main__':
+# ------------------------------------------------------------------------------
+if __name__ == "__main__":
     unittest.main()

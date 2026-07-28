@@ -2,7 +2,7 @@
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and supports two transports on the same host:
 
-- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`.
+- **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
 
 ## Getting started
@@ -38,6 +38,8 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 | `GET` | `/invocations/{invocation_id}` | No | Retrieve invocation status or result |
 | `POST` | `/invocations/{invocation_id}/cancel` | No | Cancel a running invocation |
 | `GET` | `/invocations/docs/openapi.json` | No | Serve the agent's OpenAPI 3.x spec |
+| `GET` | `/invocations/docs/asyncapi.json` | No | Serve the agent's AsyncAPI 3.x spec (JSON) |
+| `GET` | `/invocations/docs/asyncapi.yaml` | No | Serve the agent's AsyncAPI 3.x spec (YAML) |
 | `WS`   | `/invocations_ws` | No | Full-duplex WebSocket transport (`invocations_ws` protocol) |
 
 ### Request and response headers
@@ -65,6 +67,8 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 
 - `request.state.invocation_id` — The invocation ID (echoed or generated).
 - `request.state.session_id` — The resolved session ID (POST /invocations only).
+- `request.state.user_id` — The per-user ID from `x-agent-user-id` (container protocol `2.0.0`); use for per-user state.
+- `request.state.call_id` — The per-request call ID from `x-agent-foundry-call-id` (protocol `2.0.0`); forward on outbound Foundry calls.
 
 ### Distributed tracing
 
@@ -91,6 +95,42 @@ app = InvocationAgentServerHost()
 async def handle(request: Request) -> Response:
     data = await request.json()
     return JSONResponse({"greeting": f"Hello, {data['name']}!"})
+
+app.run()
+```
+
+### Multi-user session (per-request call ID)
+
+On container protocol `2.0.0` a single agent session can serve **multiple users**. Forwarding the per-request `x-agent-foundry-call-id` on outbound toolbox calls lets the tool server resolve *which* user made this request and act on their behalf. (`x-agent-user-id` is never forwarded; the tool resolves the user from the call ID server-side. Use `request.state.user_id` only for the container's own per-user state.)
+
+```python
+import os
+
+import httpx
+from azure.ai.agentserver.core import get_request_context
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+app = InvocationAgentServerHost()
+
+
+@app.invoke_handler
+async def handle(request: Request) -> Response:
+    # platform_headers() echoes x-agent-foundry-call-id only (never x-agent-user-id).
+    headers = get_request_context().platform_headers()
+
+    # Toolbox / MCP — attach the call ID PER CALL (the MCP session is shared across users/turns).
+    async with httpx.AsyncClient() as mcp:
+        resp = await mcp.post(
+            f"{os.environ['FOUNDRY_PROJECT_ENDPOINT']}/toolboxes/github/mcp",
+            headers={"Authorization": f"Bearer {get_agent_token()}", **headers},  # get_agent_token(): the agent's managed-identity token
+            json={"jsonrpc": "2.0", "method": "tools/call",
+                  "params": {"name": "list_my_assigned_issues", "arguments": {}}},
+        )
+        # The toolbox resolved the caller from the call ID and returned THIS user's issues.
+
+    return JSONResponse(resp.json())
 
 app.run()
 ```
@@ -186,6 +226,39 @@ app = InvocationAgentServerHost(openapi_spec={
     "paths": { ... },
 })
 ```
+
+### Serving an AsyncAPI spec
+
+AsyncAPI is the companion to OpenAPI for streaming/bidirectional surfaces (e.g. the
+`invocations_ws` WebSocket protocol) that OpenAPI cannot express. Pass either or both
+representations to enable the discovery endpoints:
+
+```python
+app = InvocationAgentServerHost(
+    asyncapi_spec_json={
+        "asyncapi": "3.0.0",
+        "info": {"title": "My Agent", "version": "1.0.0"},
+        "channels": { ... },
+        "operations": { ... },
+    },
+    asyncapi_spec_yaml="""asyncapi: 3.0.0
+info:
+  title: My Agent
+  version: 1.0.0
+channels:
+  ...
+""",
+)
+```
+
+Each representation is served at its own path:
+
+- `GET /invocations/docs/asyncapi.json` — `application/json`
+- `GET /invocations/docs/asyncapi.yaml` — `application/yaml`
+
+The path extension is authoritative for the returned content type (no `Accept`
+negotiation, no format conversion). If you only pass one, the other returns `404`.
+Serving both is recommended for tooling compatibility.
 
 ## WebSocket protocol (`invocations_ws`)
 

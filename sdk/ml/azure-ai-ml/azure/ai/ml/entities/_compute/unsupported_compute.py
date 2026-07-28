@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 from typing import Any, Dict
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource
 from azure.ai.ml.constants._common import TYPE
 from azure.ai.ml.entities._compute.compute import Compute
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException

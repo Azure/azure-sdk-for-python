@@ -26,7 +26,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -116,7 +116,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                     "location": "str",
                                     "name": "str",
                                     "properties": {
-                                        "ddosSettings": {"ddosProtectionPlan": {"id": "str"}, "protectionMode": "str"},
+                                        "ddosSettings": {
+                                            "ddosCustomPolicy": {"id": "str"},
+                                            "ddosProtectionPlan": {"id": "str"},
+                                            "protectionMode": "str",
+                                        },
                                         "deleteOption": "str",
                                         "dnsSettings": {
                                             "domainNameLabel": "str",
@@ -349,6 +353,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -454,6 +459,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -517,6 +527,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "type": "str",
                                                                                                             }
                                                                                                         ],
+                                                                                                        "billingSku": "str",
                                                                                                         "customDnsConfigs": [
                                                                                                             {
                                                                                                                 "fqdn": "str",
@@ -631,6 +642,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -772,6 +788,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -1070,6 +1087,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "id": "str",
                                                                                                 "name": "str",
                                                                                                 "properties": {
+                                                                                                    "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        }
+                                                                                                    },
                                                                                                     "gatewayLoadBalancer": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1147,6 +1169,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -1257,6 +1284,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -1268,6 +1296,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -1351,6 +1380,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                             "name": "str",
                                             "properties": {
                                                 "idleTimeoutInMinutes": 0,
+                                                "nat64": "str",
                                                 "provisioningState": "str",
                                                 "publicIpAddresses": [{"id": "str"}],
                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1435,6 +1465,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -1458,6 +1489,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -1644,6 +1676,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -1741,6 +1774,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1761,6 +1797,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1802,6 +1841,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1885,6 +1925,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -1987,6 +2028,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -2017,6 +2063,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -2058,6 +2107,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -2229,6 +2279,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -2497,6 +2548,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2521,6 +2577,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2562,6 +2621,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2661,6 +2721,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -2691,6 +2756,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -2732,6 +2800,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -2874,6 +2943,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -2885,6 +2955,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -2968,6 +3039,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                 "id": "str",
                                                 "name": "str",
                                                 "properties": {
+                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                     "gatewayLoadBalancer": {"id": "str"},
                                                     "inboundNatPools": [{"id": "str"}],
                                                     "inboundNatRules": [{"id": "str"}],
@@ -2985,6 +3057,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -3247,6 +3320,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                 "type": "str",
                                                                                                             }
                                                                                                         ],
+                                                                                                        "billingSku": "str",
                                                                                                         "customDnsConfigs": [
                                                                                                             {
                                                                                                                 "fqdn": "str",
@@ -3399,6 +3473,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                                     "type": "str",
                                                                                                                                 }
                                                                                                                             ],
+                                                                                                                            "billingSku": "str",
                                                                                                                             "customDnsConfigs": [
                                                                                                                                 {
                                                                                                                                     "fqdn": "str",
@@ -3618,6 +3693,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -4045,6 +4121,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -4056,6 +4133,11 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -4143,6 +4225,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -4237,6 +4320,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -4262,6 +4346,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -4470,6 +4555,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -4606,6 +4692,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -4804,6 +4891,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "type": "str",
                                                                             }
                                                                         ],
+                                                                        "billingSku": "str",
                                                                         "customDnsConfigs": [
                                                                             {"fqdn": "str", "ipAddresses": ["str"]}
                                                                         ],
@@ -5200,6 +5288,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "disableBgpRoutePropagation": bool,
+                                                                    "disablePeeringRoute": "str",
                                                                     "provisioningState": "str",
                                                                     "resourceGuid": "str",
                                                                     "routes": [
@@ -5211,6 +5300,9 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                                                                                 "nextHopType": "str",
                                                                                 "addressPrefix": "str",
                                                                                 "hasBgpOverride": bool,
+                                                                                "nextHop": {
+                                                                                    "nextHopIpAddresses": ["str"]
+                                                                                },
                                                                                 "nextHopIpAddress": "str",
                                                                                 "provisioningState": "str",
                                                                             },
@@ -5340,7 +5432,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
                 },
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5353,7 +5445,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
             resource_group_name=resource_group.name,
             load_balancer_name="str",
             backend_address_pool_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -5365,7 +5457,7 @@ class TestNetworkManagementLoadBalancerBackendAddressPoolsOperations(AzureMgmtRe
         response = self.client.load_balancer_backend_address_pools.list(
             resource_group_name=resource_group.name,
             load_balancer_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
