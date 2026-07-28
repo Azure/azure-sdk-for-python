@@ -1,6 +1,6 @@
 # Release History
 
-## 41.4.0 (2026-07-22)
+## 41.6.0b1 (2026-07-24)
 
 ### Features Added
 
@@ -87,19 +87,16 @@
   - Model `ManagedClusterProperties` added property `enable_namespace_resources`
   - Model `ManagedClusterProperties` added property `health_monitor_profile`
   - Model `ManagedClusterProperties` added property `node_disruption_profile`
-  - Model `ManagedClusterProperties` added property `scheduler_profile`
   - Model `ManagedClusterSecurityProfile` added property `image_integrity`
   - Model `ManagedClusterSecurityProfile` added property `kubernetes_resource_object_encryption_profile`
   - Model `ManagedClusterSecurityProfile` added property `node_restriction`
   - Model `ManagedClusterSecurityProfile` added property `service_account_image_pull_profile`
-  - Model `ManagedClusterSecurityProfileDefender` added property `security_gating`
   - Model `ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler` added property `addon_autoscaling`
   - Enum `OSSKU` added member `FLATCAR`
   - Enum `OSSKU` added member `MARINER`
   - Enum `OSSKU` added member `WINDOWS_ANNUAL`
   - Enum `OutboundType` added member `MANAGED_NAT_GATEWAY_V2`
   - Enum `PublicNetworkAccess` added member `SECURED_BY_PERIMETER`
-  - Model `ScaleProfile` added property `autoscale`
   - Enum `SnapshotType` added member `MANAGED_CLUSTER`
   - Enum `TransitEncryptionType` added member `M_TLS`
   - Enum `WorkloadRuntime` added member `KATA_MSHV_VM_ISOLATION`
@@ -113,7 +110,6 @@
   - Added enum `AlertConfigurationProvisioningState`
   - Added model `AlertNotification`
   - Added model `AllowedSubject`
-  - Added model `AutoScaleProfile`
   - Added model `BastionProfile`
   - Added enum `BastionSku`
   - Added model `BootstrapAzureConfig`
@@ -172,8 +168,6 @@
   - Added model `ManagedClusterNATGatewayProfileOutboundIPs`
   - Added model `ManagedClusterNATGatewayProfileOutboundIpPrefixes`
   - Added model `ManagedClusterPropertiesForSnapshot`
-  - Added model `ManagedClusterSecurityProfileDefenderSecurityGating`
-  - Added model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentity`
   - Added model `ManagedClusterSecurityProfileImageIntegrity`
   - Added model `ManagedClusterSecurityProfileNodeRestriction`
   - Added model `ManagedClusterSnapshot`
@@ -211,22 +205,19 @@
   - Added model `SafeguardsAvailableVersion`
   - Added model `SafeguardsAvailableVersionsProperties`
   - Added enum `SafeguardsSupport`
-  - Added enum `SchedulerConfigMode`
-  - Added model `SchedulerInstanceProfile`
-  - Added model `SchedulerProfile`
   - Added enum `SeccompDefault`
   - Added model `ServiceAccountImagePullProfile`
   - Added enum `UpgradeStrategy`
   - Added enum `VmState`
-  - Operation group `AgentPoolsOperations` added method `begin_complete_upgrade`
-  - Operation group `AgentPoolsOperations` added method `list_bootstrap_data`
-  - Operation group `MachinesOperations` added method `begin_create_or_update`
-  - Operation group `ManagedClustersOperations` added parameter `ignore_pod_disruption_budget` in method `begin_delete`
-  - Operation group `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
-  - Operation group `ManagedClustersOperations` added method `get_guardrails_versions`
-  - Operation group `ManagedClustersOperations` added method `get_safeguards_versions`
-  - Operation group `ManagedClustersOperations` added method `list_guardrails_versions`
-  - Operation group `ManagedClustersOperations` added method `list_safeguards_versions`
+  - Model `AgentPoolsOperations` added method `begin_complete_upgrade`
+  - Model `AgentPoolsOperations` added method `list_bootstrap_data`
+  - Model `MachinesOperations` added method `begin_create_or_update`
+  - Model `ManagedClustersOperations` added parameter `ignore_pod_disruption_budget` in method `begin_delete`
+  - Model `ManagedClustersOperations` added method `begin_rebalance_load_balancers`
+  - Model `ManagedClustersOperations` added method `get_guardrails_versions`
+  - Model `ManagedClustersOperations` added method `get_safeguards_versions`
+  - Model `ManagedClustersOperations` added method `list_guardrails_versions`
+  - Model `ManagedClustersOperations` added method `list_safeguards_versions`
   - Added operation group `AlertConfigurationsOperations`
   - Added operation group `ContainerServiceOperations`
   - Added operation group `JWTAuthenticatorsOperations`
@@ -236,6 +227,24 @@
   - Added operation group `MeshMembershipsOperations`
   - Added operation group `OperationStatusResultOperations`
   - Added operation group `VmSkusOperations`
+  - Added model `Machine`
+  - Added model `MachineIpAddress`
+  - Added model `MachineNetworkProperties`
+  - Added model `MachineProperties`
+
+## 41.5.0 (2026-07-24)
+
+### Features Added
+
+  - Model `ManagedClusterProperties` added property `scheduler_profile`
+  - Model `ManagedClusterSecurityProfileDefender` added property `security_gating`
+  - Model `ScaleProfile` added property `autoscale`
+  - Added model `AutoScaleProfile`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGating`
+  - Added model `ManagedClusterSecurityProfileDefenderSecurityGatingIdentity`
+  - Added enum `SchedulerConfigMode`
+  - Added model `SchedulerInstanceProfile`
+  - Added model `SchedulerProfile`
 
 ## 41.4.0b1 (2026-06-04)
 

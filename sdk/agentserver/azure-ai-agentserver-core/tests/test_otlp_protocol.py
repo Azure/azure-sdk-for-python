@@ -28,18 +28,6 @@ from opentelemetry.proto.collector.trace.v1 import (
 
 _SIGNALS = {"traces", "metrics", "logs"}
 _PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-_OTLP_ENV_VARS = (
-    "APPLICATIONINSIGHTS_CONNECTION_STRING",
-    "OTEL_EXPORTER_OTLP_ENDPOINT",
-    "OTEL_EXPORTER_OTLP_PROTOCOL",
-    "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT",
-    "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL",
-    "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT",
-    "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL",
-    "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT",
-    "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL",
-)
-
 _EMIT_ALL_SIGNALS = """
 from azure.ai.agentserver.core import configure_observability
 from opentelemetry import metrics, trace
@@ -220,7 +208,10 @@ def test_otlp_protocol_exports_all_signals(
     """Agent Server must honor the configured OTLP protocol for every signal."""
     with receiver_type() as receiver:
         env = os.environ.copy()
-        for variable in _OTLP_ENV_VARS:
+        for variable in list(env):
+            if variable.startswith("OTEL_EXPORTER_OTLP_"):
+                env.pop(variable, None)
+        for variable in ("APPLICATIONINSIGHTS_CONNECTION_STRING",):
             env.pop(variable, None)
         env.update(
             {

@@ -35,6 +35,9 @@ dependencies = [
 otlp-grpc = [
     "opentelemetry-exporter-otlp-proto-grpc>=1.43.0",
 ]
+hosted = [
+    "azure-identity>=1.16.0",
+]
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
@@ -68,5 +71,7 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
+# apistub crashes on Generic[Input, Output] classes (Python 3.10 inspect.getsource bug)
+apistub = false
 
 [tool.uv.sources]

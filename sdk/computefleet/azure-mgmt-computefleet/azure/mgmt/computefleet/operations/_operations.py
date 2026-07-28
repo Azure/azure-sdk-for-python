@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import ComputeFleetMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_fleets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_fleets_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -132,7 +131,7 @@ def build_fleets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -161,7 +160,7 @@ def build_fleets_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AzureFleet/fleets/{fleetName}"
     path_format_arguments = {
@@ -184,7 +183,7 @@ def build_fleets_list_by_resource_group_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -211,7 +210,7 @@ def build_fleets_list_by_subscription_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -237,7 +236,7 @@ def build_fleets_list_virtual_machine_scale_sets_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -271,7 +270,7 @@ def build_fleets_list_virtual_machines_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-04-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -495,7 +494,11 @@ class FleetsOperations:
         return deserialized  # type: ignore
 
     def _create_or_update_initial(
-        self, resource_group_name: str, fleet_name: str, resource: Union[_models.Fleet, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -597,7 +600,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        resource: JSON,
+        resource: _types.Fleet,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -610,7 +613,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computefleet.types.Fleet
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -650,7 +653,11 @@ class FleetsOperations:
 
     @distributed_trace
     def begin_create_or_update(
-        self, resource_group_name: str, fleet_name: str, resource: Union[_models.Fleet, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        fleet_name: str,
+        resource: Union[_models.Fleet, _types.Fleet, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.Fleet]:
         """Create a Fleet.
 
@@ -659,9 +666,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
-        :param resource: Resource create parameters. Is one of the following types: Fleet, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.computefleet.models.Fleet or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Fleet type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.computefleet.models.Fleet or ~azure.mgmt.computefleet.types.Fleet
+         or IO[bytes]
         :return: An instance of LROPoller that returns Fleet. The Fleet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computefleet.models.Fleet]
@@ -723,7 +731,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetUpdate, _types.FleetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -827,7 +835,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: JSON,
+        properties: _types.FleetUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -840,7 +848,7 @@ class FleetsOperations:
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.computefleet.types.FleetUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -883,7 +891,7 @@ class FleetsOperations:
         self,
         resource_group_name: str,
         fleet_name: str,
-        properties: Union[_models.FleetUpdate, JSON, IO[bytes]],
+        properties: Union[_models.FleetUpdate, _types.FleetUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Fleet]:
         """Update a Fleet.
@@ -893,9 +901,10 @@ class FleetsOperations:
         :type resource_group_name: str
         :param fleet_name: The name of the Compute Fleet. Required.
         :type fleet_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         FleetUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.computefleet.models.FleetUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a FleetUpdate type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.computefleet.models.FleetUpdate or
+         ~azure.mgmt.computefleet.types.FleetUpdate or IO[bytes]
         :return: An instance of LROPoller that returns Fleet. The Fleet is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.computefleet.models.Fleet]
@@ -1375,7 +1384,7 @@ class FleetsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-04-01-preview"],
+        api_versions_list=["2026-04-01-preview", "2026-06-01-preview"],
     )
     def list_virtual_machines(
         self,

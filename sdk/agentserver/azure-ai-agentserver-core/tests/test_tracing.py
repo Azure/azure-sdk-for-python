@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Tests for tracing configuration — not invocation spans (those live in the invocations package)."""
 import os
+from threading import Event, Thread
 from unittest import mock
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
@@ -296,6 +297,85 @@ class TestSetupDistroExport:
         assert not any(module.startswith("opentelemetry.sdk.trace.export") for module in exporter_modules)
         assert not any(module.startswith("opentelemetry.sdk.metrics.export") for module in exporter_modules)
         assert not any(module.startswith("opentelemetry.sdk._logs.export") for module in exporter_modules)
+
+    def test_suppressing_distro_otlp_serializes_overlapping_contexts(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        original_append_otlp_components = distro_globals["_append_otlp_components"]
+        first_context_entered = Event()
+        release_first_context = Event()
+        second_context_entered = Event()
+        errors = []
+
+        def first_context():
+            try:
+                with _tracing._suppress_distro_otlp_components():
+                    first_context_entered.set()
+                    release_first_context.wait(timeout=5)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        def second_context():
+            try:
+                first_context_entered.wait(timeout=5)
+                with _tracing._suppress_distro_otlp_components():
+                    second_context_entered.set()
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        first_thread = Thread(target=first_context)
+        second_thread = Thread(target=second_context)
+        first_thread.start()
+        assert first_context_entered.wait(timeout=5)
+        second_thread.start()
+
+        try:
+            assert not second_context_entered.wait(timeout=0.1)
+            assert distro_globals["_append_otlp_components"] is not original_append_otlp_components
+        finally:
+            release_first_context.set()
+            first_thread.join(timeout=5)
+            second_thread.join(timeout=5)
+
+        assert not first_thread.is_alive()
+        assert not second_thread.is_alive()
+        assert second_context_entered.is_set()
+        assert distro_globals["_append_otlp_components"] is original_append_otlp_components
+        assert errors == []
+
+    def test_suppressing_distro_otlp_only_applies_to_current_thread(self) -> None:
+        from azure.ai.agentserver.core import _tracing
+        from microsoft.opentelemetry import use_microsoft_opentelemetry
+
+        distro_globals = use_microsoft_opentelemetry.__globals__
+        other_thread_kwargs = {}
+        errors = []
+
+        def fake_append_otlp_components(otel_kwargs):
+            otel_kwargs["delegated"] = True
+
+        def call_helper_in_other_thread(helper):
+            try:
+                helper(other_thread_kwargs)
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                errors.append(exc)
+
+        with mock.patch.dict(distro_globals, {"_append_otlp_components": fake_append_otlp_components}):
+            with _tracing._suppress_distro_otlp_components():
+                active_helper = distro_globals["_append_otlp_components"]
+                current_thread_kwargs = {}
+                active_helper(current_thread_kwargs)
+
+                other_thread = Thread(target=call_helper_in_other_thread, args=(active_helper,))
+                other_thread.start()
+                other_thread.join(timeout=5)
+
+        assert current_thread_kwargs == {}
+        assert other_thread_kwargs == {"delegated": True}
+        assert not other_thread.is_alive()
+        assert errors == []
 
 
 # ------------------------------------------------------------------ #

@@ -37,6 +37,7 @@ from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=impo
 from contextlib import contextmanager, nullcontext
 import logging
 import os
+import threading
 from typing import Any, Optional, Union
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
@@ -98,6 +99,8 @@ _OTLP_ENV_VARS = (
     _OTLP_LOGS_ENDPOINT,
     _OTLP_LOGS_PROTOCOL,
 )
+_DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
+_DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
 
 
 # ======================================================================
@@ -425,17 +428,23 @@ def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
 def _suppress_distro_otlp_components() -> Any:
     import microsoft.opentelemetry as microsoft_opentelemetry
 
-    distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
-    original_append_otlp_components = distro_globals["_append_otlp_components"]
+    with _DISTRO_OTLP_SUPPRESSION_LOCK:
+        distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+        original_append_otlp_components = distro_globals["_append_otlp_components"]
 
-    def _skip_otlp_components(_otel_kwargs: dict[str, Any]) -> None:
-        return None
+        def _skip_otlp_components(_otel_kwargs: dict[str, Any]) -> None:
+            if getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False):
+                return None
+            return original_append_otlp_components(_otel_kwargs)
 
-    distro_globals["_append_otlp_components"] = _skip_otlp_components
-    try:
-        yield
-    finally:
-        distro_globals["_append_otlp_components"] = original_append_otlp_components
+        previous_suppression_state = getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False)
+        _DISTRO_OTLP_SUPPRESSION_STATE.enabled = True
+        distro_globals["_append_otlp_components"] = _skip_otlp_components
+        try:
+            yield
+        finally:
+            _DISTRO_OTLP_SUPPRESSION_STATE.enabled = previous_suppression_state
+            distro_globals["_append_otlp_components"] = original_append_otlp_components
 
 
 # ======================================================================
@@ -684,7 +693,6 @@ class _FoundryEnrichmentSpanProcessor:
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
-        target = getattr(attrs, "_dict", attrs)
         try:
             target = getattr(attrs, "_dict", attrs)
             if self.agent_name:

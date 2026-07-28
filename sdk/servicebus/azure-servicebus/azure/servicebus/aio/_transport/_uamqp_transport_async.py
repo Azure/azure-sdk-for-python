@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 import functools
+import time
 from typing import TYPE_CHECKING, Optional, Any, Callable, Union, AsyncIterator, cast
 
 try:
@@ -191,10 +192,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = await receiver._inner_anext()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopAsyncIteration:
                     break
                 finally:
