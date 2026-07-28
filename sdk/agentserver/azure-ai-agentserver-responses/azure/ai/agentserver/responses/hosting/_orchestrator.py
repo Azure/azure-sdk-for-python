@@ -420,7 +420,8 @@ def _bg_track_output_count(normalized: "generated_models.ResponseStreamEvent", o
         n_output = (normalized.get("response") or {}).get("output")
         if isinstance(n_output, list) and len(n_output) > output_item_count:
             raise ValueError(
-                f"Output item count mismatch " f"({len(n_output)} vs {output_item_count} output_item.added events)"
+                "Output item count mismatch "
+                + f"({len(n_output)} vs {output_item_count} output_item.added events)"
             )
     return output_item_count
 
@@ -478,6 +479,8 @@ async def _bg_handle_first_event(
     :keyword history_limit: History fetch limit.
     :paramtype history_limit: int
     :raises ValueError: On direct output manipulation on a fresh entry.
+    :return: The output-item count and provider-created flag after the first event.
+    :rtype: tuple[int, bool]
     """
     output_item_count = 0
     #: output manipulation detection on response.created
@@ -997,7 +1000,7 @@ async def _bg_drain_handler_events(
             )
             st.handler_events.append(normalized)
             st.validator.validate_next(normalized)
-            if normalized.get("type") in _ResponseOrchestrator._TERMINAL_SSE_TYPES:
+            if normalized.get("type") in _ResponseOrchestrator._TERMINAL_SSE_TYPES:  # pylint: disable=protected-access
                 st.terminal_seen = True
             if not st.first_event_processed:
                 st.first_event_processed = True
@@ -1110,6 +1113,8 @@ async def _run_background_non_stream(
     :keyword type history_limit: int
     :keyword runtime_state: Runtime state tracker for eager eviction after persist.
     :keyword type runtime_state: _RuntimeState | None
+    :keyword runtime_options: Runtime options controlling response execution behavior.
+    :keyword type runtime_options: ResponsesServerOptions | None
     :return: None
     :rtype: None
     """
@@ -1417,6 +1422,13 @@ class _ResponseOrchestrator:
         finally blocks, race-prone short-circuits) intentionally rely on
         the silent semantics — wrap them via this helper rather than
         sprinkling try/except.
+
+        :param stream: The event stream to emit to, or ``None``.
+        :type stream: EventStream | None
+        :param event: The event to emit.
+        :type event: Any
+        :return: None
+        :rtype: None
         """
         if stream is None:
             return
@@ -1431,7 +1443,13 @@ class _ResponseOrchestrator:
 
     @staticmethod
     async def _safe_close(stream: "EventStream | None") -> None:
-        """Close ``stream`` tolerating already-closed / destroyed."""
+        """Close ``stream`` tolerating already-closed / destroyed.
+
+        :param stream: The event stream to close, or ``None``.
+        :type stream: EventStream | None
+        :return: None
+        :rtype: None
+        """
         if stream is None:
             return
         try:
@@ -1922,7 +1940,8 @@ class _ResponseOrchestrator:
                 # Recovery: response was persisted by a prior attempt.
                 # Swallow and proceed; terminal update_response will fire.
                 logger.info(
-                    "Response %s already exists in store (recovery — swallowed by idempotent create at bg+stream first-event).",
+                    "Response %s already exists in store "
+                    + "(recovery — swallowed by idempotent create at bg+stream first-event).",
                     ctx.response_id,
                 )
                 state.provider_created = True
@@ -2412,6 +2431,8 @@ class _ResponseOrchestrator:
         :type state: _PipelineState
         :param handler_iterator: The handler's event iterator (post first event).
         :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :param seeded_output_count: The number of output items already seeded for recovery.
+        :type seeded_output_count: int
         :return: Async iterator of normalised non-terminal events.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
@@ -2686,7 +2707,8 @@ class _ResponseOrchestrator:
                     state.pending_terminal = await self._cancel_terminal_sse_dict(ctx, state)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
-                        "Failed to synthesise cancel terminal on interrupted " "foreground stream (response_id=%s)",
+                        "Failed to synthesise cancel terminal on interrupted "
+                        + "foreground stream (response_id=%s)",
                         ctx.response_id,
                         exc_info=True,
                     )
@@ -2813,6 +2835,7 @@ class _ResponseOrchestrator:
         cancel the resilient execution.
 
         :param wire_stream: The per-response stream the resilient body emits to.
+        :type wire_stream: EventStream
         :returns: Async iterator of encoded SSE strings.
         :rtype: AsyncIterator[str]
         """
@@ -3119,7 +3142,10 @@ class _ResponseOrchestrator:
             if task_run is not None:
                 try:
                     await task_run.result()
-                except asyncio.CancelledError:
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    # Cancellation must propagate untouched — never fold it into
+                    # the task-failure handling below (CancelledError is a
+                    # BaseException, so this guard is belt-and-suspenders).
                     raise
                 except Exception as task_exc:  # pylint: disable=broad-exception-caught
                     # Resilient task body raised. If the handler had a pre-creation
@@ -3137,7 +3163,8 @@ class _ResponseOrchestrator:
             elif execution_task is not None:
                 try:
                     await execution_task
-                except asyncio.CancelledError:
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    # Cancellation must propagate untouched (see above).
                     raise
                 except Exception as task_exc:  # pylint: disable=broad-exception-caught
                     if not getattr(record, "response_failed_before_events", False):
@@ -3436,8 +3463,11 @@ class _ResponseOrchestrator:
         task can be signalled in a ``try/finally`` wrapper in the caller.
 
         :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
         :param state: Pipeline state (populated by handler events).
+        :type state: _PipelineState
         :return: Response snapshot dictionary.
+        :rtype: dict[str, Any]
         """
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
@@ -3713,6 +3743,31 @@ class _ResponseOrchestrator:
         handler still runs and events still get persisted; reconnecting
         clients see the events via the GET reconnect endpoint.
 
+        :keyword parsed: Parsed create-response request.
+        :paramtype parsed: CreateResponse
+        :keyword context: Runtime response context for this request.
+        :paramtype context: ResponseContext
+        :keyword cancellation_signal: Event signalling cancellation.
+        :paramtype cancellation_signal: asyncio.Event
+        :keyword record: The mutable execution record.
+        :paramtype record: ResponseExecution
+        :keyword response_id: The response ID for this execution.
+        :paramtype response_id: str
+        :keyword agent_reference: Normalized agent reference model or dictionary.
+        :paramtype agent_reference: AgentReference | dict[str, Any]
+        :keyword model: Model name, or ``None``.
+        :paramtype model: str | None
+        :keyword store: Whether the response should be persisted.
+        :paramtype store: bool
+        :keyword agent_session_id: Resolved session ID.
+        :paramtype agent_session_id: str | None
+        :keyword conversation_id: Optional conversation ID.
+        :paramtype conversation_id: str | None
+        :keyword background: Whether the request is a background response.
+        :paramtype background: bool
+        :return: None
+        :rtype: None
+
         :keyword parsed: The parsed ``CreateResponse`` for this request.
         :keyword context: The handler's :class:`ResponseContext`.
         :keyword cancellation_signal: Per-request cancellation event
@@ -3798,7 +3853,7 @@ class _ResponseOrchestrator:
             state.next_seq = 0
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug(
-                "Could not load last cursor for response_id=%s — seeding " "next_seq=0",
+                "Could not load last cursor for response_id=%s — seeding " + "next_seq=0",
                 response_id,
                 exc_info=True,
             )
@@ -3850,7 +3905,7 @@ class _ResponseOrchestrator:
                     await self._finalize_stream(ctx, state)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
-                        "_finalize_stream failed for resilient streaming body " "response_id=%s",
+                        "_finalize_stream failed for resilient streaming body " + "response_id=%s",
                         response_id,
                         exc_info=True,
                     )

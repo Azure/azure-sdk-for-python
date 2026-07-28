@@ -38,8 +38,10 @@ def generate_default_acceptance(
     Used when no custom acceptance hook is registered, or as fallback
     when a custom hook raises an error.
 
-    :param response_id: The response ID for the queued turn.
-    :param model: The model name from the request.
+    :keyword response_id: The response ID for the queued turn.
+    :paramtype response_id: str
+    :keyword model: The model name from the request.
+    :paramtype model: str | None
     :returns: A queued ``ResponseObject`` (``status="queued"``).
     :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
@@ -61,6 +63,7 @@ def _to_queued_dict(response: Any) -> dict[str, Any]:
     a plain ``dict``. Ensures ``status`` defaults to ``"queued"``.
 
     :param response: The hook's return value.
+    :type response: Any
     :returns: A JSON-safe queued-response dict.
     :rtype: dict[str, Any]
     """
@@ -90,10 +93,14 @@ def dispatch_acceptance_hook(
     it directly; the developer-facing hook itself returns a typed
     :class:`ResponseObject`.
 
-    :param hook: The registered acceptance hook, or None.
-    :param request: The parsed create-response request.
-    :param context: The response context for this turn.
-    :param model: The model name from the request.
+    :keyword hook: The registered acceptance hook, or None.
+    :paramtype hook: AcceptanceHookFn | None
+    :keyword request: The parsed create-response request.
+    :paramtype request: CreateResponse
+    :keyword context: The response context for this turn.
+    :paramtype context: ResponseContext
+    :keyword model: The model name from the request.
+    :paramtype model: str | None
     :returns: A queued response envelope dict.
     :rtype: dict[str, Any]
     """

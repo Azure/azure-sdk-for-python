@@ -65,8 +65,14 @@ def _resolve_conversation_param(raw: Any) -> str | None:
 
 def _as_dict(
     obj: _Model | dict[str, Any],
-) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
-    """Convert a model or dict-like object to a plain dictionary."""
+) -> dict[str, Any]:
+    """Convert a model or dict-like object to a plain dictionary.
+
+    :param obj: The model or dictionary to convert.
+    :type obj: _Model | dict[str, Any]
+    :return: A plain dictionary representation.
+    :rtype: dict[str, Any]
+    """
     if isinstance(obj, _Model):
         return obj.as_dict()
     return obj

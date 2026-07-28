@@ -62,7 +62,6 @@ from ..models.runtime import (
 )
 from ..store._base import ResponseProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
-from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event, with_keep_alive
 from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
@@ -365,8 +364,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ``cancellation_signal`` parameter, so handlers awaiting that
             Event see the same wake-up).
         :type cancellation_signal: asyncio.Event
-        :param context: Optional response context to stamp cancellation cause.
-        :type context: ResponseContext | None
+        :keyword context: Optional response context to stamp cancellation cause.
+        :paramtype context: ResponseContext | None
         """
         # Create a task that resolves when _shutdown_requested fires.
         # This avoids relying on the 0.5s poll interval for shutdown detection.
@@ -1132,7 +1131,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 pass
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
-                    "Background pre-check failed for SSE replay (response_id=%s); " "proceeding to stream lookup",
+                    "Background pre-check failed for SSE replay (response_id=%s); "
+                    + "proceeding to stream lookup",
                     response_id,
                     exc_info=True,
                 )
@@ -1844,7 +1844,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     await self._provider.update_response(failed_payload, context=_pctx)
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     logger.warning(
-                        "Failed to persist Path-B failed terminal for %s during " "shutdown: %s",
+                        "Failed to persist Path-B failed terminal for %s during " + "shutdown: %s",
                         record.response_id,
                         exc,
                     )

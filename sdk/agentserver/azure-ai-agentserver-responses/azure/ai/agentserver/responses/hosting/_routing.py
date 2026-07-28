@@ -11,7 +11,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
-from collections.abc import AsyncIterable, Awaitable, Generator
+from collections.abc import AsyncIterable, Awaitable
 from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
@@ -88,6 +88,10 @@ def _serialize_event_payload(payload: Any) -> bytes:
     available so the registry's deserializer round-trips them as plain
     dicts (the consumer side only reads ``e["sequence_number"]`` /
     ``e["type"]``).
+    :param payload: The event payload to serialize.
+    :type payload: Any
+    :return: UTF-8 encoded JSON payload bytes.
+    :rtype: bytes
     """
     import json  # pylint: disable=import-outside-toplevel
 
@@ -101,14 +105,26 @@ def _serialize_event_payload(payload: Any) -> bytes:
 
 
 def _deserialize_event_payload(blob: bytes) -> Any:
-    """Inverse of :func:`_serialize_event_payload`. Returns a plain dict."""
+    """Inverse of :func:`_serialize_event_payload`. Returns a plain dict.
+
+    :param blob: UTF-8 encoded JSON payload bytes.
+    :type blob: bytes
+    :return: The decoded event payload.
+    :rtype: Any
+    """
     import json  # pylint: disable=import-outside-toplevel
 
     return json.loads(blob.decode("utf-8"))
 
 
 def _stream_cursor(event: Any) -> int:
-    """Cursor function for SSE event streams — exposes ``sequence_number``."""
+    """Cursor function for SSE event streams — exposes ``sequence_number``.
+
+    :param event: The stream event whose cursor should be read.
+    :type event: Any
+    :return: The event sequence number.
+    :rtype: int
+    """
     return int(event["sequence_number"])
 
 
@@ -132,6 +148,9 @@ def _configure_streams_registry(runtime_options: ResponsesServerOptions) -> None
     The configurator is a process-wide singleton — last call wins for
     streams created after it. In tests with multiple hosts per process,
     the per-test fixtures snapshot/restore the registry's private state.
+
+    :param runtime_options: The responses server options.
+    :type runtime_options: ResponsesServerOptions
     """
     from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-outside-toplevel,import-error,no-name-in-module
         streams,
@@ -170,6 +189,8 @@ def _validate_handler_signature(fn: Any) -> None:
 
     :raises TypeError: If the handler is not async or does not take
         exactly three positional parameters.
+    :param fn: The handler function to validate.
+    :type fn: Any
     """
     import inspect  # pylint: disable=import-outside-toplevel
 
@@ -456,7 +477,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         # ``graceful_shutdown_timeout`` for the handler to complete
         # naturally — which would deliver the wrong terminal status
         # (completed instead of failed) to a Row 3 Path B test scenario.
-        self.register_pre_shutdown_callback(endpoint._shutdown_requested.set)
+        self.register_pre_shutdown_callback(endpoint._shutdown_requested.set)  # pylint: disable=protected-access
 
         # Stash endpoint reference for request_shutdown() access.
         self._endpoint = endpoint
@@ -487,7 +508,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         triggering the ASGI server's shutdown to avoid deadlocking
         foreground handlers that await the cancellation signal.
         """
-        self._endpoint._shutdown_requested.set()
+        self._endpoint._shutdown_requested.set()  # pylint: disable=protected-access
 
     # ------------------------------------------------------------------
     # Handler decorator

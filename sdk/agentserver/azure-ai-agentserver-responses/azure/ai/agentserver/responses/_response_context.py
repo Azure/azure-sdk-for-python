@@ -11,7 +11,7 @@ surface mirrors the task primitive's composing-cause shape (separate
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence, cast
 
@@ -25,7 +25,6 @@ from .models._generated import (
     ItemReferenceParam,
     MessageContentInputTextContent,
     OutputItem,
-    ResponseObject,
 )
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
@@ -33,6 +32,7 @@ from .models.runtime import ResponseModeFlags
 if TYPE_CHECKING:
     from azure.ai.agentserver.core.tasks import TaskContext as _CoreTaskContext
 
+    from .models._generated import ResponseObject
     from .store._base import ResponseProviderProtocol
 
 

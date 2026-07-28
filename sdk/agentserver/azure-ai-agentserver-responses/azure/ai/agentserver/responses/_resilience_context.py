@@ -96,6 +96,10 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
         ``ctx.conversation_chain_metadata`` accesses the default (unnamed) namespace.
         ``ctx.conversation_chain_metadata(name)`` accesses a named namespace.
 
+        :param name: The optional namespace name to access.
+        :type name: str | None
+        :return: A metadata facade for the requested namespace.
+        :rtype: _DeveloperMetadataFacade
         :raises ValueError: If ``name`` starts with ``_`` (reserved).
         """
         if name is None:
@@ -126,7 +130,7 @@ class _DeveloperMetadataFacade(MutableMapping[str, Any]):
         """
         flush = getattr(self._raw, "flush", None)
         if callable(flush):
-            import asyncio  # local import to avoid top-level cycle  # noqa: PLC0415
+            import asyncio  # local import to avoid top-level cycle  # noqa: PLC0415  # pylint: disable=do-not-import-asyncio
 
             result = flush()
             if asyncio.iscoroutine(result):

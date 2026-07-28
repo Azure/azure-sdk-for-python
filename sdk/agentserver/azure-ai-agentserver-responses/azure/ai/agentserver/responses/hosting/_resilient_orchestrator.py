@@ -26,7 +26,6 @@ from azure.ai.agentserver.core.tasks import (
     MultiTurnTask,
     Task,
     TaskContext,
-    TaskConflictError,
     multi_turn_task,
     task,
 )
@@ -239,7 +238,7 @@ def _reconstruct_from_params(
     params: dict[str, Any],
     response_id: str,
     provider: "ResponseProviderProtocol | None",
-    runtime_state: "_RuntimeState | None",
+    runtime_state: "_RuntimeState | None",  # pylint: disable=unused-argument
     runtime_options: ResponsesServerOptions,
 ) -> tuple["ResponseExecution", "ResponseContext"]:
     """Rebuild ResponseExecution and ResponseContext from the resilient task input.
@@ -381,6 +380,11 @@ def _is_recovered_entry(task_entry_mode: str) -> bool:
     perspective, a resume is just a new turn. Only ``recovered`` (the
     task body re-entering after the previous lifetime crashed mid-run)
     flips ``context.is_recovery``.
+
+    :param task_entry_mode: The task primitive entry mode.
+    :type task_entry_mode: str
+    :return: ``True`` when the entry mode represents crash recovery.
+    :rtype: bool
     """
     return task_entry_mode == "recovered"
 
@@ -445,6 +449,9 @@ class ResilientResponseOrchestrator:
         that pre-date the spec 023 per-request dispatch refactor; returns
         the one-shot primitive (the registration with the
         ``"responses_resilient_background"`` legacy name).
+
+        :return: The one-shot resilient task primitive.
+        :rtype: Task[dict[str, Any], None]
         """
         return self._one_shot_task_fn
 
@@ -470,6 +477,9 @@ class ResilientResponseOrchestrator:
         The task body in both cases delegates to ``_execute_in_task`` —
         the routing branches inside the body handle the disposition / row
         dispatch.
+
+        :return: The registered one-shot and multi-turn task primitives.
+        :rtype: tuple[Task[dict[str, Any], None], MultiTurnTask[dict[str, Any], None]]
         """
         orchestrator = self
 
@@ -491,8 +501,13 @@ class ResilientResponseOrchestrator:
             (which is the authoritative failure record per SOT §7.2)
             and return ``None``; the deleted bookkeeping record is fine
             because the failure marker lives in the response store.
+
+            :param ctx: The resilient task context.
+            :type ctx: TaskContext[dict[str, Any]]
+            :return: None
+            :rtype: None
             """
-            return await orchestrator._execute_in_task(ctx)  # noqa: RET504
+            return await orchestrator._execute_in_task(ctx)  # noqa: RET504  # pylint: disable=protected-access
 
         # ── Multi-turn primitive ────────────────────────────────────────
         # Used for rows where the request has a conversation_id OR a
@@ -516,8 +531,13 @@ class ResilientResponseOrchestrator:
             that need to mark the response failed do so via the response
             store and ``return None`` (a normal end-of-turn signal that
             keeps the chain alive for subsequent turns).
+
+            :param ctx: The resilient task context.
+            :type ctx: TaskContext[dict[str, Any]]
+            :return: None
+            :rtype: None
             """
-            return await orchestrator._execute_in_task(ctx)  # noqa: RET504
+            return await orchestrator._execute_in_task(ctx)  # noqa: RET504  # pylint: disable=protected-access
 
         return _one_shot_response_task, _multi_turn_response_task
 
@@ -551,6 +571,7 @@ class ResilientResponseOrchestrator:
         :paramtype previous_response_id: str | None
         :returns: One of ``self._one_shot_task_fn`` /
             ``self._multi_turn_task_fn``.
+        :rtype: Task[dict[str, Any], None] | MultiTurnTask[dict[str, Any], None]
         """
         if conversation_id is not None:
             return self._multi_turn_task_fn
@@ -803,6 +824,8 @@ class ResilientResponseOrchestrator:
         :paramtype history_limit: int
         :keyword runtime_state: The runtime-state tracker.
         :paramtype runtime_state: Any
+        :return: None
+        :rtype: None
         """
         from ._orchestrator import (  # pylint: disable=import-outside-toplevel
             _run_background_non_stream,
@@ -816,7 +839,7 @@ class ResilientResponseOrchestrator:
             if stream and self._parent_orchestrator is not None:
                 assert record is not None  # reconstruction guarantees this
                 assert context is not None  # reconstruction guarantees this
-                await self._parent_orchestrator._run_resilient_stream_body(
+                await self._parent_orchestrator._run_resilient_stream_body(  # pylint: disable=protected-access
                     parsed=parsed_ref,
                     context=context,
                     cancellation_signal=cancellation_signal,
@@ -889,6 +912,11 @@ class ResilientResponseOrchestrator:
            are independent — shutdown does not fire the cancel signal.
         3. Delegates to _run_background_non_stream (existing pipeline).
         4. Suspends (task stays alive for next turn).
+
+        :param ctx: The resilient task context.
+        :type ctx: TaskContext[dict[str, Any]]
+        :return: None
+        :rtype: None
         """
         # Import here to avoid circular imports
         from ._resilient_input import (
@@ -1125,13 +1153,17 @@ class ResilientResponseOrchestrator:
         ``resilient_background=True``. The task takes over responsibility for
         execution and crash recovery.
 
-        :param record: The mutable execution record (same as non-resilient path).
-        :param resilient_input: The typed resilient boundary — the ONLY value
+        :keyword record: The mutable execution record (same as non-resilient path).
+        :paramtype record: ResponseExecution
+        :keyword resilient_input: The typed resilient boundary — the ONLY value
             persisted as resilient-task input (Spec 033 §3.1).
-        :param refs: The process-local object references for this response,
+        :paramtype resilient_input: ResilientResponseInput
+        :keyword refs: The process-local object references for this response,
             cached out-of-band (never serialized).
+        :paramtype refs: RuntimeRefs
         :returns: True if task was freshly started, False if input was queued
             on an already-active steerable task.
+        :rtype: bool
         """
         from ._request_parsing import (
             _extract_agent_identity,
@@ -1243,8 +1275,10 @@ class ResilientResponseOrchestrator:
         cases.
 
         :param response_id: The response identifier.
+        :type response_id: str
         :param params: The task input params (used to extract
             platform context for storage routing).
+        :type params: dict[str, Any]
         """
         from ..models._generated import (
             ResponseObject,
