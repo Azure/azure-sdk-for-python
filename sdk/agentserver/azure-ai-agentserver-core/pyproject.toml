@@ -31,6 +31,11 @@ dependencies = [
     "aiohttp>=3.10.0,<4.0.0a0",
 ]
 
+[project.optional-dependencies]
+hosted = [
+    "azure-identity>=1.16.0",
+]
+
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
@@ -63,5 +68,7 @@ verifytypes = false
 latestdependency = false
 pylint = true
 type_check_samples = false
+# apistub crashes on Generic[Input, Output] classes (Python 3.10 inspect.getsource bug)
+apistub = false
 
 [tool.uv.sources]
