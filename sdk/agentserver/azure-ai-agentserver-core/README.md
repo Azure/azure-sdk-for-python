@@ -126,6 +126,39 @@ async def on_shutdown():
     pass
 ```
 
+### Durable state storage
+
+`FoundryStateStore` is a durable, server-backed key-value store for agent state
+— session memory, per-user preferences, counters, and checkpoints — bound to
+one explicit, caller-named store, with single-item optimistic concurrency,
+tag-filtered key listing, and store-level TTL.
+
+```python
+from azure.ai.agentserver.core.storage import FoundryStateStore
+
+# Endpoint and credential resolve from FOUNDRY_PROJECT_ENDPOINT + DefaultAzureCredential.
+# get_or_create() resolves (or creates, on first use) the store in one call.
+store = await FoundryStateStore.get_or_create("checkpoints/thread-abc", user_isolation=True)
+async with store:
+    await store.set_item("step-1", {"done": False})
+    item = await store.get_item("step-1")
+    print(item.value)  # {"done": False}
+```
+
+> The default credential path uses `DefaultAzureCredential`, which requires the
+> optional `azure-identity` package (`pip install azure-identity`). Alternatively,
+> pass any `azure.core.credentials_async.AsyncTokenCredential` explicitly to
+> `get_or_create()` and `azure-identity` is not needed.
+
+Reads return typed `StateStoreItem` values; writes return typed item metadata and use
+single-item `If-Match` concurrency. Session/conversation scoping is expressed in
+the store name itself, and item expiry is controlled by the store's
+`item_ttl_seconds` setting. See the [Durable State Store Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/state-store-guide.md)
+for the full API, the store lifecycle, and common gotchas, and
+[state_store_sample.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/samples/state_store_sample.py)
+for a runnable end-to-end example.
+
+
 ### Configuring tracing
 
 Tracing is enabled automatically when an Application Insights connection string is available:
@@ -142,6 +175,29 @@ Or via environment variable:
 export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
+
+### Resilient long-running agents
+
+The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
+
+```python
+from azure.ai.agentserver.core.tasks import task, TaskContext
+
+@task(name="process_document")
+async def process_document(ctx: TaskContext[dict]) -> dict:
+    # ctx.entry_mode is "fresh" | "resumed" | "recovered".
+    # The framework re-invokes the handler from the top after a
+    # crash; ctx.input survives, so the handler picks up.
+    summary = await analyze(ctx.input["document_url"])
+    return {"summary": summary}
+
+result = await process_document.run(
+    task_id="doc-42", input={"document_url": "..."},
+)
+print(result)  # {"summary": "..."}
+```
+
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
 
@@ -160,6 +216,7 @@ To report an issue with the client library, or request additional features, plea
 ## Next steps
 
 - Install [`azure-ai-agentserver-invocations`](https://pypi.org/project/azure-ai-agentserver-invocations/) to add the invocation protocol endpoints.
+- Read the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for crash-resilient long-running agents.
 - See the [container image spec](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver) for the full hosted agent contract.
 
 ## Contributing

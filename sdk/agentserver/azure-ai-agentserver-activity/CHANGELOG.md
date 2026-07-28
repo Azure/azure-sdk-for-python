@@ -1,6 +1,14 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (2026-07-28)
+
+### Other Changes
+
+- Digital-worker (MAIB) outbound auth now uses the M365 Agents SDK's native `IdentityProxyManager` connection auth type instead of a custom MSAL monkeypatch (`_apply_msal_patches`), which previously overrode `MsalAuth.get_agentic_application_token` to perform the federated-identity (FMI) token exchange. The M365 SDK performs that exchange natively from `1.1.0`.
+- Raised the Microsoft 365 Agents SDK dependency floors to `>=1.1.0` (`microsoft-agents-hosting-core`, `microsoft-agents-authentication-msal`, `microsoft-agents-activity`): the `IdentityProxyManager` connection auth type is only available from `1.1.0`.
+- Removed the `azure-identity` runtime dependency: it was only used by the now-removed MSAL patch.
+
+## 1.0.0b1 (2026-07-22)
 
 ### Features Added
 
@@ -20,5 +28,5 @@
 
 ### Other Changes
 
-- Requires `azure-ai-agentserver-core>=2.0.0b7`.
+- Requires `azure-ai-agentserver-core>=2.0.0b8`.
 

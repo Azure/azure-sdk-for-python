@@ -10,8 +10,10 @@
 - Fixed `deployment_templates.list(name=...)` raising `AttributeError: 'str' object has no attribute 'request_timeout'`. In the list response, `requestSettings` / `livenessProbe` / `readinessProbe` arrive as stringified dicts nested under `properties`; these are now parsed before conversion, giving `list()` parity with `models.list()` / `environments.list()`.
 - Fixed `deployment_templates.get(name)` failing with a 404 (`DeploymentTemplate {name}:latest not found`) when no version was supplied, because the literal string `"latest"` was sent as the version. The latest version is now resolved client-side (the service exposes no `latest` label and no server-side ordering), and `get()` accepts a `label` keyword (`label="latest"` resolves to the latest version) mirroring `models.get()`. `delete(name)` resolves the latest version the same way.
 - Fixed `models.get(name, label="latest")` returning a `Model` whose `default_deployment_template` / `allowed_deployment_templates` references had `asset_id=None`. Label resolution goes through the version list endpoint (`top=1`), whose items omit the deployment-template references; for registry models the resolved version is now re-fetched through the get endpoint, so the label path hydrates these references identically to the explicit `version=` path.
+- Fixed loading a registered MLTable data asset via `mltable.load("azureml://.../data/<name>/versions/<version>")` failing with `AttributeError: 'DataVersionEntity' object has no attribute 'additional_properties'`. When the `dataset_dataplane` client was migrated to the TypeSpec (hybrid) model, `DataVersionEntity` stopped exposing the msrest `additional_properties` attribute that the `mltable` package reads (`isV2` / `legacyDataflow`) on the local resolution path. The attribute is now restored as a compatibility shim returning the un-modeled wire keys, so the on-the-wire contract is unchanged.
 
 ### Other Changes
+- Migrated SDK entities and their consumers off the per-version msrest REST clients onto the shared `arm_ml_service` hybrid client. This is an internal change; the on-the-wire request/response contract is unchanged.
 
 ## 1.34.1 (2026-07-15)
 

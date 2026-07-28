@@ -468,7 +468,6 @@ class ActivityAgentServerHost(AgentServerHost):
         )
         bot_app_id = self._connection_config.get(ConnectionSettings.CLIENT_ID, "").strip()
         self._agent_app, self._adapter = build_m365_app(
-            digital_worker=self._digital_worker,
             connection_config=self._connection_config,
             storage=self._resolve_storage(storage) if agent_app is None else storage,
             connection_manager=connection_manager,

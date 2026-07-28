@@ -321,6 +321,19 @@ class TestContainerServiceAgentPoolsOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_agent_pools_list_bootstrap_data(self, resource_group):
+        response = await self.client.agent_pools.list_bootstrap_data(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            agent_pool_name="str",
+            body={},
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_agent_pools_get_available_agent_pool_versions(self, resource_group):
         response = await self.client.agent_pools.get_available_agent_pool_versions(
             resource_group_name=resource_group.name,
