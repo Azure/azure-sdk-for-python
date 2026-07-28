@@ -4,16 +4,19 @@
 # ------------------------------------
 
 """
-FILE: sample_translation_with_glossaries.py
+FILE: sample_translation_with_custom_model_deployment.py
 
 DESCRIPTION:
-    This sample demonstrates how to translate documents and apply custom glossaries to the translation.
+    This sample demonstrates how to route a document translation request through a custom
+    translation model by specifying the model's deployment name. The deployment name can be
+    supplied for both batch and single document translation. After the operation completes,
+    each document's status reports the deployment name that was used.
 
     To set up your containers for translation and generate SAS tokens to your containers (or files)
     with the appropriate permissions, see the README.
 
 USAGE:
-    python sample_translation_with_glossaries.py
+    python sample_translation_with_custom_model_deployment.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_DOCUMENT_TRANSLATION_ENDPOINT - the endpoint to your Document Translation resource.
@@ -22,52 +25,45 @@ USAGE:
         to be translated.
     4) AZURE_TARGET_CONTAINER_URL - the container SAS URL to your target container where the translated documents
         will be written.
-    5) AZURE_TRANSLATION_GLOSSARY_URL - the SAS URL to your glossary file
+    5) AZURE_CUSTOM_MODEL_DEPLOYMENT_NAME - the deployment name of your custom translation model.
 """
 
 
-def sample_translation_with_glossaries():
+def sample_translation_with_custom_model_deployment():
     import os
     from azure.core.credentials import AzureKeyCredential
     from azure.ai.translation.document import DocumentTranslationClient
-    from azure.ai.translation.document.models import TranslationGlossary
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]
     source_container_url = os.environ["AZURE_SOURCE_CONTAINER_URL"]
     target_container_url = os.environ["AZURE_TARGET_CONTAINER_URL"]
-    glossary_url = os.environ["AZURE_TRANSLATION_GLOSSARY_URL"]
+    deployment_name = os.environ["AZURE_CUSTOM_MODEL_DEPLOYMENT_NAME"]
 
     client = DocumentTranslationClient(endpoint, AzureKeyCredential(key))
 
+    # Set the deployment name of your custom translation model on the request.
     poller = client.begin_translation(
         source_container_url,
         target_container_url,
         "es",
-        glossaries=[TranslationGlossary(glossary_url=glossary_url, file_format="TSV")],
+        deployment_name=deployment_name,
     )
-
     result = poller.result()
 
-    print(f"Status: {poller.status()}")
-    print(f"Created on: {poller.details.created_on}")
-    print(f"Last updated on: {poller.details.last_updated_on}")
+    print(f"Operation status: {poller.details.status}")
     print(f"Total number of translations on documents: {poller.details.documents_total_count}")
-
-    print("\nOf total documents...")
-    print(f"{poller.details.documents_failed_count} failed")
-    print(f"{poller.details.documents_succeeded_count} succeeded")
 
     for document in result:
         print(f"Document ID: {document.id}")
         print(f"Document status: {document.status}")
         if document.status == "Succeeded":
-            print(f"Source document location: {document.source_document_url}")
             print(f"Translated document location: {document.translated_document_url}")
-            print(f"Translated to language: {document.translated_to}\n")
+            print(f"Deployment name used: {document.deployment_name}")
+            print(f"Characters charged: {document.characters_charged}\n")
         elif document.error:
             print(f"Error Code: {document.error.code}, Message: {document.error.message}\n")
 
 
 if __name__ == "__main__":
-    sample_translation_with_glossaries()
+    sample_translation_with_custom_model_deployment()
