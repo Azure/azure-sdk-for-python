@@ -13,7 +13,7 @@ Those explain *what* the library does today and *how* to use it. This file expla
 the codebase looks the way it does — the constraints, debates, rejected alternatives, and
 deliberate trade-offs that a new developer or agent would otherwise have to reconstruct from
 years of git history. When you are tempted to "simplify" or "fix" something here that looks
-odd, read the relevant entry first: it is probably load-bearing.
+odd, read the relevant entry first.
 
 > Convention: PR numbers link to `https://github.com/Azure/azure-sdk-for-python/pull/<N>`.
 > Dates are merge dates (year-month).
