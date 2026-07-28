@@ -79,6 +79,6 @@ def test_t17_sse_encoder_is_single_stripping_chokepoint():
                 ):
                     build_frame_callers.add(node.name)
     # Only encode_sse_event constructs SSE frames; everything else delegates to it.
-    assert build_frame_callers <= {"encode_sse_event"}, (
-        f"_build_sse_frame called outside the stripping encoder by: {build_frame_callers}"
-    )
+    assert build_frame_callers <= {
+        "encode_sse_event"
+    }, f"_build_sse_frame called outside the stripping encoder by: {build_frame_callers}"

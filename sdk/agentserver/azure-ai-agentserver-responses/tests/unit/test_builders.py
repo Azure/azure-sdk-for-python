@@ -310,9 +310,9 @@ def test_response_event_stream__tracks_completed_output_items_into_response_outp
     assert isinstance(stream.response, ResponseObject)
     assert len(stream.response.output) == 1
     output_item_obj = stream.response.output[0]
-    assert isinstance(output_item_obj, OutputItemMessage), (
-        f"Expected OutputItemMessage on response.output, got {type(output_item_obj)}"
-    )
+    assert isinstance(
+        output_item_obj, OutputItemMessage
+    ), f"Expected OutputItemMessage on response.output, got {type(output_item_obj)}"
     output_item = output_item_obj.as_dict()
     assert output_item["id"] == message.item_id
     assert output_item["type"] == "message"

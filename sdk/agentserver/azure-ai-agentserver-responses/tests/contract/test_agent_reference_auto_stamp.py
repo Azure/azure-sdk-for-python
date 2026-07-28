@@ -255,9 +255,9 @@ def test_no_agent_reference_on_request_no_agent_reference_on_items() -> None:
         item = evt["data"]["item"]
         agent_ref = item.get("agent_reference")
         # agent_reference should be absent or null when request has none
-        assert agent_ref is None or agent_ref == {}, (
-            f"Output item should not have agent_reference when request has none, got: {agent_ref}"
-        )
+        assert (
+            agent_ref is None or agent_ref == {}
+        ), f"Output item should not have agent_reference when request has none, got: {agent_ref}"
 
 
 # ════════════════════════════════════════════════════════════

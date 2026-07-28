@@ -140,9 +140,9 @@ def test_keep_alive__enabled_interleaves_comment_frames_during_slow_handler() ->
         events, comments = _collect_events_and_comments(response)
 
     # At least one keep-alive comment should have been sent during the 1.5s gap
-    assert len(comments) >= 1, (
-        f"Expected at least one keep-alive comment, got {len(comments)}. Events: {[e['type'] for e in events]}"
-    )
+    assert (
+        len(comments) >= 1
+    ), f"Expected at least one keep-alive comment, got {len(comments)}. Events: {[e['type'] for e in events]}"
     # All comments should be the standard keep-alive format
     for comment in comments:
         assert comment == ": keep-alive"

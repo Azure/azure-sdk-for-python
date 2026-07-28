@@ -207,9 +207,9 @@ def test_streaming_output_items_have_response_id_matching_response_created() -> 
 
     for evt in item_events:
         item = evt["data"]["item"]
-        assert item.get("response_id") == response_id, (
-            f"Expected response_id={response_id}, got {item.get('response_id')} on event {evt['type']}"
-        )
+        assert (
+            item.get("response_id") == response_id
+        ), f"Expected response_id={response_id}, got {item.get('response_id')} on event {evt['type']}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -280,9 +280,9 @@ def test_get_json_snapshot_has_response_id_on_output_items() -> None:
     assert len(output) > 0, "Expected at least one output item"
 
     for item in output:
-        assert item.get("response_id") == response_id, (
-            f"Expected response_id={response_id} on GET output item, got {item.get('response_id')}"
-        )
+        assert (
+            item.get("response_id") == response_id
+        ), f"Expected response_id={response_id} on GET output item, got {item.get('response_id')}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -303,6 +303,6 @@ def test_direct_yield_handler_gets_response_id_auto_stamped() -> None:
 
     item_added = next(e for e in events if e["type"] == "response.output_item.added")
     item = item_added["data"]["item"]
-    assert item.get("response_id") == response_id, (
-        f"Expected auto-stamped response_id={response_id}, got {item.get('response_id')}"
-    )
+    assert (
+        item.get("response_id") == response_id
+    ), f"Expected auto-stamped response_id={response_id}, got {item.get('response_id')}"

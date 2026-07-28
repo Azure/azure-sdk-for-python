@@ -440,9 +440,7 @@ def error_response(
     return JSONResponse(payload, status_code=status_code, headers=merged_headers)
 
 
-def not_found_response(
-    response_id: str, headers: dict[str, str], request_id: str | None = None
-) -> JSONResponse:
+def not_found_response(response_id: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
     """Build a 404 Not Found error response.
 
     :param response_id: The ID of the response that was not found.
@@ -537,9 +535,7 @@ def invalid_mode_response(
     return JSONResponse(payload, status_code=400, headers=_apply_error_source_headers(headers, ERROR_SOURCE_USER))
 
 
-def service_unavailable_response(
-    message: str, headers: dict[str, str], request_id: str | None = None
-) -> JSONResponse:
+def service_unavailable_response(message: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
     """Build a 503 Service Unavailable error response.
 
     :param message: Human-readable error message.

@@ -234,9 +234,9 @@ class TestGetHistoryContractTypes:
 
         # Second item must be OutputItemFunctionToolCall
         assert isinstance(history[1], OutputItem), f"Expected OutputItem, got {type(history[1])}"
-        assert isinstance(history[1], OutputItemFunctionToolCall), (
-            f"Expected OutputItemFunctionToolCall, got {type(history[1])}"
-        )
+        assert isinstance(
+            history[1], OutputItemFunctionToolCall
+        ), f"Expected OutputItemFunctionToolCall, got {type(history[1])}"
         assert history[1].name == "get_weather"
 
     @pytest.mark.asyncio
@@ -567,9 +567,9 @@ class TestInMemoryProviderTypePreservation:
         assert items[0].content[0].text == "stored text"
 
         assert isinstance(items[1], OutputItem)
-        assert isinstance(items[1], OutputItemFunctionToolCall), (
-            f"Expected OutputItemFunctionToolCall, got {type(items[1])}"
-        )
+        assert isinstance(
+            items[1], OutputItemFunctionToolCall
+        ), f"Expected OutputItemFunctionToolCall, got {type(items[1])}"
         assert items[1].name == "lookup"
 
     @pytest.mark.asyncio
@@ -645,13 +645,13 @@ class TestStreamLifecycleOutputTypes:
         output = stream.response.output
         assert len(output) == 2
 
-        assert isinstance(output[0], OutputItemMessage), (
-            f"After full lifecycle, output[0] should be OutputItemMessage, got {type(output[0])}"
-        )
+        assert isinstance(
+            output[0], OutputItemMessage
+        ), f"After full lifecycle, output[0] should be OutputItemMessage, got {type(output[0])}"
         assert output[0].content[0].text == "Hello"
 
-        assert isinstance(output[1], OutputItemFunctionToolCall), (
-            f"After full lifecycle, output[1] should be OutputItemFunctionToolCall, got {type(output[1])}"
-        )
+        assert isinstance(
+            output[1], OutputItemFunctionToolCall
+        ), f"After full lifecycle, output[1] should be OutputItemFunctionToolCall, got {type(output[1])}"
         assert output[1].name == "get_temp"
         assert output[1].arguments == '{"unit":"C"}'

@@ -108,9 +108,10 @@ def test_streaming__first_event_is_response_created() -> None:
     assert events[0]["type"] == "response.created"
     # Contract (B8): response.created event status must be queued or in_progress
     created_status = events[0]["data"]["response"].get("status")
-    assert created_status in {"queued", "in_progress"}, (
-        f"response.created status must be queued or in_progress per B8, got: {created_status}"
-    )
+    assert created_status in {
+        "queued",
+        "in_progress",
+    }, f"response.created status must be queued or in_progress per B8, got: {created_status}"
 
 
 def test_streaming__sequence_number_is_monotonic_and_contiguous() -> None:
@@ -258,9 +259,9 @@ def test_streaming__sse_response_headers_per_contract() -> None:
     ) as response:
         assert response.status_code == 200
         content_type = response.headers.get("content-type", "")
-        assert content_type == "text/event-stream; charset=utf-8", (
-            f"Expected Content-Type with charset per SSE headers contract, got: {content_type}"
-        )
+        assert (
+            content_type == "text/event-stream; charset=utf-8"
+        ), f"Expected Content-Type with charset per SSE headers contract, got: {content_type}"
         assert response.headers.get("connection") == "keep-alive", "Missing Connection: keep-alive"
         assert response.headers.get("cache-control") == "no-cache", "Missing Cache-Control: no-cache"
         assert response.headers.get("x-accel-buffering") == "no", "Missing X-Accel-Buffering: no"
@@ -346,12 +347,12 @@ def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> No
     event_types = [e["type"] for e in events]
     # B8: pre-creation error → standalone `error` SSE event only.
     # No response.created must precede it.
-    assert "error" in event_types, (
-        f"SSE stream must emit standalone 'error' event for pre-creation failure, got: {event_types}"
-    )
-    assert "response.created" not in event_types, (
-        f"Pre-creation error must NOT emit response.created before 'error' event, got: {event_types}"
-    )
+    assert (
+        "error" in event_types
+    ), f"SSE stream must emit standalone 'error' event for pre-creation failure, got: {event_types}"
+    assert (
+        "response.created" not in event_types
+    ), f"Pre-creation error must NOT emit response.created before 'error' event, got: {event_types}"
 
 
 def test_streaming__response_in_progress_event_is_in_stream() -> None:
@@ -379,9 +380,9 @@ def test_streaming__response_in_progress_event_is_in_stream() -> None:
     terminal_set = {"response.completed", "response.failed", "response.incomplete"}
     terminal_idx = next((i for i, t in enumerate(event_types) if t in terminal_set), None)
     assert terminal_idx is not None, f"No terminal event found in: {event_types}"
-    assert created_idx < in_progress_idx < terminal_idx, (
-        f"response.in_progress must appear after response.created and before terminal event. Order was: {event_types}"
-    )
+    assert (
+        created_idx < in_progress_idx < terminal_idx
+    ), f"response.in_progress must appear after response.created and before terminal event. Order was: {event_types}"
 
 
 def test_streaming__post_creation_error_yields_response_failed_not_error_event() -> None:
@@ -406,14 +407,14 @@ def test_streaming__post_creation_error_yields_response_failed_not_error_event()
         events = _collect_stream_events(response)
 
     event_types = [e["type"] for e in events]
-    assert "response.failed" in event_types, (
-        f"Expected response.failed terminal event after post-creation error, got: {event_types}"
-    )
+    assert (
+        "response.failed" in event_types
+    ), f"Expected response.failed terminal event after post-creation error, got: {event_types}"
     # After response.created has been emitted, no standalone 'error' event should appear.
     # The failure must be surfaced as response.failed, not a raw error event.
-    assert "error" not in event_types, (
-        f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
-    )
+    assert (
+        "error" not in event_types
+    ), f"Standalone 'error' event must not appear after response.created. Events: {event_types}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -461,9 +462,9 @@ def test_stream_post_creation_error_emits_response_failed() -> None:
         events = _collect_stream_events(response)
 
     event_types = [e["type"] for e in events]
-    assert "response.failed" in event_types, (
-        f"Expected response.failed terminal after post-creation error, got: {event_types}"
-    )
+    assert (
+        "response.failed" in event_types
+    ), f"Expected response.failed terminal after post-creation error, got: {event_types}"
     assert "error" not in event_types, f"No standalone error event expected after response.created, got: {event_types}"
     # Exactly one terminal event
     terminal_types = {"response.completed", "response.failed", "response.incomplete"}
@@ -512,13 +513,13 @@ def test_stream_sequence_numbers_monotonic() -> None:
 
     assert events, "Expected at least one SSE event"
     sequence_numbers = [e["data"].get("sequence_number") for e in events]
-    assert all(isinstance(sn, int) for sn in sequence_numbers), (
-        f"All events must carry an integer sequence_number, got: {sequence_numbers}"
-    )
+    assert all(
+        isinstance(sn, int) for sn in sequence_numbers
+    ), f"All events must carry an integer sequence_number, got: {sequence_numbers}"
     assert sequence_numbers[0] == 0, f"First sequence_number must be 0, got {sequence_numbers[0]}"
-    assert sequence_numbers == sorted(sequence_numbers), (
-        f"Sequence numbers must be monotonically non-decreasing: {sequence_numbers}"
-    )
-    assert len(set(sequence_numbers)) == len(sequence_numbers), (
-        f"Sequence numbers must be unique (strictly increasing): {sequence_numbers}"
-    )
+    assert sequence_numbers == sorted(
+        sequence_numbers
+    ), f"Sequence numbers must be monotonically non-decreasing: {sequence_numbers}"
+    assert len(set(sequence_numbers)) == len(
+        sequence_numbers
+    ), f"Sequence numbers must be unique (strictly increasing): {sequence_numbers}"

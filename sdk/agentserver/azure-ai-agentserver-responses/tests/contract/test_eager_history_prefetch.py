@@ -217,8 +217,7 @@ class TestEagerHistoryPrefetchReuse:
         # get_history_item_ids should be called exactly once (eager prefetch).
         # The handler's get_history() should reuse the prefetched IDs.
         assert call_count == 1, (
-            f"Expected get_history_item_ids to be called once (eager), "
-            f"but called {call_count} times"
+            f"Expected get_history_item_ids to be called once (eager), " f"but called {call_count} times"
         )
 
 
@@ -248,6 +247,5 @@ class TestEagerHistoryPrefetchSkipped:
         )
         assert r.status_code == 200
         assert call_count == 0, (
-            f"get_history_item_ids should not be called without conversation refs, "
-            f"but called {call_count} times"
+            f"get_history_item_ids should not be called without conversation refs, " f"but called {call_count} times"
         )

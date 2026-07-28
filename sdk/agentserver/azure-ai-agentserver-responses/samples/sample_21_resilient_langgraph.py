@@ -291,9 +291,7 @@ async def handler(
         # checkpoint, so nodes after it (incl. the token-streaming node, if its
         # reply was not yet persisted) re-run — re-streaming the reply exactly
         # when needed and nothing more.
-        graph_cp = (
-            stream.internal_metadata.get(_GRAPH_CP_KEY) if context.persisted_response is not None else None
-        )
+        graph_cp = stream.internal_metadata.get(_GRAPH_CP_KEY) if context.persisted_response is not None else None
         run_config = {"configurable": {"thread_id": chain_id, "checkpoint_id": graph_cp}} if graph_cp else thread_config
         graph_input: Any = None
     else:

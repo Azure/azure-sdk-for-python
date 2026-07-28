@@ -23,9 +23,7 @@ def _item() -> OutputItemMessage:
 
 
 def _response() -> ResponseObject:
-    return ResponseObject(
-        {"id": "resp_1", "object": "response", "status": "in_progress", "output": [], "model": "m"}
-    )
+    return ResponseObject({"id": "resp_1", "object": "response", "status": "in_progress", "output": [], "model": "m"})
 
 
 # --------------------------------------------------------------------------
@@ -96,9 +94,7 @@ def test_t6_item_strip_internal_metadata_idempotent():
 
 def test_t7_v_shaped_dict_loads_empty_view():
     # A dict with no internal_metadata key loads to an empty live view.
-    item = OutputItemMessage(
-        {"type": "message", "id": "m", "role": "assistant", "content": [], "status": "completed"}
-    )
+    item = OutputItemMessage({"type": "message", "id": "m", "role": "assistant", "content": [], "status": "completed"})
     assert len(item.internal_metadata) == 0
     # Writing lazily creates the key.
     item.internal_metadata["k"] = "v"
@@ -186,9 +182,7 @@ def test_t6r2_16_key_guard():
 def test_t7r_v_shaped_response_empty_view():
     resp = _response()
     assert len(resp.internal_metadata) == 0
-    resp_no_md = ResponseObject(
-        {"id": "r", "object": "response", "status": "in_progress", "output": [], "model": "m"}
-    )
+    resp_no_md = ResponseObject({"id": "r", "object": "response", "status": "in_progress", "output": [], "model": "m"})
     assert len(resp_no_md.internal_metadata) == 0
 
 

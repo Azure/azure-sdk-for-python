@@ -276,9 +276,9 @@ class TestSessionIdStamping:
                 model=None,
                 agent_session_id="all-types-session",
             )
-            assert events[0]["response"]["agent_session_id"] == "all-types-session", (
-                f"Missing agent_session_id on {event_type}"
-            )
+            assert (
+                events[0]["response"]["agent_session_id"] == "all-types-session"
+            ), f"Missing agent_session_id on {event_type}"
 
 
 # ===================================================================

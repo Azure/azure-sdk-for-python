@@ -420,8 +420,7 @@ def _bg_track_output_count(normalized: "generated_models.ResponseStreamEvent", o
         n_output = (normalized.get("response") or {}).get("output")
         if isinstance(n_output, list) and len(n_output) > output_item_count:
             raise ValueError(
-                "Output item count mismatch "
-                + f"({len(n_output)} vs {output_item_count} output_item.added events)"
+                "Output item count mismatch " + f"({len(n_output)} vs {output_item_count} output_item.added events)"
             )
     return output_item_count
 
@@ -2707,8 +2706,7 @@ class _ResponseOrchestrator:
                     state.pending_terminal = await self._cancel_terminal_sse_dict(ctx, state)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
-                        "Failed to synthesise cancel terminal on interrupted "
-                        + "foreground stream (response_id=%s)",
+                        "Failed to synthesise cancel terminal on interrupted " + "foreground stream (response_id=%s)",
                         ctx.response_id,
                         exc_info=True,
                     )

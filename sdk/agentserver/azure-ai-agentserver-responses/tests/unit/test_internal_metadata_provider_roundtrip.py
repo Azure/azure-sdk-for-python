@@ -29,9 +29,7 @@ def _item(item_id: str) -> OutputItemMessage:
 
 
 def _response(resp_id: str, output: list) -> ResponseObject:
-    resp = ResponseObject(
-        {"id": resp_id, "object": "response", "status": "completed", "output": [], "model": "m"}
-    )
+    resp = ResponseObject({"id": resp_id, "object": "response", "status": "completed", "output": [], "model": "m"})
     resp.output = output
     resp.internal_metadata["completed_phases"] = 3
     return resp

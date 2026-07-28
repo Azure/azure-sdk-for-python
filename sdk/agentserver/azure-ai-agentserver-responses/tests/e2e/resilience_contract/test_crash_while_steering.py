@@ -155,11 +155,9 @@ async def test_crash_while_steering_recovers_steered_turn(tmp_path) -> None:
         # mid-flight and the steered turn was re-run by crash recovery (not a
         # pre-crash completion).
         texts_b = " ".join(_final_texts(body_b))
-        assert "input=actually explain topic two" in texts_b, (
-            f"recovered steered turn B output does not reflect the steered input: {texts_b!r}"
-        )
-        assert "_L1_" in texts_b, (
-            f"steered turn B did not go through crash recovery (no L1 lifetime tag): {texts_b!r}"
-        )
+        assert (
+            "input=actually explain topic two" in texts_b
+        ), f"recovered steered turn B output does not reflect the steered input: {texts_b!r}"
+        assert "_L1_" in texts_b, f"steered turn B did not go through crash recovery (no L1 lifetime tag): {texts_b!r}"
     finally:
         await harness.close()

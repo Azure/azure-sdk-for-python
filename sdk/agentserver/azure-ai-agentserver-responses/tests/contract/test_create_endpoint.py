@@ -315,9 +315,9 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
         interval_s=0.05,
         context_provider=lambda: {
             "last_status": latest_snapshot.get("status"),
-            "last_output_count": len(latest_snapshot.get("output", []))
-            if isinstance(latest_snapshot.get("output"), list)
-            else None,
+            "last_output_count": (
+                len(latest_snapshot.get("output", [])) if isinstance(latest_snapshot.get("output"), list) else None
+            ),
         },
         label="background non-stream output availability",
     )
@@ -573,13 +573,13 @@ def test_sync_no_terminal_event_still_completes() -> None:
         json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
     )
 
-    assert response.status_code == 200, (
-        f"S-015: sync no-terminal handler must return HTTP 200, got {response.status_code}"
-    )
+    assert (
+        response.status_code == 200
+    ), f"S-015: sync no-terminal handler must return HTTP 200, got {response.status_code}"
     payload = response.json()
-    assert payload.get("status") == "failed", (
-        f"S-015: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
-    )
+    assert (
+        payload.get("status") == "failed"
+    ), f"S-015: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
 
 
 # ══════════════════════════════════════════════════════════
@@ -618,9 +618,9 @@ def test_s007_wrong_first_event_sync() -> None:
         json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": False},
     )
 
-    assert response.status_code == 500, (
-        f"FR-006 violation in sync mode must return HTTP 500, got {response.status_code}"
-    )
+    assert (
+        response.status_code == 500
+    ), f"FR-006 violation in sync mode must return HTTP 500, got {response.status_code}"
 
 
 def test_s007_wrong_first_event_stream() -> None:
@@ -672,9 +672,9 @@ def test_s007_wrong_first_event_stream() -> None:
             events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
 
     event_types = [e["type"] for e in events]
-    assert event_types == ["error"], (
-        f"FR-006 violation in stream mode must produce exactly ['error'], got: {event_types}"
-    )
+    assert event_types == [
+        "error"
+    ], f"FR-006 violation in stream mode must produce exactly ['error'], got: {event_types}"
     assert "response.created" not in event_types
 
 
@@ -828,7 +828,7 @@ def test_s007_valid_handler_not_affected() -> None:
             events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
 
     event_types = [e["type"] for e in events]
-    assert "response.created" in event_types, (
-        f"Compliant handler must not be blocked; expected response.created in: {event_types}"
-    )
+    assert (
+        "response.created" in event_types
+    ), f"Compliant handler must not be blocked; expected response.created in: {event_types}"
     assert "error" not in event_types, f"Compliant handler must not produce error event; got: {event_types}"

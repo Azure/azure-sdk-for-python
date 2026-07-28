@@ -1131,8 +1131,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 pass
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
-                    "Background pre-check failed for SSE replay (response_id=%s); "
-                    + "proceeding to stream lookup",
+                    "Background pre-check failed for SSE replay (response_id=%s); " + "proceeding to stream lookup",
                     response_id,
                     exc_info=True,
                 )
