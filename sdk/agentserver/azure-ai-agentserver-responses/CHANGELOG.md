@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0b0 (Unreleased)
+
+### Features Added
+
+- Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
+
+### Breaking Changes
+
+- Removed a-prefixed async convenience generator methods from the sync `ResponseEventStream` and sync builder classes. Use `azure.ai.agentserver.responses.aio.ResponseEventStream` for async streaming convenience methods.
+
+## 1.0.0b9 (2026-07-22)
+
+### Other Changes
+
+- Raised the `azure-ai-agentserver-core` dependency floor to `>=2.0.0b8`.
+
 ## 1.0.0b8 (2026-06-28)
 
 ### Features Added
