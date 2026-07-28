@@ -16,7 +16,7 @@ from .runtime import (
     TerminalResponseStatus,
 )
 
-__all__ = [  # type: ignore[reportUnsupportedDunderAll] - generated re-export list is dynamic
+__all__ = [  # pyright: ignore[reportUnsupportedDunderAll]  # generated re-export list is dynamic
     "ResponseStatus",
     "TerminalResponseStatus",
     "get_content_expanded",
