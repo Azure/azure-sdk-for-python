@@ -32,7 +32,7 @@ from .._sync_token import SyncToken
 
 
 class AsyncSyncTokenPolicy(SansIOHTTPPolicy):
-    """A simple policy that enable the given callback with the response."""
+    """A policy that applies and updates App Configuration sync tokens asynchronously."""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"
