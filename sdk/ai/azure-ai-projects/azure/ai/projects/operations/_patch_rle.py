@@ -14,19 +14,14 @@ from __future__ import annotations
 
 import threading
 import time
-from typing import Any, Dict, IO, List, Literal, Mapping, Optional, Union, overload
+from typing import Any, Dict, List, Literal, Mapping, Optional
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from ..models import (
-    CreateRLEnvironmentRequest,
     CreateRLESandboxRequest,
-    ListRLEnvironmentsResponse,
-    ListRLESandboxesResponse,
-    RLEnvironment,
     RLEnvironmentState,
-    RLEnvironmentVersion,
     RLEResetRequest,
     RLESandbox,
     RLEStepRequest,
@@ -440,186 +435,19 @@ class OpenEnvClient:
             instance._release()  # pylint: disable=protected-access
 
 
-class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
-    """Unified RLE operations over environments and sandboxes, plus the OpenEnv client factory.
+class RLEOperations:
+    """Factory for the OpenEnv client over hosted RLE environments.
 
-    Exposes every generated environment operation (create/list/get/delete) and the sandbox
-    read operations (``list_sandboxes``/``get_sandbox``) on a single operation group, accessed
-    through the client's ``rle`` attribute. Per-episode runtime operations
-    (reset/step/state/health/metadata/schema) are driven through the :class:`OpenEnvInstance` objects
-    handed out by the :class:`OpenEnvClient` returned by :meth:`get_openenv_client`.
+    Accessed through the client's ``rle`` attribute, this operation group exposes a single entry
+    point, :meth:`get_openenv_client`, which resolves a hosted RLE environment and returns an
+    :class:`OpenEnvClient`. Customers drive environments entirely through that client and the
+    :class:`OpenEnvInstance` objects it hands out (reset/step/state/health/metadata/schema); the
+    underlying environment and sandbox management operations are internal.
     """
 
-    @overload
-    def create_environment(self, body: CreateRLEnvironmentRequest, **kwargs: Any) -> RLEnvironment: ...
-    @overload
-    def create_environment(self, body: IO[bytes], **kwargs: Any) -> RLEnvironment: ...
-    @overload
-    def create_environment(
-        self, *, acr_image_path: str, name: Optional[str] = None, **kwargs: Any
-    ) -> RLEnvironment: ...
-
-    @distributed_trace
-    def create_environment(
-        self,
-        body: Union[CreateRLEnvironmentRequest, IO[bytes], None] = None,
-        *,
-        acr_image_path: Optional[str] = None,
-        name: Optional[str] = None,
-        **kwargs: Any,
-    ) -> RLEnvironment:
-        """Create a new hosted RLE environment.
-
-        The required preview feature opt-in is supplied automatically. Pass either a request
-        ``body`` or the ``acr_image_path`` (and optional ``name``) keyword fields.
-
-        :param body: The environment to create, as a ``CreateRLEnvironmentRequest`` or ``IO[bytes]``.
-         Mutually exclusive with the ``acr_image_path``/``name`` keyword fields.
-        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or IO[bytes] or None
-        :keyword acr_image_path: Container image reference (ACR path) that backs the environment.
-         Required when ``body`` is not supplied.
-        :paramtype acr_image_path: str or None
-        :keyword name: Optional caller-provided display name for the environment.
-        :paramtype name: str or None
-        :return: The created RLE environment.
-        :rtype: ~azure.ai.projects.models.RLEnvironment
-        """
-        kwargs.pop("foundry_features", None)
-        if body is None:
-            if acr_image_path is None:
-                raise TypeError("pass either a request body or the acr_image_path keyword")
-            body = CreateRLEnvironmentRequest(acr_image_path=acr_image_path, name=name)
-        elif acr_image_path is not None or name is not None:
-            raise TypeError("pass either a request body or keyword fields, not both")
-        return super().create_environment(body, foundry_features=_RLE_FEATURE, **kwargs)
-
-    @distributed_trace
-    def list_environments(
-        self,
-        *,
-        name: Optional[str] = None,
-        skip: Optional[int] = None,
-        top: Optional[int] = None,
-        **kwargs: Any,
-    ) -> ListRLEnvironmentsResponse:
-        """List all hosted RLE environments in the project.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :keyword name: Optional environment name filter. When set, returns at most a single match.
-        :paramtype name: str or None
-        :keyword skip: Number of environments to skip. Defaults to 0.
-        :paramtype skip: int or None
-        :keyword top: Maximum number of environments to return. Defaults to 50; range is [1, 200].
-        :paramtype top: int or None
-        :return: The listing response.
-        :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
-        """
-        kwargs.pop("foundry_features", None)
-        return super().list_environments(foundry_features=_RLE_FEATURE, name=name, skip=skip, top=top, **kwargs)
-
-    @distributed_trace
-    def get_environment(self, name: str, **kwargs: Any) -> RLEnvironment:
-        """Get a hosted RLE environment by name, returning its latest version.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param name: Environment name. Required.
-        :type name: str
-        :return: The RLE environment.
-        :rtype: ~azure.ai.projects.models.RLEnvironment
-        """
-        kwargs.pop("foundry_features", None)
-        return super().get_environment(name, foundry_features=_RLE_FEATURE, **kwargs)
-
-    @distributed_trace
-    def get_environment_version(self, name: str, version: str, **kwargs: Any) -> RLEnvironment:
-        """Get a specific version of a hosted RLE environment.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param name: Environment name. Required.
-        :type name: str
-        :param version: Environment version identifier. Required.
-        :type version: str
-        :return: The RLE environment version.
-        :rtype: ~azure.ai.projects.models.RLEnvironment
-        """
-        kwargs.pop("foundry_features", None)
-        return super().get_environment_version(name, version, foundry_features=_RLE_FEATURE, **kwargs)
-
-    @distributed_trace
-    def delete_environment_version(self, name: str, version: str, **kwargs: Any) -> None:
-        """Delete a specific version of a hosted RLE environment.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param name: Environment name. Required.
-        :type name: str
-        :param version: Environment version identifier. Required.
-        :type version: str
-        :return: None
-        :rtype: None
-        """
-        kwargs.pop("foundry_features", None)
-        return super().delete_environment_version(name, version, foundry_features=_RLE_FEATURE, **kwargs)
-
-    @distributed_trace
-    def list_rl_environment_versions(self, name: str, **kwargs: Any) -> List[RLEnvironmentVersion]:
-        """List historical versions of a hosted RLE environment.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param name: Environment name. Required.
-        :type name: str
-        :return: The environment versions.
-        :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
-        """
-        kwargs.pop("foundry_features", None)
-        return super().list_rl_environment_versions(name, foundry_features=_RLE_FEATURE, **kwargs)
-
-    # --- Sandbox operations (preview feature opt-in supplied automatically) ---
-
-    @distributed_trace
-    def list_sandboxes(
-        self,
-        environment_id: str,
-        *,
-        skip: Optional[int] = None,
-        top: Optional[int] = None,
-        **kwargs: Any,
-    ) -> ListRLESandboxesResponse:
-        """List sandboxes currently leased for an environment.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param environment_id: Environment identifier whose sandboxes to list. Required.
-        :type environment_id: str
-        :keyword skip: Number of sandboxes to skip. Defaults to 0.
-        :paramtype skip: int or None
-        :keyword top: Maximum number of sandboxes to return. Defaults to 50; range is [1, 200].
-        :paramtype top: int or None
-        :return: The listing response.
-        :rtype: ~azure.ai.projects.models.ListRLESandboxesResponse
-        """
-        kwargs.pop("foundry_features", None)
-        return super().list_sandboxes(environment_id, foundry_features=_RLE_FEATURE, skip=skip, top=top, **kwargs)
-
-    @distributed_trace
-    def get_sandbox(self, environment_id: str, sandbox_id: str, **kwargs: Any) -> RLESandbox:
-        """Fetch the latest lifecycle state for a leased sandbox.
-
-        The required preview feature opt-in is supplied automatically.
-
-        :param environment_id: Environment identifier the sandbox belongs to. Required.
-        :type environment_id: str
-        :param sandbox_id: Sandbox identifier. Required.
-        :type sandbox_id: str
-        :return: The sandbox.
-        :rtype: ~azure.ai.projects.models.RLESandbox
-        """
-        kwargs.pop("foundry_features", None)
-        return super().get_sandbox(environment_id, sandbox_id, foundry_features=_RLE_FEATURE, **kwargs)
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
+        self._sandboxes = RLESandboxesOperations(*args, **kwargs)
 
     @distributed_trace
     def get_openenv_client(
@@ -663,9 +491,9 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         if num_instances < 1:
             raise ValueError("num_instances must be >= 1")
         if version is not None:
-            environment = self.get_environment_version(name, version)
+            environment = self._environments.get_environment_version(name, version, foundry_features=_RLE_FEATURE)
         else:
-            environment = self.get_environment(name)
+            environment = self._environments.get_environment(name, foundry_features=_RLE_FEATURE)
         environment_id = environment.environment_id
         if not environment_id:
             raise RLEError(f"environment '{name}' did not resolve to an environment id")
@@ -675,7 +503,7 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         )
         return OpenEnvClient(
             environment_id=environment_id,
-            sandboxes=self,
+            sandboxes=self._sandboxes,
             num_instances=num_instances,
             lease_request=lease_request,
             create_timeout_s=create_timeout_s,

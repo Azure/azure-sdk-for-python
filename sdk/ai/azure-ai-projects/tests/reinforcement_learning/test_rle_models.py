@@ -16,7 +16,7 @@ from azure.ai.projects.models import (
     RLESandboxStatus,
     RLEStepResult,
 )
-from azure.ai.projects.models import CreateRLEnvironmentRequest, CreateRLESandboxRequest
+from azure.ai.projects.models import CreateRLESandboxRequest
 from azure.ai.projects.operations import RLEOperations
 from azure.ai.projects.operations._operations import RLEnvironmentsOperations as _GenEnvOps
 from azure.ai.projects.operations._patch_rle import (
@@ -67,88 +67,6 @@ def test_rle_symbols_exported_from_public_namespace():
     assert getattr(models, "RLEStepResult")
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLESandbox")
-
-
-def _capture_env_ops(monkeypatch):
-    """Patch the generated environment base methods to record forwarded calls."""
-    calls = {}
-
-    def rec(name):
-        def _inner(self, *args, **kwargs):
-            calls[name] = {"args": args, "kwargs": kwargs}
-            return name
-
-        return _inner
-
-    for m in (
-        "create_environment",
-        "list_environments",
-        "get_environment",
-        "get_environment_version",
-        "delete_environment_version",
-        "list_rl_environment_versions",
-    ):
-        monkeypatch.setattr(_GenEnvOps, m, rec(m))
-    return calls
-
-
-def test_create_environment_from_keyword_fields_defaults_feature(monkeypatch):
-    calls = _capture_env_ops(monkeypatch)
-    ops = RLEOperations(object(), object(), object(), object())
-
-    assert ops.create_environment(acr_image_path="acr.io/img:1", name="pong") == "create_environment"
-    body = calls["create_environment"]["args"][0]
-    assert isinstance(body, CreateRLEnvironmentRequest)
-    assert body.acr_image_path == "acr.io/img:1"
-    assert body.name == "pong"
-    assert calls["create_environment"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-
-
-def test_create_environment_from_body_passes_through(monkeypatch):
-    calls = _capture_env_ops(monkeypatch)
-    ops = RLEOperations(object(), object(), object(), object())
-    req = CreateRLEnvironmentRequest(acr_image_path="acr.io/img:2")
-
-    ops.create_environment(req)
-    assert calls["create_environment"]["args"][0] is req
-    assert calls["create_environment"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-
-
-def test_create_environment_rejects_missing_and_ambiguous_args(monkeypatch):
-    _capture_env_ops(monkeypatch)
-    ops = RLEOperations(object(), object(), object(), object())
-
-    with pytest.raises(TypeError):
-        ops.create_environment()
-
-    with pytest.raises(TypeError):
-        ops.create_environment(CreateRLEnvironmentRequest(acr_image_path="x"), acr_image_path="y")
-
-
-def test_environment_read_and_delete_default_feature(monkeypatch):
-    calls = _capture_env_ops(monkeypatch)
-    ops = RLEOperations(object(), object(), object(), object())
-
-    ops.list_environments(name="pong", top=5)
-    assert calls["list_environments"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-    assert calls["list_environments"]["kwargs"]["name"] == "pong"
-    assert calls["list_environments"]["kwargs"]["top"] == 5
-
-    ops.get_environment("pong")
-    assert calls["get_environment"]["args"] == ("pong",)
-    assert calls["get_environment"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-
-    ops.get_environment_version("pong", "3")
-    assert calls["get_environment_version"]["args"] == ("pong", "3")
-    assert calls["get_environment_version"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-
-    ops.delete_environment_version("pong", "3")
-    assert calls["delete_environment_version"]["args"] == ("pong", "3")
-    assert calls["delete_environment_version"]["kwargs"]["foundry_features"] == _RLE_FEATURE
-
-    ops.list_rl_environment_versions("pong")
-    assert calls["list_rl_environment_versions"]["args"] == ("pong",)
-    assert calls["list_rl_environment_versions"]["kwargs"]["foundry_features"] == _RLE_FEATURE
 
 
 def test_coerce_action_accepts_mapping_or_keyword_fields():
@@ -315,8 +233,8 @@ def test_get_openenv_client_resolves_environment_by_name(monkeypatch):
         captured["get_environment_version"] = (name, version)
         return _Env()
 
-    monkeypatch.setattr(RLEOperations, "get_environment", fake_get_environment)
-    monkeypatch.setattr(RLEOperations, "get_environment_version", fake_get_environment_version)
+    monkeypatch.setattr(_GenEnvOps, "get_environment", fake_get_environment)
+    monkeypatch.setattr(_GenEnvOps, "get_environment_version", fake_get_environment_version)
 
     ops = RLEOperations(object(), object(), object(), object())
 
