@@ -532,6 +532,7 @@ async def _bg_handle_first_event(
     # to terminal state (otherwise a synchronous handler runs straight to
     # completion and the POST returns "completed" instead of "in_progress").
     await asyncio.sleep(0)
+    return st.output_item_count, st.provider_created
 
 
 def _bg_resolve_terminal_status(

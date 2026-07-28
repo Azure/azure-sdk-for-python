@@ -20,7 +20,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 from azure.ai.agentserver.core.tasks import (
     MultiTurnTask,
@@ -37,7 +37,7 @@ from ._dispatch import DISPOSITION_MARK_FAILED
 from ._task_id import derive_task_id
 
 if TYPE_CHECKING:
-    from .._response_context import ResponseContext
+    from .._response_context import ConversationChainMetadataNamespace, ResponseContext
     from ..models._generated import CreateResponse, ResponseObject
     from ..models.runtime import ResponseExecution
     from ..store._base import ResponseProviderProtocol
@@ -651,7 +651,9 @@ class ResilientResponseOrchestrator:
             _DeveloperMetadataFacade,
         )
 
-        context.conversation_chain_metadata = _DeveloperMetadataFacade(ctx.metadata)
+        context.conversation_chain_metadata = cast(
+            "ConversationChainMetadataNamespace", _DeveloperMetadataFacade(ctx.metadata)
+        )
         # (Spec 024 Phase 5 — Proposal #11) Expose the task context so
         # ``context.exit_for_recovery()`` can delegate to the recovery sentinel.
         context._task_context = ctx  # pylint: disable=protected-access
@@ -828,6 +830,8 @@ class ResilientResponseOrchestrator:
                     background=background,
                 )
             else:
+                assert context is not None  # reconstruction guarantees this
+                assert record is not None  # reconstruction guarantees this
                 await _run_background_non_stream(
                     create_fn=self._create_fn,
                     parsed=parsed_ref,

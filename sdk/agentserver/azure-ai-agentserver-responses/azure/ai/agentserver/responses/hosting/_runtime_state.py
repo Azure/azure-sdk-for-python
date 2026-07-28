@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from typing import Any
+from typing import Any, cast
 
 from ..models._generated import OutputItem
 from ..models.runtime import ResponseExecution
@@ -29,8 +29,9 @@ def _json_safe_agent_reference(value: Any) -> dict[str, Any]:
         return {}
     if isinstance(value, dict):
         return dict(value)
-    if hasattr(value, "as_dict") and callable(value.as_dict):
-        return value.as_dict()
+    as_dict = getattr(value, "as_dict", None)
+    if callable(as_dict):
+        return cast("dict[str, Any]", as_dict())
     try:
         return dict(value)
     except (TypeError, ValueError):

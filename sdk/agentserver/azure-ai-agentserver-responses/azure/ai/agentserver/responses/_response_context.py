@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence
+from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence, cast
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
@@ -262,7 +262,9 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         # Default-namespace metadata facade; framework code (in the
         # orchestrator) swaps the backing to the TaskContext.metadata
         # when the response runs inside a resilient task body.
-        self.conversation_chain_metadata: ConversationChainMetadataNamespace = _DeveloperMetadataFacade({})
+        self.conversation_chain_metadata: ConversationChainMetadataNamespace = cast(
+            ConversationChainMetadataNamespace, _DeveloperMetadataFacade({})
+        )
 
         # Composing cancellation surface. ``_cancellation_signal`` is
         # the per-request cancel Event delivered to the handler as the

@@ -29,7 +29,7 @@ would on fresh entry (Spec 033 FR-002b — fixes the prior drop-to-``{}`` bug).
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 
 from ..models._generated import CreateResponse
 from .._response_context import PlatformContext
@@ -94,8 +94,9 @@ def _normalize_agent_reference(agent_reference: Any) -> dict[str, Any]:
         return {}
     if isinstance(agent_reference, dict):
         return dict(agent_reference)
-    if hasattr(agent_reference, "as_dict") and callable(agent_reference.as_dict):
-        return agent_reference.as_dict()
+    as_dict = getattr(agent_reference, "as_dict", None)
+    if callable(as_dict):
+        return cast("dict[str, Any]", as_dict())
     try:
         return dict(agent_reference)
     except (TypeError, ValueError):

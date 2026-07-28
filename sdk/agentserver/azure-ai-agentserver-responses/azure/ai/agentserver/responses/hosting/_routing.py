@@ -25,17 +25,20 @@ from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
 from .._version import VERSION as _RESPONSES_VERSION
 from ..models._generated import CreateResponse, ResponseStreamEvent
+from ..streaming._checkpoint import ResponseCheckpointEvent
 from ..store._base import ResponseProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
 
+CreateHandlerEvent = Union[ResponseStreamEvent, ResponseCheckpointEvent, dict[str, Any]]
+
 CreateHandlerFn = Callable[
     [CreateResponse, ResponseContext, asyncio.Event],
     Union[
-        AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]],
-        Awaitable[AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]]],
+        AsyncIterable[CreateHandlerEvent],
+        Awaitable[AsyncIterable[CreateHandlerEvent]],
     ],
 ]
 """Type alias for the user-registered create-response handler function.

@@ -10,7 +10,7 @@ a custom hook via ``@app.response_acceptor`` to customize the queued response sh
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, cast
 
 from ..models._generated import ResponseObject
 
@@ -64,8 +64,9 @@ def _to_queued_dict(response: Any) -> dict[str, Any]:
     :returns: A JSON-safe queued-response dict.
     :rtype: dict[str, Any]
     """
-    if hasattr(response, "as_dict") and callable(response.as_dict):
-        result: dict[str, Any] = response.as_dict()
+    as_dict = getattr(response, "as_dict", None)
+    if callable(as_dict):
+        result = cast("dict[str, Any]", as_dict())
     elif isinstance(response, dict):
         result = dict(response)
     else:

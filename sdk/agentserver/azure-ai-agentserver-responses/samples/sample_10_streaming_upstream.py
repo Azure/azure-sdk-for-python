@@ -107,7 +107,7 @@ async def handler(
     # This handler owns the response lifecycle — construct the
     # response snapshot directly instead of forwarding the upstream's.
     # Seeding from the request preserves metadata, conversation, model.
-    snapshot = _build_response_snapshot(request, context)
+    snapshot = _build_response_snapshot(request, context, cancellation_signal)
 
     # Lifecycle events nest the response snapshot under "response"
     # — matching the SSE wire format.

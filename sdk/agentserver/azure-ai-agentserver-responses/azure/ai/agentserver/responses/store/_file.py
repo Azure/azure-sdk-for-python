@@ -75,7 +75,7 @@ import os
 import shutil
 from copy import deepcopy
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
 from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject
@@ -219,7 +219,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 resolve_state_subdir,
             )
 
-            storage_dir = resolve_state_subdir("responses")
+            storage_dir = cast("str | Path", resolve_state_subdir("responses"))
         self._root = Path(storage_dir)
         self._responses_dir = self._root / "responses"
         self._items_dir_global = self._root / "items"

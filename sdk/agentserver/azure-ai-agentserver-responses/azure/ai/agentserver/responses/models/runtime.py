@@ -433,7 +433,8 @@ def apply_failed_terminal(base: Mapping[str, Any], *, error: dict[str, Any]) -> 
     :returns: A new payload dict transitioned to ``failed``.
     :rtype: dict[str, ~typing.Any]
     """
-    obj = base.as_dict() if hasattr(base, "as_dict") else deepcopy(dict(base))
+    as_dict = getattr(base, "as_dict", None)
+    obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
     obj["status"] = "failed"
     obj["error"] = deepcopy(error)
     obj.pop("completed_at", None)
@@ -454,7 +455,8 @@ def apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]:
     :returns: A new payload dict transitioned to ``cancelled`` with empty output.
     :rtype: dict[str, ~typing.Any]
     """
-    obj = base.as_dict() if hasattr(base, "as_dict") else deepcopy(dict(base))
+    as_dict = getattr(base, "as_dict", None)
+    obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
     obj["status"] = "cancelled"
     obj["output"] = []
     obj.pop("error", None)
