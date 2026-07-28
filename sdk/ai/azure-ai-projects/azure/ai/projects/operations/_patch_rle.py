@@ -372,6 +372,10 @@ class OpenEnvClient:
         be satisfied, any partially-leased instances are released and an error is raised (v1 fails
         fast rather than queueing).
         """
+        # TODO: Temporary client-side reservation. This leases each instance individually and fails
+        # fast when the requested quota cannot be met. Going forward we will rely on the service to
+        # reserve quota and guarantee that ``num_instances`` are provisioned (with queueing and
+        # other flexibility), at which point this per-instance leasing loop can be removed.
         with self._lock:
             if self._reserved:
                 return

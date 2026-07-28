@@ -1,5 +1,15 @@
 # Release History
 
+## 2.5.0 
+
+### Features Added
+
+* Added Reinforcement Learning Environments (RLE) support:
+  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLESandbox`, `CreateRLEnvironmentRequest`, `CreateRLESandboxRequest`, `RLEResetRequest`, `RLEStepRequest`, `RLEStepResult`, `RLEnvironmentState`, `ListRLEnvironmentsResponse`, `ListRLESandboxesResponse`, and the `RLESandboxStatus` and `RLEnvironmentDiskImageConversionStatus` enums.
+  * New root-client operation group `project_client.rle` (`RLEOperations`) exposing a single entry point, `get_openenv_client`. Environment and sandbox management operations are internal — customers interact only with the `OpenEnvClient` and the `OpenEnvInstance` objects it hands out.
+  * New OpenEnv client interface `project_client.rle.get_openenv_client(name, version=None, num_instances=1, ...)` returning an `OpenEnvClient` / `AsyncOpenEnvClient` context manager. The environment is resolved by `name` (and `version` when supplied). Entering the client reserves `num_instances` instances in advance and fails fast if the quota cannot be satisfied (v1 does not queue). `get_instance()` hands out a reserved `OpenEnvInstance` / `AsyncOpenEnvInstance` — a context manager exposing `id`, `environment_id`, a data-plane URI (`dataplane_uri`), and the `reset`/`step`/`state`/`health`/`metadata`/`schema` runtime operations. Instances may be shared across episodes (returned to the pool for reuse) or scoped to a single episode; closing the client releases every reserved instance.
+  * The instance verifies sandbox health before every runtime call (`reset`, `step`, `state`, `metadata`, `schema`) by probing the sandbox `health` endpoint; an unhealthy sandbox surfaces as `HttpResponseError`. The `reset`/`step`/`state` operations return the generated `RLEStepResult` and `RLEnvironmentState` models; `health`, `metadata`, and `schema` return the raw JSON payload as a dictionary.
+
 ## 2.4.0 (2026-07-24)
 
 ### Features Added
@@ -121,12 +131,6 @@ all derived from `ToolboxTool`, have been defined.
 * New read-only property `content_hash` on `CodeConfiguration`, returning the SHA-256 hex digest of the uploaded code zip.
 * New optional `force` parameter on `agents.delete` and `agents.delete_version` methods.
 * New optional `blueprint_reference` parameters on `agents.create_version` method.
-* Added Reinforcement Learning Environments (RLE) support:
-  * New generated models: `RLEnvironment`, `RLEnvironmentVersion`, `RLESandbox`, `CreateRLEnvironmentRequest`, `CreateRLESandboxRequest`, `RLEResetRequest`, `RLEStepRequest`, `RLEStepResult`, `RLEnvironmentState`, `ListRLEnvironmentsResponse`, `ListRLESandboxesResponse`, and the `RLESandboxStatus` and `RLEnvironmentDiskImageConversionStatus` enums.
-  * New root-client operation group `project_client.rle` (`RLEOperations`) exposing a single entry point, `get_openenv_client`. Environment and sandbox management operations are internal — customers interact only with the `OpenEnvClient` and the `OpenEnvInstance` objects it hands out.
-  * New OpenEnv client interface `project_client.rle.get_openenv_client(name, version=None, num_instances=1, ...)` returning an `OpenEnvClient` / `AsyncOpenEnvClient` context manager. The environment is resolved by `name` (and `version` when supplied). Entering the client reserves `num_instances` instances in advance and fails fast if the quota cannot be satisfied (v1 does not queue). `get_instance()` hands out a reserved `OpenEnvInstance` / `AsyncOpenEnvInstance` — a context manager exposing `id`, `environment_id`, a data-plane URI (`dataplane_uri`), and the `reset`/`step`/`state`/`health`/`metadata`/`schema` runtime operations. Instances may be shared across episodes (returned to the pool for reuse) or scoped to a single episode; closing the client releases every reserved instance.
-  * The instance verifies sandbox health before every runtime call (`reset`, `step`, `state`, `metadata`, `schema`) by probing the sandbox `health` endpoint; an unhealthy sandbox surfaces as `HttpResponseError`. The `reset`/`step`/`state` operations return the generated `RLEStepResult` and `RLEnvironmentState` models; `health`, `metadata`, and `schema` return the raw JSON payload as a dictionary.
-
 
 ### Breaking Changes
 
