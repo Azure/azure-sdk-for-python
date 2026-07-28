@@ -1,7 +1,7 @@
 ```py
 namespace azure.identity.broker
 
-    class azure.identity.broker.InteractiveBrowserBrokerCredential(InteractiveBrowserCredential):
+    class azure.identity.broker.InteractiveBrowserBrokerCredential(_InteractiveBrowserCredential):
 
         def __init__(
                 self, 
@@ -21,7 +21,7 @@ namespace azure.identity.broker
             ) -> None: ...
 
 
-    class azure.identity.broker.PopTokenRequestOptions(dict):
+    class azure.identity.broker.PopTokenRequestOptions(TokenRequestOptions):
         key "claims": str
         key "enable_cae": bool
         key "pop": Union[bool, Mapping[str, str]]

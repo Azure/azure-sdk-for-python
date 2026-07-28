@@ -73,7 +73,7 @@ namespace azure.identity
             ) -> AccessTokenInfo: ...
 
 
-    class azure.identity.AzureAuthorityHosts:
+    class azure.identity.AzureAuthorityHosts(metaclass=AzureAuthorityHostsMeta):
         AZURE_CHINA = login.chinacloudapi.cn
         AZURE_GOVERNMENT = login.microsoftonline.us
         AZURE_PUBLIC_CLOUD = login.microsoftonline.com
