@@ -961,11 +961,19 @@ class RubricHealthConfidence(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The completeness of the evidence used to compute rubric health."""
 
     LOW = "low"
-    """The health signals are incomplete or insufficiently supported."""
+    """The health signals contain structural evidence only or are otherwise insufficiently supported."""
     MED = "med"
-    """The health signals have sufficient structural evidence but limited empirical support."""
+    """The health signals contain structural evidence and sufficient evaluation evidence."""
     HIGH = "high"
-    """The health signals include strong supporting evidence."""
+    """The health signals contain structural evidence, sufficient evaluation evidence, and sufficient
+    human annotation evidence."""
+
+
+class RubricHealthSimilarityMetric(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Similarity metrics used to compute rubric health."""
+
+    COSINE = "cosine"
+    """Cosine similarity."""
 
 
 class SampleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):

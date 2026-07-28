@@ -288,6 +288,7 @@
         "azure.ai.projects.models.RoutineRun": "Azure.AI.Projects.RoutineRun",
         "azure.ai.projects.models.RubricBasedEvaluatorDefinition": "Azure.AI.Projects.RubricBasedEvaluatorDefinition",
         "azure.ai.projects.models.RubricHealth": "Azure.AI.Projects.RubricHealth",
+        "azure.ai.projects.models.RubricHealthComputationMetadata": "Azure.AI.Projects.RubricHealthComputationMetadata",
         "azure.ai.projects.models.SASCredentials": "Azure.AI.Projects.SASCredentials",
         "azure.ai.projects.models.Schedule": "Azure.AI.Projects.Schedule",
         "azure.ai.projects.models.ScheduleRoutineTrigger": "Azure.AI.Projects.ScheduleRoutineTrigger",
@@ -384,6 +385,7 @@
         "azure.ai.projects.models.EvaluatorMetricDirection": "Azure.AI.Projects.EvaluatorMetricDirection",
         "azure.ai.projects.models.DimensionChangeKind": "Azure.AI.Projects.DimensionChangeKind",
         "azure.ai.projects.models.RubricHealthConfidence": "Azure.AI.Projects.RubricHealthConfidence",
+        "azure.ai.projects.models.RubricHealthSimilarityMetric": "Azure.AI.Projects.RubricHealthSimilarityMetric",
         "azure.ai.projects.models.PendingUploadType": "Azure.AI.Projects.PendingUploadType",
         "azure.ai.projects.models.EvaluatorGenerationJobSourceType": "Azure.AI.Projects.EvaluatorGenerationJobSourceType",
         "azure.ai.projects.models.JobStatus": "Azure.AI.Projects.JobStatus",
@@ -546,5 +548,5 @@
         "azure.ai.projects.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion",
         "azure.ai.projects.aio.operations.ToolboxesOperations.delete_version": "Azure.AI.Projects.Toolboxes.deleteToolboxVersion"
     },
-    "CrossLanguageVersion": "f7f86af3b631"
+    "CrossLanguageVersion": "18d0245add34"
 }

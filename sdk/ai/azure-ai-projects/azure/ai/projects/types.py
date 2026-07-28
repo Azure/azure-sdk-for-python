@@ -84,6 +84,7 @@ if TYPE_CHECKING:
         ReasoningEffort,
         RiskCategory,
         RubricHealthConfidence,
+        RubricHealthSimilarityMetric,
         ScheduleProvisioningStatus,
         SearchContentType,
         SearchContextSize,
@@ -5593,6 +5594,9 @@ class RubricHealth(TypedDict, total=False):
     :ivar confidence: The completeness of the evidence used to compute the health signals. Known
      values are: "low", "med", and "high".
     :vartype confidence: Union[str, "RubricHealthConfidence"]
+    :ivar computation: Information identifying the algorithm and vectorizer used to compute the
+     health signals.
+    :vartype computation: "RubricHealthComputationMetadata"
     """
 
     diversity: float
@@ -5607,6 +5611,38 @@ class RubricHealth(TypedDict, total=False):
     confidence: Union[str, "RubricHealthConfidence"]
     """The completeness of the evidence used to compute the health signals. Known values are: \"low\",
      \"med\", and \"high\"."""
+    computation: "RubricHealthComputationMetadata"
+    """Information identifying the algorithm and vectorizer used to compute the health signals."""
+
+
+class RubricHealthComputationMetadata(TypedDict, total=False):
+    """Service-generated information about how rubric health was computed.
+
+    :ivar algorithm_version: The version of the rubric-health component definitions, normalization,
+     and aggregate coefficients. Required.
+    :vartype algorithm_version: str
+    :ivar vectorizer: A stable identifier for the vectorizer or embedding model used to compute
+     diversity and coverage. Required.
+    :vartype vectorizer: str
+    :ivar vectorizer_version: The model snapshot or implementation revision of the vectorizer, when
+     available independently from the vectorizer identifier.
+    :vartype vectorizer_version: str
+    :ivar similarity_metric: The similarity metric used with the generated vectors. Required.
+     "cosine"
+    :vartype similarity_metric: Union[str, "RubricHealthSimilarityMetric"]
+    """
+
+    algorithm_version: Required[str]
+    """The version of the rubric-health component definitions, normalization, and aggregate
+     coefficients. Required."""
+    vectorizer: Required[str]
+    """A stable identifier for the vectorizer or embedding model used to compute diversity and
+     coverage. Required."""
+    vectorizer_version: str
+    """The model snapshot or implementation revision of the vectorizer, when available independently
+     from the vectorizer identifier."""
+    similarity_metric: Required[Union[str, "RubricHealthSimilarityMetric"]]
+    """The similarity metric used with the generated vectors. Required. \"cosine\""""
 
 
 class Schedule(TypedDict, total=False):

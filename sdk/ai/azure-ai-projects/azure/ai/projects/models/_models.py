@@ -13134,6 +13134,9 @@ class RubricHealth(_Model):
     :ivar confidence: The completeness of the evidence used to compute the health signals. Known
      values are: "low", "med", and "high".
     :vartype confidence: str or ~azure.ai.projects.models.RubricHealthConfidence
+    :ivar computation: Information identifying the algorithm and vectorizer used to compute the
+     health signals.
+    :vartype computation: ~azure.ai.projects.models.RubricHealthComputationMetadata
     """
 
     diversity: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -13150,6 +13153,10 @@ class RubricHealth(_Model):
     )
     """The completeness of the evidence used to compute the health signals. Known values are: \"low\",
      \"med\", and \"high\"."""
+    computation: Optional["_models.RubricHealthComputationMetadata"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Information identifying the algorithm and vectorizer used to compute the health signals."""
 
     @overload
     def __init__(
@@ -13160,6 +13167,59 @@ class RubricHealth(_Model):
         negative_vs_positive: Optional[float] = None,
         overall: Optional[float] = None,
         confidence: Optional[Union[str, "_models.RubricHealthConfidence"]] = None,
+        computation: Optional["_models.RubricHealthComputationMetadata"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RubricHealthComputationMetadata(_Model):
+    """Service-generated information about how rubric health was computed.
+
+    :ivar algorithm_version: The version of the rubric-health component definitions, normalization,
+     and aggregate coefficients. Required.
+    :vartype algorithm_version: str
+    :ivar vectorizer: A stable identifier for the vectorizer or embedding model used to compute
+     diversity and coverage. Required.
+    :vartype vectorizer: str
+    :ivar vectorizer_version: The model snapshot or implementation revision of the vectorizer, when
+     available independently from the vectorizer identifier.
+    :vartype vectorizer_version: str
+    :ivar similarity_metric: The similarity metric used with the generated vectors. Required.
+     "cosine"
+    :vartype similarity_metric: str or ~azure.ai.projects.models.RubricHealthSimilarityMetric
+    """
+
+    algorithm_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The version of the rubric-health component definitions, normalization, and aggregate
+     coefficients. Required."""
+    vectorizer: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A stable identifier for the vectorizer or embedding model used to compute diversity and
+     coverage. Required."""
+    vectorizer_version: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The model snapshot or implementation revision of the vectorizer, when available independently
+     from the vectorizer identifier."""
+    similarity_metric: Union[str, "_models.RubricHealthSimilarityMetric"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The similarity metric used with the generated vectors. Required. \"cosine\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        algorithm_version: str,
+        vectorizer: str,
+        similarity_metric: Union[str, "_models.RubricHealthSimilarityMetric"],
+        vectorizer_version: Optional[str] = None,
     ) -> None: ...
 
     @overload
