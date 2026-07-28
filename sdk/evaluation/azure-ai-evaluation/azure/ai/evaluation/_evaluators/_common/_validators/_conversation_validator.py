@@ -478,22 +478,17 @@ class GroundednessConversationValidator(ConversationValidator):
     """
     ConversationValidator override used by ``GroundednessEvaluator``.
 
-    Groundedness still rejects ``azure_ai_search``, ``azure_fabric``, and
-    ``sharepoint_grounding`` tool calls pending a helper that can extract
-    document bodies out of structured ``tool_result`` envelopes and feed
-    them in as the ``context`` input the groundedness judge prompt scores
-    against. Without that helper the judge would receive empty or wrong
-    context and return a silently low groundedness score, so the
-    enablement performed for ``ToolCallSuccessEvaluator`` and
-    ``ToolOutputUtilizationEvaluator`` is intentionally not extended here.
+    Groundedness now accepts the same structured grounding tools enabled in
+    the shared ``ConversationValidator`` path, and additionally allows
+    ``bing_grounding``, ``bing_custom_search``, and ``openapi_call``.
 
-    Once the context-extractor helper lands, this subclass can be deleted
-    and ``GroundednessEvaluator`` can use ``ConversationValidator``
-    directly.
+    A dedicated subclass is still kept so Groundedness can preserve stricter
+    guardrails for the remaining unsupported tool families without changing
+    behavior of other evaluators.
     """
 
-    UNSUPPORTED_TOOLS: List[str] = ConversationValidator.UNSUPPORTED_TOOLS + [
-        "azure_ai_search",
-        "azure_fabric",
-        "sharepoint_grounding",
+    UNSUPPORTED_TOOLS: List[str] = [
+        tool_name
+        for tool_name in ConversationValidator.UNSUPPORTED_TOOLS
+        if tool_name not in {"bing_custom_search", "bing_grounding", "openapi_call"}
     ]
