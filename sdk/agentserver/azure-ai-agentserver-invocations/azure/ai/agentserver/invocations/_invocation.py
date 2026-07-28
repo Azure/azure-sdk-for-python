@@ -593,8 +593,22 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         invocation_id = _sanitize_id(raw_invocation_id, raw_invocation_id)
         request.state.invocation_id = invocation_id
 
-        raw_session_id = request.query_params.get("agent_session_id", "")
+        # Per the invocation protocol spec (`invocation-protocol-spec.md`
+        # §1.2 GET, §1.3 cancel), neither GET nor cancel has a
+        # platform-defined ``agent_session_id`` query parameter — the
+        # session is implicit and sourced from the
+        # ``FOUNDRY_AGENT_SESSION_ID`` env var the platform sets on the
+        # container (surfaced via ``self.config.session_id``). We still
+        # honour a caller-provided ``agent_session_id`` query param if
+        # one happens to be present (callers can pass any
+        # non-platform-defined query params and the spec forwards them
+        # transparently), but fall back to the env var when absent so
+        # custom cancel/get handlers can find their per-session state in
+        # the hosted contract without the caller needing to know about
+        # the env var.
+        raw_session_id = request.query_params.get("agent_session_id") or self.config.session_id or ""
         session_id = _sanitize_id(raw_session_id, "") if raw_session_id else ""
+        request.state.session_id = session_id
 
         _ensure_log_filter()
         inv_token = _invocation_id_var.set(invocation_id)

@@ -41,6 +41,7 @@ from typing import Any, Optional, Union
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
+from ._constants import Constants
 
 _Content = Union[str, bytes, memoryview]
 
@@ -245,6 +246,15 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
+
+        # When Entra-based auth is requested, export to Azure Monitor using a
+        # system-assigned managed identity (no client id) rather than the
+        # connection string's instrumentation key alone.
+        auth_mode = os.environ.get(Constants.APPLICATIONINSIGHTS_AUTH_MODE, "")
+        if auth_mode.strip().lower() == "entra":
+            from azure.identity import ManagedIdentityCredential
+
+            kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
     if (
