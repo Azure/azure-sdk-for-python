@@ -7,7 +7,7 @@ from logging import getLogger
 import time
 import random
 from dataclasses import dataclass
-from typing import Tuple, Union, Dict, List, Optional, Mapping, TYPE_CHECKING
+from typing import Tuple, Union, List, Optional, Mapping, TYPE_CHECKING
 from typing_extensions import Self
 from azure.core import MatchConditions
 from azure.core.tracing.decorator import distributed_trace
@@ -103,14 +103,14 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         )
 
     async def _check_configuration_setting(
-        self, key: str, label: str, etag: Optional[str], headers: Dict[str, str], **kwargs
+        self, key: str, label: str, etag: Optional[str], headers: Mapping[str, str], **kwargs
     ) -> Tuple[bool, Union[ConfigurationSetting, None]]:
         """
         Checks if the configuration setting have been updated since the last refresh.
 
-        :param str key: key to check for chances
+        :param str key: key to check for changes
         :param str label: label to check for changes
-        :param str etag: etag to check for changes
+        :param Optional[str] etag: etag to check for changes
         :param Mapping[str, str] headers: headers to use for the request
         :return: A tuple with the first item being true/false if a change is detected. The second item is the updated
         value if a change was detected.
@@ -286,7 +286,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     async def get_updated_watched_settings(
-        self, watched_settings: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
+        self, watched_settings: Mapping[Tuple[str, str], Optional[str]], headers: Mapping[str, str], **kwargs
     ) -> Mapping[Tuple[str, str], Optional[str]]:
         """
         Checks if any of the watch keys have changed, and updates them if they have.
@@ -294,8 +294,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :param Mapping[Tuple[str, str], Optional[str]] watched_settings: The configuration settings to check for changes
         :param Mapping[str, str] headers: The headers to use for the request
 
-        :return: Updated value of the configuration watched settings.
-        :rtype: Union[Dict[Tuple[str, str], str], None]
+        :return: Updated value of the configuration watched settings. Empty if no change was detected.
+        :rtype: Mapping[Tuple[str, str], Optional[str]]
         """
         updated_watched_settings = dict(watched_settings)
         trigger_refresh = False
@@ -321,8 +321,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
         :param str key: The key of the configuration setting
         :param str label: The label of the configuration setting
-        :return: The configuration setting
-        :rtype: ConfigurationSetting
+        :return: The configuration setting, or None when the supplied ETag has not been modified.
+        :rtype: Optional[ConfigurationSetting]
         """
         return await self._client.get_configuration_setting(key=key, label=label, **kwargs)
 
@@ -405,12 +405,12 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         endpoint: str,
         credential: Optional["AsyncTokenCredential"],
         user_agent: str,
-        retry_total,
-        retry_backoff_max,
-        replica_discovery_enabled,
-        min_backoff_sec,
-        max_backoff_sec,
-        load_balancing_enabled,
+        retry_total: int,
+        retry_backoff_max: int,
+        replica_discovery_enabled: bool,
+        min_backoff_sec: int,
+        max_backoff_sec: int,
+        load_balancing_enabled: bool,
         **kwargs,
     ):
         super(AsyncConfigurationClientManager, self).__init__(
@@ -447,6 +447,7 @@ class AsyncConfigurationClientManager(ConfigurationClientManagerBase):  # pylint
         method returns None.
 
         :return: The next client to be used for the request.
+        :rtype: Optional[_AsyncConfigurationClientWrapper]
         """
         if not self._active_clients:
             self._last_active_client_name = ""

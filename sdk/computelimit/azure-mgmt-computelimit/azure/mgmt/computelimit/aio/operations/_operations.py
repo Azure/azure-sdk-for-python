@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ..._validation import api_version_validation
@@ -60,6 +60,10 @@ from ...operations._operations import (
     build_shared_limits_delete_request,
     build_shared_limits_get_request,
     build_shared_limits_list_by_subscription_location_resource_request,
+    build_trusted_host_subscriptions_create_request,
+    build_trusted_host_subscriptions_delete_request,
+    build_trusted_host_subscriptions_get_request,
+    build_trusted_host_subscriptions_list_by_subscription_location_resource_request,
     build_vm_families_get_request,
     build_vm_families_list_by_subscription_location_resource_request,
 )
@@ -67,7 +71,6 @@ from .._configuration import ComputeLimitMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -298,7 +301,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: JSON,
+        resource: _types.GuestSubscription,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -310,7 +313,7 @@ class GuestSubscriptionsOperations:
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.GuestSubscription
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -350,7 +353,7 @@ class GuestSubscriptionsOperations:
         self,
         location: str,
         guest_subscription_id: str,
-        resource: Union[_models.GuestSubscription, JSON, IO[bytes]],
+        resource: Union[_models.GuestSubscription, _types.GuestSubscription, IO[bytes]],
         **kwargs: Any
     ) -> _models.GuestSubscription:
         """Adds a subscription as a guest to consume the compute limits shared by the host subscription.
@@ -359,9 +362,10 @@ class GuestSubscriptionsOperations:
         :type location: str
         :param guest_subscription_id: The name of the GuestSubscription. Required.
         :type guest_subscription_id: str
-        :param resource: Resource create parameters. Is one of the following types: GuestSubscription,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a GuestSubscription type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.GuestSubscription or
+         ~azure.mgmt.computelimit.types.GuestSubscription or IO[bytes]
         :return: GuestSubscription. The GuestSubscription is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.GuestSubscription
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -590,6 +594,458 @@ class GuestSubscriptionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
+class TrustedHostSubscriptionsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computelimit.aio.ComputeLimitMgmtClient`'s
+        :attr:`trusted_host_subscriptions` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: ComputeLimitMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: _models.TrustedHostSubscription,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: _types.TrustedHostSubscription,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: ~azure.mgmt.computelimit.types.TrustedHostSubscription
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Required.
+        :type resource: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={
+            "2026-07-31": [
+                "api_version",
+                "subscription_id",
+                "location",
+                "host_subscription_id",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-07-31"],
+    )
+    async def create(
+        self,
+        location: str,
+        host_subscription_id: str,
+        resource: Union[_models.TrustedHostSubscription, _types.TrustedHostSubscription, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.TrustedHostSubscription:
+        """Adds a host subscription to the guest subscription's list of trusted hosts. A guest
+        subscription can trust multiple host subscriptions; this only establishes trust and does not
+        check the guest in to the host. Guest-to-host association is determined at check-in time, where
+        a subscription can be a guest of at most one host per region.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :param resource: Resource create parameters. Is either a TrustedHostSubscription type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.TrustedHostSubscription or
+         ~azure.mgmt.computelimit.types.TrustedHostSubscription or IO[bytes]
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.TrustedHostSubscription] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(resource, (IOBase, bytes)):
+            _content = resource
+        else:
+            _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_trusted_host_subscriptions_create_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TrustedHostSubscription, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={
+            "2026-07-31": ["api_version", "subscription_id", "location", "host_subscription_id", "accept"]
+        },
+        api_versions_list=["2026-07-31"],
+    )
+    async def get(self, location: str, host_subscription_id: str, **kwargs: Any) -> _models.TrustedHostSubscription:
+        """Gets a host subscription that the guest subscription trusts.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :return: TrustedHostSubscription. The TrustedHostSubscription is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computelimit.models.TrustedHostSubscription
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.TrustedHostSubscription] = kwargs.pop("cls", None)
+
+        _request = build_trusted_host_subscriptions_get_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.TrustedHostSubscription, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={"2026-07-31": ["api_version", "subscription_id", "location", "host_subscription_id"]},
+        api_versions_list=["2026-07-31"],
+    )
+    async def delete(self, location: str, host_subscription_id: str, **kwargs: Any) -> None:
+        """Removes a host subscription from the guest subscription's list of trusted hosts.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param host_subscription_id: The name of the TrustedHostSubscription. Required.
+        :type host_subscription_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_trusted_host_subscriptions_delete_request(
+            location=location,
+            host_subscription_id=host_subscription_id,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-07-31",
+        params_added_on={"2026-07-31": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-07-31"],
+    )
+    def list_by_subscription_location_resource(
+        self, location: str, **kwargs: Any
+    ) -> AsyncItemPaged["_models.TrustedHostSubscription"]:
+        """Lists all host subscriptions that the guest subscription trusts in a location.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: An iterator like instance of TrustedHostSubscription
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.computelimit.models.TrustedHostSubscription]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.TrustedHostSubscription]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                _request = build_trusted_host_subscriptions_list_by_subscription_location_resource_request(
+                    location=location,
+                    subscription_id=self._config.subscription_id,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                _request = HttpRequest(
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
+                    ),
+                }
+                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.TrustedHostSubscription],
+                deserialized.get("value", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("nextLink") or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+
 class SharedLimitsOperations:
     """
     .. warning::
@@ -705,7 +1161,13 @@ class SharedLimitsOperations:
 
     @overload
     async def create(
-        self, location: str, name: str, resource: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: _types.SharedLimit,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -714,7 +1176,7 @@ class SharedLimitsOperations:
         :param name: The name of the SharedLimit. Required.
         :type name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimit
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -745,7 +1207,11 @@ class SharedLimitsOperations:
 
     @distributed_trace_async
     async def create(
-        self, location: str, name: str, resource: Union[_models.SharedLimit, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        name: str,
+        resource: Union[_models.SharedLimit, _types.SharedLimit, IO[bytes]],
+        **kwargs: Any
     ) -> _models.SharedLimit:
         """Enables sharing of a compute limit by the host subscription with its guest subscriptions.
 
@@ -753,9 +1219,10 @@ class SharedLimitsOperations:
         :type location: str
         :param name: The name of the SharedLimit. Required.
         :type name: str
-        :param resource: Resource create parameters. Is one of the following types: SharedLimit, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SharedLimit type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimit or
+         ~azure.mgmt.computelimit.types.SharedLimit or IO[bytes]
         :return: SharedLimit. The SharedLimit is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SharedLimit
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1003,7 +1470,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-03-20",
         params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def get(self, location: str, feature_name: str, **kwargs: Any) -> _models.Feature:
         """Gets the properties of a compute limit feature.
@@ -1077,7 +1544,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-03-20",
         params_added_on={"2026-03-20": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-03-20", "2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(self, location: str, **kwargs: Any) -> AsyncItemPaged["_models.Feature"]:
         """Lists all compute limit features for the subscription at the specified location.
@@ -1179,13 +1646,13 @@ class FeaturesOperations:
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def _enable_initial(
         self,
         location: str,
         feature_name: str,
-        body: Optional[Union[_models.FeatureEnableRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1270,7 +1737,8 @@ class FeaturesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1293,19 +1761,20 @@ class FeaturesOperations:
         self,
         location: str,
         feature_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.FeatureEnableRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param feature_name: The name of the Feature. Required.
         :type feature_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.computelimit.types.FeatureEnableRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1326,7 +1795,8 @@ class FeaturesOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1350,24 +1820,26 @@ class FeaturesOperations:
         params_added_on={
             "2026-06-01": ["api_version", "subscription_id", "location", "feature_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def begin_enable(
         self,
         location: str,
         feature_name: str,
-        body: Optional[Union[_models.FeatureEnableRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.FeatureEnableRequest, _types.FeatureEnableRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Enables a compute limit feature for the subscription at the specified location.
+        """Enables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
         :param feature_name: The name of the Feature. Required.
         :type feature_name: str
-        :param body: The content of the action request. Is one of the following types:
-         FeatureEnableRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a FeatureEnableRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.computelimit.models.FeatureEnableRequest or
+         ~azure.mgmt.computelimit.types.FeatureEnableRequest or IO[bytes]
         :return: An instance of AsyncLROPoller that returns OperationStatusResult. The
          OperationStatusResult is compatible with MutableMapping
         :rtype:
@@ -1430,7 +1902,7 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def _disable_initial(self, location: str, feature_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1495,12 +1967,13 @@ class FeaturesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "feature_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def begin_disable(
         self, location: str, feature_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.OperationStatusResult]:
-        """Disables a compute limit feature for the subscription at the specified location.
+        """Disables a compute limit feature for the subscription at the specified location. Requires the
+        Contributor role.
 
         :param location: The name of the Azure region. Required.
         :type location: str
@@ -1583,7 +2056,7 @@ class VmFamiliesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     async def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.VmFamily:
         """Gets the properties of a VM family.
@@ -1657,7 +2130,7 @@ class VmFamiliesOperations:
     @api_version_validation(
         method_added_on="2026-04-30",
         params_added_on={"2026-04-30": ["api_version", "subscription_id", "location", "filter", "accept"]},
-        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01"],
+        api_versions_list=["2026-04-30", "2026-06-01", "2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(
         self, location: str, *, filter: Optional[str] = None, **kwargs: Any
@@ -1783,7 +2256,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def get(self, location: str, vm_family_name: str, **kwargs: Any) -> _models.SharedLimitCap:
         """Gets the shared limit cap configuration for a VM family, as visible to the caller's
@@ -1885,7 +2358,7 @@ class SharedLimitCapsOperations:
         self,
         location: str,
         vm_family_name: str,
-        resource: JSON,
+        resource: _types.SharedLimitCap,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1897,7 +2370,7 @@ class SharedLimitCapsOperations:
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.SharedLimitCap
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1938,13 +2411,13 @@ class SharedLimitCapsOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def create_or_update(
         self,
         location: str,
         vm_family_name: str,
-        resource: Union[_models.SharedLimitCap, JSON, IO[bytes]],
+        resource: Union[_models.SharedLimitCap, _types.SharedLimitCap, IO[bytes]],
         **kwargs: Any
     ) -> _models.SharedLimitCap:
         """Creates or replaces the shared limit cap configuration for a VM family.
@@ -1953,9 +2426,10 @@ class SharedLimitCapsOperations:
         :type location: str
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
-        :param resource: Resource create parameters. Is one of the following types: SharedLimitCap,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SharedLimitCap type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.SharedLimitCap or
+         ~azure.mgmt.computelimit.types.SharedLimitCap or IO[bytes]
         :return: SharedLimitCap. The SharedLimitCap is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SharedLimitCap
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2031,7 +2505,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def delete(self, location: str, vm_family_name: str, **kwargs: Any) -> None:
         """Deletes the shared limit cap configuration for a VM family. The caller's subscription is
@@ -2093,7 +2567,7 @@ class SharedLimitCapsOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def list_by_subscription_location_resource(
         self, location: str, **kwargs: Any
@@ -2223,7 +2697,13 @@ class SharedLimitCapsOperations:
 
     @overload
     async def set_member_cap_overrides(
-        self, location: str, vm_family_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        vm_family_name: str,
+        body: _types.SetMemberCapOverridesRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SetMemberCapOverridesResult:
         """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
         becomes the new complete set of overrides; supplying an empty array clears all existing
@@ -2234,7 +2714,7 @@ class SharedLimitCapsOperations:
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2279,13 +2759,13 @@ class SharedLimitCapsOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "content_type", "accept"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def set_member_cap_overrides(
         self,
         location: str,
         vm_family_name: str,
-        body: Union[_models.SetMemberCapOverridesRequest, JSON, IO[bytes]],
+        body: Union[_models.SetMemberCapOverridesRequest, _types.SetMemberCapOverridesRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.SetMemberCapOverridesResult:
         """Replaces the full set of per-member cap overrides for this shared limit cap. The supplied array
@@ -2296,9 +2776,10 @@ class SharedLimitCapsOperations:
         :type location: str
         :param vm_family_name: The name of the SharedLimitCap. Required.
         :type vm_family_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SetMemberCapOverridesRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SetMemberCapOverridesRequest type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.computelimit.models.SetMemberCapOverridesRequest or
+         ~azure.mgmt.computelimit.types.SetMemberCapOverridesRequest or IO[bytes]
         :return: SetMemberCapOverridesResult. The SetMemberCapOverridesResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.SetMemberCapOverridesResult
@@ -2402,7 +2883,7 @@ class MemberCapOverridesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def get(
         self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any
@@ -2512,7 +2993,7 @@ class MemberCapOverridesOperations:
         location: str,
         vm_family_name: str,
         member_subscription_id: str,
-        resource: JSON,
+        resource: _types.MemberCapOverride,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2526,7 +3007,7 @@ class MemberCapOverridesOperations:
         :param member_subscription_id: The name of the MemberCapOverride. Required.
         :type member_subscription_id: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.computelimit.types.MemberCapOverride
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2578,14 +3059,14 @@ class MemberCapOverridesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def create_or_update(
         self,
         location: str,
         vm_family_name: str,
         member_subscription_id: str,
-        resource: Union[_models.MemberCapOverride, JSON, IO[bytes]],
+        resource: Union[_models.MemberCapOverride, _types.MemberCapOverride, IO[bytes]],
         **kwargs: Any
     ) -> _models.MemberCapOverride:
         """Creates or replaces the cap override for a single member subscription.
@@ -2596,9 +3077,10 @@ class MemberCapOverridesOperations:
         :type vm_family_name: str
         :param member_subscription_id: The name of the MemberCapOverride. Required.
         :type member_subscription_id: str
-        :param resource: Resource create parameters. Is one of the following types: MemberCapOverride,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a MemberCapOverride type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.computelimit.models.MemberCapOverride or
+         ~azure.mgmt.computelimit.types.MemberCapOverride or IO[bytes]
         :return: MemberCapOverride. The MemberCapOverride is compatible with MutableMapping
         :rtype: ~azure.mgmt.computelimit.models.MemberCapOverride
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2677,7 +3159,7 @@ class MemberCapOverridesOperations:
         params_added_on={
             "2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "member_subscription_id"]
         },
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     async def delete(self, location: str, vm_family_name: str, member_subscription_id: str, **kwargs: Any) -> None:
         """Removes the per-member cap override for a member subscription.
@@ -2741,7 +3223,7 @@ class MemberCapOverridesOperations:
     @api_version_validation(
         method_added_on="2026-07-01",
         params_added_on={"2026-07-01": ["api_version", "subscription_id", "location", "vm_family_name", "accept"]},
-        api_versions_list=["2026-07-01"],
+        api_versions_list=["2026-07-01", "2026-07-31"],
     )
     def list_by_parent(
         self, location: str, vm_family_name: str, **kwargs: Any

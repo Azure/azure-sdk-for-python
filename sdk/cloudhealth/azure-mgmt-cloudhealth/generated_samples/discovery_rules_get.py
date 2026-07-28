@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.discovery_rules.get(
-        resource_group_name="myResourceGroup",
-        health_model_name="myHealthModel",
-        discovery_rule_name="myDiscoveryRule",
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        discovery_rule_name="discover-web-apps",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/DiscoveryRules_Get.json
+# x-ms-original-file: 2026-05-01-preview/DiscoveryRules_Get.json
 if __name__ == "__main__":
     main()

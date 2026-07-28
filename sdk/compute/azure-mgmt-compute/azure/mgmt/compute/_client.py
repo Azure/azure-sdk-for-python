@@ -53,9 +53,11 @@ from .operations import (
     SharedGalleriesOperations,
     SharedGalleryImageVersionsOperations,
     SharedGalleryImagesOperations,
+    SharedGalleryInvitesOperations,
     SnapshotsOperations,
     SoftDeletedResourceOperations,
     SshPublicKeysOperations,
+    TenantLevelSharedGalleryInvitesOperations,
     UsageOperations,
     VirtualMachineExtensionImagesOperations,
     VirtualMachineExtensionsOperations,
@@ -187,6 +189,11 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
     :vartype community_gallery_image_versions:
      azure.mgmt.compute.operations.CommunityGalleryImageVersionsOperations
+    :ivar shared_gallery_invites: SharedGalleryInvitesOperations operations
+    :vartype shared_gallery_invites: azure.mgmt.compute.operations.SharedGalleryInvitesOperations
+    :ivar tenant_level_shared_gallery_invites: TenantLevelSharedGalleryInvitesOperations operations
+    :vartype tenant_level_shared_gallery_invites:
+     azure.mgmt.compute.operations.TenantLevelSharedGalleryInvitesOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.compute.operations.ResourceSkusOperations
     :ivar virtual_machine_scale_set_rolling_upgrades:
@@ -370,6 +377,12 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_invites = SharedGalleryInvitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tenant_level_shared_gallery_invites = TenantLevelSharedGalleryInvitesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)
