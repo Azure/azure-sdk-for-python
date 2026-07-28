@@ -43,7 +43,7 @@ USAGE:
 
 import os
 import time
-from typing import Any, Union, cast
+from typing import Union
 
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
@@ -57,7 +57,6 @@ from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from openai.types.responses.response_input_text_param import ResponseInputTextParam
 
-from azure.core.polling.base_polling import LROBasePolling
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -79,10 +78,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-generation-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-
-
-def _normalize_job_status(status: object) -> str:
-    return str(getattr(status, "value", status)).lower()
 
 
 def main() -> None:
@@ -123,25 +118,10 @@ def main() -> None:
             ),
         )
         print("Creating data generation job and waiting for completion (polling is handled by the SDK)...")
-        poller = project_client.beta.datasets.begin_create_generation_job(
+        job_result = project_client.beta.datasets.begin_create_generation_job(
             job=job,
-            polling=LROBasePolling(
-                timeout=poll_interval_seconds,
-                lro_options={"final-state-via": "operation-location"},
-            ),
-        )
-        poller.wait()
-        job_payload = cast(Any, poller.polling_method())._pipeline_response.http_response.json()
-        generation_job = DataGenerationJob(job_payload if isinstance(job_payload, dict) else {})
-
-        while _normalize_job_status(generation_job.status) in {"queued", "in_progress"}:
-            time.sleep(poll_interval_seconds)
-            generation_job = project_client.beta.datasets.get_generation_job(generation_job.id)
-
-        if _normalize_job_status(generation_job.status) != "succeeded" or generation_job.result is None:
-            raise RuntimeError(f"Data generation job did not succeed. Final status: {generation_job.status}")
-
-        job_result = generation_job.result
+            polling_interval=poll_interval_seconds,
+        ).result()
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""
@@ -219,7 +199,8 @@ def main() -> None:
                     content=ResponseInputTextParam(
                         type="input_text",
                         text=(
-                            "You are a concise support assistant. Answer the user's question based on the dataset context."
+                            "You are a Contoso customer-support assistant. Answer the user's "
+                            "question about the Contoso refund policy clearly and concisely."
                         ),
                     ),
                 ),
