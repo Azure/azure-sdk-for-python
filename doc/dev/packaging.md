@@ -181,7 +181,7 @@ This was to prevent some difficult update scenario 6 years ago, and can be safel
 
 > **Python 2 support has been dropped.** The following section is preserved for historical reference only. Do not add `azure-nspkg` dependencies to new packages.
 
-The "extras_requires" section previously included a conditional dependency on "azure-nspkg" for Python 2. Example:
+The `extras_require` section previously included a conditional dependency on `azure-nspkg` for Python 2. Example:
 
 ```python
     extras_require={
