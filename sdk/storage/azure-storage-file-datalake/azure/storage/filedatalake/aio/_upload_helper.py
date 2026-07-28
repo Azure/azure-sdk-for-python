@@ -49,31 +49,22 @@ async def upload_datalake_file(
         encryption_context = kwargs.pop("encryption_context", None)
         progress_hook = kwargs.pop("progress_hook", None)
 
-        # Extract the flat access condition params from kwargs
-        access_kwargs: Dict[str, Any] = {}
-        for key in ("if_modified_since", "if_unmodified_since", "etag", "match_condition"):
-            val = kwargs.pop(key, None)
-            if val is not None:
-                access_kwargs[key] = val
-
-        # Extract path HTTP headers from kwargs
-        path_http_header_kwargs: Dict[str, Any] = {}
-        for key in (
-            "cache_control",
-            "content_type",
-            "content_md5",
-            "content_encoding",
-            "content_language",
-            "content_disposition",
-        ):
-            val = kwargs.pop(key, None)
-            if val is not None:
-                path_http_header_kwargs[key] = val
+        # Extract and pop parameters from kwargs
+        cache_control = kwargs.pop("cache_control", None)
+        content_type = kwargs.pop("content_type", None)
+        content_encoding = kwargs.pop("content_encoding", None)
+        content_language = kwargs.pop("content_language", None)
+        content_disposition = kwargs.pop("content_disposition", None)
+        content_md5 = kwargs.pop("content_md5", None)
+        if_modified_since = kwargs.pop("if_modified_since", None)
+        if_unmodified_since = kwargs.pop("if_unmodified_since", None)
+        etag = kwargs.pop("etag", None)
+        match_condition = kwargs.pop("match_condition", None)
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
-            if not _any_conditions(**access_kwargs):
-                access_kwargs["match_condition"] = MatchConditions.IfMissing
+            if not _any_conditions(if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, etag=etag, match_condition=match_condition):
+                match_condition = MatchConditions.IfMissing
             if properties or umask or permissions:
                 raise ValueError("metadata, umask and permissions can be set only when overwrite is enabled")
 
@@ -86,18 +77,23 @@ async def upload_datalake_file(
                     umask=umask,
                     permissions=permissions,
                     encryption_context=encryption_context,
+                    cache_control=cache_control,
+                    content_type=content_type,
+                    content_encoding=content_encoding,
+                    content_language=content_language,
+                    content_disposition=content_disposition,
+                    if_modified_since=if_modified_since,
+                    if_unmodified_since=if_unmodified_since,
+                    etag=etag,
+                    match_condition=match_condition,
                     cls=return_response_headers,
-                    **path_http_header_kwargs,
-                    **access_kwargs,
                     **kwargs
                 ),
             )
 
             # Set etag-based conditions to ensure no other flush between create and the current flush
-            access_kwargs = {
-                "etag": response["etag"],
-                "match_condition": MatchConditions.IfNotModified,
-            }
+            etag = response["etag"]
+            match_condition = MatchConditions.IfNotModified
 
         use_original_upload_path = (
             file_settings.use_byte_buffer
@@ -139,9 +135,17 @@ async def upload_datalake_file(
             await client.flush_data(
                 position=length,
                 close=True,
+                cache_control=cache_control,
+                content_type=content_type,
+                content_encoding=content_encoding,
+                content_language=content_language,
+                content_disposition=content_disposition,
+                if_modified_since=if_modified_since,
+                if_unmodified_since=if_unmodified_since,
+                etag=etag,
+                match_condition=match_condition,
+                content_md5=content_md5,
                 cls=return_response_headers,
-                **path_http_header_kwargs,
-                **access_kwargs,
                 **kwargs
             ),
         )
