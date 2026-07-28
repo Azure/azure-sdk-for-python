@@ -3377,11 +3377,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         # below. Note the sync classifier lives in container.py while the async
         # twin classifies inside __QueryFeed, so do not mirror the async branch
         # into this file.
-        #
-        # The container_properties pop below is a no-op in production (nothing
-        # sets that kwarg anymore); it is retained solely as a test API shim.
         feed_range_epk = None
-        kwargs.pop("container_properties", None)
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
             feed_range_epk = FeedRangeInternalEpk.from_json(feed_range).get_normalized_range()

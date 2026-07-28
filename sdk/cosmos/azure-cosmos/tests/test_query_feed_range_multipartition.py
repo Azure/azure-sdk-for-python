@@ -365,11 +365,11 @@ class TestFeedRangeMultiPartition:
             db.delete_container(created_container.id)
 
     def test_prefix_partition_key_query_pagination_resume(self):
-        """Prefix hierarchical partition-key query resumes correctly by continuation.
+        """Prefix hierarchical partition-key query resumes and aggregates correctly.
 
         The caller provides only the first level (``['CA']``). The query spans
         multiple descendants under that prefix and must preserve continuation
-        correctness on resume.
+        correctness on resume and merge aggregate results across the EPK scope.
         """
         db = _client().get_database_client(DATABASE_ID)
         container_id = "FeedRangeMultiPartitionPrefixPK-" + str(uuid.uuid4())
@@ -424,6 +424,12 @@ class TestFeedRangeMultiPartition:
             ]
             fetched_ids = [item['id'] for item in first_page] + resumed_remaining_ids
             assert baseline_ids == fetched_ids
+
+            count_results = list(created_container.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=['CA'],
+            ))
+            assert count_results == [30]
         finally:
             db.delete_container(created_container.id)
 

@@ -942,7 +942,8 @@ class TestFeedRangeMultiPartitionAsync:
         """Query with a partition key prefix on a hierarchical container,
         drain page 1, resume from the returned token, and confirm the
         resumed pages match a fresh iterator and cover the baseline
-        documents in the same order.
+        documents in the same order. Also confirm aggregate results are
+        merged correctly across the EPK scope.
         """
         client = _client()
         try:
@@ -1011,6 +1012,14 @@ class TestFeedRangeMultiPartitionAsync:
                 assert baseline_ids == fetched_ids, (
                     "Page 1 plus the resumed pages must equal the baseline "
                     "documents for this partition key prefix in the same order")
+
+                count_results = [
+                    item async for item in created_container.query_items(
+                        query="SELECT VALUE COUNT(1) FROM c",
+                        partition_key=['CA'],
+                    )
+                ]
+                assert count_results == [30]
             finally:
                 try:
                     await db.delete_container(created_container.id)

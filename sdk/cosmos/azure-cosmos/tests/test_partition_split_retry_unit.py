@@ -1240,23 +1240,9 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
             "complete partition keys must not resolve EPK overlaps"
         )
 
-        for partition_key, partition_key_header, container_properties in (
-            (
-                "PowerCut",
-                '["PowerCut"]',
-                {"partitionKey": {"paths": ["/documentType"], "kind": "Hash", "version": 2}},
-            ),
-            (
-                ["tenant", "user"],
-                '["tenant","user"]',
-                {
-                    "partitionKey": {
-                        "paths": ["/tenant", "/user"],
-                        "kind": "MultiHash",
-                        "version": 2,
-                    }
-                },
-            ),
+        for partition_key, partition_key_header in (
+            ("PowerCut", '["PowerCut"]'),
+            (["tenant", "user"], '["tenant","user"]'),
         ):
             with self.subTest(partition_key=partition_key):
                 seen_headers = []
@@ -1287,7 +1273,6 @@ class TestPartitionSplitRetryUnit(unittest.TestCase):
                                     "enableCrossPartitionQuery": False,
                                     "populateQueryMetrics": True,
                                 },
-                                container_properties=container_properties,
                             )
 
                 assert docs == [30735986]
