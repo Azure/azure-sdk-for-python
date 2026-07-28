@@ -270,7 +270,8 @@ class NodeIOMixin:
         for name, val in rest_inputs.items():
             rest_dataset_literal_inputs[name] = _rest_io_to_snake_dict(val)
             if hasattr(val, "mode") and val.mode:
-                rest_dataset_literal_inputs[name].update({"mode": val.mode.value})
+                mode_val = val.mode.value if hasattr(val.mode, "value") else val.mode
+                rest_dataset_literal_inputs[name].update({"mode": mode_val})
         return rest_dataset_literal_inputs
 
     def _to_rest_outputs(self) -> Dict[str, Dict]:

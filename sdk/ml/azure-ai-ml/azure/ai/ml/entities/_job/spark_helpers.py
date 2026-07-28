@@ -121,16 +121,20 @@ def _validate_compute_or_resources(compute: Any, resources: Any) -> None:
         )
 
 
-# Only "direct" mode is supported for spark job inputs and outputs
+# Only "direct" and "hdfs" modes are supported for spark job inputs and outputs
+_SPARK_SUPPORTED_MODES = (InputOutputModes.DIRECT, InputOutputModes.HDFS)
+_SPARK_SUPPORTED_MODES_MSG = " and ".join("'{}'".format(mode) for mode in _SPARK_SUPPORTED_MODES)
+
+
 # pylint: disable=no-else-raise, too-many-boolean-expressions
 def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
     for input_name, input_value in inputs.items():
-        if isinstance(input_value, Input) and input_value.mode != InputOutputModes.DIRECT:
+        if isinstance(input_value, Input) and input_value.mode not in _SPARK_SUPPORTED_MODES:
             # For standalone job input
-            msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
+            msg = "Input '{}' is using '{}' mode, only {} are supported for Spark job"
             raise ValidationException(
-                message=msg.format(input_name, input_value.mode, InputOutputModes.DIRECT),
-                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
+                message=msg.format(input_name, input_value.mode, _SPARK_SUPPORTED_MODES_MSG),
+                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", _SPARK_SUPPORTED_MODES_MSG),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -142,9 +146,9 @@ def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
                     isinstance(input_value._data.path, str)
                     and bool(re.search(ComponentJobConstants.INPUT_PATTERN, input_value._data.path))
                 )
-                and input_value._data.mode != InputOutputModes.DIRECT
+                and input_value._data.mode not in _SPARK_SUPPORTED_MODES
             )
-            and (isinstance(input_value._meta, Input) and input_value._meta.mode != InputOutputModes.DIRECT)
+            and (isinstance(input_value._meta, Input) and input_value._meta.mode not in _SPARK_SUPPORTED_MODES)
         ):
             # For node input in pipeline job, client side can only validate node input which isn't bound to pipeline
             # input or node output.
@@ -156,12 +160,12 @@ def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
             # always get None mode in node level. In this case, if we define correct "Direct" mode in component yaml,
             # component level mode will take effect and run successfully. Otherwise, it need to set mode in node level
             # like input1: path: ${{parent.jobs.sample_word.outputs.output1}} mode: direct.
-            msg = "Input '{}' is using '{}' mode, only '{}' is supported for Spark job"
+            msg = "Input '{}' is using '{}' mode, only {} are supported for Spark job"
             raise ValidationException(
                 message=msg.format(
-                    input_name, input_value._data.mode or input_value._meta.mode, InputOutputModes.DIRECT
+                    input_name, input_value._data.mode or input_value._meta.mode, _SPARK_SUPPORTED_MODES_MSG
                 ),
-                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", "direct"),
+                no_personal_data_message=msg.format("[input_name]", "[input_value.mode]", _SPARK_SUPPORTED_MODES_MSG),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -170,13 +174,13 @@ def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
         if (
             isinstance(output_value, Output)
             and output_name != "default"
-            and output_value.mode != InputOutputModes.DIRECT
+            and output_value.mode not in _SPARK_SUPPORTED_MODES
         ):
             # For standalone job output
-            msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
+            msg = "Output '{}' is using '{}' mode, only {} are supported for Spark job"
             raise ValidationException(
-                message=msg.format(output_name, output_value.mode, InputOutputModes.DIRECT),
-                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
+                message=msg.format(output_name, output_value.mode, _SPARK_SUPPORTED_MODES_MSG),
+                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", _SPARK_SUPPORTED_MODES_MSG),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )
@@ -189,9 +193,9 @@ def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
                     isinstance(output_value._data.path, str)
                     and bool(re.search(ComponentJobConstants.OUTPUT_PATTERN, output_value._data.path))
                 )
-                and output_value._data.mode != InputOutputModes.DIRECT
+                and output_value._data.mode not in _SPARK_SUPPORTED_MODES
             )
-            and (isinstance(output_value._meta, Output) and output_value._meta.mode != InputOutputModes.DIRECT)
+            and (isinstance(output_value._meta, Output) and output_value._meta.mode not in _SPARK_SUPPORTED_MODES)
         ):
             # For node output in pipeline job, client side can only validate node output which isn't bound to pipeline
             # output.
@@ -199,12 +203,12 @@ def _validate_input_output_mode(inputs: Any, outputs: Any) -> None:
             # validate. Even if we can judge through component output mode (_meta), we should note that pipeline level
             # output mode has higher priority than component level. so component output can be set "upload", but it
             # can run successfully when pipeline output is "Direct".
-            msg = "Output '{}' is using '{}' mode, only '{}' is supported for Spark job"
+            msg = "Output '{}' is using '{}' mode, only {} are supported for Spark job"
             raise ValidationException(
                 message=msg.format(
-                    output_name, output_value._data.mode or output_value._meta.mode, InputOutputModes.DIRECT
+                    output_name, output_value._data.mode or output_value._meta.mode, _SPARK_SUPPORTED_MODES_MSG
                 ),
-                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", "direct"),
+                no_personal_data_message=msg.format("[output_name]", "[output_value.mode]", _SPARK_SUPPORTED_MODES_MSG),
                 target=ErrorTarget.SPARK_JOB,
                 error_category=ErrorCategory.USER_ERROR,
             )

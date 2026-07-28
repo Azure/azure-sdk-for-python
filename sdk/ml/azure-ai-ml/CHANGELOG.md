@@ -3,6 +3,7 @@
 ## 1.35.0 (unreleased)
 
 ### Features Added
+- Added support for the `hdfs` input/output delivery mode (`InputOutputModes.HDFS`) for Spark jobs and components. Spark inputs and outputs can now be set to `hdfs` mode in addition to `direct`, allowing pipelines to explicitly request HDFS delivery instead of relying on service-side defaults.
 
 ### Bugs Fixed
 - Fixed `MLClient.jobs.create_or_update`, `archive`, and `restore` failing for previously-fetched jobs across all job types by routing metadata-only edits through the RunHistory PATCH endpoint.

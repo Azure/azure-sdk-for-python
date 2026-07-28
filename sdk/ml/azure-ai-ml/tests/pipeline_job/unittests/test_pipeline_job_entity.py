@@ -1754,7 +1754,7 @@ class TestPipelineJobEntity:
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_output_mode.yml",
                 {
                     "jobs.hello_world.outputs.output": "Output 'output' is using 'None' mode, "
-                    "only 'direct' is supported for Spark job"
+                    "only 'direct' and 'hdfs' are supported for Spark job"
                 },
                 id="none_mode_output",
             ),
@@ -1762,7 +1762,7 @@ class TestPipelineJobEntity:
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_output_mode.yml",
                 {
                     "jobs.hello_world.outputs.output1": "Output 'output1' is using 'upload' mode, "
-                    "only 'direct' is supported for Spark job"
+                    "only 'direct' and 'hdfs' are supported for Spark job"
                 },
                 id="upload_mode_output",
             ),
@@ -1770,7 +1770,7 @@ class TestPipelineJobEntity:
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_input_mode.yml",
                 {
                     "jobs.hello_world.inputs.file_input1": "Input 'file_input1' is using 'None' mode, "
-                    "only 'direct' is supported for Spark job",
+                    "only 'direct' and 'hdfs' are supported for Spark job",
                 },
                 id="none_mode_input",
             ),
@@ -1778,7 +1778,7 @@ class TestPipelineJobEntity:
                 "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_component_input_mode.yml",
                 {
                     "jobs.hello_world.inputs.input1": "Input 'input1' is using 'mount' mode, "
-                    "only 'direct' is supported for Spark job"
+                    "only 'direct' and 'hdfs' are supported for Spark job"
                 },
                 id="mount_mode_input",
             ),
