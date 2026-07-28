@@ -5,6 +5,7 @@ import shutil
 import tempfile
 from pathlib import Path
 from typing import Callable, List, Tuple
+from unittest.mock import patch
 
 import pytest
 
@@ -19,6 +20,7 @@ from azure.ai.ml._utils._asset_utils import (
     get_ignore_file,
     get_object_hash,
     get_upload_files_from_folder,
+    upload_directory,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
 from azure.ai.ml.constants._common import AutoDeleteCondition
@@ -174,6 +176,19 @@ class SymbolLinkTestCase:
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestAssetUtils:
+    def test_upload_directory_propagates_errors_without_progress(self, tmp_path: Path) -> None:
+        class BlobStorageClient:
+            def check_blob_exists(self):
+                pass
+
+        source = tmp_path / "source"
+        source.mkdir()
+        (source / "file.txt").write_text("content")
+
+        with patch("azure.ai.ml._utils._asset_utils.upload_file", side_effect=RuntimeError("upload failed")):
+            with pytest.raises(RuntimeError, match="upload failed"):
+                upload_directory(BlobStorageClient(), source, "destination", "Uploading", False, IgnoreFile(None))
+
     def test_amlignore_precedence(
         self, storage_test_directory: str, gitignore_file_directory: str, no_ignore_file_directory: str
     ) -> None:
