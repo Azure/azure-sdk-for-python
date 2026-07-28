@@ -13,6 +13,7 @@ from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
     add_header_regex_sanitizer,
+    remove_batch_sanitizers,
 )
 
 load_dotenv()
@@ -33,3 +34,48 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
+
+    # Cross-subscription shared infra in XDataMove-Synthetics is referenced by
+    # matrix #31 (`test_start_c2c_job_with_private_source`), the extended
+    # matrix #10 (`test_job_definition_job_run`), and #32
+    # (`test_create_get_list_update_delete` on connections). The subscription id
+    # is read from the environment (never committed) and rewritten to the
+    # sanitized zero-GUID in recordings, matching the value the test sources
+    # build their cross-sub resource IDs from at playback time.
+    storagemover_synthetics_subscription_id = (
+        os.environ.get("STORAGEMOVER_SYNTHETICS_SUBSCRIPTION_ID")
+        or "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=storagemover_synthetics_subscription_id,
+        value="00000000-0000-0000-0000-000000000000",
+    )
+    # Sanitize the per-run role-assignment GUID we mint for matrix #31 and #10.
+    # The GUID is a path segment under `roleAssignments/<guid>` — redact only
+    # there to avoid clobbering unrelated GUIDs elsewhere in payloads. The
+    # `variables` mechanism makes the source GUID deterministic across runs,
+    # so both request and cassette get the same sanitized value.
+    add_general_regex_sanitizer(
+        regex=r"(?<=roleAssignments/)[0-9a-fA-F\-]{36}",
+        value="00000000-0000-0000-0000-000000000000",
+    )
+    # Sanitize managed-identity principalId values returned by the RP on
+    # blob-container endpoints (matrix #10 + #31) so cassettes don't leak
+    # object IDs we don't control.
+    add_body_key_sanitizer(json_path="$..principalId", value="00000000-0000-0000-0000-000000000000")
+    # Sanitize the RP-managed private-endpoint subscription returned on
+    # connections (#32) and the private-source job run (#31). These resources
+    # live in the service's own `rg-sm-ur-prd-pe-*` resource groups (in `id` and
+    # `privateEndpointResourceId` fields); redact only the subscription segment
+    # under that well-known RG prefix so unrelated subscriptions are untouched.
+    add_general_regex_sanitizer(
+        regex=r"(?<=/subscriptions/)[0-9a-fA-F\-]{36}(?=/resourceGroups/rg-sm-ur-prd-pe-)",
+        value="00000000-0000-0000-0000-000000000000",
+    )
+
+    # Remove default sanitizers that clobber non-sensitive fields the storage mover
+    # tests need to assert on:
+    #  - AZSDK3430: $..id (resource ARM IDs - subscription is already sanitized)
+    #  - AZSDK3493: $..name (resource names like storage mover / endpoint / project names)
+    #  - AZSDK2003: Location header (needed for LRO polling on begin_delete, etc.)
+    remove_batch_sanitizers(["AZSDK3430", "AZSDK3493", "AZSDK2003"])

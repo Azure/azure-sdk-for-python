@@ -59,6 +59,7 @@ try:
     from .._common.constants import (
         UAMQP_LIBRARY,
         DATETIMEOFFSET_EPOCH,
+        _X_OPT_PARTITION_KEY,
         RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
         RECEIVER_LINK_DEAD_LETTER_REASON,
         DEADLETTERNAME,
@@ -619,6 +620,29 @@ try:
             sb_message_batch._message._body_gen.append(outgoing_sb_message._message)
 
         @staticmethod
+        def set_batch_envelope_properties(
+            batch_message: "BatchMessage",
+            message_id: Optional[str],
+            session_id: Optional[str],
+            partition_key: Optional[str],
+        ) -> None:
+            """
+            Populate the batch envelope's message_id/session_id properties and partition_key annotation
+            on the underlying uamqp BatchMessage.
+            :param uamqp.BatchMessage batch_message: The underlying uamqp batch message.
+            :param str or None message_id: The message_id of the first message in the batch.
+            :param str or None session_id: The session_id of the first message in the batch.
+            :param str or None partition_key: The partition_key of the first message in the batch.
+            :rtype: None
+            """
+            if message_id or session_id:
+                batch_message.properties = MessageProperties(message_id=message_id, group_id=session_id)
+            if partition_key:
+                annotations = batch_message.annotations or {}
+                annotations[_X_OPT_PARTITION_KEY] = partition_key
+                batch_message.annotations = annotations
+
+        @staticmethod
         def create_source(source: "Source", session_filter: Optional[str]) -> "Source":
             """
             Creates and returns the Source.
@@ -729,10 +753,14 @@ try:
                     original_timeout = receiver._handler._timeout
                     receiver._handler._timeout = max_wait_time * UamqpTransport.TIMEOUT_FACTOR
                 try:
+                    start_time = time.time_ns()
                     message = receiver._inner_next()
                     links = get_receive_links(message)
-                    with receive_trace_context_manager(receiver, links=links):
-                        yield message
+                    # Close the receive span before yielding so its HTTP instrumentation
+                    # suppression does not leak into the caller's message processing.
+                    with receive_trace_context_manager(receiver, links=links, start_time=start_time):
+                        pass
+                    yield message
                 except StopIteration:
                     break
                 finally:
@@ -824,6 +852,15 @@ try:
             """
             handler.message_handler.reset_link_credit(link_credit)
 
+        @staticmethod
+        def drain_and_release_messages(handler: "ReceiveClient") -> None:
+            """
+            No-op for uamqp: drain-on-close is only implemented for the pyamqp
+            transport (the default). uamqp is deprecated.
+            :param ~uamqp.ReceiveClient handler: The handler.
+            :rtype: None
+            """
+
         # Executes message settlement, implementation is in settle_message_via_receiver_link_impl
         # May be able to remove and just call methods in private method.
         @staticmethod
@@ -883,14 +920,20 @@ try:
             :keyword ~azure.servicebus.ServiceBusReceiver receiver: Required.
             :keyword bool is_peeked_message: Optional. For peeked messages.
             :keyword bool is_deferred_message: Optional. For deferred messages.
+            :keyword uuid.UUID lock_token: Optional. Lock token, if it is given by the message receiver.
             :keyword ~azure.servicebus.ServiceBusReceiveMode receive_mode: Optional.
             :return: List of ServiceBusReceivedMessage.
             :rtype: list[~azure.servicebus.ServiceBusReceivedMessage]
             """
+            is_deferred_message = kwargs.get("is_deferred_message", False)
             parsed = []
             for m in message.get_data()[b"messages"]:
                 wrapped = Message.decode_from_bytes(bytearray(m[b"message"]))
-                parsed.append(message_type(wrapped, **kwargs))
+                if is_deferred_message and b"lock-token" in m:
+                    lock_token = m[b"lock-token"]
+                else:
+                    lock_token = kwargs.pop("lock_token", None)
+                parsed.append(message_type(wrapped, lock_token=lock_token, **kwargs))
             return parsed
 
         @staticmethod

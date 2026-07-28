@@ -25,7 +25,7 @@ class TestNetworkManagementFlowLogsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             flow_log_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -72,7 +72,7 @@ class TestNetworkManagementFlowLogsOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestNetworkManagementFlowLogsOperations(AzureMgmtRecordedTestCase):
             network_watcher_name="str",
             flow_log_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestNetworkManagementFlowLogsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             network_watcher_name="str",
             flow_log_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestNetworkManagementFlowLogsOperations(AzureMgmtRecordedTestCase):
         response = self.client.flow_logs.list(
             resource_group_name=resource_group.name,
             network_watcher_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -39,6 +39,9 @@ extends:
     ServiceDirectory: storage
     TestProxy: true
     TestTimeoutInMinutes: 120
+    # Enable Compiled CodeQL because azure-storage-extensions has C code that 
+    # must be scanned
+    EnableCompiledCodeql: true
     Artifacts:
     - name: azure-storage-blob
       safeName: azurestorageblob

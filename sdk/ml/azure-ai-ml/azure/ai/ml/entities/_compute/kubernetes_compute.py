@@ -6,7 +6,7 @@
 
 from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource, Kubernetes, KubernetesProperties
+from azure.ai.ml._restclient.arm_ml_service.models import ComputeResource, Kubernetes, KubernetesProperties
 from azure.ai.ml._schema.compute.kubernetes_compute import KubernetesComputeSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.constants._compute import ComputeType
@@ -67,7 +67,11 @@ class KubernetesCompute(Compute):
                 if (prop.provisioning_errors and len(prop.provisioning_errors) > 0)
                 else None
             ),
-            created_on=prop.additional_properties.get("createdOn", None),
+            created_on=(
+                prop.additional_properties.get("createdOn", None)
+                if hasattr(prop, "additional_properties")
+                else prop.get("createdOn") if hasattr(prop, "get") else None
+            ),
             properties=prop.properties.as_dict() if prop.properties else None,
             namespace=prop.properties.namespace,
             identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
@@ -88,7 +92,7 @@ class KubernetesCompute(Compute):
         return KubernetesCompute(**loaded_data)
 
     def _to_rest_object(self) -> ComputeResource:
-        kubernetes_prop = KubernetesProperties.from_dict(self.properties)
+        kubernetes_prop = KubernetesProperties(self.properties)
         kubernetes_prop.namespace = self.namespace
         kubernetes_comp = Kubernetes(
             resource_id=self.resource_id,

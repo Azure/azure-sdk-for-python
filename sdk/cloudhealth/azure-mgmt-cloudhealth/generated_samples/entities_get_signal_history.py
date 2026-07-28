@@ -31,14 +31,14 @@ def main():
     )
 
     response = client.entities.get_signal_history(
-        resource_group_name="rgopenapi",
-        health_model_name="myHealthModel",
-        entity_name="entity1",
-        body={"endAt": "2025-12-12T10:00:00Z", "signalName": "uniqueSignalName1", "startAt": "2025-12-11T10:00:00Z"},
+        resource_group_name="online-store-rg",
+        health_model_name="online-store",
+        entity_name="web-frontend",
+        body={"endAt": "2026-05-04T09:30:00Z", "signalName": "http-5xx", "startAt": "2026-05-03T09:30:00Z", "top": 7},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-01-01-preview/Entities_GetSignalHistory.json
+# x-ms-original-file: 2026-05-01-preview/Entities_GetSignalHistory.json
 if __name__ == "__main__":
     main()

@@ -34,6 +34,7 @@ from ._models import (  # type: ignore
     Resource,
     Revocation,
     RevokeCertificate,
+    RevokeCertificateList,
     SystemData,
     TrackedResource,
 )
@@ -75,6 +76,7 @@ __all__ = [
     "Resource",
     "Revocation",
     "RevokeCertificate",
+    "RevokeCertificateList",
     "SystemData",
     "TrackedResource",
     "ActionType",

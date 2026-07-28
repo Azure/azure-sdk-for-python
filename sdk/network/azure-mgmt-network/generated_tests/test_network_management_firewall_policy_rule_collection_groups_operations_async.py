@@ -26,7 +26,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupsOperationsAsync(Azu
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
             rule_collection_group_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupsOperationsAsync(Azu
                     },
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupsOperationsAsync(Azu
                 resource_group_name=resource_group.name,
                 firewall_policy_name="str",
                 rule_collection_group_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -80,7 +80,7 @@ class TestNetworkManagementFirewallPolicyRuleCollectionGroupsOperationsAsync(Azu
         response = self.client.firewall_policy_rule_collection_groups.list(
             resource_group_name=resource_group.name,
             firewall_policy_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

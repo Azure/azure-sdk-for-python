@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -43,6 +43,7 @@ from .operations import (
     GalleryScriptsOperations,
     GallerySharingProfileOperations,
     ImagesOperations,
+    InterconnectBlocksOperations,
     LogAnalyticsOperations,
     Operations,
     ProximityPlacementGroupsOperations,
@@ -52,9 +53,11 @@ from .operations import (
     SharedGalleriesOperations,
     SharedGalleryImageVersionsOperations,
     SharedGalleryImagesOperations,
+    SharedGalleryInvitesOperations,
     SnapshotsOperations,
     SoftDeletedResourceOperations,
     SshPublicKeysOperations,
+    TenantLevelSharedGalleryInvitesOperations,
     UsageOperations,
     VirtualMachineExtensionImagesOperations,
     VirtualMachineExtensionsOperations,
@@ -71,6 +74,11 @@ from .operations import (
     VirtualMachineSizesOperations,
     VirtualMachinesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -126,6 +134,8 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
      azure.mgmt.compute.operations.CapacityReservationGroupsOperations
     :ivar capacity_reservations: CapacityReservationsOperations operations
     :vartype capacity_reservations: azure.mgmt.compute.operations.CapacityReservationsOperations
+    :ivar interconnect_blocks: InterconnectBlocksOperations operations
+    :vartype interconnect_blocks: azure.mgmt.compute.operations.InterconnectBlocksOperations
     :ivar virtual_machine_run_commands: VirtualMachineRunCommandsOperations operations
     :vartype virtual_machine_run_commands:
      azure.mgmt.compute.operations.VirtualMachineRunCommandsOperations
@@ -179,6 +189,11 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar community_gallery_image_versions: CommunityGalleryImageVersionsOperations operations
     :vartype community_gallery_image_versions:
      azure.mgmt.compute.operations.CommunityGalleryImageVersionsOperations
+    :ivar shared_gallery_invites: SharedGalleryInvitesOperations operations
+    :vartype shared_gallery_invites: azure.mgmt.compute.operations.SharedGalleryInvitesOperations
+    :ivar tenant_level_shared_gallery_invites: TenantLevelSharedGalleryInvitesOperations operations
+    :vartype tenant_level_shared_gallery_invites:
+     azure.mgmt.compute.operations.TenantLevelSharedGalleryInvitesOperations
     :ivar resource_skus: ResourceSkusOperations operations
     :vartype resource_skus: azure.mgmt.compute.operations.ResourceSkusOperations
     :ivar virtual_machine_scale_set_rolling_upgrades:
@@ -310,6 +325,9 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.capacity_reservations = CapacityReservationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.interconnect_blocks = InterconnectBlocksOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.virtual_machine_run_commands = VirtualMachineRunCommandsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -359,6 +377,12 @@ class ComputeManagementClient:  # pylint: disable=client-accepts-api-version-key
             self._client, self._config, self._serialize, self._deserialize
         )
         self.community_gallery_image_versions = CommunityGalleryImageVersionsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.shared_gallery_invites = SharedGalleryInvitesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.tenant_level_shared_gallery_invites = TenantLevelSharedGalleryInvitesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.resource_skus = ResourceSkusOperations(self._client, self._config, self._serialize, self._deserialize)

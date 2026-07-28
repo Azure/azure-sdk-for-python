@@ -185,6 +185,7 @@
         "azure.mgmt.netapp.models.FileAccessLogs": "Microsoft.NetApp.FileAccessLogs",
         "azure.mgmt.netapp.models.AvsDataStore": "Microsoft.NetApp.AvsDataStore",
         "azure.mgmt.netapp.models.EnableSubvolumes": "Microsoft.NetApp.EnableSubvolumes",
+        "azure.mgmt.netapp.models.BreakthroughMode": "Microsoft.NetApp.BreakthroughMode",
         "azure.mgmt.netapp.models.BackupType": "Microsoft.NetApp.BackupType",
         "azure.mgmt.netapp.models.VolumeBackupRelationshipStatus": "Microsoft.NetApp.VolumeBackupRelationshipStatus",
         "azure.mgmt.netapp.models.VolumeRestoreRelationshipStatus": "Microsoft.NetApp.VolumeRestoreRelationshipStatus",
@@ -211,6 +212,7 @@
         "azure.mgmt.netapp.models.CifsChangeNotifyState": "Microsoft.NetApp.CifsChangeNotifyState",
         "azure.mgmt.netapp.models.GlobalFileLockingState": "Microsoft.NetApp.GlobalFileLockingState",
         "azure.mgmt.netapp.models.EnableWriteBackState": "Microsoft.NetApp.EnableWriteBackState",
+        "azure.mgmt.netapp.models.CacheFileAccessLogs": "Microsoft.NetApp.CacheFileAccessLogs",
         "azure.mgmt.netapp.models.RegionStorageToNetworkProximity": "Microsoft.NetApp.RegionStorageToNetworkProximity",
         "azure.mgmt.netapp.models.ActiveDirectoryStatus": "Microsoft.NetApp.ActiveDirectoryStatus",
         "azure.mgmt.netapp.models.KeySource": "Microsoft.NetApp.KeySource",
@@ -471,5 +473,6 @@
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.list": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.list",
         "azure.mgmt.netapp.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get",
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get"
-    }
+    },
+    "CrossLanguageVersion": "350e558187f3"
 }

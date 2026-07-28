@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import NetAppManagementClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -51,7 +50,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +71,7 @@ def build_net_app_resource_quota_limits_account_get_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -101,7 +100,7 @@ def build_net_app_resource_quota_limits_account_list_request(  # pylint: disable
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -129,7 +128,7 @@ def build_volume_groups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -159,7 +158,7 @@ def build_volume_groups_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -189,7 +188,7 @@ def build_volume_groups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/volumeGroups/{volumeGroupName}"
     path_format_arguments = {
@@ -213,7 +212,7 @@ def build_volume_groups_list_by_net_app_account_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -246,7 +245,7 @@ def build_backups_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -282,7 +281,7 @@ def build_backups_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -320,7 +319,7 @@ def build_backups_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -356,7 +355,7 @@ def build_backups_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}"
     path_format_arguments = {
@@ -387,7 +386,7 @@ def build_backups_list_by_vault_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -418,7 +417,7 @@ def build_backups_get_latest_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -448,7 +447,7 @@ def build_backups_get_volume_latest_restore_status_request(  # pylint: disable=n
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -478,7 +477,7 @@ def build_volumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -509,7 +508,7 @@ def build_volumes_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -542,7 +541,7 @@ def build_volumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -580,7 +579,7 @@ def build_volumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}"
     path_format_arguments = {
@@ -607,7 +606,7 @@ def build_volumes_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -636,7 +635,7 @@ def build_volumes_populate_availability_zone_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -667,7 +666,7 @@ def build_volumes_revert_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/revert"
     path_format_arguments = {
@@ -695,7 +694,7 @@ def build_volumes_reset_cifs_password_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/resetCifsPassword"
     path_format_arguments = {
@@ -720,7 +719,7 @@ def build_volumes_split_clone_from_parent_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -751,7 +750,7 @@ def build_volumes_break_file_locks_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/breakFileLocks"
     path_format_arguments = {
@@ -781,7 +780,7 @@ def build_volumes_list_get_group_id_list_for_ldap_user_request(  # pylint: disab
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -814,7 +813,7 @@ def build_volumes_break_replication_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/breakReplication"
     path_format_arguments = {
@@ -844,7 +843,7 @@ def build_volumes_reestablish_replication_request(  # pylint: disable=name-too-l
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reestablishReplication"
     path_format_arguments = {
@@ -873,7 +872,7 @@ def build_volumes_replication_status_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -904,7 +903,7 @@ def build_volumes_list_replications_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -935,7 +934,7 @@ def build_volumes_resync_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/resyncReplication"
     path_format_arguments = {
@@ -959,7 +958,7 @@ def build_volumes_delete_replication_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/deleteReplication"
     path_format_arguments = {
@@ -985,7 +984,7 @@ def build_volumes_authorize_replication_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/authorizeReplication"
     path_format_arguments = {
@@ -1013,7 +1012,7 @@ def build_volumes_re_initialize_replication_request(  # pylint: disable=name-too
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/reinitializeReplication"
     path_format_arguments = {
@@ -1039,7 +1038,7 @@ def build_volumes_peer_external_cluster_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1071,7 +1070,7 @@ def build_volumes_authorize_external_replication_request(  # pylint: disable=nam
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1100,7 +1099,7 @@ def build_volumes_finalize_external_replication_request(  # pylint: disable=name
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/finalizeExternalReplication"
     path_format_arguments = {
@@ -1124,7 +1123,7 @@ def build_volumes_perform_replication_transfer_request(  # pylint: disable=name-
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/performReplicationTransfer"
     path_format_arguments = {
@@ -1150,7 +1149,7 @@ def build_volumes_pool_change_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/poolChange"
     path_format_arguments = {
@@ -1180,7 +1179,7 @@ def build_volumes_relocate_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/relocate"
     path_format_arguments = {
@@ -1208,7 +1207,7 @@ def build_volumes_finalize_relocation_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/finalizeRelocation"
     path_format_arguments = {
@@ -1232,7 +1231,7 @@ def build_volumes_revert_relocation_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/revertRelocation"
     path_format_arguments = {
@@ -1258,7 +1257,7 @@ def build_volumes_list_quota_report_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1296,7 +1295,7 @@ def build_snapshots_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1334,7 +1333,7 @@ def build_snapshots_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1374,7 +1373,7 @@ def build_snapshots_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1412,7 +1411,7 @@ def build_snapshots_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}"
     path_format_arguments = {
@@ -1438,7 +1437,7 @@ def build_snapshots_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1475,7 +1474,7 @@ def build_snapshots_restore_files_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/snapshots/{snapshotName}/restoreFiles"
     path_format_arguments = {
@@ -1505,7 +1504,7 @@ def build_snapshot_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1535,7 +1534,7 @@ def build_snapshot_policies_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1567,7 +1566,7 @@ def build_snapshot_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1597,7 +1596,7 @@ def build_snapshot_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/snapshotPolicies/{snapshotPolicyName}"
     path_format_arguments = {
@@ -1621,7 +1620,7 @@ def build_snapshot_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1649,7 +1648,7 @@ def build_snapshot_policies_list_volumes_request(  # pylint: disable=name-too-lo
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1678,7 +1677,7 @@ def build_backup_policies_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1708,7 +1707,7 @@ def build_backup_policies_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1740,7 +1739,7 @@ def build_backup_policies_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1770,7 +1769,7 @@ def build_backup_policies_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupPolicies/{backupPolicyName}"
     path_format_arguments = {
@@ -1794,7 +1793,7 @@ def build_backup_policies_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1828,7 +1827,7 @@ def build_volume_quota_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1866,7 +1865,7 @@ def build_volume_quota_rules_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1906,7 +1905,7 @@ def build_volume_quota_rules_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1944,7 +1943,7 @@ def build_volume_quota_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/volumeQuotaRules/{volumeQuotaRuleName}"
     path_format_arguments = {
@@ -1970,7 +1969,7 @@ def build_volume_quota_rules_list_by_volume_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2006,7 +2005,7 @@ def build_ransomware_reports_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2037,7 +2036,7 @@ def build_ransomware_reports_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2074,7 +2073,7 @@ def build_ransomware_reports_clear_suspects_request(  # pylint: disable=name-too
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/ransomwareReports/{ransomwareReportName}/clearSuspects"
     path_format_arguments = {
@@ -2104,7 +2103,7 @@ def build_backup_vaults_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2134,7 +2133,7 @@ def build_backup_vaults_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2166,7 +2165,7 @@ def build_backup_vaults_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2196,7 +2195,7 @@ def build_backup_vaults_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}"
     path_format_arguments = {
@@ -2220,7 +2219,7 @@ def build_backup_vaults_list_by_net_app_account_request(  # pylint: disable=name
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2254,7 +2253,7 @@ def build_buckets_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2292,7 +2291,7 @@ def build_buckets_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2332,7 +2331,7 @@ def build_buckets_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2370,7 +2369,7 @@ def build_buckets_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}"
     path_format_arguments = {
@@ -2396,7 +2395,7 @@ def build_buckets_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2433,7 +2432,7 @@ def build_buckets_generate_credentials_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2473,7 +2472,7 @@ def build_buckets_generate_akv_credentials_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}/generateAkvCredentials"
     path_format_arguments = {
@@ -2508,7 +2507,7 @@ def build_buckets_refresh_certificate_request(  # pylint: disable=name-too-long
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/buckets/{bucketName}/refreshCertificate"
     path_format_arguments = {
@@ -2534,7 +2533,7 @@ def build_caches_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2565,7 +2564,7 @@ def build_caches_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2598,7 +2597,7 @@ def build_caches_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2629,7 +2628,7 @@ def build_caches_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/caches/{cacheName}"
     path_format_arguments = {
@@ -2654,7 +2653,7 @@ def build_caches_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2683,7 +2682,7 @@ def build_caches_list_peering_passphrases_request(  # pylint: disable=name-too-l
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2714,7 +2713,7 @@ def build_caches_pool_change_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2746,7 +2745,7 @@ def build_caches_reset_smb_password_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2776,7 +2775,7 @@ def build_net_app_resource_quota_limits_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2806,7 +2805,7 @@ def build_net_app_resource_quota_limits_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2833,7 +2832,7 @@ def build_net_app_resource_region_infos_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2860,7 +2859,7 @@ def build_net_app_resource_region_infos_list_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2887,7 +2886,7 @@ def build_accounts_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2916,7 +2915,7 @@ def build_accounts_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2947,7 +2946,7 @@ def build_accounts_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -2976,7 +2975,7 @@ def build_accounts_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}"
     path_format_arguments = {
@@ -2997,7 +2996,7 @@ def build_accounts_list_request(resource_group_name: str, subscription_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3026,7 +3025,7 @@ def build_accounts_list_by_subscription_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3051,7 +3050,7 @@ def build_accounts_renew_credentials_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/renewCredentials"
     path_format_arguments = {
@@ -3075,7 +3074,7 @@ def build_accounts_transition_to_cmk_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/transitiontocmk"
     path_format_arguments = {
@@ -3102,7 +3101,7 @@ def build_accounts_get_change_key_vault_information_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3131,7 +3130,7 @@ def build_accounts_change_key_vault_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/changeKeyVault"
     path_format_arguments = {
@@ -3159,7 +3158,7 @@ def build_backups_under_account_migrate_backups_request(  # pylint: disable=name
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/migrateBackups"
     path_format_arguments = {
@@ -3186,7 +3185,7 @@ def build_pools_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3216,7 +3215,7 @@ def build_pools_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3248,7 +3247,7 @@ def build_pools_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3278,7 +3277,7 @@ def build_pools_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}"
     path_format_arguments = {
@@ -3302,7 +3301,7 @@ def build_pools_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3336,7 +3335,7 @@ def build_backups_under_backup_vault_restore_files_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/backupVaults/{backupVaultName}/backups/{backupName}/restoreFiles"
     path_format_arguments = {
@@ -3366,7 +3365,7 @@ def build_backups_under_volume_migrate_backups_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/migrateBackups"
     path_format_arguments = {
@@ -3401,7 +3400,7 @@ def build_subvolumes_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3439,7 +3438,7 @@ def build_subvolumes_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3479,7 +3478,7 @@ def build_subvolumes_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3517,7 +3516,7 @@ def build_subvolumes_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.NetApp/netAppAccounts/{accountName}/capacityPools/{poolName}/volumes/{volumeName}/subvolumes/{subvolumeName}"
     path_format_arguments = {
@@ -3543,7 +3542,7 @@ def build_subvolumes_list_by_volume_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3579,7 +3578,7 @@ def build_subvolumes_get_metadata_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3611,7 +3610,7 @@ def build_net_app_resource_check_name_availability_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3641,7 +3640,7 @@ def build_net_app_resource_check_file_path_availability_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3671,7 +3670,7 @@ def build_net_app_resource_check_quota_availability_request(  # pylint: disable=
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3700,7 +3699,7 @@ def build_net_app_resource_query_region_info_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3728,7 +3727,7 @@ def build_net_app_resource_query_network_sibling_set_request(  # pylint: disable
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3758,7 +3757,7 @@ def build_net_app_resource_update_network_sibling_set_request(  # pylint: disabl
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3787,7 +3786,7 @@ def build_net_app_resource_usages_list_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3814,7 +3813,7 @@ def build_net_app_resource_usages_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -3900,7 +3899,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3973,7 +3975,19 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def get(
         self, resource_group_name: str, account_name: str, quota_limit_name: str, **kwargs: Any
@@ -4055,7 +4069,19 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
         params_added_on={
             "2025-08-01": ["api_version", "subscription_id", "resource_group_name", "account_name", "accept"]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list(self, resource_group_name: str, account_name: str, **kwargs: Any) -> ItemPaged["_models.QuotaItem"]:
         """Gets a list of quota limits for all quotas that are under account. Currently PoolsPerAccount is
@@ -4112,7 +4138,10 @@ class NetAppResourceQuotaLimitsAccountOperations:  # pylint: disable=name-too-lo
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4252,7 +4281,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: Union[_models.VolumeGroupDetails, JSON, IO[bytes]],
+        body: Union[_models.VolumeGroupDetails, _types.VolumeGroupDetails, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4360,7 +4389,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: JSON,
+        body: _types.VolumeGroupDetails,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4375,7 +4404,7 @@ class VolumeGroupsOperations:
         :param volume_group_name: The name of the volumeGroup. Required.
         :type volume_group_name: str
         :param body: Volume Group object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeGroupDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4422,7 +4451,7 @@ class VolumeGroupsOperations:
         resource_group_name: str,
         account_name: str,
         volume_group_name: str,
-        body: Union[_models.VolumeGroupDetails, JSON, IO[bytes]],
+        body: Union[_models.VolumeGroupDetails, _types.VolumeGroupDetails, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeGroupDetails]:
         """Create a volume group along with specified volumes.
@@ -4434,9 +4463,10 @@ class VolumeGroupsOperations:
         :type account_name: str
         :param volume_group_name: The name of the volumeGroup. Required.
         :type volume_group_name: str
-        :param body: Volume Group object supplied in the body of the operation. Is one of the following
-         types: VolumeGroupDetails, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails or JSON or IO[bytes]
+        :param body: Volume Group object supplied in the body of the operation. Is either a
+         VolumeGroupDetails type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeGroupDetails or
+         ~azure.mgmt.netapp.types.VolumeGroupDetails or IO[bytes]
         :return: An instance of LROPoller that returns VolumeGroupDetails. The VolumeGroupDetails is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeGroupDetails]
@@ -4680,7 +4710,10 @@ class VolumeGroupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4824,7 +4857,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, JSON, IO[bytes]],
+        body: Union[_models.Backup, _types.Backup, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4940,7 +4973,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: JSON,
+        body: _types.Backup,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4957,7 +4990,7 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Backup
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5008,7 +5041,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.Backup, JSON, IO[bytes]],
+        body: Union[_models.Backup, _types.Backup, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Backup]:
         """Create a backup under the Backup Vault.
@@ -5022,9 +5055,9 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Backup object supplied in the body of the operation. Is one of the following
-         types: Backup, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Backup or JSON or IO[bytes]
+        :param body: Backup object supplied in the body of the operation. Is either a Backup type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Backup or ~azure.mgmt.netapp.types.Backup or IO[bytes]
         :return: An instance of LROPoller that returns Backup. The Backup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Backup]
@@ -5090,7 +5123,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BackupPatch, _types.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5208,7 +5241,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BackupPatch] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5225,7 +5258,7 @@ class BackupsOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Backup object supplied in the body of the operation. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5276,7 +5309,7 @@ class BackupsOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Optional[Union[_models.BackupPatch, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BackupPatch, _types.BackupPatch, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.Backup]:
         """Patch a Backup under the Backup Vault.
@@ -5290,9 +5323,10 @@ class BackupsOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Backup object supplied in the body of the operation. Is one of the following
-         types: BackupPatch, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BackupPatch or JSON or IO[bytes]
+        :param body: Backup object supplied in the body of the operation. Is either a BackupPatch type
+         or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BackupPatch or ~azure.mgmt.netapp.types.BackupPatch or
+         IO[bytes]
         :return: An instance of LROPoller that returns Backup. The Backup is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Backup]
@@ -5551,7 +5585,10 @@ class BackupsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5851,7 +5888,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.Volume, JSON, IO[bytes]],
+        body: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5971,7 +6008,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.Volume,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5988,7 +6025,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Volume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Volume
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6039,7 +6076,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.Volume, JSON, IO[bytes]],
+        body: Union[_models.Volume, _types.Volume, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Volume]:
         """Create or update the specified volume within the capacity pool.
@@ -6053,9 +6090,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Volume object supplied in the body of the operation. Is one of the following
-         types: Volume, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Volume or JSON or IO[bytes]
+        :param body: Volume object supplied in the body of the operation. Is either a Volume type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Volume or ~azure.mgmt.netapp.types.Volume or IO[bytes]
         :return: An instance of LROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Volume]
@@ -6121,7 +6158,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumePatch, _types.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6235,7 +6272,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.VolumePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6252,7 +6289,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Volume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6303,7 +6340,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumePatch, _types.VolumePatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Volume]:
         """Patch the specified volume.
@@ -6317,9 +6354,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Volume object supplied in the body of the operation. Is one of the following
-         types: VolumePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumePatch or JSON or IO[bytes]
+        :param body: Volume object supplied in the body of the operation. Is either a VolumePatch type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumePatch or ~azure.mgmt.netapp.types.VolumePatch or
+         IO[bytes]
         :return: An instance of LROPoller that returns Volume. The Volume is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Volume]
@@ -6586,7 +6624,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6733,14 +6774,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -6772,7 +6809,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumeRevert, JSON, IO[bytes]],
+        body: Union[_models.VolumeRevert, _types.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -6885,7 +6922,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.VolumeRevert,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6902,7 +6939,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Object for snapshot to revert supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeRevert
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6951,7 +6988,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.VolumeRevert, JSON, IO[bytes]],
+        body: Union[_models.VolumeRevert, _types.VolumeRevert, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Revert a volume to the snapshot specified in the body.
@@ -6965,9 +7002,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Object for snapshot to revert supplied in the body of the operation. Is one of the
-         following types: VolumeRevert, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeRevert or JSON or IO[bytes]
+        :param body: Object for snapshot to revert supplied in the body of the operation. Is either a
+         VolumeRevert type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeRevert or ~azure.mgmt.netapp.types.VolumeRevert or
+         IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7253,14 +7291,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.Volume, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7292,7 +7326,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakFileLocksRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakFileLocksRequest, _types.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7410,7 +7444,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BreakFileLocksRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7428,7 +7462,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type volume_name: str
         :param body: Optional body to provide the ability to clear file locks with selected options.
          Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BreakFileLocksRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7478,7 +7512,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakFileLocksRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakFileLocksRequest, _types.BreakFileLocksRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Break all the file locks on a volume.
@@ -7493,8 +7527,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Optional body to provide the ability to clear file locks with selected options. Is
-         one of the following types: BreakFileLocksRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BreakFileLocksRequest or JSON or IO[bytes]
+         either a BreakFileLocksRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BreakFileLocksRequest or
+         ~azure.mgmt.netapp.types.BreakFileLocksRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7563,7 +7598,19 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _list_get_group_id_list_for_ldap_user_initial(  # pylint: disable=name-too-long
         self,
@@ -7571,7 +7618,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.GetGroupIdListForLDAPUserRequest, JSON, IO[bytes]],
+        body: Union[_models.GetGroupIdListForLDAPUserRequest, _types.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7689,7 +7736,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.GetGroupIdListForLDAPUserRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7706,7 +7753,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Returns group Id list for a specific LDAP user. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.GetGroupIdListForLDAPUserRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7767,7 +7814,19 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_list_get_group_id_list_for_ldap_user(  # pylint: disable=name-too-long
         self,
@@ -7775,7 +7834,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.GetGroupIdListForLDAPUserRequest, JSON, IO[bytes]],
+        body: Union[_models.GetGroupIdListForLDAPUserRequest, _types.GetGroupIdListForLDAPUserRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.GetGroupIdListForLDAPUserResponse]:
         """Returns the list of group Ids for a specific LDAP User.
@@ -7789,9 +7848,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Returns group Id list for a specific LDAP user. Is one of the following types:
-         GetGroupIdListForLDAPUserRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.GetGroupIdListForLDAPUserRequest or JSON or IO[bytes]
+        :param body: Returns group Id list for a specific LDAP user. Is either a
+         GetGroupIdListForLDAPUserRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.GetGroupIdListForLDAPUserRequest or
+         ~azure.mgmt.netapp.types.GetGroupIdListForLDAPUserRequest or IO[bytes]
         :return: An instance of LROPoller that returns GetGroupIdListForLDAPUserResponse. The
          GetGroupIdListForLDAPUserResponse is compatible with MutableMapping
         :rtype:
@@ -7823,17 +7883,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Azure-AsyncOperation"] = self._deserialize(
-                "str", response.headers.get("Azure-AsyncOperation")
-            )
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.GetGroupIdListForLDAPUserResponse, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -7865,7 +7918,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakReplicationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakReplicationRequest, _types.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -7982,7 +8035,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.BreakReplicationRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7999,7 +8052,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Optional body to force break the replication. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BreakReplicationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8048,7 +8101,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.BreakReplicationRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.BreakReplicationRequest, _types.BreakReplicationRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Break the replication connection on the destination volume.
@@ -8062,9 +8115,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Optional body to force break the replication. Is one of the following types:
-         BreakReplicationRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.BreakReplicationRequest or JSON or IO[bytes]
+        :param body: Optional body to force break the replication. Is either a BreakReplicationRequest
+         type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.BreakReplicationRequest or
+         ~azure.mgmt.netapp.types.BreakReplicationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8125,7 +8179,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.ReestablishReplicationRequest, JSON, IO[bytes]],
+        body: Union[_models.ReestablishReplicationRequest, _types.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -8238,7 +8292,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.ReestablishReplicationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8256,7 +8310,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: body for the id of the source volume. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ReestablishReplicationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8306,7 +8360,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.ReestablishReplicationRequest, JSON, IO[bytes]],
+        body: Union[_models.ReestablishReplicationRequest, _types.ReestablishReplicationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Re-establish a previously deleted replication between 2 volumes that have a common ad-hoc or
@@ -8321,9 +8375,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: body for the id of the source volume. Is one of the following types:
-         ReestablishReplicationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ReestablishReplicationRequest or JSON or IO[bytes]
+        :param body: body for the id of the source volume. Is either a ReestablishReplicationRequest
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.ReestablishReplicationRequest or
+         ~azure.mgmt.netapp.types.ReestablishReplicationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8495,7 +8550,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ListReplicationsRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8512,7 +8567,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ListReplicationsRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8569,7 +8624,19 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01", "2025-09-01", "2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-08-01",
+            "2025-09-01",
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list_replications(
         self,
@@ -8577,7 +8644,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.ListReplicationsRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ListReplicationsRequest, _types.ListReplicationsRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> ItemPaged["_models.Replication"]:
         """List all replications for a specified volume.
@@ -8591,9 +8658,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: The content of the action request. Is one of the following types:
-         ListReplicationsRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.ListReplicationsRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a ListReplicationsRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.ListReplicationsRequest or
+         ~azure.mgmt.netapp.types.ListReplicationsRequest or IO[bytes]
         :return: An iterator like instance of Replication
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.Replication]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8655,7 +8723,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8961,7 +9032,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.AuthorizeRequest, JSON, IO[bytes]],
+        body: Union[_models.AuthorizeRequest, _types.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9074,7 +9145,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.AuthorizeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9091,7 +9162,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Authorize request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.AuthorizeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9140,7 +9211,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.AuthorizeRequest, JSON, IO[bytes]],
+        body: Union[_models.AuthorizeRequest, _types.AuthorizeRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Authorize the replication connection on the source volume.
@@ -9154,9 +9225,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Authorize request object supplied in the body of the operation. Is one of the
-         following types: AuthorizeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.AuthorizeRequest or JSON or IO[bytes]
+        :param body: Authorize request object supplied in the body of the operation. Is either a
+         AuthorizeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.AuthorizeRequest or
+         ~azure.mgmt.netapp.types.AuthorizeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -9344,7 +9416,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PeerClusterForVolumeMigrationRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.PeerClusterForVolumeMigrationRequest, _types.PeerClusterForVolumeMigrationRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -9461,7 +9535,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.PeerClusterForVolumeMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9478,7 +9552,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Cluster peer request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.PeerClusterForVolumeMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9529,7 +9603,9 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PeerClusterForVolumeMigrationRequest, JSON, IO[bytes]],
+        body: Union[
+            _models.PeerClusterForVolumeMigrationRequest, _types.PeerClusterForVolumeMigrationRequest, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.ClusterPeerCommandResponse]:
         """Starts peering the external cluster for this migration volume.
@@ -9543,9 +9619,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Cluster peer request object supplied in the body of the operation. Is one of the
-         following types: PeerClusterForVolumeMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.PeerClusterForVolumeMigrationRequest or JSON or IO[bytes]
+        :param body: Cluster peer request object supplied in the body of the operation. Is either a
+         PeerClusterForVolumeMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PeerClusterForVolumeMigrationRequest or
+         ~azure.mgmt.netapp.types.PeerClusterForVolumeMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns ClusterPeerCommandResponse. The
          ClusterPeerCommandResponse is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ClusterPeerCommandResponse]
@@ -10018,7 +10095,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10131,7 +10208,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.PoolChangeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10148,7 +10225,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Move volume to the pool supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.PoolChangeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10197,7 +10274,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Moves volume to another pool.
@@ -10211,9 +10288,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Move volume to the pool supplied in the body of the operation. Is one of the
-         following types: PoolChangeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or JSON or IO[bytes]
+        :param body: Move volume to the pool supplied in the body of the operation. Is either a
+         PoolChangeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or
+         ~azure.mgmt.netapp.types.PoolChangeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10273,7 +10351,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.RelocateVolumeRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RelocateVolumeRequest, _types.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10390,7 +10468,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.RelocateVolumeRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10407,7 +10485,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: Relocate volume request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.RelocateVolumeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10456,7 +10534,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.RelocateVolumeRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.RelocateVolumeRequest, _types.RelocateVolumeRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Relocates volume to a new stamp.
@@ -10470,9 +10548,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Relocate volume request. Is one of the following types: RelocateVolumeRequest,
-         JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.RelocateVolumeRequest or JSON or IO[bytes]
+        :param body: Relocate volume request. Is either a RelocateVolumeRequest type or a IO[bytes]
+         type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.RelocateVolumeRequest or
+         ~azure.mgmt.netapp.types.RelocateVolumeRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -10798,7 +10877,17 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _list_quota_report_initial(
         self,
@@ -10806,7 +10895,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.QuotaReportFilterRequest, _types.QuotaReportFilterRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -10927,7 +11016,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.QuotaReportFilterRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10944,7 +11033,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
         :param body: The content of the action request. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QuotaReportFilterRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11003,7 +11092,17 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_list_quota_report(
         self,
@@ -11011,7 +11110,7 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Optional[Union[_models.QuotaReportFilterRequest, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.QuotaReportFilterRequest, _types.QuotaReportFilterRequest, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[_models.ListQuotaReportResult]:
         """Get quota report for volume (with filter support).
@@ -11025,9 +11124,10 @@ class VolumesOperations:  # pylint: disable=too-many-public-methods
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: The content of the action request. Is one of the following types:
-         QuotaReportFilterRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a QuotaReportFilterRequest type or a
+         IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.QuotaReportFilterRequest or
+         ~azure.mgmt.netapp.types.QuotaReportFilterRequest or IO[bytes]
         :return: An instance of LROPoller that returns ListQuotaReportResult. The ListQuotaReportResult
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.ListQuotaReportResult]
@@ -11207,7 +11307,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.Snapshot, JSON, IO[bytes]],
+        body: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11325,7 +11425,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.Snapshot,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11344,7 +11444,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Snapshot
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11399,7 +11499,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.Snapshot, JSON, IO[bytes]],
+        body: Union[_models.Snapshot, _types.Snapshot, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Create the specified snapshot within the given volume.
@@ -11415,9 +11515,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation. Is one of the following
-         types: Snapshot, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Snapshot or JSON or IO[bytes]
+        :param body: Snapshot object supplied in the body of the operation. Is either a Snapshot type
+         or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Snapshot or ~azure.mgmt.netapp.types.Snapshot or
+         IO[bytes]
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
@@ -11489,7 +11590,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPatch, _types.SnapshotPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -11608,7 +11709,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.SnapshotPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11627,7 +11728,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Snapshot object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11682,7 +11783,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPatch, _types.SnapshotPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Snapshot]:
         """Patch a snapshot.
@@ -11698,9 +11799,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Snapshot object supplied in the body of the operation. Is one of the following
-         types: SnapshotPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPatch or JSON or IO[bytes]
+        :param body: Snapshot object supplied in the body of the operation. Is either a SnapshotPatch
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPatch or ~azure.mgmt.netapp.types.SnapshotPatch
+         or IO[bytes]
         :return: An instance of LROPoller that returns Snapshot. The Snapshot is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Snapshot]
@@ -11968,7 +12070,10 @@ class SnapshotsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12017,7 +12122,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.SnapshotRestoreFiles, _types.SnapshotRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12135,7 +12240,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: JSON,
+        body: _types.SnapshotRestoreFiles,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12154,7 +12259,7 @@ class SnapshotsOperations:
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
         :param body: Restore payload supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotRestoreFiles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12207,7 +12312,7 @@ class SnapshotsOperations:
         pool_name: str,
         volume_name: str,
         snapshot_name: str,
-        body: Union[_models.SnapshotRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.SnapshotRestoreFiles, _types.SnapshotRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restore the specified files from the specified snapshot to the active filesystem.
@@ -12223,9 +12328,10 @@ class SnapshotsOperations:
         :type volume_name: str
         :param snapshot_name: The name of the snapshot. Required.
         :type snapshot_name: str
-        :param body: Restore payload supplied in the body of the operation. Is one of the following
-         types: SnapshotRestoreFiles, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles or JSON or IO[bytes]
+        :param body: Restore payload supplied in the body of the operation. Is either a
+         SnapshotRestoreFiles type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotRestoreFiles or
+         ~azure.mgmt.netapp.types.SnapshotRestoreFiles or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12409,7 +12515,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: JSON,
+        body: _types.SnapshotPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12424,7 +12530,7 @@ class SnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12469,7 +12575,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicy, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicy, _types.SnapshotPolicy, IO[bytes]],
         **kwargs: Any
     ) -> _models.SnapshotPolicy:
         """Create a snapshot policy.
@@ -12481,9 +12587,10 @@ class SnapshotPoliciesOperations:
         :type account_name: str
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation. Is one of the
-         following types: SnapshotPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicy or JSON or IO[bytes]
+        :param body: Snapshot policy object supplied in the body of the operation. Is either a
+         SnapshotPolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPolicy or ~azure.mgmt.netapp.types.SnapshotPolicy
+         or IO[bytes]
         :return: SnapshotPolicy. The SnapshotPolicy is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.SnapshotPolicy
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12561,7 +12668,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicyPatch, _types.SnapshotPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -12670,7 +12777,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: JSON,
+        body: _types.SnapshotPolicyPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12685,7 +12792,7 @@ class SnapshotPoliciesOperations:
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
         :param body: Snapshot policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SnapshotPolicyPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12732,7 +12839,7 @@ class SnapshotPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         snapshot_policy_name: str,
-        body: Union[_models.SnapshotPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.SnapshotPolicyPatch, _types.SnapshotPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SnapshotPolicy]:
         """Patch a snapshot policy.
@@ -12744,9 +12851,10 @@ class SnapshotPoliciesOperations:
         :type account_name: str
         :param snapshot_policy_name: The name of the snapshot policy. Required.
         :type snapshot_policy_name: str
-        :param body: Snapshot policy object supplied in the body of the operation. Is one of the
-         following types: SnapshotPolicyPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch or JSON or IO[bytes]
+        :param body: Snapshot policy object supplied in the body of the operation. Is either a
+         SnapshotPolicyPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SnapshotPolicyPatch or
+         ~azure.mgmt.netapp.types.SnapshotPolicyPatch or IO[bytes]
         :return: An instance of LROPoller that returns SnapshotPolicy. The SnapshotPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SnapshotPolicy]
@@ -12984,7 +13092,10 @@ class SnapshotPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -13200,7 +13311,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicy, _types.BackupPolicy, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13315,7 +13426,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: JSON,
+        body: _types.BackupPolicy,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13330,7 +13441,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
         :param body: Backup policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPolicy
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13377,7 +13488,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicy, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicy, _types.BackupPolicy, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupPolicy]:
         """Create a backup policy for Netapp Account.
@@ -13389,9 +13500,10 @@ class BackupPoliciesOperations:
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is one of the
-         following types: BackupPolicy, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicy or JSON or IO[bytes]
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicy type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupPolicy or ~azure.mgmt.netapp.types.BackupPolicy or
+         IO[bytes]
         :return: An instance of LROPoller that returns BackupPolicy. The BackupPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupPolicy]
@@ -13455,7 +13567,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicyPatch, _types.BackupPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -13566,7 +13678,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: JSON,
+        body: _types.BackupPolicyPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -13581,7 +13693,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
         :param body: Backup policy object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupPolicyPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -13628,7 +13740,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         account_name: str,
         backup_policy_name: str,
-        body: Union[_models.BackupPolicyPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupPolicyPatch, _types.BackupPolicyPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupPolicy]:
         """Patch a backup policy for Netapp Account.
@@ -13640,9 +13752,10 @@ class BackupPoliciesOperations:
         :type account_name: str
         :param backup_policy_name: Backup policy Name which uniquely identify backup policy. Required.
         :type backup_policy_name: str
-        :param body: Backup policy object supplied in the body of the operation. Is one of the
-         following types: BackupPolicyPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch or JSON or IO[bytes]
+        :param body: Backup policy object supplied in the body of the operation. Is either a
+         BackupPolicyPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupPolicyPatch or
+         ~azure.mgmt.netapp.types.BackupPolicyPatch or IO[bytes]
         :return: An instance of LROPoller that returns BackupPolicy. The BackupPolicy is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupPolicy]
@@ -13880,7 +13993,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14034,7 +14150,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRule, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRule, _types.VolumeQuotaRule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14153,7 +14269,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: JSON,
+        body: _types.VolumeQuotaRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14172,7 +14288,7 @@ class VolumeQuotaRulesOperations:
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
         :param body: Quota rule object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeQuotaRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14227,7 +14343,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRule, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRule, _types.VolumeQuotaRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeQuotaRule]:
         """Create the specified quota rule within the given volume.
@@ -14243,9 +14359,10 @@ class VolumeQuotaRulesOperations:
         :type volume_name: str
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
-        :param body: Quota rule object supplied in the body of the operation. Is one of the following
-         types: VolumeQuotaRule, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule or JSON or IO[bytes]
+        :param body: Quota rule object supplied in the body of the operation. Is either a
+         VolumeQuotaRule type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRule or
+         ~azure.mgmt.netapp.types.VolumeQuotaRule or IO[bytes]
         :return: An instance of LROPoller that returns VolumeQuotaRule. The VolumeQuotaRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
@@ -14313,7 +14430,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRulePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRulePatch, _types.VolumeQuotaRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -14432,7 +14549,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: JSON,
+        body: _types.VolumeQuotaRulePatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -14451,7 +14568,7 @@ class VolumeQuotaRulesOperations:
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
         :param body: Quota rule object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.VolumeQuotaRulePatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -14506,7 +14623,7 @@ class VolumeQuotaRulesOperations:
         pool_name: str,
         volume_name: str,
         volume_quota_rule_name: str,
-        body: Union[_models.VolumeQuotaRulePatch, JSON, IO[bytes]],
+        body: Union[_models.VolumeQuotaRulePatch, _types.VolumeQuotaRulePatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.VolumeQuotaRule]:
         """Patch a quota rule.
@@ -14522,9 +14639,10 @@ class VolumeQuotaRulesOperations:
         :type volume_name: str
         :param volume_quota_rule_name: The name of volume quota rule. Required.
         :type volume_quota_rule_name: str
-        :param body: Quota rule object supplied in the body of the operation. Is one of the following
-         types: VolumeQuotaRulePatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch or JSON or IO[bytes]
+        :param body: Quota rule object supplied in the body of the operation. Is either a
+         VolumeQuotaRulePatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.VolumeQuotaRulePatch or
+         ~azure.mgmt.netapp.types.VolumeQuotaRulePatch or IO[bytes]
         :return: An instance of LROPoller that returns VolumeQuotaRule. The VolumeQuotaRule is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.VolumeQuotaRule]
@@ -14792,7 +14910,10 @@ class VolumeQuotaRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -14867,7 +14988,17 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def get(
         self,
@@ -14973,7 +15104,17 @@ class RansomwareReportsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -15042,7 +15183,10 @@ class RansomwareReportsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -15098,7 +15242,17 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _clear_suspects_initial(
         self,
@@ -15107,7 +15261,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: Union[_models.RansomwareSuspectsClearRequest, JSON, IO[bytes]],
+        body: Union[_models.RansomwareSuspectsClearRequest, _types.RansomwareSuspectsClearRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15228,7 +15382,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: JSON,
+        body: _types.RansomwareSuspectsClearRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15251,7 +15405,7 @@ class RansomwareReportsOperations:
         :param ransomware_report_name: The name of the ransomware report. Required.
         :type ransomware_report_name: str
         :param body: Clear suspects request object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.RansomwareSuspectsClearRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15315,7 +15469,17 @@ class RansomwareReportsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-01", "2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-01",
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_clear_suspects(
         self,
@@ -15324,7 +15488,7 @@ class RansomwareReportsOperations:
         pool_name: str,
         volume_name: str,
         ransomware_report_name: str,
-        body: Union[_models.RansomwareSuspectsClearRequest, JSON, IO[bytes]],
+        body: Union[_models.RansomwareSuspectsClearRequest, _types.RansomwareSuspectsClearRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Clear ransomware suspects for the given Advanced Ransomware Protection report. You should
@@ -15344,9 +15508,10 @@ class RansomwareReportsOperations:
         :type volume_name: str
         :param ransomware_report_name: The name of the ransomware report. Required.
         :type ransomware_report_name: str
-        :param body: Clear suspects request object supplied in the body of the operation. Is one of the
-         following types: RansomwareSuspectsClearRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.RansomwareSuspectsClearRequest or JSON or IO[bytes]
+        :param body: Clear suspects request object supplied in the body of the operation. Is either a
+         RansomwareSuspectsClearRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.RansomwareSuspectsClearRequest or
+         ~azure.mgmt.netapp.types.RansomwareSuspectsClearRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -15499,7 +15664,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVault, JSON, IO[bytes]],
+        body: Union[_models.BackupVault, _types.BackupVault, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15610,7 +15775,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: JSON,
+        body: _types.BackupVault,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15625,7 +15790,7 @@ class BackupVaultsOperations:
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
         :param body: BackupVault object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupVault
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15672,7 +15837,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVault, JSON, IO[bytes]],
+        body: Union[_models.BackupVault, _types.BackupVault, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupVault]:
         """Create or update the specified Backup Vault in the NetApp account.
@@ -15684,9 +15849,10 @@ class BackupVaultsOperations:
         :type account_name: str
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
-        :param body: BackupVault object supplied in the body of the operation. Is one of the following
-         types: BackupVault, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupVault or JSON or IO[bytes]
+        :param body: BackupVault object supplied in the body of the operation. Is either a BackupVault
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupVault or ~azure.mgmt.netapp.types.BackupVault or
+         IO[bytes]
         :return: An instance of LROPoller that returns BackupVault. The BackupVault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupVault]
@@ -15750,7 +15916,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVaultPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupVaultPatch, _types.BackupVaultPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -15859,7 +16025,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: JSON,
+        body: _types.BackupVaultPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -15874,7 +16040,7 @@ class BackupVaultsOperations:
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
         :param body: Backup Vault object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupVaultPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -15921,7 +16087,7 @@ class BackupVaultsOperations:
         resource_group_name: str,
         account_name: str,
         backup_vault_name: str,
-        body: Union[_models.BackupVaultPatch, JSON, IO[bytes]],
+        body: Union[_models.BackupVaultPatch, _types.BackupVaultPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.BackupVault]:
         """Patch the specified NetApp Backup Vault.
@@ -15933,9 +16099,10 @@ class BackupVaultsOperations:
         :type account_name: str
         :param backup_vault_name: The name of the Backup Vault. Required.
         :type backup_vault_name: str
-        :param body: Backup Vault object supplied in the body of the operation. Is one of the following
-         types: BackupVaultPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupVaultPatch or JSON or IO[bytes]
+        :param body: Backup Vault object supplied in the body of the operation. Is either a
+         BackupVaultPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupVaultPatch or
+         ~azure.mgmt.netapp.types.BackupVaultPatch or IO[bytes]
         :return: An instance of LROPoller that returns BackupVault. The BackupVault is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.BackupVault]
@@ -16175,7 +16342,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -16250,7 +16420,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def get(
         self,
@@ -16354,7 +16533,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _create_or_update_initial(
         self,
@@ -16363,7 +16551,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.Bucket, JSON, IO[bytes]],
+        body: Union[_models.Bucket, _types.Bucket, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16486,7 +16674,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: JSON,
+        body: _types.Bucket,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16507,7 +16695,7 @@ class BucketsOperations:
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
          mounted inside the bucket. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Bucket
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16572,7 +16760,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_create_or_update(
         self,
@@ -16581,7 +16778,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.Bucket, JSON, IO[bytes]],
+        body: Union[_models.Bucket, _types.Bucket, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Bucket]:
         """Creates or updates a bucket for a volume. A bucket allows additional services, such as AI
@@ -16599,8 +16796,8 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Is one of the following types: Bucket, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.Bucket or JSON or IO[bytes]
+         mounted inside the bucket. Is either a Bucket type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Bucket or ~azure.mgmt.netapp.types.Bucket or IO[bytes]
         :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
@@ -16676,7 +16873,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _update_initial(
         self,
@@ -16685,7 +16891,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.BucketPatch, JSON, IO[bytes]],
+        body: Union[_models.BucketPatch, _types.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -16808,7 +17014,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: JSON,
+        body: _types.BucketPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -16828,7 +17034,7 @@ class BucketsOperations:
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
          mounted inside the bucket. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BucketPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -16892,7 +17098,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_update(
         self,
@@ -16901,7 +17116,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.BucketPatch, JSON, IO[bytes]],
+        body: Union[_models.BucketPatch, _types.BucketPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Bucket]:
         """Updates the details of a volume bucket.
@@ -16918,9 +17133,9 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket details including user details, and the volume path that should be
-         mounted inside the bucket. Is one of the following types: BucketPatch, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.netapp.models.BucketPatch or JSON or IO[bytes]
+         mounted inside the bucket. Is either a BucketPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketPatch or ~azure.mgmt.netapp.types.BucketPatch or
+         IO[bytes]
         :return: An instance of LROPoller that returns Bucket. The Bucket is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Bucket]
@@ -16994,7 +17209,16 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _delete_initial(
         self,
@@ -17083,7 +17307,16 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_delete(
         self,
@@ -17172,7 +17405,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, volume_name: str, **kwargs: Any
@@ -17237,7 +17479,10 @@ class BucketsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -17326,7 +17571,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: JSON,
+        body: _types.BucketCredentialsExpiry,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17347,7 +17592,7 @@ class BucketsOperations:
         :type bucket_name: str
         :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
          days from now. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BucketCredentialsExpiry
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17412,7 +17657,16 @@ class BucketsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def generate_credentials(
         self,
@@ -17421,7 +17675,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.BucketCredentialsExpiry, JSON, IO[bytes]],
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
         **kwargs: Any
     ) -> _models.BucketGenerateCredentials:
         """Generate the access key and secret key used for accessing the specified volume bucket. Also
@@ -17439,9 +17693,9 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The bucket's Access and Secret key pair expiry time expressed as the number of
-         days from now. Is one of the following types: BucketCredentialsExpiry, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or JSON or IO[bytes]
+         days from now. Is either a BucketCredentialsExpiry type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or
+         ~azure.mgmt.netapp.types.BucketCredentialsExpiry or IO[bytes]
         :return: BucketGenerateCredentials. The BucketGenerateCredentials is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.BucketGenerateCredentials
@@ -17531,7 +17785,16 @@ class BucketsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _generate_akv_credentials_initial(
         self,
@@ -17540,7 +17803,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.BucketCredentialsExpiry, JSON, IO[bytes]],
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -17661,7 +17924,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: JSON,
+        body: _types.BucketCredentialsExpiry,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -17681,7 +17944,7 @@ class BucketsOperations:
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BucketCredentialsExpiry
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -17742,7 +18005,16 @@ class BucketsOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_generate_akv_credentials(
         self,
@@ -17751,7 +18023,7 @@ class BucketsOperations:
         pool_name: str,
         volume_name: str,
         bucket_name: str,
-        body: Union[_models.BucketCredentialsExpiry, JSON, IO[bytes]],
+        body: Union[_models.BucketCredentialsExpiry, _types.BucketCredentialsExpiry, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Generate the access key and secret key used for accessing the specified volume bucket and store
@@ -17768,9 +18040,10 @@ class BucketsOperations:
         :type volume_name: str
         :param bucket_name: The name of the bucket. Required.
         :type bucket_name: str
-        :param body: The content of the action request. Is one of the following types:
-         BucketCredentialsExpiry, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a BucketCredentialsExpiry type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BucketCredentialsExpiry or
+         ~azure.mgmt.netapp.types.BucketCredentialsExpiry or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -17838,7 +18111,16 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _refresh_certificate_initial(
         self,
@@ -17926,7 +18208,16 @@ class BucketsOperations:
                 "bucket_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_refresh_certificate(
         self,
@@ -18034,7 +18325,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def get(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -18127,7 +18427,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _create_or_update_initial(
         self,
@@ -18135,7 +18444,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.Cache, JSON, IO[bytes]],
+        body: Union[_models.Cache, _types.Cache, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18251,7 +18560,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: JSON,
+        body: _types.Cache,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18268,7 +18577,7 @@ class CachesOperations:
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
         :param body: Resource create parameters. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.Cache
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18327,7 +18636,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_create_or_update(
         self,
@@ -18335,7 +18653,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.Cache, JSON, IO[bytes]],
+        body: Union[_models.Cache, _types.Cache, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Create or update the specified Cache within the Capacity Pool.
@@ -18349,9 +18667,8 @@ class CachesOperations:
         :type pool_name: str
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
-        :param body: Resource create parameters. Is one of the following types: Cache, JSON, IO[bytes]
-         Required.
-        :type body: ~azure.mgmt.netapp.models.Cache or JSON or IO[bytes]
+        :param body: Resource create parameters. Is either a Cache type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.Cache or ~azure.mgmt.netapp.types.Cache or IO[bytes]
         :return: An instance of LROPoller that returns Cache. The Cache is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
@@ -18425,7 +18742,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _update_initial(
         self,
@@ -18433,7 +18759,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.CacheUpdate, JSON, IO[bytes]],
+        body: Union[_models.CacheUpdate, _types.CacheUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18550,7 +18876,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: JSON,
+        body: _types.CacheUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -18567,7 +18893,7 @@ class CachesOperations:
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
         :param body: The resource properties to be updated. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.CacheUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -18626,7 +18952,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_update(
         self,
@@ -18634,7 +18969,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.CacheUpdate, JSON, IO[bytes]],
+        body: Union[_models.CacheUpdate, _types.CacheUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Cache]:
         """Patch the specified Cache.
@@ -18648,9 +18983,10 @@ class CachesOperations:
         :type pool_name: str
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
-        :param body: The resource properties to be updated. Is one of the following types: CacheUpdate,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.CacheUpdate or JSON or IO[bytes]
+        :param body: The resource properties to be updated. Is either a CacheUpdate type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.CacheUpdate or ~azure.mgmt.netapp.types.CacheUpdate or
+         IO[bytes]
         :return: An instance of LROPoller that returns Cache. The Cache is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
@@ -18722,7 +19058,16 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _delete_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -18800,7 +19145,16 @@ class CachesOperations:
                 "cache_name",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_delete(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -18879,7 +19233,15 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=[
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list(
         self, resource_group_name: str, account_name: str, pool_name: str, **kwargs: Any
@@ -18940,7 +19302,10 @@ class CachesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -18996,7 +19361,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def list_peering_passphrases(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -19090,7 +19464,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _pool_change_initial(
         self,
@@ -19098,7 +19481,7 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -19182,7 +19565,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19199,8 +19582,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19211,11 +19595,11 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: JSON,
+        body: _types.PoolChangeRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19228,12 +19612,13 @@ class CachesOperations:
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
         :param body: Move cache to the pool supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.PoolChangeRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19248,7 +19633,7 @@ class CachesOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19265,8 +19650,9 @@ class CachesOperations:
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -19285,7 +19671,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_pool_change(
         self,
@@ -19293,9 +19688,9 @@ class CachesOperations:
         account_name: str,
         pool_name: str,
         cache_name: str,
-        body: Union[_models.PoolChangeRequest, JSON, IO[bytes]],
+        body: Union[_models.PoolChangeRequest, _types.PoolChangeRequest, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Moves Cache  to another Capacity Pool.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19307,18 +19702,20 @@ class CachesOperations:
         :type pool_name: str
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
-        :param body: Move cache to the pool supplied in the body of the operation. Is one of the
-         following types: PoolChangeRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :param body: Move cache to the pool supplied in the body of the operation. Is either a
+         PoolChangeRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.PoolChangeRequest or
+         ~azure.mgmt.netapp.types.PoolChangeRequest or IO[bytes]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -19338,9 +19735,12 @@ class CachesOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -19355,13 +19755,15 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
     @api_version_validation(
         method_added_on="2025-12-15-preview",
@@ -19376,7 +19778,16 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def _reset_smb_password_initial(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
@@ -19455,11 +19866,20 @@ class CachesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-12-15-preview", "2026-01-01"],
+        api_versions_list=[
+            "2025-12-15-preview",
+            "2026-01-01",
+            "2026-01-15-preview",
+            "2026-03-01",
+            "2026-03-15-preview",
+            "2026-04-01",
+            "2026-04-15-preview",
+            "2026-05-01",
+        ],
     )
     def begin_reset_smb_password(
         self, resource_group_name: str, account_name: str, pool_name: str, cache_name: str, **kwargs: Any
-    ) -> LROPoller[None]:
+    ) -> LROPoller[_models.Cache]:
         """Resets the SMB password for the cache.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -19471,14 +19891,15 @@ class CachesOperations:
         :type pool_name: str
         :param cache_name: The name of the cache resource. Required.
         :type cache_name: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
+        :return: An instance of LROPoller that returns Cache. The Cache is compatible with
+         MutableMapping
+        :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.Cache]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[None] = kwargs.pop("cls", None)
+        cls: ClsType[_models.Cache] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -19496,9 +19917,12 @@ class CachesOperations:
             raw_result.http_response.read()  # type: ignore
         kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+        def get_long_running_output(pipeline_response):
+            response = pipeline_response.http_response
+            deserialized = _deserialize(_models.Cache, response.json())
             if cls:
-                return cls(pipeline_response, None, {})  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
+            return deserialized
 
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
@@ -19513,13 +19937,15 @@ class CachesOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[None].from_continuation_token(
+            return LROPoller[_models.Cache].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
+        return LROPoller[_models.Cache](
+            self._client, raw_result, get_long_running_output, polling_method  # type: ignore
+        )
 
 
 class NetAppResourceQuotaLimitsOperations:
@@ -19659,7 +20085,10 @@ class NetAppResourceQuotaLimitsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19836,7 +20265,10 @@ class NetAppResourceRegionInfosOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -19970,7 +20402,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccount, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccount, _types.NetAppAccount, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20076,7 +20508,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.NetAppAccount,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20089,7 +20521,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: NetApp Account object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.NetAppAccount
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20132,7 +20564,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccount, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccount, _types.NetAppAccount, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetAppAccount]:
         """Create or update the specified NetApp account within the resource group.
@@ -20142,9 +20574,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: NetApp Account object supplied in the body of the operation. Is one of the
-         following types: NetAppAccount, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccount or JSON or IO[bytes]
+        :param body: NetApp Account object supplied in the body of the operation. Is either a
+         NetAppAccount type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccount or ~azure.mgmt.netapp.types.NetAppAccount
+         or IO[bytes]
         :return: An instance of LROPoller that returns NetAppAccount. The NetAppAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetAppAccount]
@@ -20214,13 +20647,13 @@ class AccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-03-01", "2026-04-01", "2026-05-01"],
     )
     def _update_initial(
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccountPatch, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccountPatch, _types.NetAppAccountPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20324,7 +20757,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.NetAppAccountPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -20337,7 +20770,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: NetApp Account object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.NetAppAccountPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -20388,13 +20821,13 @@ class AccountsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01"],
+        api_versions_list=["2026-01-01", "2026-03-01", "2026-04-01", "2026-05-01"],
     )
     def begin_update(
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.NetAppAccountPatch, JSON, IO[bytes]],
+        body: Union[_models.NetAppAccountPatch, _types.NetAppAccountPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.NetAppAccount]:
         """Patch the specified NetApp account.
@@ -20404,9 +20837,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: NetApp Account object supplied in the body of the operation. Is one of the
-         following types: NetAppAccountPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch or JSON or IO[bytes]
+        :param body: NetApp Account object supplied in the body of the operation. Is either a
+         NetAppAccountPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.NetAppAccountPatch or
+         ~azure.mgmt.netapp.types.NetAppAccountPatch or IO[bytes]
         :return: An instance of LROPoller that returns NetAppAccount. The NetAppAccount is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetAppAccount]
@@ -20632,7 +21066,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20722,7 +21159,10 @@ class AccountsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -20888,7 +21328,9 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.EncryptionTransitionRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.EncryptionTransitionRequest, _types.EncryptionTransitionRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -20996,7 +21438,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.EncryptionTransitionRequest] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21011,7 +21453,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: The required parameters to perform encryption transition. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.EncryptionTransitionRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21054,7 +21496,9 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.EncryptionTransitionRequest, JSON, IO[bytes]]] = None,
+        body: Optional[
+            Union[_models.EncryptionTransitionRequest, _types.EncryptionTransitionRequest, IO[bytes]]
+        ] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Transitions all volumes in a VNet to a different encryption key source (Microsoft-managed key
@@ -21066,9 +21510,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: The required parameters to perform encryption transition. Is one of the following
-         types: EncryptionTransitionRequest, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.EncryptionTransitionRequest or JSON or IO[bytes]
+        :param body: The required parameters to perform encryption transition. Is either a
+         EncryptionTransitionRequest type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.EncryptionTransitionRequest or
+         ~azure.mgmt.netapp.types.EncryptionTransitionRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21263,7 +21708,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.ChangeKeyVault, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ChangeKeyVault, _types.ChangeKeyVault, IO[bytes]]] = None,
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21370,7 +21815,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[JSON] = None,
+        body: Optional[_types.ChangeKeyVault] = None,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21384,7 +21829,7 @@ class AccountsOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: The required parameters to perform encryption migration. Default value is None.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ChangeKeyVault
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21426,7 +21871,7 @@ class AccountsOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Optional[Union[_models.ChangeKeyVault, JSON, IO[bytes]]] = None,
+        body: Optional[Union[_models.ChangeKeyVault, _types.ChangeKeyVault, IO[bytes]]] = None,
         **kwargs: Any
     ) -> LROPoller[None]:
         """Affects existing volumes that are encrypted with Key Vault/Managed HSM, and new volumes.
@@ -21437,9 +21882,10 @@ class AccountsOperations:
         :type resource_group_name: str
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
-        :param body: The required parameters to perform encryption migration. Is one of the following
-         types: ChangeKeyVault, JSON, IO[bytes] Default value is None.
-        :type body: ~azure.mgmt.netapp.models.ChangeKeyVault or JSON or IO[bytes]
+        :param body: The required parameters to perform encryption migration. Is either a
+         ChangeKeyVault type or a IO[bytes] type. Default value is None.
+        :type body: ~azure.mgmt.netapp.models.ChangeKeyVault or ~azure.mgmt.netapp.types.ChangeKeyVault
+         or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21514,7 +21960,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21617,7 +22063,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: JSON,
+        body: _types.BackupsMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21631,7 +22077,7 @@ class BackupsUnderAccountOperations:
         :type account_name: str
         :param body: Migrate backups under an account payload supplied in the body of the operation.
          Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupsMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -21673,7 +22119,7 @@ class BackupsUnderAccountOperations:
         self,
         resource_group_name: str,
         account_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Migrate the backups under a NetApp account to backup vault.
@@ -21684,8 +22130,9 @@ class BackupsUnderAccountOperations:
         :param account_name: The name of the NetApp account. Required.
         :type account_name: str
         :param body: Migrate backups under an account payload supplied in the body of the operation. Is
-         one of the following types: BackupsMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or JSON or IO[bytes]
+         either a BackupsMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or
+         ~azure.mgmt.netapp.types.BackupsMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -21833,7 +22280,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPool, JSON, IO[bytes]],
+        body: Union[_models.CapacityPool, _types.CapacityPool, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -21942,7 +22389,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: JSON,
+        body: _types.CapacityPool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -21957,7 +22404,7 @@ class PoolsOperations:
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
         :param body: Capacity pool object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.CapacityPool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22004,7 +22451,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPool, JSON, IO[bytes]],
+        body: Union[_models.CapacityPool, _types.CapacityPool, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CapacityPool]:
         """Create or Update a capacity pool.
@@ -22016,9 +22463,10 @@ class PoolsOperations:
         :type account_name: str
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
-        :param body: Capacity pool object supplied in the body of the operation. Is one of the
-         following types: CapacityPool, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.CapacityPool or JSON or IO[bytes]
+        :param body: Capacity pool object supplied in the body of the operation. Is either a
+         CapacityPool type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.CapacityPool or ~azure.mgmt.netapp.types.CapacityPool or
+         IO[bytes]
         :return: An instance of LROPoller that returns CapacityPool. The CapacityPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.CapacityPool]
@@ -22082,7 +22530,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPoolPatch, JSON, IO[bytes]],
+        body: Union[_models.CapacityPoolPatch, _types.CapacityPoolPatch, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22191,7 +22639,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: JSON,
+        body: _types.CapacityPoolPatch,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22206,7 +22654,7 @@ class PoolsOperations:
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
         :param body: Capacity pool object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.CapacityPoolPatch
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22253,7 +22701,7 @@ class PoolsOperations:
         resource_group_name: str,
         account_name: str,
         pool_name: str,
-        body: Union[_models.CapacityPoolPatch, JSON, IO[bytes]],
+        body: Union[_models.CapacityPoolPatch, _types.CapacityPoolPatch, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.CapacityPool]:
         """Patch the specified capacity pool.
@@ -22265,9 +22713,10 @@ class PoolsOperations:
         :type account_name: str
         :param pool_name: The name of the capacity pool. Required.
         :type pool_name: str
-        :param body: Capacity pool object supplied in the body of the operation. Is one of the
-         following types: CapacityPoolPatch, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch or JSON or IO[bytes]
+        :param body: Capacity pool object supplied in the body of the operation. Is either a
+         CapacityPoolPatch type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.CapacityPoolPatch or
+         ~azure.mgmt.netapp.types.CapacityPoolPatch or IO[bytes]
         :return: An instance of LROPoller that returns CapacityPool. The CapacityPool is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.CapacityPool]
@@ -22505,7 +22954,10 @@ class PoolsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -22571,7 +23023,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.BackupRestoreFiles, _types.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22683,7 +23135,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: JSON,
+        body: _types.BackupRestoreFiles,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22700,7 +23152,7 @@ class BackupsUnderBackupVaultOperations:
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
         :param body: Restore payload supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupRestoreFiles
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -22749,7 +23201,7 @@ class BackupsUnderBackupVaultOperations:
         account_name: str,
         backup_vault_name: str,
         backup_name: str,
-        body: Union[_models.BackupRestoreFiles, JSON, IO[bytes]],
+        body: Union[_models.BackupRestoreFiles, _types.BackupRestoreFiles, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Restore the specified files from the specified backup to the active filesystem.
@@ -22763,9 +23215,10 @@ class BackupsUnderBackupVaultOperations:
         :type backup_vault_name: str
         :param backup_name: The name of the backup. Required.
         :type backup_name: str
-        :param body: Restore payload supplied in the body of the operation. Is one of the following
-         types: BackupRestoreFiles, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or JSON or IO[bytes]
+        :param body: Restore payload supplied in the body of the operation. Is either a
+         BackupRestoreFiles type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupRestoreFiles or
+         ~azure.mgmt.netapp.types.BackupRestoreFiles or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -22843,7 +23296,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -22956,7 +23409,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: JSON,
+        body: _types.BackupsMigrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -22974,7 +23427,7 @@ class BackupsUnderVolumeOperations:
         :type volume_name: str
         :param body: Migrate backups under volume payload supplied in the body of the operation.
          Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.BackupsMigrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23024,7 +23477,7 @@ class BackupsUnderVolumeOperations:
         account_name: str,
         pool_name: str,
         volume_name: str,
-        body: Union[_models.BackupsMigrationRequest, JSON, IO[bytes]],
+        body: Union[_models.BackupsMigrationRequest, _types.BackupsMigrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Migrate the backups under volume to backup vault.
@@ -23038,9 +23491,10 @@ class BackupsUnderVolumeOperations:
         :type pool_name: str
         :param volume_name: The name of the volume. Required.
         :type volume_name: str
-        :param body: Migrate backups under volume payload supplied in the body of the operation. Is one
-         of the following types: BackupsMigrationRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or JSON or IO[bytes]
+        :param body: Migrate backups under volume payload supplied in the body of the operation. Is
+         either a BackupsMigrationRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.BackupsMigrationRequest or
+         ~azure.mgmt.netapp.types.BackupsMigrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23206,7 +23660,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumeInfo, JSON, IO[bytes]],
+        body: Union[_models.SubvolumeInfo, _types.SubvolumeInfo, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -23331,7 +23785,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: JSON,
+        body: _types.SubvolumeInfo,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23350,7 +23804,7 @@ class SubvolumesOperations:
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
         :param body: Subvolume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SubvolumeInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23405,7 +23859,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumeInfo, JSON, IO[bytes]],
+        body: Union[_models.SubvolumeInfo, _types.SubvolumeInfo, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
         """Creates a subvolume in the path or clones the subvolume mentioned in the parentPath.
@@ -23421,9 +23875,10 @@ class SubvolumesOperations:
         :type volume_name: str
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
-        :param body: Subvolume object supplied in the body of the operation. Is one of the following
-         types: SubvolumeInfo, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SubvolumeInfo or JSON or IO[bytes]
+        :param body: Subvolume object supplied in the body of the operation. Is either a SubvolumeInfo
+         type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SubvolumeInfo or ~azure.mgmt.netapp.types.SubvolumeInfo
+         or IO[bytes]
         :return: An instance of LROPoller that returns SubvolumeInfo. The SubvolumeInfo is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
@@ -23491,7 +23946,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumePatchRequest, JSON, IO[bytes]],
+        body: Union[_models.SubvolumePatchRequest, _types.SubvolumePatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -23612,7 +24067,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: JSON,
+        body: _types.SubvolumePatchRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -23631,7 +24086,7 @@ class SubvolumesOperations:
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
         :param body: Subvolume object supplied in the body of the operation. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.SubvolumePatchRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -23686,7 +24141,7 @@ class SubvolumesOperations:
         pool_name: str,
         volume_name: str,
         subvolume_name: str,
-        body: Union[_models.SubvolumePatchRequest, JSON, IO[bytes]],
+        body: Union[_models.SubvolumePatchRequest, _types.SubvolumePatchRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SubvolumeInfo]:
         """Patch a subvolume.
@@ -23702,9 +24157,10 @@ class SubvolumesOperations:
         :type volume_name: str
         :param subvolume_name: The name of the subvolume. Required.
         :type subvolume_name: str
-        :param body: Subvolume object supplied in the body of the operation. Is one of the following
-         types: SubvolumePatchRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.SubvolumePatchRequest or JSON or IO[bytes]
+        :param body: Subvolume object supplied in the body of the operation. Is either a
+         SubvolumePatchRequest type or a IO[bytes] type. Required.
+        :type body: ~azure.mgmt.netapp.models.SubvolumePatchRequest or
+         ~azure.mgmt.netapp.types.SubvolumePatchRequest or IO[bytes]
         :return: An instance of LROPoller that returns SubvolumeInfo. The SubvolumeInfo is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.SubvolumeInfo]
@@ -23974,7 +24430,10 @@ class SubvolumesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -24205,7 +24664,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest
@@ -24220,16 +24679,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_name_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.ResourceNameAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check resource name availability.
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.ResourceNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24247,7 +24711,7 @@ class NetAppResourceOperations:
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -24262,17 +24726,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_name_availability(
-        self, location: str, body: Union[_models.ResourceNameAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.ResourceNameAvailabilityRequest, _types.ResourceNameAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check resource name availability.
 
         Check if a resource name is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: ResourceNameAvailabilityRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a ResourceNameAvailabilityRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.ResourceNameAvailabilityRequest or
+         ~azure.mgmt.netapp.types.ResourceNameAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -24357,7 +24825,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest
@@ -24372,16 +24840,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_file_path_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.FilePathAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check file path availability.
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.FilePathAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24399,7 +24872,7 @@ class NetAppResourceOperations:
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -24414,17 +24887,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_file_path_availability(
-        self, location: str, body: Union[_models.FilePathAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.FilePathAvailabilityRequest, _types.FilePathAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check file path availability.
 
         Check if a file path is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: FilePathAvailabilityRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a FilePathAvailabilityRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.FilePathAvailabilityRequest or
+         ~azure.mgmt.netapp.types.FilePathAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -24509,7 +24986,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest
@@ -24524,16 +25001,21 @@ class NetAppResourceOperations:
 
     @overload
     def check_quota_availability(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.QuotaAvailabilityRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check quota availability.
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QuotaAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24551,7 +25033,7 @@ class NetAppResourceOperations:
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -24566,17 +25048,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def check_quota_availability(
-        self, location: str, body: Union[_models.QuotaAvailabilityRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.QuotaAvailabilityRequest, _types.QuotaAvailabilityRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
         """Check quota availability.
 
         Check if a quota is available.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: QuotaAvailabilityRequest, JSON,
-         IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a QuotaAvailabilityRequest type or a IO[bytes] type.
+         Required.
+        :type body: ~azure.mgmt.netapp.models.QuotaAvailabilityRequest or
+         ~azure.mgmt.netapp.types.QuotaAvailabilityRequest or IO[bytes]
         :return: CheckAvailabilityResponse. The CheckAvailabilityResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.netapp.models.CheckAvailabilityResponse
@@ -24654,7 +25140,7 @@ class NetAppResourceOperations:
 
         Provides storage to network proximity and logical zone mapping information.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: RegionInfo. The RegionInfo is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.RegionInfo
@@ -24729,7 +25215,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest
@@ -24743,16 +25229,21 @@ class NetAppResourceOperations:
 
     @overload
     def query_network_sibling_set(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.QueryNetworkSiblingSetRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.NetworkSiblingSet:
         """Describe a network sibling set.
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.QueryNetworkSiblingSetRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24769,7 +25260,7 @@ class NetAppResourceOperations:
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -24783,17 +25274,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def query_network_sibling_set(
-        self, location: str, body: Union[_models.QueryNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.QueryNetworkSiblingSetRequest, _types.QueryNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> _models.NetworkSiblingSet:
         """Describe a network sibling set.
 
         Get details of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: QueryNetworkSiblingSetRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a QueryNetworkSiblingSetRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.QueryNetworkSiblingSetRequest or
+         ~azure.mgmt.netapp.types.QueryNetworkSiblingSetRequest or IO[bytes]
         :return: NetworkSiblingSet. The NetworkSiblingSet is compatible with MutableMapping
         :rtype: ~azure.mgmt.netapp.models.NetworkSiblingSet
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24865,7 +25360,10 @@ class NetAppResourceOperations:
         return deserialized  # type: ignore
 
     def _update_network_sibling_set_initial(
-        self, location: str, body: Union[_models.UpdateNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.UpdateNetworkSiblingSetRequest, _types.UpdateNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -24947,7 +25445,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest
@@ -24962,16 +25460,21 @@ class NetAppResourceOperations:
 
     @overload
     def begin_update_network_sibling_set(
-        self, location: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        body: _types.UpdateNetworkSiblingSetRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> LROPoller[_models.NetworkSiblingSet]:
         """Update the network features of a network sibling set.
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.netapp.types.UpdateNetworkSiblingSetRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -24989,7 +25492,7 @@ class NetAppResourceOperations:
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :param body: The request body. Required.
         :type body: IO[bytes]
@@ -25004,17 +25507,21 @@ class NetAppResourceOperations:
 
     @distributed_trace
     def begin_update_network_sibling_set(
-        self, location: str, body: Union[_models.UpdateNetworkSiblingSetRequest, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        body: Union[_models.UpdateNetworkSiblingSetRequest, _types.UpdateNetworkSiblingSetRequest, IO[bytes]],
+        **kwargs: Any
     ) -> LROPoller[_models.NetworkSiblingSet]:
         """Update the network features of a network sibling set.
 
         Update the network features of the specified network sibling set.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
-        :param body: The request body. Is one of the following types: UpdateNetworkSiblingSetRequest,
-         JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest or JSON or IO[bytes]
+        :param body: The request body. Is either a UpdateNetworkSiblingSetRequest type or a IO[bytes]
+         type. Required.
+        :type body: ~azure.mgmt.netapp.models.UpdateNetworkSiblingSetRequest or
+         ~azure.mgmt.netapp.types.UpdateNetworkSiblingSetRequest or IO[bytes]
         :return: An instance of LROPoller that returns NetworkSiblingSet. The NetworkSiblingSet is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.netapp.models.NetworkSiblingSet]
@@ -25042,14 +25549,10 @@ class NetAppResourceOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            response_headers = {}
             response = pipeline_response.http_response
-            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
-            response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
-
             deserialized = _deserialize(_models.NetworkSiblingSet, response.json())
             if cls:
-                return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+                return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
 
         path_format_arguments = {
@@ -25099,7 +25602,7 @@ class NetAppResourceUsagesOperations:
 
         Get current subscription usages.
 
-        :param location: The location name. Required.
+        :param location: The name of the Azure region. Required.
         :type location: str
         :return: An iterator like instance of UsageResult
         :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.netapp.models.UsageResult]
@@ -25146,7 +25649,10 @@ class NetAppResourceUsagesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

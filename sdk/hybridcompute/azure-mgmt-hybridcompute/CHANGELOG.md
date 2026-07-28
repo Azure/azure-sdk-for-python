@@ -1,5 +1,23 @@
 # Release History
 
+## 9.1.0b5 (2026-07-13)
+
+### Features Added
+
+  - Model `GatewayProperties` added property `gateway_bypass`
+  - Model `GatewayUpdateProperties` added property `gateway_bypass`
+  - Enum `LicenseTarget` added member `WINDOWS_SERVER2016`
+  - Model `MachineProperties` added property `status_reason`
+  - Added enum `MachineStatusReason`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `UserAssignedIdentity`
+
+### Breaking Changes
+
+  - Deleted or renamed model `Identity`
+  - Deleted or renamed model `ResourceIdentityType`
+
 ## 9.1.0b3 (2026-06-03)
 
 ### Features Added

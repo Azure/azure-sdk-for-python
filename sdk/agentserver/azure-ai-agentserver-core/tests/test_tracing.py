@@ -15,8 +15,12 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
+    resolve_session_id,
 )
-from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
+from azure.ai.agentserver.core._tracing import (
+    _BaggageLogRecordProcessor,
+    _FoundryEnrichmentSpanProcessor,
+)
 
 
 class _CollectorExporter(SpanExporter):
@@ -142,6 +146,60 @@ class TestSetupDistroExport:
             mock_distro.assert_called_once()
             kwargs = mock_distro.call_args[1]
             assert kwargs["connection_string"] is None
+
+
+# ------------------------------------------------------------------ #
+# Entra-based Azure Monitor export credential
+# ------------------------------------------------------------------ #
+
+
+class TestEntraAuthMode:
+    """Verify _setup_distro_export wires a managed identity credential for Entra auth."""
+
+    def _run(self, env: dict) -> dict:
+        from azure.ai.agentserver.core import _tracing
+        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, \
+                mock.patch.dict(os.environ, env, clear=False):
+            _tracing._setup_distro_export(
+                resource=Resource.create({}),
+                span_processors=[],
+                log_record_processors=[],
+                connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000",
+            )
+            mock_use.assert_called_once()
+            return mock_use.call_args[1]
+
+    def test_entra_auth_mode_passes_managed_identity_credential(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+        assert kwargs["enable_azure_monitor"] is True
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_entra_auth_mode_case_insensitive(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "entra"})
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_no_credential_when_auth_mode_not_entra(self) -> None:
+        env = {"APPLICATIONINSIGHTS_AUTH_MODE": ""}
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("APPLICATIONINSIGHTS_AUTH_MODE", None)
+            kwargs = self._run(env)
+        assert kwargs["enable_azure_monitor"] is True
+        assert "azure_monitor_exporter_credential" not in kwargs
+
+    def test_managed_identity_credential_has_no_client_id(self) -> None:
+        with mock.patch("azure.identity.ManagedIdentityCredential") as mock_cred:
+            self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+            mock_cred.assert_called_once_with()
 
 
 # ------------------------------------------------------------------ #
@@ -408,7 +466,7 @@ class TestFoundryEnrichmentSpanProcessor:
 
 
 class TestAgentIdentityResolution:
-    """Tests for resolve_agent_name() and resolve_agent_version()."""
+    """Tests for agent identity/session resolution helpers."""
 
     def test_agent_name_from_env(self) -> None:
         with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
@@ -430,5 +488,78 @@ class TestAgentIdentityResolution:
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 
+    def test_session_id_from_env(self) -> None:
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "session-1"}):
+            assert resolve_session_id() == "session-1"
+
+    def test_session_id_default_empty(self) -> None:
+        env = os.environ.copy()
+        env.pop("FOUNDRY_AGENT_SESSION_ID", None)
+        with mock.patch.dict(os.environ, env, clear=True):
+            assert resolve_session_id() == ""
 
 
+class _FakeLogRecord:
+    def __init__(self, attributes):
+        self.attributes = attributes
+
+
+class _FakeLogData:
+    def __init__(self, attributes):
+        self.log_record = _FakeLogRecord(attributes)
+
+
+class TestBaggageLogRecordProcessor:
+    def test_adds_agent_and_fallback_session_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        proc.on_emit(log_data)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["gen_ai.agent.name"] == "agent-a"
+        assert attrs["gen_ai.agent.version"] == "1.2.3"
+        assert attrs["microsoft.session.id"] == "session-fallback-1"
+
+    def test_prefers_baggage_session_id_over_fallback(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        log_data = _FakeLogData({})
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-from-baggage",
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            proc.on_emit(log_data)
+        finally:
+            _otel_context.detach(token)
+
+        attrs = log_data.log_record.attributes
+        assert attrs["microsoft.session.id"] == "session-from-baggage"
+
+    def test_does_not_overwrite_existing_log_attributes(self) -> None:
+        proc = _BaggageLogRecordProcessor(
+            agent_name="agent-a",
+            agent_version="1.2.3",
+            session_id="session-fallback-1",
+        )
+        attrs = {
+            "gen_ai.agent.name": "existing-name",
+            "gen_ai.agent.version": "0.0.1",
+            "microsoft.session.id": "existing-session",
+        }
+        log_data = _FakeLogData(attrs)
+
+        proc.on_emit(log_data)
+
+        assert attrs["gen_ai.agent.name"] == "existing-name"
+        assert attrs["gen_ai.agent.version"] == "0.0.1"
+        assert attrs["microsoft.session.id"] == "existing-session"

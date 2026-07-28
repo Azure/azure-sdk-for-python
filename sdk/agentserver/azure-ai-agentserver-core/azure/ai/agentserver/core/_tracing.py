@@ -41,6 +41,7 @@ from typing import Any, Optional, Union
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
+from ._constants import Constants
 
 _Content = Union[str, bytes, memoryview]
 
@@ -146,10 +147,16 @@ def configure_observability(
             logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
+    _configure_tracing(
+        connection_string=connection_string,
+        enable_sensitive_data=enable_sensitive_data,
+    )
 
 
-def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
+def _configure_tracing(
+    connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
+) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -182,7 +189,13 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    log_record_processors = [  # type: ignore[list-item]
+        _BaggageLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=_config.resolve_session_id() or None,
+        ),
+    ]
 
     try:
         _setup_distro_export(
@@ -233,6 +246,15 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
+
+        # When Entra-based auth is requested, export to Azure Monitor using a
+        # system-assigned managed identity (no client id) rather than the
+        # connection string's instrumentation key alone.
+        auth_mode = os.environ.get(Constants.APPLICATIONINSIGHTS_AUTH_MODE, "")
+        if auth_mode.strip().lower() == "entra":
+            from azure.identity import ManagedIdentityCredential
+
+            kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
     if (
@@ -480,26 +502,31 @@ class _FoundryEnrichmentSpanProcessor:
         # Set agent identity attributes at span end so they cannot be
         # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
         #
-        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # Workaround: opentelemetry-sdk sets _end_time before calling
         # _on_ending, which causes set_attribute() to silently no-op despite the
-        # spec requiring mutability during OnEnding.  We write to _attributes
-        # directly until the SDK is fixed.  The try/except guards against future
-        # SDK changes that may rename or remove the internal field.
+        # spec requiring mutability during OnEnding.  We write to the span's
+        # attribute store directly until the SDK is fixed.  opentelemetry-sdk
+        # >=1.43.0 changed ``span._attributes`` from a plain dict to a
+        # ``BoundedAttributes`` whose backing store is ``._dict`` and which no
+        # longer supports item assignment; older versions exposed a mutable
+        # mapping directly.  Resolve ``._dict`` when present so both work.
+        # The try/except guards against future SDK changes to these internals.
         # TODO: switch to span.set_attribute() once the SDK honours the spec.
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
+        target = getattr(attrs, "_dict", attrs)
         try:
             if self.agent_name:
-                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
-                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+                target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
-                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+                target[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
-                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
+                target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
@@ -521,6 +548,17 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        session_id: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.session_id = session_id
+
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -528,11 +566,26 @@ class _BaggageLogRecordProcessor:
         :type log_data: any
         """
         try:
+            if not hasattr(log_data, "log_record") or not log_data.log_record:
+                return
+
+            attrs = log_data.log_record.attributes  # type: ignore[assignment]
+
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+            if entries:
                 for key, value in entries.items():
-                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+                    attrs[key] = value  # type: ignore[index]
+
+            if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+
+            bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+            resolved_session = bag_session or self.session_id
+            if resolved_session and _ATTR_SESSION_ID not in attrs:
+                attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 

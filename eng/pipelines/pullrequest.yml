@@ -10,15 +10,21 @@ pr:
   paths:
     include:
     - "*"
+    exclude:
+    - .github/skills/azsdk-common-*/**
 parameters:
   - name: Service
     type: string
     default: auto
+  - name: SkipPrValidation
+    type: boolean
+    default: false
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
   parameters:
     ServiceDirectory: ${{ parameters.Service }}
+    SkipPrValidation: ${{ parameters.SkipPrValidation }}
     BuildTargetingString: "*"
     TestProxy: true
     TestTimeOutInMinutes: 180

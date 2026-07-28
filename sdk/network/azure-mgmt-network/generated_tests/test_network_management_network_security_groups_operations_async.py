@@ -26,7 +26,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
         response = await self.client.network_security_groups.get(
             resource_group_name=resource_group.name,
             network_security_group_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -278,6 +278,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -381,6 +382,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -470,6 +472,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -481,6 +484,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -568,6 +576,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -661,6 +670,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -686,6 +696,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -757,6 +768,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -843,6 +855,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "properties": {
                                                                 "disableBgpRoutePropagation": bool,
+                                                                "disablePeeringRoute": "str",
                                                                 "provisioningState": "str",
                                                                 "resourceGuid": "str",
                                                                 "routes": [
@@ -854,6 +867,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "nextHopType": "str",
                                                                             "addressPrefix": "str",
                                                                             "hasBgpOverride": bool,
+                                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                             "nextHopIpAddress": "str",
                                                                             "provisioningState": "str",
                                                                         },
@@ -937,6 +951,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                 "id": "str",
                                                                 "name": "str",
                                                                 "properties": {
+                                                                    "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                                     "gatewayLoadBalancer": {"id": "str"},
                                                                     "inboundNatPools": [{"id": "str"}],
                                                                     "inboundNatRules": [{"id": "str"}],
@@ -957,6 +972,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1072,6 +1088,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                                 "type": "str",
                                                                                                             }
                                                                                                         ],
+                                                                                                        "billingSku": "str",
                                                                                                         "customDnsConfigs": [
                                                                                                             {
                                                                                                                 "fqdn": "str",
@@ -1171,6 +1188,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                                    "disablePeeringRoute": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "resourceGuid": "str",
                                                                                                     "routes": [
@@ -1182,6 +1200,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                                 "nextHopType": "str",
                                                                                                                 "addressPrefix": "str",
                                                                                                                 "hasBgpOverride": bool,
+                                                                                                                "nextHop": {
+                                                                                                                    "nextHopIpAddresses": [
+                                                                                                                        "str"
+                                                                                                                    ]
+                                                                                                                },
                                                                                                                 "nextHopIpAddress": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                             },
@@ -1283,6 +1306,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1385,6 +1409,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1415,6 +1442,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -1514,6 +1542,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -1603,6 +1632,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "disableBgpRoutePropagation": bool,
+                                                                                    "disablePeeringRoute": "str",
                                                                                     "provisioningState": "str",
                                                                                     "resourceGuid": "str",
                                                                                     "routes": [
@@ -1614,6 +1644,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "nextHopType": "str",
                                                                                                 "addressPrefix": "str",
                                                                                                 "hasBgpOverride": bool,
+                                                                                                "nextHop": {
+                                                                                                    "nextHopIpAddresses": [
+                                                                                                        "str"
+                                                                                                    ]
+                                                                                                },
                                                                                                 "nextHopIpAddress": "str",
                                                                                                 "provisioningState": "str",
                                                                                             },
@@ -1741,6 +1776,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "type": "str",
                                                 }
                                             ],
+                                            "billingSku": "str",
                                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                             "customNetworkInterfaceName": "str",
                                             "ipConfigurations": [
@@ -1856,6 +1892,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -1879,6 +1916,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -1944,6 +1982,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "name": "str",
                                                         "properties": {
                                                             "disableBgpRoutePropagation": bool,
+                                                            "disablePeeringRoute": "str",
                                                             "provisioningState": "str",
                                                             "resourceGuid": "str",
                                                             "routes": [
@@ -1955,6 +1994,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                         "nextHopType": "str",
                                                                         "addressPrefix": "str",
                                                                         "hasBgpOverride": bool,
+                                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                                         "nextHopIpAddress": "str",
                                                                         "provisioningState": "str",
                                                                     },
@@ -2120,6 +2160,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2150,6 +2193,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2228,6 +2272,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -2314,6 +2359,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -2325,6 +2371,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -2408,6 +2457,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "id": "str",
                                                     "name": "str",
                                                     "properties": {
+                                                        "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                         "gatewayLoadBalancer": {"id": "str"},
                                                         "inboundNatPools": [{"id": "str"}],
                                                         "inboundNatRules": [{"id": "str"}],
@@ -2425,6 +2475,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -2532,6 +2583,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -2627,6 +2679,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -2638,6 +2691,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -2727,6 +2785,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -2821,6 +2880,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2851,6 +2913,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2929,6 +2992,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -3015,6 +3079,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -3026,6 +3091,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -3133,6 +3201,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                         "type": "str",
                                                                     }
                                                                 ],
+                                                                "billingSku": "str",
                                                                 "customDnsConfigs": [
                                                                     {"fqdn": "str", "ipAddresses": ["str"]}
                                                                 ],
@@ -3256,6 +3325,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3286,6 +3358,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -3370,6 +3443,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -3381,6 +3455,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -3497,6 +3576,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "id": "str",
                                                             "name": "str",
                                                             "properties": {
+                                                                "ddosSettings": {"ddosCustomPolicy": {"id": "str"}},
                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                 "inboundNatPools": [{"id": "str"}],
                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3514,6 +3594,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -3625,6 +3706,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -3722,6 +3804,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -3733,6 +3816,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -3824,6 +3912,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -3918,6 +4007,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3948,6 +4040,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -4033,6 +4126,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -4122,6 +4216,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -4133,6 +4228,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -4340,6 +4440,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -4451,6 +4552,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                             "type": "str",
                                                                                                         }
                                                                                                     ],
+                                                                                                    "billingSku": "str",
                                                                                                     "customDnsConfigs": [
                                                                                                         {
                                                                                                             "fqdn": "str",
@@ -4548,6 +4650,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                                "disablePeeringRoute": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "resourceGuid": "str",
                                                                                                 "routes": [
@@ -4559,6 +4662,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                             "nextHopType": "str",
                                                                                                             "addressPrefix": "str",
                                                                                                             "hasBgpOverride": bool,
+                                                                                                            "nextHop": {
+                                                                                                                "nextHopIpAddresses": [
+                                                                                                                    "str"
+                                                                                                                ]
+                                                                                                            },
                                                                                                             "nextHopIpAddress": "str",
                                                                                                             "provisioningState": "str",
                                                                                                         },
@@ -4650,6 +4758,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -4743,6 +4852,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -4773,6 +4885,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -4858,6 +4971,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "type": "str",
                                                                                         }
                                                                                     ],
+                                                                                    "billingSku": "str",
                                                                                     "customDnsConfigs": [
                                                                                         {
                                                                                             "fqdn": "str",
@@ -4947,6 +5061,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "disableBgpRoutePropagation": bool,
+                                                                                "disablePeeringRoute": "str",
                                                                                 "provisioningState": "str",
                                                                                 "resourceGuid": "str",
                                                                                 "routes": [
@@ -4958,6 +5073,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "nextHopType": "str",
                                                                                             "addressPrefix": "str",
                                                                                             "hasBgpOverride": bool,
+                                                                                            "nextHop": {
+                                                                                                "nextHopIpAddresses": [
+                                                                                                    "str"
+                                                                                                ]
+                                                                                            },
                                                                                             "nextHopIpAddress": "str",
                                                                                             "provisioningState": "str",
                                                                                         },
@@ -5163,6 +5283,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                     "name": "str",
                                                     "properties": {
                                                         "ddosSettings": {
+                                                            "ddosCustomPolicy": {"id": "str"},
                                                             "ddosProtectionPlan": {"id": "str"},
                                                             "protectionMode": "str",
                                                         },
@@ -5186,6 +5307,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                             "name": "str",
                                                             "properties": {
                                                                 "idleTimeoutInMinutes": 0,
+                                                                "nat64": "str",
                                                                 "provisioningState": "str",
                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -5249,6 +5371,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "type": "str",
                                                     }
                                                 ],
+                                                "billingSku": "str",
                                                 "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                 "customNetworkInterfaceName": "str",
                                                 "ipConfigurations": [
@@ -5447,6 +5570,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -5483,6 +5607,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -5533,6 +5658,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5563,6 +5693,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -5604,6 +5737,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -5740,6 +5874,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -5760,6 +5897,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -5801,6 +5941,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -5898,6 +6039,11 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -5928,6 +6074,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -5969,6 +6118,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -6193,6 +6343,9 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -6234,6 +6387,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -6370,6 +6524,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                         "name": "str",
                                         "properties": {
                                             "disableBgpRoutePropagation": bool,
+                                            "disablePeeringRoute": "str",
                                             "provisioningState": "str",
                                             "resourceGuid": "str",
                                             "routes": [
@@ -6381,6 +6536,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                                                         "nextHopType": "str",
                                                         "addressPrefix": "str",
                                                         "hasBgpOverride": bool,
+                                                        "nextHop": {"nextHopIpAddresses": ["str"]},
                                                         "nextHopIpAddress": "str",
                                                         "provisioningState": "str",
                                                     },
@@ -6457,7 +6613,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6471,7 +6627,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             network_security_group_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -6484,7 +6640,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
             await self.client.network_security_groups.begin_delete(
                 resource_group_name=resource_group.name,
                 network_security_group_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -6496,7 +6652,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
     async def test_network_security_groups_list(self, resource_group):
         response = self.client.network_security_groups.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -6506,7 +6662,7 @@ class TestNetworkManagementNetworkSecurityGroupsOperationsAsync(AzureMgmtRecorde
     @recorded_by_proxy_async
     async def test_network_security_groups_list_all(self, resource_group):
         response = self.client.network_security_groups.list_all(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

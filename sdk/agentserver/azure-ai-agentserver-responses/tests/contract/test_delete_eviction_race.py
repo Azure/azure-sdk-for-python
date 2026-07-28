@@ -149,10 +149,10 @@ class TestDeleteEvictionRace:
         _fallback_delete_called = False
         _original_provider_delete = _ResponseEndpointHandler._provider_delete_response
 
-        async def _recording_fallback(self_handler: Any, response_id: str, isolation: Any, headers: Any) -> Any:
+        async def _recording_fallback(self_handler: Any, response_id: str, context: Any, headers: Any) -> Any:
             nonlocal _fallback_delete_called
             _fallback_delete_called = True
-            return await _original_provider_delete(self_handler, response_id, isolation, headers)
+            return await _original_provider_delete(self_handler, response_id, context, headers)
 
         monkeypatch.setattr(_ResponseEndpointHandler, "_provider_delete_response", _recording_fallback)
 

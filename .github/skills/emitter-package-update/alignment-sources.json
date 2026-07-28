@@ -1,0 +1,9 @@
+{
+  "azure-rest-api-specs": {
+    "packageJsonUrl": "https://github.com/Azure/azure-rest-api-specs/blob/main/package.json",
+    "packages": [
+      "@azure-tools/openai-typespec",
+      "@azure-tools/typespec-liftr-base"
+    ]
+  }
+}

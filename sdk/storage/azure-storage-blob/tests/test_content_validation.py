@@ -18,6 +18,20 @@ from settings.testcase import BlobPreparer
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
+from azure.storage.blob._shared import validation
+
+
+def test_content_md5_is_not_used_for_security(monkeypatch):
+    original_md5 = validation.hashlib.md5
+
+    def fips_md5(*args, **kwargs):
+        if kwargs.get("usedforsecurity") is not False:
+            raise ValueError("MD5 is unavailable for security use")
+        return original_md5(*args, **kwargs)
+
+    monkeypatch.setattr(validation.hashlib, "md5", fips_md5)
+
+    assert validation.calculate_content_md5(b"test") == bytes.fromhex("098f6bcd4621d373cade4e832627b4f6")
 
 
 def assert_content_md5(request):
@@ -645,3 +659,23 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         blob.commit_block_list([BlobBlock("1")])
         result = blob.download_blob()
         assert result.read() == content
+
+    @BlobPreparer()
+    @pytest.mark.parametrize("a", ["auto", "crc64"])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_download_decompress_with_crc64(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        self._setup(storage_account_name)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b"abc" * 512
+        blob.upload_blob(data, overwrite=True)
+
+        # decompress=True should raise ValueError
+        with pytest.raises(ValueError, match="Decompression is not supported when using CRC64 content validation."):
+            blob.download_blob(validate_content=a, decompress=True)
+
+        # decompress=False should work fine
+        downloader = blob.download_blob(validate_content=a, decompress=False)
+        assert downloader.read() == data

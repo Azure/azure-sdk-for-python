@@ -235,11 +235,14 @@ INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
     "hosted_agents": hosted_agents_instructions,
+    "skills": resource_management_instructions,
+    "toolboxes": resource_management_instructions,
     "memories": memories_instructions,
     "connections": resource_management_instructions,
     "files": resource_management_instructions,
     "deployments": resource_management_instructions,
     "datasets": resource_management_instructions,
+    "models": resource_management_instructions,
     "chat_completions": chat_completions_instructions,
     "finetuning": fine_tuning_instructions,
     "evaluations/agentic_evaluators": evaluations_instructions,
@@ -253,7 +256,7 @@ def get_instructions_for_sample_path(sample_path: str) -> str:
     The sample path may be absolute or relative and may use either '\\' or '/'.
     Matching is done against the path segment under the `samples/` directory.
 
-    Falls back to resource_management_instructions when no folder match is found.
+    Raises ValueError when no explicit folder mapping is found.
     """
 
     normalized = str(sample_path).replace("\\", "/")
@@ -272,4 +275,8 @@ def get_instructions_for_sample_path(sample_path: str) -> str:
         if folder == key or folder.startswith(f"{key}/"):
             return INSTRUCTIONS_BY_FOLDER[key]
 
-    return resource_management_instructions
+    known = ", ".join(sorted(INSTRUCTIONS_BY_FOLDER.keys()))
+    raise ValueError(
+        f"No LLM instruction mapping found for sample folder '{folder}' from path '{sample_path}'. "
+        f"Add an entry to INSTRUCTIONS_BY_FOLDER. Known folders: {known}"
+    )

@@ -1050,5 +1050,60 @@ class TestAsyncAvailabilityStrategy:
         await self._clean_up_container(setup['client_without_fault'], setup_with_transport['db'].id,
                                        setup_with_transport['col'].id)
 
+    # When the async client is built with a hedging strategy and a
+    # per-call surface explicitly passes ``availability_strategy=None``,
+    # the request must still hedge per the client's strategy.
+    @pytest.mark.asyncio
+    async def test_per_request_none_falls_back_to_client_strategy_async(self, setup):
+        uri_down = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_1'])
+        failed_over_uri = _location_cache.LocationCache.GetLocationalEndpoint(self.host, setup['region_2'])
+
+        predicate = lambda r: (FaultInjectionTransportAsync.predicate_is_document_operation(r) and
+                               FaultInjectionTransportAsync.predicate_is_operation_type(r, OperationType.Read) and
+                               FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
+        error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
+            1000,
+            CosmosHttpResponseError(status_code=400, message="Injected Error"),
+        )
+        custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
+
+        client_strategy = {'threshold_ms': 150, 'threshold_steps_ms': 50}
+        setup_with_transport = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            custom_transport,
+            multiple_write_locations=True,
+            availability_strategy=client_strategy,
+        )
+        setup_without_fault = await self._setup_method_with_custom_transport(
+            setup['write_locations'],
+            setup['read_locations'],
+            None,
+        )
+
+        doc = _create_doc()
+        await setup_without_fault['col'].create_item(doc)
+
+        # Exercise the explicit per-request None path directly; helper
+        # utilities omit the kwarg when the value is None.
+        await setup_with_transport['col'].read_item(
+            item=doc['id'],
+            partition_key=doc['pk'],
+            availability_strategy=None,
+        )
+        _validate_response_uris(
+            [uri_down, failed_over_uri],
+            [],
+            operation_type=OperationType.Read,
+            resource_type=ResourceType.Document,
+        )
+        await setup_with_transport['client'].close()
+        await setup_without_fault['client'].close()
+        await self._clean_up_container(
+            setup['client_without_fault'],
+            setup_with_transport['db'].id,
+            setup_with_transport['col'].id,
+        )
+
 if __name__ == '__main__':
     unittest.main()

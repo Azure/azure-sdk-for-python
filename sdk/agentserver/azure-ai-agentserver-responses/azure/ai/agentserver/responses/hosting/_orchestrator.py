@@ -41,7 +41,7 @@ from ..streaming._helpers import (
     _extract_response_snapshot_from_events,
 )
 from ..streaming._internals import construct_event_model
-from ..streaming._sse import encode_keep_alive_comment, encode_sse_any_event, new_stream_counter
+from ..streaming._sse import encode_sse_any_event, new_stream_counter
 from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
@@ -326,21 +326,21 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # Persist at response.created time for bg+store (FR-003)
                     if store and provider is not None:
                         try:
-                            _isolation = context.isolation if context else None
+                            _context = context.platform_context if context else None
                             _response_obj = generated_models.ResponseObject(_initial_snapshot)
                             _history_ids = (
                                 await provider.get_history_item_ids(
                                     record.previous_response_id,
                                     None,
                                     history_limit,
-                                    isolation=_isolation,
+                                    context=_context,
                                 )
                                 if record.previous_response_id
                                 else None
                             )
                             _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                             await provider.create_response(
-                                _response_obj, _resolved_items, _history_ids, isolation=_isolation
+                                _response_obj, _resolved_items, _history_ids, context=_context
                             )
                             _provider_created = True
                         except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -501,15 +501,15 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                 record.set_response_snapshot(storage_error_response)
                 record.status = "failed"  # type: ignore[assignment]
             else:
-                _isolation = context.isolation if context else None
+                _context = context.platform_context if context else None
                 try:
                     if _provider_created:
-                        await provider.update_response(record.response, isolation=_isolation)
+                        await provider.update_response(record.response, context=_context)
                     else:
                         # Response was never created (handler yielded nothing or
                         # failed before response.created) — create instead of update.
                         _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
-                        await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
+                        await provider.create_response(record.response, _resolved_items, None, context=_context)
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
                     logger.error(
@@ -602,7 +602,7 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
         previous_response_id=ctx.previous_response_id,
         agent_session_id=ctx.agent_session_id,
         conversation_id=ctx.conversation_id,
-        chat_isolation_key=ctx.chat_isolation_key,
+        user_id_key=ctx.user_id,
     )
     # Stash on state so _finalize_stream can access persistence_failed
     state.bg_record = record
@@ -919,11 +919,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 self._apply_storage_error_replacement(ctx, state, record)
             else:
                 record.response.background = record.mode_flags.background
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 try:
                     if state.provider_created:
                         # bg+stream: initial create already done at response.created — use update
-                        await self._provider.update_response(record.response, isolation=_isolation)
+                        await self._provider.update_response(record.response, context=_context)
                     else:
                         # non-bg stream or bg stream where initial create was never registered:
                         # full create
@@ -932,7 +932,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                                 ctx.previous_response_id,
                                 None,
                                 self._runtime_options.default_fetch_history_count,
-                                isolation=_isolation,
+                                context=_context,
                             )
                             if ctx.previous_response_id
                             else None
@@ -942,7 +942,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             generated_models.ResponseObject(response_payload),
                             _resolved_items,
                             _history_ids,
-                            isolation=_isolation,
+                            context=_context,
                         )
                 except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                     setattr(persist_exc, PLATFORM_ERROR_TAG, True)
@@ -1003,7 +1003,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -1012,14 +1012,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         await state.bg_record.subject.publish(first_normalized)
         await self._runtime_state.add(execution)
         if ctx.store:
-            _isolation = ctx.context.isolation if ctx.context else None
+            _context = ctx.context.platform_context if ctx.context else None
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids(
                     ctx.previous_response_id,
                     None,
                     self._runtime_options.default_fetch_history_count,
-                    isolation=_isolation,
+                    context=_context,
                 )
                 if ctx.previous_response_id
                 else None
@@ -1027,7 +1027,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
             try:
                 await self._provider.create_response(
-                    _initial_response_obj, _resolved_items, _history_ids, isolation=_isolation
+                    _initial_response_obj, _resolved_items, _history_ids, context=_context
                 )
                 state.provider_created = True
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
@@ -1336,10 +1336,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
             # Persist SSE events for replay after process restart (not needed for cancelled).
             if record.status != "cancelled" and self._stream_provider is not None and state.handler_events:
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 try:
                     await self._stream_provider.save_stream_events(
-                        ctx.response_id, state.handler_events, isolation=_isolation
+                        ctx.response_id, state.handler_events, context=_context
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
@@ -1419,7 +1419,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         # Copy persistence_failed from the ephemeral record if one was used
@@ -1430,9 +1430,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # Persist SSE events for replay after eager eviction (bg+stream only).
         if ctx.background and ctx.store and self._stream_provider is not None and events:
-            _isolation = ctx.context.isolation if ctx.context else None
+            _context = ctx.context.platform_context if ctx.context else None
             try:
-                await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
+                await self._stream_provider.save_stream_events(ctx.response_id, events, context=_context)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Best-effort stream event persistence failed (response_id=%s)",
@@ -1461,7 +1461,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         - Empty handler (fallback synthesised events).
         - Mid-stream handler errors (``response.failed`` SSE event, S-035).
         - Cancellation terminal events.
-        - Optional SSE keep-alive comments.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -1476,7 +1475,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         Delegates all event processing (first-event handling, normalisation,
         bg record registration, S-035 / S-015 / B11 terminal events) to
         :meth:`_process_handler_events`.  This method only encodes each event
-        dict to SSE and handles keep-alive comment injection.
+        dict to SSE. Keep-alive comment injection is handled at the transport
+        layer (:func:`streaming._sse.with_keep_alive`) in the endpoint handler.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -1499,153 +1499,77 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _finalize() -> None:
             await self._finalize_stream(ctx, state)
 
-        # --- Fast path: no keep-alive ---
-        if not self._runtime_options.sse_keep_alive_enabled:
-            if not (ctx.background and ctx.store):
-                # Simple fast path for non-background streaming.
-                _stream_completed = False
-                try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        yield encode_sse_any_event(event)
-                    _stream_completed = True
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        yield encode_sse_any_event(resolved)
-                finally:
-                    # B17: If the stream did not complete naturally (e.g. client
-                    # disconnect → CancelledError), mark it as interrupted so
-                    # _finalize_stream skips persistence for non-bg streams.
-                    if not _stream_completed:
-                        state.stream_interrupted = True
-                    await _finalize()
-                return
-
-            # Background+stream without keep-alive: run the handler as an independent
-            # asyncio.Task so that finalization (including subject.complete()) is
-            # guaranteed to run even when the original SSE connection is dropped before
-            # all events are delivered.  Without this, _live_stream can be abandoned
-            # mid-iteration by Starlette (the async-generator finalizer may not fire
-            # promptly), leaving GET-replay subscribers blocked on await q.get() forever.
-            _SENTINEL_BG = object()
-            bg_queue: asyncio.Queue[object] = asyncio.Queue()
-
-            async def _bg_producer_inner() -> None:
-                try:
-                    async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        await bg_queue.put(encode_sse_any_event(event))
-                    # Persist-then-yield: resolve the buffered terminal event
-                    if state.pending_terminal is not None:
-                        record = state.bg_record or _make_ephemeral_record(ctx, state)
-                        resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                        await bg_queue.put(encode_sse_any_event(resolved))
-                except Exception as exc:  # pylint: disable=broad-exception-caught
-                    logger.error(
-                        "Background stream producer failed (response_id=%s)",
-                        ctx.response_id,
-                        exc_info=exc,
-                    )
-                    state.captured_error = exc
-                finally:
-                    # Always finalize (includes subject.complete()) — this runs even if
-                    # the original POST SSE connection was dropped and _live_stream is
-                    # never properly closed by Starlette.
-                    await _finalize()
-                    await bg_queue.put(_SENTINEL_BG)
-
-            async def _bg_producer() -> None:
-                try:
-                    # FR-013: Shield the inner producer via asyncio.shield so
-                    # that Starlette's anyio cancel-scope cancellation (triggered
-                    # by client disconnect) does NOT propagate into the handler.
-                    # asyncio.shield() creates a new inner Task whose cancellation
-                    # is independent of the outer task.
-                    await asyncio.shield(_bg_producer_inner())
-                except asyncio.CancelledError:
-                    pass  # outer task cancelled by scope; inner task continues
-
-            bg_task = asyncio.create_task(_bg_producer())
-            try:
-                while True:
-                    item = await bg_queue.get()
-                    if item is _SENTINEL_BG:
-                        break
-                    yield item  # type: ignore[misc]
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass  # SSE connection dropped; bg_task continues independently
-            finally:
-                # Wait for the handler task so _finalize() has run before we exit.
-                # Do NOT cancel it — background+stream must reach a terminal state
-                # regardless of client connectivity.
-                if not bg_task.done():
-                    try:
-                        await bg_task
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        pass
-            return
-
-        # --- Keep-alive path: merge handler events with periodic keep-alive comments ---
-        # via a shared asyncio.Queue so comments are sent even while the handler is idle.
-        _SENTINEL = object()
-        merge_queue: asyncio.Queue[str | object] = asyncio.Queue()
-
-        async def _handler_producer() -> None:
+        if not (ctx.background and ctx.store):
+            # Simple path for non-background (or non-store) streaming.
+            _stream_completed = False
             try:
                 async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    await merge_queue.put(encode_sse_any_event(event))
+                    yield encode_sse_any_event(event)
+                _stream_completed = True
                 # Persist-then-yield: resolve the buffered terminal event
                 if state.pending_terminal is not None:
                     record = state.bg_record or _make_ephemeral_record(ctx, state)
                     resolved = await self._persist_and_resolve_terminal(ctx, state, record)
-                    await merge_queue.put(encode_sse_any_event(resolved))
+                    yield encode_sse_any_event(resolved)
             finally:
-                await merge_queue.put(_SENTINEL)
+                # B17: mark an interrupted (not naturally completed) stream so
+                # _finalize_stream skips persistence for non-bg streams.
+                if not _stream_completed:
+                    state.stream_interrupted = True
+                await _finalize()
+            return
 
-        async def _keep_alive_producer(interval: int) -> None:
+        # Background+stream (store): run the handler as an independent task so finalization
+        # (including subject.complete()) runs even when the SSE connection is dropped before
+        # all events are delivered.
+        _SENTINEL_BG = object()
+        bg_queue: asyncio.Queue[object] = asyncio.Queue()
+
+        async def _bg_producer_inner() -> None:
             try:
-                while True:
-                    await asyncio.sleep(interval)
-                    await merge_queue.put(encode_keep_alive_comment())
+                async for event in self._process_handler_events(ctx, state, handler_iterator):
+                    await bg_queue.put(encode_sse_any_event(event))
+                # Persist-then-yield: resolve the buffered terminal event
+                if state.pending_terminal is not None:
+                    record = state.bg_record or _make_ephemeral_record(ctx, state)
+                    resolved = await self._persist_and_resolve_terminal(ctx, state, record)
+                    await bg_queue.put(encode_sse_any_event(resolved))
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Background stream producer failed (response_id=%s)",
+                    ctx.response_id,
+                    exc_info=exc,
+                )
+                state.captured_error = exc
+            finally:
+                await _finalize()
+                await bg_queue.put(_SENTINEL_BG)
+
+        async def _bg_producer() -> None:
+            try:
+                # FR-013: Shield the producer so client-disconnect cancellation does not
+                # propagate into the handler.
+                await asyncio.shield(_bg_producer_inner())
             except asyncio.CancelledError:
-                return
+                pass  # outer task cancelled by scope; inner task continues
 
-        handler_task = asyncio.create_task(_handler_producer())
-        keep_alive_task = asyncio.create_task(
-            _keep_alive_producer(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
-        )
-
-        _ka_stream_completed = False
+        bg_task = asyncio.create_task(_bg_producer())
         try:
             while True:
-                item = await merge_queue.get()
-                if item is _SENTINEL:
-                    _ka_stream_completed = True
+                item = await bg_queue.get()
+                if item is _SENTINEL_BG:
                     break
                 yield item  # type: ignore[misc]
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error(
-                "Stream consumer failed (response_id=%s)",
-                ctx.response_id,
-                exc_info=exc,
-            )
-            state.captured_error = exc
+        except Exception:  # pylint: disable=broad-exception-caught
+            pass  # SSE connection dropped; bg_task continues independently
         finally:
-            if not _ka_stream_completed:
-                state.stream_interrupted = True
-            keep_alive_task.cancel()
-            try:
-                await keep_alive_task
-            except asyncio.CancelledError:
-                pass
-            # Ensure the handler task has finished before finalising
-            if not handler_task.done():
-                handler_task.cancel()
+            # Await the producer (do not cancel it) so it reaches a terminal state and
+            # _finalize() has run before returning.
+            if not bg_task.done():
                 try:
-                    await handler_task
-                except asyncio.CancelledError:
+                    await bg_task
+                except Exception:  # pylint: disable=broad-exception-caught
                     pass
-            await _finalize()
 
     async def run_sync(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Execute a synchronous (non-stream, non-background) create-response request.
@@ -1720,7 +1644,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1733,14 +1657,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Persist via provider (non-bg sync: single create at terminal state).
             # §3.1: Persistence failure replaces the response body with storage_error.
             try:
-                _isolation = ctx.context.isolation if ctx.context else None
+                _context = ctx.context.platform_context if ctx.context else None
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
                         ctx.previous_response_id,
                         None,
                         self._runtime_options.default_fetch_history_count,
-                        isolation=_isolation,
+                        context=_context,
                     )
                     if ctx.previous_response_id
                     else None
@@ -1750,7 +1674,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _response_obj,
                     _resolved_items,
                     _history_ids,
-                    isolation=_isolation,
+                    context=_context,
                 )
             except Exception as persist_exc:  # pylint: disable=broad-exception-caught
                 logger.error(
@@ -1818,7 +1742,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
-            chat_isolation_key=ctx.chat_isolation_key,
+            user_id_key=ctx.user_id,
         )
 
         # Register so GET can observe in-flight state
