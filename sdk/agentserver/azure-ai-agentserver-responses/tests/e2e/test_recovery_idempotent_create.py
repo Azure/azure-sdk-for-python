@@ -16,10 +16,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.ai.agentserver.responses.store import (
-    ResponseAlreadyExistsError,
-    ResponseProviderProtocol,
-)
+from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 

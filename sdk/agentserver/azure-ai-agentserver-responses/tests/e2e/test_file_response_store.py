@@ -16,11 +16,9 @@ from typing import Any
 
 import pytest
 
+from azure.ai.agentserver.responses import FileResponseStore
 from azure.ai.agentserver.responses.models._generated import ResponseObject
-from azure.ai.agentserver.responses.store import (
-    FileResponseStore,
-    ResponseAlreadyExistsError,
-)
+from azure.ai.agentserver.responses.store import ResponseAlreadyExistsError
 
 
 def _make_response(response_id: str = "resp_test", status: str = "in_progress") -> ResponseObject:
