@@ -42,7 +42,10 @@ async def run_workload(client_id: str):
         await asyncio.sleep(1)
 
         try:
-            await write_item_concurrently_initial(cont, NUMBER_OF_LOGICAL_PARTITIONS + 1)  # Number of concurrent upserts
+            # Ids run test-0 .. test-NUMBER_OF_LOGICAL_PARTITIONS, so seed one more
+            # item than that highest index. The timed runs pick from the same
+            # inclusive range.
+            await write_item_concurrently_initial(cont, NUMBER_OF_LOGICAL_PARTITIONS + 1)
         except Exception as e:
             logger.error(e)
             raise e

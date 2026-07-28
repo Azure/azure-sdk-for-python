@@ -29,6 +29,9 @@ export COSMOS_URI="${COSMOS_URI:-https://sdkdev-dikshi.documents.azure.com:443/}
 export COSMOS_DATABASE="${COSMOS_DATABASE:-scale_db}"
 export COSMOS_CONTAINER="${COSMOS_CONTAINER:-scale_cont}"
 export COSMOS_PARTITION_KEY="${COSMOS_PARTITION_KEY:-id}"
+# Highest item index, despite the name: ids run test-0 .. test-<this>, so the
+# container holds one more item than this number. Seeding and the timed run must
+# agree, or reads ask for ids that do not exist.
 export COSMOS_NUMBER_OF_LOGICAL_PARTITIONS="${COSMOS_NUMBER_OF_LOGICAL_PARTITIONS:-10000}"
 # RU/s for scale_cont. Size so a short run shows NO steady 429s -- a 429 is the
 # account being RU-limited, not the SDK being slow. 100k suits a single read-heavy
