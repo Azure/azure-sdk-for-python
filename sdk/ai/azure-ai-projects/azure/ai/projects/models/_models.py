@@ -15884,6 +15884,7 @@ class WorkIQPreviewToolboxTool(ToolboxTool, discriminator="work_iq_preview"):
 
 # RLE (reinforcement learning) grafted from generated code
 
+
 class CreateRLEnvironmentRequest(_Model):
     """Request body for creating a hosted RLE environment.
 
@@ -15916,6 +15917,7 @@ class CreateRLEnvironmentRequest(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class CreateRLESandboxRequest(_Model):
     """Request body for leasing a new sandbox from an RLE environment.
@@ -15966,6 +15968,7 @@ class CreateRLESandboxRequest(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class ListRLEnvironmentsResponse(_Model):
     """Response for listing hosted RLE environments.
 
@@ -15998,6 +16001,7 @@ class ListRLEnvironmentsResponse(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class ListRLESandboxesResponse(_Model):
     """Response for listing sandboxes leased for an RLE environment.
 
@@ -16029,6 +16033,7 @@ class ListRLESandboxesResponse(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEnvironment(_Model):
     """A hosted reinforcement-learning environment that sandboxes are leased from.
@@ -16082,6 +16087,7 @@ class RLEnvironment(_Model):
     updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the environment was last updated, in UTC. Required."""
 
+
 class RLEnvironmentState(_Model):
     """Snapshot returned by the RLE environment ``state`` endpoint.
 
@@ -16113,6 +16119,7 @@ class RLEnvironmentState(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEnvironmentVersion(_Model):
     """A historical version snapshot of a hosted RLE environment.
@@ -16164,6 +16171,7 @@ class RLEnvironmentVersion(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class RLEResetRequest(_Model):
     """Request body for starting or restarting an RLE environment episode.
 
@@ -16196,11 +16204,12 @@ class RLEResetRequest(_Model):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
+
 class RLESandbox(_Model):
     """A sandbox leased from a hosted RLE environment.
 
-    :ivar sandbox_id: RLESandbox identifier, assigned by the service. Required.
-    :vartype sandbox_id: str
+    :ivar id: RLESandbox identifier, assigned by the service. Required.
+    :vartype id: str
     :ivar project_id: Foundry project identifier that owns the sandbox. Required.
     :vartype project_id: str
     :ivar environment_id: Identifier of the parent RLE environment from which the sandbox was
@@ -16224,7 +16233,7 @@ class RLESandbox(_Model):
     :vartype updated_at_utc: ~datetime.datetime
     """
 
-    sandbox_id: str = rest_field(name="id", visibility=["read"])
+    id: str = rest_field(name="id", visibility=["read"])
     """RLESandbox identifier, assigned by the service. Required."""
     project_id: str = rest_field(name="projectId", visibility=["read"])
     """Foundry project identifier that owns the sandbox. Required."""
@@ -16246,6 +16255,7 @@ class RLESandbox(_Model):
     """Timestamp the sandbox was first leased, in UTC. Required."""
     updated_at_utc: datetime.datetime = rest_field(name="updatedAtUtc", visibility=["read"], format="rfc3339")
     """Timestamp the sandbox was last updated, in UTC. Required."""
+
 
 class RLEStepRequest(_Model):
     """Request body for applying an action to the current RLE episode.
@@ -16273,6 +16283,7 @@ class RLEStepRequest(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
 
 class RLEStepResult(_Model):
     """Outcome returned by RLE ``reset`` and ``step`` in the OpenEnv / Gymnasium wire shape.
