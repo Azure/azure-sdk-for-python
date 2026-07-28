@@ -2159,6 +2159,10 @@
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
       "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
       "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-responses/**",
+      "words": ["alnum", "aread", "cchain", "CRASHME", "dedup", "dedups", "dones", "etype", "getpgid", "idless", "injectively", "inmemory", "inprog", "interruptibly", "killpg", "nonbg", "pctx", "pointerized", "rchain", "sess", "TOCTOU", "unacked", "unstarted"]
     }
   ],
   "allowCompoundWords": true
