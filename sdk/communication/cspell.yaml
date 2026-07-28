@@ -3,12 +3,27 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - astimezone
+  - asyncgw
   - ctxt
-  - deser
-  - deseralize
-  - duiothub
-  - mday
+  - deserializers
+  - Dtmf
+  - FNNHHJT
+  - gettz
+  - mros
   - Nify
+  - Njgw
+  - nypg
+  - orgid
+  - PBOF
+  - PSTN
+  - Retriable
+  - ssml
+  - tzutc
+  - unassigning
+  - unassignment
   - unflattened
+  - Unhold
+  - unmuted
   - wday
+  - XVCJ
+  - Zwiz

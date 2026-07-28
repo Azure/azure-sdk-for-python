@@ -3,7 +3,9 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - cargs
-  - mirid
-  - testdb
-  - undoc
+  - diarization
+  - pclp
+  - pcsp
+  - Rehaan
+ignorePaths:
+  - sdk/transcription/azure-ai-transcription/**/*.wav

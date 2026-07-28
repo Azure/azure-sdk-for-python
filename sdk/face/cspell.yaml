@@ -3,12 +3,16 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - astimezone
   - ctxt
-  - deser
-  - deseralize
-  - duiothub
-  - mday
+  - dcid
+  - dynamicpersongroupid
+  - faceid
+  - facelistid
+  - largefacelistid
+  - largepersongroupid
+  - maxnumofcandidatesreturned
+  - mros
   - Nify
-  - unflattened
+  - persongroupid
+  - personid
   - wday

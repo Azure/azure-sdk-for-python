@@ -3,7 +3,8 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - cargs
-  - mirid
-  - testdb
-  - undoc
+  - ctxt
+  - deserializers
+  - mros
+  - Nify
+  - wday
