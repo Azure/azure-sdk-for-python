@@ -7,7 +7,7 @@
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to drive a hosted RLE (OpenEnv) Code RL
     environment using `project_client.rle.get_openenv_client(...)`. The OpenEnv client reserves the
-    requested concurrency quota (``min_concurrency``) in advance; entering its context fails fast if
+    requested concurrency quota (``num_instances``) in advance; entering its context fails fast if
     the quota cannot be satisfied (v1 does not queue). It then hands out an instance via
     `get_instance()`, addressable through its data-plane URI, which drives reset, step, and state.
     The sample submits one incorrect program and one correct program to show how the reward and
@@ -63,10 +63,10 @@ def main() -> int:
         help="Hosted RLE environment version, or set RLE_ENV_VERSION (optional).",
     )
     parser.add_argument(
-        "--min-concurrency",
+        "--num-instances",
         type=int,
         default=1,
-        help="Concurrency quota to reserve in advance (v1 fails fast if it cannot be met).",
+        help="Number of instances to reserve in advance (v1 fails fast if it cannot be met).",
     )
     parser.add_argument("--seed", type=int, default=0, help="Task seed passed to instance.reset().")
     args = parser.parse_args()
@@ -83,7 +83,7 @@ def main() -> int:
         with project_client.rle.get_openenv_client(
             name=args.name,
             version=args.version,
-            min_concurrency=args.min_concurrency,
+            num_instances=args.num_instances,
         ) as openenv_client:
             with openenv_client.get_instance() as instance:
                 print(f"instance_id={instance.instance_id} dataplane_uri={instance.dataplane_uri}\n")

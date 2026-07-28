@@ -125,7 +125,7 @@ def _lease_running_sandbox(
     return sandbox
 
 
-class RLEInstance:
+class OpenEnvInstance:
     """A leased RLE sandbox ("instance") that runs episodes, addressable via its data-plane URI.
 
     An instance is obtained from :meth:`OpenEnvClient.get_instance`. It wraps a single leased
@@ -184,7 +184,7 @@ class RLEInstance:
         """The underlying leased sandbox model."""
         return self._sandbox
 
-    def __enter__(self) -> "RLEInstance":
+    def __enter__(self) -> "OpenEnvInstance":
         return self
 
     def __exit__(self, *exc: Any) -> None:
@@ -211,6 +211,7 @@ class RLEInstance:
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
+        self._ensure_healthy()
         body = RLEResetRequest(seed=seed, episode_id=episode_id)
         return self._sandboxes.reset(
             self._environment_id, self._sandbox_id, body, foundry_features=_RLE_FEATURE, **kwargs
@@ -225,6 +226,7 @@ class RLEInstance:
         :return: The step result after applying the action.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
+        self._ensure_healthy()
         body = RLEStepRequest(action=coerce_action(action, action_kwargs))
         return self._sandboxes.step(self._environment_id, self._sandbox_id, body, foundry_features=_RLE_FEATURE)
 
@@ -235,6 +237,7 @@ class RLEInstance:
         :return: The current environment state.
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
+        self._ensure_healthy()
         return self._sandboxes.state(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     @distributed_trace
@@ -253,6 +256,7 @@ class RLEInstance:
         :return: Instance metadata.
         :rtype: dict[str, any]
         """
+        self._ensure_healthy()
         return self._sandboxes.get_metadata(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     @distributed_trace
@@ -262,7 +266,16 @@ class RLEInstance:
         :return: The instance action and observation schema.
         :rtype: dict[str, any]
         """
+        self._ensure_healthy()
         return self._sandboxes.schema(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
+
+    def _ensure_healthy(self) -> None:
+        """Confirm the instance reports healthy before issuing a runtime request.
+
+        A failed health probe surfaces as :class:`~azure.core.exceptions.HttpResponseError`,
+        consistent with the other operation groups.
+        """
+        self._sandboxes.health(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     def _release(self) -> None:
         """Release the underlying sandbox, best effort."""
@@ -276,13 +289,13 @@ class OpenEnvClient:
     """A client over a hosted RLE (OpenEnv) environment with a reserved concurrency quota.
 
     Created via :meth:`RLEOperations.get_openenv_client`. On entering its context (or calling
-    :meth:`reserve`) the client leases ``min_concurrency`` running instances up front. This is the
+    :meth:`reserve`) the client leases ``num_instances`` running instances up front. This is the
     v1 quota model: the customer's concurrency requirement is provided in advance and the request
     fails immediately if the quota cannot be satisfied -- there is no queueing. Future revisions may
     relax this with queueing and elastic scaling.
 
-    :meth:`get_instance` hands out one of the reserved :class:`RLEInstance` objects. Because each
-    :meth:`RLEInstance.reset` starts a fresh episode, an instance may be shared across episodes
+    :meth:`get_instance` hands out one of the reserved :class:`OpenEnvInstance` objects. Because each
+    :meth:`OpenEnvInstance.reset` starts a fresh episode, an instance may be shared across episodes
     (return it to the pool and reuse it) or dedicated to a single episode. Closing the client
     releases every leased instance.
 
@@ -290,8 +303,8 @@ class OpenEnvClient:
     :paramtype environment_id: str
     :keyword sandboxes: Generated sandbox operations bound to the project client. Required.
     :paramtype sandboxes: ~azure.ai.projects.operations.RLESandboxesOperations
-    :keyword min_concurrency: Number of instances to reserve in advance. Required.
-    :paramtype min_concurrency: int
+    :keyword num_instances: Number of instances to reserve in advance. Required.
+    :paramtype num_instances: int
     :keyword lease_request: The sandbox lease request used for every reserved instance. Required.
     :paramtype lease_request: ~azure.ai.projects.models.CreateRLESandboxRequest
     :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
@@ -306,23 +319,23 @@ class OpenEnvClient:
         *,
         environment_id: str,
         sandboxes: RLESandboxesOperations,
-        min_concurrency: int,
+        num_instances: int,
         lease_request: CreateRLESandboxRequest,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
     ) -> None:
         if not environment_id:
             raise ValueError("environment_id is required")
-        if min_concurrency < 1:
-            raise ValueError("min_concurrency must be >= 1")
+        if num_instances < 1:
+            raise ValueError("num_instances must be >= 1")
         self._environment_id = environment_id
         self._sandboxes = sandboxes
-        self._min_concurrency = min_concurrency
+        self._num_instances = num_instances
         self._lease_request = lease_request
         self._create_timeout_s = create_timeout_s
         self._poll_interval_s = poll_interval_s
-        self._pool: List[RLEInstance] = []
-        self._available: List[RLEInstance] = []
+        self._pool: List[OpenEnvInstance] = []
+        self._available: List[OpenEnvInstance] = []
         self._lock = threading.Lock()
         self._reserved = False
         self._closed = False
@@ -333,12 +346,12 @@ class OpenEnvClient:
         return self._environment_id
 
     @property
-    def min_concurrency(self) -> int:
+    def num_instances(self) -> int:
         """Number of instances reserved in advance for this client."""
-        return self._min_concurrency
+        return self._num_instances
 
     @property
-    def instances(self) -> List[RLEInstance]:
+    def instances(self) -> List[OpenEnvInstance]:
         """The reserved instances owned by this client."""
         return list(self._pool)
 
@@ -350,7 +363,7 @@ class OpenEnvClient:
         self.close()
 
     def reserve(self) -> None:
-        """Lease ``min_concurrency`` running instances in advance.
+        """Lease ``num_instances`` running instances in advance.
 
         This is idempotent: reserving an already-reserved client does nothing. If the quota cannot
         be satisfied, any partially-leased instances are released and an error is raised (v1 fails
@@ -362,7 +375,7 @@ class OpenEnvClient:
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
             try:
-                for _ in range(self._min_concurrency):
+                for _ in range(self._num_instances):
                     sandbox = _lease_running_sandbox(
                         self._sandboxes,
                         self._environment_id,
@@ -370,7 +383,9 @@ class OpenEnvClient:
                         create_timeout_s=self._create_timeout_s,
                         poll_interval_s=self._poll_interval_s,
                     )
-                    instance = RLEInstance(self._environment_id, sandbox=sandbox, sandboxes=self._sandboxes, owner=self)
+                    instance = OpenEnvInstance(
+                        self._environment_id, sandbox=sandbox, sandboxes=self._sandboxes, owner=self
+                    )
                     self._pool.append(instance)
                     self._available.append(instance)
             except BaseException:
@@ -378,15 +393,15 @@ class OpenEnvClient:
                 raise
             self._reserved = True
 
-    def get_instance(self) -> RLEInstance:
+    def get_instance(self) -> OpenEnvInstance:
         """Check out a reserved instance for one or more episodes.
 
-        The returned :class:`RLEInstance` is a context manager; exiting its context returns it to
-        the pool so it can be reused. In v1 the pool is bounded by ``min_concurrency`` and this
+        The returned :class:`OpenEnvInstance` is a context manager; exiting its context returns it to
+        the pool so it can be reused. In v1 the pool is bounded by ``num_instances`` and this
         method fails when every reserved instance is already checked out -- it does not queue.
 
         :return: A reserved instance ready to run episodes.
-        :rtype: ~azure.ai.projects.operations.RLEInstance
+        :rtype: ~azure.ai.projects.operations.OpenEnvInstance
         """
         with self._lock:
             if self._closed:
@@ -397,12 +412,12 @@ class OpenEnvClient:
                 )
             if not self._available:
                 raise RLEError(
-                    f"no instance available within the reserved quota (min_concurrency={self._min_concurrency}); "
+                    f"no instance available within the reserved quota (num_instances={self._num_instances}); "
                     "v1 does not queue for additional quota"
                 )
             return self._available.pop()
 
-    def _return_instance(self, instance: RLEInstance) -> None:
+    def _return_instance(self, instance: OpenEnvInstance) -> None:
         with self._lock:
             if self._closed:
                 return
@@ -425,211 +440,14 @@ class OpenEnvClient:
             instance._release()  # pylint: disable=protected-access
 
 
-class RLESandboxSession:
-    """Gymnasium-style session over a leased RLE sandbox, backed by the project client.
-
-    Instances are created via :meth:`RLEOperations.create_session` and lease a sandbox
-    from the environment on first use. All requests flow through the owning
-    :class:`~azure.ai.projects.AIProjectClient` pipeline and the Foundry project endpoint.
-
-    :param environment_id: The hosted RLE environment ID to lease a sandbox from. Required.
-    :type environment_id: str
-    :keyword sandboxes: Generated sandbox operations bound to the project client. Required.
-    :paramtype sandboxes: ~azure.ai.projects.operations.RLESandboxesOperations
-    :keyword version: Optional environment image version to lease. Defaults to the latest version.
-    :paramtype version: str or None
-    :keyword cpu: Requested CPU allocation, for example "1" or "500m".
-    :paramtype cpu: str or None
-    :keyword memory: Requested memory allocation, for example "2Gi".
-    :paramtype memory: str or None
-    :keyword disk: Requested disk allocation, for example "10Gi".
-    :paramtype disk: str or None
-    :keyword env_vars: Environment variables to inject into the sandbox.
-    :paramtype env_vars: mapping[str, str] or None
-    :keyword create_timeout_s: Maximum time to wait for the sandbox to become ready, in seconds.
-     Default value is 300.
-    :paramtype create_timeout_s: float
-    :keyword poll_interval_s: Interval between sandbox readiness polls, in seconds. Default value is 2.
-    :paramtype poll_interval_s: float
-    """
-
-    def __init__(
-        self,
-        environment_id: str,
-        *,
-        sandboxes: RLESandboxesOperations,
-        version: Optional[str] = None,
-        cpu: Optional[str] = None,
-        memory: Optional[str] = None,
-        disk: Optional[str] = None,
-        env_vars: Optional[Mapping[str, str]] = None,
-        create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
-        poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
-    ) -> None:
-        if not environment_id:
-            raise ValueError("environment_id is required")
-        self.environment_id = environment_id
-        self._sandboxes = sandboxes
-        self._lease_request = CreateRLESandboxRequest(
-            version=version,
-            cpu=cpu,
-            memory=memory,
-            disk=disk,
-            env_vars=dict(env_vars) if env_vars else None,
-        )
-        self.create_timeout_s = create_timeout_s
-        self.poll_interval_s = poll_interval_s
-        self._sandbox_id: Optional[str] = None
-        self._lease_lock = threading.Lock()
-
-    def __enter__(self) -> "RLESandboxSession":
-        self._ensure_leased()
-        return self
-
-    def __exit__(self, *exc: Any) -> None:
-        self.close()
-
-    @property
-    def sandbox_id(self) -> Optional[str]:
-        """ID of the leased sandbox, or ``None`` before the first request."""
-        return self._sandbox_id
-
-    def close(self) -> None:
-        """Release the leased sandbox, best effort."""
-        self._release_sandbox()
-
-    def _ensure_leased(self) -> str:
-        if self._sandbox_id is not None:
-            return self._sandbox_id
-        with self._lease_lock:
-            if self._sandbox_id is not None:
-                return self._sandbox_id
-            sandbox = self._sandboxes.lease(self.environment_id, self._lease_request, foundry_features=_RLE_FEATURE)
-            if not sandbox.sandbox_id:
-                raise RLEError("service did not return a sandbox id")
-            sandbox_id = sandbox.sandbox_id
-            self._sandbox_id = sandbox_id
-            deadline = time.monotonic() + self.create_timeout_s
-            while not _status_matches(sandbox.status, RLESandboxStatus.RUNNING):
-                if _status_matches(sandbox.status, RLESandboxStatus.FAILED):
-                    raise RLEError(f"sandbox {sandbox_id} failed to start: {sandbox.error or 'unknown error'}")
-                if time.monotonic() >= deadline:
-                    raise RLEError(
-                        f"sandbox {sandbox_id} not ready after {self.create_timeout_s:.0f}s "
-                        f"(last status: {sandbox.status or 'unknown'})"
-                    )
-                time.sleep(self.poll_interval_s)
-                sandbox = self._sandboxes.get_sandbox(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-            return sandbox_id
-
-    def _ensure_healthy(self, sandbox_id: str) -> None:
-        """Confirm the sandbox reports healthy before issuing a runtime request.
-
-        A failed health probe surfaces as :class:`~azure.core.exceptions.HttpResponseError`,
-        consistent with the other operation groups.
-
-        :param sandbox_id: The leased sandbox ID to health-check.
-        :type sandbox_id: str
-        """
-        self._sandboxes.health(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-
-    def _ensure_ready(self) -> str:
-        """Ensure a sandbox is leased and healthy, returning its ID.
-
-        :return: The ID of the leased, healthy sandbox.
-        :rtype: str
-        """
-        sandbox_id = self._ensure_leased()
-        self._ensure_healthy(sandbox_id)
-        return sandbox_id
-
-    def _release_sandbox(self) -> None:
-        sandbox_id = self._sandbox_id
-        if sandbox_id is None:
-            return
-        self._sandbox_id = None
-        try:
-            self._sandboxes.release(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-        except HttpResponseError:
-            pass
-
-    @distributed_trace
-    def reset(self, seed: Optional[int] = None, episode_id: Optional[str] = None, **kwargs: Any) -> RLEStepResult:
-        """Start a new episode and return the initial observation.
-
-        :param seed: Optional seed for deterministic episode initialization.
-        :type seed: int or None
-        :param episode_id: Optional caller-supplied episode identifier.
-        :type episode_id: str or None
-        :return: The initial step result for the new episode.
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        """
-        sandbox_id = self._ensure_ready()
-        body = RLEResetRequest(seed=seed, episode_id=episode_id)
-        return self._sandboxes.reset(self.environment_id, sandbox_id, body, foundry_features=_RLE_FEATURE, **kwargs)
-
-    @distributed_trace
-    def step(self, action: Any = None, **action_kwargs: Any) -> RLEStepResult:
-        """Apply an action and return the resulting observation, reward, and done state.
-
-        :param action: The action to apply, as a mapping or model. Mutually exclusive with keyword fields.
-        :type action: any
-        :return: The step result after applying the action.
-        :rtype: ~azure.ai.projects.models.RLEStepResult
-        """
-        sandbox_id = self._ensure_ready()
-        body = RLEStepRequest(action=coerce_action(action, action_kwargs))
-        return self._sandboxes.step(self.environment_id, sandbox_id, body, foundry_features=_RLE_FEATURE)
-
-    @distributed_trace
-    def state(self) -> RLEnvironmentState:
-        """Return the current environment state.
-
-        :return: The current environment state.
-        :rtype: ~azure.ai.projects.models.RLEnvironmentState
-        """
-        sandbox_id = self._ensure_ready()
-        return self._sandboxes.state(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-
-    @distributed_trace
-    def health(self) -> Dict[str, Any]:
-        """Return environment health information.
-
-        :return: Environment health information.
-        :rtype: dict[str, any]
-        """
-        sandbox_id = self._ensure_leased()
-        return self._sandboxes.health(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-
-    @distributed_trace
-    def metadata(self) -> Dict[str, Any]:
-        """Return environment metadata.
-
-        :return: Environment metadata.
-        :rtype: dict[str, any]
-        """
-        sandbox_id = self._ensure_ready()
-        return self._sandboxes.get_metadata(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-
-    @distributed_trace
-    def schema(self) -> Dict[str, Any]:
-        """Return the environment action and observation schema.
-
-        :return: The environment action and observation schema.
-        :rtype: dict[str, any]
-        """
-        sandbox_id = self._ensure_ready()
-        return self._sandboxes.schema(self.environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
-
-
 class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
-    """Unified RLE operations over environments and sandboxes, plus a session helper.
+    """Unified RLE operations over environments and sandboxes, plus the OpenEnv client factory.
 
     Exposes every generated environment operation (create/list/get/delete) and the sandbox
     read operations (``list_sandboxes``/``get_sandbox``) on a single operation group, accessed
-    through the client's ``rle`` attribute. Sandbox lifecycle and per-episode runtime operations
-    (lease/reset/step/state/health/metadata/schema/release) are driven through the ergonomic
-    :class:`RLESandboxSession` returned by :meth:`create_session`.
+    through the client's ``rle`` attribute. Per-episode runtime operations
+    (reset/step/state/health/metadata/schema) are driven through the :class:`OpenEnvInstance` objects
+    handed out by the :class:`OpenEnvClient` returned by :meth:`get_openenv_client`.
     """
 
     @overload
@@ -803,66 +621,13 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         kwargs.pop("foundry_features", None)
         return super().get_sandbox(environment_id, sandbox_id, foundry_features=_RLE_FEATURE, **kwargs)
 
-    def create_session(
-        self,
-        environment_id: str,
-        *,
-        version: Optional[str] = None,
-        cpu: Optional[str] = None,
-        memory: Optional[str] = None,
-        disk: Optional[str] = None,
-        env_vars: Optional[Mapping[str, str]] = None,
-        create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
-        poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
-    ) -> RLESandboxSession:
-        """Create a Gymnasium-style session that leases a sandbox from an RLE environment.
-
-        The returned :class:`RLESandboxSession` is a context manager that leases a sandbox on entry,
-        waits until it is ready, and releases it on exit. All requests are issued through this
-        client's pipeline and the Foundry project endpoint.
-
-        :param environment_id: The hosted RLE environment ID to lease a sandbox from. Required.
-        :type environment_id: str
-        :keyword version: Optional environment image version to lease. Defaults to the latest version.
-        :paramtype version: str or None
-        :keyword cpu: Requested CPU allocation, for example "1" or "500m".
-        :paramtype cpu: str or None
-        :keyword memory: Requested memory allocation, for example "2Gi".
-        :paramtype memory: str or None
-        :keyword disk: Requested disk allocation, for example "10Gi".
-        :paramtype disk: str or None
-        :keyword env_vars: Environment variables to inject into the sandbox.
-        :paramtype env_vars: mapping[str, str] or None
-        :keyword create_timeout_s: Maximum time to wait for the sandbox to become ready, in seconds.
-         Default value is 300.
-        :paramtype create_timeout_s: float
-        :keyword poll_interval_s: Interval between sandbox readiness polls, in seconds. Default value is 2.
-        :paramtype poll_interval_s: float
-        :return: A sandbox session bound to this client.
-        :rtype: ~azure.ai.projects.operations.RLESandboxSession
-        """
-        return RLESandboxSession(
-            environment_id,
-            sandboxes=self,
-            version=version,
-            cpu=cpu,
-            memory=memory,
-            disk=disk,
-            env_vars=env_vars,
-            create_timeout_s=create_timeout_s,
-            poll_interval_s=poll_interval_s,
-        )
-
     @distributed_trace
     def get_openenv_client(
         self,
         *,
         name: str,
         version: Optional[str] = None,
-        min_concurrency: int = 1,
-        cpu: Optional[str] = None,
-        memory: Optional[str] = None,
-        disk: Optional[str] = None,
+        num_instances: int = 1,
         env_vars: Optional[Mapping[str, str]] = None,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
@@ -870,9 +635,9 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         """Create an :class:`OpenEnvClient` over a hosted RLE environment with a reserved quota.
 
         The environment is resolved by ``name`` (and ``version`` when supplied). The returned client
-        is a context manager: entering it leases ``min_concurrency`` running instances up front and
+        is a context manager: entering it leases ``num_instances`` running instances up front and
         fails fast if that quota cannot be satisfied (v1 does not queue). :meth:`OpenEnvClient.get_instance`
-        then hands out reserved :class:`RLEInstance` objects to run episodes on. All requests are
+        then hands out reserved :class:`OpenEnvInstance` objects to run episodes on. All requests are
         issued through this client's pipeline and the Foundry project endpoint.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
@@ -880,15 +645,9 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         :keyword version: Optional environment image version. When set, the environment is resolved at
          that version and every instance is leased against it; otherwise the latest version is used.
         :paramtype version: str or None
-        :keyword min_concurrency: Number of instances to reserve in advance. The customer's concurrency
+        :keyword num_instances: Number of instances to reserve in advance. The customer's concurrency
          requirement, provided up front. Default value is 1.
-        :paramtype min_concurrency: int
-        :keyword cpu: Requested CPU allocation per instance, for example "1" or "500m".
-        :paramtype cpu: str or None
-        :keyword memory: Requested memory allocation per instance, for example "2Gi".
-        :paramtype memory: str or None
-        :keyword disk: Requested disk allocation per instance, for example "10Gi".
-        :paramtype disk: str or None
+        :paramtype num_instances: int
         :keyword env_vars: Environment variables to inject into each instance.
         :paramtype env_vars: mapping[str, str] or None
         :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
@@ -901,8 +660,8 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
         """
         if not name:
             raise ValueError("name is required")
-        if min_concurrency < 1:
-            raise ValueError("min_concurrency must be >= 1")
+        if num_instances < 1:
+            raise ValueError("num_instances must be >= 1")
         if version is not None:
             environment = self.get_environment_version(name, version)
         else:
@@ -912,15 +671,12 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
             raise RLEError(f"environment '{name}' did not resolve to an environment id")
         lease_request = CreateRLESandboxRequest(
             version=version,
-            cpu=cpu,
-            memory=memory,
-            disk=disk,
             env_vars=dict(env_vars) if env_vars else None,
         )
         return OpenEnvClient(
             environment_id=environment_id,
             sandboxes=self,
-            min_concurrency=min_concurrency,
+            num_instances=num_instances,
             lease_request=lease_request,
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
@@ -930,8 +686,7 @@ class RLEOperations(_RLEnvironmentsOperationsGenerated, RLESandboxesOperations):
 __all__ = [
     "OpenEnvClient",
     "RLEError",
-    "RLEInstance",
+    "OpenEnvInstance",
     "RLEOperations",
-    "RLESandboxSession",
     "coerce_action",
 ]
