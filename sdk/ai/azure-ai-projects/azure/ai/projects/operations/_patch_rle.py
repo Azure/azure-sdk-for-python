@@ -405,8 +405,14 @@ class OpenEnvClient:
     def __exit__(self, *exc: Any) -> None:
         self.close()
 
-    def _resolve_environment_locked(self) -> None:
-        """Resolve ``name``/``version`` to a hosted environment id and build the lease request."""
+    def _resolve_environment(self) -> None:
+        """Resolve ``name``/``version`` to a hosted environment id and build the lease request.
+
+        Called eagerly by :meth:`RLEOperations.get_openenv_client` so a missing environment surfaces
+        at the call site. Idempotent: a second call is a no-op once the environment is resolved.
+        """
+        if self._environment_id is not None:
+            return
         if self._version is not None:
             environment = self._environments.get_environment_version(
                 self._name, self._version, foundry_features=_RLE_FEATURE
@@ -423,11 +429,12 @@ class OpenEnvClient:
         )
 
     def reserve(self) -> None:
-        """Resolve the environment and lease ``num_instances`` running instances in advance.
+        """Lease ``num_instances`` running instances in advance.
 
-        This is idempotent: reserving an already-reserved client does nothing. If the quota cannot
-        be satisfied, any partially-leased instances are released and an error is raised (v1 fails
-        fast rather than queueing).
+        This is idempotent: reserving an already-reserved client does nothing. The environment is
+        resolved on first use if it was not already resolved at construction time. If the quota
+        cannot be satisfied, any partially-leased instances are released and an error is raised (v1
+        fails fast rather than queueing).
         """
         # TODO: Temporary client-side reservation. This leases each instance individually and fails
         # fast when the requested quota cannot be met. Going forward we will rely on the service to
@@ -439,7 +446,7 @@ class OpenEnvClient:
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
             if self._environment_id is None:
-                self._resolve_environment_locked()
+                self._resolve_environment()
             environment_id = self._environment_id
             lease_request = self._lease_request
             try:
@@ -532,9 +539,10 @@ class RLEOperations:
     ) -> OpenEnvClient:
         """Create an :class:`OpenEnvClient` over a hosted RLE environment.
 
-        The returned client is a context manager. The environment is resolved by ``name`` (and
-        ``version`` when supplied) when the client is first entered, at which point it reserves its
-        instances up front and fails fast if that quota cannot be satisfied (v1 does not queue).
+        The environment is resolved by ``name`` (and ``version`` when supplied) here, so a missing or
+        invalid environment fails at this call. The returned client is a context manager: entering it
+        reserves its instances up front and fails fast if that quota cannot be satisfied (v1 does not
+        queue).
         :meth:`OpenEnvClient.get_instance` then hands out reserved :class:`OpenEnvInstance` objects to
         run episodes on. Control-plane requests flow through this client's pipeline and the Foundry
         project endpoint; runtime calls (reset/step/state/...) target each instance's data-plane URI.
@@ -556,7 +564,7 @@ class RLEOperations:
         """
         if not name:
             raise ValueError("name is required")
-        return OpenEnvClient(
+        client = OpenEnvClient(
             environments=self._environments,
             sandboxes=self._sandboxes,
             name=name,
@@ -565,6 +573,8 @@ class RLEOperations:
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )
+        client._resolve_environment()
+        return client
 
 
 __all__ = [

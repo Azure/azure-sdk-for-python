@@ -321,12 +321,13 @@ def test_reserve_resolves_environment_version():
     assert environments.calls[0] == ("get_environment_version", "wordle", "1")
 
 
-def test_get_openenv_client_defers_resolution():
+def test_get_openenv_client_resolves_eagerly():
     ops = RLEOperations(object(), object(), object(), object())
+    ops._environments = _FakeEnvironments("env-77")
     client = ops.get_openenv_client(name="wordle-env", version="1")
     assert isinstance(client, OpenEnvClient)
-    # The factory does no network I/O; the environment id is unresolved until reserve().
-    assert client.environment_id is None
+    # The factory resolves the environment eagerly, so the id is available before reserve().
+    assert client.environment_id == "env-77"
     assert client.num_instances == 1
 
 

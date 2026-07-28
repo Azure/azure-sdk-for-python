@@ -335,7 +335,13 @@ class AsyncOpenEnvClient:
         await self.close()
 
     async def _resolve_environment(self) -> None:
-        """Resolve ``name``/``version`` to a hosted environment id and build the lease request."""
+        """Resolve ``name``/``version`` to a hosted environment id and build the lease request.
+
+        Awaited eagerly by :meth:`RLEOperations.get_openenv_client` so a missing environment surfaces
+        at the call site. Idempotent: a second call is a no-op once the environment is resolved.
+        """
+        if self._environment_id is not None:
+            return
         if self._version is not None:
             environment = await self._environments.get_environment_version(
                 self._name, self._version, foundry_features=_RLE_FEATURE
@@ -453,7 +459,8 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._sandboxes = RLESandboxesOperations(*args, **kwargs)
 
-    def get_openenv_client(
+    @distributed_trace_async
+    async def get_openenv_client(
         self,
         *,
         name: str,
@@ -464,14 +471,12 @@ class RLEOperations:
     ) -> AsyncOpenEnvClient:
         """Create an :class:`AsyncOpenEnvClient` over a hosted RLE environment.
 
-        This is a synchronous factory (no awaiting): it constructs the client without any network
-        I/O so callers can write ``async with client.rle.get_openenv_client(...) as openenv_client:``
-        symmetrically with the sync surface. The environment is resolved by ``name`` (and ``version``
-        when supplied) when the client is first entered, at which point it reserves its instances up
-        front and fails fast if that quota cannot be satisfied (v1 does not queue).
-        :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved :class:`AsyncOpenEnvInstance`
-        objects to run episodes on. Runtime calls (reset/step/state/...) target each instance's
-        data-plane URI.
+        The environment is resolved by ``name`` (and ``version`` when supplied) here, so a missing or
+        invalid environment fails at this ``await``. The returned client is an async context manager:
+        entering it reserves its instances up front and fails fast if that quota cannot be satisfied
+        (v1 does not queue). :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved
+        :class:`AsyncOpenEnvInstance` objects to run episodes on. Runtime calls (reset/step/state/...)
+        target each instance's data-plane URI.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
         :paramtype name: str
@@ -490,7 +495,7 @@ class RLEOperations:
         """
         if not name:
             raise ValueError("name is required")
-        return AsyncOpenEnvClient(
+        client = AsyncOpenEnvClient(
             environments=self._environments,
             sandboxes=self._sandboxes,
             name=name,
@@ -499,6 +504,8 @@ class RLEOperations:
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )
+        await client._resolve_environment()
+        return client
 
 
 __all__ = [

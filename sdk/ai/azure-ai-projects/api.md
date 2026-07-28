@@ -2410,7 +2410,8 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
-        def get_openenv_client(
+        @distributed_trace_async
+        async def get_openenv_client(
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
