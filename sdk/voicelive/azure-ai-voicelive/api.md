@@ -199,15 +199,15 @@ namespace azure.ai.voicelive.aio
 
 
     class azure.ai.voicelive.aio.WebsocketConnectionOptions(TypedDict, total=False):
-        autoclose: NotRequired[bool]
-        autoping: NotRequired[bool]
-        close_timeout: NotRequired[float]
-        compression: NotRequired[Union[bool, int]]
-        handshake_timeout: NotRequired[float]
-        heartbeat: NotRequired[float]
-        max_msg_size: NotRequired[int]
-        receive_timeout: NotRequired[float]
-        vendor_options: NotRequired[Mapping[str, Any]]
+        key "autoclose": NotRequired[bool]
+        key "autoping": NotRequired[bool]
+        key "close_timeout": NotRequired[float]
+        key "compression": NotRequired[Union[bool, int]]
+        key "handshake_timeout": NotRequired[float]
+        key "heartbeat": NotRequired[float]
+        key "max_msg_size": NotRequired[int]
+        key "receive_timeout": NotRequired[float]
+        key "vendor_options": NotRequired[Mapping[str, Any]]
 
 
 namespace azure.ai.voicelive.models
