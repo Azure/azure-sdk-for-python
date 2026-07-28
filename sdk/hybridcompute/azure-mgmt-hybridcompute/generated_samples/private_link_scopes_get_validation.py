@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-09-16-preview/privateLinkScope/PrivateLinkScopes_GetValidation.json
+# x-ms-original-file: 2026-06-16-preview/privateLinkScope/PrivateLinkScopes_GetValidation.json
 if __name__ == "__main__":
     main()

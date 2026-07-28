@@ -6,48 +6,36 @@
 
 """
 DESCRIPTION:
-    Demonstrates deploying a code-based Hosted Agent that discovers and uses
-    skills from a Foundry Toolbox MCP endpoint via Agent Framework
-    ``SkillsProvider(MCPSkillsSource(...))``.
-
-    The sample:
-    1. Creates a shipping-cost skill.
-    2. Creates a toolbox version that references the skill.
-    3. Packages ``assets/toolbox-agent/`` source as a zip at runtime
-       (REMOTE_BUILD - the service resolves dependencies from requirements.txt).
-    4. Deploys a new Hosted Agent version, forwarding the project endpoint,
-       model name, and toolbox MCP URL to the hosted code.
-    5. Waits for the version to become active.
-    6. Sends a query to the agent via the Responses API.
-    7. Cleans up created resources (agent version, toolbox, and skill).
-
-    The hosted agent must already exist; create it first with:
-        samples/hosted_agents/sample_create_hosted_agent.py
+    Create a shipping-cost Skill and a Toolbox version that exposes it over a
+    Foundry Toolbox MCP endpoint, then upload ``assets/toolbox-agent/`` as a
+    REMOTE_BUILD code asset for a Hosted Agent version. The sample waits for
+    the new version to become active, assigns Azure AI User RBAC to the hosted
+    agent identity on the Foundry account, temporarily routes the Hosted Agent
+    endpoint to that version, sends a query through the Responses API, and
+    finally restores the previous endpoint and deletes the temporary agent
+    version, toolbox, and skill.
 
 USAGE:
     python sample_toolbox_with_skill.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.3.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" azure-identity azure-mgmt-authorization azure-mgmt-resource python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
        Overview page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under
        the "Name" column in the "Models + endpoints" tab in your Foundry project.
-    3) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
-    4) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
-       and project are deployed.
+    3) FOUNDRY_HOSTED_AGENT_NAME - Optional. The Hosted Agent name. Defaults to
+        `MyHostedAgent`. The Hosted Agent must already exist.
+    4) AZURE_SUBSCRIPTION_ID - The Azure subscription ID containing the
+        Foundry project/account. This is used to assign Azure AI User RBAC to
+        the hosted agent identity.
 """
 
 import os
-import sys
 from pathlib import Path
-
-_SAMPLES_DIR = Path(__file__).resolve().parents[1]
-if str(_SAMPLES_DIR) not in sys.path:
-    sys.path.insert(0, str(_SAMPLES_DIR))
 
 from dotenv import load_dotenv
 
@@ -60,14 +48,14 @@ from azure.ai.projects.models import (
     ProtocolVersionRecord,
 )
 
-from hosted_agents_util import wait_for_agent_version_active
+from hosted_agents_util import create_version_from_code
 from rbac_util import ensure_agent_identity_rbac
-from util import zip
+from util import zip_directory
 
 from azure.core.exceptions import ResourceNotFoundError
 from azure.ai.projects.models import (
     SkillInlineContent,
-    ToolboxSearchPreviewToolboxTool,
+    ToolSearchToolboxTool,
     ToolboxSkillReference,
 )
 
@@ -75,8 +63,8 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+agent_name = os.environ.get("FOUNDRY_HOSTED_AGENT_NAME", "MyHostedAgent")
 
 _HOSTED_AGENT_SOURCE_DIR = Path(__file__).parent / "assets" / "toolbox-agent"
 
@@ -87,10 +75,8 @@ TOOLBOX_NAME = "toolbox_with_skill"
 def main() -> None:
     with (
         DefaultAzureCredential() as credential,
-        AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
-        project_client.get_openai_client(agent_name=agent_name) as hosted_openai_client,
+        AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
-
         try:
             project_client.toolboxes.delete(TOOLBOX_NAME)
         except ResourceNotFoundError:
@@ -119,7 +105,7 @@ def main() -> None:
         toolbox_version = project_client.toolboxes.create_version(
             name=TOOLBOX_NAME,
             description="Toolbox exposing a shipping-cost skill.",
-            tools=[ToolboxSearchPreviewToolboxTool()],
+            tools=[ToolSearchToolboxTool()],
             skills=[ToolboxSkillReference(name=skill_version.name, version=skill_version.version)],
         )
         print(f"Created toolbox: {toolbox_version.name} version={toolbox_version.version}")
@@ -127,58 +113,55 @@ def main() -> None:
         toolbox_mcp_url = f"{endpoint}/toolboxes/{TOOLBOX_NAME}/versions/{toolbox_version.version}/mcp?api-version=v1"
 
         zip_filename = "hosted-toolbox-agent.zip"
-        _, _, zip_path = zip(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
+        _, _, zip_path = zip_directory(_HOSTED_AGENT_SOURCE_DIR, zip_filename)
 
-        with zip_path.open("rb") as code_stream:
-            created = project_client.agents.create_version_from_code(
-                agent_name=agent_name,
-                description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
-                definition=HostedAgentDefinition(
-                    cpu="0.5",
-                    memory="1Gi",
-                    code_configuration=CodeConfiguration(
-                        runtime="python_3_14",
-                        entry_point=["python", "main.py"],
-                        dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+        try:
+            with (
+                zip_path.open("rb") as code_stream,
+                create_version_from_code(
+                    project_client=project_client,
+                    agent_name=agent_name,
+                    description="Hosted agent code for toolbox MCP skills with shipping-cost skill.",
+                    definition=HostedAgentDefinition(
+                        cpu="0.5",
+                        memory="1Gi",
+                        code_configuration=CodeConfiguration(
+                            runtime="python_3_14",
+                            entry_point=["python", "main.py"],
+                            dependency_resolution=CodeDependencyResolution.REMOTE_BUILD,
+                        ),
+                        environment_variables={
+                            "FOUNDRY_PROJECT_ENDPOINT": endpoint,
+                            "FOUNDRY_MODEL_NAME": model_name,
+                            "MCP_SERVER_URL": toolbox_mcp_url,
+                        },
+                        protocol_versions=[ProtocolVersionRecord(protocol="responses", version="2.0.0")],
                     ),
-                    environment_variables={
-                        "FOUNDRY_PROJECT_ENDPOINT": endpoint,
-                        "FOUNDRY_MODEL_NAME": model_name,
-                        "MCP_SERVER_URL": toolbox_mcp_url,
-                    },
-                    protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-                ),
-                code=code_stream,
-            )
-        print(f"Created hosted agent version: {created.version}")
+                    code=code_stream,
+                ) as agent,
+                project_client.get_openai_client(agent_name=agent_name) as hosted_openai_client,
+            ):
 
-        wait_for_agent_version_active(
-            project_client=project_client,
-            agent_name=agent_name,
-            agent_version=created.version,
-        )
+                # toolbox requires the hosted agent identity to have Foundry User RBAC on the Foundry account, so assign it here
+                ensure_agent_identity_rbac(
+                    agent=agent,
+                    credential=credential,
+                    subscription_id=subscription_id,
+                    foundry_project_endpoint=endpoint,
+                )
 
-        ensure_agent_identity_rbac(
-            agent=created,
-            credential=credential,
-            subscription_id=subscription_id,
-            foundry_project_endpoint=endpoint,
-        )
+                user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
+                print(f"User: {user_input}")
+                response = hosted_openai_client.responses.create(input=user_input)
 
-        user_input = "Compute the shipping cost for a 3 kg package shipped domestically."
-        print(f"User: {user_input}")
-        response = hosted_openai_client.responses.create(input=user_input)
-
-        response_text = response.output_text or ""
-        print("Response:")
-        print(response_text.encode("utf-8", errors="replace").decode("utf-8"))
-
-        project_client.agents.delete_version(agent_name=agent_name, agent_version=created.version, force=True)
-        print(f"Agent version {created.version} deleted")
-        project_client.toolboxes.delete(TOOLBOX_NAME)
-        print("Toolbox deleted")
-        project_client.beta.skills.delete(SKILL_NAME)
-        print("Skill deleted")
+                response_text = response.output_text or ""
+                print("Response:")
+                print(response_text.encode("utf-8", errors="replace").decode("utf-8"))
+        finally:
+            project_client.toolboxes.delete(TOOLBOX_NAME)
+            print("Toolbox deleted")
+            project_client.beta.skills.delete(SKILL_NAME)
+            print("Skill deleted")
 
 
 if __name__ == "__main__":

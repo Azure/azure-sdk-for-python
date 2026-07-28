@@ -42,6 +42,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: 2025-08-01/DeletedVaults_Undelete.json
+# x-ms-original-file: 2026-05-01/DeletedVaults_Undelete.json
 if __name__ == "__main__":
     main()

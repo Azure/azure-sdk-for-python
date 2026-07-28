@@ -3,12 +3,27 @@
 ## 1.0.0b56 (Unreleased)
 
 ### Features Added
+- Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
+  ([#47870](https://github.com/Azure/azure-sdk-for-python/pull/47870))
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- Propagate main agent attribute to child spans
+  ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
+- Live Metrics now honors the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable for AAD
+  authentication as a fallback when no explicit credential is supplied and local authentication is disabled.
+  ([#48284](https://github.com/Azure/azure-sdk-for-python/pull/48284))
 
 ### Other Changes
+
+- Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
+- Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
+  ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
+- Harden OneSettings configuration manager and worker: handle non-retryable HTTP errors by slow-polling instead of retrying, fix worker holding its lock across network I/O, make shutdown a soft reset that leaves the singleton reusable, and make callback registration thread-safe and initialization-independent
+  ([#48027](https://github.com/Azure/azure-sdk-for-python/pull/48027))
+- Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present <!-- cspell:ignore ikey -->
+  ([#48059](https://github.com/Azure/azure-sdk-for-python/pull/48059))
 
 ## 1.0.0b55 (2026-07-01)
 
