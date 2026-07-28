@@ -13,10 +13,10 @@ class ModelV1(TypedDict, total=False):
 
     :ivar prop: Required.
     :vartype prop: str
-    :ivar enum_prop: Required. Known values are: "enumMemberV1" and "enumMemberV2".
-    :vartype enum_prop: Union[str, "EnumV1"]
-    :ivar union_prop: Required. Is either a str type or a int type.
-    :vartype union_prop: "_unions.UnionV1"
+    :ivar enumProp: Required. Known values are: "enumMemberV1" and "enumMemberV2".
+    :vartype enumProp: Union[str, "EnumV1"]
+    :ivar unionProp: Required. Is either a str type or a int type.
+    :vartype unionProp: "_unions.UnionV1"
     """
 
     prop: Required[str]
@@ -32,10 +32,10 @@ class ModelV2(TypedDict, total=False):
 
     :ivar prop: Required.
     :vartype prop: str
-    :ivar enum_prop: Required. "enumMember"
-    :vartype enum_prop: Union[str, "EnumV2"]
-    :ivar union_prop: Required. Is either a str type or a int type.
-    :vartype union_prop: "_unions.UnionV2"
+    :ivar enumProp: Required. "enumMember"
+    :vartype enumProp: Union[str, "EnumV2"]
+    :ivar unionProp: Required. Is either a str type or a int type.
+    :vartype unionProp: "_unions.UnionV2"
     """
 
     prop: Required[str]

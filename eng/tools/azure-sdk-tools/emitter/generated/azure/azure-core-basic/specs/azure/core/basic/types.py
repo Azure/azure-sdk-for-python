@@ -37,8 +37,8 @@ class UserOrder(TypedDict, total=False):
 
     :ivar id: The user's id. Required.
     :vartype id: int
-    :ivar user_id: The user's id. Required.
-    :vartype user_id: int
+    :ivar userId: The user's id. Required.
+    :vartype userId: int
     :ivar detail: The user's order detail. Required.
     :vartype detail: str
     """

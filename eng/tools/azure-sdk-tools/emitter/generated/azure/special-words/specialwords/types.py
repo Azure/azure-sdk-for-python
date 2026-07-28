@@ -133,26 +133,26 @@ class DelModel(TypedDict, total=False):
 class DictMethods(TypedDict, total=False):
     """DictMethods.
 
-    :ivar keys_property: Required.
-    :vartype keys_property: str
-    :ivar items_property: Required.
-    :vartype items_property: str
-    :ivar values_property: Required.
-    :vartype values_property: str
-    :ivar popitem_property: Required.
-    :vartype popitem_property: str
-    :ivar clear_property: Required.
-    :vartype clear_property: str
-    :ivar update_property: Required.
-    :vartype update_property: str
-    :ivar setdefault_property: Required.
-    :vartype setdefault_property: str
-    :ivar pop_property: Required.
-    :vartype pop_property: str
-    :ivar get_property: Required.
-    :vartype get_property: str
-    :ivar copy_property: Required.
-    :vartype copy_property: str
+    :ivar keys: Required.
+    :vartype keys: str
+    :ivar items: Required.
+    :vartype items: str
+    :ivar values: Required.
+    :vartype values: str
+    :ivar popitem: Required.
+    :vartype popitem: str
+    :ivar clear: Required.
+    :vartype clear: str
+    :ivar update: Required.
+    :vartype update: str
+    :ivar setdefault: Required.
+    :vartype setdefault: str
+    :ivar pop: Required.
+    :vartype pop: str
+    :ivar get: Required.
+    :vartype get: str
+    :ivar copy: Required.
+    :vartype copy: str
     """
 
     keys: Required[str]
@@ -389,8 +389,8 @@ class ReturnModel(TypedDict, total=False):
 class SameAsModel(TypedDict, total=False):
     """SameAsModel.
 
-    :ivar same_as_model: Required.
-    :vartype same_as_model: str
+    :ivar SameAsModel: Required.
+    :vartype SameAsModel: str
     """
 
     SameAsModel: Required[str]
@@ -444,8 +444,8 @@ class YieldModel(TypedDict, total=False):
 class WithItemsRequest(TypedDict, total=False):
     """WithItemsRequest.
 
-    :ivar items_property: Required.
-    :vartype items_property: list[str]
+    :ivar items: Required.
+    :vartype items: list[str]
     """
 
     items: Required[list[str]]

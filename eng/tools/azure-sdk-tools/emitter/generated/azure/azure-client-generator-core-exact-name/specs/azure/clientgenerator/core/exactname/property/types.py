@@ -12,8 +12,8 @@ from typing_extensions import Required, TypedDict
 class ScopedModel(TypedDict, total=False):
     """ScopedModel.
 
-    :ivar _my_name: Required.
-    :vartype _my_name: str
+    :ivar name: Required.
+    :vartype name: str
     """
 
     name: Required[str]

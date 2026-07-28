@@ -46,10 +46,10 @@ class OrphanModel(TypedDict, total=False):
     """Not used anywhere, but access is override to public so still need to be generated and exported
     with serialization.
 
-    :ivar model_name: Required.
-    :vartype model_name: str
-    :ivar description: Required.
-    :vartype description: str
+    :ivar name: Required.
+    :vartype name: str
+    :ivar desc: Required.
+    :vartype desc: str
     """
 
     name: Required[str]

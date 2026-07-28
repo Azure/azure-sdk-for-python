@@ -25,9 +25,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -53,9 +53,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -70,9 +70,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -97,9 +97,9 @@ class ResourceGroupResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -115,11 +115,11 @@ class ResourceGroupResource(TrackedResource):
 class ResourceGroupResourceProperties(TypedDict, total=False):
     """Properties of resource group resource.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar resource_group_setting: The resource group-scoped setting.
-    :vartype resource_group_setting: str
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    :ivar resourceGroupSetting: The resource group-scoped setting.
+    :vartype resourceGroupSetting: str
     """
 
     provisioningState: Union[str, "ResourceProvisioningState"]
@@ -141,9 +141,9 @@ class SubscriptionResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "SubscriptionResourceProperties"
     """
@@ -164,9 +164,9 @@ class SubscriptionResource1(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "SubscriptionResource1Properties"
     """
@@ -178,9 +178,9 @@ class SubscriptionResource1(ProxyResource):
 class SubscriptionResource1Properties(TypedDict, total=False):
     """Properties of subscription resource 1.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
     :ivar description: The description of the resource.
     :vartype description: str
     """
@@ -204,9 +204,9 @@ class SubscriptionResource2(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: "SubscriptionResource2Properties"
     """
@@ -218,11 +218,11 @@ class SubscriptionResource2(ProxyResource):
 class SubscriptionResource2Properties(TypedDict, total=False):
     """Properties of subscription resource 2.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar config_value: The configuration value.
-    :vartype config_value: str
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    :ivar configValue: The configuration value.
+    :vartype configValue: str
     """
 
     provisioningState: Union[str, "ResourceProvisioningState"]
@@ -235,11 +235,11 @@ class SubscriptionResource2Properties(TypedDict, total=False):
 class SubscriptionResourceProperties(TypedDict, total=False):
     """Properties of subscription resource.
 
-    :ivar provisioning_state: The status of the last operation. Known values are: "Succeeded",
+    :ivar provisioningState: The status of the last operation. Known values are: "Succeeded",
      "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar subscription_setting: The subscription-scoped setting.
-    :vartype subscription_setting: str
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    :ivar subscriptionSetting: The subscription-scoped setting.
+    :vartype subscriptionSetting: str
     """
 
     provisioningState: Union[str, "ResourceProvisioningState"]
@@ -252,20 +252,20 @@ class SubscriptionResourceProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str

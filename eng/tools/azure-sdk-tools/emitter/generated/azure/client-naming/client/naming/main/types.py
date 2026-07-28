@@ -12,8 +12,8 @@ from typing_extensions import Required, TypedDict
 class ClientModel(TypedDict, total=False):
     """ClientModel.
 
-    :ivar default_name: Pass in true. Required.
-    :vartype default_name: bool
+    :ivar defaultName: Pass in true. Required.
+    :vartype defaultName: bool
     """
 
     defaultName: Required[bool]
@@ -23,8 +23,8 @@ class ClientModel(TypedDict, total=False):
 class ClientNameAndJsonEncodedNameModel(TypedDict, total=False):
     """ClientNameAndJsonEncodedNameModel.
 
-    :ivar client_name: Pass in true. Required.
-    :vartype client_name: bool
+    :ivar wireName: Pass in true. Required.
+    :vartype wireName: bool
     """
 
     wireName: Required[bool]
@@ -34,8 +34,8 @@ class ClientNameAndJsonEncodedNameModel(TypedDict, total=False):
 class ClientNameModel(TypedDict, total=False):
     """ClientNameModel.
 
-    :ivar client_name: Pass in true. Required.
-    :vartype client_name: bool
+    :ivar defaultName: Pass in true. Required.
+    :vartype defaultName: bool
     """
 
     defaultName: Required[bool]
@@ -45,8 +45,8 @@ class ClientNameModel(TypedDict, total=False):
 class LanguageClientNameModel(TypedDict, total=False):
     """LanguageClientNameModel.
 
-    :ivar python_name: Pass in true. Required.
-    :vartype python_name: bool
+    :ivar defaultName: Pass in true. Required.
+    :vartype defaultName: bool
     """
 
     defaultName: Required[bool]
@@ -56,8 +56,8 @@ class LanguageClientNameModel(TypedDict, total=False):
 class PythonModel(TypedDict, total=False):
     """PythonModel.
 
-    :ivar default_name: Pass in true. Required.
-    :vartype default_name: bool
+    :ivar defaultName: Pass in true. Required.
+    :vartype defaultName: bool
     """
 
     defaultName: Required[bool]

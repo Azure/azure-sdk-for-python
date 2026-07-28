@@ -21,8 +21,8 @@ class DifferentSpreadFloatDerived(DifferentSpreadFloatRecord):
 
     :ivar name: The id property. Required.
     :vartype name: str
-    :ivar derived_prop: The index property. Required.
-    :vartype derived_prop: float
+    :ivar derivedProp: The index property. Required.
+    :vartype derivedProp: float
     """
 
     derivedProp: Required[float]
@@ -32,8 +32,8 @@ class DifferentSpreadFloatDerived(DifferentSpreadFloatRecord):
 class DifferentSpreadModelArrayRecord(TypedDict, total=False):
     """The model spread Record<ModelForRecord[]> with the different known property type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: str
+    :ivar knownProp: Required.
+    :vartype knownProp: str
     """
 
     knownProp: Required[str]
@@ -44,10 +44,10 @@ class DifferentSpreadModelArrayDerived(DifferentSpreadModelArrayRecord):
     """The model extends from a model that spread Record<ModelForRecord[]> with the different known
     property type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: str
-    :ivar derived_prop: The index property. Required.
-    :vartype derived_prop: list["ModelForRecord"]
+    :ivar knownProp: Required.
+    :vartype knownProp: str
+    :ivar derivedProp: The index property. Required.
+    :vartype derivedProp: list["ModelForRecord"]
     """
 
     derivedProp: Required[list["ModelForRecord"]]
@@ -57,8 +57,8 @@ class DifferentSpreadModelArrayDerived(DifferentSpreadModelArrayRecord):
 class DifferentSpreadModelRecord(TypedDict, total=False):
     """The model spread Record<ModelForRecord> with the different known property type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: str
+    :ivar knownProp: Required.
+    :vartype knownProp: str
     """
 
     knownProp: Required[str]
@@ -69,10 +69,10 @@ class DifferentSpreadModelDerived(DifferentSpreadModelRecord):
     """The model extends from a model that spread Record<ModelForRecord> with the different known
     property type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: str
-    :ivar derived_prop: The index property. Required.
-    :vartype derived_prop: "ModelForRecord"
+    :ivar knownProp: Required.
+    :vartype knownProp: str
+    :ivar derivedProp: The index property. Required.
+    :vartype derivedProp: "ModelForRecord"
     """
 
     derivedProp: Required["ModelForRecord"]
@@ -96,8 +96,8 @@ class DifferentSpreadStringDerived(DifferentSpreadStringRecord):
 
     :ivar id: The name property. Required.
     :vartype id: float
-    :ivar derived_prop: The index property. Required.
-    :vartype derived_prop: str
+    :ivar derivedProp: The index property. Required.
+    :vartype derivedProp: str
     """
 
     derivedProp: Required[str]
@@ -118,8 +118,8 @@ class ExtendsFloatAdditionalProperties(TypedDict, total=False):
 class ExtendsModelAdditionalProperties(TypedDict, total=False):
     """The model extends from Record<ModelForRecord> type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: "ModelForRecord"
+    :ivar knownProp: Required.
+    :vartype knownProp: "ModelForRecord"
     """
 
     knownProp: Required["ModelForRecord"]
@@ -129,8 +129,8 @@ class ExtendsModelAdditionalProperties(TypedDict, total=False):
 class ExtendsModelArrayAdditionalProperties(TypedDict, total=False):
     """The model extends from Record<ModelForRecord[]> type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: list["ModelForRecord"]
+    :ivar knownProp: Required.
+    :vartype knownProp: list["ModelForRecord"]
     """
 
     knownProp: Required[list["ModelForRecord"]]
@@ -213,8 +213,8 @@ class IsFloatAdditionalProperties(TypedDict, total=False):
 class IsModelAdditionalProperties(TypedDict, total=False):
     """The model is from Record<ModelForRecord> type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: "ModelForRecord"
+    :ivar knownProp: Required.
+    :vartype knownProp: "ModelForRecord"
     """
 
     knownProp: Required["ModelForRecord"]
@@ -224,8 +224,8 @@ class IsModelAdditionalProperties(TypedDict, total=False):
 class IsModelArrayAdditionalProperties(TypedDict, total=False):
     """The model is from Record<ModelForRecord[]> type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: list["ModelForRecord"]
+    :ivar knownProp: Required.
+    :vartype knownProp: list["ModelForRecord"]
     """
 
     knownProp: Required[list["ModelForRecord"]]
@@ -330,8 +330,8 @@ class SpreadFloatRecord(TypedDict, total=False):
 class SpreadModelArrayRecord(TypedDict, total=False):
     """SpreadModelArrayRecord.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: list["ModelForRecord"]
+    :ivar knownProp: Required.
+    :vartype knownProp: list["ModelForRecord"]
     """
 
     knownProp: Required[list["ModelForRecord"]]
@@ -341,8 +341,8 @@ class SpreadModelArrayRecord(TypedDict, total=False):
 class SpreadModelRecord(TypedDict, total=False):
     """The model spread Record<ModelForRecord> with the same known property type.
 
-    :ivar known_prop: Required.
-    :vartype known_prop: "ModelForRecord"
+    :ivar knownProp: Required.
+    :vartype knownProp: "ModelForRecord"
     """
 
     knownProp: Required["ModelForRecord"]
@@ -409,8 +409,8 @@ class WidgetData0(TypedDict, total=False):
 
     :ivar kind: Required. Default value is "kind0".
     :vartype kind: Literal["kind0"]
-    :ivar foo_prop: Required.
-    :vartype foo_prop: str
+    :ivar fooProp: Required.
+    :vartype fooProp: str
     """
 
     kind: Required[Literal["kind0"]]

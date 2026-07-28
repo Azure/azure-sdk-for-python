@@ -39,14 +39,14 @@ class SpreadAsRequestParameterRequest(TypedDict, total=False):
 class SpreadWithMultipleParametersRequest(TypedDict, total=False):
     """SpreadWithMultipleParametersRequest.
 
-    :ivar required_string: required string. Required.
-    :vartype required_string: str
-    :ivar optional_int: optional int.
-    :vartype optional_int: int
-    :ivar required_int_list: required int. Required.
-    :vartype required_int_list: list[int]
-    :ivar optional_string_list: optional string.
-    :vartype optional_string_list: list[str]
+    :ivar requiredString: required string. Required.
+    :vartype requiredString: str
+    :ivar optionalInt: optional int.
+    :vartype optionalInt: int
+    :ivar requiredIntList: required int. Required.
+    :vartype requiredIntList: list[int]
+    :ivar optionalStringList: optional string.
+    :vartype optionalStringList: list[str]
     """
 
     requiredString: Required[str]

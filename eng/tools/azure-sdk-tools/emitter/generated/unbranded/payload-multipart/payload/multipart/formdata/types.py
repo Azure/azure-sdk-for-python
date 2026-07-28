@@ -8,8 +8,8 @@ from .._utils.utils import FileType
 class AnonymousModelRequest(TypedDict, total=False):
     """AnonymousModelRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     profileImage: Required[FileType]

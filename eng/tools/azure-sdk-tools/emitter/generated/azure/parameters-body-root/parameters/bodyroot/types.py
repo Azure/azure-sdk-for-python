@@ -14,10 +14,10 @@ class BodyRootModel(TypedDict, total=False):
 
     :ivar category:
     :vartype category: str
-    :ivar link_type:
-    :vartype link_type: str
-    :ivar was_successful:
-    :vartype was_successful: bool
+    :ivar linkType:
+    :vartype linkType: str
+    :ivar wasSuccessful:
+    :vartype wasSuccessful: bool
     """
 
     category: str
@@ -28,8 +28,8 @@ class BodyRootModel(TypedDict, total=False):
 class NestedParameterBody(TypedDict, total=False):
     """NestedParameterBody.
 
-    :ivar body_root_parameters: Required.
-    :vartype body_root_parameters: "BodyRootModel"
+    :ivar bodyRootParameters: Required.
+    :vartype bodyRootParameters: "BodyRootModel"
     """
 
     bodyRootParameters: Required["BodyRootModel"]

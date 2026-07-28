@@ -6,8 +6,8 @@ from typing_extensions import Required, TypedDict
 class WithItemsRequest(TypedDict, total=False):
     """WithItemsRequest.
 
-    :ivar items_property: Required.
-    :vartype items_property: list[str]
+    :ivar items: Required.
+    :vartype items: list[str]
     """
 
     items: Required[list[str]]
