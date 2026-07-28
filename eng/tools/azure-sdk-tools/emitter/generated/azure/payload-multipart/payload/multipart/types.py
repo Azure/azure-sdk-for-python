@@ -25,8 +25,8 @@ class Address(TypedDict, total=False):
 class AnonymousModelRequest(TypedDict, total=False):
     """AnonymousModelRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     profileImage: Required[FileType]
@@ -55,10 +55,10 @@ class ComplexHttpPartsModelRequest(TypedDict, total=False):
     :vartype id: str
     :ivar address: Required.
     :vartype address: "Address"
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
-    :ivar previous_addresses: Required.
-    :vartype previous_addresses: list["Address"]
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
+    :ivar previousAddresses: Required.
+    :vartype previousAddresses: list["Address"]
     :ivar pictures: Required.
     :vartype pictures: list[FileType]
     """
@@ -82,8 +82,8 @@ class ComplexPartsRequest(TypedDict, total=False):
     :vartype id: str
     :ivar address: Required.
     :vartype address: "Address"
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     :ivar pictures: Required.
     :vartype pictures: list[FileType]
     """
@@ -101,8 +101,8 @@ class ComplexPartsRequest(TypedDict, total=False):
 class FileWithHttpPartOptionalContentTypeRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """FileWithHttpPartOptionalContentTypeRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     profileImage: Required[FileType]
@@ -112,8 +112,8 @@ class FileWithHttpPartOptionalContentTypeRequest(TypedDict, total=False):  # pyl
 class FileWithHttpPartRequiredContentTypeRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """FileWithHttpPartRequiredContentTypeRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     profileImage: Required[FileType]
@@ -123,8 +123,8 @@ class FileWithHttpPartRequiredContentTypeRequest(TypedDict, total=False):  # pyl
 class FileWithHttpPartSpecificContentTypeRequest(TypedDict, total=False):  # pylint: disable=name-too-long
     """FileWithHttpPartSpecificContentTypeRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     profileImage: Required[FileType]
@@ -147,8 +147,8 @@ class JsonPartRequest(TypedDict, total=False):
 
     :ivar address: Required.
     :vartype address: "Address"
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     address: Required["Address"]
@@ -160,8 +160,8 @@ class JsonPartRequest(TypedDict, total=False):
 class MultiBinaryPartsRequest(TypedDict, total=False):
     """MultiBinaryPartsRequest.
 
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     :ivar picture:
     :vartype picture: FileType
     """
@@ -176,8 +176,8 @@ class MultiPartOptionalRequest(TypedDict, total=False):
 
     :ivar id:
     :vartype id: str
-    :ivar profile_image:
-    :vartype profile_image: FileType
+    :ivar profileImage:
+    :vartype profileImage: FileType
     """
 
     id: str
@@ -189,8 +189,8 @@ class MultiPartRequest(TypedDict, total=False):
 
     :ivar id: Required.
     :vartype id: str
-    :ivar profile_image: Required.
-    :vartype profile_image: FileType
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     id: Required[str]
@@ -202,10 +202,10 @@ class MultiPartRequest(TypedDict, total=False):
 class MultiPartRequestWithWireName(TypedDict, total=False):
     """MultiPartRequestWithWireName.
 
-    :ivar identifier: Required.
-    :vartype identifier: str
-    :ivar image: Required.
-    :vartype image: FileType
+    :ivar id: Required.
+    :vartype id: str
+    :ivar profileImage: Required.
+    :vartype profileImage: FileType
     """
 
     id: Required[str]

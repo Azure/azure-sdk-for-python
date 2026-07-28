@@ -124,10 +124,10 @@ class PlainTimeProperty(TypedDict, total=False):
 class RequiredAndOptionalProperty(TypedDict, total=False):
     """Model with required and optional properties.
 
-    :ivar optional_property: optional string property.
-    :vartype optional_property: str
-    :ivar required_property: required int property. Required.
-    :vartype required_property: int
+    :ivar optionalProperty: optional string property.
+    :vartype optionalProperty: str
+    :ivar requiredProperty: required int property. Required.
+    :vartype requiredProperty: int
     """
 
     optionalProperty: str

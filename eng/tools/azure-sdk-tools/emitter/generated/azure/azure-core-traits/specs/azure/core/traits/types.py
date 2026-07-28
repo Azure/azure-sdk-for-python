@@ -12,8 +12,8 @@ from typing_extensions import Required, TypedDict
 class UserActionParam(TypedDict, total=False):
     """User action param.
 
-    :ivar user_action_value: User action value. Required.
-    :vartype user_action_value: str
+    :ivar userActionValue: User action value. Required.
+    :vartype userActionValue: str
     """
 
     userActionValue: Required[str]

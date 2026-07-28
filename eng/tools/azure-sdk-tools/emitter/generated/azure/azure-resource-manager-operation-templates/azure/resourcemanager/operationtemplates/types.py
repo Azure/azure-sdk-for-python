@@ -17,8 +17,8 @@ if TYPE_CHECKING:
 class ActionRequest(TypedDict, total=False):
     """ActionRequest.
 
-    :ivar action_type: The action type to perform.
-    :vartype action_type: str
+    :ivar actionType: The action type to perform.
+    :vartype actionType: str
     :ivar parameters: Additional action parameters.
     :vartype parameters: str
     """
@@ -32,8 +32,8 @@ class ActionRequest(TypedDict, total=False):
 class ChangeAllowanceRequest(TypedDict, total=False):
     """ChangeAllowanceRequest.
 
-    :ivar total_allowed: The new total allowed widgets.
-    :vartype total_allowed: int
+    :ivar totalAllowed: The new total allowed widgets.
+    :vartype totalAllowed: int
     :ivar reason: The reason for the change.
     :vartype reason: str
     """
@@ -81,9 +81,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -109,9 +109,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -136,9 +136,9 @@ class Order(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -154,12 +154,12 @@ class Order(TrackedResource):
 class OrderProperties(TypedDict, total=False):
     """OrderProperties.
 
-    :ivar product_id: The product ID of the order. Required.
-    :vartype product_id: str
+    :ivar productId: The product ID of the order. Required.
+    :vartype productId: str
     :ivar amount: Amount of the product. Required.
     :vartype amount: int
-    :ivar provisioning_state: The provisioning state of the product.
-    :vartype provisioning_state: str
+    :ivar provisioningState: The provisioning state of the product.
+    :vartype provisioningState: str
     """
 
     productId: Required[str]
@@ -173,20 +173,20 @@ class OrderProperties(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -217,9 +217,9 @@ class Widget(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -239,8 +239,8 @@ class WidgetProperties(TypedDict, total=False):
     :vartype name: str
     :ivar description: The description of the widget.
     :vartype description: str
-    :ivar provisioning_state: The provisioning state of the widget.
-    :vartype provisioning_state: str
+    :ivar provisioningState: The provisioning state of the widget.
+    :vartype provisioningState: str
     """
 
     name: str

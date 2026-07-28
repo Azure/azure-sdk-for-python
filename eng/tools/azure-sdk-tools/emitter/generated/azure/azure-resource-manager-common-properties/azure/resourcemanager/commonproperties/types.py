@@ -25,9 +25,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -53,9 +53,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -80,9 +80,9 @@ class ArmResourceIdentifierResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -98,17 +98,17 @@ class ArmResourceIdentifierResource(TrackedResource):
 class ArmResourceIdentifierResourceProperties(TypedDict, total=False):
     """ArmResourceIdentifier Resource Properties.
 
-    :ivar provisioning_state: The status of the last operation. Required. Known values are:
+    :ivar provisioningState: The status of the last operation. Required. Known values are:
      "Succeeded", "Failed", and "Canceled".
-    :vartype provisioning_state: Union[str, "ResourceProvisioningState"]
-    :ivar simple_arm_id: A basic ARM resource identifier without type or scopes. Required.
-    :vartype simple_arm_id: str
-    :ivar arm_id_with_type: An ARM resource identifier with type only. Required.
-    :vartype arm_id_with_type: str
-    :ivar arm_id_with_type_and_scope: An ARM resource identifier with type and scopes. Required.
-    :vartype arm_id_with_type_and_scope: str
-    :ivar arm_id_with_all_scopes: An ARM resource identifier with all scopes. Required.
-    :vartype arm_id_with_all_scopes: str
+    :vartype provisioningState: Union[str, "ResourceProvisioningState"]
+    :ivar simpleArmId: A basic ARM resource identifier without type or scopes. Required.
+    :vartype simpleArmId: str
+    :ivar armIdWithType: An ARM resource identifier with type only. Required.
+    :vartype armIdWithType: str
+    :ivar armIdWithTypeAndScope: An ARM resource identifier with type and scopes. Required.
+    :vartype armIdWithTypeAndScope: str
+    :ivar armIdWithAllScopes: An ARM resource identifier with all scopes. Required.
+    :vartype armIdWithAllScopes: str
     """
 
     provisioningState: Required[Union[str, "ResourceProvisioningState"]]
@@ -136,9 +136,9 @@ class ConfidentialResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -154,8 +154,8 @@ class ConfidentialResource(TrackedResource):
 class ConfidentialResourceProperties(TypedDict, total=False):
     """Confidential Resource Properties.
 
-    :ivar provisioning_state: The status of the last operation. Required.
-    :vartype provisioning_state: str
+    :ivar provisioningState: The status of the last operation. Required.
+    :vartype provisioningState: str
     :ivar username: Required.
     :vartype username: str
     """
@@ -178,9 +178,9 @@ class ManagedIdentityTrackedResource(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -200,8 +200,8 @@ class ManagedIdentityTrackedResource(TrackedResource):
 class ManagedIdentityTrackedResourceProperties(TypedDict, total=False):
     """Managed Identity Arm Resource Properties.
 
-    :ivar provisioning_state: The status of the last operation. Required.
-    :vartype provisioning_state: str
+    :ivar provisioningState: The status of the last operation. Required.
+    :vartype provisioningState: str
     """
 
     provisioningState: Required[str]
@@ -211,17 +211,17 @@ class ManagedIdentityTrackedResourceProperties(TypedDict, total=False):
 class ManagedServiceIdentity(TypedDict, total=False):
     """Managed service identity (system assigned and/or user assigned identities).
 
-    :ivar principal_id: The service principal ID of the system assigned identity. This property
-     will only be provided for a system assigned identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+    :ivar principalId: The service principal ID of the system assigned identity. This property will
+     only be provided for a system assigned identity.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system assigned identity. This property will only be
      provided for a system assigned identity.
-    :vartype tenant_id: str
+    :vartype tenantId: str
     :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
      "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
     :vartype type: Union[str, "ManagedServiceIdentityType"]
-    :ivar user_assigned_identities: The identities assigned to this resource by the user.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :ivar userAssignedIdentities: The identities assigned to this resource by the user.
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -240,20 +240,20 @@ class ManagedServiceIdentity(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -275,10 +275,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str

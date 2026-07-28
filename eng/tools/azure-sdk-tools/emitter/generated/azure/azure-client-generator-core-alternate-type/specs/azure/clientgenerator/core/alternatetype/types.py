@@ -16,8 +16,8 @@ class ModelWithFeatureProperty(TypedDict, total=False):
 
     :ivar feature: Required.
     :vartype feature: geojson.Feature
-    :ivar additional_property: Required.
-    :vartype additional_property: str
+    :ivar additionalProperty: Required.
+    :vartype additionalProperty: str
     """
 
     feature: Required[geojson.Feature]

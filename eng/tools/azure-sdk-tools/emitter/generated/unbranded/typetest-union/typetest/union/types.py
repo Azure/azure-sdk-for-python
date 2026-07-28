@@ -52,18 +52,18 @@ class EnumsOnlyCases(TypedDict, total=False):
 class MixedLiteralsCases(TypedDict, total=False):
     """MixedLiteralsCases.
 
-    :ivar string_literal: This should be receive/send the "a" variant. Required. Is one of the
+    :ivar stringLiteral: This should be receive/send the "a" variant. Required. Is one of the
      following types: Literal["a"], Literal[2], float, Literal[True]
-    :vartype string_literal: Literal["a", 2, True]
-    :ivar int_literal: This should be receive/send the 2 variant. Required. Is one of the following
+    :vartype stringLiteral: Literal["a", 2, True]
+    :ivar intLiteral: This should be receive/send the 2 variant. Required. Is one of the following
      types: Literal["a"], Literal[2], float, Literal[True]
-    :vartype int_literal: Literal["a", 2, True]
-    :ivar float_literal: This should be receive/send the 3.3 variant. Required. Is one of the
+    :vartype intLiteral: Literal["a", 2, True]
+    :ivar floatLiteral: This should be receive/send the 3.3 variant. Required. Is one of the
      following types: Literal["a"], Literal[2], float, Literal[True]
-    :vartype float_literal: Literal["a", 2, True]
-    :ivar boolean_literal: This should be receive/send the true variant. Required. Is one of the
+    :vartype floatLiteral: Literal["a", 2, True]
+    :ivar booleanLiteral: This should be receive/send the true variant. Required. Is one of the
      following types: Literal["a"], Literal[2], float, Literal[True]
-    :vartype boolean_literal: Literal["a", 2, True]
+    :vartype booleanLiteral: Literal["a", 2, True]
     """
 
     stringLiteral: Required[Literal["a", 2, True]]
@@ -89,9 +89,9 @@ class MixedTypesCases(TypedDict, total=False):
     :ivar literal: This should be receive/send the "a" variant. Required. Is one of the following
      types: Cat, Literal["a"], int, bool
     :vartype literal: Union["Cat", Literal["a"], int, bool]
-    :ivar int_property: This should be receive/send the int variant. Required. Is one of the
-     following types: Cat, Literal["a"], int, bool
-    :vartype int_property: Union["Cat", Literal["a"], int, bool]
+    :ivar int: This should be receive/send the int variant. Required. Is one of the following
+     types: Cat, Literal["a"], int, bool
+    :vartype int: Union["Cat", Literal["a"], int, bool]
     :ivar boolean: This should be receive/send the boolean variant. Required. Is one of the
      following types: Cat, Literal["a"], int, bool
     :vartype boolean: Union["Cat", Literal["a"], int, bool]

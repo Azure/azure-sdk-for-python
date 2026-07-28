@@ -33,14 +33,14 @@ class Resource(TypedDict, total=False):
     :vartype map: dict[str, "InnerModel"]
     :ivar array:
     :vartype array: list["InnerModel"]
-    :ivar int_value:
-    :vartype int_value: int
-    :ivar float_value:
-    :vartype float_value: float
-    :ivar inner_model:
-    :vartype inner_model: "InnerModel"
-    :ivar int_array:
-    :vartype int_array: list[int]
+    :ivar intValue:
+    :vartype intValue: int
+    :ivar floatValue:
+    :vartype floatValue: float
+    :ivar innerModel:
+    :vartype innerModel: "InnerModel"
+    :ivar intArray:
+    :vartype intArray: list[int]
     """
 
     name: Required[str]
@@ -63,14 +63,14 @@ class ResourcePatch(TypedDict, total=False):
     :vartype map: dict[str, "InnerModel"]
     :ivar array:
     :vartype array: list["InnerModel"]
-    :ivar int_value:
-    :vartype int_value: int
-    :ivar float_value:
-    :vartype float_value: float
-    :ivar inner_model:
-    :vartype inner_model: "InnerModel"
-    :ivar int_array:
-    :vartype int_array: list[int]
+    :ivar intValue:
+    :vartype intValue: int
+    :ivar floatValue:
+    :vartype floatValue: float
+    :ivar innerModel:
+    :vartype innerModel: "InnerModel"
+    :ivar intArray:
+    :vartype intArray: list[int]
     """
 
     description: str

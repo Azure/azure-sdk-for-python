@@ -12,8 +12,8 @@ from typing_extensions import Required, TypedDict
 class ListItemInputBody(TypedDict, total=False):
     """The body of the input.
 
-    :ivar input_name: The name of the input. Required.
-    :vartype input_name: str
+    :ivar inputName: The name of the input. Required.
+    :vartype inputName: str
     """
 
     inputName: Required[str]

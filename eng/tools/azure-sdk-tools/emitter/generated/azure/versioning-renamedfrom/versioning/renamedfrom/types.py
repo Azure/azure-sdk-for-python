@@ -17,12 +17,12 @@ if TYPE_CHECKING:
 class NewModel(TypedDict, total=False):
     """NewModel.
 
-    :ivar new_prop: Required.
-    :vartype new_prop: str
-    :ivar enum_prop: Required. "newEnumMember"
-    :vartype enum_prop: Union[str, "NewEnum"]
-    :ivar union_prop: Required. Is either a str type or a int type.
-    :vartype union_prop: "_unions.NewUnion"
+    :ivar newProp: Required.
+    :vartype newProp: str
+    :ivar enumProp: Required. "newEnumMember"
+    :vartype enumProp: Union[str, "NewEnum"]
+    :ivar unionProp: Required. Is either a str type or a int type.
+    :vartype unionProp: "_unions.NewUnion"
     """
 
     newProp: Required[str]

@@ -7,10 +7,10 @@ from typing_extensions import Required, TypedDict
 class ReadOnlyModel(TypedDict, total=False):
     """RoundTrip model with readonly optional properties.
 
-    :ivar optional_nullable_int_list: Optional readonly nullable int list.
-    :vartype optional_nullable_int_list: list[int]
-    :ivar optional_string_record: Optional readonly string dictionary.
-    :vartype optional_string_record: dict[str, str]
+    :ivar optionalNullableIntList: Optional readonly nullable int list.
+    :vartype optionalNullableIntList: list[int]
+    :ivar optionalStringRecord: Optional readonly string dictionary.
+    :vartype optionalStringRecord: dict[str, str]
     """
 
     optionalNullableIntList: Optional[list[int]]
@@ -22,14 +22,14 @@ class ReadOnlyModel(TypedDict, total=False):
 class VisibilityModel(TypedDict, total=False):
     """Output model with visibility properties.
 
-    :ivar read_prop: Required string, illustrating a readonly property. Required.
-    :vartype read_prop: str
-    :ivar create_prop: Required string[], illustrating a create property. Required.
-    :vartype create_prop: list[str]
-    :ivar update_prop: Required int32[], illustrating a update property. Required.
-    :vartype update_prop: list[int]
-    :ivar delete_prop: Required bool, illustrating a delete property. Required.
-    :vartype delete_prop: bool
+    :ivar readProp: Required string, illustrating a readonly property. Required.
+    :vartype readProp: str
+    :ivar createProp: Required string[], illustrating a create property. Required.
+    :vartype createProp: list[str]
+    :ivar updateProp: Required int32[], illustrating a update property. Required.
+    :vartype updateProp: list[int]
+    :ivar deleteProp: Required bool, illustrating a delete property. Required.
+    :vartype deleteProp: bool
     """
 
     readProp: Required[str]

@@ -6,8 +6,8 @@ from typing_extensions import Required, TypedDict
 class JsonEncodedNameModel(TypedDict, total=False):
     """JsonEncodedNameModel.
 
-    :ivar default_name: Pass in true. Required.
-    :vartype default_name: bool
+    :ivar wireName: Pass in true. Required.
+    :vartype wireName: bool
     """
 
     wireName: Required[bool]

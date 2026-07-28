@@ -8,8 +8,8 @@ class TestModel(TypedDict, total=False):
 
     :ivar prop: Required.
     :vartype prop: str
-    :ivar changed_prop:
-    :vartype changed_prop: str
+    :ivar changedProp:
+    :vartype changedProp: str
     """
 
     prop: Required[str]

@@ -101,8 +101,8 @@ class Solution(TypedDict, total=False):
 class SolutionProperties(TypedDict, total=False):
     """This is the model with all read-only properties to be flattened.
 
-    :ivar solution_id:
-    :vartype solution_id: str
+    :ivar solutionId:
+    :vartype solutionId: str
     :ivar title:
     :vartype title: str
     :ivar content:

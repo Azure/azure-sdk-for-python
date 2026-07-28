@@ -14,10 +14,10 @@ class BytesProperty(TypedDict, total=False):
     """Template type for testing models with nullable property. Pass in the type of the property you
     are looking for.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: str
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: str
     """
 
     requiredProperty: Required[str]
@@ -29,10 +29,10 @@ class BytesProperty(TypedDict, total=False):
 class CollectionsByteProperty(TypedDict, total=False):
     """Model with collection bytes properties.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: list[str]
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: list[str]
     """
 
     requiredProperty: Required[str]
@@ -44,10 +44,10 @@ class CollectionsByteProperty(TypedDict, total=False):
 class CollectionsModelProperty(TypedDict, total=False):
     """Model with collection models properties.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: list["InnerModel"]
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: list["InnerModel"]
     """
 
     requiredProperty: Required[str]
@@ -59,10 +59,10 @@ class CollectionsModelProperty(TypedDict, total=False):
 class CollectionsStringProperty(TypedDict, total=False):
     """Model with collection string properties.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: list[str]
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: list[str]
     """
 
     requiredProperty: Required[str]
@@ -74,10 +74,10 @@ class CollectionsStringProperty(TypedDict, total=False):
 class DatetimeProperty(TypedDict, total=False):
     """Model with a datetime property.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: str
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: str
     """
 
     requiredProperty: Required[str]
@@ -89,10 +89,10 @@ class DatetimeProperty(TypedDict, total=False):
 class DurationProperty(TypedDict, total=False):
     """Model with a duration property.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: str
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: str
     """
 
     requiredProperty: Required[str]
@@ -116,10 +116,10 @@ class StringProperty(TypedDict, total=False):
     """Template type for testing models with nullable property. Pass in the type of the property you
     are looking for.
 
-    :ivar required_property: Required property. Required.
-    :vartype required_property: str
-    :ivar nullable_property: Property. Required.
-    :vartype nullable_property: str
+    :ivar requiredProperty: Required property. Required.
+    :vartype requiredProperty: str
+    :ivar nullableProperty: Property. Required.
+    :vartype nullableProperty: str
     """
 
     requiredProperty: Required[str]
