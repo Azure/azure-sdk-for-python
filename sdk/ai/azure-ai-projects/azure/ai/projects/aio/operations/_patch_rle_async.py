@@ -69,17 +69,25 @@ async def _lease_running_sandbox(
     if not sandbox.id:
         raise RLEError("service did not return a sandbox id")
     sandbox_id = sandbox.id
-    deadline = time.monotonic() + create_timeout_s
-    while not _status_matches(sandbox.status, RLESandboxStatus.RUNNING):
-        if _status_matches(sandbox.status, RLESandboxStatus.FAILED):
-            raise RLEError(f"sandbox {sandbox_id} failed to start: {sandbox.error or 'unknown error'}")
-        if time.monotonic() >= deadline:
-            raise RLEError(
-                f"sandbox {sandbox_id} not ready after {create_timeout_s:.0f}s "
-                f"(last status: {sandbox.status or 'unknown'})"
-            )
-        await asyncio.sleep(poll_interval_s)
-        sandbox = await sandboxes.get_sandbox(environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
+    try:
+        deadline = time.monotonic() + create_timeout_s
+        while not _status_matches(sandbox.status, RLESandboxStatus.RUNNING):
+            if _status_matches(sandbox.status, RLESandboxStatus.FAILED):
+                raise RLEError(f"sandbox {sandbox_id} failed to start: {sandbox.error or 'unknown error'}")
+            if time.monotonic() >= deadline:
+                raise RLEError(
+                    f"sandbox {sandbox_id} not ready after {create_timeout_s:.0f}s "
+                    f"(last status: {sandbox.status or 'unknown'})"
+                )
+            await asyncio.sleep(poll_interval_s)
+            sandbox = await sandboxes.get_sandbox(environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
+    except BaseException:
+        # The sandbox was leased but never became usable; release it so it does not leak quota.
+        try:
+            await sandboxes.release(environment_id, sandbox_id, foundry_features=_RLE_FEATURE)
+        except Exception:  # pylint: disable=broad-except
+            pass
+        raise
     return sandbox
 
 

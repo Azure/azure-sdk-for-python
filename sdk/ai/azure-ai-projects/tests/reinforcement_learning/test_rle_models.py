@@ -165,11 +165,13 @@ def test_openenv_client_reserves_quota_in_advance():
 
 
 def test_openenv_client_reserve_fails_fast_and_releases_partial():
-    # Second lease fails; the first (partially-leased) instance must be released, no queueing.
+    # Second lease fails; both the failed sandbox and the first (partially-leased) instance must be
+    # released, no queueing. The failed sandbox is released first (at the point of failure), then the
+    # already-pooled instance during reserve() cleanup.
     client, sandboxes = _make_openenv_client(num_instances=3, fail_on=1)
     with pytest.raises(RLEError):
         client.reserve()
-    assert sandboxes.released == ["sbx-0"]
+    assert sandboxes.released == ["sbx-1", "sbx-0"]
     assert client.instances == []
 
 
@@ -345,7 +347,7 @@ def test_async_openenv_reserve_fails_fast_and_releases_partial():
         client, sandboxes = _make_async_openenv_client(num_instances=3, fail_on=1)
         with pytest.raises(RLEError):
             await client.reserve()
-        assert sandboxes.released == ["sbx-0"]
+        assert sandboxes.released == ["sbx-1", "sbx-0"]
         assert client.instances == []
 
     asyncio.run(run())
