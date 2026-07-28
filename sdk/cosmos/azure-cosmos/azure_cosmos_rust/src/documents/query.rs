@@ -23,9 +23,8 @@ pub(crate) fn query_items<'py>(
     )
 }
 
-/// read_all_items: feed operation whose scope is interpreted by the driver.
-/// A specific partition key uses read-feed; full-container scope uses the
-/// driver's internal query-planner representation.
+/// `read_all_items`: a specific partition key uses read-feed; full-container
+/// scope uses the legacy-compatible internal query rewrite.
 #[pyfunction]
 pub(crate) fn read_all_items<'py>(
     py: Python<'py>,

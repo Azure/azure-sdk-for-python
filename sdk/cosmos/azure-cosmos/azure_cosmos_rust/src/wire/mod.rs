@@ -43,7 +43,9 @@ mod response;
 pub use errors::{DriverTransportError, UnsupportedQueryFeatureError};
 
 // ── Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ──
-pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
+pub(crate) use diagnostics::{
+    attempt_count, gateway_query_plan_count, native_query_plan_count, operation_count, retry_count,
+};
 
 // ── Request-side re-exports ───────────────────────────────────────────────────
 // pub(crate): documents/mod.rs imports these by explicit crate::wire:: path.
@@ -85,7 +87,10 @@ mod items;
 mod offers;
 mod query;
 
-pub(crate) use databases::{run_create_database_operation, run_create_database_operation_async};
+pub(crate) use databases::{
+    run_create_database_operation, run_create_database_operation_async,
+    run_read_database_operation, run_read_database_operation_async,
+};
 pub(crate) use feed_range::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,

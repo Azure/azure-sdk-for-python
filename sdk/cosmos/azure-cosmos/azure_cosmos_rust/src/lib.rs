@@ -104,10 +104,9 @@
 //!
 //!   * `read_all_items(handle, prepared) -> (status, sub_status,
 //!                                           headers, body, diagnostics)`
-//!         Executes native read-feed on the driver (no synthetic SQL rewrite).
-//!         Scope is selected from `PreparedRequest.partition_key_header`:
-//!         `[]` for full-container (`read_all_items_cross_partition`) or a
-//!         non-empty array for one logical partition (`read_all_items`).
+//!         Uses native read-feed for one logical partition. Whole-container
+//!         scope uses the same internal `SELECT *` query rewrite as legacy
+//!         Python so the driver query pipeline can fan out across partitions.
 //!
 //!   * `read_feed_ranges(handle, prepared) -> (status, sub_status,
 //!                                             headers, body, diagnostics)`
@@ -151,10 +150,19 @@
 mod credential;
 mod documents;
 mod feed_range_subset;
+#[cfg(test)]
+#[path = "../query_plan_binary.rs"]
+mod query_plan_binary;
 mod runtime;
 mod wire;
 
 use pyo3::prelude::*;
+
+#[pyfunction]
+fn configure_query_plan_interop_directory(directory: String) -> PyResult<()> {
+    azure_data_cosmos_driver::configure_query_plan_interop_directory(directory)
+        .map_err(pyo3::exceptions::PyRuntimeError::new_err)
+}
 
 macro_rules! add_pyfn {
     ($module:expr, $function:path) => {
@@ -168,6 +176,7 @@ macro_rules! add_pyfn {
 
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    add_pyfn!(m, configure_query_plan_interop_directory);
     add_pyfn!(m, runtime::init_client);
     add_pyfn!(m, runtime::close_client);
     add_pyfn!(m, documents::create_item);
@@ -184,6 +193,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_offer);
     add_pyfn!(m, documents::replace_offer);
     add_pyfn!(m, documents::create_database);
+    add_pyfn!(m, documents::read_database);
     // Async siblings: each returns a Python awaitable that completes on the
     // driver's runtime, so the async backend holds no worker thread per call.
     add_pyfn!(m, documents::create_item_async);
@@ -200,6 +210,7 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     add_pyfn!(m, documents::read_offer_async);
     add_pyfn!(m, documents::replace_offer_async);
     add_pyfn!(m, documents::create_database_async);
+    add_pyfn!(m, documents::read_database_async);
     // Concrete backend provenance: a counter incremented inside the binding on
     // every operation, so the perf harness can prove the Rust path actually ran
     // (not just that COSMOS_BACKEND said so). See wire::BINDING_OP_COUNT.
@@ -212,6 +223,10 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // retry count means the retry machinery fired even with 0 terminal errors).
     add_pyfn!(m, wire::attempt_count);
     add_pyfn!(m, wire::retry_count);
+    // Query-plan source counters let an installed-wheel test prove whether a
+    // query used packaged QueryPlanInterop or the Gateway fallback.
+    add_pyfn!(m, wire::native_query_plan_count);
+    add_pyfn!(m, wire::gateway_query_plan_count);
     // Typed transport error the Python backend maps to azure-core's
     // ServiceResponseError (see wire::DriverTransportError).
     m.add(

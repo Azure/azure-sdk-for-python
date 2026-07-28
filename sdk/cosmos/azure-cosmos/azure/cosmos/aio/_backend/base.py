@@ -92,6 +92,8 @@ class AsyncCosmosBackend(abc.ABC):
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run one engine-selected operation end to end and return the final result.
 
@@ -108,6 +110,14 @@ class AsyncCosmosBackend(abc.ABC):
         otherwise await the supplied legacy operation. ``AsyncLegacyBackend``
         overrides this to always await the legacy operation.
 
+        Falling back to the legacy path is usually the right answer: the request
+        still succeeds and the customer sees no difference. For a few requests it
+        is the wrong answer, because the fallback would change something the
+        customer asked for -- a per-call socket timeout honored on one request
+        and silently ignored on the next. For those,
+        ``allow_legacy_fallback=False`` turns the silent switch into an error the
+        customer can read and act on.
+
         :keyword build_prepared: Awaitable builder for the rust ``PreparedRequest``
             (invoked only on the rust path).
         :keyword legacy_operation: Typed port to the legacy call; see
@@ -120,10 +130,22 @@ class AsyncCosmosBackend(abc.ABC):
             a rust-backed client.
         :keyword fallback_exceptions: Narrow, operation-specific compatibility
             failures that should retry through the supplied legacy operation.
+        :keyword allow_legacy_fallback: When ``False``, an ineligible request
+            fails explicitly instead of crossing from a Rust-selected client to
+            the legacy transport.
+        :keyword unsupported_message: Customer-facing message used when an
+            ineligible request cannot fall back.
         :returns: The final result the public method returns to the caller.
         :rtype: Any
         """
         if not rust_eligible:
+            if not allow_legacy_fallback:
+                raise NotImplementedError(
+                    unsupported_message
+                    or "{} is not supported by the Rust backend for this request".format(
+                        legacy_operation.op
+                    )
+                )
             return await legacy_operation.invoke()
         try:
             prepared = await build_prepared()
@@ -131,6 +153,8 @@ class AsyncCosmosBackend(abc.ABC):
             assert response is not None  # execute() only returns None for a None prepared request
             return parse_response(response)
         except fallback_exceptions:
+            if not allow_legacy_fallback:
+                raise
             return await legacy_operation.invoke()
 
     # --- execute_pages is implemented by AsyncRustBackend; execute_batch is

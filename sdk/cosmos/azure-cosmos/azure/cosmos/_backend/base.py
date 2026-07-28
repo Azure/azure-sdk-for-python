@@ -51,9 +51,9 @@ from azure.core.utils import CaseInsensitiveDict
 
 # Operation discriminator values for ``PreparedRequest.op``.
 OP_CREATE_DATABASE = "create_database"
-OP_CREATE_DATABASE_IF_NOT_EXISTS = "create_database_if_not_exists"
 OP_CREATE_ITEM = "create_item"
 OP_DELETE_ITEM = "delete_item"
+OP_READ_DATABASE = "read_database"
 OP_READ_ITEM = "read_item"
 OP_UPSERT_ITEM = "upsert_item"
 OP_REPLACE_ITEM = "replace_item"
@@ -76,6 +76,7 @@ OP_REPLACE_OFFER = "replace_offer"
 # never through ``execute``.
 OP_TO_BINDING_METHOD = {
     OP_CREATE_DATABASE: "create_database",
+    OP_READ_DATABASE: "read_database",
     OP_CREATE_ITEM: "create_item",
     OP_UPSERT_ITEM: "upsert_item",
     OP_REPLACE_ITEM: "replace_item",
@@ -496,6 +497,8 @@ class CosmosBackend(abc.ABC):
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run one engine-selected operation end to end and return the final result.
 
@@ -524,6 +527,15 @@ class CosmosBackend(abc.ABC):
         * ``parse_response`` turns a rust ``BackendResponse`` into the final
           result (it binds the client connection and response hook).
 
+        Falling back to the legacy path is usually the right answer: the request
+        still succeeds and the customer sees no difference. For a few requests it
+        is the wrong answer, because the fallback would change something the
+        customer asked for. A customer who selected the Rust backend and passed a
+        per-call socket timeout would get that timeout honored on one request and
+        silently ignored on the next, with nothing to show which happened. For
+        those, ``allow_legacy_fallback=False`` turns the silent switch into an
+        error the customer can read and act on.
+
         :keyword build_prepared: Zero-arg builder for the rust ``PreparedRequest``.
         :keyword legacy_operation: Typed port to the legacy call; see
             :class:`LegacyOperation`.
@@ -533,10 +545,22 @@ class CosmosBackend(abc.ABC):
             forces the legacy operation even on a rust-backed client.
         :keyword fallback_exceptions: Narrow, operation-specific compatibility
             failures that should retry through the supplied legacy operation.
+        :keyword allow_legacy_fallback: When ``False``, an ineligible request
+            fails explicitly instead of crossing from a Rust-selected client to
+            the legacy transport.
+        :keyword unsupported_message: Customer-facing message used when an
+            ineligible request cannot fall back.
         :returns: The final result the public method returns to the caller.
         :rtype: Any
         """
         if not rust_eligible:
+            if not allow_legacy_fallback:
+                raise NotImplementedError(
+                    unsupported_message
+                    or "{} is not supported by the Rust backend for this request".format(
+                        legacy_operation.op
+                    )
+                )
             return legacy_operation.invoke()
         try:
             prepared = build_prepared()
@@ -544,6 +568,8 @@ class CosmosBackend(abc.ABC):
             assert response is not None  # execute() only returns None for a None prepared request
             return parse_response(response)
         except fallback_exceptions:
+            if not allow_legacy_fallback:
+                raise
             global _RUST_COMPATIBILITY_FALLBACK_COUNT  # pylint: disable=global-statement
             _RUST_COMPATIBILITY_FALLBACK_COUNT += 1
             return legacy_operation.invoke()

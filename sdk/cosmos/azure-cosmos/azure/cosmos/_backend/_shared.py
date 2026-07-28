@@ -67,6 +67,7 @@ from __future__ import annotations
 
 import logging
 import threading
+from pathlib import Path
 from typing import Any, Optional
 
 from .base import PreparedClientConfig, init_client_args
@@ -88,6 +89,48 @@ class _UnmatchableDriverError(BaseException):
     on an older ``_rust`` build that does not ship that class. Catching this
     never-thrown stand-in is a safe do-nothing.
     """
+
+
+def configure_packaged_query_plan_interop(rust_module: Optional[Any]) -> None:
+    """Tell the Rust driver where the wheel put QueryPlanInterop.
+
+    QueryPlanInterop is a separate compiled library that lets the Rust driver
+    work out a cross-partition query's plan locally instead of asking the
+    Cosmos DB gateway for it. Wheels ship it in ``azure/cosmos/.libs``, beside
+    the compiled extension.
+
+    The driver cannot guess that location, because it has no idea it is running
+    inside a Python package. Left alone it would search the operating system's
+    normal library locations, find nothing, and fall back to the gateway. So
+    this runs once when the backend module is imported and hands the driver the
+    absolute path.
+
+    Without this call a customer would have to set an environment variable to
+    get a feature their wheel already contains -- and would have no way to know
+    that was the difference.
+
+    Everything here is optional on purpose. An older compiled extension without
+    the configuration function, or a source checkout with no ``.libs``
+    directory, simply keeps the driver's existing search and gateway fallback.
+    Queries stay correct either way; only the extra round trip differs.
+    """
+    if rust_module is None:
+        return
+    configure = getattr(rust_module, "configure_query_plan_interop_directory", None)
+    module_file = getattr(rust_module, "__file__", None)
+    if not callable(configure) or not module_file:
+        return
+
+    try:
+        package_directory = Path(module_file).resolve().parent / ".libs"
+        if package_directory.is_dir():
+            configure(str(package_directory))
+    except Exception:  # pylint: disable=broad-except
+        _LOGGER.warning(
+            "Unable to configure packaged QueryPlanInterop; queries will use Gateway fallback "
+            "if no native library is discoverable.",
+            exc_info=True,
+        )
 
 
 def driver_transport_error_type(rust_module: Optional[Any]) -> type:

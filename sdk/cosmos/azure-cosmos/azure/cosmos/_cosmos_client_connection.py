@@ -3926,9 +3926,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             options,
             partition_key_range_id,
         )
-        # Python supplies the requested scope and session token. The shared driver
-        # decides how to execute it: a logical-partition scope uses read-feed, while
-        # a full-container scope uses its internal cross-partition query plan.
+        # Python supplies the requested scope and session token. The binding uses
+        # read-feed for one partition and the legacy-compatible query rewrite for
+        # a whole-container read.
         session_request = RequestObject(
             resource_type,
             documents._OperationType.ReadFeed,

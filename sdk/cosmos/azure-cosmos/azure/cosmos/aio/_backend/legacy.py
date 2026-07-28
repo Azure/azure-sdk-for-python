@@ -60,6 +60,8 @@ class AsyncLegacyBackend(AsyncCosmosBackend):
         parse_response: Callable[[BackendResponse], Any],
         rust_eligible: bool = True,
         fallback_exceptions: tuple[type[BaseException], ...] = (),
+        allow_legacy_fallback: bool = True,
+        unsupported_message: Optional[str] = None,
     ) -> Any:
         """Run the operation on the legacy core-python path.
 

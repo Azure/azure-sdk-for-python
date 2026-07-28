@@ -24,6 +24,9 @@ import concurrent.futures
 import inspect
 import logging
 import re
+import subprocess
+import sys
+import textwrap
 import threading
 import time
 from pathlib import Path
@@ -50,6 +53,7 @@ from azure.cosmos._backend.base import (
 )
 from azure.cosmos._backend.base import raise_account_read_unsupported
 from azure.cosmos._backend import _driver_registry
+from azure.cosmos._backend._shared import configure_packaged_query_plan_interop
 from azure.cosmos._backend._driver_registry import (
     StrictEngineIsolationError,
     ProxyPolicyConflictError,
@@ -100,6 +104,121 @@ def _isolate_driver_registry():
     _reset_driver_registry()
     yield
     _reset_driver_registry()
+
+
+def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path):
+    """The driver is told where the wheel put QueryPlanInterop.
+
+    QueryPlanInterop is the compiled library that lets the driver work out a
+    cross-partition query's plan locally instead of asking the Gateway for it.
+    Wheels put it in ``azure/cosmos/.libs``, and the driver has no way to guess
+    that. Without this call the customer's queries stay correct but pay an extra
+    round trip each time, with nothing to explain why.
+    """
+    package_directory = tmp_path / "azure" / "cosmos"
+    sidecar_directory = package_directory / ".libs"
+    sidecar_directory.mkdir(parents=True)
+    rust_module = MagicMock()
+    rust_module.__file__ = str(package_directory / "_rust.pyd")
+
+    configure_packaged_query_plan_interop(rust_module)
+
+    rust_module.configure_query_plan_interop_directory.assert_called_once_with(
+        str(sidecar_directory.resolve())
+    )
+
+
+def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path):
+    """A source checkout has no ``.libs`` directory, and that has to be fine.
+
+    Anyone running from a clone instead of a wheel would otherwise get an import
+    error on a directory that was never supposed to exist for them.
+    """
+    rust_module = MagicMock()
+    rust_module.__file__ = str(tmp_path / "azure" / "cosmos" / "_rust.pyd")
+
+    configure_packaged_query_plan_interop(rust_module)
+
+    rust_module.configure_query_plan_interop_directory.assert_not_called()
+
+
+def test_configure_packaged_query_plan_interop_preserves_gateway_fallback(
+    tmp_path, caplog
+):
+    """If the driver refuses the directory, queries still work.
+
+    The driver accepts this directory only once and only before it loads the
+    library, so a second call raises. Local query planning is a speed
+    improvement, not a correctness one, so failing here must not break the
+    customer's client -- it logs a warning and leaves the Gateway fallback in
+    place.
+    """
+    package_directory = tmp_path / "azure" / "cosmos"
+    (package_directory / ".libs").mkdir(parents=True)
+    rust_module = MagicMock()
+    rust_module.__file__ = str(package_directory / "_rust.pyd")
+    rust_module.configure_query_plan_interop_directory.side_effect = RuntimeError(
+        "already loaded"
+    )
+
+    with caplog.at_level(logging.WARNING):
+        configure_packaged_query_plan_interop(rust_module)
+
+    assert "queries will use Gateway fallback" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "module_name",
+    [
+        "azure.cosmos._backend.rust",
+        "azure.cosmos.aio._backend.rust",
+    ],
+)
+def test_backend_import_configures_packaged_query_plan_interop(module_name):
+    """Importing either Rust backend module makes the call, with no setup step.
+
+    Customers never call this themselves, so if the import did not do it nothing
+    would. Both the sync and async backend modules are checked because either one
+    can be the first thing an application imports. It runs in a separate process
+    because the check only means something on a fresh interpreter, where the
+    module has not already been imported by another test.
+    """
+    script = textwrap.dedent(
+        f"""
+        import importlib
+        import sys
+        import tempfile
+        import types
+        from pathlib import Path
+
+        import azure.cosmos
+
+        package_directory = Path(tempfile.mkdtemp()) / "azure" / "cosmos"
+        sidecar_directory = package_directory / ".libs"
+        sidecar_directory.mkdir(parents=True)
+        calls = []
+        fake_rust = types.ModuleType("azure.cosmos._rust")
+        fake_rust.__file__ = str(package_directory / "_rust.pyd")
+        fake_rust.configure_query_plan_interop_directory = calls.append
+        azure.cosmos._rust = fake_rust
+        sys.modules["azure.cosmos._rust"] = fake_rust
+        sys.modules.pop({module_name!r}, None)
+
+        importlib.import_module({module_name!r})
+
+        assert calls == [str(sidecar_directory.resolve())], calls
+        """
+    )
+
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=Path(__file__).resolve().parents[2],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr
 
 
 # ---------------------------------------------------------------------------

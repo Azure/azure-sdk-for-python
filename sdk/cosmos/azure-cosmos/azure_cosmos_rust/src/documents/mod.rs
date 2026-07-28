@@ -53,10 +53,10 @@ use crate::wire::{
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,
-    run_read_all_items_operation, run_read_all_items_operation_async,
-    run_read_feed_ranges_operation, run_read_feed_ranges_operation_async, run_read_offer_operation,
-    run_read_offer_operation_async, run_replace_offer_operation, run_replace_offer_operation_async,
-    OpModifiers,
+    run_read_all_items_operation, run_read_all_items_operation_async, run_read_database_operation,
+    run_read_database_operation_async, run_read_feed_ranges_operation,
+    run_read_feed_ranges_operation_async, run_read_offer_operation, run_read_offer_operation_async,
+    run_replace_offer_operation, run_replace_offer_operation_async, OpModifiers,
 };
 
 const REPLACE_ITEM_ID_REQUIRED: &str = "replace_item: PreparedRequest.item_id is required (the id of the document to overwrite, resolved from the `item` argument)";
@@ -216,7 +216,9 @@ mod items;
 mod offers;
 mod query;
 
-pub(crate) use databases::{create_database, create_database_async};
+pub(crate) use databases::{
+    create_database, create_database_async, read_database, read_database_async,
+};
 pub(crate) use feed_range::{
     feed_range_from_partition_key, feed_range_from_partition_key_async, is_feed_range_subset,
     is_feed_range_subset_async, read_feed_ranges, read_feed_ranges_async,

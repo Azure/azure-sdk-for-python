@@ -67,6 +67,7 @@ from .._backend.base import (
     OP_CREATE_ITEM,
     OP_DELETE_ITEM,
     OP_PATCH_ITEM,
+    OP_READ_DATABASE,
     OP_READ_ITEM,
     OP_REPLACE_ITEM,
     OP_UPSERT_ITEM,
@@ -184,14 +185,23 @@ def _normalize_option_value(option_key: str, value: Any) -> Any:
     return value
 
 
-def _build_create_database_prepared(
+def _build_database_prepared(
     op: str,
     database: Dict[str, Any],
     request_options: Mapping[str, Any],
     *,
+    include_database_body: bool,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the account-level create-database request consumed by the Rust backend."""
+    """Build an account-level database request consumed by the Rust backend.
+
+    Creating a database and reading one differ in exactly one way: create sends
+    the database document in the request body, read sends no body and identifies
+    the database by id alone. Everything else -- validation, header flattening,
+    timeout handling -- is the same, so both callers share this and pass
+    ``include_database_body``. Duplicating it would be two places to keep in step
+    every time header handling changes.
+    """
     _validate_resource(database)
     headers = flatten_options_to_headers(request_options)
     timeout = (kwargs or {}).get(Constants.Kwargs.TIMEOUT)
@@ -200,7 +210,7 @@ def _build_create_database_prepared(
     return PreparedRequest(
         op=op,
         container_link="",
-        body_bytes=serialize_body_to_bytes(database),
+        body_bytes=serialize_body_to_bytes(database) if include_database_body else b"",
         partition_key_header="[]",
         headers=headers,
         item_id=database["id"],
@@ -214,10 +224,33 @@ def build_create_database_prepared(
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
     """Build the request for a plain account-level create-database."""
-    return _build_create_database_prepared(
+    return _build_database_prepared(
         OP_CREATE_DATABASE,
         database,
         request_options,
+        include_database_body=True,
+        kwargs=kwargs,
+    )
+
+
+def build_read_database_prepared(
+    database: Dict[str, Any],
+    request_options: Mapping[str, Any],
+    *,
+    kwargs: Optional[Mapping[str, Any]] = None,
+) -> PreparedRequest:
+    """Build the account-level read-database request consumed by the Rust backend.
+
+    Exists so ``create_database_if_not_exists`` can do its existence check on the
+    Rust path. Before this, that check had no Rust request to send, so the whole
+    get-or-create had to run on the legacy path even for a customer who selected
+    the Rust backend.
+    """
+    return _build_database_prepared(
+        OP_READ_DATABASE,
+        database,
+        request_options,
+        include_database_body=False,
         kwargs=kwargs,
     )
 

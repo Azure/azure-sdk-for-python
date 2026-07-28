@@ -263,9 +263,9 @@ def build_read_all_items_prepared_query(
 ) -> PreparedQuery:
     """Build the PreparedQuery for one read_all_items page dispatch.
 
-    The scope is carried without choosing an execution strategy in Python. The
-    shared driver uses native read-feed for a logical partition and its internal
-    query planner for a whole-container read.
+    Python carries the requested scope without constructing SQL. The binding uses
+    native read-feed for a logical partition and the legacy-compatible internal
+    query for a whole-container read.
     """
     return PreparedQuery(
         op=OP_READ_ALL_ITEMS,

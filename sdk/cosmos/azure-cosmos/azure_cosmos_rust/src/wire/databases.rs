@@ -12,7 +12,7 @@ use pyo3::types::PyTuple;
 use azure_data_cosmos_driver::{
     driver::CosmosDriver,
     error::CosmosError,
-    models::{ActivityId, CosmosOperation, CosmosResponse, SessionToken},
+    models::{ActivityId, CosmosOperation, CosmosResponse, DatabaseReference, SessionToken},
     options::ContentResponseOnWrite,
 };
 
@@ -94,6 +94,30 @@ pub(crate) fn run_create_database_operation_async<'py>(
     })
 }
 
+pub(crate) fn run_read_database_operation<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    database_id: String,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyTuple>> {
+    run_database_sync(py, handle, op_name, move |driver| {
+        run_read_database_future(driver, modifiers, database_id)
+    })
+}
+
+pub(crate) fn run_read_database_operation_async<'py>(
+    py: Python<'py>,
+    handle: &str,
+    modifiers: OpModifiers,
+    database_id: String,
+    op_name: &str,
+) -> PyResult<Bound<'py, PyAny>> {
+    run_database_async(py, handle, op_name, move |driver| {
+        run_read_database_future(driver, modifiers, database_id)
+    })
+}
+
 async fn run_create_database_future(
     driver: Arc<CosmosDriver>,
     modifiers: OpModifiers,
@@ -111,6 +135,31 @@ async fn run_create_database_future(
 
     let options = build_operation_options(
         Some(ContentResponseOnWrite::Enabled),
+        modifiers.excluded_regions_value,
+        modifiers.end_to_end_timeout,
+        modifiers.availability_strategy,
+        modifiers.custom_headers,
+    );
+    driver.execute_singleton_operation(op, options).await
+}
+
+async fn run_read_database_future(
+    driver: Arc<CosmosDriver>,
+    modifiers: OpModifiers,
+    database_id: String,
+) -> Result<CosmosResponse, CosmosError> {
+    let database = DatabaseReference::from_name(driver.account().clone(), database_id);
+    let mut op = CosmosOperation::read_database(database);
+
+    if let Some(activity) = modifiers.activity_header.as_ref() {
+        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    }
+    if let Some(session) = modifiers.session_header.as_ref() {
+        op = op.with_session_token(SessionToken::from(session.clone()));
+    }
+
+    let options = build_operation_options(
+        None,
         modifiers.excluded_regions_value,
         modifiers.end_to_end_timeout,
         modifiers.availability_strategy,

@@ -22,6 +22,8 @@ use super::response::tuple_from_feed_result;
 use super::{lookup_driver, AbortOnDrop};
 use crate::runtime::require_runtime_context;
 
+const READ_ALL_ITEMS_QUERY_BODY: &[u8] = br#"{"query":"SELECT * FROM root r"}"#;
+
 // Query and read-all operations share the same feed-shaped response boundary.
 // The flow is: the Python wrapper hands us a
 // PreparedRequest, we work out scope (single logical partition vs full
@@ -38,6 +40,20 @@ pub(super) enum QueryTarget {
     /// Search the full container (the customer used cross-partition query, or
     /// this is a whole-container `read_all_items`).
     CrossPartition,
+}
+
+enum ReadAllItemsExecution {
+    ReadFeed(PartitionKey),
+    Query,
+}
+
+impl From<QueryTarget> for ReadAllItemsExecution {
+    fn from(target: QueryTarget) -> Self {
+        match target {
+            QueryTarget::Partition(partition_key) => Self::ReadFeed(partition_key),
+            QueryTarget::CrossPartition => Self::Query,
+        }
+    }
 }
 
 /// Entry point the binding calls to run one query page and wait for it. Finds the
@@ -116,13 +132,10 @@ pub(crate) fn run_query_operation_async<'py>(
     })
 }
 
-/// Entry point the binding calls to run one read_all_items feed page and wait for it.
+/// Entry point the binding calls to run one `read_all_items` page and wait for it.
 /// The partition-key header controls scope:
-///   * `[]` => full-container read (`read_all_items_cross_partition`)
+///   * `[]` => full-container query equivalent to legacy Python
 ///   * non-empty array => logical-partition read (`read_all_items`)
-///
-/// The shared driver owns the execution choice: full-container reads are represented
-/// internally as a query so its planner handles topology, fan-out, and continuation.
 pub(crate) fn run_read_all_items_operation<'py>(
     py: Python<'py>,
     handle: &str,
@@ -229,9 +242,9 @@ async fn run_query_future(
     driver.execute_operation(op, options).await
 }
 
-/// Driver work for `read_all_items`: resolve the container and pass the requested
-/// scope to the shared driver. A logical partition uses read-feed; full-container
-/// scope uses the driver's internal query representation.
+/// Driver work for `read_all_items`. A logical partition uses read-feed. A
+/// full-container read uses the same internal query as legacy Python so the
+/// driver's query planner provides fan-out, continuation, and split handling.
 async fn run_read_all_items_future(
     driver: Arc<CosmosDriver>,
     database_name: String,
@@ -242,13 +255,16 @@ async fn run_read_all_items_future(
     let container = driver
         .resolve_container(&database_name, &container_name)
         .await?;
-    let mut op = match query_target {
+    let mut op = match ReadAllItemsExecution::from(query_target) {
         // The public Python API currently produces full-container scope. Keep the
         // partition arm so this binding remains ready for a partition-scoped API.
-        QueryTarget::Partition(partition_key) => {
+        ReadAllItemsExecution::ReadFeed(partition_key) => {
             CosmosOperation::read_all_items(container, partition_key)
         }
-        QueryTarget::CrossPartition => CosmosOperation::read_all_items_cross_partition(container),
+        ReadAllItemsExecution::Query => {
+            CosmosOperation::query_items(container, Some(FeedRange::full()))
+                .with_body(READ_ALL_ITEMS_QUERY_BODY.to_vec())
+        }
     };
 
     if let Some(activity) = modifiers.activity_header.as_ref() {
@@ -266,4 +282,28 @@ async fn run_read_all_items_future(
         modifiers.custom_headers,
     );
     driver.execute_operation(op, options).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{PartitionKey, QueryTarget, ReadAllItemsExecution, READ_ALL_ITEMS_QUERY_BODY};
+
+    #[test]
+    fn read_all_items_query_matches_legacy_python_rewrite() {
+        let payload: serde_json::Value = serde_json::from_slice(READ_ALL_ITEMS_QUERY_BODY).unwrap();
+
+        assert_eq!(payload["query"], "SELECT * FROM root r");
+    }
+
+    #[test]
+    fn read_all_items_selects_execution_from_scope() {
+        assert!(matches!(
+            ReadAllItemsExecution::from(QueryTarget::CrossPartition),
+            ReadAllItemsExecution::Query
+        ));
+        assert!(matches!(
+            ReadAllItemsExecution::from(QueryTarget::Partition(PartitionKey::from("tenant-a"))),
+            ReadAllItemsExecution::ReadFeed(_)
+        ));
+    }
 }

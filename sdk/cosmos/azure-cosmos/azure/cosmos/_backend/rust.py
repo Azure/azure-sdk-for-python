@@ -40,6 +40,7 @@ from .base import (
 )
 from ._shared import (
     RustBackendShared,
+    configure_packaged_query_plan_interop,
     driver_transport_error_type,
     driver_unsupported_query_error_type,
 )
@@ -52,6 +53,7 @@ _rust_module: Optional[Any] = None
 try:
     from azure.cosmos import _rust  # type: ignore[attr-defined]
     _rust_module = _rust
+    configure_packaged_query_plan_interop(_rust_module)
 except ImportError:
     _LOGGER.debug(
         "_rust module not available; RustBackend operations "

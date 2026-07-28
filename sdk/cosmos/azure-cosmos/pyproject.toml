@@ -2,7 +2,8 @@
 # compile and where to put the result.
 [build-system]
 requires      = ["maturin>=1.4,<2.0"]
-build-backend = "maturin"
+build-backend = "azure_cosmos_build_backend"
+backend-path = ["."]
 
 [tool.maturin]
 # Path to the binding crate's Cargo.toml. Maturin invokes `cargo build`
@@ -21,6 +22,13 @@ module-name = "azure.cosmos._rust"
 # Required for PyO3 to build as a Python extension module (no link to
 # libpython at build time).
 features = ["pyo3/extension-module"]
+
+# The PEP 517 backend stages approved target-platform QueryPlanInterop files
+# here only while assembling a wheel. Source distributions never include them.
+include = [
+    { path = "azure/cosmos/.libs/*", format = "wheel" },
+    { path = "azure_cosmos_build_backend.py", format = "sdist" },
+]
 
 [tool.azure-sdk-build]
 mypy = true

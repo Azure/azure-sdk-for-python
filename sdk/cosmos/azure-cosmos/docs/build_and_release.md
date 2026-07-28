@@ -22,15 +22,16 @@ Local development: Maturin builds the `azure_cosmos_rust` binding against a sibl
 - [6. Maturin connects `pip` to Cargo](#6-maturin-connects-pip-to-cargo)
 - [7. How Maturin knows what to do: `pyproject.toml` and the four names](#7-how-maturin-knows-what-to-do-pyprojecttoml-and-the-four-names)
 - [8. What actually ships: the wheel](#8-what-actually-ships-the-wheel)
-- [9. One wheel becomes many: platforms, `abi3`, and `manylinux`](#9-one-wheel-becomes-many-platforms-abi3-and-manylinux)
-- [10. The release math changes: today vs. after v5](#10-the-release-math-changes-today-vs-after-v5)
-- [11. The package-level edits](#11-the-package-level-edits)
-- [12. The CI pipeline edits](#12-the-ci-pipeline-edits)
-- [13. The shape that comes out the other end](#13-the-shape-that-comes-out-the-other-end)
-- [14. What has to be arranged with System Engineering](#14-what-has-to-be-arranged-with-system-engineering)
-- [15. Rolling it out without breaking a release](#15-rolling-it-out-without-breaking-a-release)
-- [16. What stays the same unless service requirements change](#16-what-stays-the-same-unless-service-requirements-change)
-- [17. Where it all ends up: the customer's machine](#17-where-it-all-ends-up-the-customers-machine)
+- [9. Why QueryPlanInterop must be shipped beside `_rust`](#9-why-queryplaninterop-must-be-shipped-beside-_rust)
+- [10. One wheel becomes many: platforms, `abi3`, and `manylinux`](#10-one-wheel-becomes-many-platforms-abi3-and-manylinux)
+- [11. The release math changes: today vs. after v5](#11-the-release-math-changes-today-vs-after-v5)
+- [12. The package-level edits](#12-the-package-level-edits)
+- [13. The CI pipeline edits](#13-the-ci-pipeline-edits)
+- [14. The shape that comes out the other end](#14-the-shape-that-comes-out-the-other-end)
+- [15. What has to be arranged with System Engineering](#15-what-has-to-be-arranged-with-system-engineering)
+- [16. Rolling it out without breaking a release](#16-rolling-it-out-without-breaking-a-release)
+- [17. What stays the same unless service requirements change](#17-what-stays-the-same-unless-service-requirements-change)
+- [18. Where it all ends up: the customer's machine](#18-where-it-all-ends-up-the-customers-machine)
 
 ---
 
@@ -80,7 +81,10 @@ source/repos/
 │       │   └── _rust.pyd                   ← compiled extension on Windows
 │       ├── azure_cosmos_rust/              ← Rust: the binding crate
 │       │   ├── Cargo.toml
+│       │   ├── build.rs                    ← Cargo build script; checks staged native files
+│       │   ├── query_plan_binary.rs        ← PE/ELF/Mach-O reader used by build.rs
 │       │   └── src/*.rs
+│       ├── azure_cosmos_build_backend.py   ← PEP 517 wrapper; stages .libs into the wheel
 │       ├── Cargo.toml                      ← binding workspace manifest
 │       └── pyproject.toml                  ← Python/Maturin build manifest
 └── azure-sdk-for-rust/
@@ -221,27 +225,13 @@ dependency requirement that Cargo merges. The binding declares a minimum of 1.75
 driver declares 1.88; the compiler used for the combined build must satisfy both, making 1.88
 the effective minimum for this pairing. Update the binding workspace metadata to match,
 confirming the figure against the driver revision being shipped — otherwise the Python
-manifest understates the toolchain the build agents need (§14).
+manifest understates the toolchain the build agents need (§15).
 
-**One enabled feature has its own native packaging decision.** The binding enables the
-driver's explicitly internal `__internal_native_query_plan` feature; it is not a public
-compatibility guarantee. The driver's loader module is always compiled, while the feature
-enables the execution path that instantiates and uses it to look for
-`Cosmos.QueryPlanInterop.dll`, `libqueryplaninterop.so`, or
-`libqueryplaninterop.dylib`; it does **not** compile that library into the PyO3 extension.
-The driver loads it lazily from `AZURE_COSMOS_QUERYPLANINTEROP_DIR` or the operating system's
-library search path. If it is absent or query-plan generation fails, the driver falls back to
-the Gateway.
-
-The feature therefore does not make the wheel unimportable when the native query-plan library
-is absent, but it also does not provide local query planning by itself. Before release, choose
-one of two explicit models:
-
-1. Package, sign, license, and test the QueryPlanInterop library for every supported wheel
-   target and make its runtime location discoverable.
-2. Do not claim local query planning as shipped behavior; either retain the feature with its
-   Gateway fallback or disable the internal feature until the extra library has an approved
-   distribution strategy.
+**One enabled feature adds a second native component.** The binding enables the driver's
+explicitly internal `__internal_native_query_plan` feature. The Rust driver code is linked into
+the PyO3 extension, but QueryPlanInterop is loaded separately at runtime. That distinction
+changes both wheel contents and release validation; §9 covers the complete build, loading,
+fallback, and artifact-source model.
 
 **The new problem:** once those prerequisites are satisfied, `cargo build` produces a raw
 platform library — for example, `azure_cosmos_rust.dll` on Windows — and
@@ -372,20 +362,27 @@ Here is exactly what that one command does, the first time it runs:
   normal install *copies* the project files there: the `azure/cosmos/*.py` sources, the
   package data, **and the compiled extension**. Editable mode copies none of it — it drops a
   small pointer file in `site-packages/` saying "`azure.cosmos` actually lives in this working
-  tree." So the `_rust.pyd`/`_rust.abi3.so` stays in `azure/cosmos/` in your checkout and is
+  tree." So the `_rust.pyd`/`_rust.abi3.so` stays in `azure/cosmos/` in the working tree and is
   imported from there; `.py` edits take effect with no reinstall, and each later
   `maturin develop` rebuilds that extension in place.
 
-Two more Maturin commands appear later:
+For a release-style wheel, use the configured PEP 517 backend rather than calling
+`maturin build` directly:
 
 ```powershell
-maturin build --release    # produce a shippable wheel under target/wheels/
-maturin publish            # Maturin can build and upload distributions; Cosmos CI does not call this
+python -m build --wheel
 ```
 
-`maturin develop` is the command run repeatedly while developing; `maturin build
---release` is the local command used to exercise a release-mode build. The current Cosmos
-release pipeline is not yet wired to run it. 
+`maturin develop` is the command run repeatedly while developing. `python -m build --wheel`
+invokes the package's PEP 517 wrapper, which performs QueryPlanInterop staging when the build
+environment supplies it and then delegates the release-mode compile and wheel assembly to
+Maturin. Calling `maturin build` directly bypasses that package-specific staging. The current
+Cosmos release pipeline is not yet wired to run the native wheel path.
+
+Editable builds deliberately do not package release sidecars into the working tree. The wrapper
+temporarily ignores `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` for an editable build; developers
+who need local query planning with `maturin develop` use the existing runtime override
+`AZURE_COSMOS_QUERYPLANINTEROP_DIR`.
 
 
 Maturin does several things "automatically" — but *how* does it know
@@ -407,7 +404,8 @@ Here's the relevant `pyproject.toml`:
 ```toml
 [build-system]
 requires      = ["maturin>=1.4,<2.0"]
-build-backend = "maturin"                       # use Maturin, not setuptools
+build-backend = "azure_cosmos_build_backend"    # package staging wrapper
+backend-path  = ["."]
 
 [tool.maturin]
 manifest-path = "azure_cosmos_rust/Cargo.toml"  # which crate to build
@@ -460,7 +458,9 @@ so it derives `azure_cosmos_rust==0.1.0` from the binding crate.
 > `[dependencies]`. There is no separate Cosmos driver `.dll`/`.so` beside it. This
 > does not mean every native dependency is linked into it. In particular, the enabled
 > native-query-plan feature looks for a separate QueryPlanInterop library at runtime.
-> Whether that optional library ships in the wheel remains an explicit release decision.
+> The wheel configuration can place that library and its native dependencies in
+> `azure/cosmos/.libs`; release builds still need approved target-platform artifacts to supply
+> to that configuration.
 >
 > **What is "the Rust linker"?** Compiling happens in two phases. First the compiler turns
 > each crate's `.rs` source into a separate chunk of machine code (an "object file") — the
@@ -507,8 +507,10 @@ azure/cosmos/
 ├── py.typed
 ├── _query_advisor/query_advice_rules.json
 ├── …
-└── _rust.pyd            ← the compiled Rust extension (binding + driver machine code)
-[optional QueryPlanInterop library; wheel path still to be designed]
+├── _rust.pyd            ← the compiled Rust extension (binding + driver machine code)
+└── .libs/
+    ├── Cosmos.QueryPlanInterop.dll  ← Windows example; .so/.dylib on Linux/macOS
+    └── [its native dependencies]
 azure_cosmos-5.0.0.dist-info/
 ├── METADATA
 ├── WHEEL
@@ -516,17 +518,17 @@ azure_cosmos-5.0.0.dist-info/
 ```
 
 The wheel always needs the normal Python source, package data, one compiled Python extension,
-and standard `.dist-info` metadata. If the release chooses to ship local query planning, it
-also needs the platform-specific QueryPlanInterop library and runtime loading configuration
-described in section3; otherwise queries use the Gateway fallback. It is called a "binary wheel"
-because it includes native machine code, not because the Python source is compiled.
+and standard `.dist-info` metadata. A release claiming local query planning also needs the
+platform-specific QueryPlanInterop library and dependencies under `.libs`, as described in
+§9; otherwise queries use the Gateway fallback. It is called a "binary wheel" because it
+includes native machine code, not because the Python source is compiled.
 
 Every segment of the filename is doing work:
 
 - `azure_cosmos` — the package name (the dash becomes an underscore, a PyPI convention).
 - `5.0.0` — the version.
 - `cp39` — the CPython stable-ABI floor used with the next `abi3` tag: 3.9.
-- `abi3` — the stable ABI (§9).
+- `abi3` — the stable ABI (§10).
 - `win_amd64` — the operating system and CPU: 64-bit Windows.
 
 that last segment, `win_amd64`, is the whole difficulty. That one
@@ -536,7 +538,262 @@ exactly one platform. So one wheel is no longer enough.
 
 ---
 
-## 9. One wheel becomes many: platforms, `abi3`, and `manylinux`
+## 9. Why QueryPlanInterop must be shipped beside `_rust`
+
+**Start with a Windows x64 customer example.** The customer installs:
+
+```
+azure_cosmos-5.0.0-cp39-abi3-win_amd64.whl
+```
+
+The wheel contains `_rust.pyd`. That file contains the PyO3 binding and the Rust Cosmos driver.
+It does **not** contain the code that creates a local query plan. That code is in a separate file
+named `Cosmos.QueryPlanInterop.dll`.
+
+If the DLL is present and loads successfully, the Rust query path can create the query plan on
+the customer's machine. If the DLL is missing or cannot load, the SDK asks the Cosmos Gateway
+for the query plan instead. The query still works, but it did not use local query planning.
+
+This is why a wheel that is meant to provide local query planning needs two native files:
+
+| Platform | Python extension containing the Rust driver | Separate query-plan library |
+|---|---|---|
+| Windows | `_rust.pyd` | `Cosmos.QueryPlanInterop.dll` |
+| Linux | `_rust.abi3.so` | `libqueryplaninterop.so` |
+| macOS | `_rust.abi3.so` | `libqueryplaninterop.dylib` |
+
+A **native library** is a compiled `.dll`, `.so`, or `.dylib` file. The operating system loads
+it as machine code. QueryPlanInterop may need other native libraries, so those files must also be
+included in the wheel.
+
+### Files installed for a Windows customer
+
+The wheel installs the files like this:
+
+```
+azure/cosmos/
+├── _rust.pyd
+└── .libs/
+    ├── Cosmos.QueryPlanInterop.dll
+    └── QueryPlanInteropDependency.dll
+```
+
+`QueryPlanInteropDependency.dll` is only an example name. The real wheel must include every DLL
+that `Cosmos.QueryPlanInterop.dll` needs and that Windows does not already provide.
+
+Linux uses `libqueryplaninterop.so` and macOS uses `libqueryplaninterop.dylib`. Customers do not
+copy these files themselves. They also do not set `PATH`, `LD_LIBRARY_PATH`, or
+`DYLD_LIBRARY_PATH`. The SDK finds the files under its own installed `azure/cosmos/.libs`
+directory.
+
+### How a release build adds the files
+
+The build sets:
+
+```
+AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR=<directory containing the native files>
+```
+
+For example, a Windows x64 build directory may contain:
+
+```
+C:\query-plan\x64\
+├── Cosmos.QueryPlanInterop.dll
+└── QueryPlanInteropDependency.dll
+```
+
+The build then runs:
+
+```powershell
+python -m build --wheel
+```
+
+The steps are:
+
+1. The Python build code waits if another wheel build from the same checkout is currently
+   copying files into `azure/cosmos/.libs`. It stops waiting and reports an error after
+   600 seconds.
+2. It cleans up after any earlier build that was killed before it finished. That step is
+   described below.
+3. It writes a JSON file in the system temporary directory **before copying anything**. The
+   JSON file lists the file names this build is about to copy.
+4. It copies `.dll` files on Windows, `.so` files on Linux, or `.dylib` files on macOS into
+   `azure/cosmos/.libs`.
+5. `build.rs`, the binding crate's Cargo build script, checks every copied native file before
+   Maturin creates the wheel.
+6. Maturin builds `_rust` and adds `.libs/*` to the wheel.
+7. The Python build code deletes the files listed in the JSON file, removes the JSON file, and
+   removes the temporary `.libs` directory.
+
+Step 3 has to happen before step 4, and that ordering is the whole reason the JSON file exists.
+Suppose the build process is killed after copying two DLLs but before cleanup. Nothing recorded
+which two. Because the JSON file was already on disk listing all the names this build would
+copy, the next build reads it and deletes exactly those names — the two that were copied, plus
+the ones that never got written, which is harmless. If `.libs` then still contains a file that
+is not listed in the JSON file, the build stops and leaves that file unchanged rather than
+deleting something it does not own.
+
+Calling `maturin build` directly skips these copy and cleanup steps. Release wheel builds must
+therefore use `python -m build --wheel`.
+
+An editable build does not copy release DLLs, `.so` files, or `.dylib` files into the source
+checkout. A developer who needs QueryPlanInterop locally can set:
+
+```
+AZURE_COSMOS_QUERYPLANINTEROP_DIR=<directory containing the native files>
+```
+
+### How the build rejects the wrong native file
+
+Each wheel is for one operating system and CPU. The native files under `.libs` must match it.
+
+The check lives in `azure_cosmos_rust/build.rs`, a **build script** — a Rust file Cargo
+compiles and runs before it compiles the crate itself. It reads each native file's header
+through `azure_cosmos_rust/query_plan_binary.rs` and compares the CPU recorded there against
+the target Cargo was told to build for.
+
+Concrete Windows values:
+
+- x64 PE machine value: `0x8664`
+- ARM64 PE machine value: `0xAA64`
+
+If the build is creating a `win_amd64` wheel and a DLL has the ARM64 value `0xAA64`, `build.rs`
+panics and the build stops. It checks the main QueryPlanInterop file and every native file
+copied beside it.
+
+The matching check covers:
+
+- PE files on Windows;
+- ELF files on Linux; and
+- Mach-O files on macOS.
+
+For Linux, `build.rs` also checks whether the ELF file is 32-bit or 64-bit. For example, a
+64-bit `manylinux_2_17_x86_64` wheel rejects an `ELFCLASS32` library even if the ELF CPU field
+says x86-64.
+
+### How the installed SDK finds QueryPlanInterop
+
+Both the sync and async Rust backends calculate this directory when they import `_rust`:
+
+```
+Path(_rust.__file__).resolve().parent / ".libs"
+```
+
+For a normal Windows installation, the result is similar to:
+
+```
+C:\venv\Lib\site-packages\azure\cosmos\.libs
+```
+
+The driver tries these locations in order, and stops at the first one that loads:
+
+1. the installed `.libs` directory, as an absolute path;
+2. `AZURE_COSMOS_QUERYPLANINTEROP_DIR`, if a developer or test set it, also as an absolute
+   path; and
+3. the bare library name, which hands the search to the operating system's normal rules.
+
+The directory can be set once per Python process. Setting the same directory again succeeds.
+Trying to replace it with a different directory fails. A small lock covers only the first
+directory setup and the first library load, so two threads cannot perform those actions at the
+same time. Query requests do not take this lock after the first load has finished.
+
+For attempts 1 and 2 Windows loads the DLL by its full Unicode path with `LoadLibraryExW`, and
+the `LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR` flag tells Windows to look beside
+`Cosmos.QueryPlanInterop.dll` for its other DLLs. This does not change the DLL search rules for
+the rest of the Python process. Attempt 3 passes the bare name with no flags, so Windows applies
+its default search.
+
+Linux and macOS behave the same way: attempts 1 and 2 pass a full path to `dlopen`, and attempt
+3 passes the bare name. The Linux wheel repair step must make dependent-library paths relative
+to `$ORIGIN`. The macOS equivalent is `@loader_path`.
+
+### What customers see when the library is missing
+
+The package still imports. The SDK does not call the legacy Python query code.
+
+For example:
+
+1. the customer runs a query with the Rust backend;
+2. the driver cannot load `Cosmos.QueryPlanInterop.dll`;
+3. the driver asks the Cosmos Gateway for the query plan; and
+4. the query continues through the Rust path.
+
+Release notes must distinguish these two cases:
+
+- A clean installed wheel loaded QueryPlanInterop and used local query planning.
+- QueryPlanInterop was absent or failed to load, so the query used Gateway planning.
+
+### Three switches that sound like the same switch
+
+A recurring question is whether a customer has to turn something on in their Azure account to
+get local query planning. The answer is no, and the confusion comes from three unrelated
+controls that all sound like "enable native query planning."
+
+| Control | What it is | Where it is set | What it decides |
+|---|---|---|---|
+| `__internal_native_query_plan` | a Cargo build feature | `azure_cosmos_rust/Cargo.toml` | whether the driver's local-planning code and its library loader are compiled into `_rust` at all |
+| `_backend="rust"` | a Python constructor keyword, or the `COSMOS_BACKEND` environment variable | customer code, at `CosmosClient(...)` | whether an eligible query runs on the Rust engine instead of the existing Python path |
+| account metadata | a value the driver reads from the account | the Cosmos DB account | nothing about on/off — see below |
+
+The first is already enabled in this repository, so every `_rust` build contains the loader.
+The second defaults to `core-python`, so a customer who changes nothing keeps the existing
+Python path and never reaches the Rust query engine.
+
+The third is the one that gets misread. The driver reads a `query_engine_configuration` value
+from the account's cached metadata and passes it into QueryPlanInterop as an argument, alongside
+the query text and the partition-key paths. It is an **input to plan generation**, not a switch
+that permits it. When the account returns no such value the driver substitutes an empty default
+and still generates the plan. Gateway query-plan generation is likewise always available and has
+no customer-facing toggle.
+
+So there is no Azure account or service feature flag to request, document, or gate the release
+on. What decides whether a customer gets local planning is entirely on the client side: whether
+the wheel they installed contains QueryPlanInterop, and whether they selected the Rust backend.
+
+### Remaining release work
+
+The code now builds the `.libs` wheel layout, checks native file types and CPU values, finds the
+installed files from both sync and async clients, and uses Gateway planning when the files are
+missing.
+
+Four release checks are still missing:
+
+1. **Supply the libraries.** No checked-in Python pipeline sets
+   `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, so no pipeline currently gives the build the
+   QueryPlanInterop files.
+2. **Check the final repaired and signed wheel.** There is no checked-in test proving that wheel
+   repair and signing preserve QueryPlanInterop and its dependent libraries.
+3. **Open the wheel archive.** The eight build-wrapper tests check staging and cleanup. They do
+   not open the built wheel and assert that the expected `.dll`, `.so`, or `.dylib` files are
+   present.
+4. **Run native-library tests in CI.** The Rust native tests exist, but all 64 are ignored unless
+   CI enables `test_category="native_query_plan"`. No checked-in CI configuration enables it.
+
+The driver and Python binding now expose process-wide counters:
+
+```python
+native_before = _rust.native_query_plan_count()
+gateway_before = _rust.gateway_query_plan_count()
+
+list(container.query_items("SELECT TOP 1 * FROM c"))
+
+native_delta = _rust.native_query_plan_count() - native_before
+gateway_delta = _rust.gateway_query_plan_count() - gateway_before
+```
+
+For a clean installed wheel containing QueryPlanInterop, the example query must produce
+`native_delta == 1` and `gateway_delta == 0`. For the no-library fallback test, it must produce
+`native_delta == 0` and `gateway_delta == 1`. The counters are better release evidence than a
+debug log because the test can make exact assertions without changing logging settings.
+
+The release therefore still needs licensed and signed files for every supported operating system
+and CPU. For each wheel, the pipeline must build, repair, sign, open the final archive to check
+its native files, install it in a clean environment, run both counter checks above, and run the 64
+native tests with their test category enabled.
+
+---
+
+## 10. One wheel becomes many: platforms, `abi3`, and `manylinux`
 
 **The problem:** because the compiled `_rust.pyd` is platform-specific, the release now
 needs a *separate* wheel for each operating system and CPU it supports. Left unmanaged, it
@@ -554,7 +811,7 @@ with later CPython versions** rather than requiring one wheel per Python version
 This is turned on with a **Cargo feature**. A feature is an optional switch a Rust crate
 publishes so callers can enable extra behavior; it's flipped in the `features = [...]` list
 where the dependency is declared. The SDK enables PyO3's `abi3-py39` feature in the binding's
-`Cargo.toml` (the same line shown in Section3):
+`Cargo.toml` (the same line shown in Section 3):
 
 ```toml
 pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
@@ -643,7 +900,7 @@ Cosmos package-generation work runs only in the Linux job.
 
 ---
 
-## 10. The release math changes: today vs. after v5
+## 11. The release math changes: today vs. after v5
 
 The release shape changes enough that the pure-Python assumptions ("one wheel, one active
 package-build job") need to be revisited.
@@ -675,7 +932,7 @@ pipeline integration all still need explicit implementation.
 
 ---
 
-## 11. The package-level edits
+## 12. The package-level edits
 
 Package-level means **files inside `sdk/cosmos/azure-cosmos/` that the Cosmos Python SDK
 team owns** — `pyproject.toml`, `setup.py`, `sdk_packaging.toml`, `MANIFEST.in`, and the
@@ -683,7 +940,7 @@ Rust build files and source. Here, the **Rust manifest files** are specifically 
 `Cargo.toml` files: the workspace manifest at `sdk/cosmos/azure-cosmos/Cargo.toml` and the
 binding-crate manifest at `azure_cosmos_rust/Cargo.toml`. `Cargo.lock` is the generated
 dependency lock file, not a manifest, and `azure_cosmos_rust/src/*.rs` are the Rust source
-files. That's the distinction from sections 12-14, where files live in `eng/` or the
+files. That's the distinction from sections 13-15, where files live in `eng/` or the
 capability lives on a build agent and EngSys has to be involved.
 
 **Current state:**
@@ -691,14 +948,23 @@ capability lives on a build agent and EngSys has to be involved.
 - The root and binding `Cargo.toml` files exist, and the binding builds a `cdylib`.
 - `Cargo.lock` is generated on disk, explicitly ignored by `/Cargo.lock`, and not committed;
   release owners must confirm whether unlocked registry resolution is acceptable.
-- The binding enables `__internal_native_query_plan`, but no QueryPlanInterop library is
-  included or made discoverable by the package configuration.
-- `pyproject.toml` already selects Maturin (`build-backend = "maturin"`) and points it at
-  `azure_cosmos_rust/Cargo.toml`, with `module-name = "azure.cosmos._rust"`.
+- The binding enables `__internal_native_query_plan`. Package-local discovery and wheel staging
+  are implemented: the binding configures `azure/cosmos/.libs`, and
+  `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR` supplies target-platform artifacts to the PEP 517
+  build wrapper. The wrapper serializes parallel staging and tracks crash recovery outside the
+  source tree, and the binding's `build.rs` build script validates every packaged PE/ELF/Mach-O
+  binary against the target wheel's operating system and architecture. No approved
+  QueryPlanInterop artifact source is present in this checkout.
+- `pyproject.toml` selects the package's PEP 517 wrapper, which delegates compilation and wheel
+  assembly to Maturin, points Maturin at `azure_cosmos_rust/Cargo.toml`, and uses
+  `module-name = "azure.cosmos._rust"`.
 - `pyproject.toml` does **not** define the release distribution metadata or a
   `[tool.cibuildwheel]` platform matrix.
 - `MANIFEST.in` does not include the Rust manifests, lock file, or binding source.
-- `sdk_packaging.toml` does this need to be changed?(TBD)
+- `sdk_packaging.toml` contains only `[packaging] auto_update = false`. Nothing in it marks
+  the package as containing compiled code, and nothing in the repository shows that adding
+  such a key would change the build path (see item 7 below). Whether this file is the right
+  place for that marker is an EngSys decision.
 
 Other changes to be made:
 
@@ -726,11 +992,15 @@ Other changes to be made:
    and make release/support policy enforce that choice.
 
 
-4. **Native query-plan model — decide whether local planning actually ships.**
-   enabling `__internal_native_query_plan` makes the driver use its runtime loader, but
-   the required QueryPlanInterop library is separate and currently absent. either
-   package and configure the signed platform library for every supported wheel, or document
-   and test the Gateway-fallback model without claiming local planning as shipped behavior.
+4. **Native query-plan artifacts — provide and validate the actual platform libraries.**
+   Package-local loading and `.libs` wheel staging are implemented, but the required
+   QueryPlanInterop binaries are not in either checkout. Obtain approved, licensed, signed
+   artifacts and dependencies for every supported OS/architecture, supply each build through
+   `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, run the platform wheel repair/signing step, inspect
+   the final wheel archive, and prove both native selection and no-library Gateway fallback from
+   clean installed wheels with `_rust.native_query_plan_count()` and
+   `_rust.gateway_query_plan_count()`. CI must also enable `test_category="native_query_plan"` so
+   the 64 existing native-library tests run instead of being ignored.
 
 
 5. **Distribution identity — make the build produce `azure-cosmos`.**
@@ -765,7 +1035,7 @@ Other changes to be made:
 
 
 7. **Azure SDK packaging integration — satisfy both native-build gates.**
-   Section 12 shows two separate blockers: the platform fan-out switch is hardcoded for
+   Section 13 shows two separate blockers: the platform fan-out switch is hardcoded for
    `azure-storage-extensions`, and `sdk_build` parses this package through `setup.py`, where
    it sees zero `ext_modules` and therefore does not select `cibuildwheel`. use the
    package marker and metadata shape that EngSys supports so both the Windows/macOS jobs and
@@ -777,7 +1047,7 @@ EngSys on the supported matrix and package-detection mechanism.
 
 ---
 
-## 12. The CI pipeline edits
+## 13. The CI pipeline edits
 
 **Current state:** `sdk/cosmos/ci.yml` — branch/path triggers, then `extends:` the
 shared `cosmos-sdk-client.yml` template with two artifacts (`azure-cosmos`,
@@ -849,7 +1119,7 @@ it runs — and does it introduce any step the old pipeline never had?
 
 ---
 
-## 13. The shape that comes out the other end
+## 14. The shape that comes out the other end
 
 The shared CI template already defines `Build_Linux`, `Build_Windows`, and `Build_MacOS`
 jobs. Each publishes a distinct `packages_<platform>` artifact. `Build_Extended` depends on
@@ -874,7 +1144,7 @@ exists.
 ---
 
 
-## 14. What has to be arranged with System Engineering
+## 15. What has to be arranged with System Engineering
 
 The pipeline edits depend on capabilities that are not established by the repository files
 audited here. Each needs an explicit confirmation before v5's release branch is cut.
@@ -918,7 +1188,7 @@ release would create avoidable release risk.
 
 ---
 
-## 15. Rolling it out without breaking a release
+## 16. Rolling it out without breaking a release
 
 Four deliberately conservative phases, each one reducing the risk for the next:
 
@@ -942,7 +1212,7 @@ before the next depends on it.
 
 ---
 
-## 16. What stays the same unless service requirements change
+## 17. What stays the same unless service requirements change
 
 Two existing surfaces do not need package-driven changes, with one service-capability caveat:
 
@@ -957,7 +1227,7 @@ Two existing surfaces do not need package-driven changes, with one service-capab
 
 ---
 
-## 17. Where it all ends up: the customer's machine
+## 18. Where it all ends up: the customer's machine
 
 In the intended wheel-complete release, the customer runs `pip install azure-cosmos` and then
 `import azure.cosmos`. When `pip` finds a wheel that matches their OS, CPU, and Python, it
@@ -983,7 +1253,7 @@ flowchart TD
         LK["linker<br/>stitches all object files into ONE file<br/>and resolves cross-crate calls"]
         L["one linked cdylib<br/>(binding + driver code)"]
         M["maturin<br/>name → _rust.pyd / _rust.abi3.so<br/>place → azure/cosmos/"]
-        W["one wheel<br/>.py sources + _rust.&lt;ext&gt;<br/>+ optional QueryPlanInterop library"]
+        W["one wheel<br/>.py sources + _rust.&lt;ext&gt;<br/>+ .libs/ QueryPlanInterop when supplied"]
         MX["repeat per platform:<br/>win_amd64<br/>manylinux x86_64 / aarch64<br/>macosx x86_64 / arm64"]
         B --> C
         D --> C
@@ -997,7 +1267,7 @@ flowchart TD
     subgraph CUST["CUSTOMER"]
         PI["pip install azure-cosmos"]
         SEL["PyPI serves the ONE wheel<br/>matching OS + CPU + Python"]
-        SP["site-packages/azure/cosmos/<br/>__init__.py, …<br/>_rust.pyd  ← no compile, no Rust needed"]
+        SP["site-packages/azure/cosmos/<br/>__init__.py, …, _rust.pyd<br/>.libs/ when local planning ships"]
         IMP["import azure.cosmos<br/>→ guarded import of _rust<br/>→ CPython calls the pymodule entry point _rust<br/>→ driver code is already inside"]
         PI --> SEL --> SP --> IMP
     end
@@ -1016,12 +1286,15 @@ The intended wheel flow is:
    Unix-like platforms, with the binding and Cosmos driver code linked into that extension.
 4. Importing `azure.cosmos` eagerly imports the sync Rust backend module. That module performs
    a guarded `from azure.cosmos import _rust`; if the extension is present, it is loaded then
-   and calls the `#[pymodule] fn _rust` entry point. If it is absent, the guarded import leaves
-   Rust operations unavailable rather than breaking the top-level package import. The async
-   backend follows the same guarded pattern when `azure.cosmos.aio` is imported.
+   and calls the `#[pymodule] fn _rust` entry point. It then configures the binding with the
+   absolute installed `azure/cosmos/.libs` path when that directory exists. If the extension is
+   absent, the guarded import leaves Rust operations unavailable rather than breaking the
+   top-level package import. The async backend follows the same guarded pattern when
+   `azure.cosmos.aio` is imported.
 
 There is no separate Cosmos driver library for the customer to install. If local query
-planning is included, QueryPlanInterop must be carried and discovered by the wheel rather
-than installed manually by the customer. Platform inspection is still required to identify
-other operating-system runtime dependencies of the compiled extension. Publishing complete
-wheel coverage is what keeps customers from needing a Rust toolchain.
+planning is included, the wheel carries QueryPlanInterop under `.libs` and the package
+discovers it automatically; customers do not set `PATH` or
+`AZURE_COSMOS_QUERYPLANINTEROP_DIR`. Platform inspection and wheel repair are still required
+for transitive native dependencies. Publishing complete wheel coverage is what keeps customers
+from needing a Rust toolchain.

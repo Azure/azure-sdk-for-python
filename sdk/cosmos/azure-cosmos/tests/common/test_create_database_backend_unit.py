@@ -1,9 +1,21 @@
 """Unit coverage for account-level database backend routing (no network).
 
-These lock in how ``create_database`` and ``create_database_if_not_exists`` run
-on the migrated path: public methods stay thin backend-neutral delegates, the
-database coordinator owns fallback and request preparation, and final database
-properties have the same shape on either engine. All fakes, no Cosmos account.
+``create_database`` sends one request. ``create_database_if_not_exists`` sends
+one or two: read the database, and create it only if the read comes back
+not-found. The Rust driver has a read call and a create call but no combined
+one, so Python decides between them.
+
+That split is what these tests protect. The public methods must stay thin and
+must not pick an engine themselves; the database coordinator owns the branch,
+the request building, and the decision about when the legacy core-python path is
+allowed to take over. Get that wrong and a customer sees the same method behave
+differently depending on which engine they selected -- different retries,
+different diagnostics, or a per-call timeout silently dropped.
+
+The tests also check that the database properties handed back are identical on
+both paths, since customers read those directly.
+
+All fakes, no Cosmos account.
 """
 
 from __future__ import annotations
@@ -21,12 +33,13 @@ from azure.core.utils import CaseInsensitiveDict
 from azure.cosmos._backend.base import BackendResponse, CosmosBackend
 from azure.cosmos._backend.base import (
     OP_CREATE_DATABASE,
-    OP_CREATE_DATABASE_IF_NOT_EXISTS,
+    OP_READ_DATABASE,
     OP_TO_BINDING_METHOD,
 )
 from azure.cosmos._constants import _Constants as Constants
 from azure.cosmos._helpers._request_prep import (
     build_create_database_prepared,
+    build_read_database_prepared,
 )
 from azure.cosmos._helpers.database_helper import DatabaseHelper
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
@@ -54,9 +67,9 @@ def test_create_database_is_registered_as_single_response_operation():
 
 
 def test_create_database_if_not_exists_is_not_registered_in_the_binding():
-    """The compound read/404/create workflow stays in the Python coordinator until
-    the public Rust driver owns an equivalent primitive."""
-    assert OP_CREATE_DATABASE_IF_NOT_EXISTS not in OP_TO_BINDING_METHOD
+    """The compound coordinator is not a wire op; its read primitive is."""
+    assert "create_database_if_not_exists" not in OP_TO_BINDING_METHOD
+    assert OP_TO_BINDING_METHOD[OP_READ_DATABASE] == "read_database"
 
 
 def test_create_database_prepared_request_preserves_body_and_options():
@@ -88,6 +101,26 @@ def test_create_database_prepared_request_preserves_body_and_options():
     assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
 
 
+def test_read_database_prepared_request_is_bodiless():
+    """The existence read sends no body, only the database id.
+
+    Create sends the database document; read identifies the database by id alone.
+    Both build through the same helper, so this checks the read leg did not pick
+    up the create's body while still carrying the caller's options and timeout.
+    """
+    prepared = build_read_database_prepared(
+        {"id": "db1"},
+        {"throughputBucket": 7},
+        kwargs={"timeout": 3.5},
+    )
+
+    assert prepared.op == OP_READ_DATABASE
+    assert prepared.body_bytes == b""
+    assert prepared.item_id == "db1"
+    assert prepared.headers["throughputBucket"] == 7
+    assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+
+
 @pytest.mark.parametrize(
     "database,error_message",
     [
@@ -109,13 +142,17 @@ class _RustBackend(CosmosBackend):
     reply, so a test can check what would have gone on the wire without a network."""
     name = "rust"
 
-    def __init__(self, response=None):
-        self.response = response or _created_response()
+    def __init__(self, response=None, responses=None):
+        self.responses = list(responses or [response or _created_response()])
         self.prepared = None
+        self.prepared_requests = []
 
     def execute(self, prepared):
         self.prepared = prepared
-        return self.response
+        self.prepared_requests.append(prepared)
+        if len(self.responses) > 1:
+            return self.responses.pop(0)
+        return self.responses[0]
 
 
 def test_sync_helper_routes_to_rust_and_parses_response():
@@ -209,15 +246,25 @@ def test_sync_helper_maps_conflict_to_resource_exists():
     assert hook_calls == []
 
 
-def test_sync_if_not_exists_uses_python_coordinator_with_rust_selected():
-    """Selecting the Rust backend does not move compound orchestration into the
-    binding; Python reads first and returns the existing database."""
+def test_sync_if_not_exists_reads_through_rust_without_legacy_calls():
+    """The database already exists, so the read is the only request sent.
+
+    Python decides whether to create; the Rust path performs the read. The legacy
+    calls are wired to fail the test if touched, because a customer who selected
+    the Rust backend should not have half of this method run on the other engine.
+    """
     connection = SimpleNamespace(
-        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "existing"}),
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         CreateDatabase=MagicMock(),
         last_response_headers={"x-ms-request-charge": "1.0"},
     )
-    backend = _RustBackend()
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+            body=b'{"id":"db1","_rid":"existing"}',
+        )
+    )
     hooks = []
 
     result = DatabaseHelper(connection, backend).create_database_if_not_exists(
@@ -227,8 +274,8 @@ def test_sync_if_not_exists_uses_python_coordinator_with_rust_selected():
     )
 
     assert result["_rid"] == "existing"
-    assert backend.prepared is None
-    connection.ReadDatabase.assert_called_once()
+    assert [request.op for request in backend.prepared_requests] == [OP_READ_DATABASE]
+    connection.ReadDatabase.assert_not_called()
     connection.CreateDatabase.assert_not_called()
     assert hooks == [
         (
@@ -236,6 +283,96 @@ def test_sync_if_not_exists_uses_python_coordinator_with_rust_selected():
             {"id": "db1", "_rid": "existing"},
         )
     ]
+
+
+def test_sync_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
+    """The database is missing, so both requests run on the Rust path.
+
+    Also checks the two legs carry different options: ``offerThroughput`` sets the
+    throughput of a database being created, so sending it on the existence read
+    would be meaningless, while ``throughputBucket`` applies to both requests.
+    """
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
+        CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(
+        responses=[
+            BackendResponse(
+                status_code=404,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                body=b'{"message":"missing"}',
+            ),
+            _created_response(),
+        ]
+    )
+    hook_calls = []
+
+    result = DatabaseHelper(connection, backend).create_database_if_not_exists(
+        {"id": "db1"},
+        {"offerThroughput": 400, "throughputBucket": 7},
+        response_hook=lambda headers, body: hook_calls.append((headers, body)),
+    )
+
+    assert result["_rid"] == "rid1"
+    assert [request.op for request in backend.prepared_requests] == [
+        OP_READ_DATABASE,
+        OP_CREATE_DATABASE,
+    ]
+    assert "offerThroughput" not in backend.prepared_requests[0].headers
+    assert backend.prepared_requests[0].headers["throughputBucket"] == 7
+    assert backend.prepared_requests[1].headers["offerThroughput"] == 400
+    assert hook_calls == [
+        (
+            {"x-ms-request-charge": "5.25"},
+            {"id": "db1", "_rid": "rid1"},
+        )
+    ]
+    connection.ReadDatabase.assert_not_called()
+    connection.CreateDatabase.assert_not_called()
+
+
+def test_sync_if_not_exists_rust_create_race_propagates_conflict():
+    """Someone else created the database between the read and the create.
+
+    The read said not-found and the create then came back 409 Conflict. There is
+    a gap between the two requests that nothing can close, so the error is passed
+    to the caller rather than swallowed -- their throughput settings were not
+    applied, and pretending the call succeeded would hide that.
+    """
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
+        CreateDatabase=MagicMock(side_effect=AssertionError("legacy create called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(
+        responses=[
+            BackendResponse(
+                status_code=404,
+                headers=CaseInsensitiveDict({}),
+                body=b'{"message":"missing"}',
+            ),
+            BackendResponse(
+                status_code=409,
+                headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
+                body=b'{"message":"database exists"}',
+            ),
+        ]
+    )
+
+    with pytest.raises(CosmosResourceExistsError):
+        DatabaseHelper(connection, backend).create_database_if_not_exists(
+            {"id": "db1"},
+            {"offerThroughput": 400},
+        )
+
+    assert [request.op for request in backend.prepared_requests] == [
+        OP_READ_DATABASE,
+        OP_CREATE_DATABASE,
+    ]
+    connection.ReadDatabase.assert_not_called()
+    connection.CreateDatabase.assert_not_called()
 
 
 def test_sync_if_not_exists_legacy_returns_existing_without_create_headers():
@@ -300,11 +437,51 @@ def test_sync_if_not_exists_legacy_creates_only_after_404_and_propagates_409():
     )
 
 
-def test_sync_if_not_exists_read_timeout_forces_whole_operation_to_legacy():
-    """A per-call ``read_timeout`` the rust path can't honor yet sends the whole
-    read-then-create to the legacy path (which does honor it), so both legs share one
-    engine and the timeout is never split or dropped -- the rust backend is never
-    prepared here."""
+def test_sync_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
+    """A per-call socket timeout applies to the read and to the create.
+
+    The customer set one timeout for one method call. Applying it to only the
+    first request would leave the second able to hang for the client default,
+    which is not what they asked for.
+    """
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(
+            side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
+        ),
+        CreateDatabase=MagicMock(return_value={"id": "db1", "_rid": "created"}),
+        last_response_headers={},
+    )
+
+    result = DatabaseHelper(connection, None).create_database_if_not_exists(
+        {"id": "db1"},
+        {},
+        kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
+    )
+
+    assert result["_rid"] == "created"
+    assert connection.ReadDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
+    assert connection.CreateDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
+
+
+@pytest.mark.parametrize(
+    "request_options,operation_kwargs",
+    [
+        ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
+        ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
+    ],
+)
+def test_sync_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
+    request_options,
+    operation_kwargs,
+):
+    """An unsupported per-call socket timeout fails instead of mixing engines.
+
+    A per-call socket timeout is not something the Rust path can express, and the
+    method needs both of its requests on the same engine. Quietly running the whole
+    thing on the legacy path would give the customer different retry behavior and
+    different diagnostics than every other call on that client, with no way to
+    notice. It raises instead, and sends nothing.
+    """
     connection = SimpleNamespace(
         ReadDatabase=MagicMock(return_value={"id": "db1"}),
         CreateDatabase=MagicMock(),
@@ -312,28 +489,33 @@ def test_sync_if_not_exists_read_timeout_forces_whole_operation_to_legacy():
     )
     backend = _RustBackend()
 
-    result = DatabaseHelper(connection, backend).create_database_if_not_exists(
-        {"id": "db1"},
-        {Constants.Kwargs.READ_TIMEOUT: 2},
-        kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-    )
+    with pytest.raises(NotImplementedError, match="create_database_if_not_exists"):
+        DatabaseHelper(connection, backend).create_database_if_not_exists(
+            {"id": "db1"},
+            request_options,
+            kwargs=operation_kwargs,
+        )
 
-    assert result["id"] == "db1"
     assert backend.prepared is None
-    connection.ReadDatabase.assert_called_once()
+    connection.ReadDatabase.assert_not_called()
+    connection.CreateDatabase.assert_not_called()
 
 
 class _AsyncRustBackend(AsyncCosmosBackend):
     """Async stand-in rust backend: records the request and returns the canned reply."""
     name = "rust"
 
-    def __init__(self, response=None):
+    def __init__(self, response=None, responses=None):
         self.prepared = None
-        self.response = response or _created_response()
+        self.prepared_requests = []
+        self.responses = list(responses or [response or _created_response()])
 
     async def execute(self, prepared):
         self.prepared = prepared
-        return self.response
+        self.prepared_requests.append(prepared)
+        if len(self.responses) > 1:
+            return self.responses.pop(0)
+        return self.responses[0]
 
 
 def test_async_helper_routes_to_rust():
@@ -362,6 +544,12 @@ def test_async_helper_routes_to_rust():
 
 
 def test_async_helper_does_not_call_response_hook_on_failure():
+    """A failed create does not run the caller's response hook.
+
+    ``response_hook`` is customer code that receives the headers and body of a
+    successful reply. A 409 means the database was not created, so calling the
+    hook would hand them an error payload where they expect database properties.
+    """
     async def run():
         backend = _AsyncRustBackend(
             BackendResponse(
@@ -563,11 +751,17 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
     the final database properties while orchestration remains in Python."""
     sync_client = object.__new__(CosmosClient)
     sync_client.client_connection = SimpleNamespace(
-        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "existing"}),
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
         CreateDatabase=MagicMock(),
         last_response_headers={},
     )
-    sync_backend = _RustBackend()
+    sync_backend = _RustBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({}),
+            body=b'{"id":"db1","_rid":"existing"}',
+        )
+    )
     sync_client._backend = sync_backend
 
     proxy, properties = sync_client.create_database_if_not_exists(
@@ -576,16 +770,22 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
     )
     assert proxy.id == "db1"
     assert properties["_rid"] == "existing"
-    assert sync_backend.prepared is None
+    assert sync_backend.prepared.op == OP_READ_DATABASE
 
     async def run():
         async_client = object.__new__(AsyncCosmosClient)
         async_client.client_connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "existing"}),
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(),
             last_response_headers={},
         )
-        async_backend = _AsyncRustBackend()
+        async_backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({}),
+                body=b'{"id":"db1","_rid":"existing"}',
+            )
+        )
         async_client._backend = async_backend
         async_proxy, async_properties = await async_client.create_database_if_not_exists(
             "db1",
@@ -593,7 +793,7 @@ def test_public_create_database_if_not_exists_returns_final_properties_sync_and_
         )
         assert async_proxy.id == "db1"
         assert async_properties["_rid"] == "existing"
-        assert async_backend.prepared is None
+        assert async_backend.prepared.op == OP_READ_DATABASE
 
     asyncio.run(run())
 
@@ -629,10 +829,9 @@ def test_sync_database_operations_really_ignore_inapplicable_conditions(method_n
         assert "sessionToken" not in backend.prepared.headers
         assert "accessCondition" not in backend.prepared.headers
     else:
-        assert backend.prepared is None
-        read_options = client.client_connection.ReadDatabase.call_args.kwargs["options"]
-        assert "sessionToken" not in read_options
-        assert "accessCondition" not in read_options
+        assert backend.prepared.op == OP_READ_DATABASE
+        assert "sessionToken" not in backend.prepared.headers
+        assert "accessCondition" not in backend.prepared.headers
 
 
 @pytest.mark.parametrize(
@@ -665,10 +864,9 @@ def test_async_database_operations_really_ignore_inapplicable_conditions(method_
             assert "sessionToken" not in backend.prepared.headers
             assert "accessCondition" not in backend.prepared.headers
         else:
-            assert backend.prepared is None
-            read_options = client.client_connection.ReadDatabase.call_args.kwargs["options"]
-            assert "sessionToken" not in read_options
-            assert "accessCondition" not in read_options
+            assert backend.prepared.op == OP_READ_DATABASE
+            assert "sessionToken" not in backend.prepared.headers
+            assert "accessCondition" not in backend.prepared.headers
 
     asyncio.run(run())
 
@@ -703,15 +901,21 @@ def test_public_create_database_if_not_exists_does_not_orchestrate_backends(clie
 
 
 def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
-    """Async twin: the selected Rust backend is bypassed for compound
-    orchestration and the Python coordinator owns the existence read."""
+    """Async twin: the database already exists, so the read is the only request
+    sent and no legacy call is made."""
     async def run():
         connection = SimpleNamespace(
-            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "existing"}),
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
             CreateDatabase=AsyncMock(),
             last_response_headers={"x-ms-request-charge": "1.0"},
         )
-        backend = _AsyncRustBackend()
+        backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                body=b'{"id":"db1","_rid":"existing"}',
+            )
+        )
         hook_calls = []
 
         result = await AsyncDatabaseHelper(connection, backend).create_database_if_not_exists(
@@ -721,8 +925,8 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
         )
 
         assert result["_rid"] == "existing"
-        assert backend.prepared is None
-        connection.ReadDatabase.assert_awaited_once()
+        assert [request.op for request in backend.prepared_requests] == [OP_READ_DATABASE]
+        connection.ReadDatabase.assert_not_awaited()
         connection.CreateDatabase.assert_not_awaited()
         assert hook_calls == [
             (
@@ -730,6 +934,102 @@ def test_async_if_not_exists_uses_python_coordinator_with_rust_selected():
                 {"id": "db1", "_rid": "existing"},
             )
         ]
+
+    asyncio.run(run())
+
+
+def test_async_if_not_exists_rust_404_then_rust_create_without_legacy_calls():
+    """Async twin: the database is missing, so both requests run on the Rust path.
+
+    Async clients are a separate code path with their own coordinator, so the same
+    behavior has to be proven twice.
+    """
+    async def run():
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
+            CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(
+            responses=[
+                BackendResponse(
+                    status_code=404,
+                    headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                    body=b'{"message":"missing"}',
+                ),
+                _created_response(),
+            ]
+        )
+        hook_calls = []
+
+        result = await AsyncDatabaseHelper(
+            connection,
+            backend,
+        ).create_database_if_not_exists(
+            {"id": "db1"},
+            {"offerThroughput": 400, "throughputBucket": 7},
+            response_hook=lambda headers, body: hook_calls.append((headers, body)),
+        )
+
+        assert result["_rid"] == "rid1"
+        assert [request.op for request in backend.prepared_requests] == [
+            OP_READ_DATABASE,
+            OP_CREATE_DATABASE,
+        ]
+        assert "offerThroughput" not in backend.prepared_requests[0].headers
+        assert backend.prepared_requests[0].headers["throughputBucket"] == 7
+        assert backend.prepared_requests[1].headers["offerThroughput"] == 400
+        assert hook_calls == [
+            (
+                {"x-ms-request-charge": "5.25"},
+                {"id": "db1", "_rid": "rid1"},
+            )
+        ]
+        connection.ReadDatabase.assert_not_awaited()
+        connection.CreateDatabase.assert_not_awaited()
+
+    asyncio.run(run())
+
+
+def test_async_if_not_exists_rust_create_race_propagates_conflict():
+    """Async twin: a database created by someone else between the two requests
+    surfaces as a conflict error instead of a silent success."""
+    async def run():
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
+            CreateDatabase=AsyncMock(side_effect=AssertionError("legacy create called")),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(
+            responses=[
+                BackendResponse(
+                    status_code=404,
+                    headers=CaseInsensitiveDict({}),
+                    body=b'{"message":"missing"}',
+                ),
+                BackendResponse(
+                    status_code=409,
+                    headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
+                    body=b'{"message":"database exists"}',
+                ),
+            ]
+        )
+
+        with pytest.raises(CosmosResourceExistsError):
+            await AsyncDatabaseHelper(
+                connection,
+                backend,
+            ).create_database_if_not_exists(
+                {"id": "db1"},
+                {"offerThroughput": 400},
+            )
+
+        assert [request.op for request in backend.prepared_requests] == [
+            OP_READ_DATABASE,
+            OP_CREATE_DATABASE,
+        ]
+        connection.ReadDatabase.assert_not_awaited()
+        connection.CreateDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
@@ -775,10 +1075,46 @@ def test_async_if_not_exists_legacy_existing_skips_create_and_strips_create_only
     asyncio.run(run())
 
 
-def test_async_if_not_exists_read_timeout_forces_whole_operation_to_legacy():
-    """Async twin of ``test_sync_if_not_exists_read_timeout_forces_whole_operation_to_legacy``:
-    a per-call ``read_timeout`` bypasses the Rust backend entirely and runs the
-    legacy read-then-conditional-create path, which honors the socket timeout."""
+def test_async_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
+    """Async twin: one per-call socket timeout applies to the read and the create."""
+    async def run():
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(
+                side_effect=CosmosResourceNotFoundError(status_code=404, message="missing")
+            ),
+            CreateDatabase=AsyncMock(return_value={"id": "db1", "_rid": "created"}),
+            last_response_headers={},
+        )
+
+        result = await AsyncDatabaseHelper(
+            connection,
+            None,
+        ).create_database_if_not_exists(
+            {"id": "db1"},
+            {},
+            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
+        )
+
+        assert result["_rid"] == "created"
+        assert connection.ReadDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
+        assert connection.CreateDatabase.call_args.kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "request_options,operation_kwargs",
+    [
+        ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
+        ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
+    ],
+)
+def test_async_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
+    request_options,
+    operation_kwargs,
+):
+    """Async twin: an unsupported socket timeout fails without engine mixing, and
+    without sending either request."""
     async def run():
         connection = SimpleNamespace(
             ReadDatabase=AsyncMock(return_value={"id": "db1"}),
@@ -787,15 +1123,19 @@ def test_async_if_not_exists_read_timeout_forces_whole_operation_to_legacy():
         )
         backend = _AsyncRustBackend()
 
-        result = await AsyncDatabaseHelper(connection, backend).create_database_if_not_exists(
-            {"id": "db1"},
-            {Constants.Kwargs.READ_TIMEOUT: 2},
-            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
-        )
+        with pytest.raises(NotImplementedError, match="create_database_if_not_exists"):
+            await AsyncDatabaseHelper(
+                connection,
+                backend,
+            ).create_database_if_not_exists(
+                {"id": "db1"},
+                request_options,
+                kwargs=operation_kwargs,
+            )
 
-        assert result["id"] == "db1"
         assert backend.prepared is None
-        connection.ReadDatabase.assert_awaited_once()
+        connection.ReadDatabase.assert_not_awaited()
+        connection.CreateDatabase.assert_not_awaited()
 
     asyncio.run(run())
 
