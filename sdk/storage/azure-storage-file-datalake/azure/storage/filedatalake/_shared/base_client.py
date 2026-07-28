@@ -48,6 +48,7 @@ from .parser import DEVSTORE_ACCOUNT_KEY, _get_development_storage_endpoint
 from .policies import (
     ExponentialRetry,
     QueueMessagePolicy,
+    RangeHeaderPolicy,
     StorageBearerTokenCredentialPolicy,
     StorageContentValidation,
     StorageHeadersPolicy,
@@ -55,6 +56,7 @@ from .policies import (
     StorageLoggingPolicy,
     StorageRequestHook,
     StorageResponseHook,
+    StorageSensitiveHeaderCleanupPolicy,
 )
 from .request_handlers import serialize_batch_body, _get_batch_request_delimiter
 from .response_handlers import PartialBatchErrorException, process_storage_error
@@ -319,6 +321,7 @@ class StorageAccountHostsMixin(object):
             transport = RequestsTransport(**kwargs)
         policies = [
             QueueMessagePolicy(),
+            RangeHeaderPolicy(),
             config.proxy_policy,
             config.user_agent_policy,
             StorageContentValidation(),
@@ -333,6 +336,7 @@ class StorageAccountHostsMixin(object):
             StorageResponseHook(**kwargs),
             DistributedTracingPolicy(**kwargs),
             HttpLoggingPolicy(**kwargs),
+            StorageSensitiveHeaderCleanupPolicy(**kwargs),
         ]
         if kwargs.get("_additional_pipeline_policies"):
             policies = policies + kwargs.get("_additional_pipeline_policies")  # type: ignore
