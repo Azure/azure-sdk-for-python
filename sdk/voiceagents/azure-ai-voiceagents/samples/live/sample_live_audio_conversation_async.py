@@ -318,6 +318,7 @@ async def audio_conversation() -> None:
         endpoint=project_endpoint, credential=credential, transport=transport
     ) as client:
         conversation_id: Optional[str] = None
+        created_agent = False
         try:
             # 1) Create the agent. `store = true` persists conversations for later reading.
             await client.voice_agents.create_voice_agent(
@@ -332,6 +333,7 @@ async def audio_conversation() -> None:
                 description="Created by the azure-ai-voiceagents audio conversation sample.",
                 foundry_features=PREVIEW,
             )
+            created_agent = True
             print(f"Created voice agent: {agent_name}")
 
             # 2) Publish a new version with refined instructions.
@@ -368,11 +370,12 @@ async def audio_conversation() -> None:
             print(f"Service responded with an error: {e.status_code} {e.reason}")
         finally:
             # 5) Clean up: delete the agent.
-            try:
-                await client.voice_agents.delete_voice_agent(agent_name, foundry_features=PREVIEW)
-                print(f"Deleted voice agent: {agent_name}")
-            except HttpResponseError as e:
-                print(f"Could not delete agent: {e.status_code} {e.reason}")
+            if created_agent:
+                try:
+                    await client.voice_agents.delete_voice_agent(agent_name, foundry_features=PREVIEW)
+                    print(f"Deleted voice agent: {agent_name}")
+                except HttpResponseError as e:
+                    print(f"Could not delete agent: {e.status_code} {e.reason}")
 
 
 if __name__ == "__main__":
