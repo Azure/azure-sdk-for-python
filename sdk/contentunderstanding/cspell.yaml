@@ -3,7 +3,11 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - cargs
-  - mirid
-  - testdb
-  - undoc
+  - Agentic
+  - chartjs
+  - llmstats
+  - redef
+  - UPCA
+  - UPCE
+ignorePaths:
+  - sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_files/training_samples/*.json

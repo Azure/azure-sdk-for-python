@@ -3,7 +3,9 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - cargs
-  - mirid
-  - testdb
-  - undoc
+  - acrs
+  - infile
+  - kubelet
+  - otsv
+  - signin
+  - wammsa

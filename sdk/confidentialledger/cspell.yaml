@@ -3,7 +3,18 @@
 import:
   - ../../.vscode/cspell.json
 words:
-  - cargs
-  - mirid
-  - testdb
-  - undoc
+  - astimezone
+  - ctxt
+  - deser
+  - deseralize
+  - infile
+  - mday
+  - Merkle
+  - mrenclave
+  - Nify
+  - oeverify
+  - pysdkci
+  - seqno
+  - tids
+  - unflattened
+  - wday
