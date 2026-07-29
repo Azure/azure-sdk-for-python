@@ -19,9 +19,6 @@ from ._resilience_context import _DeveloperMetadataFacade
 from .models._generated import (
     CreateResponse,
     Item,
-    ItemMessage,
-    ItemReferenceParam,
-    MessageContentInputTextContent,
     OutputItem,
     ResponseObject,
 )
@@ -403,7 +400,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         texts: list[str] = []
         for item in items:
             if isinstance(item, dict) and item.get("type") == "message":
-                for part in item.get("content") or []:
+                for part in cast("list[Any]", item.get("content") or []):
                     if isinstance(part, dict) and part.get("type") == "input_text":
                         text = part.get("text")
                         if text is not None:

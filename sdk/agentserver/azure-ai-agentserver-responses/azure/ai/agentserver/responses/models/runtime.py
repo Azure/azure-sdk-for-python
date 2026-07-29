@@ -9,7 +9,7 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
-from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent, ResponseStreamEventType
+from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -246,7 +246,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             return
         event_type = normalized.get("type")
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
-            agent_reference = (
+            agent_reference: Any = (
                 self.response.get("agent_reference") if self.response is not None else {}  # type: ignore[union-attr]
             ) or {}
             model = self.response.get("model") if self.response is not None else None  # type: ignore[union-attr]

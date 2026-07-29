@@ -107,7 +107,7 @@ async def handler(
             response_id=context.response_id,
             response=context.persisted_response,
         )
-        start = len(stream.response.output)
+        start = len(stream.response.get("output") or [])
     else:
         stream = ResponseEventStream(response_id=context.response_id, request=request)
         start = 0

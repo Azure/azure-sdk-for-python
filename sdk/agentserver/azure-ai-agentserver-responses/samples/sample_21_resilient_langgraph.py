@@ -215,7 +215,9 @@ def _reply_already_persisted(stream: ResponseEventStream) -> bool:
     and re-emitted via the ``in_progress`` reset — so it must not be produced
     again. It also becomes True the moment this attempt closes a fresh reply item.
     """
-    return any(getattr(item, "type", None) == "message" for item in stream.response.output)
+    return any(
+        isinstance(item, dict) and item.get("type") == "message" for item in (stream.response.get("output") or [])
+    )
 
 
 async def _fork_from_checkpoint(graph: Any, config: dict[str, Any], checkpoint_id: str, new_message: str) -> bool:

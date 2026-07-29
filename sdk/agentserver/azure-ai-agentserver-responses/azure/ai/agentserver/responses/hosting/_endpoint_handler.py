@@ -38,15 +38,14 @@ from azure.ai.agentserver.core.platform_headers import (
     USER_ID,
 )
 from azure.ai.agentserver.core import read_request_id
-from ..models._generated import (
-    AgentReference,
-    CreateResponse,
-    ResponseStreamEventType,
-)
-
 from azure.ai.agentserver.core.streaming import (  # pylint: disable=import-error,no-name-in-module
     EventStreamNotFoundError,
     streams,
+)
+
+from ..models._generated import (
+    AgentReference,
+    CreateResponse,
 )
 
 from .._id_generator import IdGenerator

@@ -152,7 +152,7 @@ def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent
     :rtype: str | None
     """
     event_type = normalized.get("type")
-    response = normalized.get("response") or {}
+    response = cast("dict[str, Any]", normalized.get("response") or {})
     if event_type != "response.created":
         return f"first event must be response.created, got '{event_type}'"
     emitted_id = response.get("id")
@@ -417,7 +417,7 @@ def _bg_track_output_count(normalized: "generated_models.ResponseStreamEvent", o
         output_item_count += 1
     n_type = normalized.get("type", "")
     if n_type in _RESPONSE_SNAPSHOT_TYPES:
-        n_output = (normalized.get("response") or {}).get("output")
+        n_output = cast("dict[str, Any]", normalized.get("response") or {}).get("output")
         if isinstance(n_output, list) and len(n_output) > output_item_count:
             raise ValueError(
                 "Output item count mismatch " + f"({len(n_output)} vs {output_item_count} output_item.added events)"
@@ -483,7 +483,7 @@ async def _bg_handle_first_event(
     """
     output_item_count = 0
     #: output manipulation detection on response.created
-    created_response = normalized.get("response") or {}
+    created_response = cast("dict[str, Any]", normalized.get("response") or {})
     created_output = created_response.get("output")
     if isinstance(created_output, list) and len(created_output) != 0:
         # §6 recovery seeding: on a recovered entry the handler legitimately
@@ -2288,7 +2288,7 @@ class _ResponseOrchestrator:
         # recovered entry, where the handler legitimately seeds the stream from
         # context.persisted_response (§6 one-item-per-phase recovery). The
         # seeded items become the output baseline (see output_item_count below).
-        created_response = first_normalized.get("response") or {}
+        created_response = cast("dict[str, Any]", first_normalized.get("response") or {})
         created_output = created_response.get("output")
         _seeded_output_count = (
             len(created_output)
@@ -2452,7 +2452,7 @@ class _ResponseOrchestrator:
                 if _pre_type == "response.output_item.added":
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
-                    _pre_response = _pre_coerced.get("response") or {}
+                    _pre_response = cast("dict[str, Any]", _pre_coerced.get("response") or {})
                     _pre_output = _pre_response.get("output")
                     if isinstance(_pre_output, list) and len(_pre_output) > output_item_count:
                         _fr008a_msg = (

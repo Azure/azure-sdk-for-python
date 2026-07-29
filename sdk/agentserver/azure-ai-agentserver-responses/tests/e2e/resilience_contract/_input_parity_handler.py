@@ -65,35 +65,42 @@ async def _observed(request: CreateResponse, context: ResponseContext) -> dict:
     """Build a stable digest of everything the handler observes about inputs."""
     unresolved = await context.get_input_items(resolve_references=False)
     resolved = await context.get_input_items(resolve_references=True)
+    metadata = request.get("metadata")
     return {
-        "request_input": request.input,
-        "request_model": request.model,
-        "request_store": request.store,
-        "request_stream": request.stream,
-        "request_background": request.background,
-        "request_instructions": request.instructions,
-        "request_metadata": dict(request.metadata) if request.metadata else None,
+        "request_input": request.get("input"),
+        "request_model": request.get("model"),
+        "request_store": request.get("store"),
+        "request_stream": request.get("stream"),
+        "request_background": request.get("background"),
+        "request_instructions": request.get("instructions"),
+        "request_metadata": dict(metadata) if metadata else None,
         "request_conversation": _conv_id(request),
-        "request_previous_response_id": request.previous_response_id,
+        "request_previous_response_id": request.get("previous_response_id"),
         "client_headers": dict(context.client_headers),
         "query_parameters": dict(context.query_parameters),
         "isolation_user_key": context.platform_context.user_id_key,
         "isolation_chat_key": context.platform_context.call_id,
         "input_text": await context.get_input_text(),
-        "input_items_unresolved": [getattr(i, "type", type(i).__name__) for i in unresolved],
-        "input_items_resolved": [getattr(i, "type", type(i).__name__) for i in resolved],
+        "input_items_unresolved": [_item_type(i) for i in unresolved],
+        "input_items_resolved": [_item_type(i) for i in resolved],
     }
 
 
+def _item_type(item: object) -> str:
+    if isinstance(item, dict):
+        value = item.get("type")
+        if isinstance(value, str):
+            return value
+    return type(item).__name__
+
+
 def _conv_id(request: CreateResponse) -> str | None:
-    raw = getattr(request, "conversation", None)
+    raw = request.get("conversation")
     if isinstance(raw, str):
         return raw or None
     if isinstance(raw, dict):
         cid = raw.get("id")
         return str(cid) if cid else None
-    if raw is not None and hasattr(raw, "id"):
-        return str(raw.id) or None
     return None
 
 
@@ -122,7 +129,7 @@ async def handle_create(
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
-    if lifetime == 0 and (_CRASH_TOKEN == "" or _CRASH_TOKEN in str(request.input)):
+    if lifetime == 0 and (_CRASH_TOKEN == "" or _CRASH_TOKEN in str(request.get("input"))):
         # Crash window — the harness SIGKILLs here, AFTER response.created
         # persisted but BEFORE the terminal. With a crash token set, only the
         # targeted turn opens this window; earlier turns complete normally.
