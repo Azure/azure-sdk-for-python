@@ -35,9 +35,11 @@ namespace azure.mgmt.compute
         shared_galleries: SharedGalleriesOperations
         shared_gallery_image_versions: SharedGalleryImageVersionsOperations
         shared_gallery_images: SharedGalleryImagesOperations
+        shared_gallery_invites: SharedGalleryInvitesOperations
         snapshots: SnapshotsOperations
         soft_deleted_resource: SoftDeletedResourceOperations
         ssh_public_keys: SshPublicKeysOperations
+        tenant_level_shared_gallery_invites: TenantLevelSharedGalleryInvitesOperations
         usage: UsageOperations
         virtual_machine_extension_images: VirtualMachineExtensionImagesOperations
         virtual_machine_extensions: VirtualMachineExtensionsOperations
@@ -112,9 +114,11 @@ namespace azure.mgmt.compute.aio
         shared_galleries: SharedGalleriesOperations
         shared_gallery_image_versions: SharedGalleryImageVersionsOperations
         shared_gallery_images: SharedGalleryImagesOperations
+        shared_gallery_invites: SharedGalleryInvitesOperations
         snapshots: SnapshotsOperations
         soft_deleted_resource: SoftDeletedResourceOperations
         ssh_public_keys: SshPublicKeysOperations
+        tenant_level_shared_gallery_invites: TenantLevelSharedGalleryInvitesOperations
         usage: UsageOperations
         virtual_machine_extension_images: VirtualMachineExtensionImagesOperations
         virtual_machine_extensions: VirtualMachineExtensionsOperations
@@ -179,7 +183,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[ConvertToVirtualMachineScaleSetInput] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -220,7 +224,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: AvailabilitySet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -292,7 +296,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: MigrateToVirtualMachineScaleSetInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -325,7 +329,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: AvailabilitySetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -358,7 +362,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: MigrateToVirtualMachineScaleSetInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -400,7 +404,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -469,7 +473,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -513,7 +517,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
                 capacity_reservation_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -558,7 +562,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
                 capacity_reservation_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -693,7 +697,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 host_group_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -754,7 +758,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 host_group_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -798,7 +802,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 host_group_name: str, 
                 host_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -861,7 +865,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 host_group_name: str, 
                 host_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -932,7 +936,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_access_name: str, 
-                disk_access: JSON, 
+                disk_access: DiskAccess, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -982,7 +986,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_access_name: str, 
-                disk_access: JSON, 
+                disk_access: DiskAccessUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1017,7 +1021,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 disk_access_name: str, 
                 private_endpoint_connection_name: str, 
-                private_endpoint_connection: JSON, 
+                private_endpoint_connection: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1103,7 +1107,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_encryption_set_name: str, 
-                disk_encryption_set: JSON, 
+                disk_encryption_set: DiskEncryptionSet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1144,7 +1148,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_encryption_set_name: str, 
-                disk_encryption_set: JSON, 
+                disk_encryption_set: DiskEncryptionSetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1216,7 +1220,7 @@ namespace azure.mgmt.compute.aio.operations
                 restore_point_collection_name: str, 
                 vm_restore_point_name: str, 
                 disk_restore_point_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1289,7 +1293,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                disk: JSON, 
+                disk: Disk, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1330,7 +1334,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1371,7 +1375,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                disk: JSON, 
+                disk: DiskUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1431,7 +1435,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                gallery: JSON, 
+                gallery: Gallery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1472,7 +1476,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                gallery: JSON, 
+                gallery: GalleryUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1539,7 +1543,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_application_name: str, 
                 gallery_application_version_name: str, 
-                gallery_application_version: JSON, 
+                gallery_application_version: GalleryApplicationVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1588,7 +1592,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_application_name: str, 
                 gallery_application_version_name: str, 
-                gallery_application_version: JSON, 
+                gallery_application_version: GalleryApplicationVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1655,7 +1659,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_application_name: str, 
-                gallery_application: JSON, 
+                gallery_application: GalleryApplication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1700,7 +1704,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_application_name: str, 
-                gallery_application: JSON, 
+                gallery_application: GalleryApplicationUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1764,7 +1768,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
-                gallery_image_version: JSON, 
+                gallery_image_version: GalleryImageVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1813,7 +1817,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
-                gallery_image_version: JSON, 
+                gallery_image_version: GalleryImageVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1880,7 +1884,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
-                gallery_image: JSON, 
+                gallery_image: GalleryImage, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1925,7 +1929,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
-                gallery_image: JSON, 
+                gallery_image: GalleryImageUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1989,7 +1993,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
                 in_vm_access_control_profile_version_name: str, 
-                gallery_in_vm_access_control_profile_version: JSON, 
+                gallery_in_vm_access_control_profile_version: GalleryInVMAccessControlProfileVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2038,7 +2042,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
                 in_vm_access_control_profile_version_name: str, 
-                gallery_in_vm_access_control_profile_version: JSON, 
+                gallery_in_vm_access_control_profile_version: GalleryInVMAccessControlProfileVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2103,7 +2107,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
-                gallery_in_vm_access_control_profile: JSON, 
+                gallery_in_vm_access_control_profile: GalleryInVMAccessControlProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2148,7 +2152,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
-                gallery_in_vm_access_control_profile: JSON, 
+                gallery_in_vm_access_control_profile: GalleryInVMAccessControlProfileUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2212,7 +2216,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_script_name: str, 
                 gallery_script_version_name: str, 
-                gallery_script_version: JSON, 
+                gallery_script_version: GalleryScriptVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2232,7 +2236,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2262,7 +2266,7 @@ namespace azure.mgmt.compute.aio.operations
                 gallery_name: str, 
                 gallery_script_name: str, 
                 gallery_script_version_name: str, 
-                gallery_script_version: JSON, 
+                gallery_script_version: GalleryScriptVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2282,7 +2286,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2293,7 +2297,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> GalleryScriptVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def list_by_gallery_script(
                 self, 
                 resource_group_name: str, 
@@ -2329,7 +2333,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_script_name: str, 
-                gallery_script: JSON, 
+                gallery_script: GalleryScript, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2348,7 +2352,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScript]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
         async def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -2375,7 +2379,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_script_name: str, 
-                gallery_script: JSON, 
+                gallery_script: GalleryScriptUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2394,7 +2398,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncLROPoller[GalleryScript]: ...
 
         @distributed_trace_async
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         async def get(
                 self, 
                 resource_group_name: str, 
@@ -2404,7 +2408,7 @@ namespace azure.mgmt.compute.aio.operations
             ) -> GalleryScript: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def list_by_gallery(
                 self, 
                 resource_group_name: str, 
@@ -2437,7 +2441,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                sharing_update: JSON, 
+                sharing_update: SharingUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2479,7 +2483,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 image_name: str, 
-                parameters: JSON, 
+                parameters: Image, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2520,7 +2524,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 image_name: str, 
-                parameters: JSON, 
+                parameters: ImageUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2582,7 +2586,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_block_name: str, 
-                resource: JSON, 
+                resource: InterconnectBlock, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2623,7 +2627,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_block_name: str, 
-                properties: JSON, 
+                properties: InterconnectBlockUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2683,7 +2687,7 @@ namespace azure.mgmt.compute.aio.operations
         async def begin_export_request_rate_by_interval(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: RequestRateByIntervalInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2713,7 +2717,7 @@ namespace azure.mgmt.compute.aio.operations
         async def begin_export_throttled_requests(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: ThrottledRequestsInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2766,7 +2770,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 proximity_placement_group_name: str, 
-                parameters: JSON, 
+                parameters: ProximityPlacementGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2827,7 +2831,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 proximity_placement_group_name: str, 
-                parameters: JSON, 
+                parameters: ProximityPlacementGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2895,7 +2899,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
-                parameters: JSON, 
+                parameters: RestorePointCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2948,7 +2952,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
-                parameters: JSON, 
+                parameters: RestorePointCollectionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2992,7 +2996,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
                 restore_point_name: str, 
-                parameters: JSON, 
+                parameters: RestorePoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3115,6 +3119,35 @@ namespace azure.mgmt.compute.aio.operations
             ) -> AsyncItemPaged[SharedGalleryImage]: ...
 
 
+    class azure.mgmt.compute.aio.operations.SharedGalleryInvitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        async def begin_gallery_sharing_accept(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        async def begin_gallery_sharing_reject(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+
     class azure.mgmt.compute.aio.operations.SnapshotsOperations:
 
         def __init__(
@@ -3139,7 +3172,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                snapshot: JSON, 
+                snapshot: Snapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3180,7 +3213,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3221,7 +3254,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                snapshot: JSON, 
+                snapshot: SnapshotUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3233,6 +3266,72 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 snapshot_name: str, 
                 snapshot: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyLockData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyLockData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> AsyncLROPoller[Snapshot]: ...
+
+        @overload
+        async def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3300,7 +3399,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: JSON, 
+                parameters: SshPublicKeyResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3341,7 +3440,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[SshGenerateKeyPairInputParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3392,7 +3491,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: JSON, 
+                parameters: SshPublicKeyUpdateResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3408,6 +3507,35 @@ namespace azure.mgmt.compute.aio.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> SshPublicKeyResource: ...
+
+
+    class azure.mgmt.compute.aio.operations.TenantLevelSharedGalleryInvitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        async def begin_tenant_level_gallery_sharing_accept(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
+
+        @distributed_trace_async
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        async def begin_tenant_level_gallery_sharing_reject(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> AsyncLROPoller[None]: ...
 
 
     class azure.mgmt.compute.aio.operations.UsageOperations:
@@ -3492,7 +3620,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3537,7 +3665,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3746,7 +3874,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommand, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3791,7 +3919,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommandUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3872,7 +4000,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 vmss_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3917,7 +4045,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 vmss_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3998,7 +4126,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 lifecycle_hook_event_name: str, 
-                properties: JSON, 
+                properties: VMScaleSetLifecycleHookEventUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4086,7 +4214,7 @@ namespace azure.mgmt.compute.aio.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetVMExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4135,7 +4263,7 @@ namespace azure.mgmt.compute.aio.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetVMExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4206,7 +4334,7 @@ namespace azure.mgmt.compute.aio.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommand, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4255,7 +4383,7 @@ namespace azure.mgmt.compute.aio.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommandUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4333,7 +4461,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: AttachDetachDataDisksRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4418,7 +4546,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                vm_scale_set_vm_reimage_input: Optional[JSON] = None, 
+                vm_scale_set_vm_reimage_input: Optional[VirtualMachineScaleSetVMReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4472,7 +4600,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: RunCommandInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4519,7 +4647,7 @@ namespace azure.mgmt.compute.aio.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSetVM, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4618,7 +4746,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4653,7 +4781,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -4691,7 +4819,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 hibernate: Optional[bool] = ..., 
@@ -4737,7 +4865,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: JSON, 
+                vm_instance_i_ds: VirtualMachineScaleSetVMInstanceRequiredIDs, 
                 *, 
                 content_type: str = "application/json", 
                 force_deletion: Optional[bool] = ..., 
@@ -4772,7 +4900,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4806,7 +4934,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 skip_shutdown: Optional[bool] = ..., 
@@ -4849,7 +4977,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4882,7 +5010,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_scale_set_reimage_input: Optional[JSON] = None, 
+                vm_scale_set_reimage_input: Optional[VirtualMachineScaleSetReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4915,7 +5043,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4948,7 +5076,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -4981,7 +5109,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VMScaleSetScaleOutInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5014,7 +5142,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: OrchestrationServiceStateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5047,7 +5175,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5082,7 +5210,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -5119,7 +5247,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: JSON, 
+                vm_instance_i_ds: VirtualMachineScaleSetVMInstanceRequiredIDs, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5152,7 +5280,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VMScaleSetConvertToSinglePlacementGroupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5281,7 +5409,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: AttachDetachDataDisksRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5314,7 +5442,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5357,7 +5485,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -5416,7 +5544,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                install_patches_input: JSON, 
+                install_patches_input: VirtualMachineInstallPatchesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5449,7 +5577,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[MigrateVMToVirtualMachineScaleSetInput] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5516,7 +5644,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VirtualMachineReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5557,7 +5685,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: RunCommandInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -5600,7 +5728,7 @@ namespace azure.mgmt.compute.aio.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -6737,6 +6865,11 @@ namespace azure.mgmt.compute.models
         NON_PERSISTED_TPM = "NonPersistedTPM"
 
 
+    class azure.mgmt.compute.models.ConfidentialVMVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        V1 = "V1"
+        V2 = "V2"
+
+
     class azure.mgmt.compute.models.ConsistencyModeTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         APPLICATION_CONSISTENT = "ApplicationConsistent"
         CRASH_CONSISTENT = "CrashConsistent"
@@ -7719,6 +7852,7 @@ namespace azure.mgmt.compute.models
         purchase_plan: Optional[DiskPurchasePlan]
         replication_state: Optional[str]
         security_profile: Optional[DiskSecurityProfile]
+        snapshot_access_state: Optional[Union[str, SnapshotAccessState]]
         source_resource_id: Optional[str]
         source_resource_location: Optional[str]
         source_unique_id: Optional[str]
@@ -7762,6 +7896,7 @@ namespace azure.mgmt.compute.models
 
 
     class azure.mgmt.compute.models.DiskSecurityProfile(_Model):
+        confidential_vm_version: Optional[Union[str, ConfidentialVMVersion]]
         secure_vm_disk_encryption_set_id: Optional[str]
         security_type: Optional[Union[str, DiskSecurityTypes]]
 
@@ -9890,6 +10025,51 @@ namespace azure.mgmt.compute.models
         def __init__(self, mapping: Mapping[str, Any]) -> None: ...
 
 
+    class azure.mgmt.compute.models.ImmutabilityPolicy(_Model):
+        immutability_duration_days: Optional[int]
+        is_policy_expired: Optional[bool]
+        policy_expiration_time: Optional[datetime]
+        policy_start_time: Optional[datetime]
+        type: Optional[Union[str, ImmutabilityPolicyType]]
+
+
+    class azure.mgmt.compute.models.ImmutabilityPolicyData(_Model):
+        immutability_duration_days: int
+        type: Union[str, ImmutabilityPolicyType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                immutability_duration_days: int, 
+                type: Union[str, ImmutabilityPolicyType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.ImmutabilityPolicyLockData(_Model):
+        immutability_duration_days: int
+        type: Union[str, ImmutabilityPolicyType]
+
+        @overload
+        def __init__(
+                self, 
+                *, 
+                immutability_duration_days: int, 
+                type: Union[str, ImmutabilityPolicyType]
+            ) -> None: ...
+
+        @overload
+        def __init__(self, mapping: Mapping[str, Any]) -> None: ...
+
+
+    class azure.mgmt.compute.models.ImmutabilityPolicyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        LOCKED = "Locked"
+        UNLOCKED = "Unlocked"
+
+
     class azure.mgmt.compute.models.InnerError(_Model):
         errordetail: Optional[str]
         exceptiontype: Optional[str]
@@ -11959,6 +12139,7 @@ namespace azure.mgmt.compute.models
         CANCELLED = "Cancelled"
         COMPLETED = "Completed"
         FAULTED = "Faulted"
+        ROLLING_BACK = "RollingBack"
         ROLLING_FORWARD = "RollingForward"
 
 
@@ -12752,6 +12933,7 @@ namespace azure.mgmt.compute.models
         encryption: Optional[Encryption]
         encryption_settings_collection: Optional[EncryptionSettingsCollection]
         hyper_v_generation: Optional[Union[str, HyperVGeneration]]
+        immutability_policy: Optional[ImmutabilityPolicy]
         incremental: Optional[bool]
         incremental_snapshot_family_id: Optional[str]
         network_access_policy: Optional[Union[str, NetworkAccessPolicy]]
@@ -13450,6 +13632,7 @@ namespace azure.mgmt.compute.models
         CANCELLED = "Cancelled"
         COMPLETED = "Completed"
         FAULTED = "Faulted"
+        ROLLING_BACK = "RollingBack"
         ROLLING_FORWARD = "RollingForward"
 
 
@@ -16705,7 +16888,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[ConvertToVirtualMachineScaleSetInput] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16746,7 +16929,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: AvailabilitySet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16818,7 +17001,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: MigrateToVirtualMachineScaleSetInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16851,7 +17034,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: AvailabilitySetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16884,7 +17067,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 availability_set_name: str, 
-                parameters: JSON, 
+                parameters: MigrateToVirtualMachineScaleSetInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16926,7 +17109,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -16995,7 +17178,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17039,7 +17222,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
                 capacity_reservation_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservation, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17084,7 +17267,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 capacity_reservation_group_name: str, 
                 capacity_reservation_name: str, 
-                parameters: JSON, 
+                parameters: CapacityReservationUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17219,7 +17402,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 host_group_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17280,7 +17463,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 host_group_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17324,7 +17507,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 host_group_name: str, 
                 host_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHost, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17387,7 +17570,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 host_group_name: str, 
                 host_name: str, 
-                parameters: JSON, 
+                parameters: DedicatedHostUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17458,7 +17641,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_access_name: str, 
-                disk_access: JSON, 
+                disk_access: DiskAccess, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17508,7 +17691,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_access_name: str, 
-                disk_access: JSON, 
+                disk_access: DiskAccessUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17543,7 +17726,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 disk_access_name: str, 
                 private_endpoint_connection_name: str, 
-                private_endpoint_connection: JSON, 
+                private_endpoint_connection: PrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17629,7 +17812,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_encryption_set_name: str, 
-                disk_encryption_set: JSON, 
+                disk_encryption_set: DiskEncryptionSet, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17670,7 +17853,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_encryption_set_name: str, 
-                disk_encryption_set: JSON, 
+                disk_encryption_set: DiskEncryptionSetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17742,7 +17925,7 @@ namespace azure.mgmt.compute.operations
                 restore_point_collection_name: str, 
                 vm_restore_point_name: str, 
                 disk_restore_point_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17815,7 +17998,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                disk: JSON, 
+                disk: Disk, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17856,7 +18039,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17897,7 +18080,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 disk_name: str, 
-                disk: JSON, 
+                disk: DiskUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17957,7 +18140,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                gallery: JSON, 
+                gallery: Gallery, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -17998,7 +18181,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                gallery: JSON, 
+                gallery: GalleryUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18065,7 +18248,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_application_name: str, 
                 gallery_application_version_name: str, 
-                gallery_application_version: JSON, 
+                gallery_application_version: GalleryApplicationVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18114,7 +18297,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_application_name: str, 
                 gallery_application_version_name: str, 
-                gallery_application_version: JSON, 
+                gallery_application_version: GalleryApplicationVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18181,7 +18364,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_application_name: str, 
-                gallery_application: JSON, 
+                gallery_application: GalleryApplication, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18226,7 +18409,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_application_name: str, 
-                gallery_application: JSON, 
+                gallery_application: GalleryApplicationUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18290,7 +18473,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
-                gallery_image_version: JSON, 
+                gallery_image_version: GalleryImageVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18339,7 +18522,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_image_name: str, 
                 gallery_image_version_name: str, 
-                gallery_image_version: JSON, 
+                gallery_image_version: GalleryImageVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18406,7 +18589,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
-                gallery_image: JSON, 
+                gallery_image: GalleryImage, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18451,7 +18634,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_image_name: str, 
-                gallery_image: JSON, 
+                gallery_image: GalleryImageUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18515,7 +18698,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
                 in_vm_access_control_profile_version_name: str, 
-                gallery_in_vm_access_control_profile_version: JSON, 
+                gallery_in_vm_access_control_profile_version: GalleryInVMAccessControlProfileVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18564,7 +18747,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
                 in_vm_access_control_profile_version_name: str, 
-                gallery_in_vm_access_control_profile_version: JSON, 
+                gallery_in_vm_access_control_profile_version: GalleryInVMAccessControlProfileVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18629,7 +18812,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
-                gallery_in_vm_access_control_profile: JSON, 
+                gallery_in_vm_access_control_profile: GalleryInVMAccessControlProfile, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18674,7 +18857,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 in_vm_access_control_profile_name: str, 
-                gallery_in_vm_access_control_profile: JSON, 
+                gallery_in_vm_access_control_profile: GalleryInVMAccessControlProfileUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18738,7 +18921,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_script_name: str, 
                 gallery_script_version_name: str, 
-                gallery_script_version: JSON, 
+                gallery_script_version: GalleryScriptVersion, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18758,7 +18941,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -18788,7 +18971,7 @@ namespace azure.mgmt.compute.operations
                 gallery_name: str, 
                 gallery_script_name: str, 
                 gallery_script_version_name: str, 
-                gallery_script_version: JSON, 
+                gallery_script_version: GalleryScriptVersionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18808,7 +18991,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScriptVersion]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'gallery_script_version_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -18819,7 +19002,7 @@ namespace azure.mgmt.compute.operations
             ) -> GalleryScriptVersion: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def list_by_gallery_script(
                 self, 
                 resource_group_name: str, 
@@ -18855,7 +19038,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_script_name: str, 
-                gallery_script: JSON, 
+                gallery_script: GalleryScript, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18874,7 +19057,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScript]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def begin_delete(
                 self, 
                 resource_group_name: str, 
@@ -18901,7 +19084,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 gallery_name: str, 
                 gallery_script_name: str, 
-                gallery_script: JSON, 
+                gallery_script: GalleryScriptUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -18920,7 +19103,7 @@ namespace azure.mgmt.compute.operations
             ) -> LROPoller[GalleryScript]: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'gallery_script_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def get(
                 self, 
                 resource_group_name: str, 
@@ -18930,7 +19113,7 @@ namespace azure.mgmt.compute.operations
             ) -> GalleryScript: ...
 
         @distributed_trace
-        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03'])
+        @api_version_validation(method_added_on='2025-03-03', params_added_on={'2025-03-03': ['api_version', 'subscription_id', 'resource_group_name', 'gallery_name', 'accept']}, api_versions_list=['2025-03-03', '2025-12-03'])
         def list_by_gallery(
                 self, 
                 resource_group_name: str, 
@@ -18963,7 +19146,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 gallery_name: str, 
-                sharing_update: JSON, 
+                sharing_update: SharingUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19005,7 +19188,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 image_name: str, 
-                parameters: JSON, 
+                parameters: Image, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19046,7 +19229,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 image_name: str, 
-                parameters: JSON, 
+                parameters: ImageUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19108,7 +19291,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_block_name: str, 
-                resource: JSON, 
+                resource: InterconnectBlock, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19149,7 +19332,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 interconnect_block_name: str, 
-                properties: JSON, 
+                properties: InterconnectBlockUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19209,7 +19392,7 @@ namespace azure.mgmt.compute.operations
         def begin_export_request_rate_by_interval(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: RequestRateByIntervalInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19239,7 +19422,7 @@ namespace azure.mgmt.compute.operations
         def begin_export_throttled_requests(
                 self, 
                 location: str, 
-                parameters: JSON, 
+                parameters: ThrottledRequestsInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19292,7 +19475,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 proximity_placement_group_name: str, 
-                parameters: JSON, 
+                parameters: ProximityPlacementGroup, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19353,7 +19536,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 proximity_placement_group_name: str, 
-                parameters: JSON, 
+                parameters: ProximityPlacementGroupUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19421,7 +19604,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
-                parameters: JSON, 
+                parameters: RestorePointCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19474,7 +19657,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
-                parameters: JSON, 
+                parameters: RestorePointCollectionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19518,7 +19701,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 restore_point_collection_name: str, 
                 restore_point_name: str, 
-                parameters: JSON, 
+                parameters: RestorePoint, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19641,6 +19824,35 @@ namespace azure.mgmt.compute.operations
             ) -> ItemPaged[SharedGalleryImage]: ...
 
 
+    class azure.mgmt.compute.operations.SharedGalleryInvitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        def begin_gallery_sharing_accept(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'subscription_id', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        def begin_gallery_sharing_reject(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+
     class azure.mgmt.compute.operations.SnapshotsOperations:
 
         def __init__(
@@ -19665,7 +19877,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                snapshot: JSON, 
+                snapshot: Snapshot, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19706,7 +19918,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                grant_access_data: JSON, 
+                grant_access_data: GrantAccessData, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19747,7 +19959,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 snapshot_name: str, 
-                snapshot: JSON, 
+                snapshot: SnapshotUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19759,6 +19971,72 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 snapshot_name: str, 
                 snapshot: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: IO[bytes], 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyLockData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: ImmutabilityPolicyLockData, 
+                *, 
+                content_type: str = "application/json", 
+                **kwargs: Any
+            ) -> LROPoller[Snapshot]: ...
+
+        @overload
+        def begin_update_immutability_policy_lock(
+                self, 
+                resource_group_name: str, 
+                snapshot_name: str, 
+                immutability_policy_data: IO[bytes], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19826,7 +20104,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: JSON, 
+                parameters: SshPublicKeyResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19867,7 +20145,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[SshGenerateKeyPairInputParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19918,7 +20196,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 ssh_public_key_name: str, 
-                parameters: JSON, 
+                parameters: SshPublicKeyUpdateResource, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -19934,6 +20212,35 @@ namespace azure.mgmt.compute.operations
                 content_type: str = "application/json", 
                 **kwargs: Any
             ) -> SshPublicKeyResource: ...
+
+
+    class azure.mgmt.compute.operations.TenantLevelSharedGalleryInvitesOperations:
+
+        def __init__(
+                self, 
+                *args, 
+                **kwargs
+            ) -> None: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        def begin_tenant_level_gallery_sharing_accept(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
+        @api_version_validation(method_added_on='2025-12-03', params_added_on={'2025-12-03': ['api_version', 'location', 'shared_gallery_subscription_id', 'shared_gallery_name']}, api_versions_list=['2025-12-03'])
+        def begin_tenant_level_gallery_sharing_reject(
+                self, 
+                location: str, 
+                shared_gallery_subscription_id: str, 
+                shared_gallery_name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
 
 
     class azure.mgmt.compute.operations.UsageOperations:
@@ -20018,7 +20325,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20063,7 +20370,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20272,7 +20579,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommand, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20317,7 +20624,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_name: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommandUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20398,7 +20705,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 vmss_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20443,7 +20750,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 vmss_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20524,7 +20831,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 lifecycle_hook_event_name: str, 
-                properties: JSON, 
+                properties: VMScaleSetLifecycleHookEventUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20612,7 +20919,7 @@ namespace azure.mgmt.compute.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetVMExtension, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20661,7 +20968,7 @@ namespace azure.mgmt.compute.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 vm_extension_name: str, 
-                extension_parameters: JSON, 
+                extension_parameters: VirtualMachineScaleSetVMExtensionUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20732,7 +21039,7 @@ namespace azure.mgmt.compute.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommand, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20781,7 +21088,7 @@ namespace azure.mgmt.compute.operations
                 vm_scale_set_name: str, 
                 instance_id: str, 
                 run_command_name: str, 
-                run_command: JSON, 
+                run_command: VirtualMachineRunCommandUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20859,7 +21166,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: AttachDetachDataDisksRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20944,7 +21251,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                vm_scale_set_vm_reimage_input: Optional[JSON] = None, 
+                vm_scale_set_vm_reimage_input: Optional[VirtualMachineScaleSetVMReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -20998,7 +21305,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: RunCommandInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21045,7 +21352,7 @@ namespace azure.mgmt.compute.operations
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
                 instance_id: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSetVM, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -21144,7 +21451,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21179,7 +21486,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSet, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -21217,7 +21524,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 hibernate: Optional[bool] = ..., 
@@ -21263,7 +21570,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: JSON, 
+                vm_instance_i_ds: VirtualMachineScaleSetVMInstanceRequiredIDs, 
                 *, 
                 content_type: str = "application/json", 
                 force_deletion: Optional[bool] = ..., 
@@ -21298,7 +21605,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21332,7 +21639,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 skip_shutdown: Optional[bool] = ..., 
@@ -21375,7 +21682,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21408,7 +21715,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_scale_set_reimage_input: Optional[JSON] = None, 
+                vm_scale_set_reimage_input: Optional[VirtualMachineScaleSetReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21441,7 +21748,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21474,7 +21781,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21507,7 +21814,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VMScaleSetScaleOutInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21540,7 +21847,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: OrchestrationServiceStateInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21573,7 +21880,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: Optional[JSON] = None, 
+                vm_instance_i_ds: Optional[VirtualMachineScaleSetVMInstanceIDs] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21608,7 +21915,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineScaleSetUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -21645,7 +21952,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                vm_instance_i_ds: JSON, 
+                vm_instance_i_ds: VirtualMachineScaleSetVMInstanceRequiredIDs, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21678,7 +21985,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_scale_set_name: str, 
-                parameters: JSON, 
+                parameters: VMScaleSetConvertToSinglePlacementGroupInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21807,7 +22114,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: AttachDetachDataDisksRequest, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21840,7 +22147,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineCaptureParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21883,7 +22190,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachine, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -21942,7 +22249,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                install_patches_input: JSON, 
+                install_patches_input: VirtualMachineInstallPatchesParameters, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -21975,7 +22282,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[MigrateVMToVirtualMachineScaleSetInput] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22042,7 +22349,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: Optional[JSON] = None, 
+                parameters: Optional[VirtualMachineReimageParameters] = None, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22083,7 +22390,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: RunCommandInput, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -22126,7 +22433,7 @@ namespace azure.mgmt.compute.operations
                 self, 
                 resource_group_name: str, 
                 vm_name: str, 
-                parameters: JSON, 
+                parameters: VirtualMachineUpdate, 
                 *, 
                 content_type: str = "application/json", 
                 etag: Optional[str] = ..., 
@@ -22225,6 +22532,4780 @@ namespace azure.mgmt.compute.operations
                 vm_name: str, 
                 **kwargs: Any
             ) -> None: ...
+
+
+namespace azure.mgmt.compute.types
+
+    class azure.mgmt.compute.types.AccessControlRules(TypedDict, total=False):
+        identities: list[AccessControlRulesIdentity]
+        privileges: list[AccessControlRulesPrivilege]
+        roleAssignments: list[AccessControlRulesRoleAssignment]
+        role_assignments: list[AccessControlRulesRoleAssignment]
+        roles: list[AccessControlRulesRole]
+
+
+    class azure.mgmt.compute.types.AccessControlRulesIdentity(TypedDict, total=False):
+        key "exePath": str
+        key "groupName": str
+        key "name": Required[str]
+        key "processName": str
+        key "userName": str
+        exe_path: str
+        group_name: str
+        name: str
+        process_name: str
+        user_name: str
+
+
+    class azure.mgmt.compute.types.AccessControlRulesPrivilege(TypedDict, total=False):
+        key "name": Required[str]
+        key "path": Required[str]
+        name: str
+        path: str
+        queryParameters: dict[str, str]
+        query_parameters: dict[str, str]
+
+
+    class azure.mgmt.compute.types.AccessControlRulesRole(TypedDict, total=False):
+        key "name": Required[str]
+        key "privileges": Required[list[str]]
+        name: str
+        privileges: list[str]
+
+
+    class azure.mgmt.compute.types.AccessControlRulesRoleAssignment(TypedDict, total=False):
+        key "identities": Required[list[str]]
+        key "role": Required[str]
+        identities: list[str]
+        role: str
+
+
+    class azure.mgmt.compute.types.AdditionalCapabilities(TypedDict, total=False):
+        key "enableFips1403Encryption": bool
+        key "hibernationEnabled": bool
+        key "ultraSSDEnabled": bool
+        enable_fips1403_encryption: bool
+        hibernation_enabled: bool
+        ultra_ssd_enabled: bool
+
+
+    class azure.mgmt.compute.types.AdditionalReplicaSet(TypedDict, total=False):
+        key "regionalReplicaCount": int
+        key "storageAccountType": Union[str, StorageAccountType]
+        regional_replica_count: int
+        storage_account_type: Union[str, StorageAccountType]
+
+
+    class azure.mgmt.compute.types.AdditionalUnattendContent(TypedDict, total=False):
+        key "componentName": Union[str, ComponentNames]
+        key "content": str
+        key "passName": Union[str, PassNames]
+        key "settingName": Union[str, SettingNames]
+        component_name: Union[str, ComponentNames]
+        content: str
+        pass_name: Union[str, PassNames]
+        setting_name: Union[str, SettingNames]
+
+
+    class azure.mgmt.compute.types.AllInstancesDown(TypedDict, total=False):
+        key "automaticallyApprove": bool
+        automatically_approve: bool
+
+
+    class azure.mgmt.compute.types.ApiEntityReference(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.ApiError(TypedDict, total=False):
+        key "code": str
+        key "innererror": ForwardRef('InnerError', module='types')
+        key "message": str
+        key "target": str
+        code: str
+        details: list[ApiErrorBase]
+        innererror: InnerError
+        message: str
+        target: str
+
+
+    class azure.mgmt.compute.types.ApiErrorBase(TypedDict, total=False):
+        key "code": str
+        key "message": str
+        key "target": str
+        code: str
+        message: str
+        target: str
+
+
+    class azure.mgmt.compute.types.ApplicationProfile(TypedDict, total=False):
+        galleryApplications: list[VMGalleryApplication]
+        gallery_applications: list[VMGalleryApplication]
+
+
+    class azure.mgmt.compute.types.AttachDetachDataDisksRequest(TypedDict, total=False):
+        dataDisksToAttach: list[DataDisksToAttach]
+        dataDisksToDetach: list[DataDisksToDetach]
+        data_disks_to_attach: list[DataDisksToAttach]
+        data_disks_to_detach: list[DataDisksToDetach]
+
+
+    class azure.mgmt.compute.types.AutomaticOSUpgradePolicy(TypedDict, total=False):
+        key "disableAutomaticRollback": bool
+        key "enableAutomaticOSUpgrade": bool
+        key "osRollingUpgradeDeferral": bool
+        key "useRollingUpgradePolicy": bool
+        disable_automatic_rollback: bool
+        enable_automatic_os_upgrade: bool
+        os_rolling_upgrade_deferral: bool
+        use_rolling_upgrade_policy: bool
+
+
+    class azure.mgmt.compute.types.AutomaticRepairsPolicy(TypedDict, total=False):
+        key "enabled": bool
+        key "gracePeriod": str
+        key "repairAction": Union[str, RepairAction]
+        enabled: bool
+        grace_period: str
+        repair_action: Union[str, RepairAction]
+
+
+    class azure.mgmt.compute.types.AutomaticSkuMigrationPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.AutomaticZoneRebalancingPolicy(TypedDict, total=False):
+        key "enabled": bool
+        key "rebalanceBehavior": Union[str, RebalanceBehavior]
+        key "rebalanceStrategy": Union[str, RebalanceStrategy]
+        enabled: bool
+        rebalance_behavior: Union[str, RebalanceBehavior]
+        rebalance_strategy: Union[str, RebalanceStrategy]
+
+
+    class azure.mgmt.compute.types.AvailabilityPolicy(TypedDict, total=False):
+        key "actionOnDiskDelay": Union[str, AvailabilityPolicyDiskDelay]
+        action_on_disk_delay: Union[str, AvailabilityPolicyDiskDelay]
+
+
+    class azure.mgmt.compute.types.AvailabilitySet(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('AvailabilitySetProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: AvailabilitySetProperties
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.AvailabilitySetProperties(TypedDict, total=False):
+        key "platformFaultDomainCount": int
+        key "platformUpdateDomainCount": int
+        key "proximityPlacementGroup": ForwardRef('SubResource', module='types')
+        key "scheduledEventsPolicy": ForwardRef('ScheduledEventsPolicy', module='types')
+        key "virtualMachineScaleSetMigrationInfo": ForwardRef('VirtualMachineScaleSetMigrationInfo', module='types')
+        platform_fault_domain_count: int
+        platform_update_domain_count: int
+        proximity_placement_group: SubResource
+        scheduled_events_policy: ScheduledEventsPolicy
+        statuses: list[InstanceViewStatus]
+        virtualMachines: list[SubResource]
+        virtual_machine_scale_set_migration_info: VirtualMachineScaleSetMigrationInfo
+        virtual_machines: list[SubResource]
+
+
+    class azure.mgmt.compute.types.AvailabilitySetUpdate(UpdateResource):
+        key "properties": ForwardRef('AvailabilitySetProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        properties: AvailabilitySetProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.AvailablePatchSummary(TypedDict, total=False):
+        key "assessmentActivityId": str
+        key "criticalAndSecurityPatchCount": int
+        key "error": ForwardRef('ApiError', module='types')
+        key "lastModifiedTime": str
+        key "otherPatchCount": int
+        key "rebootPending": bool
+        key "startTime": str
+        key "status": Union[str, PatchOperationStatus]
+        assessment_activity_id: str
+        critical_and_security_patch_count: int
+        error: ApiError
+        last_modified_time: str
+        other_patch_count: int
+        reboot_pending: bool
+        start_time: str
+        status: Union[str, PatchOperationStatus]
+
+
+    class azure.mgmt.compute.types.BillingProfile(TypedDict, total=False):
+        key "maxPrice": float
+        max_price: float
+
+
+    class azure.mgmt.compute.types.BootDiagnostics(TypedDict, total=False):
+        key "enabled": bool
+        key "storageUri": str
+        enabled: bool
+        storage_uri: str
+
+
+    class azure.mgmt.compute.types.BootDiagnosticsInstanceView(TypedDict, total=False):
+        key "consoleScreenshotBlobUri": str
+        key "serialConsoleLogBlobUri": str
+        key "status": ForwardRef('InstanceViewStatus', module='types')
+        console_screenshot_blob_uri: str
+        serial_console_log_blob_uri: str
+        status: InstanceViewStatus
+
+
+    class azure.mgmt.compute.types.CapacityReservation(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('CapacityReservationProperties', module='types')
+        key "sku": Required[Sku]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: CapacityReservationProperties
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.CapacityReservationGroup(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('CapacityReservationGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: CapacityReservationGroupProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.CapacityReservationGroupInstanceView(TypedDict, total=False):
+        capacityReservations: list[CapacityReservationInstanceViewWithName]
+        capacity_reservations: list[CapacityReservationInstanceViewWithName]
+        sharedSubscriptionIds: list[SubResourceReadOnly]
+        shared_subscription_ids: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.CapacityReservationGroupProperties(TypedDict, total=False):
+        key "instanceView": ForwardRef('CapacityReservationGroupInstanceView', module='types')
+        key "reservationType": Union[str, ReservationType]
+        key "sharingProfile": ForwardRef('ResourceSharingProfile', module='types')
+        capacityReservations: list[SubResourceReadOnly]
+        capacity_reservations: list[SubResourceReadOnly]
+        instance_view: CapacityReservationGroupInstanceView
+        reservation_type: Union[str, ReservationType]
+        sharing_profile: ResourceSharingProfile
+        virtualMachinesAssociated: list[SubResourceReadOnly]
+        virtual_machines_associated: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.CapacityReservationGroupUpdate(UpdateResource):
+        key "properties": ForwardRef('CapacityReservationGroupProperties', module='types')
+        properties: CapacityReservationGroupProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.CapacityReservationInstanceView(TypedDict, total=False):
+        key "utilizationInfo": ForwardRef('CapacityReservationUtilization', module='types')
+        statuses: list[InstanceViewStatus]
+        utilization_info: CapacityReservationUtilization
+
+
+    class azure.mgmt.compute.types.CapacityReservationInstanceViewWithName(CapacityReservationInstanceView):
+        key "name": str
+        key "utilizationInfo": ForwardRef('CapacityReservationUtilization', module='types')
+        name: str
+        statuses: list[InstanceViewStatus]
+        utilization_info: CapacityReservationUtilization
+
+
+    class azure.mgmt.compute.types.CapacityReservationProfile(TypedDict, total=False):
+        key "capacityReservationGroup": ForwardRef('SubResource', module='types')
+        capacity_reservation_group: SubResource
+
+
+    class azure.mgmt.compute.types.CapacityReservationProperties(TypedDict, total=False):
+        key "instanceView": ForwardRef('CapacityReservationInstanceView', module='types')
+        key "platformFaultDomainCount": int
+        key "provisioningState": str
+        key "provisioningTime": str
+        key "reservationId": str
+        key "scheduleProfile": ForwardRef('ScheduleProfile', module='types')
+        key "timeCreated": str
+        instance_view: CapacityReservationInstanceView
+        platform_fault_domain_count: int
+        provisioning_state: str
+        provisioning_time: str
+        reservation_id: str
+        schedule_profile: ScheduleProfile
+        time_created: str
+        virtualMachinesAssociated: list[SubResourceReadOnly]
+        virtual_machines_associated: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.CapacityReservationUpdate(UpdateResource):
+        key "properties": ForwardRef('CapacityReservationProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        properties: CapacityReservationProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.CapacityReservationUtilization(TypedDict, total=False):
+        key "currentCapacity": int
+        current_capacity: int
+        virtualMachinesAllocated: list[SubResourceReadOnly]
+        virtual_machines_allocated: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.CommunityGalleryInfo(TypedDict, total=False):
+        key "communityGalleryEnabled": bool
+        key "eula": str
+        key "publicNamePrefix": str
+        key "publisherContact": str
+        key "publisherUri": str
+        community_gallery_enabled: bool
+        eula: str
+        publicNames: list[str]
+        public_name_prefix: str
+        public_names: list[str]
+        publisher_contact: str
+        publisher_uri: str
+
+
+    class azure.mgmt.compute.types.ConvertToVirtualMachineScaleSetInput(TypedDict, total=False):
+        key "virtualMachineScaleSetName": str
+        virtual_machine_scale_set_name: str
+
+
+    class azure.mgmt.compute.types.CopyCompletionError(TypedDict, total=False):
+        key "errorCode": Required[Union[str, CopyCompletionErrorReason]]
+        key "errorMessage": Required[str]
+        error_code: Union[str, CopyCompletionErrorReason]
+        error_message: str
+
+
+    class azure.mgmt.compute.types.CreationData(TypedDict, total=False):
+        key "createOption": Required[Union[str, DiskCreateOption]]
+        key "elasticSanResourceId": str
+        key "galleryImageReference": ForwardRef('ImageDiskReference', module='types')
+        key "imageReference": ForwardRef('ImageDiskReference', module='types')
+        key "instantAccessDurationMinutes": int
+        key "logicalSectorSize": int
+        key "performancePlus": bool
+        key "provisionedBandwidthCopySpeed": Union[str, ProvisionedBandwidthCopyOption]
+        key "securityDataUri": str
+        key "securityMetadataUri": str
+        key "sourceResourceId": str
+        key "sourceUniqueId": str
+        key "sourceUri": str
+        key "storageAccountId": str
+        key "uploadSizeBytes": int
+        create_option: Union[str, DiskCreateOption]
+        elastic_san_resource_id: str
+        gallery_image_reference: ImageDiskReference
+        image_reference: ImageDiskReference
+        instant_access_duration_minutes: int
+        logical_sector_size: int
+        performance_plus: bool
+        provisioned_bandwidth_copy_speed: Union[str, ProvisionedBandwidthCopyOption]
+        security_data_uri: str
+        security_metadata_uri: str
+        source_resource_id: str
+        source_unique_id: str
+        source_uri: str
+        storage_account_id: str
+        upload_size_bytes: int
+
+
+    class azure.mgmt.compute.types.DataDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "createOption": Required[Union[str, DiskCreateOptionTypes]]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "detachOption": Union[str, DiskDetachOptionTypes]
+        key "diskIOPSReadWrite": int
+        key "diskMBpsReadWrite": int
+        key "diskSizeGB": int
+        key "image": ForwardRef('VirtualHardDisk', module='types')
+        key "lun": Required[int]
+        key "managedDisk": ForwardRef('ManagedDiskParameters', module='types')
+        key "name": str
+        key "sourceResource": ForwardRef('ApiEntityReference', module='types')
+        key "storageFaultDomainAlignment": Union[str, StorageFaultDomainAlignmentType]
+        key "toBeDetached": bool
+        key "vhd": ForwardRef('VirtualHardDisk', module='types')
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        detach_option: Union[str, DiskDetachOptionTypes]
+        disk_iops_read_write: int
+        disk_m_bps_read_write: int
+        disk_size_gb: int
+        image: VirtualHardDisk
+        lun: int
+        managed_disk: ManagedDiskParameters
+        name: str
+        source_resource: ApiEntityReference
+        storage_fault_domain_alignment: Union[str, StorageFaultDomainAlignmentType]
+        to_be_detached: bool
+        vhd: VirtualHardDisk
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.DataDiskImageEncryption(DiskImageEncryption):
+        key "diskEncryptionSetId": str
+        key "lun": Required[int]
+        disk_encryption_set_id: str
+        lun: int
+
+
+    class azure.mgmt.compute.types.DataDisksToAttach(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "diskId": Required[str]
+        key "lun": int
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        disk_id: str
+        lun: int
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.DataDisksToDetach(TypedDict, total=False):
+        key "detachOption": Union[str, DiskDetachOptionTypes]
+        key "diskId": Required[str]
+        detach_option: Union[str, DiskDetachOptionTypes]
+        disk_id: str
+
+
+    class azure.mgmt.compute.types.DedicatedHost(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('DedicatedHostProperties', module='types')
+        key "sku": Required[Sku]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: DedicatedHostProperties
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.DedicatedHostAllocatableVM(TypedDict, total=False):
+        key "count": float
+        key "vmSize": str
+        count: float
+        vm_size: str
+
+
+    class azure.mgmt.compute.types.DedicatedHostAvailableCapacity(TypedDict, total=False):
+        allocatableVMs: list[DedicatedHostAllocatableVM]
+        allocatable_v_ms: list[DedicatedHostAllocatableVM]
+
+
+    class azure.mgmt.compute.types.DedicatedHostGroup(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('DedicatedHostGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: DedicatedHostGroupProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.DedicatedHostGroupInstanceView(TypedDict, total=False):
+        hosts: list[DedicatedHostInstanceViewWithName]
+
+
+    class azure.mgmt.compute.types.DedicatedHostGroupProperties(TypedDict, total=False):
+        key "additionalCapabilities": ForwardRef('DedicatedHostGroupPropertiesAdditionalCapabilities', module='types')
+        key "instanceView": ForwardRef('DedicatedHostGroupInstanceView', module='types')
+        key "platformFaultDomainCount": Required[int]
+        key "supportAutomaticPlacement": bool
+        additional_capabilities: DedicatedHostGroupPropertiesAdditionalCapabilities
+        hosts: list[SubResourceReadOnly]
+        instance_view: DedicatedHostGroupInstanceView
+        platform_fault_domain_count: int
+        support_automatic_placement: bool
+
+
+    class azure.mgmt.compute.types.DedicatedHostGroupPropertiesAdditionalCapabilities(TypedDict, total=False):
+        key "ultraSSDEnabled": bool
+        ultra_ssd_enabled: bool
+
+
+    class azure.mgmt.compute.types.DedicatedHostGroupUpdate(UpdateResource):
+        key "properties": ForwardRef('DedicatedHostGroupProperties', module='types')
+        properties: DedicatedHostGroupProperties
+        tags: dict[str, str]
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.DedicatedHostInstanceView(TypedDict, total=False):
+        key "assetId": str
+        key "availableCapacity": ForwardRef('DedicatedHostAvailableCapacity', module='types')
+        asset_id: str
+        available_capacity: DedicatedHostAvailableCapacity
+        statuses: list[InstanceViewStatus]
+
+
+    class azure.mgmt.compute.types.DedicatedHostInstanceViewWithName(DedicatedHostInstanceView):
+        key "assetId": str
+        key "availableCapacity": ForwardRef('DedicatedHostAvailableCapacity', module='types')
+        key "name": str
+        asset_id: str
+        available_capacity: DedicatedHostAvailableCapacity
+        name: str
+        statuses: list[InstanceViewStatus]
+
+
+    class azure.mgmt.compute.types.DedicatedHostProperties(TypedDict, total=False):
+        key "autoReplaceOnFailure": bool
+        key "hostId": str
+        key "instanceView": ForwardRef('DedicatedHostInstanceView', module='types')
+        key "licenseType": Union[str, DedicatedHostLicenseTypes]
+        key "platformFaultDomain": int
+        key "provisioningState": str
+        key "provisioningTime": str
+        key "timeCreated": str
+        auto_replace_on_failure: bool
+        host_id: str
+        instance_view: DedicatedHostInstanceView
+        license_type: Union[str, DedicatedHostLicenseTypes]
+        platform_fault_domain: int
+        provisioning_state: str
+        provisioning_time: str
+        time_created: str
+        virtualMachines: list[SubResourceReadOnly]
+        virtual_machines: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.DedicatedHostUpdate(UpdateResource):
+        key "properties": ForwardRef('DedicatedHostProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        properties: DedicatedHostProperties
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.DefaultVirtualMachineScaleSetInfo(TypedDict, total=False):
+        key "constrainedMaximumCapacity": bool
+        key "defaultVirtualMachineScaleSet": ForwardRef('SubResource', module='types')
+        constrained_maximum_capacity: bool
+        default_virtual_machine_scale_set: SubResource
+
+
+    class azure.mgmt.compute.types.DiagnosticsProfile(TypedDict, total=False):
+        key "bootDiagnostics": ForwardRef('BootDiagnostics', module='types')
+        boot_diagnostics: BootDiagnostics
+
+
+    class azure.mgmt.compute.types.DiffDiskSettings(TypedDict, total=False):
+        key "enableFullCaching": bool
+        key "option": Union[str, DiffDiskOptions]
+        key "placement": Union[str, DiffDiskPlacement]
+        enable_full_caching: bool
+        option: Union[str, DiffDiskOptions]
+        placement: Union[str, DiffDiskPlacement]
+
+
+    class azure.mgmt.compute.types.Disallowed(TypedDict, total=False):
+        diskTypes: list[str]
+        disk_types: list[str]
+
+
+    class azure.mgmt.compute.types.Disk(TrackedResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": Required[str]
+        key "managedBy": str
+        key "name": str
+        key "properties": ForwardRef('DiskProperties', module='types')
+        key "sku": ForwardRef('DiskSku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        managedByExtended: list[str]
+        managed_by: str
+        managed_by_extended: list[str]
+        name: str
+        properties: DiskProperties
+        sku: DiskSku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.DiskAccess(TrackedResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('DiskAccessProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: DiskAccessProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.DiskAccessProperties(TypedDict, total=False):
+        key "provisioningState": str
+        key "timeCreated": str
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        private_endpoint_connections: list[PrivateEndpointConnection]
+        provisioning_state: str
+        time_created: str
+
+
+    class azure.mgmt.compute.types.DiskAccessUpdate(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.DiskEncryptionSet(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('EncryptionSetIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('EncryptionSetProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: EncryptionSetIdentity
+        location: str
+        name: str
+        properties: EncryptionSetProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.DiskEncryptionSetParameters(SubResource):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.DiskEncryptionSetUpdate(TypedDict, total=False):
+        key "identity": ForwardRef('EncryptionSetIdentity', module='types')
+        key "properties": ForwardRef('DiskEncryptionSetUpdateProperties', module='types')
+        identity: EncryptionSetIdentity
+        properties: DiskEncryptionSetUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.DiskEncryptionSetUpdateProperties(TypedDict, total=False):
+        key "activeKey": ForwardRef('KeyForDiskEncryptionSet', module='types')
+        key "encryptionType": Union[str, DiskEncryptionSetType]
+        key "federatedClientId": str
+        key "rotationToLatestKeyVersionEnabled": bool
+        active_key: KeyForDiskEncryptionSet
+        encryption_type: Union[str, DiskEncryptionSetType]
+        federated_client_id: str
+        rotation_to_latest_key_version_enabled: bool
+
+
+    class azure.mgmt.compute.types.DiskEncryptionSettings(TypedDict, total=False):
+        key "diskEncryptionKey": ForwardRef('KeyVaultSecretReference', module='types')
+        key "enabled": bool
+        key "keyEncryptionKey": ForwardRef('KeyVaultKeyReference', module='types')
+        disk_encryption_key: KeyVaultSecretReference
+        enabled: bool
+        key_encryption_key: KeyVaultKeyReference
+
+
+    class azure.mgmt.compute.types.DiskImageEncryption(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        disk_encryption_set_id: str
+
+
+    class azure.mgmt.compute.types.DiskInstanceView(TypedDict, total=False):
+        key "name": str
+        key "storageAlignmentStatus": Union[str, StorageAlignmentStatus]
+        encryptionSettings: list[DiskEncryptionSettings]
+        encryption_settings: list[DiskEncryptionSettings]
+        name: str
+        statuses: list[InstanceViewStatus]
+        storage_alignment_status: Union[str, StorageAlignmentStatus]
+
+
+    class azure.mgmt.compute.types.DiskProperties(TypedDict, total=False):
+        key "LastOwnershipUpdateTime": str
+        key "availabilityPolicy": ForwardRef('AvailabilityPolicy', module='types')
+        key "burstingEnabled": bool
+        key "burstingEnabledTime": str
+        key "completionPercent": float
+        key "creationData": Required[CreationData]
+        key "dataAccessAuthMode": Union[str, DataAccessAuthMode]
+        key "diskAccessId": str
+        key "diskIOPSReadOnly": int
+        key "diskIOPSReadWrite": int
+        key "diskMBpsReadOnly": int
+        key "diskMBpsReadWrite": int
+        key "diskSizeBytes": int
+        key "diskSizeGB": int
+        key "diskState": Union[str, DiskState]
+        key "encryption": ForwardRef('Encryption', module='types')
+        key "encryptionSettingsCollection": ForwardRef('EncryptionSettingsCollection', module='types')
+        key "hyperVGeneration": Union[str, HyperVGeneration]
+        key "maxShares": int
+        key "networkAccessPolicy": Union[str, NetworkAccessPolicy]
+        key "optimizedForFrequentAttach": bool
+        key "osType": Union[str, OperatingSystemTypes]
+        key "propertyUpdatesInProgress": ForwardRef('PropertyUpdatesInProgress', module='types')
+        key "provisioningState": str
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "purchasePlan": ForwardRef('DiskPurchasePlan', module='types')
+        key "securityProfile": ForwardRef('DiskSecurityProfile', module='types')
+        key "supportedCapabilities": ForwardRef('SupportedCapabilities', module='types')
+        key "supportsHibernation": bool
+        key "tier": str
+        key "timeCreated": str
+        key "uniqueId": str
+        availability_policy: AvailabilityPolicy
+        bursting_enabled: bool
+        bursting_enabled_time: str
+        completion_percent: float
+        creation_data: CreationData
+        data_access_auth_mode: Union[str, DataAccessAuthMode]
+        disk_access_id: str
+        disk_iops_read_only: int
+        disk_iops_read_write: int
+        disk_m_bps_read_only: int
+        disk_m_bps_read_write: int
+        disk_size_bytes: int
+        disk_size_gb: int
+        disk_state: Union[str, DiskState]
+        encryption: Encryption
+        encryption_settings_collection: EncryptionSettingsCollection
+        hyper_v_generation: Union[str, HyperVGeneration]
+        last_ownership_update_time: str
+        max_shares: int
+        network_access_policy: Union[str, NetworkAccessPolicy]
+        optimized_for_frequent_attach: bool
+        os_type: Union[str, OperatingSystemTypes]
+        property_updates_in_progress: PropertyUpdatesInProgress
+        provisioning_state: str
+        public_network_access: Union[str, PublicNetworkAccess]
+        purchase_plan: DiskPurchasePlan
+        security_profile: DiskSecurityProfile
+        shareInfo: list[ShareInfoElement]
+        share_info: list[ShareInfoElement]
+        supported_capabilities: SupportedCapabilities
+        supports_hibernation: bool
+        tier: str
+        time_created: str
+        unique_id: str
+
+
+    class azure.mgmt.compute.types.DiskPurchasePlan(TypedDict, total=False):
+        key "name": Required[str]
+        key "product": Required[str]
+        key "promotionCode": str
+        key "publisher": Required[str]
+        name: str
+        product: str
+        promotion_code: str
+        publisher: str
+
+
+    class azure.mgmt.compute.types.DiskRestorePointAttributes(SubResourceReadOnly):
+        key "encryption": ForwardRef('RestorePointEncryption', module='types')
+        key "id": str
+        key "sourceDiskRestorePoint": ForwardRef('ApiEntityReference', module='types')
+        encryption: RestorePointEncryption
+        id: str
+        source_disk_restore_point: ApiEntityReference
+
+
+    class azure.mgmt.compute.types.DiskRestorePointInstanceView(TypedDict, total=False):
+        key "id": str
+        key "replicationStatus": ForwardRef('DiskRestorePointReplicationStatus', module='types')
+        key "snapshotAccessState": Union[str, SnapshotAccessState]
+        id: str
+        replication_status: DiskRestorePointReplicationStatus
+        snapshot_access_state: Union[str, SnapshotAccessState]
+
+
+    class azure.mgmt.compute.types.DiskRestorePointReplicationStatus(TypedDict, total=False):
+        key "completionPercent": int
+        key "status": ForwardRef('InstanceViewStatus', module='types')
+        completion_percent: int
+        status: InstanceViewStatus
+
+
+    class azure.mgmt.compute.types.DiskSecurityProfile(TypedDict, total=False):
+        key "confidentialVMVersion": Union[str, ConfidentialVMVersion]
+        key "secureVMDiskEncryptionSetId": str
+        key "securityType": Union[str, DiskSecurityTypes]
+        confidential_vm_version: Union[str, ConfidentialVMVersion]
+        secure_vm_disk_encryption_set_id: str
+        security_type: Union[str, DiskSecurityTypes]
+
+
+    class azure.mgmt.compute.types.DiskSku(TypedDict, total=False):
+        key "name": Union[str, DiskStorageAccountTypes]
+        key "tier": str
+        name: Union[str, DiskStorageAccountTypes]
+        tier: str
+
+
+    class azure.mgmt.compute.types.DiskUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('DiskUpdateProperties', module='types')
+        key "sku": ForwardRef('DiskSku', module='types')
+        properties: DiskUpdateProperties
+        sku: DiskSku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.DiskUpdateProperties(TypedDict, total=False):
+        key "availabilityPolicy": ForwardRef('AvailabilityPolicy', module='types')
+        key "burstingEnabled": bool
+        key "dataAccessAuthMode": Union[str, DataAccessAuthMode]
+        key "diskAccessId": str
+        key "diskIOPSReadOnly": int
+        key "diskIOPSReadWrite": int
+        key "diskMBpsReadOnly": int
+        key "diskMBpsReadWrite": int
+        key "diskSizeGB": int
+        key "encryption": ForwardRef('Encryption', module='types')
+        key "encryptionSettingsCollection": ForwardRef('EncryptionSettingsCollection', module='types')
+        key "maxShares": int
+        key "networkAccessPolicy": Union[str, NetworkAccessPolicy]
+        key "optimizedForFrequentAttach": bool
+        key "osType": Union[str, OperatingSystemTypes]
+        key "propertyUpdatesInProgress": ForwardRef('PropertyUpdatesInProgress', module='types')
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "purchasePlan": ForwardRef('DiskPurchasePlan', module='types')
+        key "supportedCapabilities": ForwardRef('SupportedCapabilities', module='types')
+        key "supportsHibernation": bool
+        key "tier": str
+        availability_policy: AvailabilityPolicy
+        bursting_enabled: bool
+        data_access_auth_mode: Union[str, DataAccessAuthMode]
+        disk_access_id: str
+        disk_iops_read_only: int
+        disk_iops_read_write: int
+        disk_m_bps_read_only: int
+        disk_m_bps_read_write: int
+        disk_size_gb: int
+        encryption: Encryption
+        encryption_settings_collection: EncryptionSettingsCollection
+        max_shares: int
+        network_access_policy: Union[str, NetworkAccessPolicy]
+        optimized_for_frequent_attach: bool
+        os_type: Union[str, OperatingSystemTypes]
+        property_updates_in_progress: PropertyUpdatesInProgress
+        public_network_access: Union[str, PublicNetworkAccess]
+        purchase_plan: DiskPurchasePlan
+        supported_capabilities: SupportedCapabilities
+        supports_hibernation: bool
+        tier: str
+
+
+    class azure.mgmt.compute.types.Encryption(TypedDict, total=False):
+        key "diskEncryptionSetId": str
+        key "type": Union[str, EncryptionType]
+        disk_encryption_set_id: str
+        type: Union[str, EncryptionType]
+
+
+    class azure.mgmt.compute.types.EncryptionIdentity(TypedDict, total=False):
+        key "userAssignedIdentityResourceId": str
+        user_assigned_identity_resource_id: str
+
+
+    class azure.mgmt.compute.types.EncryptionImages(TypedDict, total=False):
+        key "osDiskImage": ForwardRef('OSDiskImageEncryption', module='types')
+        dataDiskImages: list[DataDiskImageEncryption]
+        data_disk_images: list[DataDiskImageEncryption]
+        os_disk_image: OSDiskImageEncryption
+
+
+    class azure.mgmt.compute.types.EncryptionSetIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, DiskEncryptionSetIdentityType]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, DiskEncryptionSetIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
+
+
+    class azure.mgmt.compute.types.EncryptionSetProperties(TypedDict, total=False):
+        key "activeKey": ForwardRef('KeyForDiskEncryptionSet', module='types')
+        key "autoKeyRotationError": ForwardRef('ApiError', module='types')
+        key "encryptionType": Union[str, DiskEncryptionSetType]
+        key "federatedClientId": str
+        key "lastKeyRotationTimestamp": str
+        key "provisioningState": str
+        key "rotationToLatestKeyVersionEnabled": bool
+        active_key: KeyForDiskEncryptionSet
+        auto_key_rotation_error: ApiError
+        encryption_type: Union[str, DiskEncryptionSetType]
+        federated_client_id: str
+        last_key_rotation_timestamp: str
+        previousKeys: list[KeyForDiskEncryptionSet]
+        previous_keys: list[KeyForDiskEncryptionSet]
+        provisioning_state: str
+        rotation_to_latest_key_version_enabled: bool
+
+
+    class azure.mgmt.compute.types.EncryptionSettingsCollection(TypedDict, total=False):
+        key "enabled": Required[bool]
+        key "encryptionSettingsVersion": str
+        enabled: bool
+        encryptionSettings: list[EncryptionSettingsElement]
+        encryption_settings: list[EncryptionSettingsElement]
+        encryption_settings_version: str
+
+
+    class azure.mgmt.compute.types.EncryptionSettingsElement(TypedDict, total=False):
+        key "diskEncryptionKey": ForwardRef('KeyVaultAndSecretReference', module='types')
+        key "keyEncryptionKey": ForwardRef('KeyVaultAndKeyReference', module='types')
+        disk_encryption_key: KeyVaultAndSecretReference
+        key_encryption_key: KeyVaultAndKeyReference
+
+
+    class azure.mgmt.compute.types.EventGridAndResourceGraph(TypedDict, total=False):
+        key "enable": bool
+        key "scheduledEventsApiVersion": str
+        enable: bool
+        scheduled_events_api_version: str
+
+
+    class azure.mgmt.compute.types.ExecutedValidation(TypedDict, total=False):
+        key "executionTime": str
+        key "status": Union[str, ValidationStatus]
+        key "type": str
+        key "version": str
+        execution_time: str
+        status: Union[str, ValidationStatus]
+        type: str
+        version: str
+
+
+    class azure.mgmt.compute.types.ExtendedLocation(TypedDict, total=False):
+        key "name": str
+        key "type": Union[str, ExtendedLocationTypes]
+        name: str
+        type: Union[str, ExtendedLocationTypes]
+
+
+    class azure.mgmt.compute.types.ExternalHealthPolicy(TypedDict, total=False):
+        key "enabled": bool
+        key "expiryDuration": str
+        key "gracePeriod": str
+        enabled: bool
+        expiry_duration: str
+        grace_period: str
+
+
+    class azure.mgmt.compute.types.Gallery(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('GalleryIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: GalleryIdentity
+        location: str
+        name: str
+        properties: GalleryProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryApplication(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryApplicationProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryApplicationProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryApplicationCustomAction(TypedDict, total=False):
+        key "description": str
+        key "name": Required[str]
+        key "script": Required[str]
+        description: str
+        name: str
+        parameters: list[GalleryApplicationCustomActionParameter]
+        script: str
+
+
+    class azure.mgmt.compute.types.GalleryApplicationCustomActionParameter(TypedDict, total=False):
+        key "defaultValue": str
+        key "description": str
+        key "name": Required[str]
+        key "required": bool
+        key "type": Union[str, GalleryApplicationCustomActionParameterType]
+        default_value: str
+        description: str
+        name: str
+        required: bool
+        type: Union[str, GalleryApplicationCustomActionParameterType]
+
+
+    class azure.mgmt.compute.types.GalleryApplicationProperties(TypedDict, total=False):
+        key "description": str
+        key "endOfLifeDate": str
+        key "eula": str
+        key "privacyStatementUri": str
+        key "releaseNoteUri": str
+        key "supportedOSType": Required[Union[str, OperatingSystemTypes]]
+        customActions: list[GalleryApplicationCustomAction]
+        custom_actions: list[GalleryApplicationCustomAction]
+        description: str
+        end_of_life_date: str
+        eula: str
+        privacy_statement_uri: str
+        release_note_uri: str
+        supported_os_type: Union[str, OperatingSystemTypes]
+
+
+    class azure.mgmt.compute.types.GalleryApplicationUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryApplicationProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryApplicationProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryApplicationVersion(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryApplicationVersionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryApplicationVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryApplicationVersionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "publishingProfile": Required[GalleryApplicationVersionPublishingProfile]
+        key "replicationStatus": ForwardRef('ReplicationStatus', module='types')
+        key "safetyProfile": ForwardRef('GalleryApplicationVersionSafetyProfile', module='types')
+        provisioning_state: Union[str, GalleryProvisioningState]
+        publishing_profile: GalleryApplicationVersionPublishingProfile
+        replication_status: ReplicationStatus
+        safety_profile: GalleryApplicationVersionSafetyProfile
+
+
+    class azure.mgmt.compute.types.GalleryApplicationVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+        key "enableHealthCheck": bool
+        key "endOfLifeDate": str
+        key "excludeFromLatest": bool
+        key "manageActions": ForwardRef('UserArtifactManage', module='types')
+        key "publishedDate": str
+        key "replicaCount": int
+        key "replicationMode": Union[str, ReplicationMode]
+        key "settings": ForwardRef('UserArtifactSettings', module='types')
+        key "source": Required[UserArtifactSource]
+        key "storageAccountStrategy": Union[str, StorageAccountStrategy]
+        key "storageAccountType": Union[str, StorageAccountType]
+        advancedSettings: dict[str, str]
+        advanced_settings: dict[str, str]
+        customActions: list[GalleryApplicationCustomAction]
+        custom_actions: list[GalleryApplicationCustomAction]
+        enable_health_check: bool
+        end_of_life_date: str
+        exclude_from_latest: bool
+        manage_actions: UserArtifactManage
+        published_date: str
+        replica_count: int
+        replication_mode: Union[str, ReplicationMode]
+        settings: UserArtifactSettings
+        source: UserArtifactSource
+        storage_account_strategy: Union[str, StorageAccountStrategy]
+        storage_account_type: Union[str, StorageAccountType]
+        targetExtendedLocations: list[GalleryTargetExtendedLocation]
+        targetRegions: list[TargetRegion]
+        target_extended_locations: list[GalleryTargetExtendedLocation]
+        target_regions: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryApplicationVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+        key "allowDeletionOfReplicatedLocations": bool
+        allow_deletion_of_replicated_locations: bool
+
+
+    class azure.mgmt.compute.types.GalleryApplicationVersionUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryApplicationVersionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryApplicationVersionProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryArtifactPublishingProfileBase(TypedDict, total=False):
+        key "endOfLifeDate": str
+        key "excludeFromLatest": bool
+        key "publishedDate": str
+        key "replicaCount": int
+        key "replicationMode": Union[str, ReplicationMode]
+        key "storageAccountStrategy": Union[str, StorageAccountStrategy]
+        key "storageAccountType": Union[str, StorageAccountType]
+        end_of_life_date: str
+        exclude_from_latest: bool
+        published_date: str
+        replica_count: int
+        replication_mode: Union[str, ReplicationMode]
+        storage_account_strategy: Union[str, StorageAccountStrategy]
+        storage_account_type: Union[str, StorageAccountType]
+        targetExtendedLocations: list[GalleryTargetExtendedLocation]
+        targetRegions: list[TargetRegion]
+        target_extended_locations: list[GalleryTargetExtendedLocation]
+        target_regions: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryArtifactSafetyProfileBase(TypedDict, total=False):
+        key "allowDeletionOfReplicatedLocations": bool
+        allow_deletion_of_replicated_locations: bool
+
+
+    class azure.mgmt.compute.types.GalleryArtifactVersionFullSource(GalleryArtifactVersionSource):
+        key "communityGalleryImageId": str
+        key "id": str
+        key "virtualMachineId": str
+        community_gallery_image_id: str
+        id: str
+        virtual_machine_id: str
+
+
+    class azure.mgmt.compute.types.GalleryArtifactVersionSource(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.GalleryDataDiskImage(GalleryDiskImage):
+        key "hostCaching": Union[str, HostCaching]
+        key "lun": Required[int]
+        key "sizeInGB": int
+        key "source": ForwardRef('GalleryDiskImageSource', module='types')
+        host_caching: Union[str, HostCaching]
+        lun: int
+        size_in_gb: int
+        source: GalleryDiskImageSource
+
+
+    class azure.mgmt.compute.types.GalleryDiskImage(TypedDict, total=False):
+        key "hostCaching": Union[str, HostCaching]
+        key "sizeInGB": int
+        key "source": ForwardRef('GalleryDiskImageSource', module='types')
+        host_caching: Union[str, HostCaching]
+        size_in_gb: int
+        source: GalleryDiskImageSource
+
+
+    class azure.mgmt.compute.types.GalleryDiskImageSource(GalleryArtifactVersionSource):
+        key "id": str
+        key "storageAccountId": str
+        key "uri": str
+        id: str
+        storage_account_id: str
+        uri: str
+
+
+    class azure.mgmt.compute.types.GalleryExtendedLocation(TypedDict, total=False):
+        key "name": str
+        key "type": Union[str, GalleryExtendedLocationType]
+        name: str
+        type: Union[str, GalleryExtendedLocationType]
+
+
+    class azure.mgmt.compute.types.GalleryIdentifier(TypedDict, total=False):
+        key "uniqueName": str
+        unique_name: str
+
+
+    class azure.mgmt.compute.types.GalleryIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ResourceIdentityType]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ResourceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
+
+
+    class azure.mgmt.compute.types.GalleryImage(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryImageProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryImageProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryImageFeature(TypedDict, total=False):
+        key "name": str
+        key "startsAtVersion": str
+        key "value": str
+        name: str
+        starts_at_version: str
+        value: str
+
+
+    class azure.mgmt.compute.types.GalleryImageIdentifier(TypedDict, total=False):
+        key "offer": Required[str]
+        key "publisher": Required[str]
+        key "sku": Required[str]
+        offer: str
+        publisher: str
+        sku: str
+
+
+    class azure.mgmt.compute.types.GalleryImageProperties(TypedDict, total=False):
+        key "allowUpdateImage": bool
+        key "architecture": Union[str, Architecture]
+        key "description": str
+        key "disallowed": ForwardRef('Disallowed', module='types')
+        key "endOfLifeDate": str
+        key "eula": str
+        key "hyperVGeneration": Union[str, HyperVGeneration]
+        key "identifier": Required[GalleryImageIdentifier]
+        key "osState": Required[Union[str, OperatingSystemStateTypes]]
+        key "osType": Required[Union[str, OperatingSystemTypes]]
+        key "privacyStatementUri": str
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "purchasePlan": ForwardRef('ImagePurchasePlan', module='types')
+        key "recommended": ForwardRef('RecommendedMachineConfiguration', module='types')
+        key "releaseNoteUri": str
+        allow_update_image: bool
+        architecture: Union[str, Architecture]
+        description: str
+        disallowed: Disallowed
+        end_of_life_date: str
+        eula: str
+        features: list[GalleryImageFeature]
+        hyper_v_generation: Union[str, HyperVGeneration]
+        identifier: GalleryImageIdentifier
+        os_state: Union[str, OperatingSystemStateTypes]
+        os_type: Union[str, OperatingSystemTypes]
+        privacy_statement_uri: str
+        provisioning_state: Union[str, GalleryProvisioningState]
+        purchase_plan: ImagePurchasePlan
+        recommended: RecommendedMachineConfiguration
+        release_note_uri: str
+
+
+    class azure.mgmt.compute.types.GalleryImageUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryImageProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryImageProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryImageVersion(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryImageVersionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryImageVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "publishingProfile": ForwardRef('GalleryImageVersionPublishingProfile', module='types')
+        key "replicationStatus": ForwardRef('ReplicationStatus', module='types')
+        key "restore": bool
+        key "safetyProfile": ForwardRef('GalleryImageVersionSafetyProfile', module='types')
+        key "securityProfile": ForwardRef('ImageVersionSecurityProfile', module='types')
+        key "storageProfile": Required[GalleryImageVersionStorageProfile]
+        key "validationsProfile": ForwardRef('ValidationsProfile', module='types')
+        provisioning_state: Union[str, GalleryProvisioningState]
+        publishing_profile: GalleryImageVersionPublishingProfile
+        replication_status: ReplicationStatus
+        restore: bool
+        safety_profile: GalleryImageVersionSafetyProfile
+        security_profile: ImageVersionSecurityProfile
+        storage_profile: GalleryImageVersionStorageProfile
+        validations_profile: ValidationsProfile
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+        key "endOfLifeDate": str
+        key "excludeFromLatest": bool
+        key "publishedDate": str
+        key "replicaCount": int
+        key "replicationMode": Union[str, ReplicationMode]
+        key "storageAccountStrategy": Union[str, StorageAccountStrategy]
+        key "storageAccountType": Union[str, StorageAccountType]
+        end_of_life_date: str
+        exclude_from_latest: bool
+        published_date: str
+        replica_count: int
+        replication_mode: Union[str, ReplicationMode]
+        storage_account_strategy: Union[str, StorageAccountStrategy]
+        storage_account_type: Union[str, StorageAccountType]
+        targetExtendedLocations: list[GalleryTargetExtendedLocation]
+        targetRegions: list[TargetRegion]
+        target_extended_locations: list[GalleryTargetExtendedLocation]
+        target_regions: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+        key "allowDeletionOfReplicatedLocations": bool
+        key "blockDeletionBeforeEndOfLife": bool
+        key "reportedForPolicyViolation": bool
+        allow_deletion_of_replicated_locations: bool
+        block_deletion_before_end_of_life: bool
+        policyViolations: list[PolicyViolation]
+        policy_violations: list[PolicyViolation]
+        reported_for_policy_violation: bool
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionStorageProfile(TypedDict, total=False):
+        key "osDiskImage": ForwardRef('GalleryOSDiskImage', module='types')
+        key "source": ForwardRef('GalleryArtifactVersionFullSource', module='types')
+        dataDiskImages: list[GalleryDataDiskImage]
+        data_disk_images: list[GalleryDataDiskImage]
+        os_disk_image: GalleryOSDiskImage
+        source: GalleryArtifactVersionFullSource
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionUefiSettings(TypedDict, total=False):
+        key "additionalSignatures": ForwardRef('UefiKeySignatures', module='types')
+        additional_signatures: UefiKeySignatures
+        signatureTemplateNames: list[Union[str, UefiSignatureTemplateName]]
+        signature_template_names: list[Union[str, UefiSignatureTemplateName]]
+
+
+    class azure.mgmt.compute.types.GalleryImageVersionUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryImageVersionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryImageVersionProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfile(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryInVMAccessControlProfileProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryInVMAccessControlProfileProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfileProperties(GalleryResourceProfilePropertiesBase):
+        key "applicableHostEndpoint": Required[Union[str, EndpointTypes]]
+        key "description": str
+        key "osType": Required[Union[str, OperatingSystemTypes]]
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        applicable_host_endpoint: Union[str, EndpointTypes]
+        description: str
+        os_type: Union[str, OperatingSystemTypes]
+        provisioning_state: Union[str, GalleryProvisioningState]
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfileUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryInVMAccessControlProfileProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryInVMAccessControlProfileProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfileVersion(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryInVMAccessControlProfileVersionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryInVMAccessControlProfileVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfileVersionProperties(GalleryResourceProfileVersionPropertiesBase):
+        key "defaultAccess": Required[Union[str, EndpointAccess]]
+        key "excludeFromLatest": bool
+        key "mode": Required[Union[str, AccessControlRulesMode]]
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "publishedDate": str
+        key "replicationStatus": ForwardRef('ReplicationStatus', module='types')
+        key "rules": ForwardRef('AccessControlRules', module='types')
+        default_access: Union[str, EndpointAccess]
+        exclude_from_latest: bool
+        mode: Union[str, AccessControlRulesMode]
+        provisioning_state: Union[str, GalleryProvisioningState]
+        published_date: str
+        replication_status: ReplicationStatus
+        rules: AccessControlRules
+        targetLocations: list[TargetRegion]
+        target_locations: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryInVMAccessControlProfileVersionUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryInVMAccessControlProfileVersionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryInVMAccessControlProfileVersionProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryOSDiskImage(GalleryDiskImage):
+        key "hostCaching": Union[str, HostCaching]
+        key "sizeInGB": int
+        key "source": ForwardRef('GalleryDiskImageSource', module='types')
+        host_caching: Union[str, HostCaching]
+        size_in_gb: int
+        source: GalleryDiskImageSource
+
+
+    class azure.mgmt.compute.types.GalleryProperties(TypedDict, total=False):
+        key "description": str
+        key "identifier": ForwardRef('GalleryIdentifier', module='types')
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "sharingProfile": ForwardRef('SharingProfile', module='types')
+        key "sharingStatus": ForwardRef('SharingStatus', module='types')
+        key "softDeletePolicy": ForwardRef('SoftDeletePolicy', module='types')
+        description: str
+        identifier: GalleryIdentifier
+        provisioning_state: Union[str, GalleryProvisioningState]
+        sharing_profile: SharingProfile
+        sharing_status: SharingStatus
+        soft_delete_policy: SoftDeletePolicy
+
+
+    class azure.mgmt.compute.types.GalleryResourceProfilePropertiesBase(TypedDict, total=False):
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        provisioning_state: Union[str, GalleryProvisioningState]
+
+
+    class azure.mgmt.compute.types.GalleryResourceProfileVersionPropertiesBase(TypedDict, total=False):
+        key "excludeFromLatest": bool
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "publishedDate": str
+        key "replicationStatus": ForwardRef('ReplicationStatus', module='types')
+        exclude_from_latest: bool
+        provisioning_state: Union[str, GalleryProvisioningState]
+        published_date: str
+        replication_status: ReplicationStatus
+        targetLocations: list[TargetRegion]
+        target_locations: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryScript(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryScriptProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryScriptProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryScriptParameter(GenericGalleryParameter):
+        key "defaultValue": str
+        key "description": str
+        key "maxValue": str
+        key "minValue": str
+        key "name": Required[str]
+        key "required": bool
+        key "type": Union[str, GalleryScriptParameterType]
+        default_value: str
+        description: str
+        enumValues: list[str]
+        enum_values: list[str]
+        max_value: str
+        min_value: str
+        name: str
+        required: bool
+        type: Union[str, GalleryScriptParameterType]
+
+
+    class azure.mgmt.compute.types.GalleryScriptProperties(TypedDict, total=False):
+        key "description": str
+        key "endOfLifeDate": str
+        key "eula": str
+        key "privacyStatementUri": str
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "releaseNoteUri": str
+        key "supportedOSType": Required[Union[str, OperatingSystemTypes]]
+        description: str
+        end_of_life_date: str
+        eula: str
+        privacy_statement_uri: str
+        provisioning_state: Union[str, GalleryProvisioningState]
+        release_note_uri: str
+        supported_os_type: Union[str, OperatingSystemTypes]
+
+
+    class azure.mgmt.compute.types.GalleryScriptUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryScriptProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryScriptProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryScriptVersion(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('GalleryScriptVersionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: GalleryScriptVersionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryScriptVersionProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, GalleryProvisioningState]
+        key "publishingProfile": Required[GalleryScriptVersionPublishingProfile]
+        key "replicationStatus": ForwardRef('ReplicationStatus', module='types')
+        key "safetyProfile": ForwardRef('GalleryScriptVersionSafetyProfile', module='types')
+        provisioning_state: Union[str, GalleryProvisioningState]
+        publishing_profile: GalleryScriptVersionPublishingProfile
+        replication_status: ReplicationStatus
+        safety_profile: GalleryScriptVersionSafetyProfile
+
+
+    class azure.mgmt.compute.types.GalleryScriptVersionPublishingProfile(GalleryArtifactPublishingProfileBase):
+        key "endOfLifeDate": str
+        key "excludeFromLatest": bool
+        key "publishedDate": str
+        key "replicaCount": int
+        key "replicationMode": Union[str, ReplicationMode]
+        key "source": Required[ScriptSource]
+        key "storageAccountStrategy": Union[str, StorageAccountStrategy]
+        key "storageAccountType": Union[str, StorageAccountType]
+        end_of_life_date: str
+        exclude_from_latest: bool
+        published_date: str
+        replica_count: int
+        replication_mode: Union[str, ReplicationMode]
+        source: ScriptSource
+        storage_account_strategy: Union[str, StorageAccountStrategy]
+        storage_account_type: Union[str, StorageAccountType]
+        targetExtendedLocations: list[GalleryTargetExtendedLocation]
+        targetRegions: list[TargetRegion]
+        target_extended_locations: list[GalleryTargetExtendedLocation]
+        target_regions: list[TargetRegion]
+
+
+    class azure.mgmt.compute.types.GalleryScriptVersionSafetyProfile(GalleryArtifactSafetyProfileBase):
+        key "allowDeletionOfReplicatedLocations": bool
+        allow_deletion_of_replicated_locations: bool
+
+
+    class azure.mgmt.compute.types.GalleryScriptVersionUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('GalleryScriptVersionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: GalleryScriptVersionProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GalleryTargetExtendedLocation(TypedDict, total=False):
+        key "encryption": ForwardRef('EncryptionImages', module='types')
+        key "extendedLocation": ForwardRef('GalleryExtendedLocation', module='types')
+        key "extendedLocationReplicaCount": int
+        key "name": str
+        key "storageAccountType": Union[str, EdgeZoneStorageAccountType]
+        encryption: EncryptionImages
+        extended_location: GalleryExtendedLocation
+        extended_location_replica_count: int
+        name: str
+        storage_account_type: Union[str, EdgeZoneStorageAccountType]
+
+
+    class azure.mgmt.compute.types.GalleryUpdate(UpdateResourceDefinition):
+        key "id": str
+        key "identity": ForwardRef('GalleryIdentity', module='types')
+        key "name": str
+        key "properties": ForwardRef('GalleryProperties', module='types')
+        key "type": str
+        id: str
+        identity: GalleryIdentity
+        name: str
+        properties: GalleryProperties
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.GenericGalleryParameter(TypedDict, total=False):
+        key "defaultValue": str
+        key "description": str
+        key "name": Required[str]
+        key "required": bool
+        default_value: str
+        description: str
+        name: str
+        required: bool
+
+
+    class azure.mgmt.compute.types.GrantAccessData(TypedDict, total=False):
+        key "access": Required[Union[str, AccessLevel]]
+        key "durationInSeconds": Required[int]
+        key "fileFormat": Union[str, FileFormat]
+        key "getSecureVMGuestStateSAS": bool
+        access: Union[str, AccessLevel]
+        duration_in_seconds: int
+        file_format: Union[str, FileFormat]
+        get_secure_vm_guest_state_sas: bool
+
+
+    class azure.mgmt.compute.types.HardwareProfile(TypedDict, total=False):
+        key "vmSize": Union[str, VirtualMachineSizeTypes]
+        key "vmSizeProperties": ForwardRef('VMSizeProperties', module='types')
+        vm_size: Union[str, VirtualMachineSizeTypes]
+        vm_size_properties: VMSizeProperties
+
+
+    class azure.mgmt.compute.types.HostEndpointSettings(TypedDict, total=False):
+        key "inVMAccessControlProfileReferenceId": str
+        key "mode": Union[str, Modes]
+        in_vm_access_control_profile_reference_id: str
+        mode: Union[str, Modes]
+
+
+    class azure.mgmt.compute.types.Image(TrackedResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ImageProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        name: str
+        properties: ImageProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.ImageDataDisk(ImageDisk):
+        key "blobUri": str
+        key "caching": Union[str, CachingTypes]
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "diskSizeGB": int
+        key "lun": Required[int]
+        key "managedDisk": ForwardRef('SubResource', module='types')
+        key "snapshot": ForwardRef('SubResource', module='types')
+        key "storageAccountType": Union[str, StorageAccountTypes]
+        blob_uri: str
+        caching: Union[str, CachingTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        disk_size_gb: int
+        lun: int
+        managed_disk: SubResource
+        snapshot: SubResource
+        storage_account_type: Union[str, StorageAccountTypes]
+
+
+    class azure.mgmt.compute.types.ImageDisk(TypedDict, total=False):
+        key "blobUri": str
+        key "caching": Union[str, CachingTypes]
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "diskSizeGB": int
+        key "managedDisk": ForwardRef('SubResource', module='types')
+        key "snapshot": ForwardRef('SubResource', module='types')
+        key "storageAccountType": Union[str, StorageAccountTypes]
+        blob_uri: str
+        caching: Union[str, CachingTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        disk_size_gb: int
+        managed_disk: SubResource
+        snapshot: SubResource
+        storage_account_type: Union[str, StorageAccountTypes]
+
+
+    class azure.mgmt.compute.types.ImageDiskReference(TypedDict, total=False):
+        key "communityGalleryImageId": str
+        key "id": str
+        key "lun": int
+        key "sharedGalleryImageId": str
+        community_gallery_image_id: str
+        id: str
+        lun: int
+        shared_gallery_image_id: str
+
+
+    class azure.mgmt.compute.types.ImageOSDisk(ImageDisk):
+        key "blobUri": str
+        key "caching": Union[str, CachingTypes]
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "diskSizeGB": int
+        key "managedDisk": ForwardRef('SubResource', module='types')
+        key "osState": Required[Union[str, OperatingSystemStateTypes]]
+        key "osType": Required[Union[str, OperatingSystemTypes]]
+        key "snapshot": ForwardRef('SubResource', module='types')
+        key "storageAccountType": Union[str, StorageAccountTypes]
+        blob_uri: str
+        caching: Union[str, CachingTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        disk_size_gb: int
+        managed_disk: SubResource
+        os_state: Union[str, OperatingSystemStateTypes]
+        os_type: Union[str, OperatingSystemTypes]
+        snapshot: SubResource
+        storage_account_type: Union[str, StorageAccountTypes]
+
+
+    class azure.mgmt.compute.types.ImageProperties(TypedDict, total=False):
+        key "hyperVGeneration": Union[str, HyperVGenerationTypes]
+        key "provisioningState": str
+        key "sourceVirtualMachine": ForwardRef('SubResource', module='types')
+        key "storageProfile": ForwardRef('ImageStorageProfile', module='types')
+        hyper_v_generation: Union[str, HyperVGenerationTypes]
+        provisioning_state: str
+        source_virtual_machine: SubResource
+        storage_profile: ImageStorageProfile
+
+
+    class azure.mgmt.compute.types.ImagePurchasePlan(TypedDict, total=False):
+        key "name": str
+        key "product": str
+        key "publisher": str
+        name: str
+        product: str
+        publisher: str
+
+
+    class azure.mgmt.compute.types.ImageReference(SubResource):
+        key "communityGalleryImageId": str
+        key "exactVersion": str
+        key "id": str
+        key "offer": str
+        key "publisher": str
+        key "sharedGalleryImageId": str
+        key "sku": str
+        key "version": str
+        community_gallery_image_id: str
+        exact_version: str
+        id: str
+        offer: str
+        publisher: str
+        shared_gallery_image_id: str
+        sku: str
+        version: str
+
+
+    class azure.mgmt.compute.types.ImageStorageProfile(TypedDict, total=False):
+        key "osDisk": ForwardRef('ImageOSDisk', module='types')
+        key "zoneResilient": bool
+        dataDisks: list[ImageDataDisk]
+        data_disks: list[ImageDataDisk]
+        os_disk: ImageOSDisk
+        zone_resilient: bool
+
+
+    class azure.mgmt.compute.types.ImageUpdate(UpdateResource):
+        key "properties": ForwardRef('ImageProperties', module='types')
+        properties: ImageProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.ImageVersionSecurityProfile(TypedDict, total=False):
+        key "uefiSettings": ForwardRef('GalleryImageVersionUefiSettings', module='types')
+        uefi_settings: GalleryImageVersionUefiSettings
+
+
+    class azure.mgmt.compute.types.ImmutabilityPolicy(TypedDict, total=False):
+        key "immutabilityDurationDays": int
+        key "isPolicyExpired": bool
+        key "policyExpirationTime": str
+        key "policyStartTime": str
+        key "type": Union[str, ImmutabilityPolicyType]
+        immutability_duration_days: int
+        is_policy_expired: bool
+        policy_expiration_time: str
+        policy_start_time: str
+        type: Union[str, ImmutabilityPolicyType]
+
+
+    class azure.mgmt.compute.types.ImmutabilityPolicyData(TypedDict, total=False):
+        key "immutabilityDurationDays": Required[int]
+        key "type": Required[Union[str, ImmutabilityPolicyType]]
+        immutability_duration_days: int
+        type: Union[str, ImmutabilityPolicyType]
+
+
+    class azure.mgmt.compute.types.ImmutabilityPolicyLockData(TypedDict, total=False):
+        key "immutabilityDurationDays": Required[int]
+        key "type": Required[Union[str, ImmutabilityPolicyType]]
+        immutability_duration_days: int
+        type: Union[str, ImmutabilityPolicyType]
+
+
+    class azure.mgmt.compute.types.InnerError(TypedDict, total=False):
+        key "errordetail": str
+        key "exceptiontype": str
+        errordetail: str
+        exceptiontype: str
+
+
+    class azure.mgmt.compute.types.InstanceViewStatus(TypedDict, total=False):
+        key "code": str
+        key "displayStatus": str
+        key "level": Union[str, StatusLevelTypes]
+        key "message": str
+        key "time": str
+        code: str
+        display_status: str
+        level: Union[str, StatusLevelTypes]
+        message: str
+        time: str
+
+
+    class azure.mgmt.compute.types.InterconnectBlock(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "placement": ForwardRef('Placement', module='types')
+        key "properties": ForwardRef('InterconnectBlockProperties', module='types')
+        key "sku": Required[Sku]
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        placement: Placement
+        properties: InterconnectBlockProperties
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.InterconnectBlockInstanceView(TypedDict, total=False):
+        key "currentCapacity": int
+        current_capacity: int
+        statuses: list[InstanceViewStatus]
+
+
+    class azure.mgmt.compute.types.InterconnectBlockProfile(TypedDict, total=False):
+        key "interconnectBlock": ForwardRef('ApiEntityReference', module='types')
+        interconnect_block: ApiEntityReference
+
+
+    class azure.mgmt.compute.types.InterconnectBlockProperties(TypedDict, total=False):
+        key "instanceView": ForwardRef('InterconnectBlockInstanceView', module='types')
+        key "interconnectBlockId": str
+        key "interconnectGroup": Required[ApiEntityReference]
+        key "provisioningState": str
+        key "provisioningTime": str
+        key "timeCreated": str
+        instance_view: InterconnectBlockInstanceView
+        interconnect_block_id: str
+        interconnect_group: ApiEntityReference
+        provisioning_state: str
+        provisioning_time: str
+        time_created: str
+        virtualMachinesAssociated: list[SubResourceReadOnly]
+        virtual_machines_associated: list[SubResourceReadOnly]
+
+
+    class azure.mgmt.compute.types.InterconnectBlockUpdate(UpdateResource):
+        key "sku": ForwardRef('Sku', module='types')
+        sku: Sku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.InterconnectGroupProfile(TypedDict, total=False):
+        key "interconnectGroup": ForwardRef('SubResource', module='types')
+        interconnect_group: SubResource
+        subgroups: list[SubResource]
+
+
+    class azure.mgmt.compute.types.InterconnectInstanceView(TypedDict, total=False):
+        key "interconnectSubgroupId": str
+        interconnect_subgroup_id: str
+
+
+    class azure.mgmt.compute.types.KeyForDiskEncryptionSet(TypedDict, total=False):
+        key "keyUrl": Required[str]
+        key "sourceVault": ForwardRef('SourceVault', module='types')
+        key_url: str
+        source_vault: SourceVault
+
+
+    class azure.mgmt.compute.types.KeyVaultAndKeyReference(TypedDict, total=False):
+        key "keyUrl": Required[str]
+        key "sourceVault": Required[SourceVault]
+        key_url: str
+        source_vault: SourceVault
+
+
+    class azure.mgmt.compute.types.KeyVaultAndSecretReference(TypedDict, total=False):
+        key "secretUrl": Required[str]
+        key "sourceVault": Required[SourceVault]
+        secret_url: str
+        source_vault: SourceVault
+
+
+    class azure.mgmt.compute.types.KeyVaultKeyReference(TypedDict, total=False):
+        key "keyUrl": Required[str]
+        key "sourceVault": Required[SubResource]
+        key_url: str
+        source_vault: SubResource
+
+
+    class azure.mgmt.compute.types.KeyVaultSecretReference(TypedDict, total=False):
+        key "secretUrl": Required[str]
+        key "sourceVault": Required[SubResource]
+        secret_url: str
+        source_vault: SubResource
+
+
+    class azure.mgmt.compute.types.LastPatchInstallationSummary(TypedDict, total=False):
+        key "error": ForwardRef('ApiError', module='types')
+        key "excludedPatchCount": int
+        key "failedPatchCount": int
+        key "installationActivityId": str
+        key "installedPatchCount": int
+        key "lastModifiedTime": str
+        key "maintenanceWindowExceeded": bool
+        key "notSelectedPatchCount": int
+        key "pendingPatchCount": int
+        key "startTime": str
+        key "status": Union[str, PatchOperationStatus]
+        error: ApiError
+        excluded_patch_count: int
+        failed_patch_count: int
+        installation_activity_id: str
+        installed_patch_count: int
+        last_modified_time: str
+        maintenance_window_exceeded: bool
+        not_selected_patch_count: int
+        pending_patch_count: int
+        start_time: str
+        status: Union[str, PatchOperationStatus]
+
+
+    class azure.mgmt.compute.types.LifecycleHook(TypedDict, total=False):
+        key "defaultAction": Union[str, LifecycleHookAction]
+        key "type": Union[str, VMScaleSetLifecycleHookEventType]
+        key "waitDuration": str
+        default_action: Union[str, LifecycleHookAction]
+        type: Union[str, VMScaleSetLifecycleHookEventType]
+        wait_duration: str
+
+
+    class azure.mgmt.compute.types.LifecycleHooksProfile(TypedDict, total=False):
+        lifecycleHooks: list[LifecycleHook]
+        lifecycle_hooks: list[LifecycleHook]
+
+
+    class azure.mgmt.compute.types.LinuxConfiguration(TypedDict, total=False):
+        key "disablePasswordAuthentication": bool
+        key "enableVMAgentPlatformUpdates": bool
+        key "patchSettings": ForwardRef('LinuxPatchSettings', module='types')
+        key "provisionVMAgent": bool
+        key "ssh": ForwardRef('SshConfiguration', module='types')
+        disable_password_authentication: bool
+        enable_vm_agent_platform_updates: bool
+        patch_settings: LinuxPatchSettings
+        provision_vm_agent: bool
+        ssh: SshConfiguration
+
+
+    class azure.mgmt.compute.types.LinuxParameters(TypedDict, total=False):
+        key "maintenanceRunId": str
+        classificationsToInclude: list[Union[str, VMGuestPatchClassificationLinux]]
+        classifications_to_include: list[Union[str, VMGuestPatchClassificationLinux]]
+        maintenance_run_id: str
+        packageNameMasksToExclude: list[str]
+        packageNameMasksToInclude: list[str]
+        package_name_masks_to_exclude: list[str]
+        package_name_masks_to_include: list[str]
+
+
+    class azure.mgmt.compute.types.LinuxPatchSettings(TypedDict, total=False):
+        key "assessmentMode": Union[str, LinuxPatchAssessmentMode]
+        key "automaticByPlatformSettings": ForwardRef('LinuxVMGuestPatchAutomaticByPlatformSettings', module='types')
+        key "patchMode": Union[str, LinuxVMGuestPatchMode]
+        assessment_mode: Union[str, LinuxPatchAssessmentMode]
+        automatic_by_platform_settings: LinuxVMGuestPatchAutomaticByPlatformSettings
+        patch_mode: Union[str, LinuxVMGuestPatchMode]
+
+
+    class azure.mgmt.compute.types.LinuxVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):
+        key "bypassPlatformSafetyChecksOnUserSchedule": bool
+        key "rebootSetting": Union[str, LinuxVMGuestPatchAutomaticByPlatformRebootSetting]
+        bypass_platform_safety_checks_on_user_schedule: bool
+        reboot_setting: Union[str, LinuxVMGuestPatchAutomaticByPlatformRebootSetting]
+
+
+    class azure.mgmt.compute.types.LogAnalyticsInputBase(TypedDict, total=False):
+        key "blobContainerSasUri": Required[str]
+        key "fromTime": Required[str]
+        key "groupByClientApplicationId": bool
+        key "groupByOperationName": bool
+        key "groupByResourceName": bool
+        key "groupByThrottlePolicy": bool
+        key "groupByUserAgent": bool
+        key "toTime": Required[str]
+        blob_container_sas_uri: str
+        from_time: str
+        group_by_client_application_id: bool
+        group_by_operation_name: bool
+        group_by_resource_name: bool
+        group_by_throttle_policy: bool
+        group_by_user_agent: bool
+        to_time: str
+
+
+    class azure.mgmt.compute.types.MaintenanceRedeployStatus(TypedDict, total=False):
+        key "isCustomerInitiatedMaintenanceAllowed": bool
+        key "lastOperationMessage": str
+        key "lastOperationResultCode": Union[str, MaintenanceOperationResultCodeTypes]
+        key "maintenanceWindowEndTime": str
+        key "maintenanceWindowStartTime": str
+        key "preMaintenanceWindowEndTime": str
+        key "preMaintenanceWindowStartTime": str
+        is_customer_initiated_maintenance_allowed: bool
+        last_operation_message: str
+        last_operation_result_code: Union[str, MaintenanceOperationResultCodeTypes]
+        maintenance_window_end_time: str
+        maintenance_window_start_time: str
+        pre_maintenance_window_end_time: str
+        pre_maintenance_window_start_time: str
+
+
+    class azure.mgmt.compute.types.ManagedDiskParameters(SubResource):
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "id": str
+        key "securityProfile": ForwardRef('VMDiskSecurityProfile', module='types')
+        key "storageAccountType": Union[str, StorageAccountTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        id: str
+        security_profile: VMDiskSecurityProfile
+        storage_account_type: Union[str, StorageAccountTypes]
+
+
+    class azure.mgmt.compute.types.MaxInstancePercentPerZonePolicy(TypedDict, total=False):
+        key "enabled": bool
+        key "value": int
+        enabled: bool
+        value: int
+
+
+    class azure.mgmt.compute.types.MigrateToVirtualMachineScaleSetInput(TypedDict, total=False):
+        key "virtualMachineScaleSetFlexible": Required[SubResource]
+        virtual_machine_scale_set_flexible: SubResource
+
+
+    class azure.mgmt.compute.types.MigrateVMToVirtualMachineScaleSetInput(TypedDict, total=False):
+        key "targetFaultDomain": int
+        key "targetVMSize": str
+        key "targetZone": str
+        target_fault_domain: int
+        target_vm_size: str
+        target_zone: str
+
+
+    class azure.mgmt.compute.types.NetworkInterfaceReference(SubResource):
+        key "id": str
+        key "properties": ForwardRef('NetworkInterfaceReferenceProperties', module='types')
+        id: str
+        properties: NetworkInterfaceReferenceProperties
+
+
+    class azure.mgmt.compute.types.NetworkInterfaceReferenceProperties(TypedDict, total=False):
+        key "deleteOption": Union[str, DeleteOptions]
+        key "primary": bool
+        delete_option: Union[str, DeleteOptions]
+        primary: bool
+
+
+    class azure.mgmt.compute.types.NetworkProfile(TypedDict, total=False):
+        key "interconnectGroupProfile": ForwardRef('InterconnectGroupProfile', module='types')
+        key "networkApiVersion": Union[str, NetworkApiVersion]
+        interconnect_group_profile: InterconnectGroupProfile
+        networkInterfaceConfigurations: list[VirtualMachineNetworkInterfaceConfiguration]
+        networkInterfaces: list[NetworkInterfaceReference]
+        network_api_version: Union[str, NetworkApiVersion]
+        network_interface_configurations: list[VirtualMachineNetworkInterfaceConfiguration]
+        network_interfaces: list[NetworkInterfaceReference]
+
+
+    class azure.mgmt.compute.types.OSDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "createOption": Required[Union[str, DiskCreateOptionTypes]]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "diffDiskSettings": ForwardRef('DiffDiskSettings', module='types')
+        key "diskSizeGB": int
+        key "encryptionSettings": ForwardRef('DiskEncryptionSettings', module='types')
+        key "image": ForwardRef('VirtualHardDisk', module='types')
+        key "managedDisk": ForwardRef('ManagedDiskParameters', module='types')
+        key "name": str
+        key "osType": Union[str, OperatingSystemTypes]
+        key "storageFaultDomainAlignment": Union[str, StorageFaultDomainAlignmentType]
+        key "vhd": ForwardRef('VirtualHardDisk', module='types')
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        diff_disk_settings: DiffDiskSettings
+        disk_size_gb: int
+        encryption_settings: DiskEncryptionSettings
+        image: VirtualHardDisk
+        managed_disk: ManagedDiskParameters
+        name: str
+        os_type: Union[str, OperatingSystemTypes]
+        storage_fault_domain_alignment: Union[str, StorageFaultDomainAlignmentType]
+        vhd: VirtualHardDisk
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.OSDiskImageEncryption(DiskImageEncryption):
+        key "diskEncryptionSetId": str
+        key "securityProfile": ForwardRef('OSDiskImageSecurityProfile', module='types')
+        disk_encryption_set_id: str
+        security_profile: OSDiskImageSecurityProfile
+
+
+    class azure.mgmt.compute.types.OSDiskImageSecurityProfile(TypedDict, total=False):
+        key "confidentialVMEncryptionType": Union[str, ConfidentialVMEncryptionType]
+        key "secureVMDiskEncryptionSetId": str
+        confidential_vm_encryption_type: Union[str, ConfidentialVMEncryptionType]
+        secure_vm_disk_encryption_set_id: str
+
+
+    class azure.mgmt.compute.types.OSImageNotificationProfile(TypedDict, total=False):
+        key "enable": bool
+        key "notBeforeTimeout": str
+        enable: bool
+        not_before_timeout: str
+
+
+    class azure.mgmt.compute.types.OSProfile(TypedDict, total=False):
+        key "adminPassword": str
+        key "adminUsername": str
+        key "allowExtensionOperations": bool
+        key "computerName": str
+        key "customData": str
+        key "linuxConfiguration": ForwardRef('LinuxConfiguration', module='types')
+        key "requireGuestProvisionSignal": bool
+        key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
+        admin_password: str
+        admin_username: str
+        allow_extension_operations: bool
+        computer_name: str
+        custom_data: str
+        linux_configuration: LinuxConfiguration
+        require_guest_provision_signal: bool
+        secrets: list[VaultSecretGroup]
+        windows_configuration: WindowsConfiguration
+
+
+    class azure.mgmt.compute.types.OSProfileProvisioningData(TypedDict, total=False):
+        key "adminPassword": str
+        key "customData": str
+        admin_password: str
+        custom_data: str
+
+
+    class azure.mgmt.compute.types.OperationRecoverySettings(TypedDict, total=False):
+        key "reimageRecoveryPolicy": ForwardRef('ReimageRecoveryPolicy', module='types')
+        key "restartRecoveryPolicy": ForwardRef('RestartRecoveryPolicy', module='types')
+        key "startRecoveryPolicy": ForwardRef('StartRecoveryPolicy', module='types')
+        reimage_recovery_policy: ReimageRecoveryPolicy
+        restart_recovery_policy: RestartRecoveryPolicy
+        start_recovery_policy: StartRecoveryPolicy
+
+
+    class azure.mgmt.compute.types.OrchestrationServiceStateInput(TypedDict, total=False):
+        key "action": Required[Union[str, OrchestrationServiceStateAction]]
+        key "serviceName": Required[Union[str, OrchestrationServiceNames]]
+        action: Union[str, OrchestrationServiceStateAction]
+        service_name: Union[str, OrchestrationServiceNames]
+
+
+    class azure.mgmt.compute.types.PatchSettings(TypedDict, total=False):
+        key "assessmentMode": Union[str, WindowsPatchAssessmentMode]
+        key "automaticByPlatformSettings": ForwardRef('WindowsVMGuestPatchAutomaticByPlatformSettings', module='types')
+        key "enableHotpatching": bool
+        key "patchMode": Union[str, WindowsVMGuestPatchMode]
+        assessment_mode: Union[str, WindowsPatchAssessmentMode]
+        automatic_by_platform_settings: WindowsVMGuestPatchAutomaticByPlatformSettings
+        enable_hotpatching: bool
+        patch_mode: Union[str, WindowsVMGuestPatchMode]
+
+
+    class azure.mgmt.compute.types.Placement(TypedDict, total=False):
+        key "zonePlacementPolicy": Union[str, ZonePlacementPolicyType]
+        excludeZones: list[str]
+        exclude_zones: list[str]
+        includeZones: list[str]
+        include_zones: list[str]
+        zone_placement_policy: Union[str, ZonePlacementPolicyType]
+
+
+    class azure.mgmt.compute.types.Plan(TypedDict, total=False):
+        key "name": str
+        key "product": str
+        key "promotionCode": str
+        key "publisher": str
+        name: str
+        product: str
+        promotion_code: str
+        publisher: str
+
+
+    class azure.mgmt.compute.types.PlatformAttribute(TypedDict, total=False):
+        key "name": str
+        key "value": str
+        name: str
+        value: str
+
+
+    class azure.mgmt.compute.types.PolicyViolation(TypedDict, total=False):
+        key "category": Union[str, PolicyViolationCategory]
+        key "details": str
+        category: Union[str, PolicyViolationCategory]
+        details: str
+
+
+    class azure.mgmt.compute.types.PriorityMixPolicy(TypedDict, total=False):
+        key "baseRegularPriorityCount": int
+        key "regularPriorityPercentageAboveBase": int
+        base_regular_priority_count: int
+        regular_priority_percentage_above_base: int
+
+
+    class azure.mgmt.compute.types.PrivateEndpoint(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.PrivateEndpointConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.compute.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
+        key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        private_endpoint: PrivateEndpoint
+        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+
+
+    class azure.mgmt.compute.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": str
+        key "status": Union[str, PrivateEndpointServiceConnectionStatus]
+        actions_required: str
+        description: str
+        status: Union[str, PrivateEndpointServiceConnectionStatus]
+
+
+    class azure.mgmt.compute.types.PropertyUpdatesInProgress(TypedDict, total=False):
+        key "targetTier": str
+        target_tier: str
+
+
+    class azure.mgmt.compute.types.ProximityPlacementGroup(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ProximityPlacementGroupProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ProximityPlacementGroupProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.ProximityPlacementGroupProperties(TypedDict, total=False):
+        key "colocationStatus": ForwardRef('InstanceViewStatus', module='types')
+        key "intent": ForwardRef('ProximityPlacementGroupPropertiesIntent', module='types')
+        key "proximityPlacementGroupType": Union[str, ProximityPlacementGroupType]
+        availabilitySets: list[SubResourceWithColocationStatus]
+        availability_sets: list[SubResourceWithColocationStatus]
+        colocation_status: InstanceViewStatus
+        intent: ProximityPlacementGroupPropertiesIntent
+        proximity_placement_group_type: Union[str, ProximityPlacementGroupType]
+        virtualMachineScaleSets: list[SubResourceWithColocationStatus]
+        virtualMachines: list[SubResourceWithColocationStatus]
+        virtual_machine_scale_sets: list[SubResourceWithColocationStatus]
+        virtual_machines: list[SubResourceWithColocationStatus]
+
+
+    class azure.mgmt.compute.types.ProximityPlacementGroupPropertiesIntent(TypedDict, total=False):
+        vmSizes: list[str]
+        vm_sizes: list[str]
+
+
+    class azure.mgmt.compute.types.ProximityPlacementGroupUpdate(UpdateResource):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.ProxyAgentSettings(TypedDict, total=False):
+        key "addProxyAgentExtension": bool
+        key "enabled": bool
+        key "imds": ForwardRef('HostEndpointSettings', module='types')
+        key "keyIncarnationId": int
+        key "mode": Union[str, Mode]
+        key "wireServer": ForwardRef('HostEndpointSettings', module='types')
+        add_proxy_agent_extension: bool
+        enabled: bool
+        imds: HostEndpointSettings
+        key_incarnation_id: int
+        mode: Union[str, Mode]
+        wire_server: HostEndpointSettings
+
+
+    class azure.mgmt.compute.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.compute.types.PublicIPAddressSku(TypedDict, total=False):
+        key "name": Union[str, PublicIPAddressSkuName]
+        key "tier": Union[str, PublicIPAddressSkuTier]
+        name: Union[str, PublicIPAddressSkuName]
+        tier: Union[str, PublicIPAddressSkuTier]
+
+
+    class azure.mgmt.compute.types.RecommendedMachineConfiguration(TypedDict, total=False):
+        key "memory": ForwardRef('ResourceRange', module='types')
+        key "vCPUs": ForwardRef('ResourceRange', module='types')
+        memory: ResourceRange
+        v_cp_us: ResourceRange
+
+
+    class azure.mgmt.compute.types.RegionalReplicationStatus(TypedDict, total=False):
+        key "details": str
+        key "progress": int
+        key "region": str
+        key "state": Union[str, ReplicationState]
+        details: str
+        progress: int
+        region: str
+        state: Union[str, ReplicationState]
+
+
+    class azure.mgmt.compute.types.RegionalSharingStatus(TypedDict, total=False):
+        key "details": str
+        key "region": str
+        key "state": Union[str, SharingState]
+        details: str
+        region: str
+        state: Union[str, SharingState]
+
+
+    class azure.mgmt.compute.types.ReimageRecoveryPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.ReplicationStatus(TypedDict, total=False):
+        key "aggregatedState": Union[str, AggregatedReplicationState]
+        aggregated_state: Union[str, AggregatedReplicationState]
+        summary: list[RegionalReplicationStatus]
+
+
+    class azure.mgmt.compute.types.RequestRateByIntervalInput(LogAnalyticsInputBase):
+        key "blobContainerSasUri": Required[str]
+        key "fromTime": Required[str]
+        key "groupByClientApplicationId": bool
+        key "groupByOperationName": bool
+        key "groupByResourceName": bool
+        key "groupByThrottlePolicy": bool
+        key "groupByUserAgent": bool
+        key "intervalLength": Required[Union[str, IntervalInMins]]
+        key "toTime": Required[str]
+        blob_container_sas_uri: str
+        from_time: str
+        group_by_client_application_id: bool
+        group_by_operation_name: bool
+        group_by_resource_name: bool
+        group_by_throttle_policy: bool
+        group_by_user_agent: bool
+        interval_length: Union[str, IntervalInMins]
+        to_time: str
+
+
+    class azure.mgmt.compute.types.ResiliencyPolicy(TypedDict, total=False):
+        key "automaticZoneRebalancingPolicy": ForwardRef('AutomaticZoneRebalancingPolicy', module='types')
+        key "operationRecoverySettings": ForwardRef('OperationRecoverySettings', module='types')
+        key "resilientVMCreationPolicy": ForwardRef('ResilientVMCreationPolicy', module='types')
+        key "resilientVMDeletionPolicy": ForwardRef('ResilientVMDeletionPolicy', module='types')
+        key "zoneAllocationPolicy": ForwardRef('ZoneAllocationPolicy', module='types')
+        automatic_zone_rebalancing_policy: AutomaticZoneRebalancingPolicy
+        operation_recovery_settings: OperationRecoverySettings
+        resilient_vm_creation_policy: ResilientVMCreationPolicy
+        resilient_vm_deletion_policy: ResilientVMDeletionPolicy
+        zone_allocation_policy: ZoneAllocationPolicy
+
+
+    class azure.mgmt.compute.types.ResiliencyProfile(TypedDict, total=False):
+        key "zoneMovement": ForwardRef('ZoneMovement', module='types')
+        zone_movement: ZoneMovement
+
+
+    class azure.mgmt.compute.types.ResilientVMCreationPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.ResilientVMDeletionPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.compute.types.ResourceRange(TypedDict, total=False):
+        key "max": int
+        key "min": int
+        max: int
+        min: int
+
+
+    class azure.mgmt.compute.types.ResourceSharingProfile(TypedDict, total=False):
+        subscriptionIds: list[SubResource]
+        subscription_ids: list[SubResource]
+
+
+    class azure.mgmt.compute.types.RestartRecoveryPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.RestorePoint(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('RestorePointProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: RestorePointProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.compute.types.RestorePointCollection(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('RestorePointCollectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: RestorePointCollectionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.RestorePointCollectionProperties(TypedDict, total=False):
+        key "instantAccess": bool
+        key "provisioningState": str
+        key "restorePointCollectionId": str
+        key "source": ForwardRef('RestorePointCollectionSourceProperties', module='types')
+        instant_access: bool
+        provisioning_state: str
+        restorePoints: list[RestorePoint]
+        restore_point_collection_id: str
+        restore_points: list[RestorePoint]
+        source: RestorePointCollectionSourceProperties
+
+
+    class azure.mgmt.compute.types.RestorePointCollectionSourceProperties(TypedDict, total=False):
+        key "id": str
+        key "location": str
+        id: str
+        location: str
+
+
+    class azure.mgmt.compute.types.RestorePointCollectionUpdate(UpdateResource):
+        key "properties": ForwardRef('RestorePointCollectionProperties', module='types')
+        properties: RestorePointCollectionProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.RestorePointEncryption(TypedDict, total=False):
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "type": Union[str, RestorePointEncryptionType]
+        disk_encryption_set: DiskEncryptionSetParameters
+        type: Union[str, RestorePointEncryptionType]
+
+
+    class azure.mgmt.compute.types.RestorePointInstanceView(TypedDict, total=False):
+        diskRestorePoints: list[DiskRestorePointInstanceView]
+        disk_restore_points: list[DiskRestorePointInstanceView]
+        statuses: list[InstanceViewStatus]
+
+
+    class azure.mgmt.compute.types.RestorePointProperties(TypedDict, total=False):
+        key "consistencyMode": Union[str, ConsistencyModeTypes]
+        key "instanceView": ForwardRef('RestorePointInstanceView', module='types')
+        key "instantAccessDurationMinutes": int
+        key "provisioningState": str
+        key "sourceMetadata": ForwardRef('RestorePointSourceMetadata', module='types')
+        key "sourceRestorePoint": ForwardRef('ApiEntityReference', module='types')
+        key "timeCreated": str
+        consistency_mode: Union[str, ConsistencyModeTypes]
+        excludeDisks: list[ApiEntityReference]
+        exclude_disks: list[ApiEntityReference]
+        instance_view: RestorePointInstanceView
+        instant_access_duration_minutes: int
+        provisioning_state: str
+        source_metadata: RestorePointSourceMetadata
+        source_restore_point: ApiEntityReference
+        time_created: str
+
+
+    class azure.mgmt.compute.types.RestorePointSourceMetadata(TypedDict, total=False):
+        key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
+        key "hyperVGeneration": Union[str, HyperVGenerationTypes]
+        key "licenseType": str
+        key "location": str
+        key "osProfile": ForwardRef('OSProfile', module='types')
+        key "securityProfile": ForwardRef('SecurityProfile', module='types')
+        key "storageProfile": ForwardRef('RestorePointSourceVMStorageProfile', module='types')
+        key "userData": str
+        key "vmId": str
+        diagnostics_profile: DiagnosticsProfile
+        hardware_profile: HardwareProfile
+        hyper_v_generation: Union[str, HyperVGenerationTypes]
+        license_type: str
+        location: str
+        os_profile: OSProfile
+        security_profile: SecurityProfile
+        storage_profile: RestorePointSourceVMStorageProfile
+        user_data: str
+        vm_id: str
+
+
+    class azure.mgmt.compute.types.RestorePointSourceVMDataDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "diskRestorePoint": ForwardRef('DiskRestorePointAttributes', module='types')
+        key "diskSizeGB": int
+        key "lun": int
+        key "managedDisk": ForwardRef('ManagedDiskParameters', module='types')
+        key "name": str
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        disk_restore_point: DiskRestorePointAttributes
+        disk_size_gb: int
+        lun: int
+        managed_disk: ManagedDiskParameters
+        name: str
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.RestorePointSourceVMOSDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "diskRestorePoint": ForwardRef('DiskRestorePointAttributes', module='types')
+        key "diskSizeGB": int
+        key "encryptionSettings": ForwardRef('DiskEncryptionSettings', module='types')
+        key "managedDisk": ForwardRef('ManagedDiskParameters', module='types')
+        key "name": str
+        key "osType": Union[str, OperatingSystemType]
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        disk_restore_point: DiskRestorePointAttributes
+        disk_size_gb: int
+        encryption_settings: DiskEncryptionSettings
+        managed_disk: ManagedDiskParameters
+        name: str
+        os_type: Union[str, OperatingSystemType]
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.RestorePointSourceVMStorageProfile(TypedDict, total=False):
+        key "diskControllerType": Union[str, DiskControllerTypes]
+        key "osDisk": ForwardRef('RestorePointSourceVMOSDisk', module='types')
+        dataDisks: list[RestorePointSourceVMDataDisk]
+        data_disks: list[RestorePointSourceVMDataDisk]
+        disk_controller_type: Union[str, DiskControllerTypes]
+        os_disk: RestorePointSourceVMOSDisk
+
+
+    class azure.mgmt.compute.types.RollingUpgradePolicy(TypedDict, total=False):
+        key "enableCrossZoneUpgrade": bool
+        key "maxBatchInstancePercent": int
+        key "maxSurge": bool
+        key "maxUnhealthyInstancePercent": int
+        key "maxUnhealthyUpgradedInstancePercent": int
+        key "pauseTimeBetweenBatches": str
+        key "prioritizeUnhealthyInstances": bool
+        key "rollbackFailedInstancesOnPolicyBreach": bool
+        enable_cross_zone_upgrade: bool
+        max_batch_instance_percent: int
+        max_surge: bool
+        max_unhealthy_instance_percent: int
+        max_unhealthy_upgraded_instance_percent: int
+        pause_time_between_batches: str
+        prioritize_unhealthy_instances: bool
+        rollback_failed_instances_on_policy_breach: bool
+
+
+    class azure.mgmt.compute.types.RunCommandInput(TypedDict, total=False):
+        key "commandId": Required[str]
+        command_id: str
+        parameters: list[RunCommandInputParameter]
+        script: list[str]
+
+
+    class azure.mgmt.compute.types.RunCommandInputParameter(TypedDict, total=False):
+        key "name": Required[str]
+        key "value": Required[str]
+        name: str
+        value: str
+
+
+    class azure.mgmt.compute.types.RunCommandManagedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "objectId": str
+        client_id: str
+        object_id: str
+
+
+    class azure.mgmt.compute.types.ScaleInPolicy(TypedDict, total=False):
+        key "forceDeletion": bool
+        key "prioritizeUnhealthyVMs": bool
+        force_deletion: bool
+        prioritize_unhealthy_v_ms: bool
+        rules: list[Union[str, VirtualMachineScaleSetScaleInRules]]
+
+
+    class azure.mgmt.compute.types.ScheduleProfile(TypedDict, total=False):
+        key "end": str
+        key "start": str
+        end: str
+        start: str
+
+
+    class azure.mgmt.compute.types.ScheduledEventsAdditionalPublishingTargets(TypedDict, total=False):
+        key "eventGridAndResourceGraph": ForwardRef('EventGridAndResourceGraph', module='types')
+        event_grid_and_resource_graph: EventGridAndResourceGraph
+
+
+    class azure.mgmt.compute.types.ScheduledEventsPolicy(TypedDict, total=False):
+        key "allInstancesDown": ForwardRef('AllInstancesDown', module='types')
+        key "scheduledEventsAdditionalPublishingTargets": ForwardRef('ScheduledEventsAdditionalPublishingTargets', module='types')
+        key "userInitiatedReboot": ForwardRef('UserInitiatedReboot', module='types')
+        key "userInitiatedRedeploy": ForwardRef('UserInitiatedRedeploy', module='types')
+        all_instances_down: AllInstancesDown
+        scheduled_events_additional_publishing_targets: ScheduledEventsAdditionalPublishingTargets
+        user_initiated_reboot: UserInitiatedReboot
+        user_initiated_redeploy: UserInitiatedRedeploy
+
+
+    class azure.mgmt.compute.types.ScheduledEventsProfile(TypedDict, total=False):
+        key "osImageNotificationProfile": ForwardRef('OSImageNotificationProfile', module='types')
+        key "terminateNotificationProfile": ForwardRef('TerminateNotificationProfile', module='types')
+        os_image_notification_profile: OSImageNotificationProfile
+        terminate_notification_profile: TerminateNotificationProfile
+
+
+    class azure.mgmt.compute.types.ScriptSource(TypedDict, total=False):
+        key "scriptLink": Required[str]
+        parameters: list[GalleryScriptParameter]
+        script_link: str
+
+
+    class azure.mgmt.compute.types.SecurityPostureReference(TypedDict, total=False):
+        key "id": Required[str]
+        key "isOverridable": bool
+        excludeExtensions: list[str]
+        exclude_extensions: list[str]
+        id: str
+        is_overridable: bool
+
+
+    class azure.mgmt.compute.types.SecurityPostureReferenceUpdate(TypedDict, total=False):
+        key "id": str
+        key "isOverridable": bool
+        excludeExtensions: list[str]
+        exclude_extensions: list[str]
+        id: str
+        is_overridable: bool
+
+
+    class azure.mgmt.compute.types.SecurityProfile(TypedDict, total=False):
+        key "encryptionAtHost": bool
+        key "encryptionIdentity": ForwardRef('EncryptionIdentity', module='types')
+        key "proxyAgentSettings": ForwardRef('ProxyAgentSettings', module='types')
+        key "securityType": Union[str, SecurityTypes]
+        key "uefiSettings": ForwardRef('UefiSettings', module='types')
+        encryption_at_host: bool
+        encryption_identity: EncryptionIdentity
+        proxy_agent_settings: ProxyAgentSettings
+        security_type: Union[str, SecurityTypes]
+        uefi_settings: UefiSettings
+
+
+    class azure.mgmt.compute.types.ServiceArtifactReference(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.ShareInfoElement(TypedDict, total=False):
+        key "vmUri": str
+        vm_uri: str
+
+
+    class azure.mgmt.compute.types.SharingProfile(TypedDict, total=False):
+        key "communityGalleryInfo": ForwardRef('CommunityGalleryInfo', module='types')
+        key "permissions": Union[str, GallerySharingPermissionTypes]
+        community_gallery_info: CommunityGalleryInfo
+        groups: list[SharingProfileGroup]
+        permissions: Union[str, GallerySharingPermissionTypes]
+
+
+    class azure.mgmt.compute.types.SharingProfileGroup(TypedDict, total=False):
+        key "type": Union[str, SharingProfileGroupTypes]
+        ids: list[str]
+        type: Union[str, SharingProfileGroupTypes]
+
+
+    class azure.mgmt.compute.types.SharingStatus(TypedDict, total=False):
+        key "aggregatedState": Union[str, SharingState]
+        aggregated_state: Union[str, SharingState]
+        summary: list[RegionalSharingStatus]
+
+
+    class azure.mgmt.compute.types.SharingUpdate(TypedDict, total=False):
+        key "operationType": Required[Union[str, SharingUpdateOperationTypes]]
+        groups: list[SharingProfileGroup]
+        operation_type: Union[str, SharingUpdateOperationTypes]
+
+
+    class azure.mgmt.compute.types.Sku(TypedDict, total=False):
+        key "capacity": int
+        key "name": str
+        key "tier": str
+        capacity: int
+        name: str
+        tier: str
+
+
+    class azure.mgmt.compute.types.SkuProfile(TypedDict, total=False):
+        key "allocationStrategy": Union[str, AllocationStrategy]
+        key "automaticSkuMigrationPolicy": ForwardRef('AutomaticSkuMigrationPolicy', module='types')
+        allocation_strategy: Union[str, AllocationStrategy]
+        automatic_sku_migration_policy: AutomaticSkuMigrationPolicy
+        vmSizes: list[SkuProfileVMSize]
+        vm_sizes: list[SkuProfileVMSize]
+
+
+    class azure.mgmt.compute.types.SkuProfileVMSize(TypedDict, total=False):
+        key "name": str
+        key "rank": int
+        name: str
+        rank: int
+
+
+    class azure.mgmt.compute.types.Snapshot(TrackedResource):
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "location": Required[str]
+        key "managedBy": str
+        key "name": str
+        key "properties": ForwardRef('SnapshotProperties', module='types')
+        key "sku": ForwardRef('SnapshotSku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        extended_location: ExtendedLocation
+        id: str
+        location: str
+        managed_by: str
+        name: str
+        properties: SnapshotProperties
+        sku: SnapshotSku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.SnapshotProperties(TypedDict, total=False):
+        key "completionPercent": float
+        key "copyCompletionError": ForwardRef('CopyCompletionError', module='types')
+        key "creationData": Required[CreationData]
+        key "dataAccessAuthMode": Union[str, DataAccessAuthMode]
+        key "diskAccessId": str
+        key "diskSizeBytes": int
+        key "diskSizeGB": int
+        key "diskState": Union[str, DiskState]
+        key "encryption": ForwardRef('Encryption', module='types')
+        key "encryptionSettingsCollection": ForwardRef('EncryptionSettingsCollection', module='types')
+        key "hyperVGeneration": Union[str, HyperVGeneration]
+        key "immutabilityPolicy": ForwardRef('ImmutabilityPolicy', module='types')
+        key "incremental": bool
+        key "incrementalSnapshotFamilyId": str
+        key "networkAccessPolicy": Union[str, NetworkAccessPolicy]
+        key "osType": Union[str, OperatingSystemTypes]
+        key "provisioningState": str
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "purchasePlan": ForwardRef('DiskPurchasePlan', module='types')
+        key "securityProfile": ForwardRef('DiskSecurityProfile', module='types')
+        key "snapshotAccessState": Union[str, SnapshotAccessState]
+        key "supportedCapabilities": ForwardRef('SupportedCapabilities', module='types')
+        key "supportsHibernation": bool
+        key "timeCreated": str
+        key "uniqueId": str
+        completion_percent: float
+        copy_completion_error: CopyCompletionError
+        creation_data: CreationData
+        data_access_auth_mode: Union[str, DataAccessAuthMode]
+        disk_access_id: str
+        disk_size_bytes: int
+        disk_size_gb: int
+        disk_state: Union[str, DiskState]
+        encryption: Encryption
+        encryption_settings_collection: EncryptionSettingsCollection
+        hyper_v_generation: Union[str, HyperVGeneration]
+        immutability_policy: ImmutabilityPolicy
+        incremental: bool
+        incremental_snapshot_family_id: str
+        network_access_policy: Union[str, NetworkAccessPolicy]
+        os_type: Union[str, OperatingSystemTypes]
+        provisioning_state: str
+        public_network_access: Union[str, PublicNetworkAccess]
+        purchase_plan: DiskPurchasePlan
+        security_profile: DiskSecurityProfile
+        snapshot_access_state: Union[str, SnapshotAccessState]
+        supported_capabilities: SupportedCapabilities
+        supports_hibernation: bool
+        time_created: str
+        unique_id: str
+
+
+    class azure.mgmt.compute.types.SnapshotSku(TypedDict, total=False):
+        key "name": Union[str, SnapshotStorageAccountTypes]
+        key "tier": str
+        name: Union[str, SnapshotStorageAccountTypes]
+        tier: str
+
+
+    class azure.mgmt.compute.types.SnapshotUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('SnapshotUpdateProperties', module='types')
+        key "sku": ForwardRef('SnapshotSku', module='types')
+        properties: SnapshotUpdateProperties
+        sku: SnapshotSku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.SnapshotUpdateProperties(TypedDict, total=False):
+        key "dataAccessAuthMode": Union[str, DataAccessAuthMode]
+        key "diskAccessId": str
+        key "diskSizeGB": int
+        key "encryption": ForwardRef('Encryption', module='types')
+        key "encryptionSettingsCollection": ForwardRef('EncryptionSettingsCollection', module='types')
+        key "networkAccessPolicy": Union[str, NetworkAccessPolicy]
+        key "osType": Union[str, OperatingSystemTypes]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "snapshotAccessState": Union[str, SnapshotAccessState]
+        key "supportedCapabilities": ForwardRef('SupportedCapabilities', module='types')
+        key "supportsHibernation": bool
+        data_access_auth_mode: Union[str, DataAccessAuthMode]
+        disk_access_id: str
+        disk_size_gb: int
+        encryption: Encryption
+        encryption_settings_collection: EncryptionSettingsCollection
+        network_access_policy: Union[str, NetworkAccessPolicy]
+        os_type: Union[str, OperatingSystemTypes]
+        public_network_access: Union[str, PublicNetworkAccess]
+        snapshot_access_state: Union[str, SnapshotAccessState]
+        supported_capabilities: SupportedCapabilities
+        supports_hibernation: bool
+
+
+    class azure.mgmt.compute.types.SoftDeletePolicy(TypedDict, total=False):
+        key "isSoftDeleteEnabled": bool
+        is_soft_delete_enabled: bool
+
+
+    class azure.mgmt.compute.types.SourceVault(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.SpotRestorePolicy(TypedDict, total=False):
+        key "enabled": bool
+        key "restoreTimeout": str
+        enabled: bool
+        restore_timeout: str
+
+
+    class azure.mgmt.compute.types.SshConfiguration(TypedDict, total=False):
+        publicKeys: list[SshPublicKey]
+        public_keys: list[SshPublicKey]
+
+
+    class azure.mgmt.compute.types.SshGenerateKeyPairInputParameters(TypedDict, total=False):
+        key "encryptionType": Union[str, SshEncryptionTypes]
+        encryption_type: Union[str, SshEncryptionTypes]
+
+
+    class azure.mgmt.compute.types.SshPublicKey(TypedDict, total=False):
+        key "keyData": str
+        key "path": str
+        key_data: str
+        path: str
+
+
+    class azure.mgmt.compute.types.SshPublicKeyResource(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('SshPublicKeyResourceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: SshPublicKeyResourceProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.SshPublicKeyResourceProperties(TypedDict, total=False):
+        key "publicKey": str
+        public_key: str
+
+
+    class azure.mgmt.compute.types.SshPublicKeyUpdateResource(UpdateResource):
+        key "properties": ForwardRef('SshPublicKeyResourceProperties', module='types')
+        properties: SshPublicKeyResourceProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.StartRecoveryPolicy(TypedDict, total=False):
+        key "enabled": bool
+        enabled: bool
+
+
+    class azure.mgmt.compute.types.StorageProfile(TypedDict, total=False):
+        key "alignRegionalDisksToVMZone": bool
+        key "diskControllerType": Union[str, DiskControllerTypes]
+        key "imageReference": ForwardRef('ImageReference', module='types')
+        key "osDisk": ForwardRef('OSDisk', module='types')
+        align_regional_disks_to_vm_zone: bool
+        dataDisks: list[DataDisk]
+        data_disks: list[DataDisk]
+        disk_controller_type: Union[str, DiskControllerTypes]
+        image_reference: ImageReference
+        os_disk: OSDisk
+
+
+    class azure.mgmt.compute.types.SubResource(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.SubResourceReadOnly(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.compute.types.SubResourceWithColocationStatus(SubResource):
+        key "colocationStatus": ForwardRef('InstanceViewStatus', module='types')
+        key "id": str
+        colocation_status: InstanceViewStatus
+        id: str
+
+
+    class azure.mgmt.compute.types.SupportedCapabilities(TypedDict, total=False):
+        key "acceleratedNetwork": bool
+        key "architecture": Union[str, Architecture]
+        key "diskControllerTypes": str
+        key "supportedSecurityOption": Union[str, SupportedSecurityOption]
+        accelerated_network: bool
+        architecture: Union[str, Architecture]
+        disk_controller_types: str
+        supported_security_option: Union[str, SupportedSecurityOption]
+
+
+    class azure.mgmt.compute.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.compute.types.TargetRegion(TypedDict, total=False):
+        key "encryption": ForwardRef('EncryptionImages', module='types')
+        key "excludeFromLatest": bool
+        key "name": Required[str]
+        key "regionalReplicaCount": int
+        key "storageAccountType": Union[str, StorageAccountType]
+        additionalReplicaSets: list[AdditionalReplicaSet]
+        additional_replica_sets: list[AdditionalReplicaSet]
+        encryption: EncryptionImages
+        exclude_from_latest: bool
+        name: str
+        regional_replica_count: int
+        storage_account_type: Union[str, StorageAccountType]
+
+
+    class azure.mgmt.compute.types.TerminateNotificationProfile(TypedDict, total=False):
+        key "enable": bool
+        key "notBeforeTimeout": str
+        enable: bool
+        not_before_timeout: str
+
+
+    class azure.mgmt.compute.types.ThrottledRequestsInput(LogAnalyticsInputBase):
+        key "blobContainerSasUri": Required[str]
+        key "fromTime": Required[str]
+        key "groupByClientApplicationId": bool
+        key "groupByOperationName": bool
+        key "groupByResourceName": bool
+        key "groupByThrottlePolicy": bool
+        key "groupByUserAgent": bool
+        key "toTime": Required[str]
+        blob_container_sas_uri: str
+        from_time: str
+        group_by_client_application_id: bool
+        group_by_operation_name: bool
+        group_by_resource_name: bool
+        group_by_throttle_policy: bool
+        group_by_user_agent: bool
+        to_time: str
+
+
+    class azure.mgmt.compute.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.UefiKey(TypedDict, total=False):
+        key "type": Union[str, UefiKeyType]
+        type: Union[str, UefiKeyType]
+        value: list[str]
+
+
+    class azure.mgmt.compute.types.UefiKeySignatures(TypedDict, total=False):
+        key "pk": ForwardRef('UefiKey', module='types')
+        db: list[UefiKey]
+        dbx: list[UefiKey]
+        kek: list[UefiKey]
+        pk: UefiKey
+
+
+    class azure.mgmt.compute.types.UefiSettings(TypedDict, total=False):
+        key "secureBootEnabled": bool
+        key "vTpmEnabled": bool
+        secure_boot_enabled: bool
+        v_tpm_enabled: bool
+
+
+    class azure.mgmt.compute.types.UpdateResource(TypedDict, total=False):
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.UpdateResourceDefinition(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "type": str
+        id: str
+        name: str
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.UpgradePolicy(TypedDict, total=False):
+        key "automaticOSUpgradePolicy": ForwardRef('AutomaticOSUpgradePolicy', module='types')
+        key "mode": Union[str, UpgradeMode]
+        key "rollingUpgradePolicy": ForwardRef('RollingUpgradePolicy', module='types')
+        automatic_os_upgrade_policy: AutomaticOSUpgradePolicy
+        mode: Union[str, UpgradeMode]
+        rolling_upgrade_policy: RollingUpgradePolicy
+
+
+    class azure.mgmt.compute.types.UserArtifactManage(TypedDict, total=False):
+        key "install": Required[str]
+        key "remove": Required[str]
+        key "update": str
+        install: str
+        remove: str
+        update_property: str
+
+
+    class azure.mgmt.compute.types.UserArtifactSettings(TypedDict, total=False):
+        key "configFileName": str
+        key "packageFileName": str
+        key "scriptBehaviorAfterReboot": Union[str, GalleryApplicationScriptRebootBehavior]
+        config_file_name: str
+        package_file_name: str
+        script_behavior_after_reboot: Union[str, GalleryApplicationScriptRebootBehavior]
+
+
+    class azure.mgmt.compute.types.UserArtifactSource(TypedDict, total=False):
+        key "defaultConfigurationLink": str
+        key "mediaLink": Required[str]
+        default_configuration_link: str
+        media_link: str
+
+
+    class azure.mgmt.compute.types.UserAssignedIdentitiesValue(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
+
+
+    class azure.mgmt.compute.types.UserInitiatedReboot(TypedDict, total=False):
+        key "automaticallyApprove": bool
+        automatically_approve: bool
+
+
+    class azure.mgmt.compute.types.UserInitiatedRedeploy(TypedDict, total=False):
+        key "automaticallyApprove": bool
+        automatically_approve: bool
+
+
+    class azure.mgmt.compute.types.VMDiskSecurityProfile(TypedDict, total=False):
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "securityEncryptionType": Union[str, SecurityEncryptionTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        security_encryption_type: Union[str, SecurityEncryptionTypes]
+
+
+    class azure.mgmt.compute.types.VMGalleryApplication(TypedDict, total=False):
+        key "configurationReference": str
+        key "enableAutomaticUpgrade": bool
+        key "order": int
+        key "packageReferenceId": Required[str]
+        key "tags": str
+        key "treatFailureAsDeploymentFailure": bool
+        configuration_reference: str
+        enable_automatic_upgrade: bool
+        order: int
+        package_reference_id: str
+        tags: str
+        treat_failure_as_deployment_failure: bool
+
+
+    class azure.mgmt.compute.types.VMScaleSetConvertToSinglePlacementGroupInput(TypedDict, total=False):
+        key "activePlacementGroupId": str
+        active_placement_group_id: str
+
+
+    class azure.mgmt.compute.types.VMScaleSetLifecycleHookEventAdditionalContext(TypedDict, total=False):
+        key "priority": str
+        priority: str
+
+
+    class azure.mgmt.compute.types.VMScaleSetLifecycleHookEventProperties(TypedDict, total=False):
+        key "additionalContext": ForwardRef('VMScaleSetLifecycleHookEventAdditionalContext', module='types')
+        key "defaultAction": Union[str, LifecycleHookAction]
+        key "maxWaitUntil": str
+        key "state": Union[str, VMScaleSetLifecycleHookEventState]
+        key "timeCreated": str
+        key "type": Union[str, VMScaleSetLifecycleHookEventType]
+        key "waitUntil": str
+        additional_context: VMScaleSetLifecycleHookEventAdditionalContext
+        default_action: Union[str, LifecycleHookAction]
+        max_wait_until: str
+        state: Union[str, VMScaleSetLifecycleHookEventState]
+        targetResources: list[VMScaleSetLifecycleHookEventTargetResource]
+        target_resources: list[VMScaleSetLifecycleHookEventTargetResource]
+        time_created: str
+        type: Union[str, VMScaleSetLifecycleHookEventType]
+        wait_until: str
+
+
+    class azure.mgmt.compute.types.VMScaleSetLifecycleHookEventTargetResource(TypedDict, total=False):
+        key "actionState": Union[str, LifecycleHookActionState]
+        key "resource": ForwardRef('ApiEntityReference', module='types')
+        action_state: Union[str, LifecycleHookActionState]
+        resource: ApiEntityReference
+
+
+    class azure.mgmt.compute.types.VMScaleSetLifecycleHookEventUpdate(TypedDict, total=False):
+        key "properties": ForwardRef('VMScaleSetLifecycleHookEventProperties', module='types')
+        properties: VMScaleSetLifecycleHookEventProperties
+
+
+    class azure.mgmt.compute.types.VMScaleSetScaleOutInput(TypedDict, total=False):
+        key "capacity": Required[int]
+        key "properties": ForwardRef('VMScaleSetScaleOutInputProperties', module='types')
+        capacity: int
+        properties: VMScaleSetScaleOutInputProperties
+
+
+    class azure.mgmt.compute.types.VMScaleSetScaleOutInputProperties(TypedDict, total=False):
+        key "zone": str
+        zone: str
+
+
+    class azure.mgmt.compute.types.VMSizeProperties(TypedDict, total=False):
+        key "vCPUsAvailable": int
+        key "vCPUsPerCore": int
+        v_cpus_available: int
+        v_cpus_per_core: int
+
+
+    class azure.mgmt.compute.types.ValidationsProfile(TypedDict, total=False):
+        key "validationEtag": str
+        executedValidations: list[ExecutedValidation]
+        executed_validations: list[ExecutedValidation]
+        platformAttributes: list[PlatformAttribute]
+        platform_attributes: list[PlatformAttribute]
+        validation_etag: str
+
+
+    class azure.mgmt.compute.types.VaultCertificate(TypedDict, total=False):
+        key "certificateStore": str
+        key "certificateUrl": str
+        certificate_store: str
+        certificate_url: str
+
+
+    class azure.mgmt.compute.types.VaultSecretGroup(TypedDict, total=False):
+        key "sourceVault": ForwardRef('SubResource', module='types')
+        source_vault: SubResource
+        vaultCertificates: list[VaultCertificate]
+        vault_certificates: list[VaultCertificate]
+
+
+    class azure.mgmt.compute.types.VirtualHardDisk(TypedDict, total=False):
+        key "uri": str
+        uri: str
+
+
+    class azure.mgmt.compute.types.VirtualMachine(TrackedResource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "identity": ForwardRef('VirtualMachineIdentity', module='types')
+        key "location": Required[str]
+        key "managedBy": str
+        key "name": str
+        key "placement": ForwardRef('Placement', module='types')
+        key "plan": ForwardRef('Plan', module='types')
+        key "properties": ForwardRef('VirtualMachineProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        identity: VirtualMachineIdentity
+        location: str
+        managed_by: str
+        name: str
+        placement: Placement
+        plan: Plan
+        properties: VirtualMachineProperties
+        resources: list[VirtualMachineExtension]
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineAgentInstanceView(TypedDict, total=False):
+        key "vmAgentVersion": str
+        extensionHandlers: list[VirtualMachineExtensionHandlerInstanceView]
+        extension_handlers: list[VirtualMachineExtensionHandlerInstanceView]
+        statuses: list[InstanceViewStatus]
+        vm_agent_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineCaptureParameters(TypedDict, total=False):
+        key "destinationContainerName": Required[str]
+        key "overwriteVhds": Required[bool]
+        key "vhdPrefix": Required[str]
+        destination_container_name: str
+        overwrite_vhds: bool
+        vhd_prefix: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtension(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineExtensionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VirtualMachineExtensionProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtensionHandlerInstanceView(TypedDict, total=False):
+        key "status": ForwardRef('InstanceViewStatus', module='types')
+        key "type": str
+        key "typeHandlerVersion": str
+        status: InstanceViewStatus
+        type: str
+        type_handler_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtensionInstanceView(TypedDict, total=False):
+        key "name": str
+        key "type": str
+        key "typeHandlerVersion": str
+        name: str
+        statuses: list[InstanceViewStatus]
+        substatuses: list[InstanceViewStatus]
+        type: str
+        type_handler_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtensionProperties(TypedDict, total=False):
+        key "autoUpgradeMinorVersion": bool
+        key "enableAutomaticUpgrade": bool
+        key "forceUpdateTag": str
+        key "instanceView": ForwardRef('VirtualMachineExtensionInstanceView', module='types')
+        key "protectedSettings": Any
+        key "protectedSettingsFromKeyVault": ForwardRef('KeyVaultSecretReference', module='types')
+        key "provisioningState": str
+        key "publisher": str
+        key "settings": Any
+        key "suppressFailures": bool
+        key "type": str
+        key "typeHandlerVersion": str
+        auto_upgrade_minor_version: bool
+        enable_automatic_upgrade: bool
+        force_update_tag: str
+        instance_view: VirtualMachineExtensionInstanceView
+        protected_settings: Any
+        protected_settings_from_key_vault: KeyVaultSecretReference
+        provisionAfterExtensions: list[str]
+        provision_after_extensions: list[str]
+        provisioning_state: str
+        publisher: str
+        settings: Any
+        suppress_failures: bool
+        type: str
+        type_handler_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtensionUpdate(UpdateResource):
+        key "properties": ForwardRef('VirtualMachineExtensionUpdateProperties', module='types')
+        properties: VirtualMachineExtensionUpdateProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineExtensionUpdateProperties(TypedDict, total=False):
+        key "autoUpgradeMinorVersion": bool
+        key "enableAutomaticUpgrade": bool
+        key "forceUpdateTag": str
+        key "protectedSettings": Any
+        key "protectedSettingsFromKeyVault": ForwardRef('KeyVaultSecretReference', module='types')
+        key "publisher": str
+        key "settings": Any
+        key "suppressFailures": bool
+        key "type": str
+        key "typeHandlerVersion": str
+        auto_upgrade_minor_version: bool
+        enable_automatic_upgrade: bool
+        force_update_tag: str
+        protected_settings: Any
+        protected_settings_from_key_vault: KeyVaultSecretReference
+        publisher: str
+        settings: Any
+        suppress_failures: bool
+        type: str
+        type_handler_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineHealthStatus(TypedDict, total=False):
+        key "status": ForwardRef('InstanceViewStatus', module='types')
+        status: InstanceViewStatus
+
+
+    class azure.mgmt.compute.types.VirtualMachineIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ResourceIdentityType]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ResourceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
+
+
+    class azure.mgmt.compute.types.VirtualMachineInstallPatchesParameters(TypedDict, total=False):
+        key "linuxParameters": ForwardRef('LinuxParameters', module='types')
+        key "maximumDuration": str
+        key "rebootSetting": Required[Union[str, VMGuestPatchRebootSetting]]
+        key "windowsParameters": ForwardRef('WindowsParameters', module='types')
+        linux_parameters: LinuxParameters
+        maximum_duration: str
+        reboot_setting: Union[str, VMGuestPatchRebootSetting]
+        windows_parameters: WindowsParameters
+
+
+    class azure.mgmt.compute.types.VirtualMachineInstanceView(TypedDict, total=False):
+        key "assignedHost": str
+        key "bootDiagnostics": ForwardRef('BootDiagnosticsInstanceView', module='types')
+        key "computerName": str
+        key "hyperVGeneration": Union[str, HyperVGenerationType]
+        key "interconnectInstanceView": ForwardRef('InterconnectInstanceView', module='types')
+        key "isVMInStandbyPool": bool
+        key "maintenanceRedeployStatus": ForwardRef('MaintenanceRedeployStatus', module='types')
+        key "osName": str
+        key "osVersion": str
+        key "patchStatus": ForwardRef('VirtualMachinePatchStatus', module='types')
+        key "platformFaultDomain": int
+        key "platformUpdateDomain": int
+        key "rdpThumbPrint": str
+        key "vmAgent": ForwardRef('VirtualMachineAgentInstanceView', module='types')
+        key "vmHealth": ForwardRef('VirtualMachineHealthStatus', module='types')
+        assigned_host: str
+        boot_diagnostics: BootDiagnosticsInstanceView
+        computer_name: str
+        disks: list[DiskInstanceView]
+        extensions: list[VirtualMachineExtensionInstanceView]
+        hyper_v_generation: Union[str, HyperVGenerationType]
+        interconnect_instance_view: InterconnectInstanceView
+        is_vm_in_standby_pool: bool
+        maintenance_redeploy_status: MaintenanceRedeployStatus
+        os_name: str
+        os_version: str
+        patch_status: VirtualMachinePatchStatus
+        platform_fault_domain: int
+        platform_update_domain: int
+        rdp_thumb_print: str
+        statuses: list[InstanceViewStatus]
+        vm_agent: VirtualMachineAgentInstanceView
+        vm_health: VirtualMachineHealthStatus
+
+
+    class azure.mgmt.compute.types.VirtualMachineIpTag(TypedDict, total=False):
+        key "ipTagType": str
+        key "tag": str
+        ip_tag_type: str
+        tag: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachineNetworkInterfaceConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineNetworkInterfaceConfigurationProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceConfigurationProperties(TypedDict, total=False):
+        key "auxiliaryMode": Union[str, NetworkInterfaceAuxiliaryMode]
+        key "auxiliarySku": Union[str, NetworkInterfaceAuxiliarySku]
+        key "deleteOption": Union[str, DeleteOptions]
+        key "disableTcpStateTracking": bool
+        key "dnsSettings": ForwardRef('VirtualMachineNetworkInterfaceDnsSettingsConfiguration', module='types')
+        key "dscpConfiguration": ForwardRef('SubResource', module='types')
+        key "enableAcceleratedNetworking": bool
+        key "enableFpga": bool
+        key "enableIPForwarding": bool
+        key "ipConfigurations": Required[list[VirtualMachineNetworkInterfaceIPConfiguration]]
+        key "networkSecurityGroup": ForwardRef('SubResource', module='types')
+        key "primary": bool
+        auxiliary_mode: Union[str, NetworkInterfaceAuxiliaryMode]
+        auxiliary_sku: Union[str, NetworkInterfaceAuxiliarySku]
+        delete_option: Union[str, DeleteOptions]
+        disable_tcp_state_tracking: bool
+        dns_settings: VirtualMachineNetworkInterfaceDnsSettingsConfiguration
+        dscp_configuration: SubResource
+        enable_accelerated_networking: bool
+        enable_fpga: bool
+        enable_ip_forwarding: bool
+        ip_configurations: list[VirtualMachineNetworkInterfaceIPConfiguration]
+        network_security_group: SubResource
+        primary: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceDnsSettingsConfiguration(TypedDict, total=False):
+        dnsServers: list[str]
+        dns_servers: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceIPConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachineNetworkInterfaceIPConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineNetworkInterfaceIPConfigurationProperties
+
+
+    class azure.mgmt.compute.types.VirtualMachineNetworkInterfaceIPConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddressVersion": Union[str, IPVersions]
+        key "publicIPAddressConfiguration": ForwardRef('VirtualMachinePublicIPAddressConfiguration', module='types')
+        key "subnet": ForwardRef('SubResource', module='types')
+        applicationGatewayBackendAddressPools: list[SubResource]
+        applicationSecurityGroups: list[SubResource]
+        application_gateway_backend_address_pools: list[SubResource]
+        application_security_groups: list[SubResource]
+        loadBalancerBackendAddressPools: list[SubResource]
+        load_balancer_backend_address_pools: list[SubResource]
+        primary: bool
+        private_ip_address_version: Union[str, IPVersions]
+        public_ip_address_configuration: VirtualMachinePublicIPAddressConfiguration
+        subnet: SubResource
+
+
+    class azure.mgmt.compute.types.VirtualMachinePatchStatus(TypedDict, total=False):
+        key "availablePatchSummary": ForwardRef('AvailablePatchSummary', module='types')
+        key "lastPatchInstallationSummary": ForwardRef('LastPatchInstallationSummary', module='types')
+        available_patch_summary: AvailablePatchSummary
+        configurationStatuses: list[InstanceViewStatus]
+        configuration_statuses: list[InstanceViewStatus]
+        last_patch_installation_summary: LastPatchInstallationSummary
+
+
+    class azure.mgmt.compute.types.VirtualMachineProperties(TypedDict, total=False):
+        key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
+        key "applicationProfile": ForwardRef('ApplicationProfile', module='types')
+        key "availabilitySet": ForwardRef('SubResource', module='types')
+        key "billingProfile": ForwardRef('BillingProfile', module='types')
+        key "capacityReservation": ForwardRef('CapacityReservationProfile', module='types')
+        key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "evictionPolicy": Union[str, VirtualMachineEvictionPolicyTypes]
+        key "extensionsTimeBudget": str
+        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
+        key "host": ForwardRef('SubResource', module='types')
+        key "hostGroup": ForwardRef('SubResource', module='types')
+        key "instanceView": ForwardRef('VirtualMachineInstanceView', module='types')
+        key "interconnectBlockProfile": ForwardRef('InterconnectBlockProfile', module='types')
+        key "licenseType": str
+        key "networkProfile": ForwardRef('NetworkProfile', module='types')
+        key "osProfile": ForwardRef('OSProfile', module='types')
+        key "platformFaultDomain": int
+        key "priority": Union[str, VirtualMachinePriorityTypes]
+        key "provisioningState": str
+        key "proximityPlacementGroup": ForwardRef('SubResource', module='types')
+        key "resiliencyProfile": ForwardRef('ResiliencyProfile', module='types')
+        key "scheduledEventsPolicy": ForwardRef('ScheduledEventsPolicy', module='types')
+        key "scheduledEventsProfile": ForwardRef('ScheduledEventsProfile', module='types')
+        key "securityProfile": ForwardRef('SecurityProfile', module='types')
+        key "storageProfile": ForwardRef('StorageProfile', module='types')
+        key "timeCreated": str
+        key "userData": str
+        key "virtualMachineScaleSet": ForwardRef('SubResource', module='types')
+        key "vmId": str
+        additional_capabilities: AdditionalCapabilities
+        application_profile: ApplicationProfile
+        availability_set: SubResource
+        billing_profile: BillingProfile
+        capacity_reservation: CapacityReservationProfile
+        diagnostics_profile: DiagnosticsProfile
+        eviction_policy: Union[str, VirtualMachineEvictionPolicyTypes]
+        extensions_time_budget: str
+        hardware_profile: HardwareProfile
+        host: SubResource
+        host_group: SubResource
+        instance_view: VirtualMachineInstanceView
+        interconnect_block_profile: InterconnectBlockProfile
+        license_type: str
+        network_profile: NetworkProfile
+        os_profile: OSProfile
+        platform_fault_domain: int
+        priority: Union[str, VirtualMachinePriorityTypes]
+        provisioning_state: str
+        proximity_placement_group: SubResource
+        resiliency_profile: ResiliencyProfile
+        scheduled_events_policy: ScheduledEventsPolicy
+        scheduled_events_profile: ScheduledEventsProfile
+        security_profile: SecurityProfile
+        storage_profile: StorageProfile
+        time_created: str
+        user_data: str
+        virtual_machine_scale_set: SubResource
+        vm_id: str
+
+
+    class azure.mgmt.compute.types.VirtualMachinePublicIPAddressConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachinePublicIPAddressConfigurationProperties', module='types')
+        key "sku": ForwardRef('PublicIPAddressSku', module='types')
+        name: str
+        properties: VirtualMachinePublicIPAddressConfigurationProperties
+        sku: PublicIPAddressSku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachinePublicIPAddressConfigurationProperties(TypedDict, total=False):
+        key "deleteOption": Union[str, DeleteOptions]
+        key "dnsSettings": ForwardRef('VirtualMachinePublicIPAddressDnsSettingsConfiguration', module='types')
+        key "idleTimeoutInMinutes": int
+        key "publicIPAddressVersion": Union[str, IPVersions]
+        key "publicIPAllocationMethod": Union[str, PublicIPAllocationMethod]
+        key "publicIPPrefix": ForwardRef('SubResource', module='types')
+        delete_option: Union[str, DeleteOptions]
+        dns_settings: VirtualMachinePublicIPAddressDnsSettingsConfiguration
+        idle_timeout_in_minutes: int
+        ipTags: list[VirtualMachineIpTag]
+        ip_tags: list[VirtualMachineIpTag]
+        public_ip_address_version: Union[str, IPVersions]
+        public_ip_allocation_method: Union[str, PublicIPAllocationMethod]
+        public_ip_prefix: SubResource
+
+
+    class azure.mgmt.compute.types.VirtualMachinePublicIPAddressDnsSettingsConfiguration(TypedDict, total=False):
+        key "domainNameLabel": Required[str]
+        key "domainNameLabelScope": Union[str, DomainNameLabelScopeTypes]
+        domain_name_label: str
+        domain_name_label_scope: Union[str, DomainNameLabelScopeTypes]
+
+
+    class azure.mgmt.compute.types.VirtualMachineReimageParameters(TypedDict, total=False):
+        key "exactVersion": str
+        key "osProfile": ForwardRef('OSProfileProvisioningData', module='types')
+        key "tempDisk": bool
+        exact_version: str
+        os_profile: OSProfileProvisioningData
+        temp_disk: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineRunCommand(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineRunCommandProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VirtualMachineRunCommandProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineRunCommandInstanceView(TypedDict, total=False):
+        key "endTime": str
+        key "error": str
+        key "executionMessage": str
+        key "executionState": Union[str, ExecutionState]
+        key "exitCode": int
+        key "output": str
+        key "startTime": str
+        end_time: str
+        error: str
+        execution_message: str
+        execution_state: Union[str, ExecutionState]
+        exit_code: int
+        output: str
+        start_time: str
+        statuses: list[InstanceViewStatus]
+
+
+    class azure.mgmt.compute.types.VirtualMachineRunCommandProperties(TypedDict, total=False):
+        key "asyncExecution": bool
+        key "errorBlobManagedIdentity": ForwardRef('RunCommandManagedIdentity', module='types')
+        key "errorBlobUri": str
+        key "instanceView": ForwardRef('VirtualMachineRunCommandInstanceView', module='types')
+        key "outputBlobManagedIdentity": ForwardRef('RunCommandManagedIdentity', module='types')
+        key "outputBlobUri": str
+        key "provisioningState": str
+        key "runAsPassword": str
+        key "runAsUser": str
+        key "source": ForwardRef('VirtualMachineRunCommandScriptSource', module='types')
+        key "timeoutInSeconds": int
+        key "treatFailureAsDeploymentFailure": bool
+        async_execution: bool
+        error_blob_managed_identity: RunCommandManagedIdentity
+        error_blob_uri: str
+        instance_view: VirtualMachineRunCommandInstanceView
+        output_blob_managed_identity: RunCommandManagedIdentity
+        output_blob_uri: str
+        parameters: list[RunCommandInputParameter]
+        protectedParameters: list[RunCommandInputParameter]
+        protected_parameters: list[RunCommandInputParameter]
+        provisioning_state: str
+        run_as_password: str
+        run_as_user: str
+        source: VirtualMachineRunCommandScriptSource
+        timeout_in_seconds: int
+        treat_failure_as_deployment_failure: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineRunCommandScriptSource(TypedDict, total=False):
+        key "commandId": str
+        key "galleryScriptReferenceId": str
+        key "script": str
+        key "scriptShell": Union[str, ScriptShellTypes]
+        key "scriptUri": str
+        key "scriptUriManagedIdentity": ForwardRef('RunCommandManagedIdentity', module='types')
+        command_id: str
+        gallery_script_reference_id: str
+        script: str
+        script_shell: Union[str, ScriptShellTypes]
+        script_uri: str
+        script_uri_managed_identity: RunCommandManagedIdentity
+
+
+    class azure.mgmt.compute.types.VirtualMachineRunCommandUpdate(UpdateResource):
+        key "properties": ForwardRef('VirtualMachineRunCommandProperties', module='types')
+        properties: VirtualMachineRunCommandProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSet(TrackedResource):
+        key "etag": str
+        key "extendedLocation": ForwardRef('ExtendedLocation', module='types')
+        key "id": str
+        key "identity": ForwardRef('VirtualMachineScaleSetIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "placement": ForwardRef('Placement', module='types')
+        key "plan": ForwardRef('Plan', module='types')
+        key "properties": ForwardRef('VirtualMachineScaleSetProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        extended_location: ExtendedLocation
+        id: str
+        identity: VirtualMachineScaleSetIdentity
+        location: str
+        name: str
+        placement: Placement
+        plan: Plan
+        properties: VirtualMachineScaleSetProperties
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetDataDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "createOption": Required[Union[str, DiskCreateOptionTypes]]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "diskIOPSReadWrite": int
+        key "diskMBpsReadWrite": int
+        key "diskSizeGB": int
+        key "lun": Required[int]
+        key "managedDisk": ForwardRef('VirtualMachineScaleSetManagedDiskParameters', module='types')
+        key "name": str
+        key "storageFaultDomainAlignment": Union[str, StorageFaultDomainAlignmentType]
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        disk_iops_read_write: int
+        disk_m_bps_read_write: int
+        disk_size_gb: int
+        lun: int
+        managed_disk: VirtualMachineScaleSetManagedDiskParameters
+        name: str
+        storage_fault_domain_alignment: Union[str, StorageFaultDomainAlignmentType]
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetExtension(SubResourceReadOnly):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineScaleSetExtensionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VirtualMachineScaleSetExtensionProperties
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetExtensionProfile(TypedDict, total=False):
+        key "extensionsTimeBudget": str
+        extensions: list[VirtualMachineScaleSetExtension]
+        extensions_time_budget: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetExtensionProperties(TypedDict, total=False):
+        key "autoUpgradeMinorVersion": bool
+        key "enableAutomaticUpgrade": bool
+        key "forceUpdateTag": str
+        key "protectedSettings": Any
+        key "protectedSettingsFromKeyVault": ForwardRef('KeyVaultSecretReference', module='types')
+        key "provisioningState": str
+        key "publisher": str
+        key "settings": Any
+        key "suppressFailures": bool
+        key "type": str
+        key "typeHandlerVersion": str
+        auto_upgrade_minor_version: bool
+        enable_automatic_upgrade: bool
+        force_update_tag: str
+        protected_settings: Any
+        protected_settings_from_key_vault: KeyVaultSecretReference
+        provisionAfterExtensions: list[str]
+        provision_after_extensions: list[str]
+        provisioning_state: str
+        publisher: str
+        settings: Any
+        suppress_failures: bool
+        type: str
+        type_handler_version: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetExtensionUpdate(SubResourceReadOnly):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineScaleSetExtensionProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VirtualMachineScaleSetExtensionProperties
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetHardwareProfile(TypedDict, total=False):
+        key "vmSizeProperties": ForwardRef('VMSizeProperties', module='types')
+        vm_size_properties: VMSizeProperties
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetIPConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachineScaleSetIPConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineScaleSetIPConfigurationProperties
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetIPConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfiguration', module='types')
+        key "subnet": ForwardRef('ApiEntityReference', module='types')
+        applicationGatewayBackendAddressPools: list[SubResource]
+        applicationSecurityGroups: list[SubResource]
+        application_gateway_backend_address_pools: list[SubResource]
+        application_security_groups: list[SubResource]
+        loadBalancerBackendAddressPools: list[SubResource]
+        loadBalancerInboundNatPools: list[SubResource]
+        load_balancer_backend_address_pools: list[SubResource]
+        load_balancer_inbound_nat_pools: list[SubResource]
+        primary: bool
+        private_ip_address_version: Union[str, IPVersion]
+        public_ip_address_configuration: VirtualMachineScaleSetPublicIPAddressConfiguration
+        subnet: ApiEntityReference
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Union[str, ResourceIdentityType]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, ResourceIdentityType]
+        userAssignedIdentities: dict[str, UserAssignedIdentitiesValue]
+        user_assigned_identities: dict[str, UserAssignedIdentitiesValue]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetIpTag(TypedDict, total=False):
+        key "ipTagType": str
+        key "tag": str
+        ip_tag_type: str
+        tag: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetManagedDiskParameters(TypedDict, total=False):
+        key "diskEncryptionSet": ForwardRef('DiskEncryptionSetParameters', module='types')
+        key "securityProfile": ForwardRef('VMDiskSecurityProfile', module='types')
+        key "storageAccountType": Union[str, StorageAccountTypes]
+        disk_encryption_set: DiskEncryptionSetParameters
+        security_profile: VMDiskSecurityProfile
+        storage_account_type: Union[str, StorageAccountTypes]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetMigrationInfo(TypedDict, total=False):
+        key "defaultVirtualMachineScaleSetInfo": ForwardRef('DefaultVirtualMachineScaleSetInfo', module='types')
+        key "migrateToVirtualMachineScaleSet": ForwardRef('SubResource', module='types')
+        default_virtual_machine_scale_set_info: DefaultVirtualMachineScaleSetInfo
+        migrate_to_virtual_machine_scale_set: SubResource
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetNetworkConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachineScaleSetNetworkConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineScaleSetNetworkConfigurationProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetNetworkConfigurationDnsSettings(TypedDict, total=False):
+        dnsServers: list[str]
+        dns_servers: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetNetworkConfigurationProperties(TypedDict, total=False):
+        key "auxiliaryMode": Union[str, NetworkInterfaceAuxiliaryMode]
+        key "auxiliarySku": Union[str, NetworkInterfaceAuxiliarySku]
+        key "deleteOption": Union[str, DeleteOptions]
+        key "disableTcpStateTracking": bool
+        key "dnsSettings": ForwardRef('VirtualMachineScaleSetNetworkConfigurationDnsSettings', module='types')
+        key "enableAcceleratedNetworking": bool
+        key "enableFpga": bool
+        key "enableIPForwarding": bool
+        key "ipConfigurations": Required[list[VirtualMachineScaleSetIPConfiguration]]
+        key "networkSecurityGroup": ForwardRef('SubResource', module='types')
+        key "primary": bool
+        auxiliary_mode: Union[str, NetworkInterfaceAuxiliaryMode]
+        auxiliary_sku: Union[str, NetworkInterfaceAuxiliarySku]
+        delete_option: Union[str, DeleteOptions]
+        disable_tcp_state_tracking: bool
+        dns_settings: VirtualMachineScaleSetNetworkConfigurationDnsSettings
+        enable_accelerated_networking: bool
+        enable_fpga: bool
+        enable_ip_forwarding: bool
+        ip_configurations: list[VirtualMachineScaleSetIPConfiguration]
+        network_security_group: SubResource
+        primary: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetNetworkProfile(TypedDict, total=False):
+        key "healthProbe": ForwardRef('ApiEntityReference', module='types')
+        key "interconnectGroupProfile": ForwardRef('InterconnectGroupProfile', module='types')
+        key "networkApiVersion": Union[str, NetworkApiVersion]
+        health_probe: ApiEntityReference
+        interconnect_group_profile: InterconnectGroupProfile
+        networkInterfaceConfigurations: list[VirtualMachineScaleSetNetworkConfiguration]
+        network_api_version: Union[str, NetworkApiVersion]
+        network_interface_configurations: list[VirtualMachineScaleSetNetworkConfiguration]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetOSDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "createOption": Required[Union[str, DiskCreateOptionTypes]]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "diffDiskSettings": ForwardRef('DiffDiskSettings', module='types')
+        key "diskSizeGB": int
+        key "image": ForwardRef('VirtualHardDisk', module='types')
+        key "managedDisk": ForwardRef('VirtualMachineScaleSetManagedDiskParameters', module='types')
+        key "name": str
+        key "osType": Union[str, OperatingSystemTypes]
+        key "storageFaultDomainAlignment": Union[str, StorageFaultDomainAlignmentType]
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        create_option: Union[str, DiskCreateOptionTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        diff_disk_settings: DiffDiskSettings
+        disk_size_gb: int
+        image: VirtualHardDisk
+        managed_disk: VirtualMachineScaleSetManagedDiskParameters
+        name: str
+        os_type: Union[str, OperatingSystemTypes]
+        storage_fault_domain_alignment: Union[str, StorageFaultDomainAlignmentType]
+        vhdContainers: list[str]
+        vhd_containers: list[str]
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetOSProfile(TypedDict, total=False):
+        key "adminPassword": str
+        key "adminUsername": str
+        key "allowExtensionOperations": bool
+        key "computerNamePrefix": str
+        key "customData": str
+        key "linuxConfiguration": ForwardRef('LinuxConfiguration', module='types')
+        key "requireGuestProvisionSignal": bool
+        key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
+        admin_password: str
+        admin_username: str
+        allow_extension_operations: bool
+        computer_name_prefix: str
+        custom_data: str
+        linux_configuration: LinuxConfiguration
+        require_guest_provision_signal: bool
+        secrets: list[VaultSecretGroup]
+        windows_configuration: WindowsConfiguration
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetProperties(TypedDict, total=False):
+        key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
+        key "automaticRepairsPolicy": ForwardRef('AutomaticRepairsPolicy', module='types')
+        key "constrainedMaximumCapacity": bool
+        key "doNotRunExtensionsOnOverprovisionedVMs": bool
+        key "externalHealthPolicy": ForwardRef('ExternalHealthPolicy', module='types')
+        key "highSpeedInterconnectPlacement": Union[str, HighSpeedInterconnectPlacement]
+        key "hostGroup": ForwardRef('SubResource', module='types')
+        key "lifecycleHooksProfile": ForwardRef('LifecycleHooksProfile', module='types')
+        key "orchestrationMode": Union[str, OrchestrationMode]
+        key "overprovision": bool
+        key "platformFaultDomainCount": int
+        key "priorityMixPolicy": ForwardRef('PriorityMixPolicy', module='types')
+        key "provisioningState": str
+        key "proximityPlacementGroup": ForwardRef('SubResource', module='types')
+        key "resiliencyPolicy": ForwardRef('ResiliencyPolicy', module='types')
+        key "scaleInPolicy": ForwardRef('ScaleInPolicy', module='types')
+        key "scheduledEventsPolicy": ForwardRef('ScheduledEventsPolicy', module='types')
+        key "singlePlacementGroup": bool
+        key "skuProfile": ForwardRef('SkuProfile', module='types')
+        key "spotRestorePolicy": ForwardRef('SpotRestorePolicy', module='types')
+        key "timeCreated": str
+        key "uniqueId": str
+        key "upgradePolicy": ForwardRef('UpgradePolicy', module='types')
+        key "virtualMachineProfile": ForwardRef('VirtualMachineScaleSetVMProfile', module='types')
+        key "zonalPlatformFaultDomainAlignMode": Union[str, ZonalPlatformFaultDomainAlignMode]
+        key "zoneBalance": bool
+        additional_capabilities: AdditionalCapabilities
+        automatic_repairs_policy: AutomaticRepairsPolicy
+        constrained_maximum_capacity: bool
+        do_not_run_extensions_on_overprovisioned_v_ms: bool
+        external_health_policy: ExternalHealthPolicy
+        high_speed_interconnect_placement: Union[str, HighSpeedInterconnectPlacement]
+        host_group: SubResource
+        lifecycle_hooks_profile: LifecycleHooksProfile
+        orchestration_mode: Union[str, OrchestrationMode]
+        overprovision: bool
+        platform_fault_domain_count: int
+        priority_mix_policy: PriorityMixPolicy
+        provisioning_state: str
+        proximity_placement_group: SubResource
+        resiliency_policy: ResiliencyPolicy
+        scale_in_policy: ScaleInPolicy
+        scheduled_events_policy: ScheduledEventsPolicy
+        single_placement_group: bool
+        sku_profile: SkuProfile
+        spot_restore_policy: SpotRestorePolicy
+        time_created: str
+        unique_id: str
+        upgrade_policy: UpgradePolicy
+        virtual_machine_profile: VirtualMachineScaleSetVMProfile
+        zonal_platform_fault_domain_align_mode: Union[str, ZonalPlatformFaultDomainAlignMode]
+        zone_balance: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetPublicIPAddressConfiguration(TypedDict, total=False):
+        key "name": Required[str]
+        key "properties": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfigurationProperties', module='types')
+        key "sku": ForwardRef('PublicIPAddressSku', module='types')
+        name: str
+        properties: VirtualMachineScaleSetPublicIPAddressConfigurationProperties
+        sku: PublicIPAddressSku
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings(TypedDict, total=False):
+        key "domainNameLabel": Required[str]
+        key "domainNameLabelScope": Union[str, DomainNameLabelScopeTypes]
+        domain_name_label: str
+        domain_name_label_scope: Union[str, DomainNameLabelScopeTypes]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetPublicIPAddressConfigurationProperties(TypedDict, total=False):
+        key "deleteOption": Union[str, DeleteOptions]
+        key "dnsSettings": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings', module='types')
+        key "idleTimeoutInMinutes": int
+        key "publicIPAddressVersion": Union[str, IPVersion]
+        key "publicIPPrefix": ForwardRef('SubResource', module='types')
+        delete_option: Union[str, DeleteOptions]
+        dns_settings: VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+        idle_timeout_in_minutes: int
+        ipTags: list[VirtualMachineScaleSetIpTag]
+        ip_tags: list[VirtualMachineScaleSetIpTag]
+        public_ip_address_version: Union[str, IPVersion]
+        public_ip_prefix: SubResource
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetReimageParameters(VirtualMachineScaleSetVMReimageParameters):
+        key "exactVersion": str
+        key "forceUpdateOSDiskForEphemeral": bool
+        key "osProfile": ForwardRef('OSProfileProvisioningData', module='types')
+        key "tempDisk": bool
+        exact_version: str
+        force_update_os_disk_for_ephemeral: bool
+        instanceIds: list[str]
+        instance_ids: list[str]
+        os_profile: OSProfileProvisioningData
+        temp_disk: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetStorageProfile(TypedDict, total=False):
+        key "diskControllerType": Union[str, DiskControllerTypes]
+        key "imageReference": ForwardRef('ImageReference', module='types')
+        key "osDisk": ForwardRef('VirtualMachineScaleSetOSDisk', module='types')
+        dataDisks: list[VirtualMachineScaleSetDataDisk]
+        data_disks: list[VirtualMachineScaleSetDataDisk]
+        disk_controller_type: Union[str, DiskControllerTypes]
+        image_reference: ImageReference
+        os_disk: VirtualMachineScaleSetOSDisk
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdate(UpdateResource):
+        key "identity": ForwardRef('VirtualMachineScaleSetIdentity', module='types')
+        key "placement": ForwardRef('Placement', module='types')
+        key "plan": ForwardRef('Plan', module='types')
+        key "properties": ForwardRef('VirtualMachineScaleSetUpdateProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        identity: VirtualMachineScaleSetIdentity
+        placement: Placement
+        plan: Plan
+        properties: VirtualMachineScaleSetUpdateProperties
+        sku: Sku
+        tags: dict[str, str]
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateIPConfiguration(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineScaleSetUpdateIPConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineScaleSetUpdateIPConfigurationProperties
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateIPConfigurationProperties(TypedDict, total=False):
+        key "primary": bool
+        key "privateIPAddressVersion": Union[str, IPVersion]
+        key "publicIPAddressConfiguration": ForwardRef('VirtualMachineScaleSetUpdatePublicIPAddressConfiguration', module='types')
+        key "subnet": ForwardRef('ApiEntityReference', module='types')
+        applicationGatewayBackendAddressPools: list[SubResource]
+        applicationSecurityGroups: list[SubResource]
+        application_gateway_backend_address_pools: list[SubResource]
+        application_security_groups: list[SubResource]
+        loadBalancerBackendAddressPools: list[SubResource]
+        loadBalancerInboundNatPools: list[SubResource]
+        load_balancer_backend_address_pools: list[SubResource]
+        load_balancer_inbound_nat_pools: list[SubResource]
+        primary: bool
+        private_ip_address_version: Union[str, IPVersion]
+        public_ip_address_configuration: VirtualMachineScaleSetUpdatePublicIPAddressConfiguration
+        subnet: ApiEntityReference
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateNetworkConfiguration(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineScaleSetUpdateNetworkConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineScaleSetUpdateNetworkConfigurationProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateNetworkConfigurationProperties(TypedDict, total=False):
+        key "auxiliaryMode": Union[str, NetworkInterfaceAuxiliaryMode]
+        key "auxiliarySku": Union[str, NetworkInterfaceAuxiliarySku]
+        key "deleteOption": Union[str, DeleteOptions]
+        key "disableTcpStateTracking": bool
+        key "dnsSettings": ForwardRef('VirtualMachineScaleSetNetworkConfigurationDnsSettings', module='types')
+        key "enableAcceleratedNetworking": bool
+        key "enableFpga": bool
+        key "enableIPForwarding": bool
+        key "networkSecurityGroup": ForwardRef('SubResource', module='types')
+        key "primary": bool
+        auxiliary_mode: Union[str, NetworkInterfaceAuxiliaryMode]
+        auxiliary_sku: Union[str, NetworkInterfaceAuxiliarySku]
+        delete_option: Union[str, DeleteOptions]
+        disable_tcp_state_tracking: bool
+        dns_settings: VirtualMachineScaleSetNetworkConfigurationDnsSettings
+        enable_accelerated_networking: bool
+        enable_fpga: bool
+        enable_ip_forwarding: bool
+        ipConfigurations: list[VirtualMachineScaleSetUpdateIPConfiguration]
+        ip_configurations: list[VirtualMachineScaleSetUpdateIPConfiguration]
+        network_security_group: SubResource
+        primary: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateNetworkProfile(TypedDict, total=False):
+        key "healthProbe": ForwardRef('ApiEntityReference', module='types')
+        key "interconnectGroupProfile": ForwardRef('InterconnectGroupProfile', module='types')
+        key "networkApiVersion": Union[str, NetworkApiVersion]
+        health_probe: ApiEntityReference
+        interconnect_group_profile: InterconnectGroupProfile
+        networkInterfaceConfigurations: list[VirtualMachineScaleSetUpdateNetworkConfiguration]
+        network_api_version: Union[str, NetworkApiVersion]
+        network_interface_configurations: list[VirtualMachineScaleSetUpdateNetworkConfiguration]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateOSDisk(TypedDict, total=False):
+        key "caching": Union[str, CachingTypes]
+        key "deleteOption": Union[str, DiskDeleteOptionTypes]
+        key "diffDiskSettings": ForwardRef('DiffDiskSettings', module='types')
+        key "diskSizeGB": int
+        key "image": ForwardRef('VirtualHardDisk', module='types')
+        key "managedDisk": ForwardRef('VirtualMachineScaleSetManagedDiskParameters', module='types')
+        key "storageFaultDomainAlignment": Union[str, StorageFaultDomainAlignmentType]
+        key "writeAcceleratorEnabled": bool
+        caching: Union[str, CachingTypes]
+        delete_option: Union[str, DiskDeleteOptionTypes]
+        diff_disk_settings: DiffDiskSettings
+        disk_size_gb: int
+        image: VirtualHardDisk
+        managed_disk: VirtualMachineScaleSetManagedDiskParameters
+        storage_fault_domain_alignment: Union[str, StorageFaultDomainAlignmentType]
+        vhdContainers: list[str]
+        vhd_containers: list[str]
+        write_accelerator_enabled: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateOSProfile(TypedDict, total=False):
+        key "customData": str
+        key "linuxConfiguration": ForwardRef('LinuxConfiguration', module='types')
+        key "windowsConfiguration": ForwardRef('WindowsConfiguration', module='types')
+        custom_data: str
+        linux_configuration: LinuxConfiguration
+        secrets: list[VaultSecretGroup]
+        windows_configuration: WindowsConfiguration
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateProperties(TypedDict, total=False):
+        key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
+        key "automaticRepairsPolicy": ForwardRef('AutomaticRepairsPolicy', module='types')
+        key "doNotRunExtensionsOnOverprovisionedVMs": bool
+        key "lifecycleHooksProfile": ForwardRef('LifecycleHooksProfile', module='types')
+        key "overprovision": bool
+        key "priorityMixPolicy": ForwardRef('PriorityMixPolicy', module='types')
+        key "proximityPlacementGroup": ForwardRef('SubResource', module='types')
+        key "resiliencyPolicy": ForwardRef('ResiliencyPolicy', module='types')
+        key "scaleInPolicy": ForwardRef('ScaleInPolicy', module='types')
+        key "singlePlacementGroup": bool
+        key "skuProfile": ForwardRef('SkuProfile', module='types')
+        key "spotRestorePolicy": ForwardRef('SpotRestorePolicy', module='types')
+        key "upgradePolicy": ForwardRef('UpgradePolicy', module='types')
+        key "virtualMachineProfile": ForwardRef('VirtualMachineScaleSetUpdateVMProfile', module='types')
+        key "zonalPlatformFaultDomainAlignMode": Union[str, ZonalPlatformFaultDomainAlignMode]
+        additional_capabilities: AdditionalCapabilities
+        automatic_repairs_policy: AutomaticRepairsPolicy
+        do_not_run_extensions_on_overprovisioned_v_ms: bool
+        lifecycle_hooks_profile: LifecycleHooksProfile
+        overprovision: bool
+        priority_mix_policy: PriorityMixPolicy
+        proximity_placement_group: SubResource
+        resiliency_policy: ResiliencyPolicy
+        scale_in_policy: ScaleInPolicy
+        single_placement_group: bool
+        sku_profile: SkuProfile
+        spot_restore_policy: SpotRestorePolicy
+        upgrade_policy: UpgradePolicy
+        virtual_machine_profile: VirtualMachineScaleSetUpdateVMProfile
+        zonal_platform_fault_domain_align_mode: Union[str, ZonalPlatformFaultDomainAlignMode]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdatePublicIPAddressConfiguration(TypedDict, total=False):
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties', module='types')
+        name: str
+        properties: VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties
+        tags: dict[str, str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdatePublicIPAddressConfigurationProperties(TypedDict, total=False):
+        key "deleteOption": Union[str, DeleteOptions]
+        key "dnsSettings": ForwardRef('VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings', module='types')
+        key "idleTimeoutInMinutes": int
+        key "publicIPPrefix": ForwardRef('SubResource', module='types')
+        delete_option: Union[str, DeleteOptions]
+        dns_settings: VirtualMachineScaleSetPublicIPAddressConfigurationDnsSettings
+        idle_timeout_in_minutes: int
+        public_ip_prefix: SubResource
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateStorageProfile(TypedDict, total=False):
+        key "diskControllerType": Union[str, DiskControllerTypes]
+        key "imageReference": ForwardRef('ImageReference', module='types')
+        key "osDisk": ForwardRef('VirtualMachineScaleSetUpdateOSDisk', module='types')
+        dataDisks: list[VirtualMachineScaleSetDataDisk]
+        data_disks: list[VirtualMachineScaleSetDataDisk]
+        disk_controller_type: Union[str, DiskControllerTypes]
+        image_reference: ImageReference
+        os_disk: VirtualMachineScaleSetUpdateOSDisk
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetUpdateVMProfile(TypedDict, total=False):
+        key "billingProfile": ForwardRef('BillingProfile', module='types')
+        key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "extensionProfile": ForwardRef('VirtualMachineScaleSetExtensionProfile', module='types')
+        key "hardwareProfile": ForwardRef('VirtualMachineScaleSetHardwareProfile', module='types')
+        key "interconnectBlockProfile": ForwardRef('InterconnectBlockProfile', module='types')
+        key "licenseType": str
+        key "networkProfile": ForwardRef('VirtualMachineScaleSetUpdateNetworkProfile', module='types')
+        key "osProfile": ForwardRef('VirtualMachineScaleSetUpdateOSProfile', module='types')
+        key "scheduledEventsProfile": ForwardRef('ScheduledEventsProfile', module='types')
+        key "securityPostureReference": ForwardRef('SecurityPostureReferenceUpdate', module='types')
+        key "securityProfile": ForwardRef('SecurityProfile', module='types')
+        key "storageProfile": ForwardRef('VirtualMachineScaleSetUpdateStorageProfile', module='types')
+        key "userData": str
+        billing_profile: BillingProfile
+        diagnostics_profile: DiagnosticsProfile
+        extension_profile: VirtualMachineScaleSetExtensionProfile
+        hardware_profile: VirtualMachineScaleSetHardwareProfile
+        interconnect_block_profile: InterconnectBlockProfile
+        license_type: str
+        network_profile: VirtualMachineScaleSetUpdateNetworkProfile
+        os_profile: VirtualMachineScaleSetUpdateOSProfile
+        scheduled_events_profile: ScheduledEventsProfile
+        security_posture_reference: SecurityPostureReferenceUpdate
+        security_profile: SecurityProfile
+        storage_profile: VirtualMachineScaleSetUpdateStorageProfile
+        user_data: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVM(TrackedResource):
+        key "etag": str
+        key "id": str
+        key "identity": ForwardRef('VirtualMachineIdentity', module='types')
+        key "instanceId": str
+        key "location": Required[str]
+        key "name": str
+        key "plan": ForwardRef('Plan', module='types')
+        key "properties": ForwardRef('VirtualMachineScaleSetVMProperties', module='types')
+        key "sku": ForwardRef('Sku', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        etag: str
+        id: str
+        identity: VirtualMachineIdentity
+        instance_id: str
+        location: str
+        name: str
+        plan: Plan
+        properties: VirtualMachineScaleSetVMProperties
+        resources: list[VirtualMachineExtension]
+        sku: Sku
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMExtension(SubResourceReadOnly):
+        key "id": str
+        key "location": str
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineExtensionProperties', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: VirtualMachineExtensionProperties
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMExtensionUpdate(SubResourceReadOnly):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('VirtualMachineExtensionUpdateProperties', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: VirtualMachineExtensionUpdateProperties
+        type: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMInstanceIDs(TypedDict, total=False):
+        instanceIds: list[str]
+        instance_ids: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMInstanceRequiredIDs(TypedDict, total=False):
+        key "instanceIds": Required[list[str]]
+        instance_ids: list[str]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMInstanceView(TypedDict, total=False):
+        key "assignedHost": str
+        key "bootDiagnostics": ForwardRef('BootDiagnosticsInstanceView', module='types')
+        key "computerName": str
+        key "hyperVGeneration": Union[str, HyperVGeneration]
+        key "interconnectInstanceView": ForwardRef('InterconnectInstanceView', module='types')
+        key "maintenanceRedeployStatus": ForwardRef('MaintenanceRedeployStatus', module='types')
+        key "osName": str
+        key "osVersion": str
+        key "placementGroupId": str
+        key "platformFaultDomain": int
+        key "platformUpdateDomain": int
+        key "rdpThumbPrint": str
+        key "vmAgent": ForwardRef('VirtualMachineAgentInstanceView', module='types')
+        key "vmHealth": ForwardRef('VirtualMachineHealthStatus', module='types')
+        assigned_host: str
+        boot_diagnostics: BootDiagnosticsInstanceView
+        computer_name: str
+        disks: list[DiskInstanceView]
+        extensions: list[VirtualMachineExtensionInstanceView]
+        hyper_v_generation: Union[str, HyperVGeneration]
+        interconnect_instance_view: InterconnectInstanceView
+        maintenance_redeploy_status: MaintenanceRedeployStatus
+        os_name: str
+        os_version: str
+        placement_group_id: str
+        platform_fault_domain: int
+        platform_update_domain: int
+        rdp_thumb_print: str
+        statuses: list[InstanceViewStatus]
+        vm_agent: VirtualMachineAgentInstanceView
+        vm_health: VirtualMachineHealthStatus
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMNetworkProfileConfiguration(TypedDict, total=False):
+        key "interconnectGroupProfile": ForwardRef('InterconnectGroupProfile', module='types')
+        interconnect_group_profile: InterconnectGroupProfile
+        networkInterfaceConfigurations: list[VirtualMachineScaleSetNetworkConfiguration]
+        network_interface_configurations: list[VirtualMachineScaleSetNetworkConfiguration]
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMProfile(TypedDict, total=False):
+        key "applicationProfile": ForwardRef('ApplicationProfile', module='types')
+        key "billingProfile": ForwardRef('BillingProfile', module='types')
+        key "capacityReservation": ForwardRef('CapacityReservationProfile', module='types')
+        key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "evictionPolicy": Union[str, VirtualMachineEvictionPolicyTypes]
+        key "extensionProfile": ForwardRef('VirtualMachineScaleSetExtensionProfile', module='types')
+        key "hardwareProfile": ForwardRef('VirtualMachineScaleSetHardwareProfile', module='types')
+        key "interconnectBlockProfile": ForwardRef('InterconnectBlockProfile', module='types')
+        key "licenseType": str
+        key "networkProfile": ForwardRef('VirtualMachineScaleSetNetworkProfile', module='types')
+        key "osProfile": ForwardRef('VirtualMachineScaleSetOSProfile', module='types')
+        key "priority": Union[str, VirtualMachinePriorityTypes]
+        key "scheduledEventsProfile": ForwardRef('ScheduledEventsProfile', module='types')
+        key "securityPostureReference": ForwardRef('SecurityPostureReference', module='types')
+        key "securityProfile": ForwardRef('SecurityProfile', module='types')
+        key "serviceArtifactReference": ForwardRef('ServiceArtifactReference', module='types')
+        key "storageProfile": ForwardRef('VirtualMachineScaleSetStorageProfile', module='types')
+        key "timeCreated": str
+        key "userData": str
+        application_profile: ApplicationProfile
+        billing_profile: BillingProfile
+        capacity_reservation: CapacityReservationProfile
+        diagnostics_profile: DiagnosticsProfile
+        eviction_policy: Union[str, VirtualMachineEvictionPolicyTypes]
+        extension_profile: VirtualMachineScaleSetExtensionProfile
+        hardware_profile: VirtualMachineScaleSetHardwareProfile
+        interconnect_block_profile: InterconnectBlockProfile
+        license_type: str
+        network_profile: VirtualMachineScaleSetNetworkProfile
+        os_profile: VirtualMachineScaleSetOSProfile
+        priority: Union[str, VirtualMachinePriorityTypes]
+        scheduled_events_profile: ScheduledEventsProfile
+        security_posture_reference: SecurityPostureReference
+        security_profile: SecurityProfile
+        service_artifact_reference: ServiceArtifactReference
+        storage_profile: VirtualMachineScaleSetStorageProfile
+        time_created: str
+        user_data: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMProperties(TypedDict, total=False):
+        key "additionalCapabilities": ForwardRef('AdditionalCapabilities', module='types')
+        key "availabilitySet": ForwardRef('SubResource', module='types')
+        key "diagnosticsProfile": ForwardRef('DiagnosticsProfile', module='types')
+        key "hardwareProfile": ForwardRef('HardwareProfile', module='types')
+        key "instanceView": ForwardRef('VirtualMachineScaleSetVMInstanceView', module='types')
+        key "interconnectBlockProfile": ForwardRef('InterconnectBlockProfile', module='types')
+        key "latestModelApplied": bool
+        key "licenseType": str
+        key "modelDefinitionApplied": str
+        key "networkProfile": ForwardRef('NetworkProfile', module='types')
+        key "networkProfileConfiguration": ForwardRef('VirtualMachineScaleSetVMNetworkProfileConfiguration', module='types')
+        key "osProfile": ForwardRef('OSProfile', module='types')
+        key "protectionPolicy": ForwardRef('VirtualMachineScaleSetVMProtectionPolicy', module='types')
+        key "provisioningState": str
+        key "resilientVMDeletionStatus": Union[str, ResilientVMDeletionStatus]
+        key "securityProfile": ForwardRef('SecurityProfile', module='types')
+        key "storageProfile": ForwardRef('StorageProfile', module='types')
+        key "timeCreated": str
+        key "userData": str
+        key "virtualMachineResourceId": str
+        key "vmId": str
+        additional_capabilities: AdditionalCapabilities
+        availability_set: SubResource
+        diagnostics_profile: DiagnosticsProfile
+        hardware_profile: HardwareProfile
+        instance_view: VirtualMachineScaleSetVMInstanceView
+        interconnect_block_profile: InterconnectBlockProfile
+        latest_model_applied: bool
+        license_type: str
+        model_definition_applied: str
+        network_profile: NetworkProfile
+        network_profile_configuration: VirtualMachineScaleSetVMNetworkProfileConfiguration
+        os_profile: OSProfile
+        protection_policy: VirtualMachineScaleSetVMProtectionPolicy
+        provisioning_state: str
+        resilient_vm_deletion_status: Union[str, ResilientVMDeletionStatus]
+        security_profile: SecurityProfile
+        storage_profile: StorageProfile
+        time_created: str
+        user_data: str
+        virtual_machine_resource_id: str
+        vm_id: str
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMProtectionPolicy(TypedDict, total=False):
+        key "protectFromScaleIn": bool
+        key "protectFromScaleSetActions": bool
+        protect_from_scale_in: bool
+        protect_from_scale_set_actions: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineScaleSetVMReimageParameters(VirtualMachineReimageParameters):
+        key "exactVersion": str
+        key "forceUpdateOSDiskForEphemeral": bool
+        key "osProfile": ForwardRef('OSProfileProvisioningData', module='types')
+        key "tempDisk": bool
+        exact_version: str
+        force_update_os_disk_for_ephemeral: bool
+        os_profile: OSProfileProvisioningData
+        temp_disk: bool
+
+
+    class azure.mgmt.compute.types.VirtualMachineUpdate(UpdateResource):
+        key "identity": ForwardRef('VirtualMachineIdentity', module='types')
+        key "plan": ForwardRef('Plan', module='types')
+        key "properties": ForwardRef('VirtualMachineProperties', module='types')
+        identity: VirtualMachineIdentity
+        plan: Plan
+        properties: VirtualMachineProperties
+        tags: dict[str, str]
+        zones: list[str]
+
+
+    class azure.mgmt.compute.types.WinRMConfiguration(TypedDict, total=False):
+        listeners: list[WinRMListener]
+
+
+    class azure.mgmt.compute.types.WinRMListener(TypedDict, total=False):
+        key "certificateUrl": str
+        key "protocol": Union[str, ProtocolTypes]
+        certificate_url: str
+        protocol: Union[str, ProtocolTypes]
+
+
+    class azure.mgmt.compute.types.WindowsConfiguration(TypedDict, total=False):
+        key "enableAutomaticUpdates": bool
+        key "enableVMAgentPlatformUpdates": bool
+        key "patchSettings": ForwardRef('PatchSettings', module='types')
+        key "provisionVMAgent": bool
+        key "timeZone": str
+        key "winRM": ForwardRef('WinRMConfiguration', module='types')
+        additionalUnattendContent: list[AdditionalUnattendContent]
+        additional_unattend_content: list[AdditionalUnattendContent]
+        enable_automatic_updates: bool
+        enable_vm_agent_platform_updates: bool
+        patch_settings: PatchSettings
+        provision_vm_agent: bool
+        time_zone: str
+        win_rm: WinRMConfiguration
+
+
+    class azure.mgmt.compute.types.WindowsParameters(TypedDict, total=False):
+        key "excludeKbsRequiringReboot": bool
+        key "maxPatchPublishDate": str
+        classificationsToInclude: list[Union[str, VMGuestPatchClassificationWindows]]
+        classifications_to_include: list[Union[str, VMGuestPatchClassificationWindows]]
+        exclude_kbs_requiring_reboot: bool
+        kbNumbersToExclude: list[str]
+        kbNumbersToInclude: list[str]
+        kb_numbers_to_exclude: list[str]
+        kb_numbers_to_include: list[str]
+        max_patch_publish_date: str
+        patchNameMasksToExclude: list[str]
+        patchNameMasksToInclude: list[str]
+        patch_name_masks_to_exclude: list[str]
+        patch_name_masks_to_include: list[str]
+
+
+    class azure.mgmt.compute.types.WindowsVMGuestPatchAutomaticByPlatformSettings(TypedDict, total=False):
+        key "bypassPlatformSafetyChecksOnUserSchedule": bool
+        key "rebootSetting": Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
+        bypass_platform_safety_checks_on_user_schedule: bool
+        reboot_setting: Union[str, WindowsVMGuestPatchAutomaticByPlatformRebootSetting]
+
+
+    class azure.mgmt.compute.types.ZoneAllocationPolicy(TypedDict, total=False):
+        key "maxInstancePercentPerZonePolicy": ForwardRef('MaxInstancePercentPerZonePolicy', module='types')
+        key "maxZoneCount": int
+        max_instance_percent_per_zone_policy: MaxInstancePercentPerZonePolicy
+        max_zone_count: int
+
+
+    class azure.mgmt.compute.types.ZoneMovement(TypedDict, total=False):
+        key "isEnabled": bool
+        is_enabled: bool
 
 
 ```

@@ -1,0 +1,13 @@
+{
+  "properties": {
+    "authType": "AAD",
+    "category": "AzureOpenAi",
+    "isSharedToAll": true,
+    "metadata": {
+      "ApiType": "Azure",
+      "ApiVersion": "2024-02-01",
+      "ResourceId": null
+    },
+    "target": "https://smoke-aoai-entra.openai.azure.com/"
+  }
+}
