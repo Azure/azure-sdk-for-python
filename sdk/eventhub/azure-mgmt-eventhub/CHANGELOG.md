@@ -1,5 +1,26 @@
 # Release History
 
+## 12.0.0b3 (2026-07-27)
+
+### Features Added
+
+  - Client `EventHubManagementClient` added operation group `fabric_shortcuts`
+  - Client `EventHubManagementClient` added operation group `upgrade_preferences_operations`
+  - Added model `ExceptionWindow`
+  - Added enum `ExceptionWindowAction`
+  - Added model `FabricShortcut`
+  - Added model `FabricShortcutConfiguration`
+  - Added model `FabricShortcutProperties`
+  - Added enum `FabricShortcutStatus`
+  - Added enum `FabricShortcutType`
+  - Added model `MaintenanceWindow`
+  - Added enum `UpgradePreferenceDayOfWeek`
+  - Added model `UpgradePreferences`
+  - Added model `UpgradePreferencesProperties`
+  - Added model `UpgradeStatus`
+  - Added operation group `FabricShortcutsOperations`
+  - Added operation group `UpgradePreferencesOperationsOperations`
+
 ## 12.0.0b2 (2026-07-07)
 
 ### Features Added
