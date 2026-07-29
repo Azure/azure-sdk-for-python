@@ -33,16 +33,16 @@ def main():
 
     response = client.workspaces.begin_create_or_update(
         resource_group_name="rgdiscovery",
-        workspace_name="b8d58cd85996a6dea3",
+        workspace_name="a55c900f32bf865be0",
         resource={
             "location": "uksouth",
             "properties": {
                 "agentSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/agentSubnet1",
                 "customerManagedKeys": "Enabled",
                 "keyVaultProperties": {
-                    "keyName": "yfplarzdfwsut",
+                    "keyName": "cdrnokqonyvfzot",
                     "keyVaultUri": "https://microsoft.com/a",
-                    "keyVersion": "qlsjcf",
+                    "keyVersion": "pxfpvedkfuagtnk",
                 },
                 "logAnalyticsClusterId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.OperationalInsights/clusters/cluster1",
                 "privateEndpointSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/privateEndpointSubnet1",
@@ -55,12 +55,12 @@ def main():
                 },
                 "workspaceSubnetId": "/subscriptions/31735C59-6307-4464-8B80-3675223F23D2/providers/Microsoft.Network/virtualNetworks/virtualnetwork1/subnets/workspaceSubnet1",
             },
-            "tags": {"key5364": "xiwdefebkbfffgqlzmqaeqsqeq"},
+            "tags": {"key8931": "verirbmpdzupxkkeblzfq"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/Workspaces_CreateOrUpdate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/Workspaces_CreateOrUpdate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

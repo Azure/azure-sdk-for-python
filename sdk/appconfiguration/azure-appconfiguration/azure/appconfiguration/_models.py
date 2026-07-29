@@ -127,11 +127,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     :param feature_id: The identity of the configuration setting.
     :type feature_id: str
     :keyword enabled: The value indicating whether the feature flag is enabled.
-        A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-        if there are no conditions or if all conditions are satisfied. Default value is False.
+        A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+        against its conditions to determine its state. Default value of this property is False.
     :paramtype enabled: bool
-    :keyword filters: Filters that must run on the client and be evaluated as true for the feature
-        to be considered enabled.
+    :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+        By default (requirement type "Any"), the feature is considered enabled if at least one filter
+        evaluates to true. With requirement type "All", every filter must evaluate to true.
     :paramtype filters: list[dict[str, Any]] or None
     """
 
@@ -143,10 +144,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """The key of the configuration setting."""
     enabled: bool
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
-        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
+        If enabled is true, then the feature flag is evaluated against its conditions/filters to determine
+        its state."""
     filters: Optional[List[Dict[str, Any]]]
-    """Filters that must run on the client and be evaluated as true for the feature
-        to be considered enabled."""
+    """Filters that run on the client to determine whether the feature is enabled. By default
+        (requirement type "Any"), the feature is considered enabled if at least one filter evaluates
+        to true. With requirement type "All", every filter must evaluate to true."""
     label: str
     """The label used to group this configuration setting with others."""
     display_name: str
@@ -188,11 +191,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         :param feature_id: The identity of the configuration setting.
         :type feature_id: str
         :keyword enabled: The value indicating whether the feature flag is enabled.
-            A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-            if there are no conditions or if all conditions are satisfied. Default value of this property is False.
+            A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+            against its conditions/filters to determine its state. Default value of this property is False.
         :paramtype enabled: bool
-        :keyword filters: Filters that must run on the client and be evaluated as true for the feature
-            to be considered enabled.
+        :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+            By default (requirement type "Any"), the feature is considered enabled if at least one filter
+            evaluates to true. With requirement type "All", every filter must evaluate to true.
         :paramtype filters: list[dict[str, Any]] or None
         """
         if "value" in kwargs:
@@ -304,7 +308,7 @@ class SecretReferenceConfigurationSetting(ConfigurationSetting):
 
     :param key: The key of the configuration setting.
     :type key: str
-    :param secret_id: The identifier of the secret referenced by this configuration setting.
+    :param secret_id: The URI of the secret referenced by this configuration setting.
     :type secret_id: str
     """
 

@@ -15,12 +15,14 @@ from ._utils import get_current_utc_time
 
 
 class AppConfigRequestsCredentialsPolicy(HTTPPolicy):
-    """Implementation of request-oauthlib except and retry logic.
+    """A policy that signs App Configuration requests using HMAC authentication.
 
     :param credential: The credential used to authenticate requests.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :param str endpoint: The App Configuration endpoint.
-    :param str id_credential: The credential identifier used to sign requests.
+    :param endpoint: The App Configuration endpoint.
+    :type endpoint: str
+    :param id_credential: The credential ID used for HMAC authentication.
+    :type id_credential: str
     """
 
     def __init__(self, credential: AzureKeyCredential, endpoint: str, id_credential: str):

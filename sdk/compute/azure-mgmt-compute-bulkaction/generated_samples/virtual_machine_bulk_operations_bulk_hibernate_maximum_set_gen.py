@@ -32,15 +32,18 @@ def main():
     )
 
     response = client.virtual_machine_bulk_operations.bulk_hibernate_operation(
-        resource_group_name="myResourceGroup",
-        location="eastus2euap",
+        resource_group_name="rgBulkactions",
+        location="useast2euap",
         request_body={
             "executionParameters": {
-                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 20}
+                "retryPolicy": {"onFailureAction": "Unknown", "retryCount": 2, "retryWindowInMinutes": 19}
             },
-            "resources": {
-                "ids": [
-                    "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM"
+            "resourcesWithContext": {
+                "resources": [
+                    {
+                        "resourceContext": "hibernateContext",
+                        "resourceId": "/subscriptions/12345678-1234-1234-1234-123456789012/resourceGroups/myResourceGroup/providers/Microsoft.Compute/virtualMachines/myVM",
+                    }
                 ]
             },
         },
@@ -48,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-06-06/VirtualMachineBulkOperations_BulkHibernate_MaximumSet_Gen.json
+# x-ms-original-file: 2026-07-06-preview/VirtualMachineBulkOperations_BulkHibernate_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

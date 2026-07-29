@@ -59,11 +59,8 @@ class SyncToken:
             return None
 
 
-class SyncTokenPolicy(SansIOHTTPPolicy):  # pylint: disable=docstring-keyword-should-match-keyword-only
-    """A simple policy that enable the given callback with the response.
-
-    :keyword callback raw_response_hook: Callback function. Will be invoked on response.
-    """
+class SyncTokenPolicy(SansIOHTTPPolicy):
+    """A policy that applies and updates App Configuration sync tokens."""
 
     def __init__(self, **kwargs: Any) -> None:  # pylint: disable=unused-argument
         self._sync_token_header = "Sync-Token"

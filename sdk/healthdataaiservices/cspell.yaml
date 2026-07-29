@@ -1,0 +1,11 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - deid
+  - deidentification
+  - deidentified
+  - deidentify
+  - deidservices
+  - healthdataaiservices

@@ -144,29 +144,6 @@
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
   "words": [
-    "vally",
-    "regen",
-    "pylintrc",
-    "qnas",
-    "msedge",
-    "spinup",
-    "cibuildwheel",
-    "aoai",
-    "pyprojects",
-    "certifi",
-    "cffi",
-    "tomlw",
-    "xdist",
-    "pyprojecttoml",
-    "tomli",
-    "sdkrel",
-    "qnamaker",
-    "mindependency",
-    "automl",
-    "pyyaml",
-    "CONLL",
-    "pyjwt",
-    "conll",
     "aad",
     "aadclient",
     "AADSTS",
@@ -177,51 +154,61 @@
     "adls",
     "aenter",
     "agentic",
-    "Agentic",
     "aiohttp",
+    "aiter",
     "alru",
+    "amltemp",
+    "amltmp",
     "amqp",
     "amqps",
     "anyio",
+    "aoai",
     "apim",
     "Asal",
     "asgi",
     "astimezone",
-    "AsyncIterable",
     "asyncio",
+    "AsyncIterable",
+    "automl",
     "avroencoder",
     "Avs",
     "azcmagent",
     "azpysdk",
-    "pyenv",
     "azsdk",
     "azurecr",
-    "azuremgmtcore",
     "azuremgmtcommunication",
+    "azuremgmtcore",
     "azuremypackage",
     "bdist",
     "Beddall",
     "bstr",
+    "BUILDID",
     "byref",
+    "cchardet",
     "cdll",
+    "centralus",
+    "centraluseuap",
+    "certifi",
     "certprg",
     "certver",
-    "cchardet",
+    "cffi",
+    "chdir",
+    "cibuildwheel",
     "clientid",
     "cname",
     "conda",
+    "CONLL",
     "connectedvmware",
     "consts",
     "contoso",
     "contosodataset",
     "contosowidgetmanager",
-    "centralus",
-    "centraluseuap",
     "creds",
     "ctoring",
     "ctxt",
     "ctypes",
     "curr",
+    "dacl",
     "dateutil",
     "ddos",
     "decryptor",
@@ -229,13 +216,16 @@
     "deidservice",
     "delenv",
     "dependened",
+    "deps",
     "deque",
     "deserialization",
     "deserializers",
+    "dicom",
     "disablecov",
     "distilbert",
     "distilroberta",
     "docfx",
+    "documentdb",
     "dont",
     "dotenv",
     "dowhile",
@@ -245,9 +235,8 @@
     "dtlksd",
     "duckdb",
     "DWORD",
-    "eastus",
     "Easm",
-    "euap",
+    "eastus",
     "eckey",
     "ekus",
     "encryptor",
@@ -255,6 +244,7 @@
     "entra",
     "envname",
     "esrp",
+    "euap",
     "evals",
     "fastmcp",
     "fileno",
@@ -265,8 +255,8 @@
     "GCCH",
     "Geraghty",
     "getsizeof",
-    "graphrbac",
     "gmtime",
+    "graphrbac",
     "guids",
     "hanaonazure",
     "hdinsight",
@@ -276,32 +266,32 @@
     "himds",
     "hmac",
     "hnstestscope",
-    "howto",
     "Hololens",
+    "howto",
     "httpx",
     "illumos",
     "imds",
+    "incompat",
+    "ingraph",
     "inotify",
+    "inprogress",
     "ints",
     "iohttp",
-    "iscai",
-    "IOHTTP",
     "IOLRO",
-    "incompat",
-    "inprogress",
     "ipconfiguration",
     "ipconfigurations",
     "iqmp",
+    "iscai",
     "isclass",
     "iscoroutine",
     "iscoroutinefunction",
     "iscsi",
+    "ispkg",
     "iterrows",
     "ivar",
     "ivars",
     "jwks",
     "kashifkhan",
-    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -309,53 +299,63 @@
     "Kubernetes",
     "Kusto",
     "kvlt",
+    "libasound",
+    "liftr",
+    "LINUXVMIMAGE",
     "livekvtest",
     "livekvtestcertprg",
     "livekvtestcertrec",
+    "livekvtestdecryptperfkey",
     "livekvtestgetcertperfcert",
+    "livekvtestgetkeyperfkey",
     "livekvtestgetsecretperfsecret",
     "livekvtestlistperfsecret",
-    "livekvtestdecryptperfkey",
-    "livekvtestgetkeyperfkey",
     "livekvtestsignperfkey",
     "livekvtestunwrapperfkey",
-    "lrobasepollingasynclrobasepolling",
-    "lropollerasynclropoller",
     "lmazuel",
+    "logprobs",
     "logz",
     "LPCWSTR",
+    "lrobasepollingasynclrobasepolling",
+    "lropollerasynclropoller",
     "Lucene",
+    "MACVMIMAGE",
     "Mazuel",
     "mbps",
     "mday",
-    "mibps",
     "mgmt",
     "mhsm",
-    "mros",
-    "Nify",
+    "mibps",
+    "mindependency",
     "mipsle",
     "mktime",
     "mlindex",
+    "mros",
     "msal",
     "msauth",
+    "msedge",
+    "MSRC",
     "msrest",
     "msrestazure",
-    "msyyc",
     "MSSQL",
-    "MSRC",
+    "msyyc",
+    "mtype",
     "mutex",
     "myacr",
     "mydirectory",
     "myfile",
     "mynewpackage",
     "mypackage",
-    "myvault",
     "myservice",
     "mytable",
+    "myuseragent",
+    "myvault",
     "nazsdk",
-    "nbytes",
     "nbsp",
+    "nbytes",
+    "Nify",
     "noarch",
+    "nocae",
     "NOPERM",
     "norecursedirs",
     "northcentralus",
@@ -363,18 +363,18 @@
     "OAEP",
     "oauthlib",
     "objs",
-    "odata",
     "octocat",
+    "odata",
     "oidc",
     "onboarded",
     "onmicrosoft",
     "openai",
-    "OPENAI",
+    "openpyxl",
     "otel",
     "otlp",
-    "OTLP",
     "owasp",
     "ownerid",
+    "parameterizing",
     "PBYTE",
     "PCREDENTIAL",
     "pepy",
@@ -390,41 +390,58 @@
     "prebuilts",
     "premf",
     "prevsnapshot",
+    "prnumber",
     "prompty",
     "pschema",
     "PSECRET",
+    "pyaudio",
     "pydantic",
+    "pyenv",
     "pyfetch",
     "pyfuncitem",
     "pygobject",
+    "pyjwt",
+    "pylintrc",
     "pyodide",
+    "pypirc",
+    "pyprojects",
+    "pyprojecttoml",
     "pyright",
     "pyrightconfig",
-    "parameterizing",
-    "pypirc",
     "pyrit",
     "pystac",
     "pytyped",
     "pytz",
-    "pywin",
     "pyversion",
+    "pywin",
+    "pyyaml",
+    "qnamaker",
+    "qnas",
+    "radiculopathy",
     "RAGRS",
     "rdbms",
+    "reauthenticated",
+    "regen",
+    "reimage",
+    "reqs",
+    "revascularization",
     "rgeraghty",
+    "rgname",
+    "rgpy",
+    "riscv",
     "Rohit",
     "rohitganguly",
-    "reauthenticated",
-    "reimage",
-    "revascularization",
-    "riscv",
     "rollup",
+    "ROPC",
     "RSNULL",
     "rtsp",
     "rtype",
     "rwdlacu",
     "sansiohttppolicy",
     "scbedd",
+    "SDDL",
     "sdist",
+    "sdkrel",
     "sdpath",
     "secbak",
     "SECG",
@@ -437,16 +454,20 @@
     "skipif",
     "sktid",
     "skus",
+    "solft",
     "southcentralus",
+    "spinup",
     "ssis",
     "struct",
-    "STRUCT",
     "substringof",
     "surrogated",
+    "swaggertosdk",
     "systemperf",
     "tenvparallel",
     "Teradata",
     "timegm",
+    "tomli",
+    "tomlw",
     "toxenv",
     "tzname",
     "tzutc",
@@ -454,13 +475,14 @@
     "uamqp",
     "uksouth",
     "ukwest",
+    "ulaw",
     "uninstrument",
     "uninstrumented",
     "uninstrumenting",
+    "uniquifier",
     "unpad",
     "unpadder",
     "unpartial",
-    "uniquifier",
     "unredacted",
     "unseekable",
     "unsubscriptable",
@@ -469,9 +491,9 @@
     "urandom",
     "urlsafeb",
     "urlunparse",
-    "usgov",
     "usdodcentral",
     "usdodeast",
+    "usgov",
     "usgovarizona",
     "usgovcloudapi",
     "usgoviowa",
@@ -479,11 +501,14 @@
     "usgovvirginia",
     "utid",
     "Uvsc",
+    "vally",
     "vcrpy",
     "vendored",
+    "venvtools",
     "verifysdist",
     "verifywhl",
     "versionid",
+    "viseme",
     "vmimage",
     "vmss",
     "vmwarecloudsimple",
@@ -492,86 +517,18 @@
     "vsts",
     "waza",
     "wchar",
+    "wday",
     "wesh",
     "westcentralus",
     "westus",
     "wfile",
-    "westus",
-    "xlnet",
-    "BUILDID",
-    "documentdb",
-    "chdir",
-    "radiculopathy",
-    "reqs",
-    "rgpy",
-    "swaggertosdk",
-    "rgname",
-    "mtype",
-    "venvtools",
-    "ispkg",
-    "openpyxl",
-    "deps",
-    "prnumber",
-    "yarl",
-    "SDDL",
-    "dacl",
-    "wday",
     "whls",
-    "aiter",
-    "solft",
-    "amltmp",
-    "amltemp",
-    "deserializers",
-    "dicom",
     "WINDOWSVMIMAGE",
-    "LINUXVMIMAGE",
-    "MACVMIMAGE",
-    "myuseragent",
-    "viseme",
-    "Viseme",
-    "VISEME",
-    "ulaw",
-    "ULAW",
-    "logprobs",
-    "pyaudio",
-    "PyAudio",
-    "libasound",
-    "ingraph"
+    "xdist",
+    "xlnet",
+    "yarl"
   ],
   "overrides": [
-    {
-      "filename": "sdk/ai/**",
-      "words": [
-        "azureml",
-        "mlflow",
-        "tika",
-        "pypdf",
-        "fsspec",
-        "openai",
-        "tiktoken",
-        "vectordb",
-        "pybase",
-        "mlindex",
-        "mlindexes",
-        "aoai",
-        "faiss",
-        "mlmodel",
-        "openmpi",
-        "vcpu",
-        "vcpus",
-        "levelno",
-        "miniconda",
-        "runsvdir",
-        "Fsubscriptions",
-        "Fresource",
-        "Fproviders",
-        "Fdeployments",
-        "roups",
-        "mltable",
-        "wsid",
-        "runid"
-      ]
-    },
     {
       "filename": "doc/sphinx/generate_doc.py",
       "words": [
@@ -610,16 +567,9 @@
       ]
     },
     {
-      "filename": "sdk/remoterendering/**",
-      "words": [
-        "Phong"
-      ]
-    },
-    {
       "filename": "eng/tools/azure-sdk-tools/ci_tools/deps.html.j2",
       "words": [
         "isfork",
-        "ISFORK",
         "thead"
       ]
     },
@@ -643,1522 +593,23 @@
       ]
     },
     {
-      "filename": "sdk/core/azure-core/tests/test_serialization.py",
-      "words": [
-        "Rlcw",
-        "Jwcmlud"
-      ]
-    },
-    {
-      "filename": "sdk/identity/azure-identity/tests/*.py",
-      "words": [
-        "infile",
-        "acrs"
-      ]
-    },
-    {
-      "filename": "sdk/identity/test-resources*",
-      "words": [
-        "kubelet",
-        "otsv"
-      ]
-    },
-    {
-      "filename": "sdk/identity/azure-identity/TROUBLESHOOTING.md",
-      "words": [
-        "wammsa"
-      ]
-    },
-    {
-      "filename": "sdk/identity/azure-identity-broker/tests/*.py",
-      "words": [
-        "signin"
-      ]
-    },
-    {
-      "filename": "sdk/tables/azure-data-tables/tests/**/*.py",
-      "words": [
-        "tzutc",
-        "tzoffset",
-        "BRST",
-        "uttable",
-        "pytablesync",
-        "pytableasync",
-        "mydomain",
-        "myaccount",
-        "testid",
-        "clsid",
-        "doesnt",
-        "doesntexist"
-      ]
-    },
-    {
-      "filename": "sdk/tables/azure-data-tables/**/*.py",
-      "words": [
-        "astimezone",
-        "myasynctable",
-        "mytableasync",
-        "mytable",
-        "edmtypes",
-        "specifed"
-      ]
-    },
-    {
-      "filename": "sdk/tables/azure-data-tables/CHANGELOG.md",
-      "words": [
-        "kldtz"
-      ]
-    },
-    {
-      "filename": "sdk/tables/test-resources.json",
-      "words": [
-        "mmspecial"
-      ]
-    },
-    {
-      "filename": "sdk/translation/azure-ai-translation-document/**",
-      "words": [
-        "essai",
-        "myfoldername"
-      ]
-    },
-    {
-      "filename": "sdk/translation/azure-ai-translation-text/**",
-      "words": [
-        "akhtabar",
-        "deserializers",
-        "Esto",
-        "hudha",
-        "mosca",
-        "mros",
-        "NOACTION",
-        "prueba",
-        "wordomatic"
-      ]
-    },
-    {
-      "filename": "sdk/textanalytics/azure-ai-textanalytics/**",
-      "words": [
-        "Forndexter",
-        "ESDNI",
-        "dinero",
-        "Zocor",
-        "dann",
-        "UMLS",
-        "nach",
-        "año",
-        "BRCPF",
-        "abril",
-        "zalgo",
-        "n'était",
-        "tengo",
-        "IDRG",
-        "était",
-        "gegründet",
-        "L'hôtel",
-        "Hola",
-        "hola",
-        "escrito",
-        "Coumadin",
-        "EUGPS",
-        "dokument",
-        "wurde",
-        "Detta",
-        "IFIC",
-        "Fahrt",
-        "documento",
-        "scritto",
-        "USUK",
-        "Sprache",
-        "PLREGON",
-        "Fusce",
-        "Inigo",
-        "italiano",
-        "skrivet",
-        "verfasst",
-        "engelska",
-        "fhir",
-        "FHIR",
-        "naam"
-      ]
-    },
-    {
-      "filename": "sdk/core/azure-core-tracing-opentelemetry/**",
-      "words": [ "ctxt", "somethingstuid" ]
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics/**",
-      "words": [
-        "fhir",
-        "BRCPF",
-        "IDRG",
-        "EUGPS",
-        "PLREGON",
-        "REGON",
-        "ESDNI",
-        "USUK",
-        "ARMN",
-        "Bangla",
-        "ETHI",
-        "Ethi",
-        "GEOR",
-        "Geor",
-        "GREK",
-        "Grek",
-        "GUJR",
-        "Gujr",
-        "HANI",
-        "Hani",
-        "HEBR",
-        "Hebr",
-        "JPAN",
-        "Jpan",
-        "KHMR",
-        "Khmr",
-        "KNDA",
-        "Knda",
-        "LAOO",
-        "Laoo",
-        "MLYM",
-        "Mlym",
-        "MTEI",
-        "Mtei",
-        "Meitei",
-        "MYMR",
-        "Mymr",
-        "OLCK",
-        "Olck",
-        "ORYA",
-        "Orya",
-        "SHRD",
-        "Shrd",
-        "Sharada",
-        "TAML",
-        "Taml",
-        "TELU",
-        "Telu",
-        "THAA",
-        "Thaa",
-        "Thaana",
-        "TIBT",
-        "Tibt",
-        "UMLS",
-        "Effile",
-        "gont",
-        "mundo",
-        "naam",
-        "DBAUTH",
-        "Kelvey",
-        "CMLC",
-        "Absractive"
-      ],
-      "caseSensitive": false
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": [ "conv", "summ", "Enviar", "presentación", "CLU's"],
-      "caseSensitive": false
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
-      "words": [ "undoc" ]
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/azure/ai/language/conversations/**/_serialization.py",
-      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-textanalytics-authoring/**",
-      "words": [ "unassigning", "Customtextummarization", "cmatrix", "accb" ]
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-conversations-authoring/**",
-      "words": [ "unassigning", "unassignment" ],
-      "caseSensitive": false
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/**",
-      "words": [ "qnas", "qnamaker", "ADTO", "tfidf", "ngram", "kwoa" ],
-      "caseSensitive": false
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/tests/test_query_text*.py",
-      "words": [ "groovin", "Olufsen" ]
-    },
-    {
-      "filename": "sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/**/_serialization.py",
-      "words": [ "ctxt", "wday", "mday", "astimezone", "unflattened", "JSONify", "deseralize" ]
-    },
-    {
-      "filename": "sdk/cognitiveservices/azure-cognitiveservices-language-spellcheck/tests/*.py",
-      "words": [ "Apim", "cognituve" ]
-    },
-    {
-      "filename": "sdk/communication/**",
-      "words": [
-        "XVCJ",
-        "PBOF"
-      ]
-    },
-    {
-      "filename": "sdk/communication/azure-communication-identity/tests/**",
-      "words": [
-        "Njgw",
-        "FNNHHJT",
-        "Zwiz",
-        "nypg",
-        "tzutc",
-        "gettz"
-      ]
-    },
-    {
-      "filename": "sdk/containerregistry/azure-containerregistry/**",
-      "words": [
-        "udpated",
-        "cncf",
-        "oras",
-        "rootfs"
-      ]
-    },
-    {
-      "filename": "sdk/eventgrid/**/*",
-      "words": [
-        "cncf",
-        "CNCF",
-        "Cncf",
-        "MQTT",
-        "Dicom",
-        "Errored",
-        "Fhir"
-      ]
-    },
-    {
-      "filename": "sdk/eventhub/test-resources.json",
-      "words": [
-        "mmspecial"
-      ]
-    },
-    {
-      "filename": "sdk/eventhub/azure-eventhub-checkpointstoreblob/**",
-      "words": [
-        "blobstoragecs",
-        "blobstoragepm",
-        "rscc",
-        "rscd",
-        "rsce",
-        "rscl",
-        "rsct",
-        "saoid",
-        "scid",
-        "skoid",
-        "suoid"
-      ]
-    },
-    {
-      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/tests/*.py",
-      "words": [
-        "WDLABCD"
-      ]
-    },
-    {
-      "filename": "sdk/formrecognizer/azure-ai-formrecognizer/**",
-      "words": [
-        "allinone",
-        "dmac",
-        "ierr",
-        "mymodel",
-        "heif",
-        "racwd",
-        "rrggbb",
-        "UPCA",
-        "UPCE"
-      ]
-    },
-    {
-      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/tests/*.py",
-      "words": [
-        "WDLABCD"
-      ]
-    },
-    {
-      "filename": "sdk/documentintelligence/azure-ai-documentintelligence/**",
-      "words": [
-        "allinone",
-        "dmac",
-        "ierr",
-        "mymodel",
-        "heif",
-        "racwd",
-        "rrggbb",
-        "UPCA",
-        "UPCE",
-        "mros",
-        "Nify",
-        "deserializers",
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/healthinsights/**",
-      "words": [
-        "ABDO",
-        "ACEI",
-        "acessory",
-        "Angioedema",
-        "ANGIOEDEMA",
-        "angioedema",
-        "Apyrexial",
-        "auscltation",
-        "bilat",
-        "BIPAP",
-        "Bisacodyl",
-        "brochial",
-        "Caphosol",
-        "CARDIOVASC",
-        "chole",
-        "Cytoxan",
-        "DCIS",
-        "DEBAB",
-        "DEBAC",
-        "DEBAE",
-        "DEFIC",
-        "Dilt",
-        "diurese",
-        "dyslipidemia",
-        "ecchymoses",
-        "ENDO",
-        "Farenheit",
-        "fhir",
-        "fludarabine",
-        "Gastro",
-        "Gastroesophageal",
-        "GENEORPROTEIN",
-        "GENEORPROTEIN",
-        "Hematocrit",
-        "hemodynamic",
-        "hemodynamics",
-        "hemolytic",
-        "hemoptysis",
-        "hemoptysis",
-        "Hydrox",
-        "hypercholesterolemia",
-        "HYPERLIPEM",
-        "hypernatremia",
-        "Hypogammaglobumenia",
-        "hystarectomy",
-        "IADLs",
-        "inferolateral",
-        "IVIG",
-        "KIDN",
-        "lasix",
-        "LBTEST",
-        "LBTEST",
-        "LBTEST",
-        "LBTEST",
-        "LBTEST",
-        "LBTESTCD",
-        "LMCA",
-        "lopressor",
-        "LVEDP",
-        "LVEF",
-        "LYMPHADENO",
-        "MALIG",
-        "Medrol",
-        "meds",
-        "MIBI",
-        "Mirena",
-        "MTHU",
-        "Musculo",
-        "MYCNF",
-        "MYOCARD",
-        "nbrochial",
-        "NEURO",
-        "nhemodynamics",
-        "NKDA",
-        "nsclc",
-        "nxoperex",
-        "Omecprazole",
-        "onco",
-        "PERRLA",
-        "Phos",
-        "PRBCs",
-        "Prilosec",
-        "retrorubral",
-        "RPDA",
-        "sats",
-        "scopy",
-        "SDTM",
-        "Soln",
-        "Solu",
-        "solumedrol",
-        "Succ",
-        "sulfonylurea",
-        "tachycardic",
-        "tachypnic",
-        "Tazobactam",
-        "Theophyline",
-        "thyromegaly",
-        "tounge",
-        "tounge",
-        "Uniphyl",
-        "VASODILAT",
-        "VSTESTCD",
-        "xoperex",
-        "Zocor"
-      ]
-    },
-    {
-      "filename": "sdk/keyvault/**",
-      "words": [
-        "eddsa",
-        "Thawte"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/test-resources.json",
-      "words": [
-        "azconfig",
-        "azmonitordce",
-        "euap",
-        "azmonitordcr",
-        "azmonitorlogsws",
-        "authr",
-        "dcrrole",
-        "pergb"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-*/**/*",
-      "words": [
-        "ctxt",
-        "wday",
-        "percentilesw",
-        "plotly",
-        "nbformat",
-        "nbconvert",
-        "rollupby",
-        "milli",
-        "resourceid",
-        "Exceps",
-        "processiorate",
-        "processiobytessec",
-        "iowait",
-        "softirq"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*",
-      "words": [
-        "blrp",
-        "configurators",
-        "dbapi",
-        "grpc",
-        "opentelemetry",
-        "otel",
-        "OTELRESOURCE",
-        "OTLP",
-        "otlp",
-        "speced",
-        "pkgutils",
-        "psutil",
-        "psycopg",
-        "uninstrument",
-        "uninstrumented",
-        "scputimes"
-      ]
-    },
-    {
-      "filename": "sdk/monitor/azure-monitor-opentelemetry*/**/*.py",
-      "words": [
-        "asgi",
-        "ikey",
-        "msecs",
-        "mycontainer",
-        "pclp",
-        "pcsp",
-        "semconv",
-        "updown",
-        "uvicorn"
-      ]
-    },
-    {
-      "filename": "sdk/schemaregistry/**/*.py",
-      "words": [
-        "mros",
-        "deserializers",
-        "ctxt",
-        "wday",
-        "Nify"
-      ]
-    },
-    {
-      "filename": "sdk/schemaregistry/**/tests/**/*.py",
-      "words": [
-        "favo",
-        "randb"
-      ]
-    },
-    {
-      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/**/*.py",
-      "words": [
-        "currsize"
-      ]
-    },
-    {
-      "filename": "sdk/schemaregistry/azure-schemaregistry-avroencoder/doc/*.rst",
-      "words": [
-        "undoc"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-spark/azure/synapse/spark/models/*.py",
-      "words": [
-        "pyspark",
-        "ename",
-        "evalue"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/aio/operations/*.py",
-      "words": [
-        "Syms",
-        "MetastoreUpdation"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/models/*.py",
-      "words": [
-        "USQL",
-        "Eloqua",
-        "Hdfs",
-        "Informix",
-        "Magento",
-        "MetastoreUpdation",
-        "Netezza",
-        "Odbc",
-        "Responsys",
-        "Sybase",
-        "Twilio",
-        "Vertica",
-        "Xero",
-        "SASL",
-        "SSISDB",
-        "WTGCTBG",
-        "ilearner",
-        "DBFS",
-        "eloqua",
-        "byoa",
-        "cacerts",
-        "HDFS",
-        "hcatalog",
-        "ondemand",
-        "oozie",
-        "magento",
-        "mktorest",
-        "nbformat",
-        "paramref",
-        "myshopify",
-        "mysquare",
-        "xero"
-      ]
-    },
-    {
-      "filename": "sdk/synapse/azure-synapse-artifacts/azure/synapse/artifacts/operations/*.py",
-      "words": [
-        "Syms",
-        "Updation"
-      ]
-    },
-    {
-      "filename": "sdk/storage/azure-storage-file-datalake/**",
-      "words": [
-        "dlake",
-        "rwxrwxrwx",
-        "rwxrw",
-        "rwxr",
-        "ABFS",
-        "mynewfile",
-        "mynewdirectory",
-        "mynewfilesystem",
-        "mynewfilesystems",
-        "myfilesystem",
-        "myfilesystemforlistpaths",
-        "myfilesystemforgetclient",
-        "myclientfilesystem",
-        "mydirectoryfilesystem",
-        "myleasefilesystem",
-        "mypathfilesystem",
-        "mymetadatafilesystemsync",
-        "fpath",
-        "fsname",
-        "dname",
-        "filesys",
-        "testfs",
-        "nonexistentfs",
-        "saoid",
-        "testid",
-        "deletionid",
-        "cpkfile",
-        "cpkdirectory",
-        "cpksubdirectory",
-        "thead",
-        "tbody",
-        "racwdlmeop",
-        "newfs",
-        "adlsstorage",
-        "adlskey",
-        "skdutid",
-        "sduoid"
-      ]
-    },
-    {
-      "filename": "sdk/loadtestservice/azure-developer-loadtesting/azure/developer/loadtesting/**",
-      "words": [
-        "vusers"
-      ]
-    },
-    {
-      "filename": "sdk/ml/test-resources.json",
-      "words": [
-        "vnext",
-        "sdkvnextcli",
-        "GZRS",
-        "RAGZRS",
-        "kvtest",
-        "amlworkspace",
-        "euap",
-        "automl",
-        "azureml"
-      ]
-    },
-    {
-      "filename": "sdk/ml/*tests.yml",
-      "words": [
-        "euap"
-      ]
-    },
-    {
-      "filename": "sdk/ml/azure-ai-ml/**",
-      "words": [
-        "azureml",
-        "mldesigner",
-        "restclient",
-        "tqdm",
-        "mlflow",
-        "automl",
-        "featurization",
-        "mltable",
-        "flds",
-        "resourceid",
-        "hdfs",
-        "qnormal",
-        "qlognormal",
-        "quniform",
-        "qloguniform",
-        "odict",
-        "sdkv",
-        "jioindiawest",
-        "levelno",
-        "amlignore",
-        "envvar",
-        "miniconda",
-        "amlcompute",
-        "onnx",
-        "nesterov",
-        "debugpy",
-        "byoc",
-        "klass",
-        "vits",
-        "vitb",
-        "pbar",
-        "cntx",
-        "pydash",
-        "sklearn",
-        "openmpi",
-        "myworkspace",
-        "mydatastore",
-        "mlnlp",
-        "prec",
-        "pacf",
-        "armid",
-        "dsvm",
-        "aisupercomputer",
-        "mferp",
-        "nopycln",
-        "smod",
-        "etype",
-        "stype",
-        "roups",
-        "txts",
-        "sobol",
-        "revo",
-        "modelsrc",
-        "amlworkspace",
-        "plrmodel",
-        "noopener",
-        "runsvdir",
-        "toolsai",
-        "azuremlext",
-        "euap",
-        "centraluseuap",
-        "consts",
-        "lnotab",
-        "nlocals",
-        "kwonlyargcount",
-        "dcid",
-        "startf",
-        "dpkg",
-        "isreused",
-        "reusedrunid",
-        "strictyaml",
-        "funcs",
-        "Fsubscriptions",
-        "Fresource",
-        "Fproviders",
-        "Fdeployments",
-        "isfolder",
-        "mylist",
-        "unioned",
-        "adamw",
-        "yolov",
-        "xdist",
-        "adla",
-        "listxattr",
-        "copyxattr",
-        "curatedenv",
-        "cuda",
-        "mkdtemp",
-        "runit",
-        "delim",
-        "vendored",
-        "wasb",
-        "cgitb",
-        "isclass",
-        "isfunction",
-        "errno",
-        "firstlineno",
-        "chdir",
-        "fset",
-        "azuresqldb",
-        "unflat",
-        "unflatten",
-        "unflattened",
-        "unflattens",
-        "subel",
-        "azuresynapseanalytics",
-        "deque",
-        "fstring",
-        "vals",
-        "reprlib",
-        "gzrs",
-        "ragzrs",
-        "wsid",
-        "azml",
-        "uncompiled",
-        "segs",
-        "fnmatch",
-        "posixpath",
-        "SEPS",
-        "wargs",
-        "pycache",
-        "ruamel",
-        "reprcrash",
-        "etests",
-        "RMSE",
-        "azmonitoring",
-        "smirnov"
-      ]
-    },
-    {
-      "filename": "sdk/ai/azure-ai-inference/**",
-      "words": [
-        "ctxt",
-        "dels",
-        "dtype",
-        "fmatter",
-        "fspath",
-        "fstring",
-        "ldel",
-        "mros",
-        "nify",
-        "okwargs",
-        "prompty",
-        "rdel",
-        "ubinary",
-        "wday",
-        "Hola",
-        "cómo",
-        "estás",
-        "logprobs",
-        "conver"
-      ]
-    },
-    {
-      "filename": "sdk/evaluation/azure-ai-evaluation/**",
-      "words": [
-        "raisvc",
-        "otel",
-        "otlp",
-        "aggr",
-        "mlflow",
-        "azureml",
-        "dcid",
-        "prompty",
-        "wsid",
-        "tkey",
-        "tparam",
-        "tqdm",
-        "ncols",
-        "datas",
-        "punkt",
-        "gleu",
-        "fmeasure",
-        "upia",
-        "xpia",
-        "expirable",
-        "ralphe",
-        "Inadherent",
-        "nbformat",
-        "nbconvert",
-        "onedp",
-        "azureai"
-      ]
-    },
-    {
-      "filename": "sdk/ai/azure-ai-generative/**",
-      "words": [
-        "tqdm",
-        "genai"
-      ]
-    },
-    {
-      "filename": "sdk/openai/azure-openai/**",
-      "words": [
-        "azuread",
-        "AZUREAD",
-        "dall",
-        "Lepardus",
-        "WEBVTT",
-        "logit",
-        "byod",
-        "logprobs"
-      ]
-    },
-    {
-      "filename": "sdk/attestation/azure-security-attestation/tests/conftest.py",
-      "words": [
-        "sharedwus"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/test-resources.bicep",
-      "words": [
-        "pysdkci"
-      ]
-    },
-    {
-      "filename": "sdk/agrifood/azure-agrifood-farming/**",
-      "words": [
-        "NDVI",
-        "Unhandleable",
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "deseralize",
-        "stac",
-        "nnumeral",
-        "nonly",
-        "STAC",
-        "Placeid",
-        "resouce",
-        "nnumeral"
-      ]
-    },
-    {
-      "filename": "sdk/storage/azure-storage-file-share/**",
-      "words": [
-        "XSMB",
-        "rcwd",
-        "rcwdl",
-        "prevsharesnapshot",
-        "mydir",
-        "amet",
-        "consectetur",
-        "elit",
-        "adipiscing",
-        "pyacrstoragestorname",
-        "pyrmtstoragestorname",
-        "vhds",
-        "abcdefghijklmnop",
-        "filetoupdate",
-        "mydomain",
-        "vhds",
-        "utdir",
-        "myaccount",
-        "testid",
-        "filea",
-        "fileb",
-        "FFFE",
-        "Fdirectory",
-        "Ffile",
-        "Fsubdir",
-        "Fdir",
-        "adal",
-        "mytestshare",
-        "skdutid",
-        "sduoid"
-      ]
-    },
-    {
-      "filename": "sdk/storage/**/_shared/**",
-      "words": [
-        "mday",
-        "ISREG",
-        "ISLNK",
-        "struct",
-        "ints",
-        "nbytes"
-      ]
-    },
-    {
-      "filename": "sdk/mixedreality/azure-mixedreality-authentication/**",
-      "words": [
-        "Ijoi",
-        "Iiwid"
-      ]
-    },
-    {
-      "filename": "sdk/attestation/azure-security-attestation/**",
-      "words": [
-        "MRENCLAVE",
-        "ECDS",
-        "kwtype",
-        "clist",
-        "mrsigner",
-        "ECDH",
-        "TPMs",
-        "getopenidmetadata",
-        "getopenidmetadataasync",
-        "aikcert",
-        "shareduks",
-        "PKIX",
-        "tcbbaselines",
-        "Iiwg",
-        "Ijog",
-        "Ghvc",
-        "MCIs",
-        "Mdxl",
-        "Dxxf",
-        "PYSN",
-        "Aiandr",
-        "Ijoic",
-        "Jjcn",
-        "QLTI",
-        "Hhnc",
-        "Mkxzellr",
-        "Sjhual",
-        "Inki",
-        "NGZZN",
-        "Igog",
-      ]
-    },
-    {
-      "filename": "sdk/cosmos/azure-cosmos/**",
-      "words": [
-        "colls",
-        "pkranges",
-        "Upserts",
-        "sprocs",
-        "sproc",
-        "Tohost",
-        "appidacr",
-        "myid",
-        "mydb",
-        "mycoll",
-        "vals",
-        "testdb",
-        "globaldb",
-        "ABCT",
-        "AAAAABA",
-        "AACAAAAAAAAAA",
-        "aad",
-        "mypk",
-        "Strin'g",
-        "Strin",
-        "qlist",
-        "DBA's",
-        "myval",
-        "mytext",
-        "cdfg",
-        "opqrs",
-        "xjwm",
-        "paas",
-        "AQAAAA",
-        "AQAAAJ",
-        "unreachability",
-        "formattableorderbyquery",
-        "prange",
-        "sessionlsn",
-        "referer",
-        "isquery",
-        "iscanary",
-        "RDFE",
-        "Docoptype",
-        "mycontainer",
-        "iscontinuationexpected",
-        "aalapatirvbd",
-        "unconfigure",
-        "undoc"
-      ]
-    },
-    {
-      "filename": "sdk/metricsadvisor/azure-ai-metricsadvisor/**",
-      "words": [
-        "POSTGRE",
-        "tolist",
-        "cond",
-        "conds",
-        "sumrollup",
-        "adreadonly",
-        "Shenzen",
-        "myusername"
-      ]
-    },
-    {
-      "filename": "sdk/ai/azure-ai-resources/**",
-      "words": [
-        "azuread",
-        "all-mpnet-base-v2",
-        "dtype",
-        "LLMRAG",
-        "pipelinerunid",
-        "pydantic",
-        "swigfaiss",
-        "tiktokens",
-        "tqdm",
-        "wasb"
-      ]
-    },
-    {
-      "filename": "sdk/core/azure-core/**",
-      "words": [
-        "odatav",
-        "unpicklable",
-        "reinvesitgate",
-        "sansio",
-        "ctxt",
-        "azcore",
-        "cafile",
-        "wbits",
-        "ctype",
-        "hdrs",
-        "rdap",
-        "chardet",
-        "redef",
-        "cvar",
-        "ryohji",
-        "jiasli",
-        "vbarbaresi",
-        "undoc",
-        "myuseragent",
-        "azconfig",
-        "killpg",
-        "getpgid",
-        "Chocolat",
-        "myusergant",
-        "nocover",
-        "Patiño",
-        "oooooold",
-        "mytools",
-        "myattr",
-        "myvalue",
-        "Oopsy",
-        "datav",
-        "mybytes",
-        "myid",
-        "jsonify",
-        "ints",
-        "inirudebwoy",
-        "mghextreme"
-      ]
-    },
-    {
-      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-face/azure/cognitiveservices/vision/face/models/*.py",
-      "words": [
-        "responsed"
-      ]
-    },
-    {
-      "filename": "sdk/cognitiveservices/azure-cognitiveservices-vision-contentmoderator/azure/cognitiveservices/vision/contentmoderator/operations/*.py",
-      "words": [
-        "tfile"
-      ]
-    },
-    {
-      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/aio/operations/*.py",
-      "words": [
-        "struct",
-        "STRUCT",
-        "nonly",
-        "nthe",
-        "reques"
-      ]
-    },
-    {
-      "filename": "sdk/purview/azure-purview-workflow/azure/purview/workflow/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/purview/azure-purview-sharing/azure/purview/sharing/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/purview/azure-purview-catalog/azure/purview/catalog/operations/*.py",
-      "words": [
-        "struct",
-        "structdef",
-        "STRUCT",
-        "nonly",
-        "nthe",
-        "reques"
-      ]
-    },
-    {
-      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/CHANGELOG.md",
-      "words": [
-        "ONVIF"
-      ]
-    },
-    {
-      "filename": "sdk/videoanalyzer/azure-media-videoanalyzer-edge/samples/sample_lva.py",
-      "words": [
-        "deviceid",
-        "moduleid",
-        "onvif",
-        "Onvif"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/**",
-      "words": [
-        "deser",
-        "mrenclave",
-        "MRENCLAVE",
-        "oeverify"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/_operations/*.py",
-      "words": [
-        "mrenclave",
-        "MRENCLAVE",
-        "oeverify"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/*.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "ctxt",
-        "wday",
-        "mday",
-        "deseralize",
-        "astimezone"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/aio/_operations/*.py",
-      "words": [
-        "mrenclave",
-        "MRENCLAVE",
-        "oeverify",
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "mday",
-        "deseralize",
-        "astimezone"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/certificate/*.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "mday",
-        "deseralize",
-        "wday",
-        "mday",
-        "deseralize",
-        "astimezone"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/azure/confidentialledger/receipt/*.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "mday",
-        "deseralize",
-        "astimezone",
-        "Merkle"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/samples/*.py",
-      "words": [
-        "tids",
-        "MRENCLAVE",
-        "mrenclave",
-        "seqno"
-      ]
-    },
-    {
-      "filename": "sdk/confidentialledger/azure-confidentialledger/tests/*.py",
-      "words": [
-        "seqno",
-        "mrenclave",
-        "infile"
-      ]
-    },
-    {
-      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "deseralize",
-        "wday",
-        "mros"
-      ]
-    },
-    {
-      "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/models/*.py",
-      "words": [
-        "vcpus"
-      ]
-    },
-    {
-      "filename": "sdk/appconfiguration/test-resources.json",
-      "words": [
-        "azconfig"
-      ]
-    },
-    {
-      "filename": "sdk/appconfiguration/azure-appconfiguration/**",
-      "words": [
-        "kvset"
-      ]
-    },
-    {
-      "filename": "sdk/appconfiguration/azure-appconfiguration/tests/**",
-      "words": [
-        "adfsasdfzsd"
-      ]
-    },
-    {
-      "filename": "sdk/appconfiguration/azure-appconfiguration-provider/**",
-      "words": [
-        "aicc",
-        "AICC"
-      ]
-    },
-    {
-      "filename": "sdk/personalizer/test-resources.json",
-      "words": [
-        "euap"
-      ]
-    },
-    {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
-      "words": [
-        "Nify",
-        "ctxt",
-        "unflattened",
-        "wday",
-        "deseralize"
-      ]
-    },
-    {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/azure/messaging/webpubsubclient/**/_client.py",
-      "words": [
-        "awps"
-      ]
-    },
-    {
-      "filename": "sdk/webpubsub/azure-messaging-webpubsubclient/stress/*.py",
-      "words": [
-        "psutil"
-      ]
-    },
-    {
-      "filename": "sdk/contentsafety/azure-ai-contentsafety/azure/ai/contentsafety/*.py",
-      "words": [
-        "mros",
-        "deserializers",
-        "ctxt",
-        "wday",
-        "JSONify",
-        "Nify"
-      ]
-    },
-    {
-      "filename": "sdk/vision/azure-ai-vision-imageanalysis/azure/ai/vision/imageanalysis/**/*.py",
-      "words": [
-        "mros",
-        "Nify",
-        "deserializers",
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/iothub/azure-iot-deviceprovisioning/azure/iot/deviceprovisioning/_serialization.py",
-      "words": [
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/purview/azure-purview-datamap/azure/purview/datamap/*.py",
-      "words": [
-        "mros",
-        "Nify",
-        "deserializers",
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/translation/azure-ai-translation-document/azure/ai/translation/document/*.py",
-      "words": [
-        "mros",
-        "Nify",
-        "ctxt",
-        "wday"
-      ]
-    },
-    {
-      "filename": "sdk/healthinsights/azure-healthinsights-radiologyinsights/**",
-      "words": [
-        "ctxt",
-        "mros",
-        "Nify",
-        "loinc",
-        "wday",
-        "SNOMED",
-        "lobulated",
-        "pericholecystic",
-        "craniocaudally",
-        "angiomyolipomas",
-        "Omnipaque",
-        "acrad",
-        "MEDNAX",
-        "BIRADS",
-        "FRAX",
-        "ASCVD",
-        "TYRER",
-        "CUSICK",
-        "AGATSTON",
-        "CEUS",
-        "HNPCC",
-        "KELLGREN",
-        "TONNIS",
-        "Fleischner",
-        "CTCHWO",
-        "hilar",
-        "docid",
-        "encounterid",
-        "authorid",
-        "USTHY",
-        "assesment"
-      ]
-    },
-    {
-      "filename": "sdk/face/azure-ai-vision-face/**",
-      "words": [
-        "mros",
-        "Nify",
-        "ctxt",
-        "wday",
-        "faceid",
-        "facelistid",
-        "largefacelistid",
-        "persongroupid",
-        "largepersongroupid",
-        "dynamicpersongroupid",
-        "personid",
-        "maxnumofcandidatesreturned"
-      ]
-    },
-    {
-      "filename": "sdk/face/azure-ai-vision-face/tests/**",
-      "words": [
-        "dcid"
-      ]
-    },
-    {
-      "filename": "sdk/healthdataaiservices/azure-health-deidentification/**",
-      "words": [
-        "deid",
-        "deidservices",
-        "deidentification",
-        "healthdataaiservices",
-        "deidentify",
-        "deidentified"
-      ]
-    },
-    {
-      "filename": "sdk/evaluation/azure-ai-evaluation/azure/ai/evaluation/_common/utils.py",
-      "words": [
-        "stringized"
-      ]
-    },
-    {
-      "filename": "sdk/maps/azure-maps-route/**",
-      "words": [
-        "uturn",
-        "Einsteinweg",
-        "Hundredkm",
-        "TPEG",
-        "Hundredkm"
-      ]
-    },
-    {
-      "filename": "sdk/ai/azure-ai-voicelive/**",
-      "words": ["viseme","VISEME","ulaw","ULAW","logprobs","pyaudio","PyAudio","libasound","webrtc","WEBRTC"]
-    },
-    {
       "filename": ".github/**/ml/**",
-      "words": ["envml", "paginators"]
-    },
-    {
-      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
-      "words": ["topo", "haline", "Aproperty", "pygen"]
+      "words": [
+        "envml",
+        "paginators"
+      ]
     },
     {
       "filename": ".github/**",
-      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
-    },
-    {
-      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
-      "filename": "sdk/agentserver/azure-ai-agentserver-ghcopilot/**",
-      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
+      "words": [
+        "chenkennt",
+        "DIFC",
+        "llms",
+        "sffamily",
+        "svcowner",
+        "toddysm",
+        "XPIA"
+      ]
     }
   ],
   "allowCompoundWords": true

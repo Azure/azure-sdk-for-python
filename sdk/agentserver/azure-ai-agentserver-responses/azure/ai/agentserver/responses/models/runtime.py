@@ -9,7 +9,11 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
-from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent, ResponseStreamEventType
+from azure.ai.agentserver.responses.models import (
+    AgentReference,
+    OutputItem,
+    ResponseStreamEvent,
+)
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -52,23 +56,23 @@ class StreamEventRecord:
         :rtype: bool
         """
         return self.event_type in {
-            ResponseStreamEventType.RESPONSE_COMPLETED.value,
-            ResponseStreamEventType.RESPONSE_FAILED.value,
-            ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+            "response.completed",
+            "response.failed",
+            "response.incomplete",
         }
 
     @classmethod
-    def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
-        """Create a stream event record from a generated response stream event model.
+    def from_event(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
+        """Create a stream event record from a response stream wire payload.
 
-        :param event: The generated response stream event.
+        :param event: The response stream event payload.
         :type event: ResponseStreamEvent
         :param payload: The event payload mapping.
         :type payload: Mapping[str, Any]
         :returns: A new stream event record.
         :rtype: StreamEventRecord
         """
-        return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
+        return cls(sequence_number=event["sequence_number"], event_type=event["type"], payload=payload)
 
 
 class ResponseExecution:  # pylint: disable=too-many-instance-attributes
@@ -87,7 +91,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         updated_at: datetime | None = None,
         completed_at: datetime | None = None,
         status: ResponseStatus = "in_progress",
-        response: ResponseObject | None = None,
+        response: dict[str, Any] | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         cancel_requested: bool = False,
         client_disconnected: bool = False,
@@ -170,7 +174,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         """
         return self.status in {"completed", "failed", "cancelled", "incomplete"}
 
-    def set_response_snapshot(self, response: ResponseObject) -> None:
+    def set_response_snapshot(self, response: dict[str, Any]) -> None:
         """Replace the current response snapshot from handler-emitted events.
 
         :param response: The latest response snapshot to store.
@@ -211,7 +215,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
 
         Does nothing if the execution is already ``"cancelled"``.
 
-        :param normalized: The normalised event (``ResponseStreamEvent`` model instance).
+        :param normalized: The normalised event wire payload.
         :type normalized: ResponseStreamEvent
         :param all_events: The full ordered list of handler events seen so far
             (used to extract the latest response snapshot).
@@ -237,27 +241,25 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 agent_reference=agent_reference,
                 model=model,
             )
-            self.set_response_snapshot(ResponseObject(snapshot))
+            self.set_response_snapshot(snapshot)
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        elif event_type == "response.output_item.added":
             item = normalized.get("item")
             if item is not None and self.response is not None:
-                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
-                if isinstance(item_dict, dict):
+                if isinstance(item, dict):
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
-                        output.append(deepcopy(item_dict))
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
+                        output.append(deepcopy(item))
+        elif event_type == "response.output_item.done":
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:
-                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
-                if isinstance(item_dict, dict):
+                if isinstance(item, dict):
                     output = self.response.get("output", [])
                     if isinstance(output, list) and 0 <= output_index < len(output):
-                        output[output_index] = deepcopy(item_dict)
+                        output[output_index] = deepcopy(item)
 
     @property
     def agent_reference(self) -> AgentReference | dict[str, Any]:
@@ -325,7 +327,7 @@ def build_cancelled_response(
     agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
-) -> ResponseObject:
+) -> dict[str, Any]:
     """Build a Response object representing a cancelled terminal state.
 
     :param response_id: The response identifier.
@@ -336,8 +338,8 @@ def build_cancelled_response(
     :type model: str | None
     :param created_at: Optional creation timestamp; defaults to now if omitted.
     :type created_at: datetime | None
-    :returns: A Response object with status ``"cancelled"`` and empty output.
-    :rtype: ResponseObject
+    :returns: A response wire payload with status ``"cancelled"`` and empty output.
+    :rtype: dict[str, Any]
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -349,8 +351,8 @@ def build_cancelled_response(
         "output": [],
     }
     if created_at is not None:
-        payload["created_at"] = created_at.isoformat()
-    return ResponseObject(payload)
+        payload["created_at"] = int(created_at.timestamp())
+    return payload
 
 
 def build_failed_response(
@@ -360,8 +362,8 @@ def build_failed_response(
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
     error_code: str = "server_error",
-) -> ResponseObject:
-    """Build a ResponseObject representing a failed terminal state.
+) -> dict[str, Any]:
+    """Build a response wire payload representing a failed terminal state.
 
     :param response_id: The response identifier.
     :type response_id: str
@@ -375,8 +377,8 @@ def build_failed_response(
     :type error_message: str
     :param error_code: Error code string (e.g. ``"server_error"`` or ``"storage_error"``).
     :type error_code: str
-    :returns: A Response object with status ``"failed"`` and empty output.
-    :rtype: ResponseObject
+    :returns: A response wire payload with status ``"failed"`` and empty output.
+    :rtype: dict[str, Any]
     """
     payload: dict[str, Any] = {
         "id": response_id,
@@ -389,5 +391,5 @@ def build_failed_response(
         "error": {"code": error_code, "message": error_message},
     }
     if created_at is not None:
-        payload["created_at"] = created_at.isoformat()
-    return ResponseObject(payload)
+        payload["created_at"] = int(created_at.timestamp())
+    return payload
