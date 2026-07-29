@@ -1,5 +1,40 @@
 # Release History
 
+## 2.0.0 (2026-07-29)
+
+### Features Added
+
+  - Model `AutoScaleVCore` added property `properties`
+  - Model `AutoScaleVCoreUpdateParameters` added property `properties`
+  - Model `DedicatedCapacity` added property `properties`
+  - Model `DedicatedCapacityUpdateParameters` added property `properties`
+  - Added enum `CreatedByType`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Deleted or renamed model `PowerBIDedicated`
+  - Model `AutoScaleVCore` deleted or renamed its instance variable `capacity_limit`
+  - Model `AutoScaleVCore` deleted or renamed its instance variable `capacity_object_id`
+  - Model `AutoScaleVCore` deleted or renamed its instance variable `provisioning_state`
+  - Model `AutoScaleVCoreUpdateParameters` deleted or renamed its instance variable `capacity_limit`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `administration`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `friendly_name`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `mode`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `provisioning_state`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `state`
+  - Model `DedicatedCapacity` deleted or renamed its instance variable `tenant_id`
+  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `administration`
+  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `friendly_name`
+  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `mode`
+  - Model `DedicatedCapacityUpdateParameters` deleted or renamed its instance variable `tenant_id`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `AutoScaleVCoreListResult`
+  - Deleted or renamed model `DedicatedCapacities`
+  - Deleted or renamed model `IdentityType`
+  - Deleted or renamed model `OperationListResult`
+
 ## 1.1.0b2 (2026-07-06)
 
 ### Features Added
