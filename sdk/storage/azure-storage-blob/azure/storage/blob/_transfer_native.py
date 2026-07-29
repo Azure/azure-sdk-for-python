@@ -69,21 +69,6 @@ def _build_token_provider(credential: Any) -> Optional[Callable[[Any], Tuple[str
     return provider
 
 
-def _extract_account_url(blob_client: Any) -> str:
-    """Extract the base account URL from a BlobClient, preserving any SAS query string."""
-    # The blob client's url includes container/blob path and query string.
-    # We need just the scheme + host (+ optional SAS query).
-    scheme = blob_client.scheme
-    hostname = blob_client.primary_hostname
-    account_url = f"{scheme}://{hostname}"
-
-    # If using SAS token, append query string
-    query_str = getattr(blob_client, "_query_str", None)
-    if query_str:
-        account_url = f"{account_url}?{query_str}"
-    return account_url
-
-
 def _can_use_native_upload(
     blob_type: str,
     encryption_options: Dict[str, Any],
@@ -263,7 +248,6 @@ def try_native_upload(
             _LOGGER.debug("Native upload data type unsupported; using Python upload path.")
             return None
 
-        account_url = _extract_account_url(blob_client)
         token_provider = _build_token_provider(blob_client.credential)
 
         overwrite = kwargs.get("overwrite", False)
@@ -276,9 +260,7 @@ def try_native_upload(
         max_concurrency = kwargs.get("max_concurrency", None)
 
         result = native_upload(
-            account_url=account_url,
-            container=blob_client.container_name,
-            blob=blob_client.blob_name,
+            url=blob_client.url,
             data=upload_data,
             token_provider=token_provider,
             overwrite=overwrite,
@@ -377,14 +359,11 @@ def try_native_download_eager(
             download_blob as native_download,
         )
 
-        account_url = _extract_account_url(blob_client)
         token_provider = _build_token_provider(blob_client.credential)
         max_concurrency = kwargs.get("max_concurrency", None)
 
         data = native_download(
-            account_url=account_url,
-            container=blob_client.container_name,
-            blob=blob_client.blob_name,
+            url=blob_client.url,
             token_provider=token_provider,
             offset=offset,
             length=length,
