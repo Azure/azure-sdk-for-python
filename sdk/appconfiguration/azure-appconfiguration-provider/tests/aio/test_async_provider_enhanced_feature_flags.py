@@ -4,8 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 """
-Tests for loading feature flags from the dedicated feature flag resource endpoint
-(``FeatureFlagClient``/``FeatureFlag``), as opposed to the classic key-value based
+Tests for loading feature flags from the dedicated enhanced feature flag endpoint
+(``FeatureFlagClient``/``FeatureFlag``), as opposed to the key-value based
 ``FeatureFlagConfigurationSetting`` stored via ``AzureAppConfigurationClient`` (async version).
 """
 import functools
@@ -25,15 +25,15 @@ AppConfigProviderPreparer = functools.partial(
 )
 
 
-class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
-    """Tests for the provider loading feature flags from the dedicated feature flag resource endpoint (async)."""
+class TestAppConfigurationProviderEnhancedFeatureFlags(AppConfigTestCase):
+    """Tests for the provider loading feature flags from the dedicated enhanced feature flag endpoint (async)."""
 
     # method: load
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_feature_flag_resource(self, appconfiguration_endpoint_string):
-        """A feature flag created via the feature flag resource endpoint should be loaded by the provider."""
-        feature_flag_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+    async def test_load_enhanced_feature_flag(self, appconfiguration_endpoint_string):
+        """A feature flag created via the enhanced feature flag endpoint should be loaded by the provider."""
+        feature_flag_client = self.create_enhanced_feature_flag_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlag(name="ResourceOnlyFeature", enabled=True)
         await feature_flag_client.set_feature_flag(feature_flag)
 
@@ -53,9 +53,9 @@ class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
     # method: load
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_feature_flag_resource_disabled(self, appconfiguration_endpoint_string):
-        """A disabled feature flag resource should be loaded with enabled set to False."""
-        feature_flag_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+    async def test_load_enhanced_feature_flag_disabled(self, appconfiguration_endpoint_string):
+        """A disabled enhanced feature flag should be loaded with enabled set to False."""
+        feature_flag_client = self.create_enhanced_feature_flag_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlag(name="ResourceDisabledFeature", enabled=False)
         await feature_flag_client.set_feature_flag(feature_flag)
 
@@ -74,9 +74,9 @@ class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
     # method: load
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_load_feature_flag_resource_with_label(self, appconfiguration_endpoint_string):
-        """A feature flag resource with a label should be loaded when the label filter matches."""
-        feature_flag_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+    async def test_load_enhanced_feature_flag_with_label(self, appconfiguration_endpoint_string):
+        """An enhanced feature flag with a label should be loaded when the label filter matches."""
+        feature_flag_client = self.create_enhanced_feature_flag_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlag(name="ResourceLabeledFeature", enabled=True, label="test_label")
         await feature_flag_client.set_feature_flag(feature_flag)
 
@@ -97,9 +97,9 @@ class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
     # method: load
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_feature_flag_resource_selector_filters_by_name(self, appconfiguration_endpoint_string):
-        """The feature_flag_selectors key_filter should scope which feature flag resources are loaded."""
-        feature_flag_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+    async def test_enhanced_feature_flag_selector_filters_by_name(self, appconfiguration_endpoint_string):
+        """The feature_flag_selectors key_filter should scope which enhanced feature flags are loaded."""
+        feature_flag_client = self.create_enhanced_feature_flag_client(appconfiguration_endpoint_string)
         included_flag = FeatureFlag(name="IncludedResourceFeature", enabled=True)
         excluded_flag = FeatureFlag(name="ExcludedResourceFeature", enabled=True)
         await feature_flag_client.set_feature_flag(included_flag)
@@ -122,16 +122,16 @@ class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
     # method: load
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
-    async def test_feature_flag_resource_overrides_key_value(self, appconfiguration_endpoint_string):
-        """A feature flag resource should take precedence over a key-value based feature flag with the
+    async def test_enhanced_feature_flag_overrides_key_value(self, appconfiguration_endpoint_string):
+        """An enhanced feature flag should take precedence over a key-value based feature flag with the
         same identifier when both are loaded."""
         appconfig_client = self.create_appconfig_client(appconfiguration_endpoint_string)
-        feature_flag_client = self.create_feature_flag_client(appconfiguration_endpoint_string)
+        feature_flag_client = self.create_enhanced_feature_flag_client(appconfiguration_endpoint_string)
 
         kv_feature_flag = FeatureFlagConfigurationSetting(feature_id="OverlapFeature", enabled=False, label=NULL_CHAR)
         await appconfig_client.set_configuration_setting(kv_feature_flag)
-        resource_feature_flag = FeatureFlag(name="OverlapFeature", enabled=True)
-        await feature_flag_client.set_feature_flag(resource_feature_flag)
+        enhanced_feature_flag_obj = FeatureFlag(name="OverlapFeature", enabled=True)
+        await feature_flag_client.set_feature_flag(enhanced_feature_flag_obj)
 
         try:
             async with await self.create_client(
@@ -140,12 +140,12 @@ class TestAppConfigurationProviderFeatureFlagResources(AppConfigTestCase):
                 feature_flag_enabled=True,
                 feature_flag_selectors=[SettingSelector(key_filter="OverlapFeature")],
             ) as client:
-                # The resource-based feature flag (enabled=True) should win over the key-value based one
+                # The enhanced feature flag (enabled=True) should win over the key-value based one
                 # (enabled=False) since they share the same identifier.
                 assert has_feature_flag(client, "OverlapFeature", enabled=True)
                 feature_flag = get_feature_flag(client, "OverlapFeature")
                 assert feature_flag is not None
-                assert "name" in feature_flag
+                assert "id" in feature_flag
         finally:
             await appconfig_client.delete_configuration_setting(key=kv_feature_flag.key, label=kv_feature_flag.label)
             await feature_flag_client.delete_feature_flag("OverlapFeature")

@@ -377,44 +377,44 @@ config = load(
 
 <!-- END SNIPPET -->
 
-### Loading Feature Flags as Resources
+### Loading Enhanced Feature Flags
 
-Feature flags can also be created using the dedicated feature flag resource endpoint (via `FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`), instead of as classic key-value configuration settings. The provider loads both kinds side by side into the same `feature_management.feature_flags` list, with feature flag resources taking precedence over key-value based feature flags when they share the same name. No additional `load()` options are required to enable this — it happens automatically whenever `feature_flag_enabled=True`, using the same `feature_flag_selectors`.
+Feature flags can also be created using the dedicated enhanced feature flag endpoint (via `FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`), instead of as key-value configuration settings. The provider loads both kinds side by side into the same `feature_management.feature_flags` list, with enhanced feature flags taking precedence over key-value based feature flags when they share the same name. No additional `load()` options are required to enable this — it happens automatically whenever `feature_flag_enabled=True`, using the same `feature_flag_selectors`.
 
-<!-- SNIPPET:feature_flag_resource_sample.feature_flag_resource_loading -->
+<!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_loading -->
 
 ```python
 from azure.appconfiguration.provider import load
 
-# Feature flags loaded from the feature flag resource endpoint are merged into the same
+# Feature flags loaded from the enhanced feature flag endpoint are merged into the same
 # feature_management.feature_flags list as key-value based feature flags.
 config = load(endpoint=endpoint, credential=credential, feature_flag_enabled=True, **kwargs)
 feature_flags = config["feature_management"]["feature_flags"]
-resource_beta = next(flag for flag in feature_flags if flag.get("name") == "ResourceBeta")
-print(resource_beta["enabled"])
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("name") == "EnhancedFeatureBeta")
+print(enhanced_flag_beta["enabled"])
 ```
 
 <!-- END SNIPPET -->
 
-The same `SettingSelector` used to filter key-value based feature flags also filters feature flag resources, by name, label, or tags. Note that selectors with a `snapshot_name` are not currently supported by the feature flag resource endpoint and are skipped when loading feature flag resources.
+The same `SettingSelector` used to filter key-value based feature flags also filters enhanced feature flags, by name, label, or tags. Note that selectors with a `snapshot_name` are not currently supported by the enhanced feature flag endpoint and are skipped when loading enhanced feature flags.
 
-<!-- SNIPPET:feature_flag_resource_sample.feature_flag_resource_selector -->
+<!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_selector -->
 
 ```python
 from azure.appconfiguration.provider import load, SettingSelector
 
-# The same SettingSelector used to filter key-value based feature flags also filters feature flag
-# resources, by name/label/tags.
+# The same SettingSelector used to filter key-value based feature flags also filters enhanced feature
+# flags, by name/label/tags.
 config = load(
     endpoint=endpoint,
     credential=credential,
     feature_flag_enabled=True,
-    feature_flag_selectors=[SettingSelector(key_filter="Resource*")],
+    feature_flag_selectors=[SettingSelector(key_filter="Enhanced*")],
     **kwargs,
 )
 feature_flags = config["feature_management"]["feature_flags"]
-resource_beta = next(flag for flag in feature_flags if flag.get("name") == "ResourceBeta")
-print(resource_beta["enabled"])
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("name") == "EnhancedFeatureBeta")
+print(enhanced_flag_beta["enabled"])
 ```
 
 <!-- END SNIPPET -->
@@ -511,56 +511,11 @@ This library uses the standard [logging](https://docs.python.org/3/library/loggi
 * **Configuration not refreshing** — Make sure you are calling `config.refresh()` periodically (e.g., before each request in a web app). The provider does not auto-refresh in the background.
 * **Startup failures** — If the store is unreachable during startup, the provider will retry until `startup_timeout` (default 100 seconds) is exceeded. Increase this value if your store is expected to have high latency.
 
-## Testing 
+## Testing
 
 (This content is for `azure-appconfiguration-provider` package developer only)
 
-The tests for this package are under the `tests/` directory and are split into two categories:
-
-* **Unit tests** (e.g. `tests/test_azureappconfigurationproviderbase.py`, `tests/test_configuration_client_manager.py`) — exercise internal logic in isolation using mocked clients. These do not require any App Configuration store, network access, or environment variables, and can be run at any time with no setup.
-* **Integration tests** (e.g. `tests/test_provider.py`, `tests/test_provider_feature_flag_resources.py`, and their `tests/aio/` async equivalents) — exercise the provider end-to-end against an Azure App Configuration store. These tests are built on [`devtools_testutils`](https://github.com/Azure/azure-sdk-for-python/tree/main/eng/tools/azure-sdk-tools/devtools_testutils) and each test method is decorated with `@recorded_by_proxy` / `@recorded_by_proxy_async`, which route the test's HTTP traffic through the [test proxy](https://github.com/Azure/azure-sdk-tools/tree/main/tools/test-proxy) tool.
-
-### Live tests vs. recorded (playback) tests
-
-Whether an integration test makes a real network call or replays a recording is controlled entirely by the `AZURE_TEST_RUN_LIVE` environment variable, not by anything in this package's code:
-
-* `AZURE_TEST_RUN_LIVE=true` — Tests run in **live/record mode**. The test proxy forwards requests to the real endpoint configured via your environment variables (see below), and (unless `AZURE_SKIP_LIVE_RECORDING=true` is also set) records the request/response pairs as new recording files for use in future playback runs.
-* `AZURE_TEST_RUN_LIVE` unset or `false` (the default, and what CI uses) — Tests run in **playback mode**. The test proxy replays the existing recordings instead of contacting the real service, so **no network calls are made** and no live App Configuration store is required.
-
-Recordings themselves are not stored directly in this repository — they live in the separate [`Azure/azure-sdk-assets`](https://github.com/Azure/azure-sdk-assets) repo, and this package's `assets.json` file pins the exact recordings revision (`Tag`) that CI uses. If you add or change integration tests, you need to generate new recordings and publish them:
-
-1. Run the affected tests with `AZURE_TEST_RUN_LIVE=true` (and without `AZURE_SKIP_LIVE_RECORDING`) so the test proxy records real interactions to local recording files.
-2. From the repo root, push the new/updated recordings to the assets repo:
-
-   ```bash
-   dotnet tool run test-proxy push -a sdk/appconfiguration/azure-appconfiguration-provider/assets.json
-   ```
-
-   This uploads the changed recordings and updates the `Tag` field in `assets.json`.
-3. Commit the updated `assets.json` as part of your PR — this is what allows CI (which always runs in playback mode) to pick up the new recordings.
-
-Only re-record tests you added or intentionally changed; unrelated existing recordings don't need to be regenerated.
-
-### Environment variables for local testing
-
-To run the integration tests locally in live mode, create a `.env` file at the repository root (it is automatically loaded by `devtools_testutils`) with the following variables:
-
-```
-AZURE_TEST_RUN_LIVE=true
-APPCONFIGURATION_CONNECTION_STRING=<connection string of your App Configuration store, if you have one> 
-APPCONFIGURATION_ENDPOINT_STRING=<endpoint of your App Configuration store, e.g. https://<your-store>.azconfig.io>
-APPCONFIGURATION_KEY_VAULT_REFERENCE=<a Key Vault secret URI used by Key Vault reference tests>
-APPCONFIGURATION_KEY_VAULT_REFERENCE2=<a second Key Vault secret URI used by Key Vault reference tests>
-APPCONFIGURATION_KEYVAULT_SECRET_URL=<a Key Vault secret URI used by Key Vault reference tests>
-APPCONFIGURATION_KEYVAULT_SECRET_URL2=<a second Key Vault secret URI used by Key Vault reference tests>
-```
-
-Notes:
-
-* For key vault URI, you can create a secret in Azure Key Vault service. The key vault URI is the *Secret Identifier*, without the final version number. For example, if the secret identifier is `https://some_secret.vault.azure.net/secrets/fake-secret/30d8830ec5ed4a428d311292a826f452`, the key vault URI should be `https://some_secret.vault.azure.net/secrets/fake-secret/`. 
-* Authentication for Entra ID-based tests relies on your local Azure CLI login (`az login`); make sure you're signed in to the subscription that contains your App Configuration store.
-* Add `AZURE_SKIP_LIVE_RECORDING=true` if you want to run tests live against the real store without generating/overwriting recording files (useful for a quick sanity check).
-* Omit `AZURE_TEST_RUN_LIVE` (or set it to `false`) to run the same tests in playback mode against existing recordings — this does not require any of the App Configuration environment variables above.
+See [tests/README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration-provider/tests/README.md) for instructions on running unit and integration tests, working with recordings, and setting up environment variables for local testing.
 
 ## Next steps
 

@@ -46,7 +46,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         cred = self.get_credential(AzureAppConfigurationClient)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
-    def create_feature_flag_client(self, appconfiguration_endpoint_string):
+    def create_enhanced_feature_flag_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(FeatureFlagClient)
         return FeatureFlagClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
@@ -170,23 +170,23 @@ def create_feature_flag_config_setting(key, label, enabled, tags=None):
     return FeatureFlagConfigurationSetting(feature_id=key, label=label, enabled=enabled, tags=tags)
 
 
-def create_feature_flag_resource(name, enabled, label=None, **kwargs):
+def create_enhanced_feature_flag(name, enabled, label=None, **kwargs):
     """
-    Create a FeatureFlag resource object for use with the dedicated feature flag resource endpoint
-    (``FeatureFlagClient``), as opposed to the classic key-value based ``FeatureFlagConfigurationSetting``.
+    Create a FeatureFlag object for use with the dedicated enhanced feature flag endpoint
+    (``FeatureFlagClient``), as opposed to the key-value based ``FeatureFlagConfigurationSetting``.
 
     :param name: The name/identifier of the feature flag.
     :param enabled: Whether the feature flag is enabled.
     :param label: The label of the feature flag.
-    :return: A FeatureFlag resource object.
+    :return: A FeatureFlag object.
     :rtype: ~azure.appconfiguration.FeatureFlag
     """
     return FeatureFlag(name=name, enabled=enabled, label=label, **kwargs)
 
 
-def cleanup_feature_flag_resources(feature_flag_client, feature_flags):
+def cleanup_enhanced_feature_flags(feature_flag_client, feature_flags):
     """
-    Delete feature flag resources created via the dedicated feature flag resource endpoint.
+    Delete enhanced feature flags created via the dedicated enhanced feature flag endpoint.
 
     :param feature_flag_client: The FeatureFlagClient to use for cleanup.
     :param feature_flags: List of FeatureFlag objects (or (name, label) tuples) to delete.

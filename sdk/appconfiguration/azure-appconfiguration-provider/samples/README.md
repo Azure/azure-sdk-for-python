@@ -49,8 +49,8 @@ pip install azure.appconfiguration.provider
 | entra_id_sample.py | demos connecting to app configuration with Entra ID |
 | connection_string_sample.py | demos connecting to app configuration with a Connection String |
 | key_vault_reference_sample.py | demos resolving key vault references with App Configuration |
-| feature_flag_resource_sample.py | demos loading feature flags created via the dedicated feature flag resource endpoint |
-| async_feature_flag_resource_sample.py | async version of feature_flag_resource_sample.py |
+| enhanced_feature_flag_sample.py | demos loading feature flags created via the dedicated enhanced feature flag endpoint |
+| async_enhanced_feature_flag_sample.py | async version of enhanced_feature_flag_sample.py |
 
 ## Next steps
 

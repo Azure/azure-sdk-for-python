@@ -35,7 +35,7 @@ class AppConfigTestCase(AzureRecordedTestCase):
         cred = self.get_credential(AzureAppConfigurationClient, is_async=True)
         return AzureAppConfigurationClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
-    def create_feature_flag_client(self, appconfiguration_endpoint_string):
+    def create_enhanced_feature_flag_client(self, appconfiguration_endpoint_string):
         cred = self.get_credential(FeatureFlagClient, is_async=True)
         return FeatureFlagClient(appconfiguration_endpoint_string, cred, user_agent="SDK/Integration")
 
@@ -86,9 +86,9 @@ async def set_test_settings_async(client, settings):
         await client.set_configuration_setting(setting)
 
 
-async def cleanup_feature_flag_resources_async(feature_flag_client, feature_flags):
+async def cleanup_enhanced_feature_flags_async(feature_flag_client, feature_flags):
     """
-    Delete feature flag resources created via the dedicated feature flag resource endpoint (async version).
+    Delete enhanced feature flags created via the dedicated enhanced feature flag endpoint (async version).
 
     :param feature_flag_client: The async FeatureFlagClient to use for cleanup.
     :param feature_flags: List of FeatureFlag objects (or (name, label) tuples) to delete.

@@ -34,6 +34,7 @@ from azure.appconfiguration.provider._constants import (
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
+    FEATURE_FLAG_KV_REFERENCE_SEGMENT,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
 
@@ -212,6 +213,22 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertTrue(provider._feature_flag_enabled)
         self.assertEqual(provider._refresh_timer._interval, 60)
 
+    def test_enhanced_feature_flag_selectors_excludes_snapshot_selectors(self):
+        """The enhanced feature flag endpoint doesn't support snapshots, so snapshot-name selectors should be
+        filtered out once at startup, while the original selector list (used for the key-value store, which does
+        support snapshots) is left untouched."""
+        key_select = SettingSelector(key_filter="app:*")
+        snapshot_select = SettingSelector(snapshot_name="my-snapshot")
+        feature_flag_selectors = [snapshot_select, key_select]
+
+        provider = AzureAppConfigurationProviderBase(
+            endpoint="https://test.azconfig.io",
+            feature_flag_selectors=feature_flag_selectors,
+        )
+
+        self.assertEqual(provider._feature_flag_selectors, feature_flag_selectors)
+        self.assertEqual(provider._enhanced_feature_flag_selectors, [key_select])
+
     def test_process_key_name_with_no_prefix(self):
         """Test key name processing with no matching prefix."""
         config = Mock()
@@ -357,7 +374,9 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
     def test_generate_allocation_id_no_allocation(self):
         """Test allocation ID generation with no allocation."""
         feature_flag_value: Dict[str, Any] = {"no_allocation": "here"}
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(
+            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
+        )
         self.assertIsNone(result)
 
     def test_generate_allocation_id_with_allocation(self):
@@ -374,7 +393,9 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             ],
         }
 
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(
+            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
+        )
         self.assertIsNotNone(result)
         self.assertIsInstance(result, str)
         # Should be a base64 encoded string
@@ -393,7 +414,9 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 "default_when_enabled": "Control"
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(
+            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
+        )
         # Since default_when_enabled is provided, allocated_variants won't be empty
         # so this should return a valid allocation ID
         self.assertIsNotNone(result)
@@ -406,24 +429,26 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 # No seed and no default_when_enabled
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(
+            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
+        )
         # This should return None because allocated_variants is empty and no seed
         self.assertIsNone(result)
 
 
-class TestProcessFeatureFlagResource(unittest.TestCase):
-    """Test processing of feature flags loaded from the dedicated feature flag resource endpoint."""
+class TestProcessEnhancedFeatureFlag(unittest.TestCase):
+    """Test processing of feature flags loaded from the dedicated enhanced feature flag endpoint."""
 
     def setUp(self):
         self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
 
-    def test_process_feature_flag_resource_minimal(self):
-        """Test processing a minimal feature flag resource."""
+    def test_process_enhanced_feature_flag_minimal(self):
+        """Test processing a minimal enhanced feature flag."""
         feature_flag = FeatureFlag(name="MyFeature", enabled=True)
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
-        self.assertEqual(result["name"], "MyFeature")
+        self.assertEqual(result["id"], "MyFeature")
         self.assertTrue(result["enabled"])
         self.assertNotIn("label", result)
         self.assertNotIn("description", result)
@@ -432,31 +457,23 @@ class TestProcessFeatureFlagResource(unittest.TestCase):
         self.assertNotIn("allocation", result)
         self.assertNotIn("tags", result)
         # Telemetry metadata (ETag) is always attached during processing, even without an explicit
-        # telemetry configuration on the feature flag resource.
+        # telemetry configuration on the enhanced feature flag.
         self.assertIn("telemetry", result)
         self.assertNotIn("enabled", result["telemetry"])
 
-    def test_process_feature_flag_resource_with_label_and_description(self):
-        """Test processing a feature flag resource with label and description."""
+    def test_process_enhanced_feature_flag_with_label_and_description(self):
+        """Test processing an enhanced feature flag with label and description."""
         feature_flag = FeatureFlag(name="MyFeature", enabled=False, label="prod", description="A test feature")
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
-        self.assertEqual(result["name"], "MyFeature")
+        self.assertEqual(result["id"], "MyFeature")
         self.assertFalse(result["enabled"])
         self.assertEqual(result["label"], "prod")
         self.assertEqual(result["description"], "A test feature")
 
-    def test_process_feature_flag_resource_whitespace_label_omitted(self):
-        """Test that a whitespace-only label is not included in the processed output."""
-        feature_flag = FeatureFlag(name="MyFeature", enabled=True, label="   ")
-
-        result = self.provider._process_feature_flag_resource(feature_flag)
-
-        self.assertNotIn("label", result)
-
-    def test_process_feature_flag_resource_with_conditions(self):
-        """Test processing a feature flag resource with conditions/client filters."""
+    def test_process_enhanced_feature_flag_with_conditions(self):
+        """Test processing an enhanced feature flag with conditions/client filters."""
         feature_flag = FeatureFlag(
             name="MyFeature",
             enabled=True,
@@ -466,15 +483,15 @@ class TestProcessFeatureFlagResource(unittest.TestCase):
             ),
         )
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
         self.assertEqual(result["conditions"]["requirement_type"], "All")
         self.assertEqual(len(result["conditions"]["client_filters"]), 1)
         self.assertEqual(result["conditions"]["client_filters"][0]["name"], "Percentage")
         self.assertEqual(result["conditions"]["client_filters"][0]["parameters"], {"Value": "50"})
 
-    def test_process_feature_flag_resource_with_variants_and_allocation(self):
-        """Test processing a feature flag resource with variants and allocation."""
+    def test_process_enhanced_feature_flag_with_variants_and_allocation(self):
+        """Test processing an enhanced feature flag with variants and allocation."""
         feature_flag = FeatureFlag(
             name="MyFeature",
             enabled=True,
@@ -492,7 +509,7 @@ class TestProcessFeatureFlagResource(unittest.TestCase):
             ),
         )
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
         self.assertEqual(len(result["variants"]), 2)
         self.assertEqual(result["variants"][0]["name"], "Control")
@@ -507,8 +524,8 @@ class TestProcessFeatureFlagResource(unittest.TestCase):
         self.assertEqual(allocation["group"], [{"variant": "Test", "groups": ["group1"]}])
         self.assertEqual(allocation["seed"], "1234")
 
-    def test_process_feature_flag_resource_with_telemetry_and_tags(self):
-        """Test processing a feature flag resource with telemetry settings and tags."""
+    def test_process_enhanced_feature_flag_with_telemetry_and_tags(self):
+        """Test processing an enhanced feature flag with telemetry settings and tags."""
         feature_flag = FeatureFlag(
             name="MyFeature",
             enabled=True,
@@ -516,49 +533,49 @@ class TestProcessFeatureFlagResource(unittest.TestCase):
             tags={"team": "infra"},
         )
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
         # Telemetry metadata gets ETag/FeatureFlagReference metadata appended by
-        # _update_ff_resource_telemetry_metadata as part of processing.
+        # _update_enhanced_feature_flag_telemetry_metadata as part of processing.
         self.assertTrue(result["telemetry"]["enabled"])
         self.assertEqual(result["telemetry"]["metadata"]["custom"], "value")
         self.assertEqual(result["tags"], {"team": "infra"})
 
-    def test_process_feature_flag_resource_updates_telemetry_metadata(self):
-        """Test that processing a feature flag resource adds ETag/FeatureFlagReference telemetry metadata."""
+    def test_process_enhanced_feature_flag_updates_telemetry_metadata(self):
+        """Test that processing an enhanced feature flag adds ETag/FeatureFlagReference telemetry metadata."""
         feature_flag = FeatureFlag(
             name="MyFeature",
             enabled=True,
             label="prod",
             telemetry=FeatureFlagTelemetryConfiguration(enabled=True),
         )
-        feature_flag.etag = "resource_etag"
+        feature_flag.etag = "enhanced_etag"
 
-        result = self.provider._process_feature_flag_resource(feature_flag)
+        result = self.provider._process_enhanced_feature_flag(feature_flag)
 
         metadata = result["telemetry"][METADATA_KEY]
-        self.assertEqual(metadata[ETAG_KEY], "resource_etag")
+        self.assertEqual(metadata[ETAG_KEY], "enhanced_etag")
         self.assertIn(FEATURE_FLAG_REFERENCE_KEY, metadata)
-        # The resource-based feature flag reference uses the "ff" path segment, not "kv".
+        # The enhanced feature flag reference uses the "ff" path segment, not "kv".
         self.assertIn("/ff/MyFeature", metadata[FEATURE_FLAG_REFERENCE_KEY])
         self.assertIn("?label=prod", metadata[FEATURE_FLAG_REFERENCE_KEY])
 
 
-class TestUpdateFfResourceTelemetryMetadata(unittest.TestCase):
-    """Test the _update_ff_resource_telemetry_metadata method."""
+class TestUpdateEnhancedFeatureFlagTelemetryMetadata(unittest.TestCase):
+    """Test the _update_enhanced_feature_flag_telemetry_metadata method."""
 
     def setUp(self):
         self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
 
-    def test_update_ff_resource_telemetry_metadata(self):
-        """Test resource-based feature flag telemetry processing uses the 'ff' reference segment."""
+    def test_update_enhanced_feature_flag_telemetry_metadata(self):
+        """Test enhanced feature flag telemetry processing uses the 'ff' reference segment."""
         feature_flag = FeatureFlag(name="test_feature", enabled=True, label="test_label")
         feature_flag.etag = "test_etag"
 
         feature_flag_value: Dict[str, Any] = {TELEMETRY_KEY: {"enabled": True}}
         endpoint = "https://test.azconfig.io"
 
-        self.provider._update_ff_resource_telemetry_metadata(endpoint, feature_flag, feature_flag_value)
+        self.provider._update_enhanced_feature_flag_telemetry_metadata(endpoint, feature_flag, feature_flag_value)
 
         metadata = feature_flag_value[TELEMETRY_KEY][METADATA_KEY]
         self.assertEqual(metadata[ETAG_KEY], "test_etag")
@@ -573,23 +590,23 @@ class TestMergeFeatureFlags(unittest.TestCase):
     def test_merge_no_overlap(self):
         """Test merging when there is no identifier overlap between the two sources."""
         kv_flags = [{"id": "KvFeature", "enabled": True}]
-        resource_flags = [{"name": "ResourceFeature", "enabled": False}]
+        enhanced_flags = [{"id": "EnhancedFeature", "enabled": False}]
 
-        merged = AzureAppConfigurationProviderBase._merge_feature_flags(kv_flags, resource_flags)
+        merged = AzureAppConfigurationProviderBase._merge_feature_flags(kv_flags, enhanced_flags)
 
         self.assertEqual(len(merged), 2)
         self.assertIn({"id": "KvFeature", "enabled": True}, merged)
-        self.assertIn({"name": "ResourceFeature", "enabled": False}, merged)
+        self.assertIn({"id": "EnhancedFeature", "enabled": False}, merged)
 
-    def test_merge_resource_takes_precedence_on_collision(self):
-        """Test that a resource-based feature flag overrides a key-value one with the same identifier."""
+    def test_merge_enhanced_takes_precedence_on_collision(self):
+        """Test that an enhanced feature flag overrides a key-value one with the same identifier."""
         kv_flags = [{"id": "SharedFeature", "enabled": False, "source": "kv"}]
-        resource_flags = [{"name": "SharedFeature", "enabled": True, "source": "resource"}]
+        enhanced_flags = [{"id": "SharedFeature", "enabled": True, "source": "enhanced"}]
 
-        merged = AzureAppConfigurationProviderBase._merge_feature_flags(kv_flags, resource_flags)
+        merged = AzureAppConfigurationProviderBase._merge_feature_flags(kv_flags, enhanced_flags)
 
         self.assertEqual(len(merged), 1)
-        self.assertEqual(merged[0]["source"], "resource")
+        self.assertEqual(merged[0]["source"], "enhanced")
         self.assertTrue(merged[0]["enabled"])
 
     def test_merge_empty_lists(self):
@@ -605,11 +622,11 @@ class TestMergeFeatureFlags(unittest.TestCase):
 
         self.assertEqual(len(merged), 2)
 
-    def test_merge_only_resource_flags(self):
-        """Test merging when only resource-based feature flags are present."""
-        resource_flags = [{"name": "Feature1", "enabled": True}, {"name": "Feature2", "enabled": False}]
+    def test_merge_only_enhanced_flags(self):
+        """Test merging when only enhanced feature flags are present."""
+        enhanced_flags = [{"id": "Feature1", "enabled": True}, {"id": "Feature2", "enabled": False}]
 
-        merged = AzureAppConfigurationProviderBase._merge_feature_flags([], resource_flags)
+        merged = AzureAppConfigurationProviderBase._merge_feature_flags([], enhanced_flags)
 
         self.assertEqual(len(merged), 2)
 
