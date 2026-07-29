@@ -6,12 +6,6 @@
 
 - Added support for Entra authentication for evaluation results emitted to Application Insights.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 1.18.2 (2026-07-21)
 
 ### Features Added
