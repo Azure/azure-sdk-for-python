@@ -9,7 +9,7 @@ from collections.abc import AsyncIterable
 from typing import Any, AsyncIterator, Sequence
 
 from ..._id_generator import IdGenerator
-from ...models import _generated as generated_models
+from ... import models as response_models
 from ...streaming._event_stream import ResponseEventStream as SyncResponseEventStream
 from ._builders import (
     OutputItemCodeInterpreterCallBuilder,
@@ -141,8 +141,8 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         self,
         text: str | AsyncIterable[str],
         *,
-        annotations: Sequence[generated_models.Annotation] | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        annotations: Sequence[response_models.Annotation] | None = None,
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text message output item.
 
         :param text: Complete text or async iterable of text chunks.
@@ -173,7 +173,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_function_call(  # type: ignore[override]
         self, name: str, call_id: str, arguments: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         :param name: The function name being called.
@@ -193,7 +193,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_function_call_output(  # type: ignore[override]
         self, call_id: str, output: str
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         :param call_id: The call ID of the function call this output belongs to.
@@ -208,7 +208,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_reasoning_item(  # type: ignore[override]
         self, summary_text: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a reasoning output item.
 
         :param summary_text: Complete summary text or async iterable of chunks.
@@ -227,7 +227,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         result_base64: str,
         *,
         partials: AsyncIterable[str] | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for an image generation call.
 
         :param result_base64: The final base64-encoded image result.
@@ -249,7 +249,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_structured_outputs(  # type: ignore[override]
         self, output: Any
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a structured outputs item.
 
         :param output: The structured output data.
@@ -263,11 +263,11 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_computer_call(  # type: ignore[override]
         self,
         call_id: str,
-        action: generated_models.ComputerAction,
+        action: response_models.ComputerAction,
         *,
-        pending_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
+        pending_safety_checks: list[response_models.ComputerCallSafetyCheckParam] | None = None,
         status: str = "completed",
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a computer call output item.
 
         :param call_id: Unique identifier for this tool call.
@@ -289,10 +289,10 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_computer_call_output(  # type: ignore[override]
         self,
         call_id: str,
-        output: generated_models.ComputerScreenshotImage,
+        output: response_models.ComputerScreenshotImage,
         *,
-        acknowledged_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        acknowledged_safety_checks: list[response_models.ComputerCallSafetyCheckParam] | None = None,
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a computer call output item.
 
         :param call_id: The call ID this output belongs to.
@@ -312,10 +312,10 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_local_shell_call(  # type: ignore[override]
         self,
         call_id: str,
-        action: generated_models.LocalShellExecAction,
+        action: response_models.LocalShellExecAction,
         *,
         status: str = "completed",
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a local shell call output item.
 
         :param call_id: Unique identifier for this tool call.
@@ -332,7 +332,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_local_shell_call_output(  # type: ignore[override]
         self, output: str
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a local shell call output item.
 
         :param output: The shell output string.
@@ -346,11 +346,11 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_function_shell_call(  # type: ignore[override]
         self,
         call_id: str,
-        action: generated_models.FunctionShellAction,
-        environment: generated_models.FunctionShellCallEnvironment,
+        action: response_models.FunctionShellAction,
+        environment: response_models.FunctionShellCallEnvironment,
         *,
         status: str = "completed",
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function shell call output item.
 
         :param call_id: Unique identifier for this tool call.
@@ -370,11 +370,11 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_function_shell_call_output(  # type: ignore[override]
         self,
         call_id: str,
-        output: list[generated_models.FunctionShellCallOutputContent],
+        output: list[response_models.FunctionShellCallOutputContent],
         *,
         status: str = "completed",
         max_output_length: int | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function shell call output item.
 
         :param call_id: The call ID this output belongs to.
@@ -396,10 +396,10 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_apply_patch_call(  # type: ignore[override]
         self,
         call_id: str,
-        operation: generated_models.ApplyPatchFileOperation,
+        operation: response_models.ApplyPatchFileOperation,
         *,
         status: str = "completed",
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for an apply-patch call output item.
 
         :param call_id: Unique identifier for this tool call.
@@ -420,7 +420,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         *,
         status: str = "completed",
         output: str | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for an apply-patch call output item.
 
         :param call_id: The call ID this output belongs to.
@@ -438,8 +438,8 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
     async def output_item_custom_tool_call_output(  # type: ignore[override]
         self,
         call_id: str,
-        output: str | list[generated_models.FunctionAndCustomToolCallOutput],
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        output: str | list[response_models.FunctionAndCustomToolCallOutput],
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a custom tool call output item.
 
         :param call_id: The call ID this output belongs to.
@@ -454,7 +454,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_mcp_approval_request(  # type: ignore[override]
         self, server_label: str, name: str, arguments: str
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for an MCP approval request item.
 
         :param server_label: Label identifying the MCP server.
@@ -475,7 +475,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
         approve: bool,
         *,
         reason: str | None = None,
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for an MCP approval response item.
 
         :param approval_request_id: The request ID being responded to.
@@ -492,7 +492,7 @@ class ResponseEventStream(SyncResponseEventStream):  # pylint: disable=too-many-
 
     async def output_item_compaction(  # type: ignore[override]
         self, encrypted_content: str
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a compaction output item.
 
         :param encrypted_content: The encrypted compaction content.

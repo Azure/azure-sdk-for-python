@@ -4,9 +4,9 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
-from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, Error
+from azure.ai.agentserver.responses.models import ApiErrorResponse, Error
 
 
 class RequestValidationError(ValueError):
@@ -31,34 +31,44 @@ class RequestValidationError(ValueError):
         self.details = details
 
     def to_error(self) -> Error:
-        """Convert this validation error to the generated ``Error`` model.
+        """Convert this validation error to an error wire payload.
 
-        :returns: An ``Error`` instance populated from this validation error's fields.
+        :returns: An error payload populated from this validation error's fields.
         :rtype: Error
         """
         detail_errors: list[Error] | None = None
         if self.details:
             detail_errors = [
-                Error(
-                    code=d.get("code", "invalid_value"),
-                    message=d.get("message", ""),
-                    param=d.get("param"),
-                    type="invalid_request_error",
+                cast(
+                    Error,
+                    {
+                        "code": d.get("code", "invalid_value"),
+                        "message": d.get("message", ""),
+                        "param": d.get("param"),
+                        "type": "invalid_request_error",
+                    }
                 )
                 for d in self.details
             ]
-        return Error(
-            code=self.code,
-            message=self.message,
-            param=self.param,
-            type=self.error_type,
-            details=detail_errors,
+        error = cast(
+            Error,
+            {
+                "code": self.code,
+                "message": self.message,
+                "param": self.param,
+                "type": self.error_type,
+            }
         )
+        if detail_errors is not None:
+            error["details"] = detail_errors
+        if self.debug_info is not None:
+            error["debugInfo"] = self.debug_info
+        return error
 
     def to_api_error_response(self) -> ApiErrorResponse:
-        """Convert this validation error to the generated API error envelope.
+        """Convert this validation error to the API error envelope.
 
-        :returns: An ``ApiErrorResponse`` wrapping the generated ``Error``.
+        :returns: An ``ApiErrorResponse`` wrapping the error payload.
         :rtype: ApiErrorResponse
         """
-        return ApiErrorResponse(error=self.to_error())
+        return cast(ApiErrorResponse, {"error": self.to_error()})

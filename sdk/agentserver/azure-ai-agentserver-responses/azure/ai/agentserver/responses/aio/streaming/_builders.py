@@ -8,7 +8,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from typing import AsyncIterator
 
-from ...models import _generated as generated_models
+from ... import models as response_models
 from ...streaming._builders import (
     OutputItemBuilder,
     OutputItemCodeInterpreterCallBuilder as SyncOutputItemCodeInterpreterCallBuilder,
@@ -33,7 +33,7 @@ class OutputItemMessageBuilder(SyncOutputItemMessageBuilder):
 
     async def text_content(  # type: ignore[override]
         self, text: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text content part.
 
         :param text: Complete text or async iterable of text chunks.
@@ -54,7 +54,7 @@ class OutputItemMessageBuilder(SyncOutputItemMessageBuilder):
 
     async def refusal_content(  # type: ignore[override]
         self, text: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a refusal content part.
 
         :param text: Complete refusal text or async iterable of text chunks.
@@ -81,7 +81,7 @@ class OutputItemFunctionCallBuilder(SyncOutputItemFunctionCallBuilder):
 
     async def arguments(  # type: ignore[override]
         self, args: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield argument delta and done events.
 
         :param args: Complete arguments string or async iterable of chunks.
@@ -106,7 +106,7 @@ class OutputItemReasoningItemBuilder(SyncOutputItemReasoningItemBuilder):
     async def summary_part(  # type: ignore[override]
         self,
         text: str | AsyncIterable[str],
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a reasoning summary part.
 
         :param text: Complete summary text or async iterable of text chunks.
@@ -134,7 +134,7 @@ class OutputItemCodeInterpreterCallBuilder(SyncOutputItemCodeInterpreterCallBuil
 
     async def code(  # type: ignore[override]
         self, code_text: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield code delta and done events.
 
         :param code_text: Complete code string or async iterable of chunks.
@@ -158,7 +158,7 @@ class OutputItemMcpCallBuilder(SyncOutputItemMcpCallBuilder):
 
     async def arguments(  # type: ignore[override]
         self, args: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield MCP call argument delta and done events.
 
         :param args: Complete arguments string or async iterable of chunks.
@@ -182,7 +182,7 @@ class OutputItemCustomToolCallBuilder(SyncOutputItemCustomToolCallBuilder):
 
     async def input(  # type: ignore[override]
         self, input_text: str | AsyncIterable[str]
-    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
         """Yield custom tool input delta and done events.
 
         :param input_text: Complete input text or async iterable of chunks.

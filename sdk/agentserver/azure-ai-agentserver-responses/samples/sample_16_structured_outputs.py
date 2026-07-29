@@ -26,7 +26,7 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
 )
 from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
-from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
+from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 
 app = ResponsesAgentServerHost()
 
@@ -76,7 +76,11 @@ async def full_control_handler(
     yield stream.emit_in_progress()
 
     builder = stream.add_output_item_structured_outputs()
-    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok", "count": 42})
+    item: StructuredOutputsOutputItem = {
+        "type": "structured_outputs",
+        "id": builder.item_id,
+        "output": {"status": "ok", "count": 42},
+    }
     yield builder.emit_added(item)
     yield builder.emit_done(item)
 

@@ -7,6 +7,7 @@ words:
   - acode
   - addl
   - agentserver
+  - aiso
   - alnum
   - annot
   - aoutput
@@ -17,12 +18,15 @@ words:
   - asummary
   - atext
   - autouse
+  - azfo
   - badid
+  - bcso
   - bkey
   - bval
   - BYOK
   - cand
   - caplog
+  - caresp
   - cchain
   - configurators
   - coreai
@@ -31,6 +35,7 @@ words:
   - crashy
   - CREAT
   - ctco
+  - dataagent
   - dataclass
   - dedup
   - dedups
@@ -39,8 +44,10 @@ words:
   - elts
   - ename
   - etype
+  - fdao
   - finalizer
   - frontmatter
+  - fspath
   - fstring
   - funcs
   - genai
@@ -64,6 +71,7 @@ words:
   - MAIB
   - markexpr
   - mcpa
+  - MCPHTTP
   - mcpl
   - mcpr
   - myhost

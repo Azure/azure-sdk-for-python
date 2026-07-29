@@ -69,17 +69,20 @@ def _build_response_snapshot(
         "id": context.response_id,
         "object": "response",
         "status": "in_progress",
-        "model": request.model or "",
+        "model": request.get("model") or "",
         "output": [],
     }
-    if request.metadata is not None:
-        snapshot["metadata"] = request.metadata
-    if request.background is not None:
-        snapshot["background"] = request.background
-    if request.previous_response_id is not None:
-        snapshot["previous_response_id"] = request.previous_response_id
+    metadata = request.get("metadata")
+    if metadata is not None:
+        snapshot["metadata"] = metadata
+    background = request.get("background")
+    if background is not None:
+        snapshot["background"] = background
+    previous_response_id = request.get("previous_response_id")
+    if previous_response_id is not None:
+        snapshot["previous_response_id"] = previous_response_id
     # Normalize conversation to ConversationReference form.
-    conv = request.conversation
+    conv = request.get("conversation")
     if isinstance(conv, str):
         snapshot["conversation"] = {"id": conv}
     elif isinstance(conv, dict) and conv.get("id"):
@@ -102,7 +105,7 @@ async def handler(
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
     # serializing our Item to dict round-trips to the OpenAI SDK.
-    input_items = [item.as_dict() for item in await context.get_input_items()]
+    input_items = [dict(item) for item in await context.get_input_items()]
 
     # This handler owns the response lifecycle — construct the
     # response snapshot directly instead of forwarding the upstream's.
@@ -121,7 +124,7 @@ async def handler(
     upstream_failed = False
 
     async with await upstream.responses.create(
-        model=request.model or "gpt-4o-mini",
+        model=request.get("model") or "gpt-4o-mini",
         input=input_items,  # type: ignore[arg-type]
         stream=True,
     ) as upstream_stream:

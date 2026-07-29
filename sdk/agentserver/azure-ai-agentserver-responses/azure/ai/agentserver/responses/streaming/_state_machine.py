@@ -7,14 +7,12 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, Mapping, MutableMapping, Sequence, cast
 
-from ..models import _generated as generated_models
-
 OUTPUT_ITEM_DELTA_EVENT_TYPE = "response.output_item.delta"
 
 _TERMINAL_EVENT_TYPES = {
-    generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-    generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-    generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+    "response.completed",
+    "response.failed",
+    "response.incomplete",
 }
 _TERMINAL_TYPE_STATUS: dict[str, set[str]] = {
     "response.completed": {"completed"},
@@ -22,16 +20,16 @@ _TERMINAL_TYPE_STATUS: dict[str, set[str]] = {
     "response.incomplete": {"incomplete"},
 }
 _OUTPUT_ITEM_EVENT_TYPES = {
-    generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
+    "response.output_item.added",
     OUTPUT_ITEM_DELTA_EVENT_TYPE,
-    generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
+    "response.output_item.done",
 }
 _EVENT_STAGES = {
-    generated_models.ResponseStreamEventType.RESPONSE_CREATED.value: 0,
-    generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value: 1,
-    generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value: 2,
-    generated_models.ResponseStreamEventType.RESPONSE_FAILED.value: 2,
-    generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value: 2,
+    "response.created": 0,
+    "response.in_progress": 1,
+    "response.completed": 2,
+    "response.failed": 2,
+    "response.incomplete": 2,
 }
 
 
@@ -62,7 +60,7 @@ class EventStreamValidator:
         if not isinstance(event_type, str) or not event_type:
             raise ValueError("each lifecycle event must include a non-empty type")
 
-        if self._event_count == 0 and event_type != generated_models.ResponseStreamEventType.RESPONSE_CREATED.value:
+        if self._event_count == 0 and event_type != "response.created":
             raise ValueError("first lifecycle event must be response.created")
 
         self._event_count += 1
@@ -107,7 +105,7 @@ class EventStreamValidator:
         output_index_raw = event.get("output_index", 0)
         output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
 
-        if event_type == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        if event_type == "response.output_item.added":
             if output_index in self._done_indexes:
                 raise ValueError("cannot add output item after it has been marked done")
             self._added_indexes.add(output_index)
@@ -116,7 +114,7 @@ class EventStreamValidator:
         if output_index not in self._added_indexes:
             raise ValueError("output item delta/done requires a preceding output_item.added")
 
-        if event_type == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
+        if event_type == "response.output_item.done":
             self._done_indexes.add(output_index)
             return
 
@@ -183,7 +181,7 @@ def _normalize_lifecycle_events(
     if not normalized:
         normalized = [
             {
-                "type": generated_models.ResponseStreamEventType.RESPONSE_CREATED.value,
+                "type": "response.created",
                 "response": {
                     "id": response_id,
                     "object": "response",
@@ -213,7 +211,7 @@ def _normalize_lifecycle_events(
     if terminal_count == 0:
         normalized.append(
             {
-                "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+                "type": "response.failed",
                 "response": {
                     "id": response_id,
                     "object": "response",

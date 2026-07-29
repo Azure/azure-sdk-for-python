@@ -611,18 +611,12 @@ def test_output_item__agent_reference_stamped_on_item() -> None:
 
     async def _handler_with_agent_ref(request: Any, context: Any, cancellation_signal: asyncio.Event):
         """Handler that creates a stream with agent_reference and emits a message item."""
-        agent_ref = None
-        if hasattr(request, "agent_reference") and request.agent_reference is not None:
-            agent_ref_raw = request.agent_reference
-            if hasattr(agent_ref_raw, "as_dict"):
-                agent_ref = agent_ref_raw.as_dict()
-            elif isinstance(agent_ref_raw, dict):
-                agent_ref = agent_ref_raw
+        agent_ref = request.get("agent_reference") if isinstance(request, dict) else None
 
         async def _events():
             stream = ResponseEventStream(
                 response_id=context.response_id,
-                model=getattr(request, "model", None),
+                model=request.get("model") if isinstance(request, dict) else None,
                 agent_reference=agent_ref,
             )
             yield stream.emit_created()
