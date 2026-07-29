@@ -136,7 +136,6 @@ with (
             response.http_response.read()
             created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
-        # Alternatively, append `.result()` to block while the SDK handles polling.
         project_client.beta.evaluators.begin_create_generation_job(
             job=EvaluatorGenerationJob(
                 inputs=EvaluatorGenerationInputs(
@@ -151,6 +150,7 @@ with (
             polling=False,
             raw_response_hook=raw_response_hook,
         )
+        # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
         if not created_jobs:
             raise RuntimeError("The create operation did not return a generation job.")
         job = created_jobs[0]
@@ -199,7 +199,6 @@ with (
                 response.http_response.read()
                 created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
-            # Alternatively, append `.result()` to block while the SDK handles polling.
             project_client.beta.evaluators.begin_create_generation_job(
                 job=EvaluatorGenerationJob(
                     inputs=EvaluatorGenerationInputs(
@@ -225,6 +224,7 @@ with (
                 polling=False,
                 raw_response_hook=raw_response_hook,
             )
+            # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
             if not created_jobs:
                 raise RuntimeError("The create operation did not return a generation job.")
             job = created_jobs[0]

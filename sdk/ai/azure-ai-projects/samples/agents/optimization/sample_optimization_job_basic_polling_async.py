@@ -18,7 +18,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -73,12 +73,12 @@ async def main() -> None:
         # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        # The raw_response_hook is called synchronously before the generated LRO method
-        # awaits read() on the initial response.  Capture the pipeline response object here
-        # and parse the body afterwards, when read() has already been awaited.
         pipeline_responses = []
 
         def raw_response_hook(response):
+            # The raw_response_hook is called synchronously before the generated LRO method
+            # awaits read() on the initial response.  Capture the pipeline response object here
+            # and parse the body afterwards, when read() has already been awaited.
             pipeline_responses.append(response)
 
         await project_client.beta.agents.begin_create_optimization_job(

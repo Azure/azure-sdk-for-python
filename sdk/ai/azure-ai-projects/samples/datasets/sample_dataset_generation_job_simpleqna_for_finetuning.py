@@ -144,7 +144,7 @@ with (
     # ------------------------------------------------------------------
     # 2. Submit a fine-tuning data generation job that consumes the file.
     # ------------------------------------------------------------------
-    print("Create a fine-tuning data generation job from the Azure OpenAI file.")
+
     job = DataGenerationJob(
         inputs=DataGenerationJobInputs(
             name=f"simpleqna-finetuning-{run_id}",
@@ -178,12 +178,12 @@ with (
         response.http_response.read()
         created_jobs.append(DataGenerationJob(response.http_response.json()))
 
-    # Alternatively, append `.result()` to block while the SDK handles polling.
     project_client.beta.datasets.begin_create_generation_job(
         job=job,
         polling=False,
         raw_response_hook=raw_response_hook,
     )
+    # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
     if not created_jobs:
         raise RuntimeError("The create operation did not return a data generation job.")
     job = created_jobs[0]
