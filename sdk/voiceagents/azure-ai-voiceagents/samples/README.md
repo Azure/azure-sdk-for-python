@@ -25,8 +25,8 @@ These code samples are organized **by scenario**:
 > [!NOTE]
 > The **management** scenarios cover voice-agent management and read-only
 > conversation/audio playback over request/response (HTTP). The **live**
-> scenario drives a realtime voice session with this library's own
-> `client.realtime.connect(...)` namespace — no extra SDK required. It ships as
+> scenario drives a realtime voice session with the `azure-ai-voicelive` SDK,
+> which routes to the same voice-agent endpoint. It ships as
 > two samples: `live/sample_live_text_conversation_async.py` (a headless typed
 > turn) and `live/sample_live_audio_conversation_async.py` (a hands-free
 > microphone conversation with barge-in). Each shows the full loop (create an
@@ -66,7 +66,7 @@ a completed live session (see [Getting a conversation id](#getting-a-conversatio
 
 | File | Description |
 | ---- | ----------- |
-| [live/sample_live_text_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_text_conversation_async.py) | End to end with **typed** turns: create an agent, publish a version, then type prompts in a loop — each is sent via `client.realtime` and the spoken reply is streamed back (optionally played through your speakers). Reads the persisted conversation back, then deletes everything. Runs headless — no microphone needed. |
+| [live/sample_live_text_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_text_conversation_async.py) | End to end with **typed** turns: create an agent, publish a version, then type prompts in a loop — each is sent via `azure-ai-voicelive` and the spoken reply is streamed back (optionally played through your speakers). Reads the persisted conversation back, then deletes everything. Runs headless — no microphone needed. |
 | [live/sample_live_audio_conversation_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/voiceagents/azure-ai-voiceagents/samples/live/sample_live_audio_conversation_async.py) | End to end with your **microphone**: stream live audio to the agent, let server VAD detect your turns, and talk over the agent to **barge in** (cancel its in-flight reply). Requires `pyaudio`. Runs until you press Ctrl-C. |
 
 ## Prerequisites
@@ -79,6 +79,8 @@ a completed live session (see [Getting a conversation id](#getting-a-conversatio
   python -m pip install azure-ai-voiceagents azure-identity
   # for the async samples, also install an async transport:
   python -m pip install aiohttp
+  # for the live samples, install the realtime SDK (with its aiohttp transport):
+  python -m pip install "azure-ai-voicelive[aiohttp]"
   # optional: to hear the live sample's audio reply through your speakers:
   python -m pip install pyaudio
   ```
@@ -123,7 +125,7 @@ management samples turn this on). During the live session the service emits a
 have ended.
 
 The `live/` samples do this end to end for you: each creates an agent, opens a
-live session with `client.realtime`, captures the conversation id from that
+live session with `azure-ai-voicelive`, captures the conversation id from that
 session, and reads the conversation back — no manual id wiring required. Use
 `sample_live_text_conversation_async.py` for a headless typed turn, or
 `sample_live_audio_conversation_async.py` for a hands-free microphone

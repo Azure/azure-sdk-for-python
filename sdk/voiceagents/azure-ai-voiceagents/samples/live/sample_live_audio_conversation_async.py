@@ -8,25 +8,29 @@
 FILE: sample_live_audio_conversation_async.py
 
 DESCRIPTION:
-    End-to-end hands-free, bidirectional voice conversation using only the
-    azure-ai-voiceagents SDK (REST management + realtime streaming):
+    End-to-end hands-free, bidirectional voice conversation. Management (create/
+    version/read/delete) uses azure-ai-voiceagents; the realtime session uses
+    azure-ai-voicelive against the same voice-agent endpoint, exchanging
+    strongly-typed events.
 
-      1. Create an agent with ``store = true`` so conversations persist.
+      1. Create an agent with ``store=True`` so conversations persist.
       2. Publish a new version.
-      3. Open a realtime session, stream live microphone audio, and let server
-         VAD detect your turns. Your speech is transcribed, the agent replies
-         through the speakers, and talking over it barges in.
+      3. Stream live mic audio and let the agent's server-side VAD detect your
+         turns: your speech is transcribed, the agent replies through the
+         speakers, and talking over it barges in.
       4. Read the persisted conversation back.
       5. Delete the agent.
 
-    Uses non-blocking pyaudio callbacks for capture and playback; reply audio is
-    sequence-numbered so a barge-in can skip whatever is still queued. The GA
-    session schema configures ``server_vad`` (with an activation threshold) and
-    deep noise suppression on the input. For no echo on speakers, use a headset.
+    Capture and playback use non-blocking pyaudio callbacks; reply audio is
+    sequence-numbered so a barge-in can skip whatever is still queued. The agent
+    owns turn detection and noise suppression server-side, so no session config
+    is sent. Use a headset to avoid echo.
 
-    Audio both ways is base64 PCM16, mono, 24 kHz. Requires ``pyaudio``.
+    Mic audio is sent as base64 PCM16; the reply arrives as typed
+    ``response.audio.*`` events, decoded to PCM16, mono, 24 kHz. Requires
+    ``pyaudio``.
 
-      pip install azure-ai-voiceagents aiohttp azure-identity pyaudio
+      pip install azure-ai-voiceagents azure-ai-voicelive[aiohttp] azure-identity pyaudio
 
 USAGE:
     python sample_live_audio_conversation_async.py
@@ -45,6 +49,7 @@ import base64
 import os
 import queue
 from typing import Any, Final, Optional
+from urllib.parse import urlparse, urlunparse
 
 import aiohttp
 from azure.core.exceptions import HttpResponseError
@@ -57,14 +62,36 @@ from azure.ai.voiceagents.models import (
     VoiceAgentDefinition,
     VoiceOutputModality,
 )
+from azure.ai.voicelive.aio import connect
+from azure.ai.voicelive.models import (
+    ServerEventConversationItemInputAudioTranscriptionCompleted,
+    ServerEventError,
+    ServerEventInputAudioBufferSpeechStarted,
+    ServerEventResponseAudioDelta,
+    ServerEventResponseAudioTranscriptDone,
+)
 
 PREVIEW: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
+
+# Opt into the gated preview via this handshake header.
+_FOUNDRY_FEATURES: Final = {"Foundry-Features": "VoiceAgents=V1Preview"}
+
+# Preview API version that streams the reply as typed ``response.audio.*`` events.
+_REALTIME_API_VERSION: Final = "2025-11-15-preview"
 
 # Audio is streamed both ways as PCM16, mono, 24 kHz.
 _SAMPLE_RATE: Final = 24000
 
 # pyaudio callback buffer size (~50 ms of PCM16 audio per callback).
 _CHUNK_SAMPLES: Final = 1200
+
+
+def _voice_agent_realtime_url(project_endpoint: str, agent_name: str) -> str:
+    """Build the WebSocket URL for a voice agent's dedicated realtime route."""
+    parsed = urlparse(project_endpoint)
+    scheme = "wss" if parsed.scheme == "https" else "ws"
+    path = parsed.path.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/voice"
+    return urlunparse((scheme, parsed.netloc, path, "", f"api-version={_REALTIME_API_VERSION}", ""))
 
 try:
     import pyaudio
@@ -73,12 +100,12 @@ except ImportError:  # pragma: no cover - required audio dependency
 
 
 class _AudioProcessor:
-    """Real-time microphone capture and speaker playback via non-blocking pyaudio callbacks.
+    """Real-time mic capture and speaker playback via non-blocking pyaudio callbacks.
 
     * Capture base64-encodes each frame and appends it to the input buffer.
-    * Playback pulls sequence-numbered PCM16 from a queue, always handing pyaudio
-      exactly the sample count it asked for (wrong size corrupts audio).
-    * ``skip_pending_audio`` bumps a "base" sequence number so audio queued before
+    * Playback pulls sequence-numbered PCM16 from a queue, always returning the
+      exact sample count pyaudio asked for (a wrong size corrupts audio).
+    * ``skip_pending_audio`` bumps a base sequence number so audio queued before
       a barge-in is dropped, stopping playback the instant the user speaks.
     """
 
@@ -197,7 +224,8 @@ class _AudioProcessor:
 
 
 async def _run_audio_conversation(
-    client: VoiceAgentsClient,
+    project_endpoint: str,
+    credential: DefaultAzureCredential,
     agent_name: str,
 ) -> Optional[str]:
     """Hold a live, hands-free conversation with barge-in; return the persisted conversation id."""
@@ -207,33 +235,20 @@ async def _run_audio_conversation(
 
     conversation_id: Optional[str] = None
 
-    async with client.realtime.connect(
-        agent_name=agent_name,
-        foundry_features=PREVIEW,
-    ) as conn:
-        # Configure the session (GA schema): server_vad turn detection (an
-        # activation threshold avoids phantom turns from noise) plus deep noise
-        # suppression on the input audio.
-        try:
-            await conn.session.update(
-                session={
-                    "type": "realtime",
-                    "audio": {
-                        "input": {
-                            "noise_reduction": {"type": "azure_deep_noise_suppression"},
-                            "turn_detection": {
-                                "type": "server_vad",
-                                "threshold": 0.5,
-                                "prefix_padding_ms": 300,
-                                "silence_duration_ms": 500,
-                            },
-                        }
-                    },
-                }
-            )
-        except HttpResponseError as e:
-            print(f"(session config not applied: {e.status_code} {e.reason})")
-
+    # Open the realtime session on the voice agent's dedicated route. The
+    # voicelive ``connect`` provides the typed event stream and auth; point it
+    # at the agent URL built above (its default route is a non-agent one).
+    session = connect(
+        credential=credential,
+        endpoint=project_endpoint,
+        api_version=_REALTIME_API_VERSION,
+        headers=_FOUNDRY_FEATURES,
+    )
+    agent_url = _voice_agent_realtime_url(project_endpoint, agent_name)
+    session._prepare_url = lambda: agent_url  # type: ignore[attr-defined]
+    async with session as conn:
+        # A voice agent owns its model, instructions, voice, turn detection, and
+        # noise suppression server-side, so this client sends no ``session.update``.
         ap = _AudioProcessor(conn)
         ap.start_playback()
         ap.start_capture()
@@ -243,30 +258,25 @@ async def _run_audio_conversation(
 
         try:
             async for event in conn:
-                event_type = event.get("type")
-                if event_type == "conversation.created":
-                    # Only ``conversation.created`` carries the persisted id;
-                    # the id on ``response.done`` is a per-turn runtime id.
-                    conversation_id = event.get("conversation_id") or conversation_id
-                    print(f"(conversation.created -> persisted id: {conversation_id})")
-                elif event_type == "input_audio_buffer.speech_started":
+                # Every server event is strongly typed by voicelive.
+                if isinstance(event, ServerEventInputAudioBufferSpeechStarted):
                     # Barge-in: drop whatever reply audio is still queued.
                     ap.skip_pending_audio()
                     print("(listening...)")
-                elif event_type == "conversation.item.input_audio_transcription.completed":
-                    print(f"You:   {event.get('transcript', '').strip()}")
-                elif event_type in ("response.output_audio.delta", "response.audio.delta"):
-                    ap.queue_audio(base64.b64decode(event.get("delta", "")))
-                elif event_type in (
-                    "response.output_audio_transcript.done",
-                    "response.audio_transcript.done",
-                ):
-                    print(f"Agent: {event.get('transcript', '')}")
-                elif event_type == "error":
-                    # Non-fatal errors are reported and ignored; a fatal error
-                    # closes the socket, ending this loop on its own.
-                    error = event.get("error") or {}
-                    print(f"Session error: {error.get('message', error)}")
+                elif isinstance(event, ServerEventConversationItemInputAudioTranscriptionCompleted):
+                    print(f"You:   {event.transcript.strip()}")
+                elif isinstance(event, ServerEventError):
+                    # Non-fatal errors are reported; a fatal one closes the socket.
+                    print(f"Session error: {event.error.message}")
+                elif isinstance(event, ServerEventResponseAudioDelta):
+                    # Each delta is a decoded PCM16 chunk; queue it.
+                    ap.queue_audio(event.delta)
+                elif isinstance(event, ServerEventResponseAudioTranscriptDone):
+                    print(f"Agent: {event.transcript}")
+                elif event.type == "conversation.created":
+                    # Carries the persisted id (untyped in this build).
+                    conversation_id = event.get("conversation_id") or conversation_id
+                    print(f"(conversation.created -> persisted id: {conversation_id})")
         except (KeyboardInterrupt, asyncio.CancelledError):
             # Ctrl-C ends the session; read back whatever was persisted so far.
             print("\n(ending session...)")
@@ -351,7 +361,7 @@ async def audio_conversation() -> None:
 
             # 3) Hold a live microphone conversation with the agent.
             print("Starting realtime session...")
-            conversation_id = await _run_audio_conversation(client, agent_name)
+            conversation_id = await _run_audio_conversation(project_endpoint, credential, agent_name)
 
             # 4) Read the persisted conversation back with the voice-agents client.
             if conversation_id:

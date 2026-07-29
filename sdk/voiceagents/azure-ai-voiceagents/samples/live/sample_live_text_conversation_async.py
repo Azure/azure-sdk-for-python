@@ -8,23 +8,24 @@
 FILE: sample_live_text_conversation_async.py
 
 DESCRIPTION:
-    End-to-end typed voice-agent conversation using only the azure-ai-voiceagents
-    SDK (REST management + realtime streaming):
+    End-to-end typed voice-agent conversation. Management (create/version/read/
+    delete) uses azure-ai-voiceagents; the realtime session uses azure-ai-voicelive
+    against the same voice-agent endpoint, exchanging strongly-typed events.
 
-      1. Create an agent with ``store = true`` so conversations persist.
+      1. Create an agent with ``store=True`` so conversations persist.
       2. Publish a new version.
-      3. Open a realtime session and hold a typed, multi-turn conversation: each
-         prompt you type is sent to the agent and its spoken reply streams back
-         as audio plus a transcript. Blank line (or ``exit`` / ``quit``) ends it.
-         Runs headless -- no microphone needed.
+      3. Hold a typed, multi-turn conversation: each prompt is sent as a
+         ``UserMessageItem`` and the reply streams back as typed audio and
+         transcript events. Blank line (or ``exit`` / ``quit``) ends it.
       4. Read the persisted conversation back.
       5. Delete the agent.
 
-    Reply audio is base64 PCM16, mono, 24 kHz, played through the speakers when
-    ``pyaudio`` is installed. For a hands-free mic conversation with barge-in,
-    see sample_live_audio_conversation_async.py.
+    Reply audio is PCM16, mono, 24 kHz (already decoded by voicelive) and plays
+    through the speakers when ``pyaudio`` is installed; runs headless otherwise.
+    For a hands-free mic conversation with barge-in, see
+    sample_live_audio_conversation_async.py.
 
-      pip install azure-ai-voiceagents aiohttp azure-identity pyaudio
+      pip install azure-ai-voiceagents azure-ai-voicelive[aiohttp] azure-identity pyaudio
 
 USAGE:
     python sample_live_text_conversation_async.py
@@ -38,9 +39,9 @@ USAGE:
 """
 
 import asyncio
-import base64
 import os
 from typing import Final, Optional
+from urllib.parse import urlparse, urlunparse
 
 import aiohttp
 from azure.core.exceptions import HttpResponseError
@@ -53,14 +54,37 @@ from azure.ai.voiceagents.models import (
     VoiceAgentDefinition,
     VoiceOutputModality,
 )
+from azure.ai.voicelive.aio import connect
+from azure.ai.voicelive.models import (
+    InputTextContentPart,
+    ServerEventError,
+    ServerEventResponseAudioDelta,
+    ServerEventResponseAudioTranscriptDone,
+    ServerEventResponseDone,
+    UserMessageItem,
+)
 
 PREVIEW: Final = AgentDefinitionOptInKeys.VOICE_AGENTS_V1_PREVIEW
 
-# Timeout (seconds) to wait for the agent to finish its spoken reply.
+# Opt into the gated preview via this handshake header.
+_FOUNDRY_FEATURES: Final = {"Foundry-Features": "VoiceAgents=V1Preview"}
+
+# Preview API version that streams the reply as typed ``response.audio.*`` events.
+_REALTIME_API_VERSION: Final = "2025-11-15-preview"
+
+# Seconds to wait for the agent to finish its reply.
 _RESPONSE_TIMEOUT: Final = 45
 
-# The agent streams its reply as PCM16, mono, 24 kHz audio.
+# Reply audio format: PCM16, mono, 24 kHz.
 _SAMPLE_RATE: Final = 24000
+
+
+def _voice_agent_realtime_url(project_endpoint: str, agent_name: str) -> str:
+    """Build the WebSocket URL for a voice agent's dedicated realtime route."""
+    parsed = urlparse(project_endpoint)
+    scheme = "wss" if parsed.scheme == "https" else "ws"
+    path = parsed.path.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/voice"
+    return urlunparse((scheme, parsed.netloc, path, "", f"api-version={_REALTIME_API_VERSION}", ""))
 
 try:
     import pyaudio
@@ -69,10 +93,10 @@ except ImportError:  # pragma: no cover - optional playback dependency
 
 
 class _SpeakerPlayer:
-    """Play streamed PCM16 audio deltas through the speakers with pyaudio.
+    """Play streamed PCM16 audio through the speakers with pyaudio.
 
-    Playback is optional: when pyaudio is not installed the player is a no-op and
-    the sample still runs headless, reporting the amount of audio it received.
+    Optional: without pyaudio the player is a no-op and the sample still runs
+    headless, reporting how much audio it received.
     """
 
     def __init__(self) -> None:
@@ -115,7 +139,8 @@ class _SpeakerPlayer:
 
 
 async def _run_text_conversation(
-    client: VoiceAgentsClient,
+    project_endpoint: str,
+    credential: DefaultAzureCredential,
     agent_name: str,
 ) -> Optional[str]:
     """Hold a typed, multi-turn conversation and return the persisted conversation id."""
@@ -124,36 +149,37 @@ async def _run_text_conversation(
     player = _SpeakerPlayer()
 
     try:
-        async with client.realtime.connect(
-            agent_name=agent_name,
-            foundry_features=PREVIEW,
-        ) as conn:
+        # Open the realtime session, then point it at the agent's dedicated route.
+        session = connect(
+            credential=credential,
+            endpoint=project_endpoint,
+            api_version=_REALTIME_API_VERSION,
+            headers=_FOUNDRY_FEATURES,
+        )
+        agent_url = _voice_agent_realtime_url(project_endpoint, agent_name)
+        session._prepare_url = lambda: agent_url  # type: ignore[attr-defined]
+        async with session as conn:
             print("Type a message and press Enter. Blank line (or 'exit') ends the session.")
 
             async def pump() -> None:
                 nonlocal conversation_id, audio_delta_count
                 async for event in conn:
-                    event_type = event.get("type")
-                    if event_type == "conversation.created":
-                        # Only ``conversation.created`` carries the persisted id;
-                        # the id on ``response.done`` is a per-turn runtime id.
+                    # Every server event is strongly typed by voicelive.
+                    if isinstance(event, ServerEventResponseDone):
+                        return
+                    if isinstance(event, ServerEventError):
+                        print(f"Session error: {event.error.message}")
+                        return
+                    if isinstance(event, ServerEventResponseAudioDelta):
+                        # Each delta is a decoded PCM16 chunk; play it.
+                        audio_delta_count += 1
+                        player.play(event.delta)
+                    elif isinstance(event, ServerEventResponseAudioTranscriptDone):
+                        print(f"Agent: {event.transcript}")
+                    elif event.type == "conversation.created":
+                        # Carries the persisted id (untyped in this build).
                         conversation_id = event.get("conversation_id") or conversation_id
                         print(f"(conversation.created -> persisted id: {conversation_id})")
-                    elif event_type in ("response.output_audio.delta", "response.audio.delta"):
-                        # Each delta is a base64 PCM16 chunk of the reply; play it.
-                        audio_delta_count += 1
-                        player.play(base64.b64decode(event.get("delta", "")))
-                    elif event_type in (
-                        "response.output_audio_transcript.done",
-                        "response.audio_transcript.done",
-                    ):
-                        print(f"Agent: {event.get('transcript', '')}")
-                    elif event_type == "response.done":
-                        return
-                    elif event_type == "error":
-                        error = event.get("error") or {}
-                        print(f"Session error: {error.get('message', error)}")
-                        return
 
             while True:
                 # input() blocks, so read it off the loop in a worker thread.
@@ -161,13 +187,9 @@ async def _run_text_conversation(
                 if not prompt or prompt.lower() in ("exit", "quit"):
                     break
 
-                # Send the user turn and ask the agent to respond.
+                # Send the turn and ask the agent to respond.
                 await conn.conversation.item.create(
-                    item={
-                        "type": "message",
-                        "role": "user",
-                        "content": [{"type": "input_text", "text": prompt}],
-                    }
+                    item=UserMessageItem(content=[InputTextContentPart(text=prompt)])
                 )
                 await conn.response.create()
 
@@ -230,7 +252,7 @@ async def text_conversation() -> None:
     ) as client:
         conversation_id: Optional[str] = None
         try:
-            # 1) Create the agent. `store = true` persists conversations for later reading.
+            # 1) Create the agent. ``store=True`` persists conversations for later reading.
             await client.voice_agents.create_voice_agent(
                 name=agent_name,
                 definition=VoiceAgentDefinition(
@@ -260,11 +282,11 @@ async def text_conversation() -> None:
             )
             print(f"Published agent version: {new_version.version}")
 
-            # 3) Hold a realtime streaming conversation with the agent via typed turns.
+            # 3) Hold the realtime conversation.
             print("Starting realtime session...")
-            conversation_id = await _run_text_conversation(client, agent_name)
+            conversation_id = await _run_text_conversation(project_endpoint, credential, agent_name)
 
-            # 4) Read the persisted conversation back with the voice-agents client.
+            # 4) Read the persisted conversation back.
             if conversation_id:
                 print(f"Reading persisted conversation {conversation_id}...")
                 try:
