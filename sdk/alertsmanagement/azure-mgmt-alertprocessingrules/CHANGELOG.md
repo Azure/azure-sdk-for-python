@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - First GA version.
+  - First GA
 
 ## 1.0.0b1 (2026-07-09)
 
