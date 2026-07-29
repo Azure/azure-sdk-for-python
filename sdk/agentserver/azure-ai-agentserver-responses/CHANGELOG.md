@@ -1,5 +1,41 @@
 # Release History
 
+## 2.0.0b0 (Unreleased)
+
+### Features Added
+
+- Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
+
+### Breaking Changes
+
+- Removed a-prefixed async convenience generator methods from the sync `ResponseEventStream` and sync builder classes. Use `azure.ai.agentserver.responses.aio.ResponseEventStream` for async streaming convenience methods.
+
+### Migration Guide
+
+Async response event stream helpers now live under the `aio` namespace and no longer use the `a` prefix.
+
+Before:
+
+```python
+from azure.ai.agentserver.responses import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.aoutput_item_message(token_stream()):
+    yield event
+```
+
+After:
+
+```python
+from azure.ai.agentserver.responses.aio import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.output_item_message(token_stream()):
+    yield event
+```
+
+Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
+
 ## 1.0.0b9 (2026-07-22)
 
 ### Other Changes
