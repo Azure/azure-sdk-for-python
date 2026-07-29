@@ -60,6 +60,11 @@ from azure.ai.voiceagents.aio import VoiceAgentsClient
 from azure.ai.voiceagents.models import (
     AgentDefinitionOptInKeys,
     VoiceAgentDefinition,
+    VoiceAudioConfig,
+    VoiceAudioInputConfig,
+    VoiceInputTranscription,
+    VoiceNoiseReduction,
+    VoiceNoiseReductionType,
     VoiceOutputModality,
 )
 from azure.ai.voicelive.aio import connect
@@ -317,6 +322,14 @@ async def audio_conversation() -> None:
     model = os.environ.get("AZURE_VOICE_AGENTS_MODEL", "gpt-realtime")
     agent_name = "sample-audio-agent"
 
+    # Transcribe input audio in English and suppress echo/background noise on the mic.
+    audio_config = VoiceAudioConfig(
+        input=VoiceAudioInputConfig(
+            noise_reduction=VoiceNoiseReduction(type=VoiceNoiseReductionType.AZURE_DEEP_NOISE_SUPPRESSION),
+            transcription=VoiceInputTranscription(model="whisper-1", language="en-US"),
+        )
+    )
+
     credential = DefaultAzureCredential()
     # Foundry may return Brotli responses (Content-Encoding: br) that aiohttp
     # won't decode; ask only for gzip/deflate so the transport handles it.
@@ -338,6 +351,7 @@ async def audio_conversation() -> None:
                     model=model,
                     instructions="You are a friendly voice assistant. Keep replies short.",
                     output_modalities=[VoiceOutputModality.TEXT, VoiceOutputModality.AUDIO],
+                    audio=audio_config,
                     store=True,
                 ),
                 description="Created by the azure-ai-voiceagents audio conversation sample.",
@@ -354,6 +368,7 @@ async def audio_conversation() -> None:
                     model=model,
                     instructions="You are a helpful voice assistant. Give concise, clear answers.",
                     output_modalities=[VoiceOutputModality.TEXT, VoiceOutputModality.AUDIO],
+                    audio=audio_config,
                     store=True,
                 ),
                 description="Refined instructions.",
