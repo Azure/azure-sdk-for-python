@@ -23,6 +23,7 @@ never skipped.
 from __future__ import annotations
 
 import asyncio
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -33,6 +34,11 @@ from tests.e2e.resilience_contract.conftest import (
     poll_until_terminal,
     post_and_get_response_id,
     reconnect_stream_and_collect_events,
+)
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="CrashHarness uses POSIX process-group signals (os.killpg)",
 )
 
 _SAMPLE = Path(__file__).resolve().parents[2] / "samples" / "sample_19_resilient_streaming.py"

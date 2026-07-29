@@ -63,7 +63,7 @@ class CrashHarness:
         subprocess via ``PORT`` env var.
     :type port: int | None
     :param readiness_timeout_seconds: How long to wait for the subprocess to
-        respond to the ``/health/live`` probe. Default 30.
+        respond to the ``/health/live`` probe. Default 10.
     :type readiness_timeout_seconds: float
     :param env_extras: Additional environment variables to pass to the
         subprocess. Merged onto the harness's defaults.
@@ -76,7 +76,7 @@ class CrashHarness:
         tmp_path: Path,
         *,
         port: int | None = None,
-        readiness_timeout_seconds: float = 30.0,
+        readiness_timeout_seconds: float = 10.0,
         env_extras: dict[str, str] | None = None,
     ) -> None:
         if isinstance(sample_module, ModuleType):

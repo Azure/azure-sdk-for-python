@@ -20,6 +20,7 @@ that cross-turn state survives a process restart, which these tests pin.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -29,6 +30,11 @@ from tests.e2e._crash_harness import CrashHarness
 from tests.e2e.resilience_contract.conftest import (
     poll_until_terminal,
     post_and_get_response_id,
+)
+
+pytestmark = pytest.mark.skipif(
+    sys.platform == "win32",
+    reason="CrashHarness uses POSIX process-group signals (os.killpg)",
 )
 
 _SAMPLE = Path(__file__).resolve().parents[2] / "samples" / "sample_22_resilient_multiturn.py"

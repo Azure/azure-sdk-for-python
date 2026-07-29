@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import sys
 from collections.abc import AsyncIterator, Callable
 from pathlib import Path
 from typing import Any
@@ -82,6 +83,8 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     harness.start()`` and ``await harness.close()`` (or use it as an
     async context manager).
     """
+    if sys.platform == "win32":
+        pytest.skip("CrashHarness uses POSIX process-group signals (os.killpg)")
 
     def _factory(
         *,
@@ -149,6 +152,8 @@ def make_checkpoint_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     Returns an unstarted ``CrashHarness`` (resilient_background is always True
     for Row 11 — it is a Row 1 extension).
     """
+    if sys.platform == "win32":
+        pytest.skip("CrashHarness uses POSIX process-group signals (os.killpg)")
 
     def _factory(
         *,

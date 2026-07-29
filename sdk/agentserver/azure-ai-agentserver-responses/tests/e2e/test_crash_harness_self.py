@@ -14,7 +14,6 @@ behaves as advertised.
 from __future__ import annotations
 
 import platform
-import sys
 import textwrap
 from pathlib import Path
 
@@ -65,8 +64,8 @@ def echo_server_path(tmp_path: Path) -> Path:
 
 
 pytestmark = pytest.mark.skipif(
-    platform.system() == "Windows",
-    reason="CrashHarness uses POSIX SIGKILL; not supported on Windows.",
+    platform.system() in ("Windows", "Darwin"),
+    reason="Self-tests use a throwaway http.server subprocess unreachable on macOS CI; harness is POSIX-only.",
 )
 
 
