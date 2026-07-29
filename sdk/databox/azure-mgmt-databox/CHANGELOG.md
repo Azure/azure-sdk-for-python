@@ -1,5 +1,74 @@
 # Release History
 
+## 4.0.0 (2026-07-29)
+
+### Features Added
+
+  - Client `DataBoxManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `DataBoxManagementClient` added method `send_request`
+  - Model `DeviceErasureDetails` added property `secure_erasure_certificate_sas_key`
+  - Model `JobResource` added property `properties`
+  - Model `JobResourceUpdateParameter` added property `properties`
+  - Model `SkuInformation` added property `properties`
+  - Added enum `CreatedByType`
+  - Added model `JobProperties`
+  - Added model `OperationProperties`
+  - Added model `SkuProperties`
+  - Added model `TrackedResource`
+  - Added model `UpdateJobProperties`
+  - Added model `ValidationResponseProperties`
+  - Model `JobsOperations` added parameter `etag` in method `begin_update`
+  - Model `JobsOperations` added parameter `match_condition` in method `begin_update`
+
+### Breaking Changes
+
+  - Model `AddressValidationOutput` deleted or renamed its instance variable `alternate_addresses`
+  - Model `AddressValidationOutput` deleted or renamed its instance variable `error`
+  - Model `AddressValidationOutput` deleted or renamed its instance variable `validation_status`
+  - Model `AddressValidationOutput` deleted or renamed its instance variable `validation_type`
+  - Model `JobResource` deleted or renamed its instance variable `all_devices_lost`
+  - Model `JobResource` deleted or renamed its instance variable `cancellation_reason`
+  - Model `JobResource` deleted or renamed its instance variable `delayed_stage`
+  - Model `JobResource` deleted or renamed its instance variable `delivery_info`
+  - Model `JobResource` deleted or renamed its instance variable `delivery_type`
+  - Model `JobResource` deleted or renamed its instance variable `details`
+  - Model `JobResource` deleted or renamed its instance variable `error`
+  - Model `JobResource` deleted or renamed its instance variable `is_cancellable`
+  - Model `JobResource` deleted or renamed its instance variable `is_cancellable_without_fee`
+  - Model `JobResource` deleted or renamed its instance variable `is_deletable`
+  - Model `JobResource` deleted or renamed its instance variable `is_prepare_to_ship_enabled`
+  - Model `JobResource` deleted or renamed its instance variable `is_shipping_address_editable`
+  - Model `JobResource` deleted or renamed its instance variable `reverse_shipping_details_update`
+  - Model `JobResource` deleted or renamed its instance variable `reverse_transport_preference_update`
+  - Model `JobResource` deleted or renamed its instance variable `start_time`
+  - Model `JobResource` deleted or renamed its instance variable `status`
+  - Model `JobResource` deleted or renamed its instance variable `transfer_type`
+  - Model `JobResourceUpdateParameter` deleted or renamed its instance variable `details`
+  - Model `Resource` deleted or renamed its instance variable `identity`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `sku`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `SkuInformation` deleted or renamed its instance variable `api_versions`
+  - Model `SkuInformation` deleted or renamed its instance variable `capacity`
+  - Model `SkuInformation` deleted or renamed its instance variable `costs`
+  - Model `SkuInformation` deleted or renamed its instance variable `countries_within_commerce_boundary`
+  - Model `SkuInformation` deleted or renamed its instance variable `data_location_to_service_location_map`
+  - Model `SkuInformation` deleted or renamed its instance variable `disabled_reason`
+  - Model `SkuInformation` deleted or renamed its instance variable `disabled_reason_message`
+  - Model `SkuInformation` deleted or renamed its instance variable `required_feature`
+  - Model `ValidationResponse` deleted or renamed its instance variable `individual_response_details`
+  - Model `ValidationResponse` deleted or renamed its instance variable `status`
+  - Deleted or renamed model `ArmBaseObject`
+  - Deleted or renamed model `AvailableSkusResult`
+  - Deleted or renamed model `JobResourceList`
+  - Deleted or renamed model `OperationList`
+  - Deleted or renamed model `UnencryptedCredentialsList`
+  - Method `JobsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `JobsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `JobsOperations.list` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `JobsOperations.list_by_resource_group` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `DataBoxManagementClientOperationsMixin`
+
 ## 4.0.0b1 (2026-07-06)
 
 ### Features Added
