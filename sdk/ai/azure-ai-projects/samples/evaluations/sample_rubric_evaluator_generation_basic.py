@@ -65,8 +65,8 @@ from azure.ai.projects.models import (
     EvaluatorGenerationJob,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
-    TestingCriterionAzureAIEvaluator,
 )
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 

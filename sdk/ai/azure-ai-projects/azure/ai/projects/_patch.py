@@ -11,6 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
+import importlib
 from typing import List, Any, Optional
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI
@@ -413,3 +414,8 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    types_module = importlib.import_module(f"{__package__}.types")
+    patch_types_module = importlib.import_module(f"{__package__}._patch_types")
+
+    for name in getattr(patch_types_module, "__all__", []):
+        setattr(types_module, name, getattr(patch_types_module, name))

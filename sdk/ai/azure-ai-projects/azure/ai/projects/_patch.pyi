@@ -33,7 +33,7 @@ from openai.types.eval_create_response import EvalCreateResponse
 from openai.types.shared_params.metadata import Metadata
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
-from .models import (
+from ._patch_types import (
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,

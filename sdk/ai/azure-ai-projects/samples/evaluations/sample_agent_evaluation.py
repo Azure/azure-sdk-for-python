@@ -37,11 +37,11 @@ from openai.types.evals.run_create_response import RunCreateResponse
 from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
+from azure.ai.projects.models import PromptAgentDefinition
+from azure.ai.projects.types import (
     TestingCriterionAzureAIEvaluator,
-    PromptAgentDefinition,
     TargetCompletionEvalRunDataSource,
-    AzureAIAgentTargetParam,
+    AzureAIAgentTarget,
 )
 
 load_dotenv()
@@ -114,7 +114,7 @@ with (
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIAgentTargetParam(
+        target=AzureAIAgentTarget(
             type="azure_ai_agent",
             name=agent.name,
             version=agent.version,  # Version is optional. Defaults to latest version if not specified

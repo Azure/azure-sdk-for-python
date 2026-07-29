@@ -35,10 +35,8 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import CreateEva
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import (
-    DatasetVersion,
-    TestingCriterionAzureAIEvaluator,
-)
+from azure.ai.projects.models import DatasetVersion
+from azure.ai.projects.types import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 

@@ -5,7 +5,7 @@
 # ------------------------------------
 
 import datetime
-from typing import Dict, Any, List, Union
+from typing import Any, Dict, List, Union
 from typing_extensions import Literal, Required, TypedDict
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     InputMessagesItemReference,
@@ -13,73 +13,13 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
     SourceFileID,
 )
 
-# **************************************************************************************************
-# BEGIN - These are duplicates of full classes implementation in _models.py. Redefined here as TypedDicts
-# with "Param" suffix, so they can be used in type annotations for "openai_client.evals" operations
-# **************************************************************************************************
-
-
-# Note all properties on this class where required. Sample code suggest they are all optional. Update it here.
-class ModelSamplingConfigParam(TypedDict, total=False):
-    """Represents a set of parameters used to control the sampling behavior of a language model
-    during text generation.
-    """
-
-    temperature: float
-    """The temperature parameter for sampling. Required."""
-    top_p: float
-    """The top-p parameter for nucleus sampling. Required."""
-    seed: int
-    """The random seed for reproducibility. Required."""
-    max_completion_tokens: int
-    """The maximum number of tokens allowed in the completion. Required."""
-
-
-class ToolDescriptionParam(TypedDict, total=False):
-    """Description of a tool that can be used by an agent."""
-
-    name: str
-    """The name of the tool."""
-    description: str
-    """A brief description of the tool's purpose."""
-
-
-class AzureAIAgentTargetParam(TypedDict, total=False):
-    """Represents a target specifying an Azure AI agent."""
-
-    type: Required[Literal["azure_ai_agent"]]
-    """The type of target, always ``azure_ai_agent``. Required. Default value is \"azure_ai_agent\"."""
-    name: Required[str]
-    """The unique identifier of the Azure AI agent. Required."""
-    version: str
-    """The version of the Azure AI agent."""
-    tool_descriptions: List[ToolDescriptionParam]
-    """The parameters used to control the sampling behavior of the agent during text generation."""
-
-
-class AzureAIModelTargetParam(TypedDict, total=False):
-    """Represents a target specifying an Azure AI model for operations requiring model selection."""
-
-    type: Required[Literal["azure_ai_model"]]
-    """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
-    model: str
-    """The unique identifier of the Azure AI model."""
-    sampling_params: ModelSamplingConfigParam
-    """The parameters used to control the sampling behavior of the model during text generation."""
-
-
-# *************************************************************************************************
-# END - Typed re-definitions
-# *************************************************************************************************
-
-
 class ResponseRetrievalItemGenerationParams(TypedDict, total=False):
     """Represents the parameters for response retrieval item generation."""
 
     type: Required[Literal["response_retrieval"]]
     """The type of item generation parameters, always ``response_retrieval``. Required. The
      ResponseRetrieval item generation parameters."""
-    max_num_turns: int  # Required[int] # TODO: In TypeSpec this is required, but sample code does not set it
+    max_num_turns: int
     """The maximum number of turns of chat history to evaluate. Required."""
     data_mapping: Required[Dict[str, str]]
     """Mapping from source fields to response_id field, required for retrieving chat history.
@@ -99,9 +39,9 @@ class AzureAIResponsesEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_responses\"."""
     item_generation_params: Required[ResponseRetrievalItemGenerationParams]
     """The parameters for item generation. Required."""
-    max_runs_hourly: int  # Required[int]  # TODO: In TypeSpec this is required, but sample code does not set it
+    max_runs_hourly: int
     """Maximum number of evaluation runs allowed per hour. Required."""
-    event_configuration_id: str  # Required[str] # TODO: In TypeSpec this is required, but sample code does not set it
+    event_configuration_id: str
     """The event configuration name associated with this evaluation run. Required."""
 
 
@@ -111,7 +51,7 @@ class AzureAIDataSourceConfig(TypedDict, total=False):
     type: Required[Literal["azure_ai_source"]]
     """The object type, which is always ``azure_ai_source``. Required. Default value is
      \"azure_ai_source\"."""
-    scenario: Required[str]  # TODO: Update typespec to define the below strings as enum
+    scenario: Required[str]
     """Data schema scenario. Required. Is one of the following types: Literal[\"red_team\"],
      Literal[\"responses\"], Literal[\"traces_preview\"], Literal[\"synthetic_data_gen_preview\"],
      Literal[\"benchmark_preview\"]"""
@@ -126,7 +66,7 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     source: Required[Union[SourceFileContent, SourceFileID]]
     """The source configuration for inline or file data. Required. Is either a
      SourceFileContent type or a SourceFileID type."""
-    target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
+    target: Required[Union[AzureAIAgentTarget, AzureAIModelTarget, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
     input_messages: Required[InputMessagesItemReference]
     """Input messages configuration."""
@@ -156,11 +96,11 @@ class AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_benchmark_preview"]]
     """The type of data source, always ``azure_ai_benchmark_preview``. Required. Default value is
      \"azure_ai_benchmark_preview\"."""
-    target: Required[Union[AzureAIModelTargetParam, AzureAIAgentTargetParam, dict[str, Any]]]
+    target: Required[Union[AzureAIModelTarget, AzureAIAgentTarget, dict[str, Any]]]
     """The target model or agent to evaluate against the benchmark. When using ``azure_ai_model``
      target, ``sampling_params`` must not be provided; inference parameters are auto-filled from the
      benchmark specification stored in eval group properties. Required. Is either a
-     AzureAIModelTargetParam type or a AzureAIAgentTargetParam type."""
+     AzureAIModelTarget type or a AzureAIAgentTarget type."""
     input_messages: InputMessagesItemReference
     """Input messages configuration."""
 
@@ -179,7 +119,7 @@ class EvalCsvRunDataSource(TypedDict, total=False):
 
     type: Required[Literal["csv"]]
     """The type of data source, always ``csv``. Required. Default value is \"csv\"."""
-    source: Required[EvalCsvFileIdSource]  # EvalCsvFileIdSource
+    source: Required[EvalCsvFileIdSource]
     """The source of the CSV data, either inline content or a file reference. Required."""
 
 
@@ -189,9 +129,9 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_red_team"]]
     """The type of data source. Always ``azure_ai_red_team``. Required. Default value is
      \"azure_ai_red_team\"."""
-    item_generation_params: Required[Any]  # ItemGenerationParams
+    item_generation_params: Required[Any]
     """The parameters for item generation. Required."""
-    target: Required[Union[AzureAIModelTargetParam, AzureAIAgentTargetParam, dict[str, Any]]]
+    target: Required[Union[AzureAIModelTarget, AzureAIAgentTarget, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
 
 
@@ -219,3 +159,17 @@ class TracesPreviewEvalRunDataSource(TypedDict, total=False):
     """Sampling limit applied to traces retrieved for evaluation."""
     ingestion_delay_seconds: int
     """The delay to apply for ingestion when querying traces."""
+
+
+__all__ = [
+    "AzureAIBenchmarkPreviewEvalRunDataSource",
+    "AzureAIDataSourceConfig",
+    "AzureAIResponsesEvalRunDataSource",
+    "EvalCsvFileIdSource",
+    "EvalCsvRunDataSource",
+    "TestingCriterionAzureAIEvaluator",
+    "RedTeamEvalRunDataSource",
+    "ResponseRetrievalItemGenerationParams",
+    "TargetCompletionEvalRunDataSource",
+    "TracesPreviewEvalRunDataSource",
+]
