@@ -203,5 +203,5 @@
         "azure.mgmt.storagesync.StorageSyncMgmtClient.location_operation_status": "Microsoft.StorageSync.locationOperationStatusGet",
         "azure.mgmt.storagesync.aio.StorageSyncMgmtClient.location_operation_status": "Microsoft.StorageSync.locationOperationStatusGet"
     },
-    "CrossLanguageVersion": "14b23868ff81"
+    "CrossLanguageVersion": "467789b7bf64"
 }

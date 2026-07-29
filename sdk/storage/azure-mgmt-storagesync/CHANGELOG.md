@@ -1,5 +1,193 @@
 # Release History
 
+## 2.0.0 (2026-07-29)
+
+### Features Added
+
+  - Model `CloudEndpoint` added property `properties`
+  - Model `CloudEndpointCreateParameters` added property `properties`
+  - Model `OperationResourceMetricSpecification` added property `lock_aggregation_type`
+  - Model `PrivateEndpointConnection` added property `properties`
+  - Model `PrivateLinkResource` added property `properties`
+  - Model `RegisteredServer` added property `properties`
+  - Model `RegisteredServerCreateParameters` added property `properties`
+  - Model `ServerEndpoint` added property `properties`
+  - Model `ServerEndpointCloudTieringStatus` added property `low_disk_mode`
+  - Model `ServerEndpointCreateParameters` added property `properties`
+  - Model `StorageSyncService` added property `identity`
+  - Model `StorageSyncService` added property `properties`
+  - Model `StorageSyncServiceCreateParameters` added property `id`
+  - Model `StorageSyncServiceCreateParameters` added property `identity`
+  - Model `StorageSyncServiceCreateParameters` added property `name`
+  - Model `StorageSyncServiceCreateParameters` added property `properties`
+  - Model `StorageSyncServiceCreateParameters` added property `system_data`
+  - Model `StorageSyncServiceCreateParameters` added property `type`
+  - Model `StorageSyncServiceUpdateParameters` added property `identity`
+  - Model `StorageSyncServiceUpdateParameters` added property `properties`
+  - Model `SyncGroup` added property `properties`
+  - Model `Workflow` added property `properties`
+  - Added model `CloudEndpointAfsShareMetadataCertificatePublicKeys`
+  - Added model `CloudEndpointCreateParametersProperties`
+  - Added model `CloudEndpointProperties`
+  - Added model `CloudTieringLowDiskMode`
+  - Added enum `CloudTieringLowDiskModeState`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ErrorDetail`
+  - Added model `ErrorResponse`
+  - Added model `ManagedServiceIdentity`
+  - Added enum `ManagedServiceIdentityType`
+  - Added model `PostBackupResponseProperties`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `RegisteredServerCreateParametersProperties`
+  - Added model `RegisteredServerProperties`
+  - Added model `RegisteredServerUpdateParameters`
+  - Added model `RegisteredServerUpdateProperties`
+  - Added enum `ServerAuthType`
+  - Added model `ServerEndpointCreateParametersProperties`
+  - Added model `ServerEndpointProperties`
+  - Added model `ServerEndpointProvisioningStatus`
+  - Added model `ServerEndpointProvisioningStepStatus`
+  - Added model `ServerEndpointUpdateProperties`
+  - Added enum `ServerProvisioningStatus`
+  - Added model `StorageSyncServiceCreateParametersProperties`
+  - Added model `StorageSyncServiceProperties`
+  - Added model `StorageSyncServiceUpdateProperties`
+  - Added model `SyncGroupProperties`
+  - Added enum `Type`
+  - Added model `UserAssignedIdentity`
+  - Added model `WorkflowProperties`
+  - Model `CloudEndpointsOperations` added method `afs_share_metadata_certificate_public_keys`
+  - Model `CloudEndpointsOperations` added method `restore_heartbeat`
+  - Model `RegisteredServersOperations` added method `begin_update`
+
+### Breaking Changes
+
+  - Deleted or renamed model `MicrosoftStorageSync`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `azure_file_share_name`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `backup_enabled`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `change_enumeration_status`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `friendly_name`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `last_operation_name`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `last_workflow_id`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `partnership_id`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `provisioning_state`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `storage_account_resource_id`
+  - Model `CloudEndpoint` deleted or renamed its instance variable `storage_account_tenant_id`
+  - Model `CloudEndpointCreateParameters` deleted or renamed its instance variable `azure_file_share_name`
+  - Model `CloudEndpointCreateParameters` deleted or renamed its instance variable `friendly_name`
+  - Model `CloudEndpointCreateParameters` deleted or renamed its instance variable `storage_account_resource_id`
+  - Model `CloudEndpointCreateParameters` deleted or renamed its instance variable `storage_account_tenant_id`
+  - Model `PostBackupResponse` deleted or renamed its instance variable `cloud_endpoint_name`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `RegisteredServer` deleted or renamed its instance variable `agent_version`
+  - Model `RegisteredServer` deleted or renamed its instance variable `agent_version_expiration_date`
+  - Model `RegisteredServer` deleted or renamed its instance variable `agent_version_status`
+  - Model `RegisteredServer` deleted or renamed its instance variable `cluster_id`
+  - Model `RegisteredServer` deleted or renamed its instance variable `cluster_name`
+  - Model `RegisteredServer` deleted or renamed its instance variable `discovery_endpoint_uri`
+  - Model `RegisteredServer` deleted or renamed its instance variable `friendly_name`
+  - Model `RegisteredServer` deleted or renamed its instance variable `last_heart_beat`
+  - Model `RegisteredServer` deleted or renamed its instance variable `last_operation_name`
+  - Model `RegisteredServer` deleted or renamed its instance variable `last_workflow_id`
+  - Model `RegisteredServer` deleted or renamed its instance variable `management_endpoint_uri`
+  - Model `RegisteredServer` deleted or renamed its instance variable `monitoring_configuration`
+  - Model `RegisteredServer` deleted or renamed its instance variable `monitoring_endpoint_uri`
+  - Model `RegisteredServer` deleted or renamed its instance variable `provisioning_state`
+  - Model `RegisteredServer` deleted or renamed its instance variable `resource_location`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_certificate`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_id`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_management_error_code`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_name`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_os_version`
+  - Model `RegisteredServer` deleted or renamed its instance variable `server_role`
+  - Model `RegisteredServer` deleted or renamed its instance variable `service_location`
+  - Model `RegisteredServer` deleted or renamed its instance variable `storage_sync_service_uid`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `agent_version`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `cluster_id`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `cluster_name`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `friendly_name`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `last_heart_beat`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `server_certificate`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `server_id`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `server_os_version`
+  - Model `RegisteredServerCreateParameters` deleted or renamed its instance variable `server_role`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `cloud_tiering`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `cloud_tiering_status`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `friendly_name`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `initial_download_policy`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `initial_upload_policy`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `last_operation_name`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `last_workflow_id`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `local_cache_mode`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `offline_data_transfer`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `offline_data_transfer_share_name`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `offline_data_transfer_storage_account_resource_id`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `offline_data_transfer_storage_account_tenant_id`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `provisioning_state`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `recall_status`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `server_local_path`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `server_name`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `server_resource_id`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `sync_status`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `tier_files_older_than_days`
+  - Model `ServerEndpoint` deleted or renamed its instance variable `volume_free_space_percent`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `cloud_tiering`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `friendly_name`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `initial_download_policy`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `initial_upload_policy`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `local_cache_mode`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `offline_data_transfer`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `offline_data_transfer_share_name`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `server_local_path`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `server_resource_id`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `tier_files_older_than_days`
+  - Model `ServerEndpointCreateParameters` deleted or renamed its instance variable `volume_free_space_percent`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `cloud_tiering`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `local_cache_mode`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `offline_data_transfer`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `offline_data_transfer_share_name`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `tier_files_older_than_days`
+  - Model `ServerEndpointUpdateParameters` deleted or renamed its instance variable `volume_free_space_percent`
+  - Model `StorageSyncService` deleted or renamed its instance variable `incoming_traffic_policy`
+  - Model `StorageSyncService` deleted or renamed its instance variable `last_operation_name`
+  - Model `StorageSyncService` deleted or renamed its instance variable `last_workflow_id`
+  - Model `StorageSyncService` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `StorageSyncService` deleted or renamed its instance variable `provisioning_state`
+  - Model `StorageSyncService` deleted or renamed its instance variable `storage_sync_service_status`
+  - Model `StorageSyncService` deleted or renamed its instance variable `storage_sync_service_uid`
+  - Model `StorageSyncServiceCreateParameters` deleted or renamed its instance variable `incoming_traffic_policy`
+  - Model `StorageSyncServiceUpdateParameters` deleted or renamed its instance variable `incoming_traffic_policy`
+  - Model `SyncGroup` deleted or renamed its instance variable `sync_group_status`
+  - Model `SyncGroup` deleted or renamed its instance variable `unique_id`
+  - Model `Workflow` deleted or renamed its instance variable `command_name`
+  - Model `Workflow` deleted or renamed its instance variable `created_timestamp`
+  - Model `Workflow` deleted or renamed its instance variable `last_operation_id`
+  - Model `Workflow` deleted or renamed its instance variable `last_status_timestamp`
+  - Model `Workflow` deleted or renamed its instance variable `last_step_name`
+  - Model `Workflow` deleted or renamed its instance variable `operation`
+  - Model `Workflow` deleted or renamed its instance variable `status`
+  - Model `Workflow` deleted or renamed its instance variable `steps`
+  - Deleted or renamed model `CloudEndpointArray`
+  - Deleted or renamed model `OperationDisplayResource`
+  - Deleted or renamed model `OperationEntityListResult`
+  - Deleted or renamed model `PrivateEndpointConnectionListResult`
+  - Deleted or renamed model `ProgressType`
+  - Deleted or renamed model `Reason`
+  - Deleted or renamed model `RegisteredServerArray`
+  - Deleted or renamed model `ResourcesMoveInfo`
+  - Deleted or renamed model `ServerEndpointArray`
+  - Deleted or renamed model `StorageSyncServiceArray`
+  - Deleted or renamed model `SubscriptionState`
+  - Deleted or renamed model `SyncGroupArray`
+  - Deleted or renamed model `WorkflowArray`
+  - Deleted or renamed method `CloudEndpointsOperations.restoreheartbeat`
+
 ## 2.0.0b2 (2026-07-06)
 
 ### Features Added
