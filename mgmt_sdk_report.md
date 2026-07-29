@@ -38,7 +38,7 @@
 | 37 | azure-mgmt-relay | 2024-01-01 | 2.0.0b2 |  | 2026-07-06 | Not Started | [#48321](https://github.com/Azure/azure-sdk-for-python/pull/48321) |
 | 38 | azure-mgmt-privatedns | 2024-06-01 | 2.0.0b1 |  | 2026-07-06 | Not Started | [#48322](https://github.com/Azure/azure-sdk-for-python/pull/48322) |
 | 39 | azure-mgmt-powerbidedicated | 2021-01-01 | 1.1.0b2 |  | 2026-07-06 | Not Started | [#48323](https://github.com/Azure/azure-sdk-for-python/pull/48323) |
-| 40 | azure-mgmt-edgeorder | 2024-02-01 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
+| 40 | azure-mgmt-edgeorder | 2024-02-01 | 3.0.0b1 |  | 2026-07-06 | Not Started | [#48324](https://github.com/Azure/azure-sdk-for-python/pull/48324) |
 | 41 | azure-mgmt-dynatrace | 2024-04-24 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
 | 42 | azure-mgmt-databox | 2025-07-01 | 4.0.0b1 |  | 2026-07-06 | Not Started |  |
 | 43 | azure-mgmt-reservations | 2020-10-25, 2022-11-01 | 3.0.0b1 |  | 2026-06-02 | Not Started |  |
