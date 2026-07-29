@@ -144,9 +144,9 @@ class Metrics(_BackCompatMixin):
             version=metrics.version,
             enabled=metrics.enabled,
             include_apis=metrics.include_apis,
-            retention_policy=RetentionPolicy._to_generated(
+            retention_policy=RetentionPolicy._to_generated(  # pylint: disable=protected-access
                 metrics.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -1394,9 +1394,9 @@ class AnalyticsLogging(_BackCompatMixin):
             delete=logging.delete,
             read=logging.read,
             write=logging.write,
-            retention_policy=RetentionPolicy._to_generated(
+            retention_policy=RetentionPolicy._to_generated(  # pylint: disable=protected-access
                 logging.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 

@@ -29,7 +29,7 @@ def _any_conditions(**kwargs):
     )
 
 
-async def upload_datalake_file(
+async def upload_datalake_file(  # pylint: disable=too-many-locals
     client: "PathOperations",
     stream: IO,
     validate_content: bool,
@@ -63,7 +63,10 @@ async def upload_datalake_file(
 
         if not overwrite:
             # if customers didn't specify access conditions, they cannot flush data to existing file
-            if not _any_conditions(if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since, etag=etag, match_condition=match_condition):
+            if not _any_conditions(
+                if_modified_since=if_modified_since, if_unmodified_since=if_unmodified_since,
+                etag=etag, match_condition=match_condition
+            ):
                 match_condition = MatchConditions.IfMissing
             if properties or umask or permissions:
                 raise ValueError("metadata, umask and permissions can be set only when overwrite is enabled")
