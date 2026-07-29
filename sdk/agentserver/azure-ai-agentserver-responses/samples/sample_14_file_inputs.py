@@ -51,7 +51,6 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
 
 app = ResponsesAgentServerHost()
 
@@ -60,10 +59,10 @@ def _extract_files(items):
     """Extract ``MessageContentInputFileContent`` from expanded input items."""
     files = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if item.get("type") != "message":
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputFileContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_file":
                 files.append(content)
     return files
 
@@ -77,9 +76,10 @@ async def base64_handler(request: CreateResponse, context: ResponseContext):
 
     results = []
     for f in files:
-        if f.file_data and is_data_url(f.file_data):
-            raw = try_decode_bytes(f.file_data)
-            media = get_media_type(f.file_data)
+        file_data = f.get("file_data")
+        if file_data and is_data_url(file_data):
+            raw = try_decode_bytes(file_data)
+            media = get_media_type(file_data)
             size = len(raw) if raw else 0
             results.append(f"{media or 'unknown'} ({size} bytes)")
     return TextResponse(context, request, text=f"Decoded {len(results)} file(s): {'; '.join(results)}")
@@ -92,7 +92,7 @@ async def url_handler(request: CreateResponse, context: ResponseContext):
     items = await context.get_input_items()
     files = _extract_files(items)
 
-    urls = [f.file_url for f in files if f.file_url]
+    urls = [f["file_url"] for f in files if f.get("file_url")]
     return TextResponse(context, request, text=f"Received {len(urls)} file URL(s): {', '.join(urls)}")
 
 
@@ -103,7 +103,7 @@ async def file_id_handler(request: CreateResponse, context: ResponseContext):
     items = await context.get_input_items()
     files = _extract_files(items)
 
-    file_ids = [f.file_id for f in files if f.file_id]
+    file_ids = [f["file_id"] for f in files if f.get("file_id")]
     return TextResponse(context, request, text=f"Received {len(file_ids)} file ID(s): {', '.join(file_ids)}")
 
 

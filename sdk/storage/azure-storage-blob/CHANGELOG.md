@@ -1,8 +1,27 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.31.0b1 (2026-07-29)
 
 ### Features Added
+- Added support for service version 2026-10-06.
+- Added support for parsing List Blobs responses in Apache Arrow format by passing
+`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs`, `walk_blobs`, and `list_blob_names` APIs
+(`response_format` defaults to `"auto"`, and `"auto"` currently means `"xml"`).
+The use of `"response_format=arrow"` requires `nanoarrow` to be installed.
+This change also enables the new `end_before` keyword for range-based listing.
+- Added access tier information to the response of `BlobClient`'s `download_blob` API.
+The `blob_tier`, `blob_tier_inferred`, `blob_tier_change_time`, and `smart_access_tier`
+properties are now populated on the downloaded blob's `properties`.
+- The service-calculated CRC64 is now surfaced as `content_crc64` on the response of
+`BlobClient` upload operations (`stage_block`, `stage_block_from_url`, `upload_page`,
+`upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
+`upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
+provided with the request.
+
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
 
 ## 12.30.0 (2026-06-08)
 

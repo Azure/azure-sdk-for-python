@@ -14,9 +14,9 @@ from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.pipeline import PipelineRequest, policies
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
+from azure.ai.agentserver.responses.models import OutputItem, ResponseObject
 
 from .._version import VERSION
-from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
 from ._foundry_serializer import (

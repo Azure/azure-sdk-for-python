@@ -32,12 +32,12 @@ def main():
 
     response = client.workspace_private_link_resources.get(
         resource_group_name="rgdiscovery",
-        workspace_name="68b05b24fa2cc1a943",
+        workspace_name="aaee850178a948dd6e",
         private_link_resource_name="connection",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-02-01-preview/WorkspacePrivateLinkResources_Get_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/WorkspacePrivateLinkResources_Get_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

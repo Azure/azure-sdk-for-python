@@ -393,6 +393,7 @@ class TestEntraAuthMode:
             _tracing._setup_distro_export(
                 resource=Resource.create({}),
                 span_processors=[],
+                metric_readers=[],
                 log_record_processors=[],
                 connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000",
             )

@@ -21,13 +21,13 @@ from __future__ import annotations
 
 import json
 from datetime import datetime, timedelta, timezone
-from typing import Any, Iterable
+from typing import Any, Iterable, cast
 
 import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.models._generated import OutputItem, ResponseObject
+from azure.ai.agentserver.responses.models import OutputItem, ResponseObject, ResponseStreamEvent
 from azure.ai.agentserver.responses.store._base import (
     ResponseProviderProtocol,
     ResponseStreamProviderProtocol,
@@ -35,6 +35,16 @@ from azure.ai.agentserver.responses.store._base import (
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
 from tests._helpers import poll_until
+
+
+def _seed_stream_events(
+    provider: InMemoryResponseProvider,
+    response_id: str,
+    events: list[dict[str, Any]],
+) -> None:
+    provider._stream_events[response_id] = [  # pylint: disable=protected-access
+        cast(ResponseStreamEvent, dict(event)) for event in events
+    ]
 
 # ────────────────────────────────────────
 # Facade that strips stream capability (simulates Foundry / hosted)
@@ -336,7 +346,7 @@ class TestStreamEventTTL:
             {"type": "response.created", "_saved_at": now - timedelta(minutes=5)},
             {"type": "response.completed", "_saved_at": now - timedelta(minutes=3)},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         result = await provider.get_stream_events(rid)
         assert result is not None
@@ -355,7 +365,7 @@ class TestStreamEventTTL:
             {"type": "response.created", "_saved_at": now - timedelta(minutes=11)},
             {"type": "response.completed", "_saved_at": now - timedelta(minutes=11)},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         result = await provider.get_stream_events(rid)
         # Either None (purged entirely by orphan cleanup) or empty list
@@ -373,7 +383,7 @@ class TestStreamEventTTL:
             {"type": "response.created", "_saved_at": now - timedelta(minutes=15)},
             {"type": "response.completed", "_saved_at": now - timedelta(minutes=12)},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         result = await provider.get_stream_events(rid)
         # Either None (purged entirely by orphan cleanup) or empty list
@@ -393,7 +403,7 @@ class TestStreamEventTTL:
             {"type": "response.output_item.added", "_saved_at": now - timedelta(minutes=5)},
             {"type": "response.completed", "_saved_at": now - timedelta(minutes=2)},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         result = await provider.get_stream_events(rid)
         assert result is not None
@@ -415,7 +425,7 @@ class TestStreamEventTTL:
             {"type": "response.created", "_saved_at": now - timedelta(minutes=9, seconds=59)},
             {"type": "response.completed", "_saved_at": now - timedelta(minutes=9, seconds=59)},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         result = await provider.get_stream_events(rid)
         assert result is not None
@@ -437,7 +447,7 @@ class TestStreamEventTTL:
             {"type": "response.created", "_saved_at": old_time},
             {"type": "response.completed", "_saved_at": old_time},
         ]
-        await provider.save_stream_events(rid, events)
+        _seed_stream_events(provider, rid, events)
 
         # The auto-purge on each _locked() call cleans orphaned stale events.
         # After saving stale events and then reading, the stale events are
