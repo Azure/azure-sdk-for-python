@@ -1,5 +1,93 @@
 # Release History
 
+## 2.0.0 (2026-07-29)
+
+### Features Added
+
+  - Client `PrivateDnsManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `PrivateDnsManagementClient` added method `send_request`
+  - Model `PrivateZone` added property `properties`
+  - Model `PrivateZone` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `RecordSet` added property `properties`
+  - Model `RecordSet` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `VirtualNetworkLink` added property `properties`
+  - Model `VirtualNetworkLink` added property `system_data`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `PrivateZoneProperties`
+  - Added model `RecordSetProperties`
+  - Added model `SystemData`
+  - Added model `VirtualNetworkLinkProperties`
+  - Model `PrivateZonesOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `PrivateZonesOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `PrivateZonesOperations` added parameter `etag` in method `begin_delete`
+  - Model `PrivateZonesOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `PrivateZonesOperations` added parameter `etag` in method `begin_update`
+  - Model `PrivateZonesOperations` added parameter `match_condition` in method `begin_update`
+  - Model `RecordSetsOperations` added parameter `etag` in method `create_or_update`
+  - Model `RecordSetsOperations` added parameter `match_condition` in method `create_or_update`
+  - Model `RecordSetsOperations` added parameter `etag` in method `delete`
+  - Model `RecordSetsOperations` added parameter `match_condition` in method `delete`
+  - Model `RecordSetsOperations` added parameter `etag` in method `update`
+  - Model `RecordSetsOperations` added parameter `match_condition` in method `update`
+  - Model `VirtualNetworkLinksOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `VirtualNetworkLinksOperations` added parameter `match_condition` in method `begin_create_or_update`
+  - Model `VirtualNetworkLinksOperations` added parameter `etag` in method `begin_delete`
+  - Model `VirtualNetworkLinksOperations` added parameter `match_condition` in method `begin_delete`
+  - Model `VirtualNetworkLinksOperations` added parameter `etag` in method `begin_update`
+  - Model `VirtualNetworkLinksOperations` added parameter `match_condition` in method `begin_update`
+
+### Breaking Changes
+
+  - Model `PrivateZone` deleted or renamed its instance variable `internal_id`
+  - Model `PrivateZone` deleted or renamed its instance variable `max_number_of_record_sets`
+  - Model `PrivateZone` deleted or renamed its instance variable `max_number_of_virtual_network_links`
+  - Model `PrivateZone` deleted or renamed its instance variable `max_number_of_virtual_network_links_with_registration`
+  - Model `PrivateZone` deleted or renamed its instance variable `number_of_record_sets`
+  - Model `PrivateZone` deleted or renamed its instance variable `number_of_virtual_network_links`
+  - Model `PrivateZone` deleted or renamed its instance variable `number_of_virtual_network_links_with_registration`
+  - Model `PrivateZone` deleted or renamed its instance variable `provisioning_state`
+  - Model `RecordSet` deleted or renamed its instance variable `a_records`
+  - Model `RecordSet` deleted or renamed its instance variable `aaaa_records`
+  - Model `RecordSet` deleted or renamed its instance variable `cname_record`
+  - Model `RecordSet` deleted or renamed its instance variable `fqdn`
+  - Model `RecordSet` deleted or renamed its instance variable `is_auto_registered`
+  - Model `RecordSet` deleted or renamed its instance variable `metadata`
+  - Model `RecordSet` deleted or renamed its instance variable `mx_records`
+  - Model `RecordSet` deleted or renamed its instance variable `ptr_records`
+  - Model `RecordSet` deleted or renamed its instance variable `soa_record`
+  - Model `RecordSet` deleted or renamed its instance variable `srv_records`
+  - Model `RecordSet` deleted or renamed its instance variable `ttl`
+  - Model `RecordSet` deleted or renamed its instance variable `txt_records`
+  - Model `VirtualNetworkLink` deleted or renamed its instance variable `provisioning_state`
+  - Model `VirtualNetworkLink` deleted or renamed its instance variable `registration_enabled`
+  - Model `VirtualNetworkLink` deleted or renamed its instance variable `resolution_policy`
+  - Model `VirtualNetworkLink` deleted or renamed its instance variable `virtual_network`
+  - Model `VirtualNetworkLink` deleted or renamed its instance variable `virtual_network_link_state`
+  - Deleted or renamed model `PrivateZoneListResult`
+  - Deleted or renamed model `RecordSetListResult`
+  - Deleted or renamed model `TrackedResource`
+  - Deleted or renamed model `VirtualNetworkLinkListResult`
+  - Method `PrivateZonesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PrivateZonesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `PrivateZonesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PrivateZonesOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RecordSetsOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RecordSetsOperations.create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `RecordSetsOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `RecordSetsOperations.list` changed its parameter `recordsetnamesuffix` from `positional_or_keyword` to `keyword_only`
+  - Method `RecordSetsOperations.list_by_type` changed its parameter `recordsetnamesuffix` from `positional_or_keyword` to `keyword_only`
+  - Method `RecordSetsOperations.update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualNetworkLinksOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualNetworkLinksOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
+  - Method `VirtualNetworkLinksOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `VirtualNetworkLinksOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `PrivateZonesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'parameters', 'private_zone_name', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'parameters', 'private_zone_name', 'resource_group_name', 'kwargs']`
+  - Method `VirtualNetworkLinksOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'parameters', 'private_zone_name', 'resource_group_name', 'virtual_network_link_name', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'parameters', 'private_zone_name', 'resource_group_name', 'virtual_network_link_name', 'kwargs']`
+  - Method `RecordSetsOperations.create_or_update` re-ordered its parameters from `['self', 'content_type', 'if_match', 'if_none_match', 'parameters', 'private_zone_name', 'record_type', 'relative_record_set_name', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'match_condition', 'parameters', 'private_zone_name', 'record_type', 'relative_record_set_name', 'resource_group_name', 'kwargs']`
+
 ## 2.0.0b1 (2026-07-06)
 
 ### Features Added
