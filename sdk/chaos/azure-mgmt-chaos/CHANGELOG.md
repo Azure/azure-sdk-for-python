@@ -34,7 +34,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `exclusions`
   - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `filters`
   - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_cancelled`
