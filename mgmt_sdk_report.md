@@ -41,10 +41,10 @@
 | 40 | azure-mgmt-edgeorder | 2024-02-01 | 3.0.0b1 |  | 2026-07-06 | Not Started | [48324](https://github.com/Azure/azure-sdk-for-python/pull/48324) |
 | 41 | azure-mgmt-dynatrace | 2024-04-24 | 3.0.0b1 |  | 2026-07-06 | Not Started | [48329](https://github.com/Azure/azure-sdk-for-python/pull/48329) |
 | 42 | azure-mgmt-databox | 2025-07-01 | 4.0.0b1 |  | 2026-07-06 | Not Started | [48328](https://github.com/Azure/azure-sdk-for-python/pull/48328) |
-| 43 | azure-mgmt-reservations | 2020-10-25, 2022-11-01 | 3.0.0b1 |  | 2026-06-02 | Not Started | |
+| 43 | azure-mgmt-reservations | 2020-10-25, 2022-11-01 | 3.0.0b1 |  | 2026-06-02 | Not Started | [48334](https://github.com/Azure/azure-sdk-for-python/pull/48334) |
 | 44 | azure-mgmt-automation | 2024-10-23 | 1.1.0b5 |  | 2026-05-27 | Not Started | [48331](https://github.com/Azure/azure-sdk-for-python/pull/48331) |
 | 45 | azure-mgmt-dataprotection | 2026-03-01 | 2.1.0b1 |  | 2026-04-07 | Not Started | [48330](https://github.com/Azure/azure-sdk-for-python/pull/48330) |
 | 46 | azure-mgmt-prometheusrulegroups | 2023-03-01 | 1.0.0b1 |  | 2026-07-09 | Not Started | [48327](https://github.com/Azure/azure-sdk-for-python/pull/48327) |
-| 47 | azure-mgmt-alertprocessingrules | 2021-08-08 | 1.0.0b1 |  | 2026-07-09 | Not Started |  |
-| 48 | azure-mgmt-providerhub |  | 1.0.0b1 |  |  | Not Started |  |
-| 49 | azure-mgmt-marketplace |  | 1.0.0b1 |  |  | Not Started |  |
+| 47 | azure-mgmt-alertprocessingrules | 2021-08-08 | 1.0.0b1 |  | 2026-07-09 | Not Started | [48336](https://github.com/Azure/azure-sdk-for-python/pull/48336) |
+| 48 | azure-mgmt-providerhub |  | 1.0.0b1 |  |  | Not Started | [48333](https://github.com/Azure/azure-sdk-for-python/pull/48333) |
+| 49 | azure-mgmt-marketplace |  | 1.0.0b1 |  |  | Not Started | [48335](https://github.com/Azure/azure-sdk-for-python/pull/48335) |
