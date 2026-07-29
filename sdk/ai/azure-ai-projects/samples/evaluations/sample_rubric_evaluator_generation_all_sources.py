@@ -63,6 +63,7 @@ from azure.ai.projects.models import (
     EvaluatorGenerationInputs,
     EvaluatorGenerationJob,
     EvaluatorGenerationJobSource,
+    JobStatus,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TracesEvaluatorGenerationJobSource,
@@ -77,6 +78,8 @@ dataset_name = os.environ.get("FOUNDRY_REFERENCE_DATASET_NAME")
 dataset_version = os.environ.get("FOUNDRY_REFERENCE_DATASET_VERSION")
 traces_window_days = int(os.environ.get("FOUNDRY_TRACES_WINDOW_DAYS", "7"))
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
+
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Unique per-run suffix so repeated runs do not collide on evaluator name.
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
@@ -127,17 +130,13 @@ with (
 
     print("Waiting for multi-source job to complete...")
     try:
-        latest_lro_response = {}
+        created_jobs: list[EvaluatorGenerationJob] = []
 
-        # Optionally capture LRO responses to extract an error message if the job fails.
-        def capture_multi_source_lro_response(response):
-            body = response.http_response.json()
-            if isinstance(body, dict) and "status" in body:
-                latest_lro_response.clear()
-                latest_lro_response.update(body)
+        def capture_created_job(response):
+            created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
         # Alternatively, append `.result()` to block while the SDK handles polling.
-        poller = project_client.beta.evaluators.begin_create_generation_job(
+        project_client.beta.evaluators.begin_create_generation_job(
             job=EvaluatorGenerationJob(
                 inputs=EvaluatorGenerationInputs(
                     model=model_name,
@@ -148,19 +147,28 @@ with (
                 ),
             ),
             operation_id=f"rubric-multi-{short}",
-            polling_interval=poll_interval_seconds,
-            raw_response_hook=capture_multi_source_lro_response,
+            polling=False,
+            raw_response_hook=capture_created_job,
         )
-        while not poller.done():
-            print(f"Multi-source job status: {poller.status()}")
+        if not created_jobs:
+            raise RuntimeError("The create operation did not return a generation job.")
+        job = created_jobs[0]
+        print(f"Created job: id={job.id}, status={job.status}")
+
+        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+        while job.status not in TERMINAL_STATUSES:
             time.sleep(poll_interval_seconds)
-        status = poller.status()
-        print(f"Final multi-source job status: `{status}`.")
-        if status.lower() != "succeeded":
-            error = latest_lro_response.get("error")
-            message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
-            raise RuntimeError(f"Multi-source job ended with status `{status}`: {message}")
-        evaluator = poller.result()
+            job = project_client.beta.evaluators.get_generation_job(job.id)
+            print(".", end="", flush=True)
+        print()
+        print(f"Final job status: `{job.status}`.")
+
+        if job.status != JobStatus.SUCCEEDED:
+            message = job.error.message if job.error else "<no error message>"
+            raise RuntimeError(f"Multi-source job `{job.id}` ended with status `{job.status}`: {message}")
+        if job.result is None:
+            raise RuntimeError(f"Multi-source job `{job.id}` completed without a result.")
+        evaluator = job.result
         # `isinstance` narrows the discriminated `definition` to the rubric subtype.
         definition = evaluator.definition
         assert isinstance(definition, RubricBasedEvaluatorDefinition)
@@ -184,17 +192,13 @@ with (
 
         print("Waiting for traces job to complete...")
         try:
-            latest_lro_response = {}
+            created_jobs = []
 
-            # Optionally capture LRO responses to extract an error message if the job fails.
-            def capture_traces_lro_response(response):
-                body = response.http_response.json()
-                if isinstance(body, dict) and "status" in body:
-                    latest_lro_response.clear()
-                    latest_lro_response.update(body)
+            def capture_created_job(response):
+                created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
             # Alternatively, append `.result()` to block while the SDK handles polling.
-            poller = project_client.beta.evaluators.begin_create_generation_job(
+            project_client.beta.evaluators.begin_create_generation_job(
                 job=EvaluatorGenerationJob(
                     inputs=EvaluatorGenerationInputs(
                         model=model_name,
@@ -216,23 +220,28 @@ with (
                     ),
                 ),
                 operation_id=f"rubric-traces-{short}",
-                polling_interval=poll_interval_seconds,
-                raw_response_hook=capture_traces_lro_response,
+                polling=False,
+                raw_response_hook=capture_created_job,
             )
-            while not poller.done():
-                print(f"Traces job status: {poller.status()}")
+            if not created_jobs:
+                raise RuntimeError("The create operation did not return a generation job.")
+            job = created_jobs[0]
+            print(f"Created job: id={job.id}, status={job.status}")
+
+            print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+            while job.status not in TERMINAL_STATUSES:
                 time.sleep(poll_interval_seconds)
-            status = poller.status()
-            print(f"Final traces job status: `{status}`.")
-            if status.lower() != "succeeded":
-                error = latest_lro_response.get("error")
-                message = (
-                    error.get("message", "<no error message>")
-                    if isinstance(error, dict)
-                    else "<no error message>"
-                )
-                raise RuntimeError(f"Traces job ended with status `{status}`: {message}")
-            evaluator = poller.result()
+                job = project_client.beta.evaluators.get_generation_job(job.id)
+                print(".", end="", flush=True)
+            print()
+            print(f"Final job status: `{job.status}`.")
+
+            if job.status != JobStatus.SUCCEEDED:
+                message = job.error.message if job.error else "<no error message>"
+                raise RuntimeError(f"Traces job `{job.id}` ended with status `{job.status}`: {message}")
+            if job.result is None:
+                raise RuntimeError(f"Traces job `{job.id}` completed without a result.")
+            evaluator = job.result
             # `isinstance` narrows the discriminated `definition` to the rubric subtype.
             definition = evaluator.definition
             assert isinstance(definition, RubricBasedEvaluatorDefinition)

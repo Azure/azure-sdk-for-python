@@ -67,6 +67,7 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
     TestingCriterionAzureAIEvaluator,
@@ -78,6 +79,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "dataset-generation-eval-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
+
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 
 def main() -> None:
@@ -118,31 +121,36 @@ def main() -> None:
             ),
         )
         print("Creating data generation job and polling until completion...")
-        latest_lro_response = {}
+        created_jobs: list[DataGenerationJob] = []
 
-        # Optionally capture LRO responses to extract an error message if the job fails.
-        def capture_lro_response(response):
-            body = response.http_response.json()
-            if isinstance(body, dict) and "status" in body:
-                latest_lro_response.clear()
-                latest_lro_response.update(body)
+        def capture_created_job(response):
+            created_jobs.append(DataGenerationJob(response.http_response.json()))
 
         # Alternatively, append `.result()` to block while the SDK handles polling.
-        poller = project_client.beta.datasets.begin_create_generation_job(
+        project_client.beta.datasets.begin_create_generation_job(
             job=job,
-            polling_interval=poll_interval_seconds,
-            raw_response_hook=capture_lro_response,
+            polling=False,
+            raw_response_hook=capture_created_job,
         )
-        while not poller.done():
-            print(f"Data generation job status: {poller.status()}")
+        if not created_jobs:
+            raise RuntimeError("The create operation did not return a data generation job.")
+        job = created_jobs[0]
+        print(f"Created job: id={job.id}, status={job.status}")
+
+        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+        while job.status not in TERMINAL_STATUSES:
             time.sleep(poll_interval_seconds)
-        status = poller.status()
-        print(f"Final data generation job status: `{status}`.")
-        if status.lower() != "succeeded":
-            error = latest_lro_response.get("error")
-            message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
-            raise RuntimeError(f"Data generation job ended with status `{status}`: {message}")
-        job_result = poller.result()
+            job = project_client.beta.datasets.get_generation_job(job_id=job.id)
+            print(".", end="", flush=True)
+        print()
+        print(f"Final job status: `{job.status}`.")
+
+        if job.status != JobStatus.SUCCEEDED:
+            message = job.error.message if job.error else "<no error message>"
+            raise RuntimeError(f"Data generation job `{job.id}` ended with status `{job.status}`: {message}")
+        if job.result is None:
+            raise RuntimeError(f"Data generation job `{job.id}` completed without a result.")
+        job_result = job.result
 
         # Locate the Dataset output produced by the job.
         output_name: str = ""

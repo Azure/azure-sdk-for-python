@@ -54,6 +54,7 @@ from azure.ai.projects.models import (
     DataGenerationJobScenario,
     DatasetDataGenerationJobOutput,
     DatasetVersion,
+    JobStatus,
     PromptAgentDefinition,
     TracesDataGenerationJobOptions,
     TracesDataGenerationJobSource,
@@ -81,6 +82,7 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment = os.environ["FOUNDRY_MODEL_NAME"]
 DATASET_NAME = "traces-eval-sample"
 POLL_INTERVAL_SECONDS = 10
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 INITIAL_INGEST_WAIT_SECONDS = 60
 MAX_JOB_ATTEMPTS = 5
 RETRY_WAIT_SECONDS = 60
@@ -138,17 +140,13 @@ with (
                 f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
             )
             try:
-                latest_lro_response = {}
+                created_jobs: list[DataGenerationJob] = []
 
-                # Optionally capture LRO responses to extract an error message if the job fails.
-                def capture_lro_response(response):
-                    body = response.http_response.json()
-                    if isinstance(body, dict) and "status" in body:
-                        latest_lro_response.clear()
-                        latest_lro_response.update(body)
+                def capture_created_job(response):
+                    created_jobs.append(DataGenerationJob(response.http_response.json()))
 
                 # Alternatively, append `.result()` to block while the SDK handles polling.
-                poller = project_client.beta.datasets.begin_create_generation_job(
+                project_client.beta.datasets.begin_create_generation_job(
                     job=DataGenerationJob(
                         inputs=DataGenerationJobInputs(
                             name=f"traces-eval-{run_id}-a{attempt}",
@@ -166,23 +164,25 @@ with (
                             output_options=DataGenerationJobOutputOptions(name=output_dataset_name),
                         ),
                     ),
-                    polling_interval=POLL_INTERVAL_SECONDS,
-                    raw_response_hook=capture_lro_response,
+                    polling=False,
+                    raw_response_hook=capture_created_job,
                 )
-                while not poller.done():
-                    print(f"Data generation job status: {poller.status()}")
+                if not created_jobs:
+                    raise RuntimeError("The create operation did not return a data generation job.")
+                job = created_jobs[0]
+                print(f"Created job: id={job.id}, status={job.status}")
+
+                print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+                while job.status not in TERMINAL_STATUSES:
                     time.sleep(POLL_INTERVAL_SECONDS)
-                status = poller.status()
-                print(f"Final data generation job status: `{status}`.")
-                if status.lower() != "succeeded":
-                    error = latest_lro_response.get("error")
-                    message = (
-                        error.get("message", "<no error message>")
-                        if isinstance(error, dict)
-                        else "<no error message>"
-                    )
-                    raise RuntimeError(f"Data generation job ended with status `{status}`: {message}")
-                job = poller.result()
+                    job = project_client.beta.datasets.get_generation_job(job_id=job.id)
+                    print(".", end="", flush=True)
+                print()
+                print(f"Final job status: `{job.status}`.")
+
+                if job.status != JobStatus.SUCCEEDED:
+                    message = job.error.message if job.error else "<no error message>"
+                    raise RuntimeError(f"Data generation job `{job.id}` ended with status `{job.status}`: {message}")
                 print("Data generation job succeeded.")
                 break
             except Exception as e:  # pylint: disable=broad-except
@@ -192,9 +192,9 @@ with (
                 time.sleep(RETRY_WAIT_SECONDS)
 
         # 3. Resolve the generated dataset.
-        if job is None:
+        if job is None or job.result is None:
             raise RuntimeError("The data generation job did not return a result.")
-        outputs = job.outputs or []
+        outputs = job.result.outputs or []
         dataset_output = next((o for o in outputs if isinstance(o, DatasetDataGenerationJobOutput)), None)
         if dataset_output is None or not dataset_output.name or not dataset_output.version:
             raise RuntimeError("The data generation job did not produce a dataset output.")
@@ -204,8 +204,8 @@ with (
             f"Generated dataset: name=`{created_dataset.name}` "
             f"version=`{created_dataset.version}` id=`{created_dataset.id}`"
         )
-        if job.generated_samples is not None:
-            print(f"Generated samples: {job.generated_samples}")
+        if job.result.generated_samples is not None:
+            print(f"Generated samples: {job.result.generated_samples}")
 
     finally:
         # Best-effort cleanup, outputs -> producers (dataset, job, conversations, agent).

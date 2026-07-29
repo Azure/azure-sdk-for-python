@@ -66,6 +66,8 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+
 # Unique per-run name so repeated runs do not collide.
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
@@ -92,73 +94,48 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # 1. Start the generation job LRO. `operation_id` makes the call idempotent -
-    # re-submitting with the same id returns a poller attached to the existing job.
-    latest_lro_response = {}
+    # 1. Create the generation job. `operation_id` makes the call idempotent -
+    # re-submitting with the same id returns the existing job.
+    created_jobs: list[EvaluatorGenerationJob] = []
 
-    # Optionally capture LRO responses to extract an error message if the job fails.
-    def capture_lro_response(response):
-        body = response.http_response.json()
-        if isinstance(body, dict) and "status" in body:
-            latest_lro_response.clear()
-            latest_lro_response.update(body)
+    def capture_created_job(response):
+        created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
     # Alternatively, append `.result()` to block while the SDK handles polling.
-    poller = project_client.beta.evaluators.begin_create_generation_job(
+    project_client.beta.evaluators.begin_create_generation_job(
         job=job_body,
         operation_id=operation_id,
-        polling_interval=poll_interval_seconds,
-        raw_response_hook=capture_lro_response,
+        polling=False,
+        raw_response_hook=capture_created_job,
     )
-    print("Generation job started; LRO polling in progress.")
+    if not created_jobs:
+        raise RuntimeError("The create operation did not return a generation job.")
+    job = created_jobs[0]
+    print(f"Created job: id={job.id}, status={job.status}")
 
-    # Idempotency: a second call with the same operation_id attaches to the same job.
-    latest_replay_lro_response = {}
+    # Idempotency: a second call with the same operation_id returns the same job.
+    replay_job = project_client.beta.evaluators.get_generation_job(job.id)
+    assert replay_job.id == job.id
 
-    # Optionally capture LRO responses to extract an error message if the job fails.
-    def capture_replay_lro_response(response):
-        body = response.http_response.json()
-        if isinstance(body, dict) and "status" in body:
-            latest_replay_lro_response.clear()
-            latest_replay_lro_response.update(body)
-
-    # Alternatively, append `.result()` to block while the SDK handles polling.
-    replay_poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body,
-        operation_id=operation_id,
-        polling_interval=poll_interval_seconds,
-        raw_response_hook=capture_replay_lro_response,
-    )
-
-    # 2. Poll until the LRO finishes, then retrieve the produced EvaluatorVersion.
-    print("Waiting for the generation job to complete...")
-    while not poller.done():
-        print(f"Generation job status: {poller.status()}")
+    # 2. Poll until the job reaches a terminal state.
+    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+    while job.status not in TERMINAL_STATUSES:
         time.sleep(poll_interval_seconds)
-    status = poller.status()
-    print(f"Final generation job status: `{status}`.")
-    if status.lower() != "succeeded":
-        error = latest_lro_response.get("error")
-        message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
-        raise RuntimeError(f"Generation job ended with status `{status}`: {message}")
-    evaluator: EvaluatorVersion = poller.result()
+        job = project_client.beta.evaluators.get_generation_job(job.id)
+        print(".", end="", flush=True)
+    print()
+    print(f"Final job status: `{job.status}`.")
+
+    if job.status != JobStatus.SUCCEEDED:
+        message = job.error.message if job.error else "<no error message>"
+        raise RuntimeError(f"Generation job `{job.id}` ended with status `{job.status}`: {message}")
+    if job.result is None:
+        raise RuntimeError(f"Generation job `{job.id}` completed without a result.")
+    evaluator: EvaluatorVersion = job.result
     print(
         f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
         f"(job `{evaluator.generation_job_id}`)."
     )
-
-    # Verify the idempotency: the replay poller resolves to the same underlying job.
-    while not replay_poller.done():
-        print(f"Replay job status: {replay_poller.status()}")
-        time.sleep(poll_interval_seconds)
-    replay_status = replay_poller.status()
-    print(f"Final replay job status: `{replay_status}`.")
-    if replay_status.lower() != "succeeded":
-        error = latest_replay_lro_response.get("error")
-        message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
-        raise RuntimeError(f"Replay job ended with status `{replay_status}`: {message}")
-    replay_evaluator: EvaluatorVersion = replay_poller.result()
-    assert replay_evaluator.generation_job_id == evaluator.generation_job_id
 
     # 3. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
