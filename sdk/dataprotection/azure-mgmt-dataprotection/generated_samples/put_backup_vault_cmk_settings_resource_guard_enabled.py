@@ -16,7 +16,7 @@ from azure.mgmt.dataprotection import DataProtectionMgmtClient
     pip install azure-identity
     pip install azure-mgmt-dataprotection
 # USAGE
-    python put_backup_vault_with_cmk.py
+    python put_backup_vault_cmk_settings_resource_guard_enabled.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -35,6 +35,7 @@ def main():
         resource_group_name="SampleResourceGroup",
         vault_name="swaggerExample",
         parameters={
+            "identity": {"type": "None"},
             "location": "WestUS",
             "properties": {
                 "monitoringSettings": {"azureMonitorAlertSettings": {"alertsForAllJobFailures": "Enabled"}},
@@ -42,7 +43,7 @@ def main():
                     "encryptionSettings": {
                         "infrastructureEncryption": "Enabled",
                         "kekIdentity": {
-                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourceGroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
+                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
                             "identityType": "UserAssigned",
                         },
                         "keyVaultProperties": {
@@ -61,6 +62,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-03-01/VaultCRUD/PutBackupVaultWithCMK.json
+# x-ms-original-file: 2026-03-01/VaultCRUD/PutBackupVaultCMKSettings_ResourceGuardEnabled.json
 if __name__ == "__main__":
     main()
