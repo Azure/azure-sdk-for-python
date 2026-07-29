@@ -1395,7 +1395,7 @@ class ShareItemInternal(_Model):
 
 
 class ShareNfsSettings(_Model):
-    """Settings for SMB protocol.
+    """Settings for NFS protocol.
 
     :ivar encryption_in_transit: Enable or disable encryption in transit.
     :vartype encryption_in_transit:

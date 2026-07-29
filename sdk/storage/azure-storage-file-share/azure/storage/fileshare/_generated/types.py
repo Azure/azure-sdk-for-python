@@ -141,7 +141,7 @@ class RetentionPolicy(TypedDict, total=False):
 
 
 class ShareNfsSettings(TypedDict, total=False):
-    """Settings for SMB protocol.
+    """Settings for NFS protocol.
 
     :ivar encryption_in_transit: Enable or disable encryption in transit.
     :vartype encryption_in_transit: "ShareNfsSettingsEncryptionInTransit"

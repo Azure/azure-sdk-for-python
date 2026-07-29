@@ -160,5 +160,5 @@
         "azure.storage.fileshare.operations.ShareOperations.restore": "Storage.File.Share.restore",
         "azure.storage.fileshare.aio.operations.ShareOperations.restore": "Storage.File.Share.restore"
     },
-    "CrossLanguageVersion": "86bc872539d9"
+    "CrossLanguageVersion": "177a161ef4e5"
 }
