@@ -7,6 +7,7 @@ words:
   - acode
   - addl
   - agentserver
+  - aiso
   - annot
   - aoutput
   - appinsights
@@ -16,23 +17,28 @@ words:
   - asummary
   - atext
   - autouse
+  - azfo
   - badid
+  - bcso
   - bkey
   - bval
   - BYOK
   - cand
   - caplog
+  - caresp
   - configurators
   - coreai
   - coro
   - crashy
   - CREAT
   - ctco
+  - dataagent
   - dataclass
   - dedup
   - Dunders
   - elts
   - ename
+  - fdao
   - finalizer
   - frontmatter
   - fstring
@@ -53,6 +59,7 @@ words:
   - MAIB
   - markexpr
   - mcpa
+  - MCPHTTP
   - mcpl
   - mcpr
   - myhost
