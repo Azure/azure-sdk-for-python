@@ -814,12 +814,12 @@ namespace azure.ai.agentserver.responses
 namespace azure.ai.agentserver.responses.aio
 
     class azure.ai.agentserver.responses.aio.ResponseEventStream(SyncResponseEventStream):
-        property response: ResponseObject    # Read-only
+        property response: dict[str, Any]    # Read-only
 
         def __init__(
                 self, 
                 *, 
-                agent_reference: AgentReference | None = ..., 
+                agent_reference: AgentReference | dict[str, Any] | None = ..., 
                 model: str | None = ..., 
                 request: CreateResponse | None = ..., 
                 response: ResponseObject | None = ..., 
@@ -905,7 +905,7 @@ namespace azure.ai.agentserver.responses.aio
         def emit_failed(
                 self, 
                 *, 
-                code: str | ResponseErrorCode = "server_error", 
+                code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
@@ -1049,7 +1049,9 @@ namespace azure.ai.agentserver.responses.aio.streaming
                 self, 
                 stream: ResponseEventStream, 
                 output_index: int, 
-                item_id: str
+                item_id: str, 
+                *, 
+                default_type: str | None = ...
             ) -> None: ...
 
         def emit_added(self, item: OutputItem) -> ResponseOutputItemAddedEvent: ...
@@ -1371,12 +1373,12 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.ResponseEventStream(SyncResponseEventStream):
-        property response: ResponseObject    # Read-only
+        property response: dict[str, Any]    # Read-only
 
         def __init__(
                 self, 
                 *, 
-                agent_reference: AgentReference | None = ..., 
+                agent_reference: AgentReference | dict[str, Any] | None = ..., 
                 model: str | None = ..., 
                 request: CreateResponse | None = ..., 
                 response: ResponseObject | None = ..., 
@@ -1462,7 +1464,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
         def emit_failed(
                 self, 
                 *, 
-                code: str | ResponseErrorCode = "server_error", 
+                code: str = "server_error", 
                 message: str = "An internal server error occurred.", 
                 usage: ResponseUsage | None = ...
             ) -> ResponseFailedEvent: ...
