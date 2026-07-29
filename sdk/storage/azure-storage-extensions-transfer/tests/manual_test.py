@@ -102,9 +102,7 @@ def test_direct_extension(credential):
     payload = os.urandom(16 * 1024 * 1024)
     print(f"Uploading {len(payload)} bytes to '{blob_name}'...")
     result = upload_blob(
-        account_url=ACCOUNT_URL,
-        container=CONTAINER,
-        blob=blob_name,
+        url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
         data=payload,
         token_provider=token_provider,
         overwrite=True,
@@ -115,9 +113,7 @@ def test_direct_extension(credential):
 
     print("Downloading it back...")
     downloaded = download_blob(
-        account_url=ACCOUNT_URL,
-        container=CONTAINER,
-        blob=blob_name,
+        url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
         token_provider=token_provider,
         max_concurrency=8,
         expected_size=len(payload),
@@ -131,18 +127,14 @@ def test_direct_extension(credential):
         buf_blob = f"direct-{label}-{uuid.uuid4().hex}.bin"
         print(f"Uploading {len(payload)} bytes from a {label} to '{buf_blob}'...")
         upload_blob(
-            account_url=ACCOUNT_URL,
-            container=CONTAINER,
-            blob=buf_blob,
+            url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
             data=buf,
             token_provider=token_provider,
             overwrite=True,
             max_concurrency=8,
         )
         back = download_blob(
-            account_url=ACCOUNT_URL,
-            container=CONTAINER,
-            blob=buf_blob,
+            url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
             token_provider=token_provider,
             max_concurrency=8,
             expected_size=len(payload),
