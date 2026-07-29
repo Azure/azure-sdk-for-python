@@ -1,5 +1,150 @@
 # Release History
 
+## 12.0.0 (2026-07-29)
+
+### Features Added
+
+  - Client `EventHubManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `EventHubManagementClient` added method `send_request`
+  - Model `ApplicationGroup` added property `properties`
+  - Model `ArmDisasterRecovery` added property `properties`
+  - Model `AuthorizationRule` added property `properties`
+  - Model `Cluster` added property `properties`
+  - Model `ConsumerGroup` added property `properties`
+  - Model `Destination` added property `properties`
+  - Model `EHNamespace` added property `properties`
+  - Model `Eventhub` added property `properties`
+  - Model `NetworkRuleSet` added property `properties`
+  - Model `NetworkSecurityPerimeterConfiguration` added property `properties`
+  - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `properties`
+  - Model `PrivateLinkResource` added property `properties`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `RetentionDescription` added property `min_compaction_lag_time_in_minutes`
+  - Model `SchemaGroup` added property `properties`
+  - Enum `TlsVersion` added member `ONE3`
+  - Added model `ApplicationGroupProperties`
+  - Added model `ArmDisasterRecoveryProperties`
+  - Added model `AuthorizationRuleProperties`
+  - Added model `ClusterProperties`
+  - Added model `ConfidentialCompute`
+  - Added model `ConsumerGroupProperties`
+  - Added model `DestinationProperties`
+  - Added model `EHNamespaceProperties`
+  - Added model `EventhubProperties`
+  - Added model `FailOverProperties`
+  - Added enum `IpAddressType`
+  - Added enum `Mode`
+  - Added model `NetworkRuleSetProperties`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added model `PlatformCapabilities`
+  - Added model `PrivateEndpointConnectionProperties`
+  - Added model `PrivateLinkResourceProperties`
+  - Added model `SchemaGroupProperties`
+  - Model `NetworkSecurityPerimeterConfigurationsOperations` added method `get_resource_association_name`
+
+### Breaking Changes
+
+  - Model `ApplicationGroup` deleted or renamed its instance variable `client_app_group_identifier`
+  - Model `ApplicationGroup` deleted or renamed its instance variable `is_enabled`
+  - Model `ApplicationGroup` deleted or renamed its instance variable `policies`
+  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `alternate_name`
+  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `partner_namespace`
+  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `pending_replication_operations_count`
+  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `provisioning_state`
+  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `role`
+  - Model `AuthorizationRule` deleted or renamed its instance variable `rights`
+  - Model `Cluster` deleted or renamed its instance variable `created_at`
+  - Model `Cluster` deleted or renamed its instance variable `metric_id`
+  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
+  - Model `Cluster` deleted or renamed its instance variable `status`
+  - Model `Cluster` deleted or renamed its instance variable `supports_scaling`
+  - Model `Cluster` deleted or renamed its instance variable `updated_at`
+  - Model `ConsumerGroup` deleted or renamed its instance variable `created_at`
+  - Model `ConsumerGroup` deleted or renamed its instance variable `updated_at`
+  - Model `ConsumerGroup` deleted or renamed its instance variable `user_metadata`
+  - Model `Destination` deleted or renamed its instance variable `archive_name_format`
+  - Model `Destination` deleted or renamed its instance variable `blob_container`
+  - Model `Destination` deleted or renamed its instance variable `data_lake_account_name`
+  - Model `Destination` deleted or renamed its instance variable `data_lake_folder_path`
+  - Model `Destination` deleted or renamed its instance variable `data_lake_subscription_id`
+  - Model `Destination` deleted or renamed its instance variable `storage_account_resource_id`
+  - Model `EHNamespace` deleted or renamed its instance variable `alternate_name`
+  - Model `EHNamespace` deleted or renamed its instance variable `cluster_arm_id`
+  - Model `EHNamespace` deleted or renamed its instance variable `created_at`
+  - Model `EHNamespace` deleted or renamed its instance variable `disable_local_auth`
+  - Model `EHNamespace` deleted or renamed its instance variable `encryption`
+  - Model `EHNamespace` deleted or renamed its instance variable `geo_data_replication`
+  - Model `EHNamespace` deleted or renamed its instance variable `is_auto_inflate_enabled`
+  - Model `EHNamespace` deleted or renamed its instance variable `kafka_enabled`
+  - Model `EHNamespace` deleted or renamed its instance variable `maximum_throughput_units`
+  - Model `EHNamespace` deleted or renamed its instance variable `metric_id`
+  - Model `EHNamespace` deleted or renamed its instance variable `minimum_tls_version`
+  - Model `EHNamespace` deleted or renamed its instance variable `private_endpoint_connections`
+  - Model `EHNamespace` deleted or renamed its instance variable `provisioning_state`
+  - Model `EHNamespace` deleted or renamed its instance variable `public_network_access`
+  - Model `EHNamespace` deleted or renamed its instance variable `service_bus_endpoint`
+  - Model `EHNamespace` deleted or renamed its instance variable `status`
+  - Model `EHNamespace` deleted or renamed its instance variable `updated_at`
+  - Model `EHNamespace` deleted or renamed its instance variable `zone_redundant`
+  - Model `Eventhub` deleted or renamed its instance variable `capture_description`
+  - Model `Eventhub` deleted or renamed its instance variable `created_at`
+  - Model `Eventhub` deleted or renamed its instance variable `identifier`
+  - Model `Eventhub` deleted or renamed its instance variable `message_retention_in_days`
+  - Model `Eventhub` deleted or renamed its instance variable `message_timestamp_description`
+  - Model `Eventhub` deleted or renamed its instance variable `partition_count`
+  - Model `Eventhub` deleted or renamed its instance variable `partition_ids`
+  - Model `Eventhub` deleted or renamed its instance variable `retention_description`
+  - Model `Eventhub` deleted or renamed its instance variable `status`
+  - Model `Eventhub` deleted or renamed its instance variable `updated_at`
+  - Model `Eventhub` deleted or renamed its instance variable `user_metadata`
+  - Model `FailOver` deleted or renamed its instance variable `force`
+  - Model `FailOver` deleted or renamed its instance variable `primary_location`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `default_action`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `ip_rules`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `public_network_access`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `trusted_service_access_enabled`
+  - Model `NetworkRuleSet` deleted or renamed its instance variable `virtual_network_rules`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `applicable_features`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `is_backing_resource`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `network_security_perimeter`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `parent_association_name`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `profile`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_issues`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_state`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `resource_association`
+  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `source_resource_id`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
+  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
+  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - Model `ProxyResource` deleted or renamed its instance variable `location`
+  - Model `RetentionDescription` deleted or renamed its instance variable `min_compaction_lag_in_mins`
+  - Model `SchemaGroup` deleted or renamed its instance variable `created_at_utc`
+  - Model `SchemaGroup` deleted or renamed its instance variable `e_tag`
+  - Model `SchemaGroup` deleted or renamed its instance variable `group_properties`
+  - Model `SchemaGroup` deleted or renamed its instance variable `schema_compatibility`
+  - Model `SchemaGroup` deleted or renamed its instance variable `schema_type`
+  - Model `SchemaGroup` deleted or renamed its instance variable `updated_at_utc`
+  - Deleted or renamed model `ApplicationGroupListResult`
+  - Deleted or renamed model `ArmDisasterRecoveryListResult`
+  - Deleted or renamed model `AuthorizationRuleListResult`
+  - Deleted or renamed model `ClusterListResult`
+  - Deleted or renamed model `ConsumerGroupListResult`
+  - Deleted or renamed model `EHNamespaceListResult`
+  - Deleted or renamed model `ErrorDetailAutoGenerated`
+  - Deleted or renamed model `ErrorResponseAutoGenerated`
+  - Deleted or renamed model `EventHubListResult`
+  - Deleted or renamed model `OperationListResult`
+  - Deleted or renamed model `PrivateEndpointConnectionListResult`
+  - Deleted or renamed model `SchemaGroupListResult`
+  - Deleted or renamed model `TrackedResource`
+  - Method `NetworkSecurityPerimeterConfigurationsOperations.begin_create_or_update` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[NetworkSecurityPerimeterConfiguration]`
+  - Method `NetworkSecurityPerimeterConfigurationsOperations.begin_create_or_update` changed return type from `LROPoller[None]` to `LROPoller[NetworkSecurityPerimeterConfiguration]`
+
 ## 12.0.0b2 (2026-07-07)
 
 ### Features Added
