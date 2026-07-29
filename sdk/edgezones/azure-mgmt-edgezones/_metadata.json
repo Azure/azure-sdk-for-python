@@ -1,0 +1,11 @@
+{
+  "apiVersion": "2026-10-01",
+  "apiVersions": {
+    "Microsoft.EdgeZones": "2026-10-01"
+  },
+  "commit": "b11c849d192da49ae3d359f8b16d422f65850666",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/edgezones/EdgeZones.Management",
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
+}
