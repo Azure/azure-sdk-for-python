@@ -1,6 +1,6 @@
 # Release History
 
-## 8.1.0 (2026-07-24)
+## 8.1.0 (2026-07-29)
 
 ### Features Added
 
@@ -16,9 +16,9 @@
   - Model `ReportedProperties` added property `last_sync_timestamp`
   - Enum `State` added member `HEALTH_CHECK_EXPIRED`
   - Enum `State` added member `PENDING_OEM_VALIDATION`
-  - Model `Storage` added property `storage_type`
   - Model `Storage` added property `s2_d`
   - Model `Storage` added property `san`
+  - Model `Storage` added property `storage_type`
   - Added model `CheckUpdatesRequest`
   - Added model `ClusterBillingProperties`
   - Added model `EdgeDeviceDisks`
@@ -33,7 +33,7 @@
   - Added model `StorageSanConfig`
   - Added enum `StorageType`
   - Added enum `VolumeType`
-  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Model `UpdatesOperations` added method `begin_prepare`
   - Added operation group `UpdateSummariesOperationGroupOperations`
 
 ## 8.1.0b1 (2026-04-13)

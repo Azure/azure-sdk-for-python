@@ -3,9 +3,9 @@
   "apiVersions": {
     "Microsoft.AzureStackHCI": "2026-04-30"
   },
-  "commit": "3f9377a567b5cba99707410e66908c77b2f96355",
+  "commit": "52872c1f699ca9dfbf721c79b6e50fed8b041335",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/azurestackhci/resource-manager/Microsoft.AzureStackHCI/StackHCI",
-  "emitterVersion": "0.63.2",
-  "httpClientPythonVersion": "^0.34.1"
+  "emitterVersion": "0.63.3",
+  "httpClientPythonVersion": "^0.34.2"
 }
