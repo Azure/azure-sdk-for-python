@@ -16247,8 +16247,8 @@ class ListRLESandboxesResponse(_Model):
 class RLEnvironment(_Model):
     """A hosted reinforcement-learning environment that sandboxes are leased from.
 
-    :ivar environment_id: Hosted RLE environment identifier, assigned by the service. Required.
-    :vartype environment_id: str
+    :ivar id: Hosted RLE environment identifier, assigned by the service. Required.
+    :vartype id: str
     :ivar project_id: Foundry project identifier that owns this environment. Required.
     :vartype project_id: str
     :ivar name: Caller-provided display name for the environment. Optional on create.
@@ -16272,7 +16272,7 @@ class RLEnvironment(_Model):
     :vartype updated_at_utc: ~datetime.datetime
     """
 
-    environment_id: str = rest_field(name="environmentId", visibility=["read"])
+    id: str = rest_field(visibility=["read"])
     """Hosted RLE environment identifier, assigned by the service. Required."""
     project_id: str = rest_field(name="projectId", visibility=["read"])
     """Foundry project identifier that owns this environment. Required."""
@@ -16306,9 +16306,13 @@ class RLEnvironmentState(_Model):
     :vartype step_count: int
     """
 
-    episode_id: Optional[str] = rest_field(name="episodeId", visibility=["read", "create", "update", "delete", "query"])
+    episode_id: Optional[str] = rest_field(
+        name="episode_id", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Current episode identifier, when one is active."""
-    step_count: Optional[int] = rest_field(name="stepCount", visibility=["read", "create", "update", "delete", "query"])
+    step_count: Optional[int] = rest_field(
+        name="step_count", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Number of completed steps in the current episode."""
 
     @overload

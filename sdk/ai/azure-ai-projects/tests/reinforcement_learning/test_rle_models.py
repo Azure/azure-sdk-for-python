@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import asyncio
-import json
 from types import SimpleNamespace
 
 import pytest
@@ -44,63 +43,14 @@ class _FakeSandbox:
         self.error = error
 
 
-class _FakeResponse:
-    """Minimal stand-in for an HTTP response returned by the (fake) pipeline."""
-
-    def __init__(self, status_code=200, payload=None):
-        self.status_code = status_code
-        self._payload = {} if payload is None else payload
-
-    def json(self):
-        return self._payload
-
-
-def _handle_dataplane(recorder, request):
-    """Record a data-plane request and return a canned response for its route."""
-    method = request.method
-    url = request.url
-    route = "/" + url.rstrip("/").rsplit("/", 1)[-1]
-    body = None
-    raw = getattr(request, "content", None)
-    if raw:
-        if isinstance(raw, (bytes, bytearray)):
-            raw = raw.decode("utf-8")
-        body = json.loads(raw)
-    recorder.calls.append((route.lstrip("/"), method, url, body))
-    if route in ("/reset", "/step"):
-        payload = dict(RLEStepResult(observation={"ok": True}))
-    elif route == "/state":
-        payload = dict(RLEnvironmentState(episode_id="e", step_count=1))
-    else:
-        payload = {"status": "ok"}
-    return _FakeResponse(200, payload)
-
-
-class _FakeSyncPipeline:
-    def __init__(self, recorder):
-        self._recorder = recorder
-
-    def run(self, request, **kwargs):  # noqa: D401
-        return SimpleNamespace(http_response=_handle_dataplane(self._recorder, request))
-
-
-class _FakeSyncPipelineClient:
-    def __init__(self, recorder):
-        self._pipeline = _FakeSyncPipeline(recorder)
-
-
-class _FakeAsyncPipeline:
-    def __init__(self, recorder):
-        self._recorder = recorder
-
-    async def run(self, request, **kwargs):
-        return SimpleNamespace(http_response=_handle_dataplane(self._recorder, request))
-
-
-class _FakeAsyncPipelineClient:
-    def __init__(self, recorder):
-        self._pipeline = _FakeAsyncPipeline(recorder)
-
+def _record_runtime(calls, op, environment_id, sandbox_id, body=None):
+    """Record a delegated control-plane runtime call and return a canned result."""
+    calls.append((op, environment_id, sandbox_id, dict(body) if body is not None else None))
+    if op in ("reset", "step"):
+        return RLEStepResult(observation={"ok": True})
+    if op == "state":
+        return RLEnvironmentState(episode_id="e", step_count=1)
+    return {"status": "ok"}
 
 class _FakeEnvironments:
     def __init__(self, environment_id="env-1"):
@@ -110,12 +60,12 @@ class _FakeEnvironments:
     def get_environment(self, name, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.calls.append(("get_environment", name))
-        return SimpleNamespace(environment_id=self._eid)
+        return SimpleNamespace(id=self._eid)
 
     def get_environment_version(self, name, version, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.calls.append(("get_environment_version", name, version))
-        return SimpleNamespace(environment_id=self._eid)
+        return SimpleNamespace(id=self._eid)
 
 
 class _AsyncFakeEnvironments:
@@ -126,12 +76,12 @@ class _AsyncFakeEnvironments:
     async def get_environment(self, name, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.calls.append(("get_environment", name))
-        return SimpleNamespace(environment_id=self._eid)
+        return SimpleNamespace(id=self._eid)
 
     async def get_environment_version(self, name, version, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.calls.append(("get_environment_version", name, version))
-        return SimpleNamespace(environment_id=self._eid)
+        return SimpleNamespace(id=self._eid)
 
 
 def test_rle_public_symbols_are_available():
@@ -196,7 +146,6 @@ class _PoolFakeSandboxes:
         self._fail_on = fail_on
         self.released = []
         self.calls = []
-        self._client = _FakeSyncPipelineClient(self)
 
     def lease(self, environment_id, body, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
@@ -213,6 +162,18 @@ class _PoolFakeSandboxes:
     def release(self, environment_id, sandbox_id, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.released.append(sandbox_id)
+
+    def reset(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "reset", environment_id, sandbox_id, body)
+
+    def step(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "step", environment_id, sandbox_id, body)
+
+    def state(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "state", environment_id, sandbox_id)
 
 
 def _make_openenv_client(num_instances=1, *, fail_on=None, environments=None):
@@ -285,13 +246,12 @@ def test_openenv_instance_runtime_uses_dataplane_uri():
             assert isinstance(instance.step({"code": "print(1)"}), RLEStepResult)
             assert isinstance(instance.state(), RLEnvironmentState)
 
-    # Runtime calls target the instance's data-plane URI (unprefixed OpenEnv routes), not the
-    # control plane.
+    # Runtime calls delegate to the generated control-plane sandbox operations, addressed by the
+    # resolved environment id and leased sandbox id (no separate data-plane host).
     routes = [call[0] for call in sandboxes.calls]
     assert routes == ["reset", "step", "state"]
-    assert all(call[2].startswith("https://dataplane/0/") for call in sandboxes.calls)
+    assert all(call[1] == "env-1" and call[2] == "sbx-0" for call in sandboxes.calls)
     reset_call = sandboxes.calls[0]
-    assert reset_call[1] == "POST"
     assert reset_call[3].get("seed") == 42
 
 
@@ -347,7 +307,6 @@ class _AsyncPoolFakeSandboxes:
         self._fail_on = fail_on
         self.released = []
         self.calls = []
-        self._client = _FakeAsyncPipelineClient(self)
 
     async def lease(self, environment_id, body, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
@@ -364,6 +323,18 @@ class _AsyncPoolFakeSandboxes:
     async def release(self, environment_id, sandbox_id, *, foundry_features):
         assert foundry_features is _RLE_FEATURE
         self.released.append(sandbox_id)
+
+    async def reset(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "reset", environment_id, sandbox_id, body)
+
+    async def step(self, environment_id, sandbox_id, body, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "step", environment_id, sandbox_id, body)
+
+    async def state(self, environment_id, sandbox_id, *, foundry_features):
+        assert foundry_features is _RLE_FEATURE
+        return _record_runtime(self.calls, "state", environment_id, sandbox_id)
 
 
 def _make_async_openenv_client(num_instances=1, *, fail_on=None, environments=None):
@@ -391,10 +362,10 @@ def test_async_openenv_client_reserves_and_runs():
                 assert isinstance(await instance.step({"code": "x"}), RLEStepResult)
                 assert isinstance(await instance.state(), RLEnvironmentState)
         assert sorted(sandboxes.released) == ["sbx-0", "sbx-1"]
-        # Runtime calls went to the data-plane URI.
+        # Runtime calls delegate to the generated control-plane sandbox operations.
         routes = [call[0] for call in sandboxes.calls]
         assert routes == ["reset", "step", "state"]
-        assert all(call[2].startswith("https://dataplane/") for call in sandboxes.calls)
+        assert all(call[1] == "env-1" and call[2].startswith("sbx-") for call in sandboxes.calls)
 
     asyncio.run(run())
 

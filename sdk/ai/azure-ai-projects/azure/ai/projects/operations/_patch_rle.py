@@ -12,13 +12,11 @@ Foundry project endpoint, exactly like the other operation groups on the client.
 
 from __future__ import annotations
 
-import json
 import threading
 import time
 from typing import Any, Dict, List, Literal, Mapping, Optional
 
-from azure.core.exceptions import HttpResponseError, map_error
-from azure.core.rest import HttpRequest
+from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
 from ..models import (
@@ -31,7 +29,6 @@ from ..models import (
     RLESandboxStatus,
 )
 from ..models._enums import _FoundryFeaturesOptInKeys
-from .._utils.model_base import SdkJSONEncoder, _deserialize
 from ._operations import (
     RLEnvironmentsOperations as _RLEnvironmentsOperationsGenerated,
     RLESandboxesOperations,
@@ -39,6 +36,7 @@ from ._operations import (
 
 _DEFAULT_CREATE_TIMEOUT_S = 300.0
 _DEFAULT_POLL_INTERVAL_S = 2.0
+_MAX_INSTANCES = 10
 _RLE_FEATURE: Literal[_FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW] = (
     _FoundryFeaturesOptInKeys.RL_ENVIRONMENT_V1_PREVIEW
 )
@@ -168,7 +166,6 @@ class OpenEnvInstance:
         self._sandbox = sandbox
         self._sandbox_id: str = sandbox.id
         self._sandboxes = sandboxes
-        self._client = getattr(sandboxes, "_client", None)
         self._owner = owner
 
     @property
@@ -218,9 +215,13 @@ class OpenEnvInstance:
         :return: The initial step result for the new episode.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        body = RLEResetRequest(seed=seed, episode_id=episode_id)
-        response = self._dataplane_request("POST", "/reset", body=body, **kwargs)
-        return _deserialize(RLEStepResult, response.json())
+        return self._sandboxes.reset(
+            self._environment_id,
+            self._sandbox_id,
+            RLEResetRequest(seed=seed, episode_id=episode_id),
+            foundry_features=_RLE_FEATURE,
+            **kwargs,
+        )
 
     @distributed_trace
     def step(self, action: Any = None, **action_kwargs: Any) -> RLEStepResult:
@@ -231,9 +232,12 @@ class OpenEnvInstance:
         :return: The step result after applying the action.
         :rtype: ~azure.ai.projects.models.RLEStepResult
         """
-        body = RLEStepRequest(action=coerce_action(action, action_kwargs))
-        response = self._dataplane_request("POST", "/step", body=body)
-        return _deserialize(RLEStepResult, response.json())
+        return self._sandboxes.step(
+            self._environment_id,
+            self._sandbox_id,
+            RLEStepRequest(action=coerce_action(action, action_kwargs)),
+            foundry_features=_RLE_FEATURE,
+        )
 
     @distributed_trace
     def state(self) -> RLEnvironmentState:
@@ -242,8 +246,7 @@ class OpenEnvInstance:
         :return: The current environment state.
         :rtype: ~azure.ai.projects.models.RLEnvironmentState
         """
-        response = self._dataplane_request("GET", "/state")
-        return _deserialize(RLEnvironmentState, response.json())
+        return self._sandboxes.state(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     @distributed_trace
     def health(self) -> Dict[str, Any]:
@@ -252,8 +255,7 @@ class OpenEnvInstance:
         :return: Instance health information.
         :rtype: dict[str, any]
         """
-        response = self._dataplane_request("GET", "/health")
-        return response.json()
+        return self._sandboxes.health(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     @distributed_trace
     def metadata(self) -> Dict[str, Any]:
@@ -262,8 +264,7 @@ class OpenEnvInstance:
         :return: Instance metadata.
         :rtype: dict[str, any]
         """
-        response = self._dataplane_request("GET", "/metadata")
-        return response.json()
+        return self._sandboxes.get_metadata(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
     @distributed_trace
     def schema(self) -> Dict[str, Any]:
@@ -272,43 +273,8 @@ class OpenEnvInstance:
         :return: The instance action and observation schema.
         :rtype: dict[str, any]
         """
-        response = self._dataplane_request("GET", "/schema")
-        return response.json()
+        return self._sandboxes.schema(self._environment_id, self._sandbox_id, foundry_features=_RLE_FEATURE)
 
-    def _dataplane_request(self, method: str, route: str, *, body: Any = None, **kwargs: Any) -> Any:
-        """Issue an OpenEnv data-plane request against this instance's :attr:`dataplane_uri`.
-
-        The request flows through the owning project client's pipeline (auth, retries, tracing)
-        but targets the sandbox's data-plane base URL directly instead of the control plane.
-
-        :param method: HTTP method, e.g. ``"GET"`` or ``"POST"``.
-        :type method: str
-        :param route: OpenEnv route to append to the data-plane base URL, e.g. ``"/reset"``.
-        :type route: str
-        :keyword body: Optional request body model serialized as JSON.
-        :paramtype body: any
-        :return: The raw HTTP response.
-        :rtype: ~azure.core.rest.HttpResponse
-        """
-        base = self._sandbox.base_url
-        if not base:
-            raise RLEError("instance has no data-plane URI; the sandbox is not running")
-        if self._client is None:
-            raise RLEError("instance is not bound to a pipeline client")
-        url = base.rstrip("/") + route
-        headers = {"Accept": "application/json"}
-        content: Optional[str] = None
-        if body is not None:
-            headers["Content-Type"] = "application/json"
-            content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore[call-arg]
-        request = HttpRequest(method=method, url=url, headers=headers, content=content)
-        response = self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        ).http_response
-        if response.status_code not in (200,):
-            map_error(status_code=response.status_code, response=response, error_map={})
-            raise HttpResponseError(response=response)
-        return response
 
     def _release(self) -> None:
         """Release the underlying sandbox, best effort."""
@@ -342,7 +308,8 @@ class OpenEnvClient:
     :paramtype version: str or None
     :keyword env_vars: Environment variables to inject into each instance.
     :paramtype env_vars: mapping[str, str] or None
-    :keyword num_instances: Number of instances to reserve in advance (internal; defaults to 1).
+    :keyword num_instances: Number of instances (leased sandboxes) to reserve in advance. Defaults to
+     1 and may not exceed 10.
     :paramtype num_instances: int
     :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
      Default value is 300.
@@ -367,6 +334,8 @@ class OpenEnvClient:
             raise ValueError("name is required")
         if num_instances < 1:
             raise ValueError("num_instances must be >= 1")
+        if num_instances > _MAX_INSTANCES:
+            raise ValueError(f"num_instances must be <= {_MAX_INSTANCES}")
         self._environments = environments
         self._sandboxes = sandboxes
         self._name = name
@@ -420,7 +389,7 @@ class OpenEnvClient:
             )
         else:
             environment = self._environments.get_environment(self._name, foundry_features=_RLE_FEATURE)
-        environment_id = getattr(environment, "environment_id", None) or getattr(environment, "id", None)
+        environment_id = getattr(environment, "id", None)
         if not environment_id:
             raise RLEError(f"environment '{self._name}' did not resolve to an environment id")
         self._environment_id = environment_id
@@ -538,6 +507,7 @@ class RLEOperations:
         name: str,
         version: Optional[str] = None,
         env_vars: Optional[Mapping[str, str]] = None,
+        num_instances: int = 1,
         create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S,
         poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S,
     ) -> OpenEnvClient:
@@ -558,6 +528,9 @@ class RLEOperations:
         :paramtype version: str or None
         :keyword env_vars: Environment variables to inject into each instance.
         :paramtype env_vars: mapping[str, str] or None
+        :keyword num_instances: Number of instances (leased sandboxes) to reserve in advance, so that
+         several episodes can run concurrently. Defaults to 1 and may not exceed 10.
+        :paramtype num_instances: int
         :keyword create_timeout_s: Maximum time to wait for each instance to become ready, in seconds.
          Default value is 300.
         :paramtype create_timeout_s: float
@@ -574,6 +547,7 @@ class RLEOperations:
             name=name,
             version=version,
             env_vars=env_vars,
+            num_instances=num_instances,
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )
