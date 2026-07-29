@@ -26,14 +26,15 @@
   - Added model `WorkspaceDiscovery`
   - Added model `WorkspaceDiscoveryProperties`
   - Added enum `WorkspaceDiscoveryStatus`
-  - Model `ScenarioConfigurationsOperations` added method `begin_execute`
-  - Model `ScenarioRunsOperations` added method `begin_cancel`
-  - Model `WorkspacesOperations` added method `begin_discover`
-  - Model `WorkspacesOperations` added method `begin_evaluate`
+  - Operation group `ScenarioConfigurationsOperations` added method `begin_execute`
+  - Operation group `ScenarioRunsOperations` added method `begin_cancel`
+  - Operation group `WorkspacesOperations` added method `begin_discover`
+  - Operation group `WorkspacesOperations` added method `begin_evaluate`
   - Added operation group `ConnectionsOperations`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `exclusions`
   - Model `ScenarioConfigurationProperties` deleted or renamed its instance variable `filters`
   - Model `WorkspaceEvaluationProperties` deleted or renamed its instance variable `num_scenarios_evaluated_cancelled`
