@@ -4,6 +4,18 @@
 
 ### Features Added
 
+- Added support for Entra authentication for evaluation results emitted to Application Insights.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.18.2 (2026-07-21)
+
+### Features Added
+
 - Added support for admin-connected (BYO) judge models in prompty-based evaluators. Models configured
   with `byo_model` and `project_endpoint` are routed through the Foundry project Responses API, which
   resolves the connection and its authentication.
