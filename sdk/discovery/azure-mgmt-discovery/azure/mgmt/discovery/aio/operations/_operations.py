@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
-from ... import models as _models
+from ... import models as _models, types as _types
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
 from ...operations._operations import (
@@ -105,7 +105,6 @@ from .._configuration import DiscoveryMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 
@@ -310,7 +309,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        resource: Union[_models.Bookshelf, JSON, IO[bytes]],
+        resource: Union[_models.Bookshelf, _types.Bookshelf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -416,7 +415,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        resource: JSON,
+        resource: _types.Bookshelf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -429,7 +428,7 @@ class BookshelvesOperations:
         :param bookshelf_name: The name of the Bookshelf. Required.
         :type bookshelf_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.Bookshelf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -472,7 +471,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        resource: Union[_models.Bookshelf, JSON, IO[bytes]],
+        resource: Union[_models.Bookshelf, _types.Bookshelf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Bookshelf]:
         """Create a Bookshelf.
@@ -482,9 +481,10 @@ class BookshelvesOperations:
         :type resource_group_name: str
         :param bookshelf_name: The name of the Bookshelf. Required.
         :type bookshelf_name: str
-        :param resource: Resource create parameters. Is one of the following types: Bookshelf, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.Bookshelf or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Bookshelf type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.Bookshelf or ~azure.mgmt.discovery.types.Bookshelf
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Bookshelf. The Bookshelf is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Bookshelf]
@@ -546,7 +546,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        properties: Union[_models.Bookshelf, JSON, IO[bytes]],
+        properties: Union[_models.Bookshelf, _types.Bookshelf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -650,7 +650,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        properties: JSON,
+        properties: _types.Bookshelf,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -663,7 +663,7 @@ class BookshelvesOperations:
         :param bookshelf_name: The name of the Bookshelf. Required.
         :type bookshelf_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.Bookshelf
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -706,7 +706,7 @@ class BookshelvesOperations:
         self,
         resource_group_name: str,
         bookshelf_name: str,
-        properties: Union[_models.Bookshelf, JSON, IO[bytes]],
+        properties: Union[_models.Bookshelf, _types.Bookshelf, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Bookshelf]:
         """Update a Bookshelf.
@@ -716,9 +716,10 @@ class BookshelvesOperations:
         :type resource_group_name: str
         :param bookshelf_name: The name of the Bookshelf. Required.
         :type bookshelf_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Bookshelf, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.Bookshelf or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Bookshelf type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.Bookshelf or
+         ~azure.mgmt.discovery.types.Bookshelf or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Bookshelf. The Bookshelf is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Bookshelf]
@@ -1184,7 +1185,9 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         bookshelf_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.BookshelfPrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[
+            _models.BookshelfPrivateEndpointConnection, _types.BookshelfPrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -1297,7 +1300,7 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         bookshelf_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.BookshelfPrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1313,7 +1316,7 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.BookshelfPrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1363,7 +1366,9 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         bookshelf_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.BookshelfPrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[
+            _models.BookshelfPrivateEndpointConnection, _types.BookshelfPrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.BookshelfPrivateEndpointConnection]:
         """Approves or updates the specified private endpoint connection.
@@ -1376,10 +1381,10 @@ class BookshelfPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         BookshelfPrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.BookshelfPrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a BookshelfPrivateEndpointConnection
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.discovery.models.BookshelfPrivateEndpointConnection or
+         ~azure.mgmt.discovery.types.BookshelfPrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns BookshelfPrivateEndpointConnection. The
          BookshelfPrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -1954,7 +1959,11 @@ class ToolsOperations:
         return deserialized  # type: ignore
 
     async def _create_or_update_initial(
-        self, resource_group_name: str, tool_name: str, resource: Union[_models.Tool, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        tool_name: str,
+        resource: Union[_models.Tool, _types.Tool, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2059,7 +2068,7 @@ class ToolsOperations:
         self,
         resource_group_name: str,
         tool_name: str,
-        resource: JSON,
+        resource: _types.Tool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2072,7 +2081,7 @@ class ToolsOperations:
         :param tool_name: The name of the Tool. Required.
         :type tool_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.Tool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2112,7 +2121,11 @@ class ToolsOperations:
 
     @distributed_trace_async
     async def begin_create_or_update(
-        self, resource_group_name: str, tool_name: str, resource: Union[_models.Tool, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        tool_name: str,
+        resource: Union[_models.Tool, _types.Tool, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Tool]:
         """Create a Tool.
 
@@ -2121,9 +2134,10 @@ class ToolsOperations:
         :type resource_group_name: str
         :param tool_name: The name of the Tool. Required.
         :type tool_name: str
-        :param resource: Resource create parameters. Is one of the following types: Tool, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.Tool or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Tool type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.Tool or ~azure.mgmt.discovery.types.Tool or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Tool. The Tool is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Tool]
@@ -2182,7 +2196,11 @@ class ToolsOperations:
         )
 
     async def _update_initial(
-        self, resource_group_name: str, tool_name: str, properties: Union[_models.Tool, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        tool_name: str,
+        properties: Union[_models.Tool, _types.Tool, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2285,7 +2303,7 @@ class ToolsOperations:
         self,
         resource_group_name: str,
         tool_name: str,
-        properties: JSON,
+        properties: _types.Tool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2298,7 +2316,7 @@ class ToolsOperations:
         :param tool_name: The name of the Tool. Required.
         :type tool_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.Tool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2338,7 +2356,11 @@ class ToolsOperations:
 
     @distributed_trace_async
     async def begin_update(
-        self, resource_group_name: str, tool_name: str, properties: Union[_models.Tool, JSON, IO[bytes]], **kwargs: Any
+        self,
+        resource_group_name: str,
+        tool_name: str,
+        properties: Union[_models.Tool, _types.Tool, IO[bytes]],
+        **kwargs: Any
     ) -> AsyncLROPoller[_models.Tool]:
         """Update a Tool.
 
@@ -2347,9 +2369,10 @@ class ToolsOperations:
         :type resource_group_name: str
         :param tool_name: The name of the Tool. Required.
         :type tool_name: str
-        :param properties: The resource properties to be updated. Is one of the following types: Tool,
-         JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.Tool or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Tool type or a IO[bytes]
+         type. Required.
+        :type properties: ~azure.mgmt.discovery.models.Tool or ~azure.mgmt.discovery.types.Tool or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Tool. The Tool is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Tool]
@@ -2811,7 +2834,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        resource: Union[_models.Project, JSON, IO[bytes]],
+        resource: Union[_models.Project, _types.Project, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -2922,7 +2945,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        resource: JSON,
+        resource: _types.Project,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2937,7 +2960,7 @@ class ProjectsOperations:
         :param project_name: The name of the Project. Required.
         :type project_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.Project
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2984,7 +3007,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        resource: Union[_models.Project, JSON, IO[bytes]],
+        resource: Union[_models.Project, _types.Project, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Project]:
         """Create a Project.
@@ -2996,9 +3019,10 @@ class ProjectsOperations:
         :type workspace_name: str
         :param project_name: The name of the Project. Required.
         :type project_name: str
-        :param resource: Resource create parameters. Is one of the following types: Project, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.Project or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Project type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.Project or ~azure.mgmt.discovery.types.Project or
+         IO[bytes]
         :return: An instance of AsyncLROPoller that returns Project. The Project is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Project]
@@ -3062,7 +3086,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        properties: Union[_models.Project, JSON, IO[bytes]],
+        properties: Union[_models.Project, _types.Project, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3171,7 +3195,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        properties: JSON,
+        properties: _types.Project,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3186,7 +3210,7 @@ class ProjectsOperations:
         :param project_name: The name of the Project. Required.
         :type project_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.Project
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3233,7 +3257,7 @@ class ProjectsOperations:
         resource_group_name: str,
         workspace_name: str,
         project_name: str,
-        properties: Union[_models.Project, JSON, IO[bytes]],
+        properties: Union[_models.Project, _types.Project, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Project]:
         """Update a Project.
@@ -3245,9 +3269,10 @@ class ProjectsOperations:
         :type workspace_name: str
         :param project_name: The name of the Project. Required.
         :type project_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Project, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.Project or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Project type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.Project or ~azure.mgmt.discovery.types.Project
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Project. The Project is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Project]
@@ -3624,7 +3649,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.Workspace, JSON, IO[bytes]],
+        resource: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3730,7 +3755,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: JSON,
+        resource: _types.Workspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3743,7 +3768,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the Workspace. Required.
         :type workspace_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3786,7 +3811,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        resource: Union[_models.Workspace, JSON, IO[bytes]],
+        resource: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Create a Workspace.
@@ -3796,9 +3821,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the Workspace. Required.
         :type workspace_name: str
-        :param resource: Resource create parameters. Is one of the following types: Workspace, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.Workspace or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Workspace type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.Workspace or ~azure.mgmt.discovery.types.Workspace
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Workspace]
@@ -3860,7 +3886,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.Workspace, JSON, IO[bytes]],
+        properties: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -3964,7 +3990,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: JSON,
+        properties: _types.Workspace,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3977,7 +4003,7 @@ class WorkspacesOperations:
         :param workspace_name: The name of the Workspace. Required.
         :type workspace_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.Workspace
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4020,7 +4046,7 @@ class WorkspacesOperations:
         self,
         resource_group_name: str,
         workspace_name: str,
-        properties: Union[_models.Workspace, JSON, IO[bytes]],
+        properties: Union[_models.Workspace, _types.Workspace, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Workspace]:
         """Update a Workspace.
@@ -4030,9 +4056,10 @@ class WorkspacesOperations:
         :type resource_group_name: str
         :param workspace_name: The name of the Workspace. Required.
         :type workspace_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Workspace, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.Workspace or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Workspace type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.Workspace or
+         ~azure.mgmt.discovery.types.Workspace or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Workspace. The Workspace is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Workspace]
@@ -4498,7 +4525,9 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.WorkspacePrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[
+            _models.WorkspacePrivateEndpointConnection, _types.WorkspacePrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -4611,7 +4640,7 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        resource: JSON,
+        resource: _types.WorkspacePrivateEndpointConnection,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4627,7 +4656,7 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.WorkspacePrivateEndpointConnection
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4677,7 +4706,9 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         resource_group_name: str,
         workspace_name: str,
         private_endpoint_connection_name: str,
-        resource: Union[_models.WorkspacePrivateEndpointConnection, JSON, IO[bytes]],
+        resource: Union[
+            _models.WorkspacePrivateEndpointConnection, _types.WorkspacePrivateEndpointConnection, IO[bytes]
+        ],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.WorkspacePrivateEndpointConnection]:
         """Approves or updates the specified private endpoint connection.
@@ -4690,10 +4721,10 @@ class WorkspacePrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         WorkspacePrivateEndpointConnection, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.WorkspacePrivateEndpointConnection or JSON or
-         IO[bytes]
+        :param resource: Resource create parameters. Is either a WorkspacePrivateEndpointConnection
+         type or a IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.discovery.models.WorkspacePrivateEndpointConnection or
+         ~azure.mgmt.discovery.types.WorkspacePrivateEndpointConnection or IO[bytes]
         :return: An instance of AsyncLROPoller that returns WorkspacePrivateEndpointConnection. The
          WorkspacePrivateEndpointConnection is compatible with MutableMapping
         :rtype:
@@ -5079,7 +5110,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        resource: Union[_models.ChatModelDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ChatModelDeployment, _types.ChatModelDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5190,7 +5221,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        resource: JSON,
+        resource: _types.ChatModelDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5205,7 +5236,7 @@ class ChatModelDeploymentsOperations:
         :param chat_model_deployment_name: The name of the ChatModelDeployment. Required.
         :type chat_model_deployment_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.ChatModelDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5252,7 +5283,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        resource: Union[_models.ChatModelDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ChatModelDeployment, _types.ChatModelDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ChatModelDeployment]:
         """Create a ChatModelDeployment.
@@ -5264,9 +5295,10 @@ class ChatModelDeploymentsOperations:
         :type workspace_name: str
         :param chat_model_deployment_name: The name of the ChatModelDeployment. Required.
         :type chat_model_deployment_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         ChatModelDeployment, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.ChatModelDeployment or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a ChatModelDeployment type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.discovery.models.ChatModelDeployment or
+         ~azure.mgmt.discovery.types.ChatModelDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ChatModelDeployment. The
          ChatModelDeployment is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.ChatModelDeployment]
@@ -5330,7 +5362,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        properties: Union[_models.ChatModelDeployment, JSON, IO[bytes]],
+        properties: Union[_models.ChatModelDeployment, _types.ChatModelDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -5439,7 +5471,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        properties: JSON,
+        properties: _types.ChatModelDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5454,7 +5486,7 @@ class ChatModelDeploymentsOperations:
         :param chat_model_deployment_name: The name of the ChatModelDeployment. Required.
         :type chat_model_deployment_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.ChatModelDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5501,7 +5533,7 @@ class ChatModelDeploymentsOperations:
         resource_group_name: str,
         workspace_name: str,
         chat_model_deployment_name: str,
-        properties: Union[_models.ChatModelDeployment, JSON, IO[bytes]],
+        properties: Union[_models.ChatModelDeployment, _types.ChatModelDeployment, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.ChatModelDeployment]:
         """Update a ChatModelDeployment.
@@ -5513,9 +5545,10 @@ class ChatModelDeploymentsOperations:
         :type workspace_name: str
         :param chat_model_deployment_name: The name of the ChatModelDeployment. Required.
         :type chat_model_deployment_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         ChatModelDeployment, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.ChatModelDeployment or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a ChatModelDeployment type
+         or a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.ChatModelDeployment or
+         ~azure.mgmt.discovery.types.ChatModelDeployment or IO[bytes]
         :return: An instance of AsyncLROPoller that returns ChatModelDeployment. The
          ChatModelDeployment is compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.ChatModelDeployment]
@@ -6097,7 +6130,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        resource: Union[_models.NodePool, JSON, IO[bytes]],
+        resource: Union[_models.NodePool, _types.NodePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6208,7 +6241,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        resource: JSON,
+        resource: _types.NodePool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6223,7 +6256,7 @@ class NodePoolsOperations:
         :param node_pool_name: The name of the NodePool. Required.
         :type node_pool_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.NodePool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6270,7 +6303,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        resource: Union[_models.NodePool, JSON, IO[bytes]],
+        resource: Union[_models.NodePool, _types.NodePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NodePool]:
         """Create a NodePool.
@@ -6282,9 +6315,10 @@ class NodePoolsOperations:
         :type supercomputer_name: str
         :param node_pool_name: The name of the NodePool. Required.
         :type node_pool_name: str
-        :param resource: Resource create parameters. Is one of the following types: NodePool, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.NodePool or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a NodePool type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.NodePool or ~azure.mgmt.discovery.types.NodePool
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NodePool. The NodePool is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.NodePool]
@@ -6348,7 +6382,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        properties: Union[_models.NodePool, JSON, IO[bytes]],
+        properties: Union[_models.NodePool, _types.NodePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -6457,7 +6491,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        properties: JSON,
+        properties: _types.NodePool,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6472,7 +6506,7 @@ class NodePoolsOperations:
         :param node_pool_name: The name of the NodePool. Required.
         :type node_pool_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.NodePool
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6519,7 +6553,7 @@ class NodePoolsOperations:
         resource_group_name: str,
         supercomputer_name: str,
         node_pool_name: str,
-        properties: Union[_models.NodePool, JSON, IO[bytes]],
+        properties: Union[_models.NodePool, _types.NodePool, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.NodePool]:
         """Update a NodePool.
@@ -6531,9 +6565,10 @@ class NodePoolsOperations:
         :type supercomputer_name: str
         :param node_pool_name: The name of the NodePool. Required.
         :type node_pool_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         NodePool, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.NodePool or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a NodePool type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.NodePool or ~azure.mgmt.discovery.types.NodePool
+         or IO[bytes]
         :return: An instance of AsyncLROPoller that returns NodePool. The NodePool is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.NodePool]
@@ -6910,7 +6945,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        resource: Union[_models.Supercomputer, JSON, IO[bytes]],
+        resource: Union[_models.Supercomputer, _types.Supercomputer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7016,7 +7051,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        resource: JSON,
+        resource: _types.Supercomputer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7029,7 +7064,7 @@ class SupercomputersOperations:
         :param supercomputer_name: The name of the Supercomputer. Required.
         :type supercomputer_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.Supercomputer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7072,7 +7107,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        resource: Union[_models.Supercomputer, JSON, IO[bytes]],
+        resource: Union[_models.Supercomputer, _types.Supercomputer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Supercomputer]:
         """Create a Supercomputer.
@@ -7082,9 +7117,10 @@ class SupercomputersOperations:
         :type resource_group_name: str
         :param supercomputer_name: The name of the Supercomputer. Required.
         :type supercomputer_name: str
-        :param resource: Resource create parameters. Is one of the following types: Supercomputer,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.Supercomputer or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Supercomputer type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.discovery.models.Supercomputer or
+         ~azure.mgmt.discovery.types.Supercomputer or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Supercomputer. The Supercomputer is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Supercomputer]
@@ -7146,7 +7182,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        properties: Union[_models.Supercomputer, JSON, IO[bytes]],
+        properties: Union[_models.Supercomputer, _types.Supercomputer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7250,7 +7286,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        properties: JSON,
+        properties: _types.Supercomputer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7263,7 +7299,7 @@ class SupercomputersOperations:
         :param supercomputer_name: The name of the Supercomputer. Required.
         :type supercomputer_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.Supercomputer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7306,7 +7342,7 @@ class SupercomputersOperations:
         self,
         resource_group_name: str,
         supercomputer_name: str,
-        properties: Union[_models.Supercomputer, JSON, IO[bytes]],
+        properties: Union[_models.Supercomputer, _types.Supercomputer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.Supercomputer]:
         """Update a Supercomputer.
@@ -7316,9 +7352,10 @@ class SupercomputersOperations:
         :type resource_group_name: str
         :param supercomputer_name: The name of the Supercomputer. Required.
         :type supercomputer_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         Supercomputer, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.Supercomputer or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a Supercomputer type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.Supercomputer or
+         ~azure.mgmt.discovery.types.Supercomputer or IO[bytes]
         :return: An instance of AsyncLROPoller that returns Supercomputer. The Supercomputer is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.Supercomputer]
@@ -7786,7 +7823,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        resource: Union[_models.StorageAsset, JSON, IO[bytes]],
+        resource: Union[_models.StorageAsset, _types.StorageAsset, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -7897,7 +7934,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        resource: JSON,
+        resource: _types.StorageAsset,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -7912,7 +7949,7 @@ class StorageAssetsOperations:
         :param storage_asset_name: The name of the StorageAsset. Required.
         :type storage_asset_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.StorageAsset
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -7959,7 +7996,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        resource: Union[_models.StorageAsset, JSON, IO[bytes]],
+        resource: Union[_models.StorageAsset, _types.StorageAsset, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageAsset]:
         """Create a StorageAsset.
@@ -7971,9 +8008,10 @@ class StorageAssetsOperations:
         :type storage_container_name: str
         :param storage_asset_name: The name of the StorageAsset. Required.
         :type storage_asset_name: str
-        :param resource: Resource create parameters. Is one of the following types: StorageAsset, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.StorageAsset or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a StorageAsset type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.discovery.models.StorageAsset or
+         ~azure.mgmt.discovery.types.StorageAsset or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StorageAsset. The StorageAsset is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.StorageAsset]
@@ -8037,7 +8075,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        properties: Union[_models.StorageAsset, JSON, IO[bytes]],
+        properties: Union[_models.StorageAsset, _types.StorageAsset, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8146,7 +8184,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        properties: JSON,
+        properties: _types.StorageAsset,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8161,7 +8199,7 @@ class StorageAssetsOperations:
         :param storage_asset_name: The name of the StorageAsset. Required.
         :type storage_asset_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.StorageAsset
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8208,7 +8246,7 @@ class StorageAssetsOperations:
         resource_group_name: str,
         storage_container_name: str,
         storage_asset_name: str,
-        properties: Union[_models.StorageAsset, JSON, IO[bytes]],
+        properties: Union[_models.StorageAsset, _types.StorageAsset, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageAsset]:
         """Update a StorageAsset.
@@ -8220,9 +8258,10 @@ class StorageAssetsOperations:
         :type storage_container_name: str
         :param storage_asset_name: The name of the StorageAsset. Required.
         :type storage_asset_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         StorageAsset, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.StorageAsset or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a StorageAsset type or a
+         IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.StorageAsset or
+         ~azure.mgmt.discovery.types.StorageAsset or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StorageAsset. The StorageAsset is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.StorageAsset]
@@ -8601,7 +8640,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        resource: Union[_models.StorageContainer, JSON, IO[bytes]],
+        resource: Union[_models.StorageContainer, _types.StorageContainer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8707,7 +8746,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        resource: JSON,
+        resource: _types.StorageContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8720,7 +8759,7 @@ class StorageContainersOperations:
         :param storage_container_name: The name of the StorageContainer. Required.
         :type storage_container_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.discovery.types.StorageContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8763,7 +8802,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        resource: Union[_models.StorageContainer, JSON, IO[bytes]],
+        resource: Union[_models.StorageContainer, _types.StorageContainer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageContainer]:
         """Create a StorageContainer.
@@ -8773,9 +8812,10 @@ class StorageContainersOperations:
         :type resource_group_name: str
         :param storage_container_name: The name of the StorageContainer. Required.
         :type storage_container_name: str
-        :param resource: Resource create parameters. Is one of the following types: StorageContainer,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.discovery.models.StorageContainer or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a StorageContainer type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.discovery.models.StorageContainer or
+         ~azure.mgmt.discovery.types.StorageContainer or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StorageContainer. The StorageContainer is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.StorageContainer]
@@ -8837,7 +8877,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        properties: Union[_models.StorageContainer, JSON, IO[bytes]],
+        properties: Union[_models.StorageContainer, _types.StorageContainer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -8941,7 +8981,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        properties: JSON,
+        properties: _types.StorageContainer,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -8954,7 +8994,7 @@ class StorageContainersOperations:
         :param storage_container_name: The name of the StorageContainer. Required.
         :type storage_container_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.discovery.types.StorageContainer
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8997,7 +9037,7 @@ class StorageContainersOperations:
         self,
         resource_group_name: str,
         storage_container_name: str,
-        properties: Union[_models.StorageContainer, JSON, IO[bytes]],
+        properties: Union[_models.StorageContainer, _types.StorageContainer, IO[bytes]],
         **kwargs: Any
     ) -> AsyncLROPoller[_models.StorageContainer]:
         """Update a StorageContainer.
@@ -9007,9 +9047,10 @@ class StorageContainersOperations:
         :type resource_group_name: str
         :param storage_container_name: The name of the StorageContainer. Required.
         :type storage_container_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         StorageContainer, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.discovery.models.StorageContainer or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a StorageContainer type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.discovery.models.StorageContainer or
+         ~azure.mgmt.discovery.types.StorageContainer or IO[bytes]
         :return: An instance of AsyncLROPoller that returns StorageContainer. The StorageContainer is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.discovery.models.StorageContainer]

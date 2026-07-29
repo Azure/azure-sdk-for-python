@@ -192,5 +192,5 @@
         "azure.mgmt.discovery.operations.StorageContainersOperations.list_by_subscription": "Microsoft.Discovery.StorageContainers.listBySubscription",
         "azure.mgmt.discovery.aio.operations.StorageContainersOperations.list_by_subscription": "Microsoft.Discovery.StorageContainers.listBySubscription"
     },
-    "CrossLanguageVersion": "bfa45c6744e2"
+    "CrossLanguageVersion": "3b69322817f3"
 }

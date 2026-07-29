@@ -109,7 +109,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 bookshelf_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: BookshelfPrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -204,7 +204,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 bookshelf_name: str, 
-                resource: JSON, 
+                resource: Bookshelf, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -245,7 +245,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 bookshelf_name: str, 
-                properties: JSON, 
+                properties: Bookshelf, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -307,7 +307,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 chat_model_deployment_name: str, 
-                resource: JSON, 
+                resource: ChatModelDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -352,7 +352,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 chat_model_deployment_name: str, 
-                properties: JSON, 
+                properties: ChatModelDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -414,7 +414,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 supercomputer_name: str, 
                 node_pool_name: str, 
-                resource: JSON, 
+                resource: NodePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -459,7 +459,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 supercomputer_name: str, 
                 node_pool_name: str, 
-                properties: JSON, 
+                properties: NodePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -533,7 +533,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 project_name: str, 
-                resource: JSON, 
+                resource: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -578,7 +578,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 project_name: str, 
-                properties: JSON, 
+                properties: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -640,7 +640,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 storage_container_name: str, 
                 storage_asset_name: str, 
-                resource: JSON, 
+                resource: StorageAsset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -685,7 +685,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 storage_container_name: str, 
                 storage_asset_name: str, 
-                properties: JSON, 
+                properties: StorageAsset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -745,7 +745,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_container_name: str, 
-                resource: JSON, 
+                resource: StorageContainer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -786,7 +786,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 storage_container_name: str, 
-                properties: JSON, 
+                properties: StorageContainer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -846,7 +846,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 supercomputer_name: str, 
-                resource: JSON, 
+                resource: Supercomputer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -887,7 +887,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 supercomputer_name: str, 
-                properties: JSON, 
+                properties: Supercomputer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -947,7 +947,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 tool_name: str, 
-                resource: JSON, 
+                resource: Tool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -988,7 +988,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 tool_name: str, 
-                properties: JSON, 
+                properties: Tool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1050,7 +1050,7 @@ namespace azure.mgmt.discovery.aio.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: WorkspacePrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1145,7 +1145,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                resource: JSON, 
+                resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1186,7 +1186,7 @@ namespace azure.mgmt.discovery.aio.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                properties: JSON, 
+                properties: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2202,7 +2202,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 bookshelf_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: BookshelfPrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2297,7 +2297,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 bookshelf_name: str, 
-                resource: JSON, 
+                resource: Bookshelf, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2338,7 +2338,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 bookshelf_name: str, 
-                properties: JSON, 
+                properties: Bookshelf, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2400,7 +2400,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 chat_model_deployment_name: str, 
-                resource: JSON, 
+                resource: ChatModelDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2445,7 +2445,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 chat_model_deployment_name: str, 
-                properties: JSON, 
+                properties: ChatModelDeployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2507,7 +2507,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 supercomputer_name: str, 
                 node_pool_name: str, 
-                resource: JSON, 
+                resource: NodePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2552,7 +2552,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 supercomputer_name: str, 
                 node_pool_name: str, 
-                properties: JSON, 
+                properties: NodePool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2626,7 +2626,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 project_name: str, 
-                resource: JSON, 
+                resource: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2671,7 +2671,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 project_name: str, 
-                properties: JSON, 
+                properties: Project, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2733,7 +2733,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 storage_container_name: str, 
                 storage_asset_name: str, 
-                resource: JSON, 
+                resource: StorageAsset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2778,7 +2778,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 storage_container_name: str, 
                 storage_asset_name: str, 
-                properties: JSON, 
+                properties: StorageAsset, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2838,7 +2838,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 storage_container_name: str, 
-                resource: JSON, 
+                resource: StorageContainer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2879,7 +2879,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 storage_container_name: str, 
-                properties: JSON, 
+                properties: StorageContainer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2939,7 +2939,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 supercomputer_name: str, 
-                resource: JSON, 
+                resource: Supercomputer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -2980,7 +2980,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 supercomputer_name: str, 
-                properties: JSON, 
+                properties: Supercomputer, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3040,7 +3040,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 tool_name: str, 
-                resource: JSON, 
+                resource: Tool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3081,7 +3081,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 tool_name: str, 
-                properties: JSON, 
+                properties: Tool, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3143,7 +3143,7 @@ namespace azure.mgmt.discovery.operations
                 resource_group_name: str, 
                 workspace_name: str, 
                 private_endpoint_connection_name: str, 
-                resource: JSON, 
+                resource: WorkspacePrivateEndpointConnection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3238,7 +3238,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                resource: JSON, 
+                resource: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3279,7 +3279,7 @@ namespace azure.mgmt.discovery.operations
                 self, 
                 resource_group_name: str, 
                 workspace_name: str, 
-                properties: JSON, 
+                properties: Workspace, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -3313,6 +3313,520 @@ namespace azure.mgmt.discovery.operations
 
         @distributed_trace
         def list_by_subscription(self, **kwargs: Any) -> ItemPaged[Workspace]: ...
+
+
+namespace azure.mgmt.discovery.types
+
+    class azure.mgmt.discovery.types.AzureNetAppFilesStore(TypedDict, total=False):
+        key "kind": Required[Literal[StorageStoreType.AZURE_NET_APP_FILES]]
+        key "mountProtocol": Union[str, NetAppMountProtocol]
+        key "netAppVolumeId": Required[str]
+        kind: Literal[StorageStoreType.AZURE_NET_APP_FILES]
+        mount_protocol: Union[str, NetAppMountProtocol]
+        net_app_volume_id: str
+
+
+    class azure.mgmt.discovery.types.AzureStorageBlobStore(TypedDict, total=False):
+        key "kind": Required[Literal[StorageStoreType.AZURE_STORAGE_BLOB]]
+        key "mountProtocol": Union[str, BlobStorageMountProtocol]
+        key "storageAccountId": Required[str]
+        kind: Literal[StorageStoreType.AZURE_STORAGE_BLOB]
+        mount_protocol: Union[str, BlobStorageMountProtocol]
+        storage_account_id: str
+
+
+    class azure.mgmt.discovery.types.Bookshelf(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('BookshelfProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: BookshelfProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.BookshelfKeyVaultProperties(TypedDict, total=False):
+        key "identityClientId": Required[str]
+        key "keyName": Required[str]
+        key "keyVaultUri": Required[str]
+        key "keyVersion": str
+        identity_client_id: str
+        key_name: str
+        key_vault_uri: str
+        key_version: str
+
+
+    class azure.mgmt.discovery.types.BookshelfPrivateEndpointConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.discovery.types.BookshelfProperties(TypedDict, total=False):
+        key "bookshelfUri": str
+        key "customerManagedKeys": Union[str, CustomerManagedKeys]
+        key "keyVaultProperties": ForwardRef('BookshelfKeyVaultProperties', module='types')
+        key "logAnalyticsClusterId": str
+        key "managedOnBehalfOfConfiguration": ForwardRef('WithMoboBrokerResources', module='types')
+        key "managedResourceGroup": str
+        key "privateEndpointSubnetId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "searchSubnetId": str
+        bookshelf_uri: str
+        customer_managed_keys: Union[str, CustomerManagedKeys]
+        key_vault_properties: BookshelfKeyVaultProperties
+        log_analytics_cluster_id: str
+        managed_on_behalf_of_configuration: WithMoboBrokerResources
+        managed_resource_group: str
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        private_endpoint_connections: list[PrivateEndpointConnection]
+        private_endpoint_subnet_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        public_network_access: Union[str, PublicNetworkAccess]
+        search_subnet_id: str
+        workloadIdentities: dict[str, UserAssignedIdentity]
+        workload_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.discovery.types.ChatModelDeployment(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ChatModelDeploymentProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ChatModelDeploymentProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.ChatModelDeploymentProperties(TypedDict, total=False):
+        key "capacity": int
+        key "modelFormat": Required[str]
+        key "modelName": Required[str]
+        key "modelVersion": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "skuName": str
+        capacity: int
+        model_format: str
+        model_name: str
+        model_version: str
+        provisioning_state: Union[str, ProvisioningState]
+        sku_name: str
+
+
+    class azure.mgmt.discovery.types.Identity(TypedDict, total=False):
+        key "clientId": str
+        key "id": Required[str]
+        key "principalId": str
+        client_id: str
+        id: str
+        principal_id: str
+
+
+    class azure.mgmt.discovery.types.KeyVaultProperties(TypedDict, total=False):
+        key "keyName": Required[str]
+        key "keyVaultUri": Required[str]
+        key "keyVersion": str
+        key_name: str
+        key_vault_uri: str
+        key_version: str
+
+
+    class azure.mgmt.discovery.types.MoboBrokerResource(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.discovery.types.NodePool(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('NodePoolProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: NodePoolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.NodePoolProperties(TypedDict, total=False):
+        key "imageCacheLowerThreshold": int
+        key "imageCacheUpperThreshold": int
+        key "maxNodeCount": Required[int]
+        key "minNodeCount": int
+        key "osDiskSizeGb": int
+        key "provisioningState": Union[str, ProvisioningState]
+        key "scaleSetPriority": Union[str, ScaleSetPriority]
+        key "subnetId": Required[str]
+        key "vmSize": Required[Union[str, VmSize]]
+        image_cache_lower_threshold: int
+        image_cache_upper_threshold: int
+        max_node_count: int
+        min_node_count: int
+        os_disk_size_gb: int
+        provisioning_state: Union[str, ProvisioningState]
+        scale_set_priority: Union[str, ScaleSetPriority]
+        subnet_id: str
+        vm_size: Union[str, VmSize]
+
+
+    class azure.mgmt.discovery.types.PrivateEndpoint(TypedDict, total=False):
+        key "id": str
+        id: str
+
+
+    class azure.mgmt.discovery.types.PrivateEndpointConnection(Resource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.discovery.types.PrivateEndpointConnectionProperties(TypedDict, total=False):
+        key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
+        key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
+        key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
+        groupIds: list[str]
+        group_ids: list[str]
+        private_endpoint: PrivateEndpoint
+        private_link_service_connection_state: PrivateLinkServiceConnectionState
+        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+
+
+    class azure.mgmt.discovery.types.PrivateLinkServiceConnectionState(TypedDict, total=False):
+        key "actionsRequired": str
+        key "description": str
+        key "status": Union[str, PrivateEndpointServiceConnectionStatus]
+        actions_required: str
+        description: str
+        status: Union[str, PrivateEndpointServiceConnectionStatus]
+
+
+    class azure.mgmt.discovery.types.Project(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ProjectProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ProjectProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.ProjectProperties(TypedDict, total=False):
+        key "foundryProjectEndpoint": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "settings": ForwardRef('ProjectSettings', module='types')
+        foundry_project_endpoint: str
+        provisioning_state: Union[str, ProvisioningState]
+        settings: ProjectSettings
+        storageContainerIds: list[str]
+        storage_container_ids: list[str]
+
+
+    class azure.mgmt.discovery.types.ProjectSettings(TypedDict, total=False):
+        key "behaviorPreferences": str
+        behavior_preferences: str
+
+
+    class azure.mgmt.discovery.types.ProxyResource(Resource):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.discovery.types.Resource(TypedDict, total=False):
+        key "id": str
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.discovery.types.StorageAsset(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('StorageAssetProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: StorageAssetProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.StorageAssetProperties(TypedDict, total=False):
+        key "description": Required[str]
+        key "path": str
+        key "provisioningState": Union[str, ProvisioningState]
+        description: str
+        path: str
+        provisioning_state: Union[str, ProvisioningState]
+
+
+    class azure.mgmt.discovery.types.StorageContainer(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('StorageContainerProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: StorageContainerProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.StorageContainerProperties(TypedDict, total=False):
+        key "provisioningState": Union[str, ProvisioningState]
+        key "storageStore": Required[StorageStore]
+        provisioning_state: Union[str, ProvisioningState]
+        storage_store: StorageStore
+
+
+    class azure.mgmt.discovery.types.StorageStoreType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+        AZURE_NET_APP_FILES = "AzureNetAppFiles"
+        AZURE_STORAGE_BLOB = "AzureStorageBlob"
+
+
+    class azure.mgmt.discovery.types.Supercomputer(TrackedResource):
+        key "id": str
+        key "identity": ForwardRef('SystemAssignedServiceIdentity', module='types')
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('SupercomputerProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        identity: SystemAssignedServiceIdentity
+        location: str
+        name: str
+        properties: SupercomputerProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.SupercomputerIdentities(TypedDict, total=False):
+        key "clusterIdentity": Required[Identity]
+        key "kubeletIdentity": Required[Identity]
+        cluster_identity: Identity
+        kubelet_identity: Identity
+        workloadIdentities: dict[str, UserAssignedIdentity]
+        workload_identities: dict[str, UserAssignedIdentity]
+
+
+    class azure.mgmt.discovery.types.SupercomputerProperties(TypedDict, total=False):
+        key "customerManagedKeys": Union[str, CustomerManagedKeys]
+        key "diskEncryptionSetId": str
+        key "identities": Required[SupercomputerIdentities]
+        key "logAnalyticsClusterId": str
+        key "managedOnBehalfOfConfiguration": ForwardRef('WithMoboBrokerResources', module='types')
+        key "managedResourceGroup": str
+        key "managementSubnetId": str
+        key "outboundType": Union[str, NetworkEgressType]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "subnetId": Required[str]
+        key "systemSku": Union[str, SystemSku]
+        customer_managed_keys: Union[str, CustomerManagedKeys]
+        disk_encryption_set_id: str
+        identities: SupercomputerIdentities
+        log_analytics_cluster_id: str
+        managed_on_behalf_of_configuration: WithMoboBrokerResources
+        managed_resource_group: str
+        management_subnet_id: str
+        outbound_type: Union[str, NetworkEgressType]
+        provisioning_state: Union[str, ProvisioningState]
+        subnet_id: str
+        system_sku: Union[str, SystemSku]
+
+
+    class azure.mgmt.discovery.types.SystemAssignedServiceIdentity(TypedDict, total=False):
+        key "principalId": str
+        key "tenantId": str
+        key "type": Required[Union[str, SystemAssignedServiceIdentityType]]
+        principal_id: str
+        tenant_id: str
+        type: Union[str, SystemAssignedServiceIdentityType]
+
+
+    class azure.mgmt.discovery.types.SystemData(TypedDict, total=False):
+        key "createdAt": str
+        key "createdBy": str
+        key "createdByType": Union[str, CreatedByType]
+        key "lastModifiedAt": str
+        key "lastModifiedBy": str
+        key "lastModifiedByType": Union[str, CreatedByType]
+        created_at: str
+        created_by: str
+        created_by_type: Union[str, CreatedByType]
+        last_modified_at: str
+        last_modified_by: str
+        last_modified_by_type: Union[str, CreatedByType]
+
+
+    class azure.mgmt.discovery.types.Tool(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('ToolProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: ToolProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.ToolProperties(TypedDict, total=False):
+        key "definitionContent": Required[dict[str, Any]]
+        key "provisioningState": Union[str, ProvisioningState]
+        key "version": Required[str]
+        definition_content: dict[str, Any]
+        environmentVariables: dict[str, str]
+        environment_variables: dict[str, str]
+        provisioning_state: Union[str, ProvisioningState]
+        version: str
+
+
+    class azure.mgmt.discovery.types.TrackedResource(Resource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.UserAssignedIdentity(TypedDict, total=False):
+        key "clientId": str
+        key "principalId": str
+        client_id: str
+        principal_id: str
+
+
+    class azure.mgmt.discovery.types.WithMoboBrokerResources(TypedDict, total=False):
+        moboBrokerResources: list[MoboBrokerResource]
+        mobo_broker_resources: list[MoboBrokerResource]
+
+
+    class azure.mgmt.discovery.types.Workspace(TrackedResource):
+        key "id": str
+        key "location": Required[str]
+        key "name": str
+        key "properties": ForwardRef('WorkspaceProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        location: str
+        name: str
+        properties: WorkspaceProperties
+        system_data: SystemData
+        tags: dict[str, str]
+        type: str
+
+
+    class azure.mgmt.discovery.types.WorkspacePrivateEndpointConnection(ProxyResource):
+        key "id": str
+        key "name": str
+        key "properties": ForwardRef('PrivateEndpointConnectionProperties', module='types')
+        key "systemData": ForwardRef('SystemData', module='types')
+        key "type": str
+        id: str
+        name: str
+        properties: PrivateEndpointConnectionProperties
+        system_data: SystemData
+        type: str
+
+
+    class azure.mgmt.discovery.types.WorkspaceProperties(TypedDict, total=False):
+        key "agentSubnetId": str
+        key "customerManagedKeys": Union[str, CustomerManagedKeys]
+        key "keyVaultProperties": ForwardRef('KeyVaultProperties', module='types')
+        key "logAnalyticsClusterId": str
+        key "managedOnBehalfOfConfiguration": ForwardRef('WithMoboBrokerResources', module='types')
+        key "managedResourceGroup": str
+        key "privateEndpointSubnetId": str
+        key "provisioningState": Union[str, ProvisioningState]
+        key "publicNetworkAccess": Union[str, PublicNetworkAccess]
+        key "workspaceApiUri": str
+        key "workspaceIdentity": Required[Identity]
+        key "workspaceSubnetId": str
+        key "workspaceUiUri": str
+        agent_subnet_id: str
+        customer_managed_keys: Union[str, CustomerManagedKeys]
+        key_vault_properties: KeyVaultProperties
+        log_analytics_cluster_id: str
+        managed_on_behalf_of_configuration: WithMoboBrokerResources
+        managed_resource_group: str
+        privateEndpointConnections: list[PrivateEndpointConnection]
+        private_endpoint_connections: list[PrivateEndpointConnection]
+        private_endpoint_subnet_id: str
+        provisioning_state: Union[str, ProvisioningState]
+        public_network_access: Union[str, PublicNetworkAccess]
+        supercomputerIds: list[str]
+        supercomputer_ids: list[str]
+        workspace_api_uri: str
+        workspace_identity: Identity
+        workspace_subnet_id: str
+        workspace_ui_uri: str
 
 
 ```
