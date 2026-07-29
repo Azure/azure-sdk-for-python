@@ -25,7 +25,8 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
-from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
 
 app = ResponsesAgentServerHost()
 
@@ -40,7 +41,7 @@ async def convenience_handler(
     cancellation_signal: asyncio.Event,
 ):
     """Return structured analysis results using the convenience method."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
@@ -57,7 +58,7 @@ async def convenience_handler(
         ],
     }
 
-    async for event in stream.aoutput_item_structured_outputs(result):
+    async for event in stream.output_item_structured_outputs(result):
         yield event
 
     yield stream.emit_completed()

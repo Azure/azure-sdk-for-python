@@ -354,13 +354,15 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
         yield event
     yield stream.emit_completed()
 
-# Async generator with an async builder (token streaming)
+# Async handler
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+
 @app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_message(token_stream()):
+    async for event in stream.output_item_message(token_stream()):
         yield event
     yield stream.emit_completed()
 ```
@@ -409,7 +411,7 @@ It provides:
 | Response | `stream.response` — the underlying Response object. Set custom metadata or instructions before `emit_created()` |
 | Lifecycle | `emit_created()`, `emit_in_progress()`, `emit_completed()`, `emit_failed()`, `emit_incomplete()` |
 | Output factories | `add_output_item_message()`, `add_output_item_function_call()`, `add_output_item_reasoning_item()`, and more |
-| Convenience generators | `output_item_message()`, `output_item_function_call()`, `output_item_reasoning_item()`, and async variants |
+| Convenience generators | `output_item_message()`, `output_item_function_call()`, `output_item_reasoning_item()`, and async variants in `azure.ai.agentserver.responses.aio` |
 
 ### Method Naming Conventions
 
@@ -422,8 +424,7 @@ prefixes tells you what any method does at a glance:
 |--------|---------|---------|----------|
 | `emit_*` | `emit_created()`, `emit_completed()` | A specific event subtype | Produce one response-lifecycle event |
 | `add_*` | `add_output_item_message()` | A builder object | Create a builder for step-by-step event emission |
-| `output_item_*` | `output_item_message(text)` | Generator of events | Convenience — yields the complete output-item lifecycle |
-| `aoutput_item_*` | `aoutput_item_message(stream)` | Async generator | Async convenience for streaming `AsyncIterable[str]` |
+| `output_item_*` | `output_item_message(text)` | Generator or async generator of events | Convenience — yields the complete output-item lifecycle |
 
 #### Builder-level methods
 
@@ -445,8 +446,8 @@ Every convenience generator has two variants:
 
 | Variant | Signature | When to use |
 |---------|-----------|-------------|
-| **Sync** | `output_item_message(text: str)` → `Iterable` | You have the full value up-front |
-| **Async** | `aoutput_item_message(stream: AsyncIterable[str])` → `AsyncIterable` | You're receiving chunks from a model |
+| **Sync** | `ResponseEventStream.output_item_message(text: str)` → `Iterable` | You have the full value up-front |
+| **Async** | `aio.ResponseEventStream.output_item_message(stream: AsyncIterable[str])` → `AsyncIterable` | You're receiving chunks from a model |
 
 > **Tip:** Start with `TextResponse`. If you need convenience generators
 > (`output_item_message`), use those. Drop down to `add_*` builders only when you
@@ -655,7 +656,10 @@ yield stream.emit_completed()
 Streaming from an LLM:
 
 ```python
-async for evt in stream.aoutput_item_message(get_token_stream()):
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+
+stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
+async for evt in stream.output_item_message(get_token_stream()):
     yield evt
 ```
 
@@ -723,14 +727,16 @@ next turn.
 ```python
 @app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     tool_output = await _find_function_call_output(context)
 
     if tool_output is not None:
         # Turn 2+: Process the function result and respond
         yield stream.emit_created()
         yield stream.emit_in_progress()
-        async for event in stream.aoutput_item_message(f"The result is: {tool_output}"):
+        async for event in stream.output_item_message(f"The result is: {tool_output}"):
             yield event
         yield stream.emit_completed()
     else:
@@ -738,7 +744,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
         yield stream.emit_created()
         yield stream.emit_in_progress()
         args = json.dumps({"location": "Seattle"})
-        async for event in stream.aoutput_item_function_call("get_weather", "call_weather_1", args):
+        async for event in stream.output_item_function_call("get_weather", "call_weather_1", args):
             yield event
         yield stream.emit_completed()
 ```
@@ -866,8 +872,9 @@ for evt in stream.output_item_message(
     yield evt
 ```
 
-All convenience generators have async variants (prefixed with `a`):
-`aoutput_item_image_gen_call()`, `aoutput_item_structured_outputs()`, etc.
+All convenience generators have async variants with matching names under
+`azure.ai.agentserver.responses.aio`, for example `output_item_image_gen_call()`
+and `output_item_structured_outputs()`.
 
 #### `data_url` utility
 
@@ -1108,6 +1115,63 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 
 6. **`return` in an async generator is a bare statement** — you cannot
    `return value`. Use `yield` for events, then `return` to exit.
+
+```python
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+
+    stream = AsyncResponseEventStream(...)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+
+    async for token in model.stream(prompt):
+        if cancellation_signal.is_set():
+            break
+        yield text.emit_delta(token)
+
+    yield stream.emit_completed()
+```
+
+### What the Library Does on Cancellation
+
+Let the handler exit cleanly — the server handles the winddown automatically:
+
+1. The library sets the `cancellation_signal` event.
+2. It waits up to 10 seconds for the handler to wind down. If the handler doesn't
+   cooperate, the cancel endpoint returns the response in its current state.
+3. Once the handler finishes (within or beyond the grace period), the response
+   transitions to `cancelled` status and a `response.failed` terminal event is
+   emitted and persisted.
+
+You don't need to emit any terminal event on cancellation — just check the signal
+and exit your generator cleanly.
+
+### Graceful Shutdown
+
+When the host shuts down (e.g., SIGTERM), `context.is_shutdown_requested` is set to
+`True` and the cancellation signal is triggered. Use this to distinguish shutdown
+from explicit cancel:
+
+```python
+@app.response_handler
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    stream = ResponseEventStream(...)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+
+    try:
+        result = await do_long_running_work()
+    except asyncio.CancelledError:
+        if context.is_shutdown_requested:
+            yield stream.emit_incomplete()
+            return
+        raise
+
+    for event in stream.output_item_message(result):
+        yield event
+    yield stream.emit_completed()
+```
 
 ---
 
@@ -1940,7 +2004,7 @@ Every builder follows `emit_added()` → work → `emit_done()`. If you forget
 
 ### 6. Prefer Convenience Generators Over Builders
 
-Start with `output_item_message()` / `aoutput_item_message()`. Drop down to
+Start with `output_item_message()` from the sync or aio stream. Drop down to
 `add_output_item_message()` builders only when you need fine-grained control.
 
 ### 7. Let the Library Handle Mode Negotiation

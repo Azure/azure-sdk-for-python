@@ -432,7 +432,7 @@ namespace azure.ai.agentserver.responses
         is_steered_turn: bool
         mode_flags: ResponseModeFlags
         pending_input_count: int
-        persisted_response: ResponseObject | None
+        persisted_response: Optional[ResponseObject]
         platform_context: PlatformContext
         query_parameters: dict[str, str]
         request: CreateResponse | None
@@ -552,121 +552,6 @@ namespace azure.ai.agentserver.responses
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
-
-        async def aoutput_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
-                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
-                output: str | list[FunctionAndCustomToolCallOutput]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
-                arguments: str | AsyncIterable[str]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call_output(
-                self, 
-                call_id: str, 
-                output: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_image_gen_call(
-                self, 
-                result_base64: str, 
-                *, 
-                partials: AsyncIterable[str] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
-                arguments: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
-                reason: str | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_message(
-                self, 
-                text: str | AsyncIterable[str], 
-                *, 
-                annotations: Sequence[Annotation] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def checkpoint(self) -> ResponseCheckpointEvent: ...
 
@@ -981,6 +866,827 @@ namespace azure.ai.agentserver.responses
                 configure: Callable[[ResponseObject], None] | None = ..., 
                 text: TextSource
             ) -> None: ...
+
+
+namespace azure.ai.agentserver.responses.aio
+
+    class azure.ai.agentserver.responses.aio.ResponseEventStream(SyncResponseEventStream):
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
+        property response: ResponseObject    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                agent_reference: AgentReference | None = ..., 
+                model: str | None = ..., 
+                request: CreateResponse | None = ..., 
+                response: ResponseObject | None = ..., 
+                response_id: str | None = ...
+            ) -> None: ...
+
+        def add_output_item(self, item_id: str) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder: ...
+
+        def add_output_item_compaction(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_custom_tool_call(
+                self, 
+                call_id: str, 
+                name: str
+            ) -> OutputItemCustomToolCallBuilder: ...
+
+        def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
+
+        def add_output_item_function_call(
+                self, 
+                name: str, 
+                call_id: str
+            ) -> OutputItemFunctionCallBuilder: ...
+
+        def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder: ...
+
+        def add_output_item_function_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_function_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder: ...
+
+        def add_output_item_local_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_local_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_request(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_call(
+                self, 
+                server_label: str, 
+                name: str, 
+                *, 
+                item_id: str | None = ...
+            ) -> OutputItemMcpCallBuilder: ...
+
+        def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder: ...
+
+        def add_output_item_message(self) -> OutputItemMessageBuilder: ...
+
+        def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder: ...
+
+        def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
+
+        def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
+
+        def emit_completed(
+                self, 
+                *, 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseCompletedEvent: ...
+
+        def emit_created(
+                self, 
+                *, 
+                status: str = "in_progress"
+            ) -> ResponseCreatedEvent: ...
+
+        def emit_failed(
+                self, 
+                *, 
+                code: str | ResponseErrorCode = "server_error", 
+                message: str = "An internal server error occurred.", 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseInProgressEvent: ...
+
+        def emit_incomplete(
+                self, 
+                *, 
+                reason: str | None = ..., 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseIncompleteEvent: ...
+
+        def emit_queued(self) -> ResponseQueuedEvent: ...
+
+        def events(self) -> list[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call(
+                self, 
+                call_id: str, 
+                operation: ApplyPatchFileOperation, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call_output(
+                self, 
+                call_id: str, 
+                *, 
+                output: str | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call(
+                self, 
+                call_id: str, 
+                action: ComputerAction, 
+                *, 
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call_output(
+                self, 
+                call_id: str, 
+                output: ComputerScreenshotImage, 
+                *, 
+                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_custom_tool_call_output(
+                self, 
+                call_id: str, 
+                output: str | list[FunctionAndCustomToolCallOutput]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call(
+                self, 
+                name: str, 
+                call_id: str, 
+                arguments: str | AsyncIterable[str]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call_output(
+                self, 
+                call_id: str, 
+                output: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call(
+                self, 
+                call_id: str, 
+                action: FunctionShellAction, 
+                environment: FunctionShellCallEnvironment, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call_output(
+                self, 
+                call_id: str, 
+                output: list[FunctionShellCallOutputContent], 
+                *, 
+                max_output_length: int | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_image_gen_call(
+                self, 
+                result_base64: str, 
+                *, 
+                partials: AsyncIterable[str] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call(
+                self, 
+                call_id: str, 
+                action: LocalShellExecAction, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_request(
+                self, 
+                server_label: str, 
+                name: str, 
+                arguments: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_response(
+                self, 
+                approval_request_id: str, 
+                approve: bool = False, 
+                *, 
+                reason: str | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_message(
+                self, 
+                text: str | AsyncIterable[str], 
+                *, 
+                annotations: Sequence[Annotation] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+namespace azure.ai.agentserver.responses.aio.streaming
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self, item: OutputItem) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self, item: OutputItem) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemCodeInterpreterCallBuilder(SyncOutputItemCodeInterpreterCallBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        async def code(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_code_delta(self, delta: str) -> ResponseCodeInterpreterCallCodeDeltaEvent: ...
+
+        def emit_code_done(self, code: str) -> ResponseCodeInterpreterCallCodeDoneEvent: ...
+
+        def emit_completed(self) -> ResponseCodeInterpreterCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseCodeInterpreterCallInProgressEvent: ...
+
+        def emit_interpreting(self) -> ResponseCodeInterpreterCallInterpretingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemCustomToolCallBuilder(SyncOutputItemCustomToolCallBuilder):
+        property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str, 
+                call_id: str, 
+                name: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_input_delta(self, delta: str) -> ResponseCustomToolCallInputDeltaEvent: ...
+
+        def emit_input_done(self, input_text: str) -> ResponseCustomToolCallInputDoneEvent: ...
+
+        async def input(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseFileSearchCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseFileSearchCallInProgressEvent: ...
+
+        def emit_searching(self) -> ResponseFileSearchCallSearchingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallBuilder(SyncOutputItemFunctionCallBuilder):
+        property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str, 
+                name: str, 
+                call_id: str
+            ) -> None: ...
+
+        async def arguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_arguments_delta(self, delta: str) -> ResponseFunctionCallArgumentsDeltaEvent: ...
+
+        def emit_arguments_done(self, arguments: str) -> ResponseFunctionCallArgumentsDoneEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
+        property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str, 
+                call_id: str
+            ) -> None: ...
+
+        def emit_added(self, output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None = None) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self, output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None = None) -> ResponseOutputItemDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseImageGenCallCompletedEvent: ...
+
+        def emit_done(self, result: str) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_generating(self) -> ResponseImageGenCallGeneratingEvent: ...
+
+        def emit_in_progress(self) -> ResponseImageGenCallInProgressEvent: ...
+
+        def emit_partial_image(self, partial_image_b64: str) -> ResponseImageGenCallPartialImageEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpCallBuilder(SyncOutputItemMcpCallBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property name: str    # Read-only
+        property output_index: int    # Read-only
+        property server_label: str    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str, 
+                server_label: str, 
+                name: str
+            ) -> None: ...
+
+        async def arguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_arguments_delta(self, delta: str) -> ResponseMCPCallArgumentsDeltaEvent: ...
+
+        def emit_arguments_done(self, arguments: str) -> ResponseMCPCallArgumentsDoneEvent: ...
+
+        def emit_completed(self) -> ResponseMCPCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_failed(self) -> ResponseMCPCallFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseMCPCallInProgressEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+        property server_label: str    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str, 
+                server_label: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseMCPListToolsCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_failed(self) -> ResponseMCPListToolsFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseMCPListToolsInProgressEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemMessageBuilder(SyncOutputItemMessageBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def add_refusal_content(self) -> RefusalContentBuilder: ...
+
+        def add_text_content(self) -> TextContentBuilder: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        async def refusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def text_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemReasoningItemBuilder(SyncOutputItemReasoningItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def add_summary_part(self) -> ReasoningSummaryPartBuilder: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        async def summary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
+        property item_id: str    # Read-only
+        property output_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseOutputItemAddedEvent: ...
+
+        def emit_completed(self) -> ResponseWebSearchCallCompletedEvent: ...
+
+        def emit_done(self) -> ResponseOutputItemDoneEvent: ...
+
+        def emit_in_progress(self) -> ResponseWebSearchCallInProgressEvent: ...
+
+        def emit_searching(self) -> ResponseWebSearchCallSearchingEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.ReasoningSummaryPartBuilder:
+        property final_text: str | None    # Read-only
+        property summary_index: int    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                summary_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseReasoningSummaryPartAddedEvent: ...
+
+        def emit_done(self) -> ResponseReasoningSummaryPartDoneEvent: ...
+
+        def emit_text_delta(self, text: str) -> ResponseReasoningSummaryTextDeltaEvent: ...
+
+        def emit_text_done(self, final_text: str) -> ResponseReasoningSummaryTextDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.RefusalContentBuilder:
+        property content_index: int    # Read-only
+        property final_refusal: str | None    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                content_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseContentPartAddedEvent: ...
+
+        def emit_delta(self, text: str) -> ResponseRefusalDeltaEvent: ...
+
+        def emit_done(self) -> ResponseContentPartDoneEvent: ...
+
+        def emit_refusal_done(self, final_refusal: str) -> ResponseRefusalDoneEvent: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.ResponseEventStream(SyncResponseEventStream):
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
+        property response: ResponseObject    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                agent_reference: AgentReference | None = ..., 
+                model: str | None = ..., 
+                request: CreateResponse | None = ..., 
+                response: ResponseObject | None = ..., 
+                response_id: str | None = ...
+            ) -> None: ...
+
+        def add_output_item(self, item_id: str) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_code_interpreter_call(self) -> OutputItemCodeInterpreterCallBuilder: ...
+
+        def add_output_item_compaction(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_computer_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_custom_tool_call(
+                self, 
+                call_id: str, 
+                name: str
+            ) -> OutputItemCustomToolCallBuilder: ...
+
+        def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_file_search_call(self) -> OutputItemFileSearchCallBuilder: ...
+
+        def add_output_item_function_call(
+                self, 
+                name: str, 
+                call_id: str
+            ) -> OutputItemFunctionCallBuilder: ...
+
+        def add_output_item_function_call_output(self, call_id: str) -> OutputItemFunctionCallOutputBuilder: ...
+
+        def add_output_item_function_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_function_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_image_gen_call(self) -> OutputItemImageGenCallBuilder: ...
+
+        def add_output_item_local_shell_call(self) -> OutputItemBuilder: ...
+
+        def add_output_item_local_shell_call_output(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_request(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_approval_response(self) -> OutputItemBuilder: ...
+
+        def add_output_item_mcp_call(
+                self, 
+                server_label: str, 
+                name: str, 
+                *, 
+                item_id: str | None = ...
+            ) -> OutputItemMcpCallBuilder: ...
+
+        def add_output_item_mcp_list_tools(self, server_label: str) -> OutputItemMcpListToolsBuilder: ...
+
+        def add_output_item_message(self) -> OutputItemMessageBuilder: ...
+
+        def add_output_item_reasoning_item(self) -> OutputItemReasoningItemBuilder: ...
+
+        def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
+
+        def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
+
+        def emit_completed(
+                self, 
+                *, 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseCompletedEvent: ...
+
+        def emit_created(
+                self, 
+                *, 
+                status: str = "in_progress"
+            ) -> ResponseCreatedEvent: ...
+
+        def emit_failed(
+                self, 
+                *, 
+                code: str | ResponseErrorCode = "server_error", 
+                message: str = "An internal server error occurred.", 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseFailedEvent: ...
+
+        def emit_in_progress(self) -> ResponseInProgressEvent: ...
+
+        def emit_incomplete(
+                self, 
+                *, 
+                reason: str | None = ..., 
+                usage: ResponseUsage | None = ...
+            ) -> ResponseIncompleteEvent: ...
+
+        def emit_queued(self) -> ResponseQueuedEvent: ...
+
+        def events(self) -> list[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call(
+                self, 
+                call_id: str, 
+                operation: ApplyPatchFileOperation, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_apply_patch_call_output(
+                self, 
+                call_id: str, 
+                *, 
+                output: str | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call(
+                self, 
+                call_id: str, 
+                action: ComputerAction, 
+                *, 
+                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_computer_call_output(
+                self, 
+                call_id: str, 
+                output: ComputerScreenshotImage, 
+                *, 
+                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_custom_tool_call_output(
+                self, 
+                call_id: str, 
+                output: str | list[FunctionAndCustomToolCallOutput]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call(
+                self, 
+                name: str, 
+                call_id: str, 
+                arguments: str | AsyncIterable[str]
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_call_output(
+                self, 
+                call_id: str, 
+                output: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call(
+                self, 
+                call_id: str, 
+                action: FunctionShellAction, 
+                environment: FunctionShellCallEnvironment, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_function_shell_call_output(
+                self, 
+                call_id: str, 
+                output: list[FunctionShellCallOutputContent], 
+                *, 
+                max_output_length: int | None = ..., 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_image_gen_call(
+                self, 
+                result_base64: str, 
+                *, 
+                partials: AsyncIterable[str] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call(
+                self, 
+                call_id: str, 
+                action: LocalShellExecAction, 
+                *, 
+                status: str = "completed"
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_request(
+                self, 
+                server_label: str, 
+                name: str, 
+                arguments: str
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_mcp_approval_response(
+                self, 
+                approval_request_id: str, 
+                approve: bool = False, 
+                *, 
+                reason: str | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_message(
+                self, 
+                text: str | AsyncIterable[str], 
+                *, 
+                annotations: Sequence[Annotation] | None = ...
+            ) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
+
+        async def output_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
+
+
+    class azure.ai.agentserver.responses.aio.streaming.TextContentBuilder:
+        property content_index: int    # Read-only
+        property final_text: str | None    # Read-only
+
+        def __init__(
+                self, 
+                stream: ResponseEventStream, 
+                output_index: int, 
+                content_index: int, 
+                item_id: str
+            ) -> None: ...
+
+        def emit_added(self) -> ResponseContentPartAddedEvent: ...
+
+        def emit_annotation_added(self, annotation: Annotation) -> ResponseOutputTextAnnotationAddedEvent: ...
+
+        def emit_delta(self, text: str) -> ResponseTextDeltaEvent: ...
+
+        def emit_done(self) -> ResponseContentPartDoneEvent: ...
+
+        def emit_text_done(self, final_text: str | None = None) -> ResponseTextDoneEvent: ...
 
 
 namespace azure.ai.agentserver.responses.hosting
@@ -9027,8 +9733,6 @@ namespace azure.ai.agentserver.responses.streaming
                 item_id: str
             ) -> None: ...
 
-        async def acode(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
         def code(self, code_text: str) -> Iterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
@@ -9061,8 +9765,6 @@ namespace azure.ai.agentserver.responses.streaming
                 call_id: str, 
                 name: str
             ) -> None: ...
-
-        async def ainput(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
@@ -9113,8 +9815,6 @@ namespace azure.ai.agentserver.responses.streaming
                 name: str, 
                 call_id: str
             ) -> None: ...
-
-        async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def arguments(self, args: str) -> Iterator[ResponseStreamEvent]: ...
 
@@ -9187,8 +9887,6 @@ namespace azure.ai.agentserver.responses.streaming
                 name: str
             ) -> None: ...
 
-        async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
         def arguments(self, args: str) -> Iterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
@@ -9247,10 +9945,6 @@ namespace azure.ai.agentserver.responses.streaming
 
         def add_text_content(self) -> TextContentBuilder: ...
 
-        async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
         def emit_done(self) -> ResponseOutputItemDoneEvent: ...
@@ -9273,8 +9967,6 @@ namespace azure.ai.agentserver.responses.streaming
             ) -> None: ...
 
         def add_summary_part(self) -> ReasoningSummaryPartBuilder: ...
-
-        async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def emit_added(self) -> ResponseOutputItemAddedEvent: ...
 
@@ -9423,121 +10115,6 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
-
-        async def aoutput_item_apply_patch_call(
-                self, 
-                call_id: str, 
-                operation: ApplyPatchFileOperation, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_apply_patch_call_output(
-                self, 
-                call_id: str, 
-                *, 
-                output: str | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_compaction(self, encrypted_content: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call(
-                self, 
-                call_id: str, 
-                action: ComputerAction, 
-                *, 
-                pending_safety_checks: list[ComputerCallSafetyCheckParam] | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_computer_call_output(
-                self, 
-                call_id: str, 
-                output: ComputerScreenshotImage, 
-                *, 
-                acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_custom_tool_call_output(
-                self, 
-                call_id: str, 
-                output: str | list[FunctionAndCustomToolCallOutput]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call(
-                self, 
-                name: str, 
-                call_id: str, 
-                arguments: str | AsyncIterable[str]
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_call_output(
-                self, 
-                call_id: str, 
-                output: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call(
-                self, 
-                call_id: str, 
-                action: FunctionShellAction, 
-                environment: FunctionShellCallEnvironment, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_function_shell_call_output(
-                self, 
-                call_id: str, 
-                output: list[FunctionShellCallOutputContent], 
-                *, 
-                max_output_length: int | None = ..., 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_image_gen_call(
-                self, 
-                result_base64: str, 
-                *, 
-                partials: AsyncIterable[str] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call(
-                self, 
-                call_id: str, 
-                action: LocalShellExecAction, 
-                *, 
-                status: str = "completed"
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_local_shell_call_output(self, output: str) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_request(
-                self, 
-                server_label: str, 
-                name: str, 
-                arguments: str
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_mcp_approval_response(
-                self, 
-                approval_request_id: str, 
-                approve: bool = False, 
-                *, 
-                reason: str | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_message(
-                self, 
-                text: str | AsyncIterable[str], 
-                *, 
-                annotations: Sequence[Annotation] | None = ...
-            ) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_reasoning_item(self, summary_text: str | AsyncIterable[str]) -> AsyncIterator[ResponseStreamEvent]: ...
-
-        async def aoutput_item_structured_outputs(self, output: Any) -> AsyncIterator[ResponseStreamEvent]: ...
 
         def checkpoint(self) -> ResponseCheckpointEvent: ...
 

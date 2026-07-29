@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, Iterator, cast
 
 from ...models import _generated as generated_models
 from ._base import BaseOutputItemBuilder, _require_non_empty
@@ -276,29 +275,6 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         """
         yield self.emit_code_delta(code_text)
         yield self.emit_code_done(code_text)
-
-    async def acode(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
-        """Async variant of :meth:`code` with streaming support.
-
-        When *code_text* is a string, behaves identically to :meth:`code`.
-        When *code_text* is an async iterable of string chunks, emits one
-        ``code_interpreter_call.code.delta`` per chunk in real time (S-055),
-        then ``code_interpreter_call.code.done`` with the accumulated text.
-
-        :param code_text: Complete code string or async iterable of chunks.
-        :type code_text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(code_text, str):
-            for event in self.code(code_text):
-                yield event
-            return
-        accumulated: list[str] = []
-        async for chunk in code_text:
-            accumulated.append(chunk)
-            yield self.emit_code_delta(chunk)
-        yield self.emit_code_done("".join(accumulated))
 
 
 class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
@@ -577,29 +553,6 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         yield self.emit_arguments_delta(args)
         yield self.emit_arguments_done(args)
 
-    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
-        """Async variant of :meth:`arguments` with streaming support.
-
-        When *args* is a string, behaves identically to :meth:`arguments`.
-        When *args* is an async iterable of string chunks, emits one
-        ``mcp_call_arguments.delta`` per chunk in real time (S-055),
-        then ``mcp_call_arguments.done`` with the accumulated text.
-
-        :param args: Complete arguments string or async iterable of chunks.
-        :type args: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(args, str):
-            for event in self.arguments(args):
-                yield event
-            return
-        accumulated: list[str] = []
-        async for chunk in args:
-            accumulated.append(chunk)
-            yield self.emit_arguments_delta(chunk)
-        yield self.emit_arguments_done("".join(accumulated))
-
 
 class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
     """Scoped builder for MCP list-tools lifecycle events."""
@@ -823,26 +776,3 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         """
         yield self.emit_input_delta(input_text)
         yield self.emit_input_done(input_text)
-
-    async def ainput(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
-        """Async variant of :meth:`input` with streaming support.
-
-        When *input_text* is a string, behaves identically to :meth:`input`.
-        When *input_text* is an async iterable of string chunks, emits one
-        ``custom_tool_call_input.delta`` per chunk in real time (S-055),
-        then ``custom_tool_call_input.done`` with the accumulated text.
-
-        :param input_text: Complete input text or async iterable of chunks.
-        :type input_text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(input_text, str):
-            for event in self.input(input_text):
-                yield event
-            return
-        accumulated: list[str] = []
-        async for chunk in input_text:
-            accumulated.append(chunk)
-            yield self.emit_input_delta(chunk)
-        yield self.emit_input_done("".join(accumulated))

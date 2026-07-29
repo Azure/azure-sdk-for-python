@@ -1,8 +1,10 @@
 # Release History
 
-## 1.0.0b10 (2026-07-28)
+## 2.0.0b0 (Unreleased)
 
 ### Features Added
+
+- Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
 
 - `ResponseContext.conversation_chain_id` (and the resilient task id it backs) now follows the native id convention: `cchain_<partition><scope>` for conversation-scoped chains, `rchain_<partition><scope>` for steerable response-linkage chains, or the `response_id` verbatim for a non-steerable one-shot. The id embeds the chain's partition key for co-location and carries a deterministic `(agent, session)` scope; `task_id == conversation_chain_id` exactly. Replaces the previous opaque `resilient-resp-<32-hex>` form.
 
@@ -71,10 +73,38 @@
 
 ### Breaking Changes
 
+- Removed a-prefixed async convenience generator methods from the sync `ResponseEventStream` and sync builder classes. Use `azure.ai.agentserver.responses.aio.ResponseEventStream` for async streaming convenience methods.
+
 - The resilient-task input persisted for a `store=true` background response now
   carries a single `user_id_key` (the durable per-user partition key) instead of
   the previous `user_isolation_key` / `chat_isolation_key` pair; conversation
   scoping continues to use `conversation_id`.
+
+### Migration Guide
+
+Async response event stream helpers now live under the `aio` namespace and no longer use the `a` prefix.
+
+Before:
+
+```python
+from azure.ai.agentserver.responses import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.aoutput_item_message(token_stream()):
+    yield event
+```
+
+After:
+
+```python
+from azure.ai.agentserver.responses.aio import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.output_item_message(token_stream()):
+    yield event
+```
+
+Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
 
 ### Bugs Fixed
 
