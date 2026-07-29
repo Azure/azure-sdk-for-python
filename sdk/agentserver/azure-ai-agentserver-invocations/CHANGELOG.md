@@ -2,9 +2,19 @@
 
 ## 1.0.0b8 (Unreleased)
 
+### Samples
+
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
+
 ### Bugs Fixed
 
+- The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
+
 - Added A365 telemetry correlation to `invocations_ws` by propagating the WebSocket session ID as OpenTelemetry baggage for handler spans and logs, using the cross-protocol `azure.ai.agentserver.session_id` attribute.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`.
 
 ## 1.0.0b7 (2026-07-22)
 

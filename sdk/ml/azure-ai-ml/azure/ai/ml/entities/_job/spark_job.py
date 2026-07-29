@@ -10,8 +10,15 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Union
 
 from marshmallow import INCLUDE
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobInput as RestJobInput
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import SparkJob as RestSparkJob
+from azure.ai.ml._restclient.arm_ml_service.models import SparkJobEntry as RestSparkJobEntry
+from azure.ai.ml._restclient.arm_ml_service.models import (
+    SparkResourceConfiguration as RestSparkResourceConfiguration,
+)
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.parameterized_spark import CONF_KEY_MAP
 from azure.ai.ml._schema.job.spark_job import SparkJobSchema
@@ -28,6 +35,7 @@ from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import (
     from_rest_data_outputs,
     from_rest_inputs_to_dataset_literal,
+    to_hybrid_rest_model,
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
     validate_inputs_for_args,
@@ -227,29 +235,48 @@ class SparkJob(Job, ParameterizedSpark, JobIOMixin, SparkJobEntryMixin):
         if self.executor_instances is not None:
             conf["spark.executor.instances"] = self.executor_instances
 
+        # The legacy msrest SparkJob model typed ``conf`` as ``Dict[str, str]`` and coerced every
+        # value to a string on the wire; the arm_ml_service model does not coerce, so stringify here
+        # to keep the wire body identical.
+        conf = {key: str(value) for key, value in conf.items() if value is not None}
+
         properties = RestSparkJob(
             experiment_name=self.experiment_name,
             display_name=self.display_name,
             description=self.description,
             tags=self.tags,
             code_id=self.code,
-            entry=self.entry._to_rest_object() if self.entry is not None and not isinstance(self.entry, dict) else None,
+            # The shared arm_ml_service SparkJob model defaults ``is_archived`` to None (omitted on
+            # the wire); the legacy msrest model serialized ``isArchived=false`` on create.
+            is_archived=False,
+            entry=to_hybrid_rest_model(
+                (self.entry._to_rest_object() if self.entry is not None and not isinstance(self.entry, dict) else None),
+                RestSparkJobEntry,
+            ),
             py_files=self.py_files,
             jars=self.jars,
             files=self.files,
             archives=self.archives,
-            identity=(
-                self.identity._to_job_rest_object() if self.identity and not isinstance(self.identity, dict) else None
+            identity=to_hybrid_rest_model(
+                (
+                    self.identity._to_job_rest_object()
+                    if self.identity and not isinstance(self.identity, dict)
+                    else None
+                ),
+                RestIdentityConfiguration,
             ),
             conf=conf,
             properties=self.properties_sparkJob,
             environment_id=self.environment,
-            inputs=to_rest_dataset_literal_inputs(self.inputs, job_type=self.type),
-            outputs=to_rest_data_outputs(self.outputs),
+            # The shared rest helpers emit msrest models; convert each nested child to its
+            # arm_ml_service hybrid equivalent so the hybrid SdkJSONEncoder can serialize the body.
+            inputs=to_hybrid_rest_model(to_rest_dataset_literal_inputs(self.inputs, job_type=self.type), RestJobInput),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             args=self.args,
             compute_id=self.compute,
-            resources=(
-                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None
+            resources=to_hybrid_rest_model(
+                self.resources._to_rest_object() if self.resources and not isinstance(self.resources, Dict) else None,
+                RestSparkResourceConfiguration,
             ),
         )
         result = JobBase(properties=properties)

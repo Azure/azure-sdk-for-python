@@ -8,7 +8,7 @@ import pytest
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml import MLClient, load_connection, load_datastore
-from azure.ai.ml._restclient.v2024_04_01_preview.models import ConnectionAuthType, ConnectionCategory
+from azure.ai.ml._restclient.arm_ml_service.models import ConnectionAuthType, ConnectionCategory
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities import (
     WorkspaceConnection,
