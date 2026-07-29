@@ -9,7 +9,7 @@ name = "_native"
 crate-type = ["cdylib"]
 
 [dependencies]
-pyo3 = { version = "0.25", features = ["extension-module"] }
+pyo3 = { version = "0.29", features = ["extension-module"] }
 azure_storage_blob = "1.1.0-beta.1"
 azure_core = { version = "1", features = ["xml"] }
 async-trait = "0.1"
