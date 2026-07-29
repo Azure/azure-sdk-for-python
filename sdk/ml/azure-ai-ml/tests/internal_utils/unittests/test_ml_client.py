@@ -526,7 +526,9 @@ class TestMachineLearningClient:
         ]
         with ExitStack() as stack:
             for operation_name in operation_names:
-                stack.enter_context(patch(f"azure.ai.ml._ml_client.{operation_name}", make_fake_operation(operation_name)))
+                stack.enter_context(
+                    patch(f"azure.ai.ml._ml_client.{operation_name}", make_fake_operation(operation_name))
+                )
 
             stack.enter_context(patch("azure.ai.ml._ml_client.get_deployments_operation", return_value=Mock()))
             stack.enter_context(
