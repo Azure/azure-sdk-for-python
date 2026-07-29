@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from pathlib import Path
 
 from typing import Optional, List
 from subprocess import CalledProcessError, check_call
@@ -17,6 +18,36 @@ PYLINT_VERSION = "4.0.4"
 PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.7"
 NEXT_PYLINT_VERSION = "4.0.6"
 NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.9"
+SNIPPET_IMPORT_DISABLES = (
+    "reimported",
+    "wrong-import-position",
+    "wrong-import-order",
+    "ungrouped-imports",
+)
+
+
+def get_sample_pylint_commands(executable: str, rcfile: str, samples_dir: str) -> List[List[str]]:
+    """Build separate Pylint commands for regular and README snippet sample files."""
+    regular_samples: List[str] = []
+    snippet_samples: List[str] = []
+
+    for sample_file in sorted(Path(samples_dir).rglob("*.py")):
+        targets = snippet_samples if b"# [START" in sample_file.read_bytes() else regular_samples
+        targets.append(str(sample_file))
+
+    base_command = [
+        executable,
+        "-m",
+        "pylint",
+        f"--rcfile={rcfile}",
+        "--output-format=parseable",
+    ]
+    commands = []
+    if regular_samples:
+        commands.append(base_command + regular_samples)
+    if snippet_samples:
+        commands.append(base_command + [f"--disable={','.join(SNIPPET_IMPORT_DISABLES)}"] + snippet_samples)
+    return commands
 
 
 class pylint(Check):
@@ -202,38 +233,19 @@ class pylint(Check):
 
                 # Run samples with samples_pylintrc
                 if os.path.exists(samples_dir):
-                    try:
-                        samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
-                        logger.info(
-                            [
-                                executable,
-                                "-m",
-                                "pylint",
-                                "--rcfile={}".format(samples_rcfile),
-                                "--output-format=parseable",
-                                samples_dir,
-                            ]
-                        )
-                        results.append(
-                            check_call(
-                                [
-                                    executable,
-                                    "-m",
-                                    "pylint",
-                                    "--rcfile={}".format(samples_rcfile),
-                                    "--output-format=parseable",
-                                    samples_dir,
-                                ]
+                    samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
+                    for command in get_sample_pylint_commands(executable, samples_rcfile, samples_dir):
+                        try:
+                            logger.info(command)
+                            results.append(check_call(command))
+                        except CalledProcessError as e:
+                            logger.error(
+                                "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                                    package_name, e.returncode
+                                )
                             )
-                        )
-                    except CalledProcessError as e:
-                        logger.error(
-                            "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
-                                package_name, e.returncode
-                            )
-                        )
-                        results.append(e.returncode)
-                        package_failed = True
+                            results.append(e.returncode)
+                            package_failed = True
 
             if args.next and in_ci():
                 if package_failed:
