@@ -42,6 +42,7 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2025_09_01 = "2025-09-01"
     V2026_04_01 = "2026-04-01"
     V2026_05_01_PREVIEW = "2026-05-01-preview"
+    V2026_08_01_PREVIEW = "2026-08-01-preview"
 
 
 DEFAULT_VERSION = ApiVersion.V2026_05_01_PREVIEW
