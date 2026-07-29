@@ -1163,6 +1163,7 @@ class RelayNamespace(TrackedResource):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
@@ -1224,6 +1225,10 @@ class RelayNamespaceProperties(_Model):
     :ivar public_network_access: This determines if traffic is allowed over public network. By
      default it is enabled. Known values are: "Enabled", "Disabled", and "SecuredByPerimeter".
     :vartype public_network_access: str or ~azure.mgmt.relay.models.PublicNetworkAccess
+    :ivar minimum_tls_version: The minimum TLS version for the namespace. Supported values are 1.2
+     and 1.3. The service defaults to 1.2 when the property is omitted. Existing namespaces
+     configured with TLS 1.0 or 1.1 are reported as TLS 1.2. Known values are: "1.2" and "1.3".
+    :vartype minimum_tls_version: str or ~azure.mgmt.relay.models.TlsVersion
     """
 
     provisioning_state: Optional[str] = rest_field(name="provisioningState", visibility=["read"])
@@ -1247,6 +1252,12 @@ class RelayNamespaceProperties(_Model):
     )
     """This determines if traffic is allowed over public network. By default it is enabled. Known
      values are: \"Enabled\", \"Disabled\", and \"SecuredByPerimeter\"."""
+    minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = rest_field(
+        name="minimumTlsVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The minimum TLS version for the namespace. Supported values are 1.2 and 1.3. The service
+     defaults to 1.2 when the property is omitted. Existing namespaces configured with TLS 1.0 or
+     1.1 are reported as TLS 1.2. Known values are: \"1.2\" and \"1.3\"."""
 
     @overload
     def __init__(
@@ -1254,6 +1265,7 @@ class RelayNamespaceProperties(_Model):
         *,
         private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        minimum_tls_version: Optional[Union[str, "_models.TlsVersion"]] = None,
     ) -> None: ...
 
     @overload
@@ -1344,6 +1356,7 @@ class RelayUpdateParameters(ResourceNamespacePatch):
         "metric_id",
         "private_endpoint_connections",
         "public_network_access",
+        "minimum_tls_version",
     ]
 
     @overload
