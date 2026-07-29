@@ -1,19 +1,8 @@
 # Release History
 
-## 1.1.0 (2026-06-15)
+## 1.1.0 (2026-07-29)
 
-### Features Added
-
-- Regenerated client from TypeSpec specification. The library now uses the unified
-  `azure.core` HTTP pipeline and shares model infrastructure with other modern
-  Azure Python SDKs.
-
-### Other Changes
-
-- Migrated source of truth from Swagger to TypeSpec
-  (`specification/deviceupdate/data-plane/duiothub`).
-- Updated minimum required `azure-core` to `1.37.0`.
-- Dropped support for Python 3.8 and 3.9; minimum supported Python is 3.10.
+skip changelog generation for data-plane package and please add changelog manually.
 
 ## 1.0.0 (2022-09-09)
 

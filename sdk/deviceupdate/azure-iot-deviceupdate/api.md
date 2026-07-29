@@ -1,15 +1,18 @@
 ```py
 namespace azure.iot.deviceupdate
 
-    class azure.iot.deviceupdate.DeviceUpdateClient(DeviceUpdateClientGenerated): implements ContextManager 
+    class azure.iot.deviceupdate.DeviceUpdateClient: implements ContextManager 
+        device_management: DeviceManagementOperations
+        device_update: DeviceUpdateOperations
 
         def __init__(
                 self, 
                 endpoint: str, 
-                instance_id: str, 
                 credential: TokenCredential, 
+                instance_id: str, 
                 *, 
-                api_version: Optional[str] = ..., 
+                api_version: str = ..., 
+                polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -26,15 +29,18 @@ namespace azure.iot.deviceupdate
 
 namespace azure.iot.deviceupdate.aio
 
-    class azure.iot.deviceupdate.aio.DeviceUpdateClient(DeviceUpdateClientGenerated): implements AsyncContextManager 
+    class azure.iot.deviceupdate.aio.DeviceUpdateClient: implements AsyncContextManager 
+        device_management: DeviceManagementOperations
+        device_update: DeviceUpdateOperations
 
         def __init__(
                 self, 
                 endpoint: str, 
-                instance_id: str, 
                 credential: AsyncTokenCredential, 
+                instance_id: str, 
                 *, 
-                api_version: Optional[str] = ..., 
+                api_version: str = ..., 
+                polling_interval: Optional[int] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -51,7 +57,7 @@ namespace azure.iot.deviceupdate.aio
 
 namespace azure.iot.deviceupdate.aio.operations
 
-    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
+    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations:
 
         def __init__(
                 self, 
@@ -82,7 +88,7 @@ namespace azure.iot.deviceupdate.aio.operations
                 self, 
                 group_id: str, 
                 deployment_id: str, 
-                deployment: JSON, 
+                deployment: Deployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -239,15 +245,15 @@ namespace azure.iot.deviceupdate.aio.operations
                 **kwargs: Any
             ) -> LogCollectionOperationDetailedStatus: ...
 
+        @distributed_trace_async
         async def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> DeviceOperation: ...
 
         @distributed_trace_async
         async def get_update_compliance(self, **kwargs: Any) -> UpdateCompliance: ...
@@ -379,7 +385,7 @@ namespace azure.iot.deviceupdate.aio.operations
         async def start_log_collection(
                 self, 
                 log_collection_id: str, 
-                log_collection: JSON, 
+                log_collection: LogCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -418,7 +424,7 @@ namespace azure.iot.deviceupdate.aio.operations
         async def update_device_class(
                 self, 
                 device_class_id: str, 
-                device_class_patch: JSON, 
+                device_class_patch: PatchBody, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -435,7 +441,7 @@ namespace azure.iot.deviceupdate.aio.operations
             ) -> DeviceClass: ...
 
 
-    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
+    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations:
 
         def __init__(
                 self, 
@@ -464,7 +470,7 @@ namespace azure.iot.deviceupdate.aio.operations
         @overload
         async def begin_import_update(
                 self, 
-                update_to_import: list[JSON], 
+                update_to_import: list[ImportUpdateInputItem], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -479,6 +485,7 @@ namespace azure.iot.deviceupdate.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
+        @distributed_trace_async
         async def get_file(
                 self, 
                 provider: str, 
@@ -487,21 +494,21 @@ namespace azure.iot.deviceupdate.aio.operations
                 file_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> UpdateFile: ...
 
+        @distributed_trace_async
         async def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> UpdateOperation: ...
 
+        @distributed_trace_async
         async def get_update(
                 self, 
                 provider: str, 
@@ -509,10 +516,9 @@ namespace azure.iot.deviceupdate.aio.operations
                 version: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> Update: ...
 
         @distributed_trace
         def list_files(
@@ -1470,7 +1476,7 @@ namespace azure.iot.deviceupdate.models
 
 namespace azure.iot.deviceupdate.operations
 
-    class azure.iot.deviceupdate.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
+    class azure.iot.deviceupdate.operations.DeviceManagementOperations:
 
         def __init__(
                 self, 
@@ -1501,7 +1507,7 @@ namespace azure.iot.deviceupdate.operations
                 self, 
                 group_id: str, 
                 deployment_id: str, 
-                deployment: JSON, 
+                deployment: Deployment, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1658,15 +1664,15 @@ namespace azure.iot.deviceupdate.operations
                 **kwargs: Any
             ) -> LogCollectionOperationDetailedStatus: ...
 
+        @distributed_trace
         def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> DeviceOperation: ...
 
         @distributed_trace
         def get_update_compliance(self, **kwargs: Any) -> UpdateCompliance: ...
@@ -1798,7 +1804,7 @@ namespace azure.iot.deviceupdate.operations
         def start_log_collection(
                 self, 
                 log_collection_id: str, 
-                log_collection: JSON, 
+                log_collection: LogCollection, 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1837,7 +1843,7 @@ namespace azure.iot.deviceupdate.operations
         def update_device_class(
                 self, 
                 device_class_id: str, 
-                device_class_patch: JSON, 
+                device_class_patch: PatchBody, 
                 *, 
                 content_type: str = "application/merge-patch+json", 
                 **kwargs: Any
@@ -1854,7 +1860,7 @@ namespace azure.iot.deviceupdate.operations
             ) -> DeviceClass: ...
 
 
-    class azure.iot.deviceupdate.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
+    class azure.iot.deviceupdate.operations.DeviceUpdateOperations:
 
         def __init__(
                 self, 
@@ -1883,7 +1889,7 @@ namespace azure.iot.deviceupdate.operations
         @overload
         def begin_import_update(
                 self, 
-                update_to_import: list[JSON], 
+                update_to_import: list[ImportUpdateInputItem], 
                 *, 
                 content_type: str = "application/json", 
                 **kwargs: Any
@@ -1898,6 +1904,7 @@ namespace azure.iot.deviceupdate.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
+        @distributed_trace
         def get_file(
                 self, 
                 provider: str, 
@@ -1906,21 +1913,21 @@ namespace azure.iot.deviceupdate.operations
                 file_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> UpdateFile: ...
 
+        @distributed_trace
         def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> UpdateOperation: ...
 
+        @distributed_trace
         def get_update(
                 self, 
                 provider: str, 
@@ -1928,10 +1935,9 @@ namespace azure.iot.deviceupdate.operations
                 version: str, 
                 *, 
                 etag: Optional[str] = ..., 
-                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ): ...
+            ) -> Update: ...
 
         @distributed_trace
         def list_files(
@@ -1979,6 +1985,114 @@ namespace azure.iot.deviceupdate.operations
                 filter: Optional[str] = ..., 
                 **kwargs: Any
             ) -> ItemPaged[str]: ...
+
+
+namespace azure.iot.deviceupdate.types
+
+    class azure.iot.deviceupdate.types.CloudInitiatedRollbackPolicy(TypedDict, total=False):
+        key "failure": Required[CloudInitiatedRollbackPolicyFailure]
+        key "update": Required[UpdateInfo]
+        failure: CloudInitiatedRollbackPolicyFailure
+        update_property: UpdateInfo
+
+
+    class azure.iot.deviceupdate.types.CloudInitiatedRollbackPolicyFailure(TypedDict, total=False):
+        key "devicesFailedCount": Required[int]
+        key "devicesFailedPercentage": Required[int]
+        devices_failed_count: int
+        devices_failed_percentage: int
+
+
+    class azure.iot.deviceupdate.types.Deployment(TypedDict, total=False):
+        key "deploymentId": Required[str]
+        key "downloadSecurity": Union[str, DownloadSecurity]
+        key "groupId": Required[str]
+        key "isCanceled": bool
+        key "isCloudInitiatedRollback": bool
+        key "isRetried": bool
+        key "rollbackPolicy": ForwardRef('CloudInitiatedRollbackPolicy', module='types')
+        key "startDateTime": Required[str]
+        key "update": Required[UpdateInfo]
+        deployment_id: str
+        deviceClassSubgroups: list[str]
+        device_class_subgroups: list[str]
+        download_security: Union[str, DownloadSecurity]
+        group_id: str
+        is_canceled: bool
+        is_cloud_initiated_rollback: bool
+        is_retried: bool
+        rollback_policy: CloudInitiatedRollbackPolicy
+        start_date_time: str
+        update_property: UpdateInfo
+
+
+    class azure.iot.deviceupdate.types.DeviceUpdateAgentId(TypedDict, total=False):
+        key "deviceId": Required[str]
+        key "moduleId": str
+        device_id: str
+        module_id: str
+
+
+    class azure.iot.deviceupdate.types.FileImportMetadata(TypedDict, total=False):
+        key "filename": Required[str]
+        key "url": Required[str]
+        filename: str
+        url: str
+
+
+    class azure.iot.deviceupdate.types.ImportManifestMetadata(TypedDict, total=False):
+        key "hashes": Required[dict[str, str]]
+        key "sizeInBytes": Required[int]
+        key "url": Required[str]
+        hashes: dict[str, str]
+        size_in_bytes: int
+        url: str
+
+
+    class azure.iot.deviceupdate.types.ImportUpdateInputItem(TypedDict, total=False):
+        key "friendlyName": str
+        key "importManifest": Required[ImportManifestMetadata]
+        files: list[FileImportMetadata]
+        friendly_name: str
+        import_manifest: ImportManifestMetadata
+
+
+    class azure.iot.deviceupdate.types.LogCollection(TypedDict, total=False):
+        key "createdDateTime": str
+        key "description": str
+        key "deviceList": Required[list[DeviceUpdateAgentId]]
+        key "lastActionDateTime": str
+        key "operationId": str
+        key "status": Union[str, OperationStatus]
+        created_date_time: str
+        description: str
+        device_list: list[DeviceUpdateAgentId]
+        last_action_date_time: str
+        log_collection_id: str
+        status: Union[str, OperationStatus]
+
+
+    class azure.iot.deviceupdate.types.PatchBody(TypedDict, total=False):
+        key "friendlyName": Required[str]
+        friendly_name: str
+
+
+    class azure.iot.deviceupdate.types.UpdateId(TypedDict, total=False):
+        key "name": Required[str]
+        key "provider": Required[str]
+        key "version": Required[str]
+        name: str
+        provider: str
+        version: str
+
+
+    class azure.iot.deviceupdate.types.UpdateInfo(TypedDict, total=False):
+        key "description": str
+        key "friendlyName": str
+        key "updateId": Required[UpdateId]
+        description: str
+        friendly_name: str
+        update_id: UpdateId
 
 
 ```
