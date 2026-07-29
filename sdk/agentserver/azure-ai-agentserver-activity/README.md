@@ -55,6 +55,10 @@ from azure.ai.agentserver.activity import ActivityAgentServerHost
 app = ActivityAgentServerHost(storage=MemoryStorage())
 ```
 
+When `storage` is omitted, the host uses durable `FoundryStorage` in a
+Foundry-hosted container and `MemoryStorage` during local development. Passing
+`storage=` always overrides this environment-based default.
+
 **Inject a pre-built `AgentApplication`** — host an M365 `AgentApplication` you built yourself:
 
 ```python
