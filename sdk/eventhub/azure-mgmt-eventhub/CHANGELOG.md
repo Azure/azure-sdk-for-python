@@ -6,144 +6,41 @@
 
   - Client `EventHubManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `EventHubManagementClient` added method `send_request`
-  - Model `ApplicationGroup` added property `properties`
-  - Model `ArmDisasterRecovery` added property `properties`
-  - Model `AuthorizationRule` added property `properties`
-  - Model `Cluster` added property `properties`
-  - Model `ConsumerGroup` added property `properties`
-  - Model `Destination` added property `properties`
-  - Model `EHNamespace` added property `properties`
-  - Model `Eventhub` added property `properties`
-  - Model `NetworkRuleSet` added property `properties`
-  - Model `NetworkSecurityPerimeterConfiguration` added property `properties`
   - Model `NetworkSecurityPerimeterConfiguration` added property `system_data`
-  - Model `PrivateEndpointConnection` added property `properties`
-  - Model `PrivateLinkResource` added property `properties`
   - Model `ProxyResource` added property `system_data`
   - Model `Resource` added property `system_data`
-  - Model `RetentionDescription` added property `min_compaction_lag_time_in_minutes`
-  - Model `SchemaGroup` added property `properties`
   - Enum `TlsVersion` added member `ONE3`
-  - Added model `ApplicationGroupProperties`
-  - Added model `ArmDisasterRecoveryProperties`
-  - Added model `AuthorizationRuleProperties`
-  - Added model `ClusterProperties`
   - Added model `ConfidentialCompute`
-  - Added model `ConsumerGroupProperties`
-  - Added model `DestinationProperties`
-  - Added model `EHNamespaceProperties`
-  - Added model `EventhubProperties`
-  - Added model `FailOverProperties`
   - Added enum `IpAddressType`
   - Added enum `Mode`
-  - Added model `NetworkRuleSetProperties`
-  - Added model `NetworkSecurityPerimeterConfigurationProperties`
   - Added model `PlatformCapabilities`
-  - Added model `PrivateEndpointConnectionProperties`
-  - Added model `PrivateLinkResourceProperties`
-  - Added model `SchemaGroupProperties`
-  - Model `NetworkSecurityPerimeterConfigurationsOperations` added method `get_resource_association_name`
+  - Operation group `NetworkSecurityPerimeterConfigurationsOperations` added method `get_resource_association_name`
 
 ### Breaking Changes
 
-  - Model `ApplicationGroup` deleted or renamed its instance variable `client_app_group_identifier`
-  - Model `ApplicationGroup` deleted or renamed its instance variable `is_enabled`
-  - Model `ApplicationGroup` deleted or renamed its instance variable `policies`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `alternate_name`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `partner_namespace`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `pending_replication_operations_count`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `provisioning_state`
-  - Model `ArmDisasterRecovery` deleted or renamed its instance variable `role`
-  - Model `AuthorizationRule` deleted or renamed its instance variable `rights`
-  - Model `Cluster` deleted or renamed its instance variable `created_at`
-  - Model `Cluster` deleted or renamed its instance variable `metric_id`
-  - Model `Cluster` deleted or renamed its instance variable `provisioning_state`
-  - Model `Cluster` deleted or renamed its instance variable `status`
-  - Model `Cluster` deleted or renamed its instance variable `supports_scaling`
-  - Model `Cluster` deleted or renamed its instance variable `updated_at`
-  - Model `ConsumerGroup` deleted or renamed its instance variable `created_at`
-  - Model `ConsumerGroup` deleted or renamed its instance variable `updated_at`
-  - Model `ConsumerGroup` deleted or renamed its instance variable `user_metadata`
-  - Model `Destination` deleted or renamed its instance variable `archive_name_format`
-  - Model `Destination` deleted or renamed its instance variable `blob_container`
-  - Model `Destination` deleted or renamed its instance variable `data_lake_account_name`
-  - Model `Destination` deleted or renamed its instance variable `data_lake_folder_path`
-  - Model `Destination` deleted or renamed its instance variable `data_lake_subscription_id`
-  - Model `Destination` deleted or renamed its instance variable `storage_account_resource_id`
-  - Model `EHNamespace` deleted or renamed its instance variable `alternate_name`
-  - Model `EHNamespace` deleted or renamed its instance variable `cluster_arm_id`
-  - Model `EHNamespace` deleted or renamed its instance variable `created_at`
-  - Model `EHNamespace` deleted or renamed its instance variable `disable_local_auth`
-  - Model `EHNamespace` deleted or renamed its instance variable `encryption`
-  - Model `EHNamespace` deleted or renamed its instance variable `geo_data_replication`
-  - Model `EHNamespace` deleted or renamed its instance variable `is_auto_inflate_enabled`
-  - Model `EHNamespace` deleted or renamed its instance variable `kafka_enabled`
-  - Model `EHNamespace` deleted or renamed its instance variable `maximum_throughput_units`
-  - Model `EHNamespace` deleted or renamed its instance variable `metric_id`
-  - Model `EHNamespace` deleted or renamed its instance variable `minimum_tls_version`
-  - Model `EHNamespace` deleted or renamed its instance variable `private_endpoint_connections`
-  - Model `EHNamespace` deleted or renamed its instance variable `provisioning_state`
-  - Model `EHNamespace` deleted or renamed its instance variable `public_network_access`
-  - Model `EHNamespace` deleted or renamed its instance variable `service_bus_endpoint`
-  - Model `EHNamespace` deleted or renamed its instance variable `status`
-  - Model `EHNamespace` deleted or renamed its instance variable `updated_at`
-  - Model `EHNamespace` deleted or renamed its instance variable `zone_redundant`
-  - Model `Eventhub` deleted or renamed its instance variable `capture_description`
-  - Model `Eventhub` deleted or renamed its instance variable `created_at`
-  - Model `Eventhub` deleted or renamed its instance variable `identifier`
-  - Model `Eventhub` deleted or renamed its instance variable `message_retention_in_days`
-  - Model `Eventhub` deleted or renamed its instance variable `message_timestamp_description`
-  - Model `Eventhub` deleted or renamed its instance variable `partition_count`
-  - Model `Eventhub` deleted or renamed its instance variable `partition_ids`
-  - Model `Eventhub` deleted or renamed its instance variable `retention_description`
-  - Model `Eventhub` deleted or renamed its instance variable `status`
-  - Model `Eventhub` deleted or renamed its instance variable `updated_at`
-  - Model `Eventhub` deleted or renamed its instance variable `user_metadata`
-  - Model `FailOver` deleted or renamed its instance variable `force`
-  - Model `FailOver` deleted or renamed its instance variable `primary_location`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `default_action`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `ip_rules`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `public_network_access`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `trusted_service_access_enabled`
-  - Model `NetworkRuleSet` deleted or renamed its instance variable `virtual_network_rules`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `applicable_features`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `is_backing_resource`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `network_security_perimeter`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `parent_association_name`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `profile`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_issues`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `provisioning_state`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `resource_association`
-  - Model `NetworkSecurityPerimeterConfiguration` deleted or renamed its instance variable `source_resource_id`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_endpoint`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `private_link_service_connection_state`
-  - Model `PrivateEndpointConnection` deleted or renamed its instance variable `provisioning_state`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `group_id`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_members`
-  - Model `PrivateLinkResource` deleted or renamed its instance variable `required_zone_names`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `ApplicationGroup` moved instance variable `client_app_group_identifier`, `is_enabled` and `policies` under property `properties` whose type is `ApplicationGroupProperties`
+  - Model `ArmDisasterRecovery` moved instance variable `alternate_name`, `partner_namespace`, `pending_replication_operations_count`, `provisioning_state` and `role` under property `properties` whose type is `ArmDisasterRecoveryProperties`
+  - Model `AuthorizationRule` moved instance variable `rights` under property `properties` whose type is `AuthorizationRuleProperties`
+  - Model `Cluster` moved instance variable `created_at`, `metric_id`, `provisioning_state`, `status`, `supports_scaling` and `updated_at` under property `properties` whose type is `ClusterProperties`
+  - Model `ConsumerGroup` moved instance variable `created_at`, `updated_at` and `user_metadata` under property `properties` whose type is `ConsumerGroupProperties`
+  - Model `Destination` moved instance variable `archive_name_format`, `blob_container`, `data_lake_account_name`, `data_lake_folder_path`, `data_lake_subscription_id` and `storage_account_resource_id` under property `properties` whose type is `DestinationProperties`
+  - Model `EHNamespace` moved instance variable `alternate_name`, `cluster_arm_id`, `created_at`, `disable_local_auth`, `encryption`, `geo_data_replication`, `is_auto_inflate_enabled`, `kafka_enabled`, `maximum_throughput_units`, `metric_id`, `minimum_tls_version`, `private_endpoint_connections`, `provisioning_state`, `public_network_access`, `service_bus_endpoint`, `status`, `updated_at` and `zone_redundant` under property `properties` whose type is `EHNamespaceProperties`
+  - Model `Eventhub` moved instance variable `capture_description`, `created_at`, `identifier`, `message_retention_in_days`, `message_timestamp_description`, `partition_count`, `partition_ids`, `retention_description`, `status`, `updated_at` and `user_metadata` under property `properties` whose type is `EventhubProperties`
+  - Model `FailOver` moved instance variable `force` and `primary_location` under property `properties` whose type is `FailOverProperties`
+  - Model `NetworkRuleSet` moved instance variable `default_action`, `ip_rules`, `public_network_access`, `trusted_service_access_enabled` and `virtual_network_rules` under property `properties` whose type is `NetworkRuleSetProperties`
+  - Model `NetworkSecurityPerimeterConfiguration` moved instance variable `applicable_features`, `is_backing_resource`, `network_security_perimeter`, `parent_association_name`, `profile`, `provisioning_issues`, `provisioning_state`, `resource_association` and `source_resource_id` under property `properties` whose type is `NetworkSecurityPerimeterConfigurationProperties`
+  - Model `PrivateEndpointConnection` moved instance variable `private_endpoint`, `private_link_service_connection_state` and `provisioning_state` under property `properties` whose type is `PrivateEndpointConnectionProperties`
+  - Model `PrivateLinkResource` moved instance variable `group_id`, `required_members` and `required_zone_names` under property `properties` whose type is `PrivateLinkResourceProperties`
   - Model `ProxyResource` deleted or renamed its instance variable `location`
-  - Model `RetentionDescription` deleted or renamed its instance variable `min_compaction_lag_in_mins`
-  - Model `SchemaGroup` deleted or renamed its instance variable `created_at_utc`
-  - Model `SchemaGroup` deleted or renamed its instance variable `e_tag`
-  - Model `SchemaGroup` deleted or renamed its instance variable `group_properties`
-  - Model `SchemaGroup` deleted or renamed its instance variable `schema_compatibility`
-  - Model `SchemaGroup` deleted or renamed its instance variable `schema_type`
-  - Model `SchemaGroup` deleted or renamed its instance variable `updated_at_utc`
-  - Deleted or renamed model `ApplicationGroupListResult`
-  - Deleted or renamed model `ArmDisasterRecoveryListResult`
-  - Deleted or renamed model `AuthorizationRuleListResult`
-  - Deleted or renamed model `ClusterListResult`
-  - Deleted or renamed model `ConsumerGroupListResult`
-  - Deleted or renamed model `EHNamespaceListResult`
-  - Deleted or renamed model `ErrorDetailAutoGenerated`
-  - Deleted or renamed model `ErrorResponseAutoGenerated`
-  - Deleted or renamed model `EventHubListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `PrivateEndpointConnectionListResult`
-  - Deleted or renamed model `SchemaGroupListResult`
-  - Deleted or renamed model `TrackedResource`
-  - Method `NetworkSecurityPerimeterConfigurationsOperations.begin_create_or_update` changed return type from `AsyncLROPoller[None]` to `AsyncLROPoller[NetworkSecurityPerimeterConfiguration]`
+  - Model `RetentionDescription` renamed its instance variable `min_compaction_lag_in_mins` to `min_compaction_lag_time_in_minutes`
+  - Model `SchemaGroup` moved instance variable `created_at_utc`, `e_tag`, `group_properties`, `schema_compatibility`, `schema_type` and `updated_at_utc` under property `properties` whose type is `SchemaGroupProperties`
   - Method `NetworkSecurityPerimeterConfigurationsOperations.begin_create_or_update` changed return type from `LROPoller[None]` to `LROPoller[NetworkSecurityPerimeterConfiguration]`
+
+### Other Changes
+
+  - Deleted model `ApplicationGroupListResult`/`ArmDisasterRecoveryListResult`/`AuthorizationRuleListResult`/`ClusterListResult`/`ConsumerGroupListResult`/`EHNamespaceListResult`/`EventHubListResult`/`OperationListResult`/`PrivateEndpointConnectionListResult`/`SchemaGroupListResult` which actually were not used by SDK users
+  - Deleted model `ErrorDetailAutoGenerated`/`ErrorResponseAutoGenerated`/`TrackedResource` which actually were not used by SDK users
 
 ## 12.0.0b2 (2026-07-07)
 
