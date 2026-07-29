@@ -970,7 +970,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -995,7 +995,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1018,7 +1018,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -3999,5 +3999,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             service.delete_container(container_name)
 
         return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_download_blob_returns_access_tier(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        blob.upload_blob(b"hello world", overwrite=True)
+        blob.set_standard_blob_tier(StandardBlobTier.SMART)
+
+        # Act
+        downloader = blob.download_blob()
+
+        # Assert
+        assert StandardBlobTier.SMART == downloader.properties.blob_tier
+        assert downloader.properties.smart_access_tier is not None
+        assert downloader.properties.blob_tier_change_time is not None
+        assert not downloader.properties.blob_tier_inferred
 
     # ------------------------------------------------------------------------------
