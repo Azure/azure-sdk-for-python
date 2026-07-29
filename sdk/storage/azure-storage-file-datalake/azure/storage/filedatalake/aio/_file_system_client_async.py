@@ -957,7 +957,7 @@ class FileSystemClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):
             policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline
+            url, filesystem=self.file_system_name, path=deleted_path_name, version=self._api_version, pipeline=pipeline
         )
         try:
             is_file = cast(

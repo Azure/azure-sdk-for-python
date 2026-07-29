@@ -953,7 +953,7 @@ class FileSystemClient(StorageAccountHostsMixin):
             policies=self._pipeline._impl_policies,  # pylint: disable=protected-access
         )
         path_client = AzureDataLakeStorageRESTAPI(
-            url, filesystem=self.file_system_name, path=deleted_path_name, pipeline=pipeline
+            url, filesystem=self.file_system_name, path=deleted_path_name, version=self._api_version, pipeline=pipeline
         )
         try:
             is_file = path_client.path.undelete(undelete_source=undelete_source, cls=is_file_path, **kwargs)
