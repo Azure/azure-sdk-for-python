@@ -10,8 +10,8 @@ DESCRIPTION:
     jobs. The sample exercises:
 
       * `begin_create_generation_job` with `operation_id` for idempotent re-submits;
-        returns `LROPoller[EvaluatorVersion]` — the SDK polls automatically and
-        `.result()` blocks until the job reaches a terminal state.
+                returns `LROPoller[EvaluatorVersion]`, whose status is reported until
+                the job reaches a terminal state.
       * `list_generation_jobs` to enumerate recent jobs in the project.
       * `delete_generation_job` to remove a finished job record.
       * `delete_version` to remove the persisted evaluator that the job produced.
@@ -41,6 +41,7 @@ USAGE:
 
 import os
 import itertools
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import cast
@@ -93,19 +94,53 @@ with (
 ):
     # 1. Start the generation job LRO. `operation_id` makes the call idempotent -
     # re-submitting with the same id returns a poller attached to the existing job.
+    latest_lro_response = {}
+
+    # Optionally capture LRO responses to extract an error message if the job fails.
+    def capture_lro_response(response):
+        body = response.http_response.json()
+        if isinstance(body, dict) and "status" in body:
+            latest_lro_response.clear()
+            latest_lro_response.update(body)
+
+    # Alternatively, append `.result()` to block while the SDK handles polling.
     poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
+        job=job_body,
+        operation_id=operation_id,
+        polling_interval=poll_interval_seconds,
+        raw_response_hook=capture_lro_response,
     )
     print("Generation job started; LRO polling in progress.")
 
     # Idempotency: a second call with the same operation_id attaches to the same job.
+    latest_replay_lro_response = {}
+
+    # Optionally capture LRO responses to extract an error message if the job fails.
+    def capture_replay_lro_response(response):
+        body = response.http_response.json()
+        if isinstance(body, dict) and "status" in body:
+            latest_replay_lro_response.clear()
+            latest_replay_lro_response.update(body)
+
+    # Alternatively, append `.result()` to block while the SDK handles polling.
     replay_poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
+        job=job_body,
+        operation_id=operation_id,
+        polling_interval=poll_interval_seconds,
+        raw_response_hook=capture_replay_lro_response,
     )
 
-    # 2. Block until the LRO finishes. The SDK polls automatically; `.result()` returns
-    # the produced EvaluatorVersion once the job reaches a terminal state.
-    print("Waiting for the generation job to complete (polling is handled by the SDK)...")
+    # 2. Poll until the LRO finishes, then retrieve the produced EvaluatorVersion.
+    print("Waiting for the generation job to complete...")
+    while not poller.done():
+        print(f"Generation job status: {poller.status()}")
+        time.sleep(poll_interval_seconds)
+    status = poller.status()
+    print(f"Final generation job status: `{status}`.")
+    if status.lower() != "succeeded":
+        error = latest_lro_response.get("error")
+        message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
+        raise RuntimeError(f"Generation job ended with status `{status}`: {message}")
     evaluator: EvaluatorVersion = poller.result()
     print(
         f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
@@ -113,6 +148,15 @@ with (
     )
 
     # Verify the idempotency: the replay poller resolves to the same underlying job.
+    while not replay_poller.done():
+        print(f"Replay job status: {replay_poller.status()}")
+        time.sleep(poll_interval_seconds)
+    replay_status = replay_poller.status()
+    print(f"Final replay job status: `{replay_status}`.")
+    if replay_status.lower() != "succeeded":
+        error = latest_replay_lro_response.get("error")
+        message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
+        raise RuntimeError(f"Replay job ended with status `{replay_status}`: {message}")
     replay_evaluator: EvaluatorVersion = replay_poller.result()
     assert replay_evaluator.generation_job_id == evaluator.generation_job_id
 

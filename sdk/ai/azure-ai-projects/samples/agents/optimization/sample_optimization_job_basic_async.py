@@ -6,9 +6,9 @@
 
 """
 DESCRIPTION:
-    Async version of sample_optimization_job_basic.py. Demonstrates how to
-    create an agent optimization job, poll it to completion, and read the
-    results using the async AIProjectClient.
+    Given an async AIProjectClient, this sample demonstrates how to create an agent
+    optimization job, and use the SDK's built-in polling mechanism to wait for
+    its completion to get the result.
 
 USAGE:
     python sample_optimization_job_basic_async.py

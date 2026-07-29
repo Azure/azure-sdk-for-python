@@ -13,8 +13,8 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
-      2. Calls `begin_create_generation_job` which returns an `LROPoller[EvaluatorVersion]`;
-         `.result()` polls automatically and returns the generated `EvaluatorVersion`.
+      2. Calls `begin_create_generation_job` and reports the standard LRO
+         poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
          testing criterion.
       4. Runs the evaluation against inline JSONL sample data.
@@ -87,10 +87,18 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
-    # The LRO polls automatically; `.result()` blocks until the job reaches a terminal state
-    # and returns the produced EvaluatorVersion directly.
-    print("Waiting for generation job to complete (polling is handled by the SDK)...")
-    evaluator = project_client.beta.evaluators.begin_create_generation_job(
+    print("Waiting for generation job to complete...")
+    latest_lro_response = {}
+
+    # Optionally capture LRO responses to extract an error message if the job fails.
+    def capture_lro_response(response):
+        body = response.http_response.json()
+        if isinstance(body, dict) and "status" in body:
+            latest_lro_response.clear()
+            latest_lro_response.update(body)
+
+    # Alternatively, append `.result()` to block while the SDK handles polling.
+    poller = project_client.beta.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -119,7 +127,18 @@ with (
         # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
         polling_interval=poll_interval_seconds,
-    ).result()
+        raw_response_hook=capture_lro_response,
+    )
+    while not poller.done():
+        print(f"Generation job status: {poller.status()}")
+        time.sleep(poll_interval_seconds)
+    status = poller.status()
+    print(f"Final generation job status: `{status}`.")
+    if status.lower() != "succeeded":
+        error = latest_lro_response.get("error")
+        message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
+        raise RuntimeError(f"Generation job ended with status `{status}`: {message}")
+    evaluator = poller.result()
 
     # On success, the evaluator is automatically saved as version 1.
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.

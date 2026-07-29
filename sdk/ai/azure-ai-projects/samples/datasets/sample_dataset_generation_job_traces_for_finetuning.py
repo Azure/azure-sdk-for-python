@@ -139,7 +139,17 @@ with (
                 f"window: {start_time.isoformat()} .. {end_time.isoformat()})."
             )
             try:
-                job = project_client.beta.datasets.begin_create_generation_job(
+                latest_lro_response = {}
+
+                # Optionally capture LRO responses to extract an error message if the job fails.
+                def capture_lro_response(response):
+                    body = response.http_response.json()
+                    if isinstance(body, dict) and "status" in body:
+                        latest_lro_response.clear()
+                        latest_lro_response.update(body)
+
+                # Alternatively, append `.result()` to block while the SDK handles polling.
+                poller = project_client.beta.datasets.begin_create_generation_job(
                     job=DataGenerationJob(
                         inputs=DataGenerationJobInputs(
                             name=f"traces-ft-{run_id}-a{attempt}",
@@ -160,8 +170,23 @@ with (
                         ),
                     ),
                     polling_interval=POLL_INTERVAL_SECONDS,
-                ).result()
-                print(f"Data generation job succeeded.")
+                    raw_response_hook=capture_lro_response,
+                )
+                while not poller.done():
+                    print(f"Data generation job status: {poller.status()}")
+                    time.sleep(POLL_INTERVAL_SECONDS)
+                status = poller.status()
+                print(f"Final data generation job status: `{status}`.")
+                if status.lower() != "succeeded":
+                    error = latest_lro_response.get("error")
+                    message = (
+                        error.get("message", "<no error message>")
+                        if isinstance(error, dict)
+                        else "<no error message>"
+                    )
+                    raise RuntimeError(f"Data generation job ended with status `{status}`: {message}")
+                job = poller.result()
+                print("Data generation job succeeded.")
                 break
             except Exception as e:  # pylint: disable=broad-except
                 if attempt == MAX_JOB_ATTEMPTS:
