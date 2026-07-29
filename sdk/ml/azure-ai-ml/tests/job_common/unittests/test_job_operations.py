@@ -9,7 +9,7 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_job
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2023_04_01_preview import models
+from azure.ai.ml._restclient.arm_ml_service import models
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, AzureMLResourceType, GitProperties
 from azure.ai.ml.entities._builders import Command
@@ -122,7 +122,7 @@ def mock_job_operation(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client_02_2023_preview=mock_aml_services_2023_02_01_preview,
-        service_client_01_2024_preview=mock_aml_services_2024_01_01_preview,
+        service_client_01_2024_preview_arm=mock_aml_services_2024_01_01_preview,
         service_client_10_2024_preview=mock_aml_services_2024_10_01_preview,
         service_client_01_2025_preview=mock_aml_services_2025_01_01_preview,
         service_client_run_history=mock_aml_services_run_history,
@@ -139,19 +139,19 @@ class TestJobOperations:
     def test_list(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview_arm.jobs.list.call_args
 
     @patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"})
     def test_list_private_preview(self, mock_job_operation: JobOperations) -> None:
         mock_job_operation.list()
         expected = (mock_job_operation._resource_group_name, mock_job_operation._workspace_name)
-        assert expected in mock_job_operation.service_client_01_2024_preview.jobs.list.call_args
+        assert expected in mock_job_operation.service_client_01_2024_preview_arm.jobs.list.call_args
 
     @patch.object(Job, "_from_rest_object")
     def test_get(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("randon_name")
-        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
 
     # use mock_component_hash to avoid passing a Mock object as client key
     @pytest.mark.usefixtures("mock_component_hash")
@@ -190,7 +190,7 @@ class TestJobOperations:
     def test_get_private_preview_flag_returns_latest(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.get("random_name")
-        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
 
     def test_stream_command_job(self, mock_job_operation: JobOperations) -> None:
         # setup
@@ -201,7 +201,7 @@ class TestJobOperations:
         mock_job_operation.stream("random_name")
 
         # check
-        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
         mock_job_operation._get_workspace_url.assert_called_once()
         mock_job_operation._stream_logs_until_completion.assert_called_once()
         assert mock_job_operation._runs_operations_client._operation._client._base_url == "TheWorkSpaceUrl"
@@ -256,14 +256,14 @@ class TestJobOperations:
     def test_archive(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.archive(name="random_name")
-        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     @patch.object(Job, "_from_rest_object")
     def test_restore(self, mock_method, mock_job_operation: JobOperations) -> None:
         mock_method.return_value = Command(component=None)
         mock_job_operation.restore(name="random_name")
-        mock_job_operation.service_client_01_2024_preview.jobs.get.assert_called_once()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.get.assert_called_once()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_called_once()
 
     def test_delete(self, mock_job_operation: JobOperations) -> None:
@@ -293,7 +293,7 @@ class TestJobOperations:
         the correct experiment_name / run_id and a CreateRun body carrying the supplied fields.
         The returned entity must also be routed through _resolve_azureml_id so callers get the
         same resolved view they'd get from jobs.get()."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         fake_job = Mock()
         fake_job.properties.job_type = RestJobType.COMMAND
@@ -341,7 +341,7 @@ class TestJobOperations:
     ) -> None:
         """PIPELINE jobs must be re-fetched via _get_job_2401 to obtain the non-projected view
         before the RunHistory PATCH is issued. The refreshed entity is then resolved."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         pipeline_job = Mock()
         pipeline_job.properties.job_type = RestJobType.PIPELINE
@@ -367,7 +367,7 @@ class TestJobOperations:
     ) -> None:
         """A pipeline child job (properties is None on the 2401 view) must raise
         PipelineChildJobError and must NOT issue any RunHistory PATCH."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
         from azure.ai.ml.exceptions import PipelineChildJobError
 
         parent_view = Mock()
@@ -401,7 +401,7 @@ class TestJobOperations:
         """For a Job that was previously fetched (has an ARM id) and is being resubmitted with
         only metadata edits (no compute/experiment_name change), create_or_update must route
         through the RunHistory PATCH shortcut and skip the legacy MFE PUT round-trip."""
-        from azure.ai.ml._restclient.v2023_08_01_preview.models import JobType as RestJobType
+        from azure.ai.ml._restclient.arm_ml_service.models import JobType as RestJobType
 
         fake_job = Mock()
         fake_job.properties.job_type = RestJobType.COMMAND
@@ -433,7 +433,7 @@ class TestJobOperations:
         assert body.tags == {"k": "v"}
         assert body.properties == {"pk": "pv"}
         # Legacy MFE PUT paths must be untouched when the shortcut succeeds.
-        mock_job_operation.service_client_01_2024_preview.jobs.create_or_update.assert_not_called()
+        mock_job_operation.service_client_01_2024_preview_arm.jobs.create_or_update.assert_not_called()
         mock_job_operation._operation_2023_02_preview.create_or_update.assert_not_called()
 
     @pytest.mark.parametrize(
@@ -445,7 +445,7 @@ class TestJobOperations:
     def test_parse_corrupt_job_data(self, mocker: MockFixture, corrupt_job_data: str) -> None:
         with open(corrupt_job_data, "r") as f:
             resource = json.load(f)
-        resource = models.JobBase.deserialize(resource)
+        resource = models.JobBase._deserialize(resource, [])
         with pytest.raises(Exception, match="Unknown search space type"):
             # Convert from REST object
             Job._from_rest_object(resource)

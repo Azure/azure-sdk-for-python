@@ -13,10 +13,14 @@ from typing import Any, Dict, List, Optional, Tuple, Union, cast
 
 from marshmallow import INCLUDE, Schema
 
-from ..._restclient.v2023_04_01_preview.models import JobBase as JobBaseData
-from ..._restclient.v2023_04_01_preview.models import SparkJob as RestSparkJob
+from ..._restclient.arm_ml_service.models import JobBase as JobBaseData
+from ..._restclient.arm_ml_service.models import SparkJob as RestSparkJob
 from ..._schema import NestedField, PathAwareSchema, UnionField
-from ..._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from ..._schema.job.identity import (
+    AMLTokenIdentitySchema,
+    ManagedIdentitySchema,
+    UserIdentitySchema,
+)
 from ..._schema.job.parameterized_spark import CONF_KEY_MAP
 from ..._schema.job.spark_job import SparkJobSchema
 from ..._utils.utils import is_url
@@ -55,7 +59,12 @@ from .._job.spark_helpers import (
     _validate_spark_configurations,
 )
 from .._job.spark_job_entry_mixin import SparkJobEntry, SparkJobEntryMixin
-from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, load_from_dict, validate_attribute_type
+from .._util import (
+    convert_ordered_dict_to_dict,
+    get_rest_dict_for_node_attrs,
+    load_from_dict,
+    validate_attribute_type,
+)
 from .base_node import BaseNode
 
 module_logger = logging.getLogger(__name__)
@@ -137,7 +146,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
         *,
         component: Union[str, SparkComponent],
         identity: Optional[
-            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict,
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         driver_cores: Optional[Union[int, str]] = None,
         driver_memory: Optional[str] = None,
@@ -179,7 +193,13 @@ class Spark(BaseNode, SparkJobEntryMixin):
         kwargs.pop("type", None)
 
         BaseNode.__init__(
-            self, type=NodeType.SPARK, inputs=inputs, outputs=outputs, component=component, compute=compute, **kwargs
+            self,
+            type=NodeType.SPARK,
+            inputs=inputs,
+            outputs=outputs,
+            component=component,
+            compute=compute,
+            **kwargs,
         )
 
         # init mark for _AttrDict
@@ -273,7 +293,14 @@ class Spark(BaseNode, SparkJobEntryMixin):
     @property
     def identity(
         self,
-    ) -> Optional[Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+    ) -> Optional[
+        Union[
+            Dict,
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration,
+        ]
+    ]:
         """The identity that the Spark job will use while running on compute.
 
         :rtype: Union[~azure.ai.ml.entities.ManagedIdentityConfiguration, ~azure.ai.ml.entities.AmlTokenConfiguration,
@@ -293,7 +320,12 @@ class Spark(BaseNode, SparkJobEntryMixin):
     def identity(
         self,
         value: Optional[
-            Union[Dict[str, str], ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict[str, str],
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ],
     ) -> None:
         """Sets the identity that the Spark job will use while running on compute.
@@ -576,7 +608,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     code_path = code_path.resolve().absolute()
                 else:
                     validation_result.append_error(
-                        message=f"Code path {code_path} doesn't exist.", yaml_path="component.code"
+                        message=f"Code path {code_path} doesn't exist.",
+                        yaml_path="component.code",
                     )
                 entry_path = code_path / self.entry.entry
             else:
@@ -588,7 +621,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             ):
                 if not entry_path.exists():
                     validation_result.append_error(
-                        message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
+                        message=f"Entry {entry_path} doesn't exist.",
+                        yaml_path="component.entry",
                     )
         return validation_result
 
