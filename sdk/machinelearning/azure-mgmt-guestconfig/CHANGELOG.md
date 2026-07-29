@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - First stable release of the Azure Guest Configuration Management client library.
+  - First GA
 
 ## 1.0.0b3 (2026-07-07)
 
