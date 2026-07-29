@@ -18,7 +18,7 @@ PYLINT_VERSION = "4.0.4"
 PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.7"
 NEXT_PYLINT_VERSION = "4.0.6"
 NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.9"
-SNIPPET_IMPORT_DISABLES = (
+SNIPPET_SAMPLE_IMPORT_DISABLES = (
     "reimported",
     "wrong-import-position",
     "wrong-import-order",
@@ -26,8 +26,8 @@ SNIPPET_IMPORT_DISABLES = (
 )
 
 
-def get_sample_pylint_commands(executable: str, rcfile: str, samples_dir: str) -> List[List[str]]:
-    """Build separate Pylint commands for regular and README snippet sample files."""
+def get_snippet_aware_sample_pylint_commands(executable: str, rcfile: str, samples_dir: str) -> List[List[str]]:
+    """Build the normal sample command plus an exception for README snippet files."""
     regular_samples: List[str] = []
     snippet_samples: List[str] = []
 
@@ -46,7 +46,7 @@ def get_sample_pylint_commands(executable: str, rcfile: str, samples_dir: str) -
     if regular_samples:
         commands.append(base_command + regular_samples)
     if snippet_samples:
-        commands.append(base_command + [f"--disable={','.join(SNIPPET_IMPORT_DISABLES)}"] + snippet_samples)
+        commands.append(base_command + [f"--disable={','.join(SNIPPET_SAMPLE_IMPORT_DISABLES)}"] + snippet_samples)
     return commands
 
 
@@ -234,7 +234,7 @@ class pylint(Check):
                 # Run samples with samples_pylintrc
                 if os.path.exists(samples_dir):
                     samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
-                    for command in get_sample_pylint_commands(executable, samples_rcfile, samples_dir):
+                    for command in get_snippet_aware_sample_pylint_commands(executable, samples_rcfile, samples_dir):
                         try:
                             logger.info(command)
                             results.append(check_call(command))
