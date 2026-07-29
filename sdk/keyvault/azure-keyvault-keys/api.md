@@ -4,7 +4,6 @@ namespace azure.keyvault.keys
     class azure.keyvault.keys.ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
         V2016_10_01 = "2016-10-01"
         V2025_07_01 = "2025-07-01"
-        V2026_01_01_PREVIEW = "2026-01-01-preview"
         V7_0 = "7.0"
         V7_1 = "7.1"
         V7_2 = "7.2"
@@ -32,17 +31,6 @@ namespace azure.keyvault.keys
                 recovery_id: Optional[str] = None, 
                 scheduled_purge_date: Optional[datetime] = None, 
                 **kwargs: Any
-            ) -> None: ...
-
-        def __repr__(self) -> str: ...
-
-
-    class azure.keyvault.keys.ExternalKey:
-
-        def __init__(
-                self, 
-                *, 
-                id: str
             ) -> None: ...
 
         def __repr__(self) -> str: ...
@@ -138,20 +126,6 @@ namespace azure.keyvault.keys
                 exportable: Optional[bool] = ..., 
                 hardware_protected: Optional[bool] = False, 
                 key_operations: Optional[List[Union[str, KeyOperation]]] = ..., 
-                not_before: Optional[datetime] = ..., 
-                release_policy: Optional[KeyReleasePolicy] = ..., 
-                tags: Optional[Dict[str, str]] = ..., 
-                **kwargs: Any
-            ) -> KeyVaultKey: ...
-
-        @distributed_trace
-        def create_external_key(
-                self, 
-                name: str, 
-                external_key: ExternalKey, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                expires_on: Optional[datetime] = ..., 
                 not_before: Optional[datetime] = ..., 
                 release_policy: Optional[KeyReleasePolicy] = ..., 
                 tags: Optional[Dict[str, str]] = ..., 
@@ -373,8 +347,6 @@ namespace azure.keyvault.keys
         encrypt = "encrypt"
         export = "export"
         import_key = "import"
-        secure_unwrap_key = "secureUnwrapKey"
-        secure_wrap_key = "secureWrapKey"
         sign = "sign"
         unwrap_key = "unwrapKey"
         verify = "verify"
@@ -387,10 +359,8 @@ namespace azure.keyvault.keys
         property enabled: Optional[bool]    # Read-only
         property expires_on: Optional[datetime]    # Read-only
         property exportable: Optional[bool]    # Read-only
-        property external_key: Optional[ExternalKey]    # Read-only
         property hsm_platform: Optional[str]    # Read-only
         property id: str    # Read-only
-        property key_size: Optional[int]    # Read-only
         property managed: Optional[bool]    # Read-only
         property name: str    # Read-only
         property not_before: Optional[datetime]    # Read-only
@@ -532,20 +502,6 @@ namespace azure.keyvault.keys.aio
                 exportable: Optional[bool] = ..., 
                 hardware_protected: Optional[bool] = False, 
                 key_operations: Optional[List[Union[str, KeyOperation]]] = ..., 
-                not_before: Optional[datetime] = ..., 
-                release_policy: Optional[KeyReleasePolicy] = ..., 
-                tags: Optional[Dict[str, str]] = ..., 
-                **kwargs: Any
-            ) -> KeyVaultKey: ...
-
-        @distributed_trace_async
-        async def create_external_key(
-                self, 
-                name: str, 
-                external_key: ExternalKey, 
-                *, 
-                enabled: Optional[bool] = ..., 
-                expires_on: Optional[datetime] = ..., 
                 not_before: Optional[datetime] = ..., 
                 release_policy: Optional[KeyReleasePolicy] = ..., 
                 tags: Optional[Dict[str, str]] = ..., 
@@ -814,22 +770,6 @@ namespace azure.keyvault.keys.crypto
             ) -> EncryptResult: ...
 
         @distributed_trace
-        def secure_unwrap_key(
-                self, 
-                algorithm: KeySecureWrapAlgorithm, 
-                encrypted_key: bytes, 
-                target_attestation_token: str, 
-                **kwargs: Any
-            ) -> SecureUnwrapResult: ...
-
-        @distributed_trace
-        def secure_wrap_key(
-                self, 
-                algorithm: KeySecureWrapAlgorithm, 
-                **kwargs: Any
-            ) -> SecureWrapResult: ...
-
-        @distributed_trace
         def send_request(
                 self, 
                 request: HttpRequest, 
@@ -909,18 +849,6 @@ namespace azure.keyvault.keys.crypto
         a256_gcm = "A256GCM"
         rsa1_5 = "RSA1_5"
         rsa_oaep = "RSA-OAEP"
-        rsa_oaep_256 = "RSA-OAEP-256"
-
-
-    class azure.keyvault.keys.crypto.KeySecureWrapAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-        aes_128 = "A128KW"
-        aes_128_pad = "A128KWPAD"
-        aes_192 = "A192KW"
-        aes_192_pad = "A192KWPAD"
-        aes_256 = "A256KW"
-        aes_256_pad = "A256KWPAD"
-        ckm_aes_key_wrap = "CKM_AES_KEY_WRAP"
-        ckm_aes_key_wrap_pad = "CKM_AES_KEY_WRAP_PAD"
         rsa_oaep_256 = "RSA-OAEP-256"
 
 
@@ -1031,26 +959,6 @@ namespace azure.keyvault.keys.crypto
         rsa_oaep_256 = "RSA-OAEP-256"
 
 
-    class azure.keyvault.keys.crypto.SecureUnwrapResult:
-
-        def __init__(
-                self, 
-                key_id: Optional[str], 
-                algorithm: KeySecureWrapAlgorithm, 
-                key: bytes
-            ) -> None: ...
-
-
-    class azure.keyvault.keys.crypto.SecureWrapResult:
-
-        def __init__(
-                self, 
-                key_id: Optional[str], 
-                algorithm: KeySecureWrapAlgorithm, 
-                encrypted_key: bytes
-            ) -> None: ...
-
-
     class azure.keyvault.keys.crypto.SignResult:
 
         def __init__(
@@ -1150,22 +1058,6 @@ namespace azure.keyvault.keys.crypto.aio
                 iv: Optional[bytes] = ..., 
                 **kwargs: Any
             ) -> EncryptResult: ...
-
-        @distributed_trace_async
-        async def secure_unwrap_key(
-                self, 
-                algorithm: KeySecureWrapAlgorithm, 
-                encrypted_key: bytes, 
-                target_attestation_token: str, 
-                **kwargs: Any
-            ) -> SecureUnwrapResult: ...
-
-        @distributed_trace_async
-        async def secure_wrap_key(
-                self, 
-                algorithm: KeySecureWrapAlgorithm, 
-                **kwargs: Any
-            ) -> SecureWrapResult: ...
 
         @distributed_trace_async
         def send_request(
