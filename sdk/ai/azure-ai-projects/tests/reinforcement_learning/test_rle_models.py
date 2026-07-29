@@ -144,14 +144,18 @@ def test_rle_public_symbols_are_available():
 
 def test_rle_symbols_exported_from_public_namespace():
     import azure.ai.projects as projects
-    import azure.ai.projects.aio as aio_projects
+    import azure.ai.projects.operations as operations
+    import azure.ai.projects.aio.operations as aio_operations
     import azure.ai.projects.models as models
 
-    assert getattr(projects, "OpenEnvClient")
-    assert getattr(projects, "OpenEnvInstance")
-    assert getattr(aio_projects, "AsyncOpenEnvClient")
-    assert getattr(aio_projects, "AsyncOpenEnvInstance")
+    # Customers interact with RLE only through ``project_client.rle.get_openenv_client(...)``; the
+    # OpenEnv client/instance types are reachable via the operations namespaces but are intentionally
+    # not top-level package exports. Only ``RLEError`` is surfaced at the package root (for excepts).
     assert getattr(projects, "RLEError")
+    assert getattr(operations, "OpenEnvClient")
+    assert getattr(operations, "OpenEnvInstance")
+    assert getattr(aio_operations, "AsyncOpenEnvClient")
+    assert getattr(aio_operations, "AsyncOpenEnvInstance")
     assert getattr(models, "RLEStepResult")
     assert getattr(models, "RLEnvironmentState")
     assert getattr(models, "RLESandbox")
@@ -241,7 +245,7 @@ def test_openenv_client_reserve_fails_fast_and_releases_partial():
     # already-pooled instance during reserve() cleanup.
     client, sandboxes = _make_openenv_client(num_instances=3, fail_on=1)
     with pytest.raises(RLEError):
-        client.reserve()
+        client._reserve()
     assert sandboxes.released == ["sbx-1", "sbx-0"]
     assert client.instances == []
 
@@ -321,13 +325,13 @@ def test_reserve_resolves_environment_version():
     assert environments.calls[0] == ("get_environment_version", "wordle", "1")
 
 
-def test_get_openenv_client_resolves_eagerly():
+def test_get_openenv_client_defers_resolution():
     ops = RLEOperations(object(), object(), object(), object())
     ops._environments = _FakeEnvironments("env-77")
     client = ops.get_openenv_client(name="wordle-env", version="1")
     assert isinstance(client, OpenEnvClient)
-    # The factory resolves the environment eagerly, so the id is available before reserve().
-    assert client.environment_id == "env-77"
+    # The factory does no network I/O; the environment is resolved on context entry, not here.
+    assert client.environment_id is None
     assert client.num_instances == 1
 
 
@@ -413,7 +417,7 @@ def test_async_openenv_reserve_fails_fast_and_releases_partial():
     async def run():
         client, sandboxes = _make_async_openenv_client(num_instances=3, fail_on=1)
         with pytest.raises(RLEError):
-            await client.reserve()
+            await client._reserve()
         assert sandboxes.released == ["sbx-1", "sbx-0"]
         assert client.instances == []
 

@@ -328,7 +328,8 @@ class AsyncOpenEnvClient:
         return list(self._pool)
 
     async def __aenter__(self) -> "AsyncOpenEnvClient":
-        await self.reserve()
+        await self._resolve_environment()
+        await self._reserve()
         return self
 
     async def __aexit__(self, *exc: Any) -> None:
@@ -337,8 +338,8 @@ class AsyncOpenEnvClient:
     async def _resolve_environment(self) -> None:
         """Resolve ``name``/``version`` to a hosted environment id and build the lease request.
 
-        Awaited eagerly by :meth:`RLEOperations.get_openenv_client` so a missing environment surfaces
-        at the call site. Idempotent: a second call is a no-op once the environment is resolved.
+        Awaited on context entry (``__aenter__``) before reservation, so a missing environment
+        surfaces when the client is entered. Idempotent: a second call is a no-op once resolved.
         """
         if self._environment_id is not None:
             return
@@ -357,7 +358,7 @@ class AsyncOpenEnvClient:
             env_vars=dict(self._env_vars) if self._env_vars else None,
         )
 
-    async def reserve(self) -> None:
+    async def _reserve(self) -> None:
         """Resolve the environment and lease ``num_instances`` running instances in advance.
 
         Idempotent. If the quota cannot be satisfied, any partially-leased instances are released
@@ -402,9 +403,12 @@ class AsyncOpenEnvClient:
         returns it to the pool. In v1 the pool is bounded by ``num_instances`` and this method
         fails when every reserved instance is already checked out -- it does not queue.
 
-        This is a synchronous accessor (no awaiting) so callers can write
-        ``async with client.get_instance() as instance:`` symmetrically with the sync surface. It is
-        safe under a single-threaded event loop because it performs no ``await``.
+        This is a plain accessor (no awaiting) so callers can write
+        ``async with client.get_instance() as instance:`` symmetrically with the sync surface. In v1
+        it checks out an instance already leased into an in-memory pool on context entry, so it
+        performs no ``await``. If a future revision leases on demand from the service, that I/O will
+        move into the instance's context entry (``__aenter__``), not this accessor -- so this
+        signature is expected to stay stable across that change.
 
         :return: A reserved instance ready to run episodes.
         :rtype: ~azure.ai.projects.aio.operations.AsyncOpenEnvInstance
@@ -412,9 +416,7 @@ class AsyncOpenEnvClient:
         if self._closed:
             raise RLEError("OpenEnv client is closed")
         if not self._reserved:
-            raise RLEError(
-                "reserve quota first: enter the AsyncOpenEnvClient context or call reserve() before get_instance()"
-            )
+            raise RLEError("reserve quota first: enter the AsyncOpenEnvClient context before get_instance()")
         if not self._available:
             raise RLEError(
                 f"no instance available within the reserved quota (num_instances={self._num_instances}); "
@@ -459,8 +461,7 @@ class RLEOperations:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._sandboxes = RLESandboxesOperations(*args, **kwargs)
 
-    @distributed_trace_async
-    async def get_openenv_client(
+    def get_openenv_client(
         self,
         *,
         name: str,
@@ -471,12 +472,14 @@ class RLEOperations:
     ) -> AsyncOpenEnvClient:
         """Create an :class:`AsyncOpenEnvClient` over a hosted RLE environment.
 
-        The environment is resolved by ``name`` (and ``version`` when supplied) here, so a missing or
-        invalid environment fails at this ``await``. The returned client is an async context manager:
-        entering it reserves its instances up front and fails fast if that quota cannot be satisfied
-        (v1 does not queue). :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved
-        :class:`AsyncOpenEnvInstance` objects to run episodes on. Runtime calls (reset/step/state/...)
-        target each instance's data-plane URI.
+        This constructs the client without any network I/O (no awaiting needed), so callers can write
+        ``async with client.rle.get_openenv_client(...) as openenv_client:``. The returned client is an
+        async context manager: entering it resolves the environment by ``name`` (and ``version`` when
+        supplied) -- so a missing or invalid environment fails on entry -- then reserves its instances
+        up front and fails fast if that quota cannot be satisfied (v1 does not queue).
+        :meth:`AsyncOpenEnvClient.get_instance` then hands out reserved :class:`AsyncOpenEnvInstance`
+        objects to run episodes on. Runtime calls (reset/step/state/...) target each instance's
+        data-plane URI.
 
         :keyword name: The hosted RLE environment name to resolve. Required.
         :paramtype name: str
@@ -495,7 +498,7 @@ class RLEOperations:
         """
         if not name:
             raise ValueError("name is required")
-        client = AsyncOpenEnvClient(
+        return AsyncOpenEnvClient(
             environments=self._environments,
             sandboxes=self._sandboxes,
             name=name,
@@ -504,8 +507,6 @@ class RLEOperations:
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )
-        await client._resolve_environment()
-        return client
 
 
 __all__ = [

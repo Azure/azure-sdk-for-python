@@ -15,7 +15,7 @@ DESCRIPTION:
     endpoint, just like the other operation groups on the client.
 
 USAGE:
-    python sample_rle_code_rl_environment.py --name <rle-environment-name> --version <version>
+    python sample_rle.py --name <rle-environment-name> --version <version>
 
     Before running the sample:
 

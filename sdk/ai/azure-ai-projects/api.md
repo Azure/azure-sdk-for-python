@@ -41,76 +41,6 @@ namespace azure.ai.projects
             ) -> HttpResponse: ...
 
 
-    class azure.ai.projects.OpenEnvClient: implements ContextManager 
-        property environment_id: Optional[str]    # Read-only
-        property instances: List[OpenEnvInstance]    # Read-only
-        property num_instances: int    # Read-only
-
-        def __init__(
-                self, 
-                *, 
-                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                env_vars: Optional[Mapping[str, str]] = ..., 
-                environments: _RLEnvironmentsOperationsGenerated, 
-                name: str, 
-                num_instances: int = 1, 
-                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations, 
-                version: Optional[str] = ...
-            ) -> None: ...
-
-        def close(self) -> None: ...
-
-        def get_instance(self) -> OpenEnvInstance: ...
-
-        def reserve(self) -> None: ...
-
-
-    class azure.ai.projects.OpenEnvInstance: implements ContextManager 
-        property dataplane_uri: Optional[str]    # Read-only
-        property environment_id: str    # Read-only
-        property id: str    # Read-only
-        property sandbox: RLESandbox    # Read-only
-
-        def __init__(
-                self, 
-                environment_id: str, 
-                *, 
-                owner: Optional[OpenEnvClient] = ..., 
-                sandbox: RLESandbox, 
-                sandboxes: RLESandboxesOperations
-            ) -> None: ...
-
-        def checkin(self) -> None: ...
-
-        @distributed_trace
-        def health(self) -> Dict[str, Any]: ...
-
-        @distributed_trace
-        def metadata(self) -> Dict[str, Any]: ...
-
-        @distributed_trace
-        def reset(
-                self, 
-                seed: Optional[int] = None, 
-                episode_id: Optional[str] = None, 
-                **kwargs: Any
-            ) -> RLEStepResult: ...
-
-        @distributed_trace
-        def schema(self) -> Dict[str, Any]: ...
-
-        @distributed_trace
-        def state(self) -> RLEnvironmentState: ...
-
-        @distributed_trace
-        def step(
-                self, 
-                action: Any = None, 
-                **action_kwargs: Any
-            ) -> RLEStepResult: ...
-
-
     class azure.ai.projects.RLEError(RuntimeError):
 
 
@@ -154,76 +84,6 @@ namespace azure.ai.projects.aio
                 stream: bool = False, 
                 **kwargs: Any
             ) -> Awaitable[AsyncHttpResponse]: ...
-
-
-    class azure.ai.projects.aio.AsyncOpenEnvClient: implements AsyncContextManager 
-        property environment_id: Optional[str]    # Read-only
-        property instances: List[AsyncOpenEnvInstance]    # Read-only
-        property num_instances: int    # Read-only
-
-        def __init__(
-                self, 
-                *, 
-                create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
-                env_vars: Optional[Mapping[str, str]] = ..., 
-                environments: _RLEnvironmentsOperationsGenerated, 
-                name: str, 
-                num_instances: int = 1, 
-                poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
-                sandboxes: RLESandboxesOperations, 
-                version: Optional[str] = ...
-            ) -> None: ...
-
-        async def close(self) -> None: ...
-
-        def get_instance(self) -> AsyncOpenEnvInstance: ...
-
-        async def reserve(self) -> None: ...
-
-
-    class azure.ai.projects.aio.AsyncOpenEnvInstance: implements AsyncContextManager 
-        property dataplane_uri: Optional[str]    # Read-only
-        property environment_id: str    # Read-only
-        property id: str    # Read-only
-        property sandbox: RLESandbox    # Read-only
-
-        def __init__(
-                self, 
-                environment_id: str, 
-                *, 
-                owner: Optional[AsyncOpenEnvClient] = ..., 
-                sandbox: RLESandbox, 
-                sandboxes: RLESandboxesOperations
-            ) -> None: ...
-
-        async def checkin(self) -> None: ...
-
-        @distributed_trace_async
-        async def health(self) -> Dict[str, Any]: ...
-
-        @distributed_trace_async
-        async def metadata(self) -> Dict[str, Any]: ...
-
-        @distributed_trace_async
-        async def reset(
-                self, 
-                seed: Optional[int] = None, 
-                episode_id: Optional[str] = None, 
-                **kwargs: Any
-            ) -> RLEStepResult: ...
-
-        @distributed_trace_async
-        async def schema(self) -> Dict[str, Any]: ...
-
-        @distributed_trace_async
-        async def state(self) -> RLEnvironmentState: ...
-
-        @distributed_trace_async
-        async def step(
-                self, 
-                action: Any = None, 
-                **action_kwargs: Any
-            ) -> RLEStepResult: ...
 
 
 namespace azure.ai.projects.aio.operations
@@ -569,8 +429,6 @@ namespace azure.ai.projects.aio.operations
         async def close(self) -> None: ...
 
         def get_instance(self) -> AsyncOpenEnvInstance: ...
-
-        async def reserve(self) -> None: ...
 
 
     class azure.ai.projects.aio.operations.AsyncOpenEnvInstance: implements AsyncContextManager 
@@ -2410,8 +2268,7 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
-        @distributed_trace_async
-        async def get_openenv_client(
+        def get_openenv_client(
                 self, 
                 *, 
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
@@ -12288,8 +12145,6 @@ namespace azure.ai.projects.operations
         def close(self) -> None: ...
 
         def get_instance(self) -> OpenEnvInstance: ...
-
-        def reserve(self) -> None: ...
 
 
     class azure.ai.projects.operations.OpenEnvInstance: implements ContextManager 

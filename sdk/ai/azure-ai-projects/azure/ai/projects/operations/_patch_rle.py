@@ -399,7 +399,8 @@ class OpenEnvClient:
         return list(self._pool)
 
     def __enter__(self) -> "OpenEnvClient":
-        self.reserve()
+        self._resolve_environment()
+        self._reserve()
         return self
 
     def __exit__(self, *exc: Any) -> None:
@@ -408,8 +409,8 @@ class OpenEnvClient:
     def _resolve_environment(self) -> None:
         """Resolve ``name``/``version`` to a hosted environment id and build the lease request.
 
-        Called eagerly by :meth:`RLEOperations.get_openenv_client` so a missing environment surfaces
-        at the call site. Idempotent: a second call is a no-op once the environment is resolved.
+        Invoked on context entry (``__enter__``) before reservation, so a missing environment
+        surfaces when the client is entered. Idempotent: a second call is a no-op once resolved.
         """
         if self._environment_id is not None:
             return
@@ -428,7 +429,7 @@ class OpenEnvClient:
             env_vars=dict(self._env_vars) if self._env_vars else None,
         )
 
-    def reserve(self) -> None:
+    def _reserve(self) -> None:
         """Lease ``num_instances`` running instances in advance.
 
         This is idempotent: reserving an already-reserved client does nothing. The environment is
@@ -473,6 +474,11 @@ class OpenEnvClient:
         the pool so it can be reused. In v1 the pool is bounded by ``num_instances`` and this
         method fails when every reserved instance is already checked out -- it does not queue.
 
+        In v1 this is a plain accessor that checks out an instance already leased into an in-memory
+        pool on context entry, so it performs no network I/O. If a future revision leases on demand
+        from the service, that I/O will move into the instance's context entry (``__enter__``), not
+        this accessor -- so this signature is expected to stay stable across that change.
+
         :return: A reserved instance ready to run episodes.
         :rtype: ~azure.ai.projects.operations.OpenEnvInstance
         """
@@ -480,9 +486,7 @@ class OpenEnvClient:
             if self._closed:
                 raise RLEError("OpenEnv client is closed")
             if not self._reserved:
-                raise RLEError(
-                    "reserve quota first: enter the OpenEnvClient context or call reserve() before get_instance()"
-                )
+                raise RLEError("reserve quota first: enter the OpenEnvClient context before get_instance()")
             if not self._available:
                 raise RLEError(
                     f"no instance available within the reserved quota (num_instances={self._num_instances}); "
@@ -539,10 +543,10 @@ class RLEOperations:
     ) -> OpenEnvClient:
         """Create an :class:`OpenEnvClient` over a hosted RLE environment.
 
-        The environment is resolved by ``name`` (and ``version`` when supplied) here, so a missing or
-        invalid environment fails at this call. The returned client is a context manager: entering it
-        reserves its instances up front and fails fast if that quota cannot be satisfied (v1 does not
-        queue).
+        This constructs the client without any network I/O. The returned client is a context manager:
+        entering it resolves the environment by ``name`` (and ``version`` when supplied) -- so a
+        missing or invalid environment fails on entry -- then reserves its instances up front and
+        fails fast if that quota cannot be satisfied (v1 does not queue).
         :meth:`OpenEnvClient.get_instance` then hands out reserved :class:`OpenEnvInstance` objects to
         run episodes on. Control-plane requests flow through this client's pipeline and the Foundry
         project endpoint; runtime calls (reset/step/state/...) target each instance's data-plane URI.
@@ -564,7 +568,7 @@ class RLEOperations:
         """
         if not name:
             raise ValueError("name is required")
-        client = OpenEnvClient(
+        return OpenEnvClient(
             environments=self._environments,
             sandboxes=self._sandboxes,
             name=name,
@@ -573,8 +577,6 @@ class RLEOperations:
             create_timeout_s=create_timeout_s,
             poll_interval_s=poll_interval_s,
         )
-        client._resolve_environment()
-        return client
 
 
 __all__ = [
