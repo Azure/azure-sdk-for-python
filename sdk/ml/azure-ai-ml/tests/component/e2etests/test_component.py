@@ -27,6 +27,7 @@ from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
+from azure.core.serialization import as_attribute_dict
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
@@ -612,9 +613,9 @@ class TestComponent(AzureRecordedTestCase):
         # additional fields added_property in distribution and resources are removed.
         torch_resources = {"instance_count": 2, "properties": {}}
         assert component_entity.distribution.__dict__ == torch_distribution()
-        assert component_entity.resources._to_rest_object().as_dict() == torch_resources
+        assert as_attribute_dict(component_entity.resources._to_rest_object()) == torch_resources
         torch_component_resource = client.components.create_or_update(component_entity)
-        assert torch_component_resource.resources._to_rest_object().as_dict() == torch_resources
+        assert as_attribute_dict(torch_component_resource.resources._to_rest_object()) == torch_resources
         assert torch_component_resource.distribution.__dict__ == torch_distribution(has_strs=True)
 
     def test_tensorflow_component(
@@ -996,7 +997,7 @@ class TestComponent(AzureRecordedTestCase):
         }
         omit_fields = ["name", "creation_context", "id", "code", "environment", "version"]
         rest_component = pydash.omit(
-            command_component._to_rest_object().as_dict()["properties"]["component_spec"],
+            command_component._to_rest_object().as_dict()["properties"]["componentSpec"],
             omit_fields,
         )
 

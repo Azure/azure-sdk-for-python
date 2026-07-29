@@ -1,0 +1,46 @@
+# cspell configuration for this service. Words are case-insensitive and
+# kept sorted alphabetically. The import of the central config is required.
+import:
+  - ../../.vscode/cspell.json
+words:
+  - azconfig
+  - azcore
+  - cafile
+  - chardet
+  - Chocolat
+  - ctxt
+  - ctype
+  - cvar
+  - datav
+  - getpgid
+  - hdrs
+  - inirudebwoy
+  - ints
+  - jiasli
+  - jsonify
+  - Jwcmlud
+  - killpg
+  - mghextreme
+  - myattr
+  - mybytes
+  - myid
+  - mytools
+  - myuseragent
+  - myusergant
+  - myvalue
+  - nocover
+  - odatav
+  - oooooold
+  - Oopsy
+  - Patiño
+  - rdap
+  - redef
+  - reinvesitgate
+  - Rlcw
+  - ryohji
+  - sansio
+  - somethingstuid
+  - undoc
+  - unpicklable
+  - vbarbaresi
+  - wbits

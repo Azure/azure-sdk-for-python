@@ -2,9 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Optional
+from typing import Any, Dict, Optional
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import IntellectualProperty as RestIntellectualProperty
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._assets import IPProtectionLevel
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -36,12 +35,16 @@ class IntellectualProperty(RestTranslatableMixin):
         self.publisher = publisher
         self.protection_level = protection_level
 
-    def _to_rest_object(self) -> RestIntellectualProperty:
-        return RestIntellectualProperty(publisher=self.publisher, protection_level=self.protection_level)
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``IntellectualProperty`` was dropped from the arm_ml_service (2025-12) model; build the
+        # 2023-04 wire body directly as a dict (JSON-direct).
+        return {"publisher": self.publisher, "protectionLevel": self.protection_level}
 
     @classmethod
-    def _from_rest_object(cls, obj: RestIntellectualProperty) -> "IntellectualProperty":
-        return cls(publisher=obj.publisher, protection_level=obj.protection_level)
+    def _from_rest_object(cls, obj: Any) -> "IntellectualProperty":
+        publisher = obj.get("publisher") if hasattr(obj, "get") else obj.publisher
+        protection_level = obj.get("protectionLevel") if hasattr(obj, "get") else obj.protection_level
+        return cls(publisher=publisher, protection_level=protection_level)
 
     def __eq__(self, other: Any) -> bool:
         if not isinstance(other, IntellectualProperty):

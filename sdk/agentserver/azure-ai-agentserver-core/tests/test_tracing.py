@@ -149,6 +149,60 @@ class TestSetupDistroExport:
 
 
 # ------------------------------------------------------------------ #
+# Entra-based Azure Monitor export credential
+# ------------------------------------------------------------------ #
+
+
+class TestEntraAuthMode:
+    """Verify _setup_distro_export wires a managed identity credential for Entra auth."""
+
+    def _run(self, env: dict) -> dict:
+        from azure.ai.agentserver.core import _tracing
+        with mock.patch("microsoft.opentelemetry.use_microsoft_opentelemetry") as mock_use, \
+                mock.patch.dict(os.environ, env, clear=False):
+            _tracing._setup_distro_export(
+                resource=Resource.create({}),
+                span_processors=[],
+                log_record_processors=[],
+                connection_string="InstrumentationKey=00000000-0000-0000-0000-000000000000",
+            )
+            mock_use.assert_called_once()
+            return mock_use.call_args[1]
+
+    def test_entra_auth_mode_passes_managed_identity_credential(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+        assert kwargs["enable_azure_monitor"] is True
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_entra_auth_mode_case_insensitive(self) -> None:
+        sentinel = object()
+        with mock.patch(
+            "azure.identity.ManagedIdentityCredential",
+            return_value=sentinel,
+        ):
+            kwargs = self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "entra"})
+        assert kwargs["azure_monitor_exporter_credential"] is sentinel
+
+    def test_no_credential_when_auth_mode_not_entra(self) -> None:
+        env = {"APPLICATIONINSIGHTS_AUTH_MODE": ""}
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("APPLICATIONINSIGHTS_AUTH_MODE", None)
+            kwargs = self._run(env)
+        assert kwargs["enable_azure_monitor"] is True
+        assert "azure_monitor_exporter_credential" not in kwargs
+
+    def test_managed_identity_credential_has_no_client_id(self) -> None:
+        with mock.patch("azure.identity.ManagedIdentityCredential") as mock_cred:
+            self._run({"APPLICATIONINSIGHTS_AUTH_MODE": "Entra"})
+            mock_cred.assert_called_once_with()
+
+
+# ------------------------------------------------------------------ #
 # Constructor passes / skips connection string
 # ------------------------------------------------------------------ #
 
