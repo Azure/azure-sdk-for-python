@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservicepreparedimgspec import ContainerServiceClient
+from azure.mgmt.containerservicepreparedimgspec import ContainerServicePreparedImgSpecMgmtClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.containerservicepreparedimgspec import ContainerServiceClient
 
 
 def main():
-    client = ContainerServiceClient(
+    client = ContainerServicePreparedImgSpecMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
@@ -35,6 +35,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-02-02-preview/Operations_List.json
+# x-ms-original-file: 2026-05-02-preview/Operations_List.json
 if __name__ == "__main__":
     main()

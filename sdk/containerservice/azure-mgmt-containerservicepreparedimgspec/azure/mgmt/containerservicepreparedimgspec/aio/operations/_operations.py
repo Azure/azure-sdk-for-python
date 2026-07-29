@@ -49,7 +49,7 @@ from ...operations._operations import (
     build_prepared_image_specifications_list_versions_request,
     build_prepared_image_specifications_update_request,
 )
-from .._configuration import ContainerServiceClientConfiguration
+from .._configuration import ContainerServicePreparedImgSpecMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -62,14 +62,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerservicepreparedimgspec.aio.ContainerServiceClient`'s
+        :class:`~azure.mgmt.containerservicepreparedimgspec.aio.ContainerServicePreparedImgSpecMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerServicePreparedImgSpecMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -173,14 +175,16 @@ class PreparedImageSpecificationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerservicepreparedimgspec.aio.ContainerServiceClient`'s
+        :class:`~azure.mgmt.containerservicepreparedimgspec.aio.ContainerServicePreparedImgSpecMgmtClient`'s
         :attr:`prepared_image_specifications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerServicePreparedImgSpecMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

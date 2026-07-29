@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.containerservicepreparedimgspec import ContainerServiceClient
+from azure.mgmt.containerservicepreparedimgspec import ContainerServicePreparedImgSpecMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = ContainerServiceClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = ContainerServicePreparedImgSpecMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

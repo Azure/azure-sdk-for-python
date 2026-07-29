@@ -18,7 +18,7 @@ from azure.mgmt.core.policies import AsyncARMAutoResourceProviderRegistrationPol
 from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
-from ._configuration import ContainerServiceClientConfiguration
+from ._configuration import ContainerServicePreparedImgSpecMgmtClientConfiguration
 from .operations import Operations, PreparedImageSpecificationsOperations
 
 if sys.version_info >= (3, 11):
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class ContainerServiceClient:
+class ContainerServicePreparedImgSpecMgmtClient:  # pylint: disable=name-too-long
     """Azure Kubernetes Prepared Image Specification api client.
 
     :ivar operations: Operations operations
@@ -49,7 +49,7 @@ class ContainerServiceClient:
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-02-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-05-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -72,7 +72,7 @@ class ContainerServiceClient:
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = ContainerServiceClientConfiguration(
+        self._config = ContainerServicePreparedImgSpecMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

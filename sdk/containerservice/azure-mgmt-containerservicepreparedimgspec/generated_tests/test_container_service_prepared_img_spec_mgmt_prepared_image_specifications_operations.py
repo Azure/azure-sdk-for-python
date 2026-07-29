@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.containerservicepreparedimgspec import ContainerServiceClient
+from azure.mgmt.containerservicepreparedimgspec import ContainerServicePreparedImgSpecMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,9 +14,9 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestContainerServicePreparedImageSpecificationsOperations(AzureMgmtRecordedTestCase):
+class TestContainerServicePreparedImgSpecMgmtPreparedImageSpecificationsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(ContainerServiceClient)
+        self.client = self.create_mgmt_client(ContainerServicePreparedImgSpecMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy

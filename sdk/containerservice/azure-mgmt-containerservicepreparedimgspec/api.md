@@ -1,7 +1,7 @@
 ```py
 namespace azure.mgmt.containerservicepreparedimgspec
 
-    class azure.mgmt.containerservicepreparedimgspec.ContainerServiceClient: implements ContextManager 
+    class azure.mgmt.containerservicepreparedimgspec.ContainerServicePreparedImgSpecMgmtClient: implements ContextManager 
         operations: Operations
         prepared_image_specifications: PreparedImageSpecificationsOperations
 
@@ -30,7 +30,7 @@ namespace azure.mgmt.containerservicepreparedimgspec
 
 namespace azure.mgmt.containerservicepreparedimgspec.aio
 
-    class azure.mgmt.containerservicepreparedimgspec.aio.ContainerServiceClient: implements AsyncContextManager 
+    class azure.mgmt.containerservicepreparedimgspec.aio.ContainerServicePreparedImgSpecMgmtClient: implements AsyncContextManager 
         operations: Operations
         prepared_image_specifications: PreparedImageSpecificationsOperations
 

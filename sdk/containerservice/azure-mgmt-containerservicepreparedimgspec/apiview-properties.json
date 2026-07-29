@@ -44,5 +44,5 @@
         "azure.mgmt.containerservicepreparedimgspec.operations.PreparedImageSpecificationsOperations.list_versions": "Microsoft.ContainerService.PreparedImageSpecifications.listVersions",
         "azure.mgmt.containerservicepreparedimgspec.aio.operations.PreparedImageSpecificationsOperations.list_versions": "Microsoft.ContainerService.PreparedImageSpecifications.listVersions"
     },
-    "CrossLanguageVersion": "24de03d08b65"
+    "CrossLanguageVersion": "8ba2628b46d5"
 }

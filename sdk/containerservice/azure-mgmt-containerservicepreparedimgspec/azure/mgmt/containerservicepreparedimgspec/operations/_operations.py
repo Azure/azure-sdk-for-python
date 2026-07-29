@@ -34,7 +34,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
 from .. import models as _models, types as _types
-from .._configuration import ContainerServiceClientConfiguration
+from .._configuration import ContainerServicePreparedImgSpecMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
@@ -51,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -72,7 +72,7 @@ def build_prepared_image_specifications_get_request(  # pylint: disable=name-too
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -109,7 +109,7 @@ def build_prepared_image_specifications_create_or_update_request(  # pylint: dis
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -154,7 +154,7 @@ def build_prepared_image_specifications_update_request(  # pylint: disable=name-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -198,7 +198,7 @@ def build_prepared_image_specifications_delete_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/preparedImageSpecifications/{preparedImageSpecificationName}"
     path_format_arguments = {
@@ -238,7 +238,7 @@ def build_prepared_image_specifications_delete_version_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerService/preparedImageSpecifications/{preparedImageSpecificationName}/versions/{version}"
     path_format_arguments = {
@@ -272,7 +272,7 @@ def build_prepared_image_specifications_list_by_resource_group_request(  # pylin
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -299,7 +299,7 @@ def build_prepared_image_specifications_list_by_subscription_request(  # pylint:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -325,7 +325,7 @@ def build_prepared_image_specifications_get_version_request(  # pylint: disable=
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -356,7 +356,7 @@ def build_prepared_image_specifications_list_versions_request(  # pylint: disabl
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-02-02-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-02-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -386,14 +386,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerservicepreparedimgspec.ContainerServiceClient`'s
+        :class:`~azure.mgmt.containerservicepreparedimgspec.ContainerServicePreparedImgSpecMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerServicePreparedImgSpecMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -497,14 +499,16 @@ class PreparedImageSpecificationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.containerservicepreparedimgspec.ContainerServiceClient`'s
+        :class:`~azure.mgmt.containerservicepreparedimgspec.ContainerServicePreparedImgSpecMgmtClient`'s
         :attr:`prepared_image_specifications` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: ContainerServiceClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: ContainerServicePreparedImgSpecMgmtClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
