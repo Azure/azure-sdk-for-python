@@ -21,11 +21,6 @@
   - Model `SavingsPlanPurchaseRequest` moved instance variable `applied_scope_properties`, `applied_scope_type`, `billing_plan`, `billing_scope_id`, `commitment`, `display_name` and `term` under property `properties` whose type is `SavingsPlanPurchaseRequestProperties`
   - Model `SkuRestriction` renamed its instance variable `values` to `values_property`
   - Model `SplitRequest` moved instance variable `quantities` and `reservation_id` under property `properties` whose type is `SplitProperties`
-  - Deleted or renamed model `CatalogsResult`
-  - Deleted or renamed model `CurrentQuotaLimit`
-  - Deleted or renamed model `QuotaRequestSubmitResponse201`
-  - Deleted or renamed model `RefundResponse`
-  - Deleted or renamed model `ReservationsListResult`
   - Method `QuotaRequestStatusOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ReservationOperations.list_all` changed its parameter `orderby`/`refresh_summary`/`selected_state`/`skiptoken`/`take` from `positional_or_keyword` to `keyword_only`
@@ -36,6 +31,7 @@
   - Deleted model `OperationList`/`QuotaLimits`/`QuotaLimitsResponse`/`QuotaRequestDetailsList`/`ReservationList`/`ReservationOrderList` which actually were not used by SDK users
   - Deleted model `CreateGenericQuotaRequestParameters`/`QuotaRequestOneResourceSubmitResponse`/`QuotaRequestSubmitResponse` which actually were not used by SDK users
   - Deleted enum `DisplayProvisioningState`/`Location`/`UserFriendlyAppliedScopeType`/`UserFriendlyRenewState` which actually were not used by SDK users
+  - Deleted model `CatalogsResult`/`CurrentQuotaLimit`/`QuotaRequestSubmitResponse201`/`RefundResponse`/`ReservationsListResult` which actually were not used by SDK users
 
 ## 3.0.0b1 (2026-06-02)
 
