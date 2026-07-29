@@ -9,8 +9,8 @@
 ### Breaking Changes
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Renamed client `PowerBIDedicated` to `PowerBIDedicatedMgmtClient`
   - Renamed enum `IdentityType` to `CreatedByType`
-  - Deleted or renamed client `PowerBIDedicated`
   - Model `AutoScaleVCore` moved instance variable `capacity_limit`, `capacity_object_id` and `provisioning_state` under property `properties` whose type is `AutoScaleVCoreProperties`
   - Model `AutoScaleVCoreUpdateParameters` moved instance variable `capacity_limit` under property `properties` whose type is `AutoScaleVCoreMutableProperties`
   - Model `DedicatedCapacity` moved instance variable `administration`, `friendly_name`, `mode`, `provisioning_state`, `state` and `tenant_id` under property `properties` whose type is `DedicatedCapacityProperties`
