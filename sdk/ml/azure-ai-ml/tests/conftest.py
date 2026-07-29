@@ -95,6 +95,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         compare_bodies=True,
         excluded_headers="x-ms-meta-name, x-ms-meta-version,x-ms-blob-type,If-None-Match,Content-Type,Content-MD5,Content-Length,Accept",
         ignored_query_parameters="api-version",
+        ignore_query_ordering=True,
     )
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
@@ -248,7 +249,10 @@ def mock_aml_services_2022_01_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2020_09_01_dataplanepreview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2020_09_01_dataplanepreview")
+    # Production code no longer imports v2020_09_01_dataplanepreview (migrated to arm_ml_service). This
+    # fixture is only used as a passed-in service_client mock, so return a plain mock rather than patching the
+    # (now removed) module.
+    return mocker.MagicMock()
 
 
 @pytest.fixture
@@ -263,37 +267,28 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_10_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview")
-
-
-@pytest.fixture
-def mock_aml_services_2022_12_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2022_12_01_preview")
+    # Registry data-plane assets now flow through the shared arm_ml_service hybrid client.
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_02_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_02_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_04_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_04_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_06_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_06_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
 def mock_aml_services_2023_08_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2023_08_01_preview")
+    return mocker.patch("azure.ai.ml._restclient.arm_ml_service")
 
 
 @pytest.fixture
@@ -305,7 +300,10 @@ def mock_aml_services_2023_10_01(mocker: MockFixture) -> Mock:
 
 @pytest.fixture
 def mock_aml_services_2024_01_01_preview(mocker: MockFixture) -> Mock:
-    return mocker.patch("azure.ai.ml._restclient.v2024_01_01_preview")
+    # Production code no longer imports v2024_01_01_preview (operations were migrated to arm_ml_service). This
+    # fixture is only used as a passed-in service_client mock, so return a plain mock rather than patching the
+    # (now removed) module.
+    return mocker.MagicMock()
 
 
 @pytest.fixture

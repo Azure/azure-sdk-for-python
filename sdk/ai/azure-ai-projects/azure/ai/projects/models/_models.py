@@ -61,6 +61,97 @@ if TYPE_CHECKING:
     from .. import _types, models as _models
 
 
+class _CreateAgentVersionFromCodeContent(_Model):
+    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
+    POST /agents/{name}/versions).
+
+    :ivar metadata: JSON metadata including description and hosted definition. Required.
+    :vartype metadata: ~azure.ai.projects.models._models._CreateAgentVersionFromCodeMetadata
+    :ivar code: The code zip file (max 250 MB). Required.
+    :vartype code: ~azure.ai.projects._utils.utils.FileType
+    """
+
+    metadata: "_models._models._CreateAgentVersionFromCodeMetadata" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """JSON metadata including description and hosted definition. Required."""
+    code: FileType = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
+    )
+    """The code zip file (max 250 MB). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        metadata: "_models._models._CreateAgentVersionFromCodeMetadata",
+        code: FileType,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class _CreateAgentVersionFromCodeMetadata(_Model):
+    """JSON metadata for code-based agent operations (create, update, create version). The agent name
+    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
+    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
+    header.
+
+    :ivar description: A human-readable description of the agent.
+    :vartype description: str
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters.
+    :vartype metadata: dict[str, str]
+    :ivar definition: The hosted agent definition including code_configuration (runtime,
+     entry_point), cpu, memory, and protocol_versions. Required.
+    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
+    """
+
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the agent."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters."""
+    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
+     and protocol_versions. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        definition: "_models.HostedAgentDefinition",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Tool(_Model):
     """A tool that can be used to generate a response.
 
@@ -70,17 +161,16 @@ class Tool(_Model):
     CaptureStructuredOutputsTool, CodeInterpreterTool, ComputerTool, ComputerUsePreviewTool,
     CustomToolParam, MicrosoftFabricPreviewTool, FabricIQPreviewTool, FileSearchTool, FunctionTool,
     ImageGenTool, LocalShellToolParam, MCPTool, MemorySearchPreviewTool, NamespaceToolParam,
-    OpenApiTool, ReminderPreviewTool, SharepointPreviewTool, FunctionShellToolParam,
-    ToolSearchToolParam, WebSearchTool, WebSearchPreviewTool, WorkIQPreviewTool
+    OpenApiTool, SharepointPreviewTool, FunctionShellToolParam, ToolSearchToolParam, WebSearchTool,
+    WebSearchPreviewTool, WorkIQPreviewTool
 
     :ivar type: Required. Known values are: "function", "file_search", "computer",
      "computer_use_preview", "web_search", "mcp", "code_interpreter", "image_generation",
      "local_shell", "shell", "custom", "namespace", "tool_search", "web_search_preview",
      "apply_patch", "a2a_preview", "bing_custom_search_preview", "browser_automation_preview",
      "fabric_dataagent_preview", "sharepoint_grounding_preview", "memory_search_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview",
-     "azure_ai_search", "azure_function", "bing_grounding", "capture_structured_outputs", and
-     "openapi".
+     "work_iq_preview", "fabric_iq_preview", "toolbox_search_preview", "azure_ai_search",
+     "azure_function", "bing_grounding", "capture_structured_outputs", and "openapi".
     :vartype type: str or ~azure.ai.projects.models.ToolType
     """
 
@@ -91,7 +181,7 @@ class Tool(_Model):
      \"local_shell\", \"shell\", \"custom\", \"namespace\", \"tool_search\", \"web_search_preview\",
      \"apply_patch\", \"a2a_preview\", \"bing_custom_search_preview\",
      \"browser_automation_preview\", \"fabric_dataagent_preview\", \"sharepoint_grounding_preview\",
-     \"memory_search_preview\", \"reminder_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
+     \"memory_search_preview\", \"work_iq_preview\", \"fabric_iq_preview\",
      \"toolbox_search_preview\", \"azure_ai_search\", \"azure_function\", \"bing_grounding\",
      \"capture_structured_outputs\", and \"openapi\"."""
 
@@ -177,12 +267,13 @@ class ToolboxTool(_Model):
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     A2APreviewToolboxTool, AzureAISearchToolboxTool, BrowserAutomationPreviewToolboxTool,
     CodeInterpreterToolboxTool, FabricIQPreviewToolboxTool, FileSearchToolboxTool, MCPToolboxTool,
-    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolboxSearchPreviewToolboxTool,
-    WebSearchToolboxTool, WorkIQPreviewToolboxTool
+    OpenApiToolboxTool, ReminderPreviewToolboxTool, ToolSearchToolboxTool,
+    ToolboxSearchPreviewToolboxTool, WebSearchToolboxTool, WorkIQPreviewToolboxTool
 
     :ivar type: The type of tool. Required. Known values are: "code_interpreter", "file_search",
      "web_search", "mcp", "azure_ai_search", "openapi", "a2a_preview", "browser_automation_preview",
-     "reminder_preview", "work_iq_preview", "fabric_iq_preview", and "toolbox_search_preview".
+     "reminder_preview", "work_iq_preview", "fabric_iq_preview", "toolbox_search", and
+     "toolbox_search_preview".
     :vartype type: str or ~azure.ai.projects.models.ToolboxToolType
     :ivar name: Optional user-defined name for this tool or configuration.
     :vartype name: str
@@ -199,7 +290,7 @@ class ToolboxTool(_Model):
     """The type of tool. Required. Known values are: \"code_interpreter\", \"file_search\",
      \"web_search\", \"mcp\", \"azure_ai_search\", \"openapi\", \"a2a_preview\",
      \"browser_automation_preview\", \"reminder_preview\", \"work_iq_preview\",
-     \"fabric_iq_preview\", and \"toolbox_search_preview\"."""
+     \"fabric_iq_preview\", \"toolbox_search\", and \"toolbox_search_preview\"."""
     name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Optional user-defined name for this tool or configuration."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1029,12 +1120,20 @@ class AgentIdentity(_Model):
     :ivar client_id: The client ID of the agent instance. Also referred to as the instance ID.
      Required.
     :vartype client_id: str
+    :ivar status: The status of the agent identity. Present for both the agent instance identity
+     and the agent blueprint. Known values are: "active" and "disabled".
+    :vartype status: str or ~azure.ai.projects.models.AgentIdentityStatus
     """
 
     principal_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The principal ID of the agent instance. Required."""
     client_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The client ID of the agent instance. Also referred to as the instance ID. Required."""
+    status: Optional[Union[str, "_models.AgentIdentityStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The status of the agent identity. Present for both the agent instance identity and the agent
+     blueprint. Known values are: \"active\" and \"disabled\"."""
 
     @overload
     def __init__(
@@ -1042,6 +1141,7 @@ class AgentIdentity(_Model):
         *,
         principal_id: str,
         client_id: str,
+        status: Optional[Union[str, "_models.AgentIdentityStatus"]] = None,
     ) -> None: ...
 
     @overload
@@ -4115,97 +4215,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         self.type = IndexType.COSMOS_DB  # type: ignore
 
 
-class CreateAgentVersionFromCodeContent(_Model):
-    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
-    POST /agents/{name}/versions).
-
-    :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeMetadata
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
-    """
-
-    metadata: "_models.CreateAgentVersionFromCodeMetadata" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """The code zip file (max 250 MB). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: "_models.CreateAgentVersionFromCodeMetadata",
-        code: FileType,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateAgentVersionFromCodeMetadata(_Model):
-    """JSON metadata for code-based agent operations (create, update, create version). The agent name
-    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
-    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
-    header.
-
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The hosted agent definition including code_configuration (runtime,
-     entry_point), cpu, memory, and protocol_versions. Required.
-    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable description of the agent."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-     
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
-     and protocol_versions. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        definition: "_models.HostedAgentDefinition",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class CreateAsyncResponse(_Model):
     """CreateAsyncResponse.
 
@@ -4813,11 +4822,11 @@ class DataGenerationJobOptions(_Model):
     """Options for managing data generation jobs.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    SimpleQnADataGenerationJobOptions, ToolUseFineTuningDataGenerationJobOptions,
-    TracesDataGenerationJobOptions
+    SimpleQnADataGenerationJobOptions, TaskGenerationDataGenerationJobOptions,
+    ToolUseFineTuningDataGenerationJobOptions, TracesDataGenerationJobOptions
 
     :ivar type: The data generation job type. Required. Known values are: "simple_qna", "traces",
-     and "tool_use".
+     "tool_use", and "task_generation".
     :vartype type: str or ~azure.ai.projects.models.DataGenerationJobType
     :ivar max_samples: Maximum number of samples to generate. Required.
     :vartype max_samples: int
@@ -4830,8 +4839,8 @@ class DataGenerationJobOptions(_Model):
 
     __mapping__: dict[str, _Model] = {}
     type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
-    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\", and
-     \"tool_use\"."""
+    """The data generation job type. Required. Known values are: \"simple_qna\", \"traces\",
+     \"tool_use\", and \"task_generation\"."""
     max_samples: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum number of samples to generate. Required."""
     train_split: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -6671,6 +6680,12 @@ class EvaluatorGenerationJob(_Model):
     :vartype finished_at: ~datetime.datetime
     :ivar usage: Token consumption summary. Populated when the job reaches a terminal state.
     :vartype usage: ~azure.ai.projects.models.EvaluatorGenerationTokenUsage
+    :ivar input_quality_warnings: Non-fatal input-quality advisories produced by the generation
+     pipeline. Read-only; service-generated; populated only on terminal jobs when advisories fired.
+     Omitted when generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories.
+    :vartype input_quality_warnings:
+     list[~azure.ai.projects.models.RubricGenerationInputQualityWarning]
     """
 
     id: str = rest_field(visibility=["read"])
@@ -6693,6 +6708,13 @@ class EvaluatorGenerationJob(_Model):
     """The timestamp when the job finished, represented in Unix time (seconds since January 1, 1970)."""
     usage: Optional["_models.EvaluatorGenerationTokenUsage"] = rest_field(visibility=["read"])
     """Token consumption summary. Populated when the job reaches a terminal state."""
+    input_quality_warnings: Optional[list["_models.RubricGenerationInputQualityWarning"]] = rest_field(
+        visibility=["read"]
+    )
+    """Non-fatal input-quality advisories produced by the generation pipeline. Read-only;
+     service-generated; populated only on terminal jobs when advisories fired. Omitted when
+     generation was clean. Cleared when a subsequent ``PATCH`` to the paired
+     ``EvaluatorVersion.definition`` invalidates the advisories."""
 
     @overload
     def __init__(
@@ -6835,6 +6857,16 @@ class EvaluatorVersion(_Model):
      present only on evaluator versions created via an EvaluatorGenerationJob. Each artifact
      resolves to a versioned Foundry Dataset.
     :vartype generation_artifacts: ~azure.ai.projects.models.EvaluatorGenerationArtifacts
+    :ivar generation_job_id: Read-only provenance link back to the EvaluatorGenerationJob that
+     produced this version. Present only on evaluator versions created via the generation pipeline;
+     absent for manually-created versions and unaffected by subsequent ``PATCH`` calls.
+    :vartype generation_job_id: str
+    :ivar warnings: Categories of warnings surfaced on this generated evaluator version. Present
+     only on versions created via an EvaluatorGenerationJob when the paired job produced non-empty
+     warnings. Absent (treat as no warnings) when the version is not from generation, when the
+     paired job was clean, or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's
+     advisories. Follow ``generation_job_id`` to fetch the detailed warning payloads.
+    :vartype warnings: list[str or ~azure.ai.projects.models.GenerationWarningType]
     :ivar created_by: Creator of the evaluator. Required.
     :vartype created_by: str
     :ivar created_at: Creation date/time of the evaluator. Required.
@@ -6877,6 +6909,16 @@ class EvaluatorVersion(_Model):
     """Provenance artifacts from the generation pipeline. Read-only; present only on evaluator
      versions created via an EvaluatorGenerationJob. Each artifact resolves to a versioned Foundry
      Dataset."""
+    generation_job_id: Optional[str] = rest_field(visibility=["read"])
+    """Read-only provenance link back to the EvaluatorGenerationJob that produced this version.
+     Present only on evaluator versions created via the generation pipeline; absent for
+     manually-created versions and unaffected by subsequent ``PATCH`` calls."""
+    warnings: Optional[list[Union[str, "_models.GenerationWarningType"]]] = rest_field(visibility=["read"])
+    """Categories of warnings surfaced on this generated evaluator version. Present only on versions
+     created via an EvaluatorGenerationJob when the paired job produced non-empty warnings. Absent
+     (treat as no warnings) when the version is not from generation, when the paired job was clean,
+     or when a subsequent ``PATCH`` to ``definition`` cleared the paired job's advisories. Follow
+     ``generation_job_id`` to fetch the detailed warning payloads."""
     created_by: str = rest_field(visibility=["read"])
     """Creator of the evaluator. Required."""
     created_at: datetime.datetime = rest_field(visibility=["read"], format="rfc3339")
@@ -11627,6 +11669,14 @@ class OptimizationOptions(_Model):
      'conversation' for per-conversation multi-turn simulation scoring. Known values are: "turn" and
      "conversation".
     :vartype evaluation_level: str or ~azure.ai.projects.models.EvaluationLevel
+    :ivar max_stalls: Maximum number of consecutive reflective minibatch rejections before stopping
+     early. A 'stall' occurs when the optimizer proposes a prompt change, evaluates it on a small
+     subset, and the score does not improve — so no full validation-set evaluation is triggered. The
+     counter resets whenever a minibatch passes and its full-validation score beats the current
+     best. Only a sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the
+     stop. The service defaults to 5 if a value is not specified by the caller. Must be >= 1 when
+     set.
+    :vartype max_stalls: int
     """
 
     max_candidates: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -11647,6 +11697,13 @@ class OptimizationOptions(_Model):
     """Evaluation granularity. Null/omitted means per-item single-turn. Set to 'conversation' for
      per-conversation multi-turn simulation scoring. Known values are: \"turn\" and
      \"conversation\"."""
+    max_stalls: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Maximum number of consecutive reflective minibatch rejections before stopping early. A 'stall'
+     occurs when the optimizer proposes a prompt change, evaluates it on a small subset, and the
+     score does not improve — so no full validation-set evaluation is triggered. The counter resets
+     whenever a minibatch passes and its full-validation score beats the current best. Only a
+     sustained plateau of ``max_stalls`` consecutive minibatch failures triggers the stop. The
+     service defaults to 5 if a value is not specified by the caller. Must be >= 1 when set."""
 
     @overload
     def __init__(
@@ -11657,6 +11714,7 @@ class OptimizationOptions(_Model):
         eval_model: Optional[str] = None,
         optimization_model: Optional[str] = None,
         evaluation_level: Optional[Union[str, "_models.EvaluationLevel"]] = None,
+        max_stalls: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -12625,47 +12683,6 @@ class RedTeam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ReminderPreviewTool(Tool, discriminator="reminder_preview"):
-    """A built-in tool that schedules the agent to re-invoke itself after a delay. The model passes a
-    single ``minutes`` argument (positive integer) when calling this tool. The service creates a
-    one-shot timer routine that fires after the specified delay and re-invokes the agent on the
-    same conversation thread. No pre-created routine is required.
-
-    :ivar type: The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW.
-    :vartype type: str or ~azure.ai.projects.models.REMINDER_PREVIEW
-    :ivar name: Optional user-defined name for this tool or configuration.
-    :vartype name: str
-    :ivar description: Optional user-defined description for this tool or configuration.
-    :vartype description: str
-    """
-
-    type: Literal[ToolType.REMINDER_PREVIEW] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """The type of the tool. Always ``reminder_preview``. Required. REMINDER_PREVIEW."""
-    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined name for this tool or configuration."""
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Optional user-defined description for this tool or configuration."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-        self.type = ToolType.REMINDER_PREVIEW  # type: ignore
-
-
 class ReminderPreviewToolboxTool(ToolboxTool, discriminator="reminder_preview"):
     """A reminder tool stored in a toolbox.
 
@@ -13061,6 +13078,76 @@ class RubricBasedEvaluatorDefinition(EvaluatorDefinition, discriminator="rubric"
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = EvaluatorDefinitionType.RUBRIC  # type: ignore
+
+
+class RubricGenerationInputQualityWarning(_Model):
+    """A non-fatal advisory produced during rubric evaluator generation when resolved inputs are
+    technically valid but likely too weak to produce a high-quality rubric. Read-only;
+    service-generated. Persisted with the terminal EvaluatorGenerationJob.
+
+    :ivar code: Stable searchable machine-readable warning code. Required. Known values are:
+     "empty_prompt", "short_prompt", "empty_agent_instructions", "short_agent_instructions",
+     "empty_dataset_content", "short_dataset_content", "low_trace_count", and
+     "insufficient_total_input".
+    :vartype code: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningCode
+    :ivar severity: Advisory severity. Initial values: ``warning``. Required. "warning"
+    :vartype severity: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSeverity
+    :ivar message: Human-readable message suitable for direct SDK/CLI/UI display. Must not include
+     raw prompt, instruction, dataset, or trace text. Required.
+    :vartype message: str
+    :ivar source: Which source category the warning applies to. ``aggregate`` is used only for
+     cross-source warnings. Required. Known values are: "prompt", "agent", "dataset", and
+     "aggregate".
+    :vartype source: str or ~azure.ai.projects.models.RubricGenerationInputQualityWarningSource
+    :ivar source_index: Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the
+     warning applies to a specific source. Omitted for aggregate warnings and for warnings not tied
+     to one source.
+    :vartype source_index: int
+    """
+
+    code: Union[str, "_models.RubricGenerationInputQualityWarningCode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Stable searchable machine-readable warning code. Required. Known values are: \"empty_prompt\",
+     \"short_prompt\", \"empty_agent_instructions\", \"short_agent_instructions\",
+     \"empty_dataset_content\", \"short_dataset_content\", \"low_trace_count\", and
+     \"insufficient_total_input\"."""
+    severity: Union[str, "_models.RubricGenerationInputQualityWarningSeverity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Advisory severity. Initial values: ``warning``. Required. \"warning\""""
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable message suitable for direct SDK/CLI/UI display. Must not include raw prompt,
+     instruction, dataset, or trace text. Required."""
+    source: Union[str, "_models.RubricGenerationInputQualityWarningSource"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Which source category the warning applies to. ``aggregate`` is used only for cross-source
+     warnings. Required. Known values are: \"prompt\", \"agent\", \"dataset\", and \"aggregate\"."""
+    source_index: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Zero-based index into ``EvaluatorGenerationJob.inputs.sources`` when the warning applies to a
+     specific source. Omitted for aggregate warnings and for warnings not tied to one source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: Union[str, "_models.RubricGenerationInputQualityWarningCode"],
+        severity: Union[str, "_models.RubricGenerationInputQualityWarningSeverity"],
+        message: str,
+        source: Union[str, "_models.RubricGenerationInputQualityWarningSource"],
+        source_index: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SASCredentials(BaseCredentials, discriminator="SAS"):
@@ -13908,6 +13995,48 @@ class StructuredOutputDefinition(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class TaskGenerationDataGenerationJobOptions(DataGenerationJobOptions, discriminator="task_generation"):
+    """The options for a task generation data generation job. Use with multiturn evaluation scenarios
+    and with prompt, file, or agent sources. Generated dataset rows include fields such as ``id``,
+    ``category``, ``test_case_description``, and ``desired_num_turns``.
+
+    :ivar max_samples: Maximum number of samples to generate. Required.
+    :vartype max_samples: int
+    :ivar train_split: The proportion of the generated data to be used for training when the data
+     is used for fine-tuning. The rest will be used for validation. Value should be between 0 and 1.
+    :vartype train_split: float
+    :ivar model_options: The LLM model options.
+    :vartype model_options: ~azure.ai.projects.models.DataGenerationModelOptions
+    :ivar type: The data generation job type, which is TaskGeneration for this model. Required.
+     Task generation for evaluation scenarios.
+    :vartype type: str or ~azure.ai.projects.models.TASK_GENERATION
+    """
+
+    type: Literal[DataGenerationJobType.TASK_GENERATION] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The data generation job type, which is TaskGeneration for this model. Required. Task generation
+     for evaluation scenarios."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        max_samples: int,
+        train_split: Optional[float] = None,
+        model_options: Optional["_models.DataGenerationModelOptions"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = DataGenerationJobType.TASK_GENERATION  # type: ignore
 
 
 class TaxonomyCategory(_Model):
@@ -14985,6 +15114,45 @@ class ToolProjectConnection(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class ToolSearchToolboxTool(ToolboxTool, discriminator="toolbox_search"):
+    """A toolbox search tool stored in a toolbox.
+
+    :ivar name: Optional user-defined name for this tool or configuration.
+    :vartype name: str
+    :ivar description: Optional user-defined description for this tool or configuration.
+    :vartype description: str
+    :ivar tool_configs: Per-tool configuration map. Keys are tool names or ``*`` (catch-all
+     default). Resolution order: exact tool name match takes priority over ``*``. Unknown tool names
+     are silently ignored at runtime.
+    :vartype tool_configs: dict[str, ~azure.ai.projects.models.ToolConfig]
+    :ivar type: The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH.
+    :vartype type: str or ~azure.ai.projects.models.TOOLBOX_SEARCH
+    """
+
+    type: Literal[ToolboxToolType.TOOLBOX_SEARCH] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The type of the tool. Always ``toolbox_search``. Required. TOOLBOX_SEARCH."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        description: Optional[str] = None,
+        tool_configs: Optional[dict[str, "_models.ToolConfig"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = ToolboxToolType.TOOLBOX_SEARCH  # type: ignore
 
 
 class ToolSearchToolParam(Tool, discriminator="tool_search"):

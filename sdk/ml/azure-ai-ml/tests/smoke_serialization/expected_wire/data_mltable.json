@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "dataType": "mltable",
+    "dataUri": "azureml://datastores/workspaceblobstore/paths/smoke/mltable/",
+    "isAnonymous": false,
+    "isArchived": false,
+    "properties": {},
+    "tags": {}
+  }
+}

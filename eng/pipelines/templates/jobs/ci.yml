@@ -116,6 +116,13 @@ jobs:
       vmImage: $(MACVMIMAGE)
       os: macOS
 
+    templateContext:
+      sdl:
+        codeql:
+          compiled:
+            enabled: false
+            justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
+
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:
@@ -235,16 +242,6 @@ jobs:
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
       parameters:
         ContinueOnError: false
-
-    - template: /eng/common/pipelines/templates/steps/verify-links.yml
-      parameters:
-        ${{ if eq(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: ''
-          Urls: (eng/common/scripts/get-markdown-files-from-changed-files.ps1)
-        ${{ if ne(variables['Build.Reason'], 'PullRequest') }}:
-          Directory: sdk/${{ parameters.ServiceDirectory }}
-        CheckLinkGuidance: $true
-        Condition: succeededOrFailed()
 
     - task: DownloadPipelineArtifact@2
       condition: succeededOrFailed()

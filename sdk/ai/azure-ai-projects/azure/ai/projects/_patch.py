@@ -114,6 +114,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -123,17 +125,19 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
-     Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
-     or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
+     Set this to True to create a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
      Set this to True to use human evaluation rule action (class :class:`~azure.ai.projects.models.HumanEvaluationPreviewRuleAction`).
      Methods on the `.beta` sub-client (class :class:`~azure.ai.projects.operations.BetaOperations`)
      are all in preview, but do not require setting `allow_preview=True` since it's implied by the sub-client name.
      When preview features are enabled, the client libraries sends the HTTP request header `Foundry-Features`
-     with the appropriate value in all relevant calls to the service.
+     with the appropriate value in all relevant calls to the service. Do not use preview features in production code,
+     as they are subject to change or removal without notice.
     :type allow_preview: bool
     :keyword api_version: The API version to use for this operation. Known values are "v1". Default
      value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(

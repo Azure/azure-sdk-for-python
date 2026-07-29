@@ -38,6 +38,27 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _NOT_SET = "(not set)"
 
 
+def _read_task_manager_shutdown_grace() -> float:
+    """Return TaskManager shutdown grace in seconds (env-driven, default 25.0).
+
+    Reads ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS``. Defaults to 25.0 when
+    unset. Allows tests (and operators) to keep shutdown fast when no
+    long-running resilient handlers need to checkpoint — for example the
+    conformance suite runs with a 1s grace so the in-process shutdown
+    marker fires before the handler completes naturally.
+
+    :return: Grace period in seconds (non-negative).
+    :rtype: float
+    """
+    raw = os.environ.get("AGENTSERVER_SHUTDOWN_GRACE_SECONDS")
+    if raw is None:
+        return 25.0
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        return 25.0
+
+
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
@@ -85,9 +106,7 @@ class _PlatformHeaderMiddleware:
         async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
-                headers.append(
-                    (b"x-platform-server", self._get_server_version().encode())
-                )
+                headers.append((b"x-platform-server", self._get_server_version().encode()))
                 message = {**message, "headers": headers}
             await send(message)
 
@@ -161,7 +180,7 @@ class AgentServerHost(Starlette):
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-statements
         self,
         *,
         applicationinsights_connection_string: Optional[str] = None,
@@ -175,14 +194,20 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+        #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
+        # SIGTERM signal handler — before Hypercorn's graceful drain
+        # begins. Used by responses to set ``_shutdown_requested`` early so
+        # foreground handlers' disconnect-poll loop sees the shutdown
+        # signal BEFORE Hypercorn waits for in-flight requests to complete.
+        # Callbacks must be non-blocking and thread-safe (they run in the
+        # signal handler, not on the event loop).
+        self._pre_shutdown_callbacks: list[Callable[[], None]] = []
 
         # Server version segments for the x-platform-server header.
         # Protocol packages call register_server_version() to add their
         # own portion; the middleware joins them at response time.
         self._server_version_segments: list[str] = []
-        self.register_server_version(
-            build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
-        )
+        self.register_server_version(build_server_version("azure-ai-agentserver-core", _CORE_VERSION))
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
@@ -204,15 +229,11 @@ class AgentServerHost(Starlette):
                 logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
-        self._access_log: Optional[logging.Logger] = (
-            logger if access_log is _SENTINEL_ACCESS_LOG else access_log
-        )
+        self._access_log: Optional[logging.Logger] = logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Timeouts ---------------------------------------------------------
-        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
-            graceful_shutdown_timeout
-        )
+        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(graceful_shutdown_timeout)
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
@@ -245,6 +266,27 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
+            # --- Resilient task manager auto-initialization ---
+            task_manager = None
+            try:
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                    TaskManager,
+                    set_task_manager,
+                )
+
+                task_manager = TaskManager(
+                    config=cfg,
+                    shutdown_event=asyncio.Event(),
+                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                )
+                set_task_manager(task_manager)
+                await task_manager.startup()
+                logger.info("TaskManager initialized automatically")
+            except ImportError:
+                pass  # resilient module not available
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize TaskManager", exc_info=True)
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -252,6 +294,14 @@ class AgentServerHost(Starlette):
                 "AgentServerHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
+
+            #  Run on_shutdown FIRST so the responses layer's
+            # ``handle_shutdown`` can set ``_shutdown_requested`` and signal
+            # cancellation BEFORE the TaskManager waits its grace period.
+            # Without this, Row 3 (foreground) handlers can race against
+            # Hypercorn's client-connection close — the disconnect-poll loop
+            # stamps ``CLIENT_CANCELLED`` instead of ``SHUTTING_DOWN`` and
+            # B11 emits a cancelled terminal instead of failed.
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:
@@ -267,6 +317,21 @@ class AgentServerHost(Starlette):
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
+
+            # Shutdown task manager AFTER on_shutdown so resilient handlers
+            # have had time to checkpoint via the responses layer's
+            # ``handle_shutdown``.
+            if task_manager is not None:
+                try:
+                    await task_manager.shutdown()
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        set_task_manager as _clear_manager,
+                    )
+
+                    _clear_manager(None)
+                    logger.info("TaskManager shut down")
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
@@ -294,6 +359,7 @@ class AgentServerHost(Starlette):
         # (e.g. by MAF / agent-framework) are children of the caller's trace.
         # We do NOT create a SERVER span ourselves — we only propagate context.
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+
         self.add_middleware(TraceContextMiddleware)
 
     def add_middleware(
@@ -373,6 +439,31 @@ class AgentServerHost(Starlette):
         self._shutdown_fn = fn
         return fn
 
+    def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
+        """Register a synchronous callback to run on SIGTERM signal receipt.
+
+        Callbacks run from inside the SIGTERM signal handler,
+        BEFORE Hypercorn begins its graceful drain. Use this to
+        set asyncio events that long-running request handlers observe via
+        their cancellation-polling loops, so they can return before
+        Hypercorn waits the full ``graceful_shutdown_timeout`` for the
+        request to complete.
+
+        Callbacks MUST be non-blocking and signal-safe — they execute
+        synchronously on the main thread inside the signal handler. The
+        typical pattern is::
+
+            shutdown_event = asyncio.Event()
+            app.register_pre_shutdown_callback(shutdown_event.set)
+
+        Note: ``asyncio.Event.set()`` is safe to call from a signal
+        handler when the event loop is running on the same thread.
+
+        :param fn: A synchronous, non-blocking callable.
+        :type fn: Callable[[], None]
+        """
+        self._pre_shutdown_callbacks.append(fn)
+
     async def _dispatch_shutdown(self) -> None:
         """Dispatch to the registered shutdown handler, or no-op."""
         if self._shutdown_fn is not None:
@@ -424,23 +515,42 @@ class AgentServerHost(Starlette):
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
 
-        # Register SIGTERM handler to log the signal and initiate
-        # Hypercorn's graceful shutdown.
-        original_sigterm = signal.getsignal(signal.SIGTERM)
+        async def _serve_with_shutdown_trigger() -> None:
+            """Wrap hypercorn.serve with a custom shutdown_trigger.
 
-        def _handle_sigterm(_signum: int, _frame: Any) -> None:
-            logger.info("SIGTERM received, initiating graceful shutdown")
-            # Restore the original handler so the re-raised signal is not
-            # caught by this handler again (avoids infinite recursion).
-            signal.signal(signal.SIGTERM, original_sigterm)
-            os.kill(os.getpid(), signal.SIGTERM)
+             When Hypercorn's default ``shutdown_trigger=None``
+            is used, Hypercorn registers its own SIGTERM/SIGINT handler
+            via ``loop.add_signal_handler`` and our ``signal.signal``
+            handler is overridden. We register our own
+            ``loop.add_signal_handler`` here and pass the resulting wait
+            as ``shutdown_trigger`` so Hypercorn uses our event — and we
+            get to fire pre-shutdown callbacks synchronously on signal
+            receipt, before Hypercorn begins its graceful drain.
+            """
+            loop = asyncio.get_event_loop()
+            signal_event = asyncio.Event()
 
-        signal.signal(signal.SIGTERM, _handle_sigterm)
+            def _on_signal() -> None:
+                # Run pre-shutdown callbacks BEFORE setting the event so
+                # they fire before Hypercorn begins draining connections.
+                for cb in self._pre_shutdown_callbacks:
+                    try:
+                        cb()
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Pre-shutdown callback raised", exc_info=True)
+                signal_event.set()
 
-        try:
-            asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
-        finally:
-            signal.signal(signal.SIGTERM, original_sigterm)
+            for signal_name in ("SIGINT", "SIGTERM", "SIGBREAK"):
+                if hasattr(signal, signal_name):
+                    try:
+                        loop.add_signal_handler(getattr(signal, signal_name), _on_signal)
+                    except NotImplementedError:
+                        # Windows fallback — install via signal.signal directly.
+                        signal.signal(getattr(signal, signal_name), lambda *_: _on_signal())
+
+            await _hypercorn_serve(self, config, shutdown_trigger=signal_event.wait)  # type: ignore[arg-type]
+
+        asyncio.run(_serve_with_shutdown_trigger())
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).

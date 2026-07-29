@@ -185,6 +185,7 @@
         "azure.mgmt.netapp.models.FileAccessLogs": "Microsoft.NetApp.FileAccessLogs",
         "azure.mgmt.netapp.models.AvsDataStore": "Microsoft.NetApp.AvsDataStore",
         "azure.mgmt.netapp.models.EnableSubvolumes": "Microsoft.NetApp.EnableSubvolumes",
+        "azure.mgmt.netapp.models.BreakthroughMode": "Microsoft.NetApp.BreakthroughMode",
         "azure.mgmt.netapp.models.BackupType": "Microsoft.NetApp.BackupType",
         "azure.mgmt.netapp.models.VolumeBackupRelationshipStatus": "Microsoft.NetApp.VolumeBackupRelationshipStatus",
         "azure.mgmt.netapp.models.VolumeRestoreRelationshipStatus": "Microsoft.NetApp.VolumeRestoreRelationshipStatus",
@@ -473,5 +474,5 @@
         "azure.mgmt.netapp.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get",
         "azure.mgmt.netapp.aio.operations.NetAppResourceUsagesOperations.get": "Microsoft.NetApp.NetAppResourceUsagesOperationGroup.get"
     },
-    "CrossLanguageVersion": "f7c8760c77ab"
+    "CrossLanguageVersion": "350e558187f3"
 }

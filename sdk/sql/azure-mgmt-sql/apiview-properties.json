@@ -1702,5 +1702,5 @@
         "azure.mgmt.sql.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation",
         "azure.mgmt.sql.aio.operations.CapabilitiesOperations.list_by_location": "Microsoft.Sql.CapabilitiesOperationGroup.listByLocation"
     },
-    "CrossLanguageVersion": "028db855ae66"
+    "CrossLanguageVersion": "b5fa88beec73"
 }

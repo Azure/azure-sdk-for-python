@@ -5,16 +5,11 @@ namespace azure.ai.agentserver.invocations
         property routes: list[BaseRoute]    # Read-only
         property ws_ping_interval: float    # Read-only
 
-        async def __call__(
-                self, 
-                scope: Scope, 
-                receive: Receive, 
-                send: Send
-            ) -> None: ...
-
         def __init__(
                 self, 
                 *, 
+                asyncapi_spec_json: Optional[dict[str, Any]] = ..., 
+                asyncapi_spec_yaml: Optional[str] = ..., 
                 openapi_spec: Optional[dict[str, Any]] = ..., 
                 **kwargs: Any
             ) -> None: ...
@@ -45,16 +40,13 @@ namespace azure.ai.agentserver.invocations
 
         def cancel_invocation_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
 
+        def get_asyncapi_spec_json(self) -> Optional[dict[str, Any]]: ...
+
+        def get_asyncapi_spec_yaml(self) -> Optional[str]: ...
+
         def get_invocation_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
 
         def get_openapi_spec(self) -> Optional[dict[str, Any]]: ...
-
-        def host(
-                self, 
-                host: str, 
-                app: ASGIApp, 
-                name: str | None = None
-            ) -> None: ...
 
         def invoke_handler(self, fn: Callable[[Request], Awaitable[Response]]) -> Callable[[Request], Awaitable[Response]]: ...
 

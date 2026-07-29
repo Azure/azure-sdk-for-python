@@ -21,7 +21,9 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.job_limits import SweepJobLimits
-from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
+from azure.ai.ml.entities._job.job_resource_configuration import (
+    JobResourceConfiguration,
+)
 from azure.ai.ml.entities._job.pipeline._io import NodeInput
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
 from azure.ai.ml.entities._job.sweep.early_termination_policy import (
@@ -46,12 +48,20 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    UserErrorException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.ai.ml.sweep import SweepJob
+from azure.core.serialization import as_attribute_dict
 
 from ..._restclient.arm_ml_service.models import ComponentVersion
 from ..._schema import PathAwareSchema
-from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
+from ..._schema._utils.data_binding_expression import (
+    support_data_binding_expression_for_fields,
+)
 from ..._utils.utils import camel_to_snake
 from .base_node import BaseNode
 
@@ -138,20 +148,40 @@ class Sweep(ParameterizedSweep, BaseNode):
         sampling_algorithm: Optional[Union[str, SamplingAlgorithm]] = None,
         objective: Optional[Objective] = None,
         early_termination: Optional[
-            Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy, EarlyTerminationPolicy, str]
+            Union[
+                BanditPolicy,
+                MedianStoppingPolicy,
+                TruncationSelectionPolicy,
+                EarlyTerminationPolicy,
+                str,
+            ]
         ] = None,
         search_space: Optional[
             Dict[
                 str,
                 Union[
-                    Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform
+                    Choice,
+                    LogNormal,
+                    LogUniform,
+                    Normal,
+                    QLogNormal,
+                    QLogUniform,
+                    QNormal,
+                    QUniform,
+                    Randint,
+                    Uniform,
                 ],
             ]
         ] = None,
         inputs: Optional[Dict[str, Union[Input, str, bool, int, float]]] = None,
         outputs: Optional[Dict[str, Union[str, Output]]] = None,
         identity: Optional[
-            Union[Dict, ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+            Union[
+                Dict,
+                ManagedIdentityConfiguration,
+                AmlTokenConfiguration,
+                UserIdentityConfiguration,
+            ]
         ] = None,
         queue_settings: Optional[QueueSettings] = None,
         resources: Optional[Union[dict, JobResourceConfiguration]] = None,
@@ -201,7 +231,18 @@ class Sweep(ParameterizedSweep, BaseNode):
     ) -> Optional[
         Dict[
             str,
-            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+            Union[
+                Choice,
+                LogNormal,
+                LogUniform,
+                Normal,
+                QLogNormal,
+                QLogUniform,
+                QNormal,
+                QUniform,
+                Randint,
+                Uniform,
+            ],
         ]
     ]:
         """Dictionary of the hyperparameter search space.
@@ -285,7 +326,10 @@ class Sweep(ParameterizedSweep, BaseNode):
         # the change
         if "early_termination" in rest_obj:
             _early_termination: EarlyTerminationPolicy = self.early_termination  # type: ignore
-            rest_obj["early_termination"] = _early_termination._to_rest_object().as_dict()
+            # ``as_attribute_dict`` yields the snake_case field view (``policy_type``/``delay_evaluation``)
+            # that the round-trip reader and schema expect; the arm_ml_service hybrid ``as_dict`` would emit
+            # camelCase and break the node dict.
+            rest_obj["early_termination"] = as_attribute_dict(_early_termination._to_rest_object())
 
         rest_obj.update(
             {
@@ -306,7 +350,9 @@ class Sweep(ParameterizedSweep, BaseNode):
             obj["early_termination"]["type"] = camel_to_snake(obj["early_termination"].pop("policy_type"))
 
         # TODO: use cls._get_schema() to load from rest object
-        from azure.ai.ml._schema._sweep.parameterized_sweep import ParameterizedSweepSchema
+        from azure.ai.ml._schema._sweep.parameterized_sweep import (
+            ParameterizedSweepSchema,
+        )
 
         schema = ParameterizedSweepSchema(context={BASE_PATH_CONTEXT_KEY: "./"})
         support_data_binding_expression_for_fields(schema, ["type", "component", "trial"])
