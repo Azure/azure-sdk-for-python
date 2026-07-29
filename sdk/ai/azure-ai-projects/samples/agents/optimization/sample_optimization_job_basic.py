@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to create an agent
-    optimization job, and use the SDK's built-in polling mechanism to wait for
+    optimization job and use the SDK's built-in polling mechanism to wait for
     its completion to get the result.
 
     Agent optimization automatically improves an agent's system prompt, model
