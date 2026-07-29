@@ -24,7 +24,7 @@
 /sdk/core/azure-mgmt-core/                                           @msyyc
 
 # Smoke Tests
-/common/smoketest/                                                   @xirzec @chlowell @mccoyp @shurd @southpolesteve
+/common/smoketest/                                                   @xirzec @mccoyp @shurd @southpolesteve
 
 ####################
 # Client Libraries
@@ -35,10 +35,10 @@
 /sdk/agrifood/azure-agrifood-farming/    @bhargav-kansagara
 
 # PRLabel: %AI
-/sdk/ai/    @dargilco @luigiw @needuv @paulshealy1 @singankit @trrwilson
+/sdk/ai/    @dargilco @luigiw @needuv @singankit @trrwilson @howieleung
 
 # ServiceLabel: %AI
-# ServiceOwners: @luigiw @needuv @paulshealy1 @singankit
+# ServiceOwners: @luigiw @needuv @singankit
 
 # ServiceLabel: %AI Agents %Service Attention
 # PRLabel: %AI Agents
@@ -53,7 +53,7 @@
 /sdk/ai/azure-ai-projects/    @dargilco @glharper @howieleung @kingernupur @nick863 @trangevi @trrwilson @bobogogo1990
 
 # PRLabel: %App Configuration
-/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084
+/sdk/appconfiguration/    @avanigupta @jimmyca15 @mrm9084 @yuanqu72
 
 # AzureSdkOwners: @mrm9084
 # ServiceLabel: %App Configuration
@@ -186,7 +186,10 @@
 
 # ServiceLabel: %Container Service
 # PRLabel: %Container Service
-/sdk/containerservice/    @zqingqing1
+/sdk/containerservice/    @elvazhu521 @FumingZhang
+
+# ServiceLabel: %Container Service
+# ServiceOwners: @elvazhu521 @FumingZhang
 
 # ServiceLabel: %Cosmos
 # PRLabel: %Cosmos
@@ -246,7 +249,7 @@
 # AzureSdkOwners: @rajeshka @shankarsama
 # ServiceLabel: %Event Grid
 # PRLabel: %Event Grid
-/sdk/eventgrid/    @rajeshka @shankarsama
+/sdk/eventgrid/    @shankarsama @Nishanth-MS
 
 # PRLabel: %Event Hubs
 /sdk/eventhub/    @axisc @hmlam @j7nw4r @SwayGom @sagar0207 @sjkwak
@@ -265,12 +268,12 @@
 /sdk/healthdataaiservices/    @alexathomases @Azure/healthdatadeidentification
 
 # PRLabel: %Hosted Agents
-/sdk/agentserver/    @ankitbko @vangarp @RaviPidaparthi
+/sdk/agentserver/    @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 # PRLabel: %Hosted Agents
 /sdk/agentserver/azure-ai-agentserver-ghcopilot/    @jodeklotzms @pradeepkintali @tendau @ganeshyb @code-vicar
 
 # ServiceLabel: %Hosted Agents
-# ServiceOwners: @ankitbko @vangarp @RaviPidaparthi
+# ServiceOwners: @Shivakishore14 @ankitbko @vangarp @RaviPidaparthi
 
 # ServiceLabel: %Image Analysis %Service Attention
 # PRLabel: %Image Analysis
@@ -376,11 +379,11 @@
 # ServiceOwners: @axisc @hmlam @sjkwak
 
 # PRLabel: %Search
-/sdk/search/    @Azure/azsdk-search @Azure/azure-sdk-write-search
+/sdk/search/    @Azure/azure-sdk-write-search
 
 # AzureSdkOwners: @hizixin
 # ServiceLabel: %Search
-# ServiceOwners: @kuanlu95 @mattgotteiner
+# ServiceOwners: @efrainretana @lc48t @mattgotteiner
 
 # ServiceLabel: %Service Attention %Voice Live
 # PRLabel: %Voice Live

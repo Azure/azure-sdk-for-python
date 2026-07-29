@@ -128,6 +128,35 @@ class AgentPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use of this is strongly discouraged."""
     VIRTUAL_MACHINES = "VirtualMachines"
     """Create an Agent Pool backed by a Single Instance VM orchestration mode."""
+    FLEX_NODES = "FlexNodes"
+    """Create an Agent Pool for BYO machines running the FlexNode agent."""
+
+
+class AlertConfigurationMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The mode of the alert configuration."""
+
+    DISABLED = "Disabled"
+    """Alerts are disabled."""
+    MANAGED = "Managed"
+    """AKS manages the alerts lifecycle including creation, updates, and deletion. Users receive
+    alerts through the configured notification channel."""
+
+
+class AlertConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current provisioning state of the alert configuration."""
+
+    SUCCEEDED = "Succeeded"
+    """Resource has been created."""
+    FAILED = "Failed"
+    """Resource creation failed."""
+    CANCELED = "Canceled"
+    """Resource creation was canceled."""
+    CREATING = "Creating"
+    """The alert configuration is being created."""
+    UPDATING = "Updating"
+    """The alert configuration is being updated."""
+    DELETING = "Deleting"
+    """The alert configuration is being deleted."""
 
 
 class ArtifactSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,6 +177,11 @@ class BackendPoolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
     NODE_IP = "NodeIP"
     """The type of the managed inbound Load Balancer BackendPool.
+    `https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend
+    <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
+    POD_IP = "PodIP"
+    """The type of the managed inbound Load Balancer BackendPool. Used only when loadBalancerSku is
+    specified as 'service'.
     `https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend
     <https://cloud-provider-azure.sigs.k8s.io/topics/loadbalancer/#configure-load-balancer-backend>`_."""
 
@@ -497,6 +531,11 @@ class LoadBalancerSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     about the differences between load balancer SKUs.
     """
 
+    SERVICE = "service"
+    """Use a service Load Balancer, with native pod-level load balancing. This SKU is specifically
+    built to scale for container-based workloads, with a single instance utilized for each
+    application. For more information, see `https://aka.ms/aks/container-native-slb
+    <https://aka.ms/aks/container-native-slb>`_."""
     STANDARD = "standard"
     """Use a a standard Load Balancer. This is the recommended Load Balancer SKU. For more information
     about on working with the load balancer in the managed cluster, see the `standard Load Balancer

@@ -7,8 +7,8 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Optional, TYPE_CHECKING, cast
-from typing_extensions import Self
 
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import StorageManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AdvancedPlatformMetricsOperations,
     BlobContainersOperations,
     BlobInventoryPoliciesOperations,
     BlobServicesOperations,
@@ -47,6 +48,11 @@ from .operations import (
     TableServicesOperations,
     UsagesOperations,
 )
+
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self  # type: ignore
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -94,6 +100,9 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
     :vartype connectors: azure.mgmt.storage.operations.ConnectorsOperations
     :ivar data_shares: DataSharesOperations operations
     :vartype data_shares: azure.mgmt.storage.operations.DataSharesOperations
+    :ivar advanced_platform_metrics: AdvancedPlatformMetricsOperations operations
+    :vartype advanced_platform_metrics:
+     azure.mgmt.storage.operations.AdvancedPlatformMetricsOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources: azure.mgmt.storage.operations.PrivateLinkResourcesOperations
     :ivar storage_task_assignments_instances_report:
@@ -126,9 +135,9 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2025-08-01".
-     Default value is "2025-08-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-08-01"
+     and "2026-04-01". Default value is "2026-04-01". Note that overriding this default value may
+     result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -214,6 +223,9 @@ class StorageManagementClient:  # pylint: disable=too-many-instance-attributes
         )
         self.connectors = ConnectorsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.data_shares = DataSharesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.advanced_platform_metrics = AdvancedPlatformMetricsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

@@ -33,11 +33,11 @@ def main():
     response = client.gateways.update(
         resource_group_name="myResourceGroup",
         gateway_name="{gatewayName}",
-        parameters={"properties": {"allowedFeatures": ["*"]}},
+        parameters={"properties": {"allowedFeatures": ["*"], "gatewayBypass": ["contoso.com", "internal.corp.net"]}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-09-16-preview/gateway/Gateway_Update.json
+# x-ms-original-file: 2026-06-16-preview/gateway/Gateway_Update.json
 if __name__ == "__main__":
     main()

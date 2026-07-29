@@ -6,15 +6,21 @@
 
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models import JobBase
-from azure.ai.ml._restclient.v2023_04_01_preview.models import Regression as RestRegression
-from azure.ai.ml._restclient.v2023_04_01_preview.models import RegressionPrimaryMetrics, TaskType
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import IdentityConfiguration as RestIdentityConfiguration
+from azure.ai.ml._restclient.arm_ml_service.models import JobBase
+from azure.ai.ml._restclient.arm_ml_service.models import JobOutput as RestJobOutput
+from azure.ai.ml._restclient.arm_ml_service.models import Regression as RestRegression
+from azure.ai.ml._restclient.arm_ml_service.models import RegressionPrimaryMetrics, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake, is_data_binding_expression
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._credentials import _BaseJobIdentityConfiguration
-from azure.ai.ml.entities._job._input_output_helpers import from_rest_data_outputs, to_rest_data_outputs
+from azure.ai.ml.entities._job._input_output_helpers import (
+    from_rest_data_outputs,
+    to_hybrid_rest_model,
+    to_rest_data_outputs,
+)
 from azure.ai.ml.entities._job.automl.tabular import AutoMLTabular, TabularFeaturizationSettings, TabularLimitSettings
 from azure.ai.ml.entities._job.automl.training_settings import RegressionTrainingSettings
 from azure.ai.ml.entities._util import load_from_dict
@@ -99,6 +105,7 @@ class RegressionJob(AutoMLTabular):
 
         properties = RestAutoMLJob(
             display_name=self.display_name,
+            is_archived=False,
             description=self.description,
             experiment_name=self.experiment_name,
             tags=self.tags,
@@ -107,10 +114,12 @@ class RegressionJob(AutoMLTabular):
             environment_id=self.environment_id,
             environment_variables=self.environment_variables,
             services=self.services,
-            outputs=to_rest_data_outputs(self.outputs),
+            outputs=to_hybrid_rest_model(to_rest_data_outputs(self.outputs), RestJobOutput),
             resources=self.resources,
             task_details=regression_task,
-            identity=self.identity._to_job_rest_object() if self.identity else None,
+            identity=to_hybrid_rest_model(
+                self.identity._to_job_rest_object() if self.identity else None, RestIdentityConfiguration
+            ),
             queue_settings=self.queue_settings,
         )
 

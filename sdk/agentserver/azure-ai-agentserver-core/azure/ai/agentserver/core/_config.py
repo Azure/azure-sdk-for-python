@@ -14,6 +14,7 @@ Invalid environment variable values raise ``ValueError`` immediately so
 misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
+from pathlib import Path
 from typing import Optional
 
 from typing_extensions import Self
@@ -217,19 +218,73 @@ def resolve_port(port: Optional[int]) -> int:
 
 
 _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
+_ENV_GRACEFUL_SHUTDOWN_TIMEOUT = "AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS"
 
 
 def resolve_graceful_shutdown_timeout(timeout: Optional[int]) -> int:
-    """Resolve the graceful shutdown timeout from argument or default.
+    """Resolve the graceful shutdown timeout from argument, env var, or default.
+
+    Resolution order:
+    1. Explicit ``timeout`` argument (constructor / programmatic).
+    2. ``AGENTSERVER_GRACEFUL_SHUTDOWN_TIMEOUT_SECONDS`` env var.
+    3. Default of 30 seconds.
+
+    Lower values force Hypercorn to cancel in-flight connections sooner
+    on SIGTERM — useful for tests / operators that want shutdown handlers
+    (in-process markers, resilient task checkpoints) to fire before
+    long-running requests complete naturally.
 
     :param timeout: Explicitly requested timeout or None.
     :type timeout: Optional[int]
-    :return: The resolved timeout in seconds (default 30).
+    :return: The resolved timeout in seconds.
     :rtype: int
     """
     if timeout is not None:
         return max(0, _require_int("graceful_shutdown_timeout", timeout))
+    env_val = _parse_int_env(_ENV_GRACEFUL_SHUTDOWN_TIMEOUT)
+    if env_val is not None:
+        return max(0, env_val)
     return _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT
+
+
+# ======================================================================
+# On-disk state storage paths
+# ======================================================================
+
+_ENV_STATE_ROOT = "AGENTSERVER_STATE_ROOT"
+_DEFAULT_STATE_ROOT_DIRNAME = ".agentserver"
+
+
+def _resolve_state_root() -> Path:
+    """Resolve the root directory for agentserver on-disk state.
+
+    ``AGENTSERVER_STATE_ROOT`` if set, else ``~/.agentserver``. Private —
+    callers resolve a named subdirectory via :func:`resolve_state_subdir`.
+
+    :return: The resolved state-root path.
+    :rtype: Path
+    """
+    env_value = os.environ.get(_ENV_STATE_ROOT)
+    if env_value:
+        return Path(env_value)
+    return Path.home() / _DEFAULT_STATE_ROOT_DIRNAME
+
+
+def resolve_state_subdir(name: str) -> Path:
+    """Resolve an on-disk state subdirectory under the agentserver state root.
+
+    The root is ``AGENTSERVER_STATE_ROOT`` (the single operator knob), or
+    ``~/.agentserver`` when unset. Each subsystem owns and passes its own
+    subdirectory name (e.g. ``"tasks"``); the core layer does not enumerate
+    or reserve names. The path is not created on disk — callers mkdir lazily
+    on first write.
+
+    :param name: The subdirectory name owned by the calling subsystem.
+    :type name: str
+    :return: The resolved subdirectory path under the state root.
+    :rtype: Path
+    """
+    return _resolve_state_root() / name
 
 
 _VALID_LOG_LEVELS = ("DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL")

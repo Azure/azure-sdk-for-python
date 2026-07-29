@@ -32,6 +32,18 @@ stages:
             - ${{ parameters.DependsOn }}
           Artifacts: ${{ parameters.Artifacts }}
           Condition: and(succeeded(), ne(variables['SetDevVersion'], 'true'), ne(variables['Skip.Release'], 'true'), ne(variables['Build.Repository.Name'], 'Azure/azure-sdk-for-python-pr'))
+          # Package detection installs azure-sdk-tools; set up Python and authenticate pip/uv to the
+          # internal feed first so the install does not fall back to (firewalled) public PyPI.
+          PreSteps:
+            - task: UsePythonVersion@0
+              inputs:
+                versionSpec: '3.12'
+            - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+              parameters:
+                DevFeedName: ${{ parameters.DevFeedName }}
+                EnableTwineAuth: false
+                EnablePipAuth: true
+                EnableUvAuth: true
 
     - ${{ each artifact in parameters.Artifacts }}:
       - stage: 'Release_${{artifact.safename}}'
