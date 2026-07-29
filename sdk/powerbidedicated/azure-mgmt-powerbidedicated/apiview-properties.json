@@ -73,5 +73,5 @@
         "azure.mgmt.powerbidedicated.operations.AutoScaleVCoresOperations.list_by_subscription": "Microsoft.PowerBIDedicated.AutoScaleVCores.listBySubscription",
         "azure.mgmt.powerbidedicated.aio.operations.AutoScaleVCoresOperations.list_by_subscription": "Microsoft.PowerBIDedicated.AutoScaleVCores.listBySubscription"
     },
-    "CrossLanguageVersion": "b30688221632"
+    "CrossLanguageVersion": "b31965f7c3b6"
 }

@@ -96,4 +96,41 @@ namespace azure.ai.agentserver.activity
             ) -> URLPath: ...
 
 
+    class azure.ai.agentserver.activity.FoundryStorage(AsyncStorageBase): implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                credential: AsyncTokenCredential | None = ..., 
+                endpoint: FoundryStorageEndpoint | str | None = ..., 
+                is_user_scoped: Callable[[str], bool] = _default_is_user_scoped, 
+                item_ttl_seconds: int | None = ...
+            ) -> None: ...
+
+        def __init_subclass__(
+                cls, 
+                *args, 
+                **kwargs
+            ): ...
+
+        @classmethod
+        def _proto_hook(cls, other): ...
+
+        async def aclose(self) -> None: ...
+
+        async def delete(self, keys: list[str]) -> None: ...
+
+        async def initialize(self) -> None: ...
+
+        async def read(
+                self, 
+                keys: list[str], 
+                *, 
+                target_cls: Type[StoreItemT] | None = ..., 
+                **kwargs
+            ) -> dict[str, StoreItemT]: ...
+
+        async def write(self, changes: dict[str, StoreItemT]) -> None: ...
+
+
 ```

@@ -32,7 +32,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import DataProtectionMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -40,7 +40,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -2353,7 +2352,10 @@ class DataProtectionOperationsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2551,7 +2553,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2597,7 +2602,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForBackupRequest, _types.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2704,7 +2709,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateForBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2717,7 +2722,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateForBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2762,7 +2767,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.ValidateForBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForBackupRequest, _types.ValidateForBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validate whether adhoc backup will be successful or not.
@@ -2772,10 +2777,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateForBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateForBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForBackupRequest or
+         ~azure.mgmt.dataprotection.types.ValidateForBackupRequest or IO[bytes]
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -2914,7 +2919,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupInstanceResource, _types.BackupInstanceResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -3035,7 +3040,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.BackupInstanceResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -3051,7 +3056,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BackupInstanceResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -3103,7 +3108,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.BackupInstanceResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupInstanceResource, _types.BackupInstanceResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -3117,9 +3122,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BackupInstanceResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a BackupInstanceResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BackupInstanceResource or
+         ~azure.mgmt.dataprotection.types.BackupInstanceResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns BackupInstanceResource. The
@@ -3328,7 +3334,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerBackupRequest, _types.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3440,7 +3446,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.TriggerBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3455,7 +3461,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.TriggerBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3504,7 +3510,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.TriggerBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.TriggerBackupRequest, _types.TriggerBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Trigger adhoc backup.
@@ -3516,9 +3522,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         TriggerBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a TriggerBackupRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.TriggerBackupRequest or
+         ~azure.mgmt.dataprotection.types.TriggerBackupRequest or IO[bytes]
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -3583,7 +3590,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateForModifyBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForModifyBackupRequest, _types.ValidateForModifyBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3692,7 +3699,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateForModifyBackupRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3707,7 +3714,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateForModifyBackupRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3752,7 +3759,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateForModifyBackupRequest, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateForModifyBackupRequest, _types.ValidateForModifyBackupRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Validate whether update for backup instance will be successful or not.
@@ -3764,10 +3771,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateForModifyBackupRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForModifyBackupRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateForModifyBackupRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateForModifyBackupRequest or
+         ~azure.mgmt.dataprotection.types.ValidateForModifyBackupRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3825,7 +3832,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRehydrationRequest, _types.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3935,7 +3942,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupRehydrationRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3950,7 +3957,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupRehydrationRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3995,7 +4002,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRehydrationRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRehydrationRequest, _types.AzureBackupRehydrationRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """rehydrate recovery point for restore for a BackupInstance.
@@ -4007,10 +4014,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupRehydrationRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a AzureBackupRehydrationRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRehydrationRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupRehydrationRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4068,7 +4075,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4186,7 +4193,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupRestoreRequest,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -4202,7 +4209,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4256,7 +4263,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupRestoreRequest, JSON, IO[bytes]],
+        parameters: Union[_models.AzureBackupRestoreRequest, _types.AzureBackupRestoreRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4270,10 +4277,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupRestoreRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a AzureBackupRestoreRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupRestoreRequest or
+         ~azure.mgmt.dataprotection.types.AzureBackupRestoreRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
@@ -4593,7 +4600,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.StopProtectionRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, _types.StopProtectionRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4713,7 +4720,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.StopProtectionRequest] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -4729,7 +4736,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.StopProtectionRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -4779,7 +4786,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.StopProtectionRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.StopProtectionRequest, _types.StopProtectionRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4793,9 +4800,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         StopProtectionRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a StopProtectionRequest type or
+         a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.StopProtectionRequest or
+         ~azure.mgmt.dataprotection.types.StopProtectionRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns None
@@ -4857,7 +4865,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.SuspendBackupRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, _types.SuspendBackupRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -4978,7 +4986,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[JSON] = None,
+        parameters: Optional[_types.SuspendBackupRequest] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -4995,7 +5003,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: The content of the action request. Default value is None.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.SuspendBackupRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -5046,7 +5054,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Optional[Union[_models.SuspendBackupRequest, JSON, IO[bytes]]] = None,
+        parameters: Optional[Union[_models.SuspendBackupRequest, _types.SuspendBackupRequest, IO[bytes]]] = None,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -5061,9 +5069,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: The content of the action request. Is one of the following types:
-         SuspendBackupRequest, JSON, IO[bytes] Default value is None.
-        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest or JSON or IO[bytes]
+        :param parameters: The content of the action request. Is either a SuspendBackupRequest type or
+         a IO[bytes] type. Default value is None.
+        :type parameters: ~azure.mgmt.dataprotection.models.SuspendBackupRequest or
+         ~azure.mgmt.dataprotection.types.SuspendBackupRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns None
@@ -5125,7 +5134,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, JSON, IO[bytes]],
+        parameters: Union[_models.SyncBackupInstanceRequest, _types.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5236,7 +5245,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.SyncBackupInstanceRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5252,7 +5261,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.SyncBackupInstanceRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5298,7 +5307,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.SyncBackupInstanceRequest, JSON, IO[bytes]],
+        parameters: Union[_models.SyncBackupInstanceRequest, _types.SyncBackupInstanceRequest, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[None]:
         """Sync backup instance again in case of failure This action will retry last failed operation and
@@ -5311,10 +5320,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         SyncBackupInstanceRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a SyncBackupInstanceRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.SyncBackupInstanceRequest or
+         ~azure.mgmt.dataprotection.types.SyncBackupInstanceRequest or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5372,7 +5381,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5484,7 +5493,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.ValidateRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5499,7 +5508,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5548,7 +5557,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.ValidateRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.ValidateRestoreRequestObject, _types.ValidateRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validates if Restore can be triggered for a DataSource.
@@ -5560,10 +5569,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateRestoreRequestObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ValidateRestoreRequestObject type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ValidateRestoreRequestObject or
+         ~azure.mgmt.dataprotection.types.ValidateRestoreRequestObject or IO[bytes]
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -5627,7 +5636,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, _types.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5734,7 +5743,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5747,7 +5756,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for trigger CRR operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5792,7 +5801,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreRequestObject, _types.CrossRegionRestoreRequestObject, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Triggers Cross Region Restore for BackupInstance.
@@ -5802,10 +5811,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for trigger CRR operation. Is one of the following types:
-         CrossRegionRestoreRequestObject, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or JSON or
-         IO[bytes]
+        :param parameters: Request body for trigger CRR operation. Is either a
+         CrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreRequestObject or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreRequestObject or IO[bytes]
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -5868,7 +5877,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ValidateCrossRegionRestoreRequestObject, _types.ValidateCrossRegionRestoreRequestObject, IO[bytes]
+        ],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5975,7 +5986,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.ValidateCrossRegionRestoreRequestObject,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5988,7 +5999,7 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ValidateCrossRegionRestoreRequestObject
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6033,7 +6044,9 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes]],
+        parameters: Union[
+            _models.ValidateCrossRegionRestoreRequestObject, _types.ValidateCrossRegionRestoreRequestObject, IO[bytes]
+        ],
         **kwargs: Any
     ) -> LROPoller[_models.OperationJobExtendedInfo]:
         """Validates whether Cross Region Restore can be triggered for DataSource.
@@ -6043,10 +6056,10 @@ class BackupInstancesOperations:  # pylint: disable=too-many-public-methods
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ValidateCrossRegionRestoreRequestObject, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a
+         ValidateCrossRegionRestoreRequestObject type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.ValidateCrossRegionRestoreRequestObject or
-         JSON or IO[bytes]
+         ~azure.mgmt.dataprotection.types.ValidateCrossRegionRestoreRequestObject or IO[bytes]
         :return: An instance of LROPoller that returns OperationJobExtendedInfo. The
          OperationJobExtendedInfo is compatible with MutableMapping
         :rtype:
@@ -6358,7 +6371,10 @@ class DeletedBackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6552,7 +6568,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6696,7 +6715,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceGuardResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6709,7 +6728,7 @@ class ResourceGuardsOperations:
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ResourceGuardResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6750,7 +6769,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: Union[_models.ResourceGuardResource, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceGuardResource, _types.ResourceGuardResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardResource:
         """Creates or updates a ResourceGuard resource belonging to a resource group.
@@ -6760,9 +6779,10 @@ class ResourceGuardsOperations:
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ResourceGuardResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a ResourceGuardResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardResource or
+         ~azure.mgmt.dataprotection.types.ResourceGuardResource or IO[bytes]
         :return: ResourceGuardResource. The ResourceGuardResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -6867,7 +6887,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: JSON,
+        parameters: _types.PatchResourceGuardInput,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -6881,7 +6901,7 @@ class ResourceGuardsOperations:
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.PatchResourceGuardInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -6923,7 +6943,7 @@ class ResourceGuardsOperations:
         self,
         resource_group_name: str,
         resource_guards_name: str,
-        parameters: Union[_models.PatchResourceGuardInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceGuardInput, _types.PatchResourceGuardInput, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardResource:
         """Updates a ResourceGuard resource belonging to a resource group. For example, updating tags for
@@ -6934,10 +6954,10 @@ class ResourceGuardsOperations:
         :type resource_group_name: str
         :param resource_guards_name: The name of ResourceGuard. Required.
         :type resource_guards_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         PatchResourceGuardInput, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a PatchResourceGuardInput type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceGuardInput or
+         ~azure.mgmt.dataprotection.types.PatchResourceGuardInput or IO[bytes]
         :return: ResourceGuardResource. The ResourceGuardResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7122,7 +7142,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7212,7 +7235,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7388,7 +7414,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7564,7 +7593,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7740,7 +7772,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -7916,7 +7951,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8092,7 +8130,10 @@ class ResourceGuardsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -8230,7 +8271,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.BackupVaultResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupVaultResource, _types.BackupVaultResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         x_ms_deleted_vault_id: Optional[str] = None,
@@ -8346,7 +8387,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.BackupVaultResource,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         x_ms_deleted_vault_id: Optional[str] = None,
@@ -8361,7 +8402,7 @@ class BackupVaultsOperations:
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BackupVaultResource
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
@@ -8420,7 +8461,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.BackupVaultResource, JSON, IO[bytes]],
+        parameters: Union[_models.BackupVaultResource, _types.BackupVaultResource, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         x_ms_deleted_vault_id: Optional[str] = None,
@@ -8433,9 +8474,10 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BackupVaultResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BackupVaultResource or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a BackupVaultResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BackupVaultResource or
+         ~azure.mgmt.dataprotection.types.BackupVaultResource or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword x_ms_deleted_vault_id: The ID of the deleted backup vault to restore from during
@@ -8504,7 +8546,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.PatchResourceRequestInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceRequestInput, _types.PatchResourceRequestInput, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -8615,7 +8657,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: JSON,
+        parameters: _types.PatchResourceRequestInput,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -8630,7 +8672,7 @@ class BackupVaultsOperations:
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.PatchResourceRequestInput
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8679,7 +8721,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         vault_name: str,
-        parameters: Union[_models.PatchResourceRequestInput, JSON, IO[bytes]],
+        parameters: Union[_models.PatchResourceRequestInput, _types.PatchResourceRequestInput, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -8692,10 +8734,10 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param vault_name: The name of the BackupVaultResource. Required.
         :type vault_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         PatchResourceRequestInput, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a PatchResourceRequestInput type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.PatchResourceRequestInput or
+         ~azure.mgmt.dataprotection.types.PatchResourceRequestInput or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: An instance of LROPoller that returns BackupVaultResource. The BackupVaultResource is
@@ -8920,7 +8962,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9016,7 +9061,10 @@ class BackupVaultsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -9093,7 +9141,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CheckNameAvailabilityRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9108,7 +9156,7 @@ class BackupVaultsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Check name availability request. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CheckNameAvailabilityRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9153,7 +9201,7 @@ class BackupVaultsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CheckNameAvailabilityRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CheckNameAvailabilityRequest, _types.CheckNameAvailabilityRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.CheckNameAvailabilityResult:
         """API to check for resource name availability.
@@ -9165,10 +9213,10 @@ class BackupVaultsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Check name availability request. Is one of the following types:
-         CheckNameAvailabilityRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityRequest or JSON or
-         IO[bytes]
+        :param parameters: Check name availability request. Is either a CheckNameAvailabilityRequest
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityRequest or
+         ~azure.mgmt.dataprotection.types.CheckNameAvailabilityRequest or IO[bytes]
         :return: CheckNameAvailabilityResult. The CheckNameAvailabilityResult is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.CheckNameAvailabilityResult
@@ -9695,7 +9743,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_policy_name: str,
-        parameters: JSON,
+        parameters: _types.BaseBackupPolicyResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -9710,7 +9758,7 @@ class BackupPoliciesOperations:
         :param backup_policy_name: Required.
         :type backup_policy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.BaseBackupPolicyResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -9757,7 +9805,7 @@ class BackupPoliciesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_policy_name: str,
-        parameters: Union[_models.BaseBackupPolicyResource, JSON, IO[bytes]],
+        parameters: Union[_models.BaseBackupPolicyResource, _types.BaseBackupPolicyResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.BaseBackupPolicyResource:
         """Creates or Updates a backup policy belonging to a backup vault.
@@ -9769,10 +9817,10 @@ class BackupPoliciesOperations:
         :type vault_name: str
         :param backup_policy_name: Required.
         :type backup_policy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         BaseBackupPolicyResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a BaseBackupPolicyResource type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource or
+         ~azure.mgmt.dataprotection.types.BaseBackupPolicyResource or IO[bytes]
         :return: BaseBackupPolicyResource. The BaseBackupPolicyResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.BaseBackupPolicyResource
@@ -9966,7 +10014,10 @@ class BackupPoliciesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10063,7 +10114,7 @@ class RestorableTimeRangesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: JSON,
+        parameters: _types.AzureBackupFindRestorableTimeRangesRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -10078,7 +10129,7 @@ class RestorableTimeRangesOperations:
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -10125,7 +10176,11 @@ class RestorableTimeRangesOperations:
         resource_group_name: str,
         vault_name: str,
         backup_instance_name: str,
-        parameters: Union[_models.AzureBackupFindRestorableTimeRangesRequest, JSON, IO[bytes]],
+        parameters: Union[
+            _models.AzureBackupFindRestorableTimeRangesRequest,
+            _types.AzureBackupFindRestorableTimeRangesRequest,
+            IO[bytes],
+        ],
         **kwargs: Any
     ) -> _models.AzureBackupFindRestorableTimeRangesResponseResource:
         """find.
@@ -10137,10 +10192,10 @@ class RestorableTimeRangesOperations:
         :type vault_name: str
         :param backup_instance_name: The name of the BackupInstanceResource. Required.
         :type backup_instance_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         AzureBackupFindRestorableTimeRangesRequest, JSON, IO[bytes] Required.
+        :param parameters: Request body for operation. Is either a
+         AzureBackupFindRestorableTimeRangesRequest type or a IO[bytes] type. Required.
         :type parameters: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesRequest
-         or JSON or IO[bytes]
+         or ~azure.mgmt.dataprotection.types.AzureBackupFindRestorableTimeRangesRequest or IO[bytes]
         :return: AzureBackupFindRestorableTimeRangesResponseResource. The
          AzureBackupFindRestorableTimeRangesResponseResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupFindRestorableTimeRangesResponseResource
@@ -10390,7 +10445,10 @@ class RecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10583,7 +10641,10 @@ class JobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -10777,7 +10838,10 @@ class DeletedBackupInstancesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11075,7 +11139,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.ResourceGuardProxyBaseResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -11090,7 +11154,7 @@ class DppResourceGuardProxyOperations:
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.ResourceGuardProxyBaseResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11137,7 +11201,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.ResourceGuardProxyBaseResource, JSON, IO[bytes]],
+        parameters: Union[_models.ResourceGuardProxyBaseResource, _types.ResourceGuardProxyBaseResource, IO[bytes]],
         **kwargs: Any
     ) -> _models.ResourceGuardProxyBaseResource:
         """Creates or Updates a ResourceGuardProxy.
@@ -11149,10 +11213,10 @@ class DppResourceGuardProxyOperations:
         :type vault_name: str
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         ResourceGuardProxyBaseResource, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a ResourceGuardProxyBaseResource type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource or
+         ~azure.mgmt.dataprotection.types.ResourceGuardProxyBaseResource or IO[bytes]
         :return: ResourceGuardProxyBaseResource. The ResourceGuardProxyBaseResource is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.ResourceGuardProxyBaseResource
@@ -11346,7 +11410,10 @@ class DppResourceGuardProxyOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -11427,7 +11494,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: JSON,
+        parameters: _types.UnlockDeleteRequest,
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         content_type: str = "application/json",
@@ -11443,7 +11510,7 @@ class DppResourceGuardProxyOperations:
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.UnlockDeleteRequest
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -11493,7 +11560,7 @@ class DppResourceGuardProxyOperations:
         resource_group_name: str,
         vault_name: str,
         resource_guard_proxy_name: str,
-        parameters: Union[_models.UnlockDeleteRequest, JSON, IO[bytes]],
+        parameters: Union[_models.UnlockDeleteRequest, _types.UnlockDeleteRequest, IO[bytes]],
         *,
         x_ms_authorization_auxiliary: Optional[str] = None,
         **kwargs: Any
@@ -11507,9 +11574,10 @@ class DppResourceGuardProxyOperations:
         :type vault_name: str
         :param resource_guard_proxy_name: name of the resource guard proxy. Required.
         :type resource_guard_proxy_name: str
-        :param parameters: Request body for operation. Is one of the following types:
-         UnlockDeleteRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.UnlockDeleteRequest or JSON or IO[bytes]
+        :param parameters: Request body for operation. Is either a UnlockDeleteRequest type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.UnlockDeleteRequest or
+         ~azure.mgmt.dataprotection.types.UnlockDeleteRequest or IO[bytes]
         :keyword x_ms_authorization_auxiliary: Default value is None.
         :paramtype x_ms_authorization_auxiliary: str
         :return: UnlockDeleteResponse. The UnlockDeleteResponse is compatible with MutableMapping
@@ -11910,7 +11978,12 @@ class DataProtectionOperations:
 
     @overload
     def check_feature_support(
-        self, location: str, parameters: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        parameters: _types.FeatureValidationRequestBase,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
@@ -11919,7 +11992,7 @@ class DataProtectionOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: The request body. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.FeatureValidationRequestBase
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -11952,7 +12025,10 @@ class DataProtectionOperations:
 
     @distributed_trace
     def check_feature_support(
-        self, location: str, parameters: Union[_models.FeatureValidationRequestBase, JSON, IO[bytes]], **kwargs: Any
+        self,
+        location: str,
+        parameters: Union[_models.FeatureValidationRequestBase, _types.FeatureValidationRequestBase, IO[bytes]],
+        **kwargs: Any
     ) -> _models.FeatureValidationResponseBase:
         """Validates if a feature is supported.
 
@@ -11960,10 +12036,10 @@ class DataProtectionOperations:
 
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: The request body. Is one of the following types:
-         FeatureValidationRequestBase, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or JSON or
-         IO[bytes]
+        :param parameters: The request body. Is either a FeatureValidationRequestBase type or a
+         IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.FeatureValidationRequestBase or
+         ~azure.mgmt.dataprotection.types.FeatureValidationRequestBase or IO[bytes]
         :return: FeatureValidationResponseBase. The FeatureValidationResponseBase is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.FeatureValidationResponseBase
@@ -12093,7 +12169,7 @@ class FetchSecondaryRecoveryPointsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.FetchSecondaryRPsRequestParameters,
         *,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
@@ -12109,7 +12185,7 @@ class FetchSecondaryRecoveryPointsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.FetchSecondaryRPsRequestParameters
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword skip_token: skipToken Filter. Default value is None.
@@ -12163,7 +12239,9 @@ class FetchSecondaryRecoveryPointsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.FetchSecondaryRPsRequestParameters, JSON, IO[bytes]],
+        parameters: Union[
+            _models.FetchSecondaryRPsRequestParameters, _types.FetchSecondaryRPsRequestParameters, IO[bytes]
+        ],
         *,
         filter: Optional[str] = None,
         skip_token: Optional[str] = None,
@@ -12177,10 +12255,10 @@ class FetchSecondaryRecoveryPointsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         FetchSecondaryRPsRequestParameters, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.FetchSecondaryRPsRequestParameters or JSON
-         or IO[bytes]
+        :param parameters: Request body for operation. Is either a FetchSecondaryRPsRequestParameters
+         type or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.FetchSecondaryRPsRequestParameters or
+         ~azure.mgmt.dataprotection.types.FetchSecondaryRPsRequestParameters or IO[bytes]
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword skip_token: skipToken Filter. Default value is None.
@@ -12243,7 +12321,10 @@ class FetchSecondaryRecoveryPointsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12335,7 +12416,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreJobRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -12348,7 +12429,7 @@ class FetchCrossRegionRestoreJobOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -12389,7 +12470,7 @@ class FetchCrossRegionRestoreJobOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreJobRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreJobRequest, _types.CrossRegionRestoreJobRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.AzureBackupJobResource:
         """Fetches the Cross Region Restore Job.
@@ -12399,10 +12480,10 @@ class FetchCrossRegionRestoreJobOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         CrossRegionRestoreJobRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a CrossRegionRestoreJobRequest type or
+         a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobRequest or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobRequest or IO[bytes]
         :return: AzureBackupJobResource. The AzureBackupJobResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.dataprotection.models.AzureBackupJobResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -12527,7 +12608,7 @@ class FetchCrossRegionRestoreJobsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: JSON,
+        parameters: _types.CrossRegionRestoreJobsRequest,
         *,
         filter: Optional[str] = None,
         content_type: str = "application/json",
@@ -12541,7 +12622,7 @@ class FetchCrossRegionRestoreJobsOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param parameters: Request body for operation. Required.
-        :type parameters: JSON
+        :type parameters: ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobsRequest
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -12587,7 +12668,7 @@ class FetchCrossRegionRestoreJobsOperations:
         self,
         resource_group_name: str,
         location: str,
-        parameters: Union[_models.CrossRegionRestoreJobsRequest, JSON, IO[bytes]],
+        parameters: Union[_models.CrossRegionRestoreJobsRequest, _types.CrossRegionRestoreJobsRequest, IO[bytes]],
         *,
         filter: Optional[str] = None,
         **kwargs: Any
@@ -12599,10 +12680,10 @@ class FetchCrossRegionRestoreJobsOperations:
         :type resource_group_name: str
         :param location: The name of the Azure region. Required.
         :type location: str
-        :param parameters: Request body for operation. Is one of the following types:
-         CrossRegionRestoreJobsRequest, JSON, IO[bytes] Required.
-        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobsRequest or JSON or
-         IO[bytes]
+        :param parameters: Request body for operation. Is either a CrossRegionRestoreJobsRequest type
+         or a IO[bytes] type. Required.
+        :type parameters: ~azure.mgmt.dataprotection.models.CrossRegionRestoreJobsRequest or
+         ~azure.mgmt.dataprotection.types.CrossRegionRestoreJobsRequest or IO[bytes]
         :keyword filter: OData filter options. Default value is None.
         :paramtype filter: str
         :return: An iterator like instance of AzureBackupJobResource
@@ -12661,7 +12742,10 @@ class FetchCrossRegionRestoreJobsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -12772,7 +12856,10 @@ class BackupInstancesExtensionRoutingOperations:  # pylint: disable=name-too-lon
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

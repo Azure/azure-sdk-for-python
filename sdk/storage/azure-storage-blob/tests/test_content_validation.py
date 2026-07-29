@@ -20,6 +20,20 @@ from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
+from azure.storage.blob._shared import validation
+
+
+def test_content_md5_is_not_used_for_security(monkeypatch):
+    original_md5 = validation.hashlib.md5
+
+    def fips_md5(*args, **kwargs):
+        if kwargs.get("usedforsecurity") is not False:
+            raise ValueError("MD5 is unavailable for security use")
+        return original_md5(*args, **kwargs)
+
+    monkeypatch.setattr(validation.hashlib, "md5", fips_md5)
+
+    assert validation.calculate_content_md5(b"test") == bytes.fromhex("098f6bcd4621d373cade4e832627b4f6")
 
 
 def assert_content_md5(request):

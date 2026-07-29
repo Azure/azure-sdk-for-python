@@ -1,5 +1,13 @@
 # Release History
 
+## 2.0.0b3 (2026-07-22)
+
+### Features Added
+
+  - Model `VirtualMachine` added property `priority`
+  - Model `VirtualMachine` added property `vm_size`
+  - Model `VirtualMachine` added property `zone`
+
 ## 2.0.0b2 (2026-05-28)
 
 ### Features Added

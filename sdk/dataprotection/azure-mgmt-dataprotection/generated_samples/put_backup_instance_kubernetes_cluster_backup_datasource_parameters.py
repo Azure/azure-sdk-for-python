@@ -58,7 +58,7 @@ def main():
                 "friendlyName": "aksbi",
                 "objectType": "BackupInstance",
                 "policyInfo": {
-                    "policyId": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourcegroups/aksrg/providers/Microsoft.DataProtection/BackupVaults/aksvault/backupPolicies/akspolicy",
+                    "policyId": "/subscriptions/62b829ee-7936-40c9-a1c9-47a93f9f3965/resourceGroups/aksrg/providers/Microsoft.DataProtection/BackupVaults/aksvault/backupPolicies/akspolicy",
                     "policyParameters": {
                         "backupDatasourceParametersList": [
                             {
