@@ -9,7 +9,7 @@ from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from ... import models as response_models
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream

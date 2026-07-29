@@ -198,7 +198,7 @@ def _overlay_failed_terminal(
         "code": "server_error",
         "message": message if message is not None else _server_error_message(shutdown_reason),
     }
-    return ResponseObject(apply_failed_terminal(snapshot, error=error))
+    return cast(ResponseObject, apply_failed_terminal(snapshot, error=error))
 
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,
@@ -290,13 +290,13 @@ def _reconstruct_from_params(
     # pure sync functions of the request, identical to fresh entry
     # (``_endpoint_handler._build_execution_context`` / ``_resolve_conversation_id``).
     # No parallel persisted scalars to drift (Spec 033 §3.1).
-    stream = bool(getattr(request, "stream", False))
-    store = True if getattr(request, "store", None) is None else bool(request.store)
-    background = bool(getattr(request, "background", False))
-    model = getattr(request, "model", None) or ""
+    stream = bool(request.get("stream", False))
+    store = True if request.get("store") is None else bool(request.get("store"))
+    background = bool(request.get("background", False))
+    model = request.get("model") or ""
     previous_response_id = (
-        request.previous_response_id
-        if isinstance(request.previous_response_id, str) and request.previous_response_id
+        request.get("previous_response_id")
+        if isinstance(request.get("previous_response_id"), str) and request.get("previous_response_id")
         else None
     )
     conversation_id = _resolve_conversation_id(request)
@@ -954,10 +954,10 @@ class ResilientResponseOrchestrator:
         # Request-scoped scalars re-derived from the persisted request — pure
         # sync functions identical to fresh entry; no parallel persisted scalars
         # to drift (Spec 033 §3.1).
-        _store = True if getattr(request, "store", None) is None else bool(request.store)
-        _stream = bool(getattr(request, "stream", False))
-        _background = bool(getattr(request, "background", False))
-        _model = getattr(request, "model", None) or ""
+        _store = True if request.get("store") is None else bool(request.get("store"))
+        _stream = bool(request.get("stream", False))
+        _background = bool(request.get("background", False))
+        _model = request.get("model") or ""
         _conversation_id = _resolve_conversation_id(request)
         _agent_reference = resilient.agent_reference
         _agent_session_id = resilient.agent_session_id
@@ -1174,8 +1174,8 @@ class ResilientResponseOrchestrator:
         response_id = resilient_input.response_id
         conversation_id = _resolve_conversation_id(request)
         previous_response_id = (
-            request.previous_response_id
-            if isinstance(request.previous_response_id, str) and request.previous_response_id
+            request.get("previous_response_id")
+            if isinstance(request.get("previous_response_id"), str) and request.get("previous_response_id")
             else None
         )
 
@@ -1354,13 +1354,14 @@ class ResilientResponseOrchestrator:
             # carrying agent_reference + model from the persisted task input so
             # the write still satisfies the store's agent-reference requirement.
             # Output is empty (no progress could be preserved).
-            failed_response = ResponseObject(
+            failed_response = cast(
+                ResponseObject,
                 _build_server_error_payload(
                     response_id,
                     shutdown_reason="crash_recovery",
                     agent_reference=_agent_reference_from_params(params),
                     model=_model_from_params(params),
-                )
+                ),
             )
 
         if existing_snapshot is not None or response_known_absent:

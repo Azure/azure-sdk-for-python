@@ -68,9 +68,9 @@ def test_round_trip_preserves_all_fields() -> None:
     assert restored.client_headers == {"client-trace-id": "t-1"}
     assert restored.query_parameters == {"foo": "bar"}
     # request carries the input — once.
-    assert restored.request.input == "crash during task"
-    assert restored.request.model == "test-model"
-    assert restored.request.store is True
+    assert restored.request["input"] == "crash during task"
+    assert restored.request["model"] == "test-model"
+    assert restored.request["store"] is True
 
 
 def test_input_embedded_once_no_input_items_key() -> None:
@@ -80,7 +80,7 @@ def test_input_embedded_once_no_input_items_key() -> None:
     assert "input_items" not in params
     assert "request" in params
     # the input is recoverable from the request alone
-    assert ResilientResponseInput.from_task_input(params).request.input == "crash during task"
+    assert ResilientResponseInput.from_task_input(params).request["input"] == "crash during task"
 
 
 def test_to_task_input_is_json_serializable_fail_closed() -> None:

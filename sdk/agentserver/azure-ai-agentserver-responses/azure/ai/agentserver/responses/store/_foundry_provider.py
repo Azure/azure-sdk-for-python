@@ -264,7 +264,7 @@ class FoundryStorageProvider:
             # idempotent-create signal during recovery. Other 4xx flavours
             # (400 bad-request) propagate as-is.
             if "already exists" in (exc.message or "").lower() or _is_conflict(exc):
-                response_id = str(getattr(response, "id"))
+                response_id = str(response.get("id"))
                 raise ResponseAlreadyExistsError(response_id) from exc
             raise
 

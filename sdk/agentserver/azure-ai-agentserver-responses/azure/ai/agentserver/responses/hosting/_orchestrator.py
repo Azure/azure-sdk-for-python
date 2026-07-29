@@ -210,8 +210,8 @@ async def _iter_with_winddown(
 
 _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
-        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
+        "response.output_item.added",
+        "response.output_item.done",
     }
 )
 
@@ -219,11 +219,11 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
 # Used by  output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
-        generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
-        generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-        generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-        generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
-        generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
+        "response.in_progress",
+        "response.completed",
+        "response.failed",
+        "response.incomplete",
+        "response.queued",
     }
 )
 
@@ -321,7 +321,7 @@ async def _do_checkpoint_persist(
     if response is None or provider is None:
         return last_snapshot
     try:
-        snapshot_bytes = json.dumps(response.as_dict(), sort_keys=True, default=str).encode("utf-8")
+        snapshot_bytes = json.dumps(dict(response), sort_keys=True, default=str).encode("utf-8")
     except Exception:  # pylint: disable=broad-exception-caught
         logger.debug("checkpoint() snapshot serialisation failed for %s", response_id, exc_info=True)
         return last_snapshot
@@ -413,7 +413,7 @@ def _bg_track_output_count(normalized: "generated_models.ResponseStreamEvent", o
     :rtype: int
     :raises ValueError: On an output-item count mismatch.
     """
-    if normalized.get("type") == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+    if normalized.get("type") == "response.output_item.added":
         output_item_count += 1
     n_type = normalized.get("type", "")
     if n_type in _RESPONSE_SNAPSHOT_TYPES:
@@ -510,7 +510,7 @@ async def _bg_handle_first_event(
         agent_session_id=agent_session_id,
         conversation_id=conversation_id,
     )
-    record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
+    record.set_response_snapshot(cast(generated_models.ResponseObject, _initial_snapshot))
     # Honour the handler's initial status (e.g. "queued").
     if _initial_snapshot.get("status") == "queued":
         record.status = "queued"  # type: ignore[assignment]
@@ -601,7 +601,7 @@ def _bg_resolve_terminal_status(
     if record.status in _TERMINAL_STATES:
         return  # leave the marker's terminal state intact
     if record.status != "cancelled":
-        record.set_response_snapshot(generated_models.ResponseObject(response_payload))
+        record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
         target = resolved_status if isinstance(resolved_status, str) else "completed"
         # If still queued, transition through in_progress first so the state
         # machine stays valid (queued can only reach terminal via in_progress).
@@ -647,7 +647,7 @@ async def _bg_persist_at_created(
     if not (store and provider is not None):
         return False
     _context = context.platform_context if context else None
-    _response_obj = generated_models.ResponseObject(initial_snapshot)
+    _response_obj = cast(generated_models.ResponseObject, initial_snapshot)
     try:
         _history_ids = (
             await provider.get_history_item_ids(
@@ -1170,7 +1170,7 @@ async def _run_background_non_stream(
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         if record.response is not None:
-            record.response.background = record.mode_flags.background
+            record.response["background"] = record.mode_flags.background
         # Persist terminal state update via provider (bg non-stream). §3.5:
         # persistence failure sets persistence_failed + storage_error; §A.4:
         # skip when deferring to recovery so the checkpoint is not clobbered.
@@ -1339,9 +1339,9 @@ class _ResponseOrchestrator:
 
     _TERMINAL_SSE_TYPES: frozenset[str] = frozenset(
         {
-            generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
-            generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-            generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+            "response.completed",
+            "response.failed",
+            "response.incomplete",
         }
     )
 
@@ -1541,7 +1541,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
         )
         cancel_event: dict[str, Any] = {
-            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": _apply_cancelled_terminal(base),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
@@ -1570,7 +1570,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
         )
         failed_event: dict[str, Any] = {
-            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": _apply_failed_terminal(
                 base,
                 error={"code": "server_error", "message": "An internal server error occurred."},
@@ -1603,8 +1603,8 @@ class _ResponseOrchestrator:
             error_message=_STORAGE_ERROR_MESSAGE,
         )
         replacement_event: dict[str, Any] = {
-            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-            "response": storage_error_response.as_dict(),
+            "type": "response.failed",
+            "response": dict(storage_error_response),
         }
 
         # Determine the sequence_number: reuse the original pending terminal's
@@ -1681,7 +1681,7 @@ class _ResponseOrchestrator:
         # Replace state.pending_terminal with the cancel-terminal event so
         # the SSE wire and persistence see the overridden status.
         override_event: dict[str, Any] = {
-            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            "type": "response.failed",
             "response": response_payload,
         }
         state.pending_terminal = await self._normalize_and_append(ctx, state, override_event)
@@ -1751,7 +1751,7 @@ class _ResponseOrchestrator:
 
         if not cancel_race:
             # Update snapshot on record before persistence attempt
-            record.set_response_snapshot(generated_models.ResponseObject(response_payload))
+            record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
             record.transition_to(status)
 
             # Attempt persistence
@@ -1760,7 +1760,7 @@ class _ResponseOrchestrator:
                     # Phase 1 already failed — skip persistence attempt, emit storage error directly.
                     self._apply_storage_error_replacement(ctx, state, record)
                 else:
-                    record.response.background = record.mode_flags.background
+                    record.response["background"] = record.mode_flags.background
                     _context = ctx.context.platform_context if ctx.context else None
                     try:
                         if state.provider_created:
@@ -1781,7 +1781,7 @@ class _ResponseOrchestrator:
                             )
                             _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                             await self._provider.create_response(
-                                generated_models.ResponseObject(response_payload),
+                                cast(generated_models.ResponseObject, response_payload),
                                 _resolved_items,
                                 _history_ids,
                                 context=_context,
@@ -1904,7 +1904,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
+        execution.set_response_snapshot(cast(generated_models.ResponseObject, initial_payload))
         # Bind the per-response stream from the registry — the registry
         # guarantees the same instance for the same id, so any other caller
         # that does ``streams.get_or_create(response_id)`` for this id sees
@@ -1915,7 +1915,7 @@ class _ResponseOrchestrator:
         await self._runtime_state.add(execution)
         if ctx.store:
             _context = ctx.context.platform_context if ctx.context else None
-            _initial_response_obj = generated_models.ResponseObject(initial_payload)
+            _initial_response_obj = cast(generated_models.ResponseObject, initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids(
                     ctx.previous_response_id,
@@ -2385,8 +2385,8 @@ class _ResponseOrchestrator:
             # response.created (which _finalize_stream Path B would regress to
             # status=in_progress).
             failed_event = {
-                "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
-                "response": storage_error_response.as_dict(),
+                "type": "response.failed",
+                "response": dict(storage_error_response),
             }
             failed_normalized = await self._normalize_and_append(ctx, state, failed_event)
             if state.bg_record is not None:
@@ -2449,7 +2449,7 @@ class _ResponseOrchestrator:
                 # appended to the state machine before we emit response.failed.
                 _pre_coerced = _coerce_handler_event(raw)
                 _pre_type = _pre_coerced.get("type", "")
-                if _pre_type == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                if _pre_type == "response.output_item.added":
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
                     _pre_response = _pre_coerced.get("response") or {}
@@ -2783,7 +2783,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
+        execution.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
         # Copy persistence_failed from the ephemeral record if one was used
         if state.bg_record is not None:
             execution.persistence_failed = state.bg_record.persistence_failed
@@ -3519,7 +3519,7 @@ class _ResponseOrchestrator:
             conversation_id=ctx.conversation_id,
             user_id_key=ctx.user_id,
         )
-        record.set_response_snapshot(generated_models.ResponseObject(response_payload))
+        record.set_response_snapshot(cast(generated_models.ResponseObject, response_payload))
 
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
@@ -3531,7 +3531,7 @@ class _ResponseOrchestrator:
             # §3.1: Persistence failure replaces the response body with storage_error.
             try:
                 _context = ctx.context.platform_context if ctx.context else None
-                _response_obj = generated_models.ResponseObject(response_payload)
+                _response_obj = cast(generated_models.ResponseObject, response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
                         ctx.previous_response_id,

@@ -100,7 +100,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :rtype: None
         :raises ResponseAlreadyExistsError: If a non-deleted response with the same ID already exists.
         """
-        response_id = str(getattr(response, "id"))
+        response_id = str(response.get("id"))
         async with self._locked():
             entry = self._entries.get(response_id)
             if entry is not None and not entry.deleted:
@@ -164,7 +164,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
-        response_id = str(getattr(response, "id"))
+        response_id = str(response.get("id"))
         async with self._locked():
             entry = self._entries.get(response_id)
             if entry is None or entry.deleted:
@@ -595,7 +595,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :returns: Ordered list of output item IDs.
         :rtype: list[str]
         """
-        output = getattr(response, "output", None)
+        output = response.get("output")
         if not output:
             return []
         output_ids: list[str] = []
@@ -636,7 +636,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
         :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseModeFlags
         """
         return ResponseModeFlags(
-            stream=bool(getattr(response, "stream", False)),
-            store=bool(getattr(response, "store", True)),
-            background=bool(getattr(response, "background", False)),
+            stream=bool(response.get("stream", False)),
+            store=bool(response.get("store", True)),
+            background=bool(response.get("background", False)),
         )

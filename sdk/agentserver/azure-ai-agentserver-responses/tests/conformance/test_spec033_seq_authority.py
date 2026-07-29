@@ -24,18 +24,21 @@ monotonic-across-recovery guarantee is additionally proven end-to-end by
 """
 from __future__ import annotations
 
+from typing import cast
+
 from azure.ai.agentserver.responses.models import _generated as generated_models
 from azure.ai.agentserver.responses.streaming._helpers import _apply_stream_event_defaults
 
 
 def _delta_event(builder_seq: int) -> generated_models.ResponseStreamEvent:
-    return generated_models.ResponseStreamEvent(
+    return cast(
+        generated_models.ResponseStreamEvent,
         {
             "type": "response.output_text.delta",
             "delta": "hi",
             # A deliberately-wrong builder-stamped seq the streaming path must overwrite.
             "sequence_number": builder_seq,
-        }
+        },
     )
 
 

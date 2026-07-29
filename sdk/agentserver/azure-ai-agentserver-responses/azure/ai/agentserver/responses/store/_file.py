@@ -136,10 +136,7 @@ def _deserialize_item(data: dict[str, Any] | None) -> OutputItem | None:
     """
     if data is None:
         return None
-    try:
-        return OutputItem._deserialize(data, [])  # pylint: disable=protected-access
-    except Exception:  # pylint: disable=broad-exception-caught
-        return data  # type: ignore[return-value]
+    return cast(OutputItem, data)
 
 
 def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
@@ -150,8 +147,9 @@ def _response_to_dict(response: ResponseObject) -> dict[str, Any]:
     :returns: JSON-safe representation.
     :rtype: dict[str, Any]
     """
-    if hasattr(response, "as_dict") and callable(response.as_dict):
-        return response.as_dict()  # type: ignore[no-any-return]
+    response_any = cast(Any, response)
+    if hasattr(response_any, "as_dict") and callable(response_any.as_dict):
+        return response_any.as_dict()  # type: ignore[no-any-return]
     if isinstance(response, dict):
         return dict(response)
     return json.loads(json.dumps(response, default=str))
@@ -165,7 +163,7 @@ def _dict_to_response(data: dict[str, Any]) -> ResponseObject:
     :returns: A reconstructed response object.
     :rtype: ResponseObject
     """
-    return ResponseObject(data)
+    return cast(ResponseObject, data)
 
 
 def _item_id(item: Any) -> str | None:
@@ -282,7 +280,7 @@ class FileResponseStore(ResponseProviderProtocol):
             the same id already exists.
         """
         del context
-        response_id = str(getattr(response, "id"))
+        response_id = str(response.get("id"))
         async with self._lock:
             target = self._response_path(response_id)
             deleted_marker = self._deleted_marker(response_id)
@@ -361,7 +359,7 @@ class FileResponseStore(ResponseProviderProtocol):
         :raises KeyError: If the response does not exist or has been deleted.
         """
         del context
-        response_id = str(getattr(response, "id"))
+        response_id = str(response.get("id"))
         async with self._lock:
             if self._deleted_marker(response_id).exists():
                 raise KeyError(f"response '{response_id}' not found")
@@ -590,9 +588,7 @@ class FileResponseStore(ResponseProviderProtocol):
         :returns: Ordered list of stored output item ids.
         :rtype: list[str]
         """
-        output = getattr(response, "output", None)
-        if not output and isinstance(response, dict):
-            output = response.get("output")
+        output = response.get("output")
         if not output:
             return []
         return self._store_items_unlocked(output)

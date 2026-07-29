@@ -14,11 +14,11 @@ from azure.ai.agentserver.core.platform_headers import (
     MAX_ERROR_DETAIL_LENGTH,
     PLATFORM_ERROR_TAG,
 )
-from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._options import ResponsesServerOptions
-from azure.ai.agentserver.responses.models import ApiErrorResponse, CreateResponse
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
-from azure.ai.agentserver.responses.models._validators import (
+from .._id_generator import IdGenerator
+from .._options import ResponsesServerOptions
+from ..models import ApiErrorResponse, CreateResponse
+from ..models.errors import RequestValidationError
+from ..models._validators import (
     validate_create_response_payload,
 )
 
@@ -33,9 +33,7 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
     :raises RequestValidationError: If payload is not an object or cannot be parsed.
     """
     if not isinstance(payload, Mapping):
-        raise RequestValidationError(
-            "request body must be a JSON object", code="invalid_request"
-        )
+        raise RequestValidationError("request body must be a JSON object", code="invalid_request")
 
     validation_errors = validate_create_response_payload(payload)
     if validation_errors:
@@ -43,11 +41,7 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
             {
                 "code": "invalid_value",
                 "message": e.get("message", ""),
-                "param": (
-                    ("$" + e.get("path", ""))
-                    if e.get("path", "").startswith(".")
-                    else e.get("path", "")
-                ),
+                "param": (("$" + e.get("path", "")) if e.get("path", "").startswith(".") else e.get("path", "")),
             }
             for e in validation_errors
         ]
@@ -383,11 +377,7 @@ def _api_error(
     :return: A JSONResponse containing the error payload.
     :rtype: JSONResponse
     """
-    payload = _json_payload(
-        build_api_error_response(
-            message=message, code=code, param=param, error_type=error_type
-        )
-    )
+    payload = _json_payload(build_api_error_response(message=message, code=code, param=param, error_type=error_type))
     if request_id and isinstance(payload, dict):
         _enrich_error_payload(payload, request_id)
     return JSONResponse(payload, status_code=status_code, headers=headers)
@@ -423,9 +413,7 @@ def error_response(
     """
     envelope = to_api_error_response(error)
     payload = _json_payload(envelope)
-    error_type = (
-        payload.get("error", {}).get("type") if isinstance(payload, dict) else None
-    )
+    error_type = payload.get("error", {}).get("type") if isinstance(payload, dict) else None
     status_code = 500
     if error_type == "invalid_request_error":
         status_code = 400
@@ -444,9 +432,7 @@ def error_response(
         else:
             error_source = ERROR_SOURCE_UPSTREAM
 
-    detail = (
-        format_error_detail(error) if error_source == ERROR_SOURCE_PLATFORM else None
-    )
+    detail = format_error_detail(error) if error_source == ERROR_SOURCE_PLATFORM else None
     merged_headers = _apply_error_source_headers(headers, error_source, detail)
     return JSONResponse(payload, status_code=status_code, headers=merged_headers)
 
@@ -585,9 +571,7 @@ def service_unavailable_response(message: str, headers: dict[str, str], request_
     )
 
 
-def deleted_response(
-    response_id: str, headers: dict[str, str], request_id: str | None = None
-) -> JSONResponse:
+def deleted_response(response_id: str, headers: dict[str, str], request_id: str | None = None) -> JSONResponse:
     """Build a 404 error response indicating the response has been deleted.
 
     Per spec, all endpoints treat deleted responses as not-found (HTTP 404).

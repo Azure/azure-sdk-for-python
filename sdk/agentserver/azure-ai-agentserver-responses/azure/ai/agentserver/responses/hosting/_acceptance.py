@@ -45,14 +45,15 @@ def generate_default_acceptance(
     :returns: A queued ``ResponseObject`` (``status="queued"``).
     :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
-    return ResponseObject(
+    return cast(
+        ResponseObject,
         {
             "id": response_id,
             "object": "response",
             "status": "queued",
             "model": model,
             "output": [],
-        }
+        },
     )
 
 

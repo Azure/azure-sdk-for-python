@@ -61,9 +61,9 @@ class StreamEventRecord:
         :rtype: bool
         """
         return self.event_type in {
-            ResponseStreamEventType.RESPONSE_COMPLETED.value,
-            ResponseStreamEventType.RESPONSE_FAILED.value,
-            ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+            "response.completed",
+            "response.failed",
+            "response.incomplete",
         }
 
     @classmethod
@@ -77,7 +77,7 @@ class StreamEventRecord:
         :returns: A new stream event record.
         :rtype: StreamEventRecord
         """
-        return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
+        return cls(sequence_number=event["sequence_number"], event_type=event["type"], payload=payload)
 
 
 class ResponseExecution:  # pylint: disable=too-many-instance-attributes
@@ -256,27 +256,29 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                 agent_reference=agent_reference,
                 model=model,
             )
-            self.set_response_snapshot(ResponseObject(snapshot))
+            self.set_response_snapshot(cast(ResponseObject, snapshot))
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        elif event_type == "response.output_item.added":
             item = normalized.get("item")
             if item is not None and self.response is not None:
-                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
+                item_any = cast(Any, item)
+                item_dict = item_any.as_dict() if hasattr(item_any, "as_dict") else item
                 if isinstance(item_dict, dict):
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
-                        output.append(deepcopy(item_dict))
-        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
+                        cast(list[Any], output).append(deepcopy(item_dict))
+        elif event_type == "response.output_item.done":
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:
-                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
+                item_any = cast(Any, item)
+                item_dict = item_any.as_dict() if hasattr(item_any, "as_dict") else item
                 if isinstance(item_dict, dict):
                     output = self.response.get("output", [])
                     if isinstance(output, list) and 0 <= output_index < len(output):
-                        output[output_index] = deepcopy(item_dict)
+                        cast(list[Any], output)[output_index] = deepcopy(item_dict)
 
     @property
     def agent_reference(self) -> AgentReference | dict[str, Any]:
@@ -368,8 +370,8 @@ def build_cancelled_response(
         "output": [],
     }
     if created_at is not None:
-        payload["created_at"] = created_at.isoformat()
-    return ResponseObject(payload)
+        payload["created_at"] = int(created_at.timestamp())
+    return cast(ResponseObject, payload)
 
 
 def build_failed_response(
@@ -408,8 +410,8 @@ def build_failed_response(
         "error": {"code": error_code, "message": error_message},
     }
     if created_at is not None:
-        payload["created_at"] = created_at.isoformat()
-    return ResponseObject(payload)
+        payload["created_at"] = int(created_at.timestamp())
+    return cast(ResponseObject, payload)
 
 
 _DEFAULT_FAILED_ERROR_MESSAGE = "An internal server error occurred."
@@ -499,7 +501,7 @@ def resolve_failed_response(
     :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
     if base is not None:
-        return ResponseObject(apply_failed_terminal(base, error={"code": error_code, "message": error_message}))
+        return cast(ResponseObject, apply_failed_terminal(base, error={"code": error_code, "message": error_message}))
     return build_failed_response(
         response_id, agent_reference, model, created_at=created_at, error_message=error_message, error_code=error_code
     )
@@ -533,5 +535,5 @@ def resolve_cancelled_response(
     :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
     """
     if base is not None:
-        return ResponseObject(apply_cancelled_terminal(base))
+        return cast(ResponseObject, apply_cancelled_terminal(base))
     return build_cancelled_response(response_id, agent_reference, model, created_at=created_at)

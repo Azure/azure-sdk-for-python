@@ -54,7 +54,7 @@ class TestDefaultAcceptanceBehavior:
     """Default acceptance creates a queued response envelope."""
 
     def test_default_queued_response_shape(self) -> None:
-        """Default acceptance returns a typed ResponseObject with status=queued."""
+        """Default acceptance returns a dict-native ResponseObject with status=queued."""
         from azure.ai.agentserver.responses.hosting._acceptance import (
             generate_default_acceptance,
         )
@@ -63,7 +63,7 @@ class TestDefaultAcceptanceBehavior:
             response_id="resp_123",
             model="gpt-4o",
         )
-        assert isinstance(response, ResponseObject)
+        assert isinstance(response, dict)
         assert response["id"] == "resp_123"
         assert response["status"] == "queued"
         assert response["object"] == "response"

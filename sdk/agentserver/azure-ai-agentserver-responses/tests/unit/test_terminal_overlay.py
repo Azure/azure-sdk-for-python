@@ -76,7 +76,7 @@ def test_apply_cancelled_terminal_clears_output_and_error_preserves_rest() -> No
 def test_resolve_failed_response_overlays_when_base_present() -> None:
     base = _rich_snapshot()
     resp = resolve_failed_response(base, "caresp_x", {"name": "a", "version": "1"}, "m", error_code="storage_error")
-    payload = resp.as_dict()
+    payload = resp
     assert payload["status"] == "failed"
     assert payload["error"]["code"] == "storage_error"
     assert payload["metadata"] == {"tenant": "contoso", "trace": "abc"}
@@ -85,7 +85,7 @@ def test_resolve_failed_response_overlays_when_base_present() -> None:
 
 def test_resolve_failed_response_synthesizes_when_no_base() -> None:
     resp = resolve_failed_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
-    payload = resp.as_dict()
+    payload = resp
     assert payload["status"] == "failed"
     assert payload["agent_reference"]["name"] == "a"
     assert payload["output"] == []
@@ -95,7 +95,7 @@ def test_resolve_failed_response_synthesizes_when_no_base() -> None:
 def test_resolve_cancelled_response_overlays_when_base_present() -> None:
     base = _rich_snapshot()
     resp = resolve_cancelled_response(base, "caresp_x", {"name": "a", "version": "1"}, "m")
-    payload = resp.as_dict()
+    payload = resp
     assert payload["status"] == "cancelled"
     assert payload["output"] == []
     assert payload["metadata"] == {"tenant": "contoso", "trace": "abc"}
@@ -104,7 +104,7 @@ def test_resolve_cancelled_response_overlays_when_base_present() -> None:
 
 def test_resolve_cancelled_response_synthesizes_when_no_base() -> None:
     resp = resolve_cancelled_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
-    payload = resp.as_dict()
+    payload = resp
     assert payload["status"] == "cancelled"
     assert payload["output"] == []
     assert payload["agent_reference"]["name"] == "a"

@@ -15,8 +15,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence, cast
 
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
-
 from ._resilience_context import _DeveloperMetadataFacade
 from .models._generated import (
     CreateResponse,
@@ -27,6 +25,7 @@ from .models._generated import (
     OutputItem,
     ResponseObject,
 )
+from .models._generated._unions import InputParam
 from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
@@ -403,10 +402,10 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         items = await self.get_input_items(resolve_references=resolve_references)
         texts: list[str] = []
         for item in items:
-            if isinstance(item, ItemMessage):
-                for part in getattr(item, "content", None) or []:
-                    if isinstance(part, MessageContentInputTextContent):
-                        text = getattr(part, "text", None)
+            if isinstance(item, dict) and item.get("type") == "message":
+                for part in item.get("content") or []:
+                    if isinstance(part, dict) and part.get("type") == "input_text":
+                        text = part.get("text")
                         if text is not None:
                             texts.append(text)
         return "\n".join(texts)
@@ -449,8 +448,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         results: list[Item | None] = []
 
         for item in expanded:
-            if isinstance(item, ItemReferenceParam):
-                reference_ids.append(item.id)
+            if isinstance(item, dict) and item.get("type") == "item_reference":
+                item_id = item.get("id")
+                if not isinstance(item_id, str):
+                    continue
+                reference_ids.append(item_id)
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:

@@ -8,7 +8,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any, cast
 
-from azure.ai.agentserver.responses.models import OutputItem
+from ..models import OutputItem
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
 
@@ -220,7 +220,7 @@ class _RuntimeState:
         :rtype: dict[str, Any]
         """
         if execution.response is not None:
-            result: dict[str, Any] = deepcopy(execution.response)
+            result: dict[str, Any] = deepcopy(dict(execution.response))
             result.setdefault("id", execution.response_id)
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")

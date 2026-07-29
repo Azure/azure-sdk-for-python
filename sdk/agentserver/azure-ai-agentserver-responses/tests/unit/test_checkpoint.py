@@ -37,13 +37,13 @@ class _RecordingProvider:
     async def update_response(self, response, *, context=None):  # noqa: ANN001
         if self.fail:
             raise RuntimeError("boom")
-        self.updates.append(response.as_dict())
+        self.updates.append(dict(response))
 
 
 def _event(**md) -> ResponseCheckpointEvent:
-    resp = ResponseObject({"id": "r1", "object": "response", "status": "in_progress", "output": [], "model": "m"})
+    resp: ResponseObject = {"id": "r1", "object": "response", "status": "in_progress", "output": [], "model": "m"}
     for k, v in md.items():
-        resp.internal_metadata[k] = v
+        resp.setdefault("metadata", {}).setdefault("_internal_metadata", {})[k] = v
     return ResponseCheckpointEvent(resp)
 
 
@@ -151,7 +151,7 @@ async def test_t20_idempotent_when_snapshot_unchanged():
 async def test_t21_status_as_is_in_snapshot():
     p = _RecordingProvider()
     ev = _event(cp=1)
-    ev.response.status = "in_progress"
+    ev.response["status"] = "in_progress"
     await _do_checkpoint_persist(
         ev,
         provider=p,
@@ -165,7 +165,7 @@ async def test_t21_status_as_is_in_snapshot():
     )
     assert p.updates[0]["status"] == "in_progress"
     # Reserved internal_metadata is in the persisted snapshot (storage retains it).
-    assert p.updates[0]["metadata"]["_internal_metadata"] == '{"cp":1}'
+    assert p.updates[0]["metadata"]["_internal_metadata"] == {"cp": 1}
 
 
 @pytest.mark.asyncio

@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import AsyncIterator, cast
 
-from azure.ai.agentserver.responses.models import ResponseStreamEvent
+from ..models import ResponseStreamEvent
 
 
 class _ResponseEventSubject:

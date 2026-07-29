@@ -5,11 +5,6 @@
 from __future__ import annotations
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses.models._generated import (
-    OutputItemMessage,
-    ResponseObject,
-    ResponseStreamEvent,
-)
 from azure.ai.agentserver.responses.streaming import (
     OutputItemFunctionCallBuilder,
     OutputItemFunctionCallOutputBuilder,
@@ -32,9 +27,9 @@ def test_text_content_builder__emits_added_delta_done_events() -> None:
     done = text.emit_done()
 
     assert isinstance(text, TextContentBuilder)
-    # Every emitted event must be a ResponseStreamEvent subtype, not a plain dict
+    # Every emitted event is a dict-native ResponseStreamEvent payload.
     for event in (added, delta, text_done, done):
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.content_part.added"
     assert delta["type"] == "response.output_text.delta"
     assert text_done["type"] == "response.output_text.done"
@@ -75,7 +70,7 @@ def test_output_item_message_builder__emits_added_content_done_and_done() -> Non
 
     assert isinstance(message, OutputItemMessageBuilder)
     for event in (added, content_done, done):
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert content_done["type"] == "response.content_part.done"
     assert done["type"] == "response.output_item.done"
@@ -95,7 +90,7 @@ def test_output_item_function_call_builder__emits_arguments_and_done_events() ->
 
     assert isinstance(function_call, OutputItemFunctionCallBuilder)
     for event in (added, delta, args_done, done):
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert delta["type"] == "response.function_call_arguments.delta"
     assert args_done["type"] == "response.function_call_arguments.done"
@@ -115,7 +110,7 @@ def test_output_item_function_call_output_builder__emits_added_and_done_events()
 
     assert isinstance(function_output, OutputItemFunctionCallOutputBuilder)
     for event in (added, done):
-        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert added["item"]["type"] == "function_call_output"
     assert added["item"]["call_id"] == "call_1"
@@ -306,14 +301,11 @@ def test_response_event_stream__tracks_completed_output_items_into_response_outp
     done = message.emit_done()
 
     assert done["type"] == "response.output_item.done"
-    # response.output items must be properly typed model instances
-    assert isinstance(stream.response, ResponseObject)
-    assert len(stream.response.output) == 1
-    output_item_obj = stream.response.output[0]
-    assert isinstance(
-        output_item_obj, OutputItemMessage
-    ), f"Expected OutputItemMessage on response.output, got {type(output_item_obj)}"
-    output_item = output_item_obj.as_dict()
+    # response.output items are dict-native model payloads.
+    assert isinstance(stream.response, dict)
+    assert len(stream.response["output"]) == 1
+    output_item = stream.response["output"][0]
+    assert isinstance(output_item, dict), f"Expected dict-native OutputItemMessage, got {type(output_item)}"
     assert output_item["id"] == message.item_id
     assert output_item["type"] == "message"
     assert output_item["content"][0]["text"] == "hello"

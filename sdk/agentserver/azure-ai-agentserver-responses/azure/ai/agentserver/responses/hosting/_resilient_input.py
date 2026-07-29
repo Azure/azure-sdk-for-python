@@ -244,7 +244,7 @@ class ResilientResponseInput:
         raw_request = params.get(_K_REQUEST)
         if raw_request is None:
             raise ValueError("ResilientResponseInput missing required 'request'")
-        request = CreateResponse(raw_request) if isinstance(raw_request, dict) else raw_request
+        request = cast(CreateResponse, raw_request) if isinstance(raw_request, dict) else raw_request
 
         return cls(
             request=request,

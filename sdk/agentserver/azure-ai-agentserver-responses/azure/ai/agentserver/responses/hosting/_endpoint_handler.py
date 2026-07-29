@@ -38,7 +38,7 @@ from azure.ai.agentserver.core.platform_headers import (
     USER_ID,
 )
 from azure.ai.agentserver.core import read_request_id
-from azure.ai.agentserver.responses.models._generated import (
+from ..models._generated import (
     AgentReference,
     CreateResponse,
     ResponseStreamEventType,
@@ -307,8 +307,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _normalize_lifecycle_events(
             response_id="resp_validation",
             events=[
-                {"type": ResponseStreamEventType.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
-                {"type": ResponseStreamEventType.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
+                {"type": "response.created", "response": {"status": "in_progress"}},
+                {"type": "response.completed", "response": {"status": "completed"}},
             ],
         )
 
@@ -445,15 +445,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     ``context`` field already set.
         :rtype: _ExecutionContext
         """
-        stream = bool(getattr(parsed, "stream", False))
-        store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
-        background = bool(getattr(parsed, "background", False))
-        model = getattr(parsed, "model", None) or ""
+        stream = bool(parsed.get("stream", False))
+        store = True if parsed.get("store") is None else bool(parsed.get("store"))
+        background = bool(parsed.get("background", False))
+        model = parsed.get("model") or ""
         _expanded = get_input_expanded(parsed)
         input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
         previous_response_id: str | None = (
-            parsed.previous_response_id
-            if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
+            parsed.get("previous_response_id")
+            if isinstance(parsed.get("previous_response_id"), str) and parsed.get("previous_response_id")
             else None
         )
         conversation_id = _resolve_conversation_id(parsed)
@@ -1004,11 +1004,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _not_found(response_id, _hdrs)
 
         snapshot = _RuntimeState.to_snapshot(record)
+        output = snapshot.get("output")
         logger.info(
             "Retrieved response %s: status=%s output_count=%d",
             response_id,
             snapshot.get("status"),
-            len(snapshot.get("output", [])),
+            len(output) if isinstance(output, list) else 0,
         )
         return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
 
@@ -1086,12 +1087,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # (e.g., after a process restart).
             try:
                 response_obj = await self._provider.get_response(response_id, context=_context)
-                snapshot = response_obj.as_dict()
+                snapshot = dict(response_obj)
+                output = snapshot.get("output")
                 logger.info(
                     "Retrieved response %s: status=%s output_count=%d",
                     response_id,
                     snapshot.get("status"),
-                    len(snapshot.get("output", [])),
+                    len(output) if isinstance(output, list) else 0,
                 )
                 return JSONResponse(strip_internal_metadata(snapshot), status_code=200, headers=_hdrs)
             except FoundryResourceNotFoundError:
@@ -1118,7 +1120,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # 400 instead of accidentally serving a stream.
             try:
                 _persisted = await self._provider.get_response(response_id, context=_context)
-                _persisted_dict = _persisted.as_dict()
+                _persisted_dict = dict(_persisted)
                 if _persisted_dict.get("background") is not True:
                     return _invalid_mode(
                         "This response cannot be streamed because it was not created with background=true.",
@@ -1153,7 +1155,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # so use a combined message.
             try:
                 persisted = await self._provider.get_response(response_id, context=_context)
-                persisted_dict = persisted.as_dict()
+                persisted_dict = dict(persisted)
                 # B2: SSE replay requires background mode.
                 if persisted_dict.get("background") is not True:
                     return _invalid_mode(
@@ -1574,7 +1576,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         if record.response is not None:
-            record.response.background = record.mode_flags.background
+            record.response["background"] = record.mode_flags.background
         record.transition_to("cancelled")
 
         # Persist cancelled state to the response store (B11: cancellation always wins)
@@ -1616,7 +1618,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         """
         try:
             response_obj = await self._provider.get_response(response_id, context=_context)
-            persisted = response_obj.as_dict()
+            persisted = dict(response_obj)
 
             # B1 + B16/B17: background check comes first. For non-bg responses:
             #   - If still in_progress / queued (in-flight): return 404 (not
@@ -1627,7 +1629,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # response on first event, so the provider returns it mid-flight;
             # the status filter preserves B16 visibility semantics.
             if persisted.get("background") is not True:
-                stored_status = persisted.get("status")
+                stored_status_raw = persisted.get("status")
+                stored_status = stored_status_raw if isinstance(stored_status_raw, str) else None
                 if stored_status in ("in_progress", "queued"):
                     return _not_found(response_id, _hdrs)
                 return _invalid_request(
@@ -1636,7 +1639,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     param="response_id",
                 )
 
-            stored_status = persisted.get("status")
+            stored_status_raw = persisted.get("status")
+            stored_status = stored_status_raw if isinstance(stored_status_raw, str) else None
             terminal_error = _check_cancel_terminal_status(stored_status, _hdrs)
             if terminal_error is not None:
                 if stored_status == "cancelled":
@@ -1726,9 +1730,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return _not_found(response_id, _hdrs)
 
         ordered_items = items if order == "asc" else list(reversed(items))
-        ordered_dicts: list[dict[str, Any]] = [
-            item.as_dict() if hasattr(item, "as_dict") else cast("dict[str, Any]", item) for item in ordered_items
-        ]
+        ordered_dicts: list[dict[str, Any]] = []
+        for item in ordered_items:
+            item_any = cast(Any, item)
+            ordered_dicts.append(item_any.as_dict() if hasattr(item_any, "as_dict") else cast("dict[str, Any]", item))
         scoped_items = _apply_item_cursors(ordered_dicts, after=after, before=before)
 
         page = scoped_items[:limit]

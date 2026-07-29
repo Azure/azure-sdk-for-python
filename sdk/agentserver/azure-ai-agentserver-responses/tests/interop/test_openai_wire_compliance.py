@@ -43,7 +43,7 @@ async def _capture_handler(request: CreateResponse, context: ResponseContext, ca
     _captured["request"] = request
 
     async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        stream = ResponseEventStream(response_id=context.response_id, model=request.get("model"))
         yield stream.emit_created()
         yield stream.emit_in_progress()
 
@@ -268,10 +268,10 @@ def test_c_func_01__function_tool_without_strict_accepted() -> None:
         }
     """
     )
-    assert request.tools is not None
-    assert len(request.tools) == 1
-    assert request.tools[0].get("type") == "function"
-    assert request.tools[0].get("name") == "get_weather"
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("type") == "function"
+    assert request["tools"][0].get("name") == "get_weather"
 
 
 def test_c_func_02__function_tool_without_parameters_accepted() -> None:
@@ -286,9 +286,9 @@ def test_c_func_02__function_tool_without_parameters_accepted() -> None:
         }
     """
     )
-    assert request.tools is not None
-    assert len(request.tools) == 1
-    assert request.tools[0].get("name") == "no_params_tool"
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("name") == "no_params_tool"
 
 
 def test_c_func_01_02__function_tool_minimal_form_accepted() -> None:
@@ -300,9 +300,9 @@ def test_c_func_01_02__function_tool_minimal_form_accepted() -> None:
         }
     """
     )
-    assert request.tools is not None
-    assert len(request.tools) == 1
-    assert request.tools[0].get("name") == "minimal_tool"
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("name") == "minimal_tool"
 
 
 def test_c_func_01__function_tool_with_strict_null_accepted() -> None:
@@ -319,8 +319,8 @@ def test_c_func_01__function_tool_with_strict_null_accepted() -> None:
         }
     """
     )
-    assert request.tools is not None
-    assert len(request.tools) == 1
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
 
 
 def test_c_func_01__function_tool_with_strict_true_accepted() -> None:
@@ -337,8 +337,8 @@ def test_c_func_01__function_tool_with_strict_true_accepted() -> None:
         }
     """
     )
-    assert request.tools is not None
-    assert len(request.tools) == 1
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -538,27 +538,27 @@ def test_input_mixed_types_all_deserialize() -> None:
 
 def test_create_response_model() -> None:
     req = _send_and_capture('{"model": "gpt-4o-mini"}')
-    assert req.model == "gpt-4o-mini"
+    assert req["model"] == "gpt-4o-mini"
 
 
 def test_create_response_instructions() -> None:
     req = _send_and_capture('{"model": "test", "instructions": "Be helpful"}')
-    assert req.instructions == "Be helpful"
+    assert req["instructions"] == "Be helpful"
 
 
 def test_create_response_temperature() -> None:
     req = _send_and_capture('{"model": "test", "temperature": 0.7}')
-    assert abs(req.temperature - 0.7) < 0.001
+    assert abs(req["temperature"] - 0.7) < 0.001
 
 
 def test_create_response_top_p() -> None:
     req = _send_and_capture('{"model": "test", "top_p": 0.9}')
-    assert abs(req.top_p - 0.9) < 0.001
+    assert abs(req["top_p"] - 0.9) < 0.001
 
 
 def test_create_response_max_output_tokens() -> None:
     req = _send_and_capture('{"model": "test", "max_output_tokens": 1024}')
-    assert req.max_output_tokens == 1024
+    assert req["max_output_tokens"] == 1024
 
 
 def test_create_response_previous_response_id() -> None:
@@ -566,33 +566,33 @@ def test_create_response_previous_response_id() -> None:
 
     valid_id = IdGenerator.new_response_id()
     req = _send_and_capture(f'{{"model": "test", "previous_response_id": "{valid_id}"}}')
-    assert req.previous_response_id == valid_id
+    assert req["previous_response_id"] == valid_id
 
 
 def test_create_response_store() -> None:
     req = _send_and_capture('{"model": "test", "store": false}')
-    assert req.store is False
+    assert req["store"] is False
 
 
 def test_create_response_metadata() -> None:
     req = _send_and_capture('{"model": "test", "metadata": {"key": "value"}}')
-    assert req.metadata is not None
-    assert req.metadata.get("key") == "value"
+    assert req["metadata"] is not None
+    assert req["metadata"].get("key") == "value"
 
 
 def test_create_response_parallel_tool_calls() -> None:
     req = _send_and_capture('{"model": "test", "parallel_tool_calls": false}')
-    assert req.parallel_tool_calls is False
+    assert req["parallel_tool_calls"] is False
 
 
 def test_create_response_truncation() -> None:
     req = _send_and_capture('{"model": "test", "truncation": "auto"}')
-    assert req.truncation is not None
+    assert req["truncation"] is not None
 
 
 def test_create_response_reasoning() -> None:
     req = _send_and_capture('{"model": "test", "reasoning": {"effort": "high"}}')
-    assert req.reasoning is not None
+    assert req["reasoning"] is not None
 
 
 def test_create_response_tool_choice_auto() -> None:
@@ -631,9 +631,9 @@ def test_create_response_tools_web_search() -> None:
         {"model": "test", "tools": [{"type": "web_search_preview"}]}
     """
     )
-    assert req.tools is not None
-    assert len(req.tools) == 1
-    assert req.tools[0].get("type") == "web_search_preview"
+    assert req["tools"] is not None
+    assert len(req["tools"]) == 1
+    assert req["tools"][0].get("type") == "web_search_preview"
 
 
 def test_create_response_tools_file_search() -> None:
@@ -642,9 +642,9 @@ def test_create_response_tools_file_search() -> None:
         {"model": "test", "tools": [{"type": "file_search", "vector_store_ids": ["vs_abc"]}]}
     """
     )
-    assert req.tools is not None
-    assert len(req.tools) == 1
-    assert req.tools[0].get("type") == "file_search"
+    assert req["tools"] is not None
+    assert len(req["tools"]) == 1
+    assert req["tools"][0].get("type") == "file_search"
 
 
 def test_create_response_tools_code_interpreter() -> None:
@@ -653,9 +653,9 @@ def test_create_response_tools_code_interpreter() -> None:
         {"model": "test", "tools": [{"type": "code_interpreter"}]}
     """
     )
-    assert req.tools is not None
-    assert len(req.tools) == 1
-    assert req.tools[0].get("type") == "code_interpreter"
+    assert req["tools"] is not None
+    assert len(req["tools"]) == 1
+    assert req["tools"][0].get("type") == "code_interpreter"
 
 
 def test_create_response_stream() -> None:
@@ -757,11 +757,11 @@ def test_full_payload_all_shorthands_and_minimal_forms() -> None:
         }
     """
     )
-    assert req.model == "gpt-4o"
-    assert req.instructions == "Be helpful"
-    assert abs(req.temperature - 0.5) < 0.001
-    assert req.max_output_tokens == 500
-    assert req.store is True
+    assert req["model"] == "gpt-4o"
+    assert req["instructions"] == "Be helpful"
+    assert abs(req["temperature"] - 0.5) < 0.001
+    assert req["max_output_tokens"] == 500
+    assert req["store"] is True
 
     items = get_input_expanded(req)
     assert len(items) == 1
@@ -770,8 +770,8 @@ def test_full_payload_all_shorthands_and_minimal_forms() -> None:
     tc = get_tool_choice_expanded(req)
     assert tc is not None
 
-    assert req.tools is not None
-    assert len(req.tools) == 1
+    assert req["tools"] is not None
+    assert len(req["tools"]) == 1
 
 
 def test_multi_turn_mixed_shorthand_and_full_form() -> None:

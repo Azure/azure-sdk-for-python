@@ -10,7 +10,7 @@ import json
 from contextvars import ContextVar
 from copy import deepcopy
 from datetime import date, datetime, time, timedelta
-from typing import Any, AsyncIterator, Mapping
+from typing import Any, AsyncIterator, Mapping, cast
 
 from .._egress import strip_internal_metadata
 from ..models._generated import ResponseStreamEvent
@@ -118,6 +118,7 @@ def _ensure_sequence_number(event: Any, payload: dict[str, Any]) -> None:
         candidate = _next_sequence_number()
 
     payload["sequence_number"] = candidate
+    payload.pop("_saved_at", None)
 
 
 def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
@@ -151,8 +152,15 @@ def encode_sse_event(event: ResponseStreamEvent) -> str:
     :returns: Encoded SSE payload string.
     :rtype: str
     """
-    if hasattr(event, "as_dict"):
-        wire = event.as_dict()
+    event_any = cast(Any, event)
+    if isinstance(event, Mapping):
+        wire = dict(event)
+        event_type = str(wire.get("type", ""))
+        _ensure_sequence_number(event, wire)
+        strip_internal_metadata(wire)
+        return _build_sse_frame(event_type, wire)
+    if hasattr(event_any, "as_dict"):
+        wire = event_any.as_dict()
         event_type = str(wire.get("type", ""))
         _ensure_sequence_number(event, wire)
         strip_internal_metadata(wire)
