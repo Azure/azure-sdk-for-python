@@ -1,14 +1,9 @@
 ## Release History
 
-### 4.16.3 (Unreleased)
-
-#### Features Added
-
-#### Breaking Changes
+### 4.16.3 (2026-07-29)
 
 #### Bugs Fixed
-
-#### Other Changes
+* Fixed regression introduced in 4.16.0 on [47105](https://github.com/Azure/azure-sdk-for-python/pull/47105) for complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`. See [PR 48237](https://github.com/Azure/azure-sdk-for-python/pull/48237)
 
 ### 4.16.2 (2026-07-15)
 

@@ -101,6 +101,54 @@ class TestQuery(unittest.TestCase):
         self.assertTrue(all(['=' in x for x in metrics]))
         self._delete_container_for_test(created_collection.id)
 
+    def test_partition_scoped_count_is_index_only(self):
+        created_collection = self.created_db.get_container_client(
+            self.config.TEST_MULTI_PARTITION_CONTAINER_ID
+        )
+        partition_key = "PowerCut-" + str(uuid.uuid4())
+        other_partition_key = "Other-" + str(uuid.uuid4())
+        created_items = []
+        try:
+            for i in range(25):
+                item = created_collection.create_item({
+                    "id": f"power-cut-{i}-{uuid.uuid4()}",
+                    "pk": partition_key,
+                    "value": i,
+                })
+                created_items.append((item["id"], item["pk"]))
+            item = created_collection.create_item({
+                "id": "other-document-type-" + str(uuid.uuid4()),
+                "pk": other_partition_key,
+            })
+            created_items.append((item["id"], item["pk"]))
+
+            query_iterable = created_collection.query_items(
+                query="SELECT VALUE COUNT(1) FROM c",
+                partition_key=partition_key,
+                enable_cross_partition_query=False,
+                populate_query_metrics=True,
+            )
+            pager = query_iterable.by_page()
+            pages = [list(page) for page in pager]
+
+            self.assertEqual([[25]], pages)
+            self.assertIsNone(pager.continuation_token)
+
+            response_headers = query_iterable.get_response_headers()
+            metrics_header = response_headers[http_constants.HttpHeaders.QueryMetrics]
+            metrics = dict(
+                entry.split("=", 1)
+                for entry in metrics_header.split(";")
+                if entry
+            )
+            self.assertEqual(0, int(metrics["retrievedDocumentCount"]))
+            self.assertEqual(0, int(metrics["retrievedDocumentSize"]))
+            self.assertEqual(1.0, float(metrics["indexUtilizationRatio"]))
+            self.assertLess(float(response_headers[http_constants.HttpHeaders.RequestCharge]), 20.0)
+        finally:
+            for item_id, item_partition_key in created_items:
+                created_collection.delete_item(item_id, item_partition_key)
+
     def test_populate_index_metrics(self):
         created_collection = self._create_container_for_test("query_index_test",
                                                               PartitionKey(path="/pk"))
