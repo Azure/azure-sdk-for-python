@@ -21,9 +21,9 @@ from typing import cast
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
-    ResponseEventStream,
     ResponsesAgentServerHost,
 )
+from azure.ai.agentserver.responses.aio import ResponseEventStream
 from azure.ai.agentserver.responses.models import (
     Annotation,
     FileCitationBody,
@@ -65,7 +65,7 @@ async def annotations_handler(request: CreateResponse, context: ResponseContext)
         ),
     ]
 
-    async for event in stream.aoutput_item_message(
+    async for event in stream.output_item_message(
         "Here are your files and sources.",
         annotations=annotations,
     ):

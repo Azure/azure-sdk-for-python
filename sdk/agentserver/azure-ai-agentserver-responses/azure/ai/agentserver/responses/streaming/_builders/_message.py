@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, Any, Iterator, cast
 
 from azure.ai.agentserver.responses import models as response_models
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState, _require_wire_dict
@@ -489,33 +488,6 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_delta(text)
         yield tc.emit_text_done(text)
         yield tc.emit_done()
-
-    async def atext_content(
-        self, text: str | AsyncIterable[str]
-    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
-        """Async variant of :meth:`text_content` with streaming support.
-
-        When *text* is a string, behaves identically to :meth:`text_content`.
-        When *text* is an async iterable of string chunks, emits one
-        ``output_text.delta`` per chunk in real time (S-055), then
-        ``output_text.done`` with the accumulated text.
-
-        :param text: Complete text or async iterable of text chunks.
-        :type text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(text, str):
-            for event in self.text_content(text):
-                yield event
-            return
-        tc = self.add_text_content()
-        yield tc.emit_added()
-        async for chunk in text:
-            yield tc.emit_delta(chunk)
-        yield tc.emit_text_done()
-        yield tc.emit_done()
-
     def refusal_content(self, text: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a refusal content part.
 
@@ -531,32 +503,4 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield rc.emit_added()
         yield rc.emit_delta(text)
         yield rc.emit_refusal_done(text)
-        yield rc.emit_done()
-
-    async def arefusal_content(
-        self, text: str | AsyncIterable[str]
-    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
-        """Async variant of :meth:`refusal_content` with streaming support.
-
-        When *text* is a string, behaves identically to :meth:`refusal_content`.
-        When *text* is an async iterable of string chunks, emits one
-        ``refusal.delta`` per chunk in real time (S-055), then
-        ``refusal.done`` with the accumulated text.
-
-        :param text: Complete refusal text or async iterable of text chunks.
-        :type text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(text, str):
-            for event in self.refusal_content(text):
-                yield event
-            return
-        rc = self.add_refusal_content()
-        yield rc.emit_added()
-        accumulated: list[str] = []
-        async for chunk in text:
-            accumulated.append(chunk)
-            yield rc.emit_delta(chunk)
-        yield rc.emit_refusal_done("".join(accumulated))
         yield rc.emit_done()

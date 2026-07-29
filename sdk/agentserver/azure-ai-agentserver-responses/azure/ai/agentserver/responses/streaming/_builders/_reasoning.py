@@ -4,8 +4,7 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, Iterator, cast
 
 from azure.ai.agentserver.responses import models as response_models
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState
@@ -215,34 +214,4 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         yield part.emit_added()
         yield part.emit_text_delta(text)
         yield part.emit_text_done(text)
-        yield part.emit_done()
-
-    async def asummary_part(
-        self,
-        text: str | AsyncIterable[str],
-    ) -> AsyncIterator[response_models.ResponseStreamEvent]:
-        """Async variant of :meth:`summary_part` with streaming support.
-
-        When *text* is a string, behaves identically to :meth:`summary_part`.
-        When *text* is an async iterable of string chunks, emits one
-        ``reasoning_summary_text.delta`` per chunk in real time (S-055),
-        then ``reasoning_summary_text.done`` with the accumulated text.
-
-        :param text: Complete summary text or async iterable of text chunks.
-        :type text: str | AsyncIterable[str]
-        :returns: An async iterator of events.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(text, str):
-            for event in self.summary_part(text):
-                yield event
-            return
-        part = self.add_summary_part()
-        yield part.emit_added()
-        accumulated: list[str] = []
-        async for chunk in text:
-            accumulated.append(chunk)
-            yield part.emit_text_delta(chunk)
-        final = "".join(accumulated)
-        yield part.emit_text_done(final)
         yield part.emit_done()

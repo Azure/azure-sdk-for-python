@@ -4,9 +4,8 @@
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, Iterator, cast
 
 from azure.ai.agentserver.responses import models as response_models
 from ._base import BaseOutputItemBuilder, _require_non_empty
@@ -153,31 +152,6 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         yield self.emit_arguments_delta(args)
         yield self.emit_arguments_done(args)
-
-    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[response_models.ResponseStreamEvent]:
-        """Async variant of :meth:`arguments` with streaming support.
-
-        When *args* is a string, behaves identically to :meth:`arguments`.
-        When *args* is an async iterable of string chunks, emits one
-        ``function_call_arguments.delta`` per chunk in real time (S-055),
-        then ``function_call_arguments.done`` with the accumulated text.
-
-        :param args: Complete arguments string or async iterable of chunks.
-        :type args: str | AsyncIterable[str]
-        :returns: An async iterator of events.
-        :rtype: AsyncIterator[ResponseStreamEvent]
-        """
-        if isinstance(args, str):
-            for event in self.arguments(args):
-                yield event
-            return
-        accumulated: list[str] = []
-        async for chunk in args:
-            accumulated.append(chunk)
-            yield self.emit_arguments_delta(chunk)
-        yield self.emit_arguments_done("".join(accumulated))
-
-
 class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
     """Scoped builder for a function-call-output item in stream mode."""
 

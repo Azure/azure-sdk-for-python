@@ -19,6 +19,7 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
 from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 
 # ---------------------------------------------------------------------------
@@ -61,18 +62,6 @@ def _collect_stream_events(response: Any) -> list[dict[str, Any]]:
     return events
 
 
-def _is_item_type(item: Any, type_value: str) -> bool:
-    return isinstance(item, dict) and item.get("type") == type_value
-
-
-def _message_texts(item: dict[str, Any]) -> list[str]:
-    return [
-        part["text"]
-        for part in item.get("content") or []
-        if isinstance(part, dict) and isinstance(part.get("text"), str)
-    ]
-
-
 def _post_json(client: TestClient, payload: dict[str, Any]) -> Any:
     return client.post("/responses", json=payload)
 
@@ -93,6 +82,10 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
     }
     payload.update(overrides)
     return payload
+
+
+def _is_item_type(item: dict[str, Any], item_type: str) -> bool:
+    return item.get("type") == item_type
 
 
 # ---------------------------------------------------------------------------
@@ -202,7 +195,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 
 async def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Convenience handler: emits a greeting using output_item_message()."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
 
     stream.response.temperature = 0.7
     stream.response.max_output_tokens = 1024
@@ -211,7 +204,7 @@ async def _sample3_handler(request: CreateResponse, context: ResponseContext, ca
     yield stream.emit_in_progress()
 
     user_text = await context.get_input_text()
-    for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
+    async for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
         yield event
 
     yield stream.emit_completed()
@@ -327,10 +320,11 @@ def test_sample4_turn2_returns_weather_text() -> None:
 async def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Study tutor handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
-    has_previous = request.get("previous_response_id") is not None and str(request.get("previous_response_id")).strip() != ""
+    previous_response_id = request.get("previous_response_id")
+    has_previous = previous_response_id is not None and str(previous_response_id).strip() != ""
     user_text = await context.get_input_text()
     if has_previous:
-        text = f"Building on our previous discussion ({request.get('previous_response_id')}): {user_text}"
+        text = f"Building on our previous discussion ({previous_response_id}): {user_text}"
     else:
         text = f"Welcome! I'm your study tutor. You asked: {user_text}"
 
@@ -799,10 +793,14 @@ async def _item_ref_echo_handler(request: CreateResponse, context: ResponseConte
     summaries = []
     for item in items:
         if _is_item_type(item, "message"):
-            texts = _message_texts(item)
+            texts = []
+            for part in item.get("content") or []:
+                t = part.get("text") if isinstance(part, dict) else None
+                if t:
+                    texts.append(t)
             summaries.append({"type": "message", "text": " ".join(texts)})
         else:
-            summaries.append({"type": item.get("type", "unknown") if isinstance(item, dict) else "unknown"})
+            summaries.append({"type": item.get("type", "unknown")})
 
     return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
@@ -957,7 +955,7 @@ def test_item_reference_resolve_references_false() -> None:
         items = await context.get_input_items(resolve_references=False)
         summaries = []
         for item in items:
-            item_type = item.get("type", "unknown") if isinstance(item, dict) else "unknown"
+            item_type = item.get("type", "unknown")
             summaries.append({"type": item_type})
         return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
@@ -1054,10 +1052,10 @@ TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8
 async def _image_gen_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+    async for event in stream.output_item_image_gen_call(TINY_IMAGE_B64):
         yield event
     yield stream.emit_completed()
 
@@ -1303,7 +1301,7 @@ def test_sample14_file_input_file_id_handler() -> None:
 async def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
 
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
     annotations = [
@@ -1311,7 +1309,7 @@ async def _annotations_handler(request: CreateResponse, context: ResponseContext
         FileCitationBody(file_id="/sources/paper.pdf", index=1, filename="paper.pdf"),
         UrlCitationBody(url="https://example.com/guide", start_index=0, end_index=10, title="Guide"),
     ]
-    async for event in stream.aoutput_item_message("Here are your sources.", annotations=annotations):
+    async for event in stream.output_item_message("Here are your sources.", annotations=annotations):
         yield event
     yield stream.emit_completed()
 
@@ -1349,10 +1347,10 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 async def _structured_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
+    async for event in stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
         yield event
     yield stream.emit_completed()
 
