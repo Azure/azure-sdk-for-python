@@ -48,20 +48,22 @@ impl From<azure_core::Error> for AzureError {
     }
 }
 
-/// Build a `BlobClient` from the provided URL components and optional token provider.
+/// Build a `BlobClient` from a fully-qualified blob URL and optional token provider.
+///
+/// `blob_url` must be the complete, already percent-encoded blob URL
+/// (e.g. `https://account.blob.core.windows.net/container/blob`), optionally including a
+/// SAS token in the query string. It is parsed and used as-is — `BlobClient::new` expects
+/// the caller to have encoded it correctly, and `Url::parse` preserves existing
+/// percent-encoding, so no double-encoding occurs.
 ///
 /// If `token_provider` is provided, a Python-callback credential is used that fetches a
-/// fresh token on demand. If the `account_url` contains a SAS token in the query string,
+/// fresh token on demand. If the `blob_url` contains a SAS token in the query string,
 /// pass `token_provider=None`.
 fn build_blob_client(
-    account_url: &str,
-    container: &str,
-    blob: &str,
+    blob_url: &str,
     token_provider: Option<Py<PyAny>>,
 ) -> Result<BlobClient, AzureError> {
-    let base = account_url.trim_end_matches('/');
-    let blob_url_str = format!("{}/{}/{}", base, container, blob);
-    let blob_url = Url::parse(&blob_url_str).map_err(|e| {
+    let blob_url = Url::parse(blob_url).map_err(|e| {
         azure_core::Error::with_message(
             azure_core::error::ErrorKind::Other,
             format!("Invalid URL: {}", e),
@@ -149,9 +151,7 @@ impl TokenCredential for PyCallbackCredential {
 /// allowing other Python threads to run concurrently.
 #[pyfunction]
 #[pyo3(signature = (
-    account_url,
-    container,
-    blob,
+    url,
     data,
     *,
     token_provider = None,
@@ -164,9 +164,7 @@ impl TokenCredential for PyCallbackCredential {
 ))]
 fn upload_blob<'py>(
     py: Python<'py>,
-    account_url: &str,
-    container: &str,
-    blob: &str,
+    url: &str,
     data: &Bound<'py, PyAny>,
     token_provider: Option<Py<PyAny>>,
     overwrite: bool,
@@ -176,7 +174,7 @@ fn upload_blob<'py>(
     _max_single_put_size: Option<u64>,
     max_block_size: Option<u64>,
 ) -> PyResult<Bound<'py, PyDict>> {
-    let blob_client = build_blob_client(account_url, container, blob, token_provider)?;
+    let blob_client = build_blob_client(url, token_provider)?;
 
     // We copy the payload once into a Rust-owned `Bytes` here, while the GIL is held.
     //
@@ -246,9 +244,7 @@ fn upload_blob<'py>(
 /// Rust I/O operation.
 #[pyfunction]
 #[pyo3(signature = (
-    account_url,
-    container,
-    blob,
+    url,
     *,
     token_provider = None,
     offset = None,
@@ -258,16 +254,14 @@ fn upload_blob<'py>(
 ))]
 fn download_blob<'py>(
     py: Python<'py>,
-    account_url: &str,
-    container: &str,
-    blob: &str,
+    url: &str,
     token_provider: Option<Py<PyAny>>,
     offset: Option<u64>,
     length: Option<u64>,
     max_concurrency: Option<usize>,
     expected_size: Option<usize>,
 ) -> PyResult<Bound<'py, PyBytes>> {
-    let blob_client = build_blob_client(account_url, container, blob, token_provider)?;
+    let blob_client = build_blob_client(url, token_provider)?;
 
     let mut options = BlobClientDownloadOptions::default();
 
