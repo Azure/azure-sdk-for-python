@@ -31,13 +31,13 @@
 | 30 | azure-mgmt-sqlvirtualmachine | 2023-10-01 | 1.0.0b7 |  | 2026-07-07 | Done | [48149](https://github.com/Azure/azure-sdk-for-python/pull/48149) |
 | 31 | azure-mgmt-servicebus | 2026-01-01 | 10.0.0b2 |  | 2026-07-07 | Done | [48151](https://github.com/Azure/azure-sdk-for-python/pull/48151) |
 | 32 | azure-mgmt-peering | 2025-05-01 | 2.0.0b2 |  | 2026-07-07 | Done | [#47907](https://github.com/Azure/azure-sdk-for-python/pull/47907) |
-| 33 | azure-mgmt-guestconfig | 2024-04-05 | 1.0.0b3 |  | 2026-07-07 | Not Started |  |
-| 34 | azure-mgmt-eventhub | 2026-01-01 | 12.0.0b2 |  | 2026-07-07 | Not Started |  |
-| 35 | azure-mgmt-elastic | 2025-06-01 | 3.0.0b1 |  | 2026-07-07 | Not Started |  |
-| 36 | azure-mgmt-storagesync | 2022-09-01 | 2.0.0b2 |  | 2026-07-06 | Not Started |  |
-| 37 | azure-mgmt-relay | 2024-01-01 | 2.0.0b2 |  | 2026-07-06 | Not Started |  |
-| 38 | azure-mgmt-privatedns | 2024-06-01 | 2.0.0b1 |  | 2026-07-06 | Not Started |  |
-| 39 | azure-mgmt-powerbidedicated | 2021-01-01 | 1.1.0b2 |  | 2026-07-06 | Not Started |  |
+| 33 | azure-mgmt-guestconfig | 2024-04-05 | 1.0.0b3 |  | 2026-07-07 | Not Started | [#48316](https://github.com/Azure/azure-sdk-for-python/pull/48316) |
+| 34 | azure-mgmt-eventhub | 2026-01-01 | 12.0.0b2 |  | 2026-07-07 | Not Started | [#48317](https://github.com/Azure/azure-sdk-for-python/pull/48317) |
+| 35 | azure-mgmt-elastic | 2025-06-01 | 3.0.0b1 |  | 2026-07-07 | Not Started | [#48318](https://github.com/Azure/azure-sdk-for-python/pull/48318) |
+| 36 | azure-mgmt-storagesync | 2022-09-01 | 2.0.0b2 |  | 2026-07-06 | Not Started | [#48320](https://github.com/Azure/azure-sdk-for-python/pull/48320) |
+| 37 | azure-mgmt-relay | 2024-01-01 | 2.0.0b2 |  | 2026-07-06 | Not Started | [#48321](https://github.com/Azure/azure-sdk-for-python/pull/48321) |
+| 38 | azure-mgmt-privatedns | 2024-06-01 | 2.0.0b1 |  | 2026-07-06 | Not Started | [#48322](https://github.com/Azure/azure-sdk-for-python/pull/48322) |
+| 39 | azure-mgmt-powerbidedicated | 2021-01-01 | 1.1.0b2 |  | 2026-07-06 | Not Started | [#48323](https://github.com/Azure/azure-sdk-for-python/pull/48323) |
 | 40 | azure-mgmt-edgeorder | 2024-02-01 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
 | 41 | azure-mgmt-dynatrace | 2024-04-24 | 3.0.0b1 |  | 2026-07-06 | Not Started |  |
 | 42 | azure-mgmt-databox | 2025-07-01 | 4.0.0b1 |  | 2026-07-06 | Not Started |  |
