@@ -33,7 +33,6 @@ USAGE:
 """
 
 import asyncio
-import json
 import os
 
 from dotenv import load_dotenv
@@ -74,12 +73,13 @@ async def main() -> None:
         # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        created_jobs: list[OptimizationJob] = []
+        # The raw_response_hook is called synchronously before the generated LRO method
+        # awaits read() on the initial response.  Capture the pipeline response object here
+        # and parse the body afterwards, when read() has already been awaited.
+        pipeline_responses = []
 
-        def capture_created_job(response):
-            # Since `polling=False` is set below, it is guaranteed that `capture_created_job` will be
-            # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
-            created_jobs.append(OptimizationJob(json.loads(response.http_response.text())))
+        def raw_response_hook(response):
+            pipeline_responses.append(response)
 
         await project_client.beta.agents.begin_create_optimization_job(
             job=OptimizationJob(
@@ -98,11 +98,11 @@ async def main() -> None:
                 )
             ),
             polling=False,
-            raw_response_hook=capture_created_job,
+            raw_response_hook=raw_response_hook,
         )
-        if not created_jobs:
+        if not pipeline_responses:
             raise RuntimeError("The create operation did not return an optimization job.")
-        job = created_jobs[0]
+        job = OptimizationJob(pipeline_responses[0].http_response.json())
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------

@@ -65,7 +65,8 @@ with (
     print("Creating optimization job...")
     created_jobs: list[OptimizationJob] = []
 
-    def capture_created_job(response):
+    def raw_response_hook(response):
+        response.http_response.read()
         created_jobs.append(OptimizationJob(response.http_response.json()))
 
     project_client.beta.agents.begin_create_optimization_job(
@@ -85,7 +86,7 @@ with (
             )
         ),
         polling=False,
-        raw_response_hook=capture_created_job,
+        raw_response_hook=raw_response_hook,
     )
     if not created_jobs:
         raise RuntimeError("The create operation did not return an optimization job.")

@@ -73,9 +73,10 @@ with (
     print("Creating optimization job...")
     created_jobs: list[OptimizationJob] = []
 
-    def capture_created_job(response):
-        # Since `polling=False` is set below, it is guaranteed that `capture_created_job` will be
+    def raw_response_hook(response):
+        # Since `polling=False` is set below, it is guaranteed that `raw_response_hook` will be
         # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
+        response.http_response.read()
         created_jobs.append(OptimizationJob(response.http_response.json()))
 
     project_client.beta.agents.begin_create_optimization_job(
@@ -95,7 +96,7 @@ with (
             )
         ),
         polling=False,
-        raw_response_hook=capture_created_job,
+        raw_response_hook=raw_response_hook,
     )
     if not created_jobs:
         raise RuntimeError("The create operation did not return an optimization job.")

@@ -142,7 +142,8 @@ with (
             try:
                 created_jobs: list[DataGenerationJob] = []
 
-                def capture_created_job(response):
+                def raw_response_hook(response):
+                    response.http_response.read()
                     created_jobs.append(DataGenerationJob(response.http_response.json()))
 
                 # Alternatively, append `.result()` to block while the SDK handles polling.
@@ -165,7 +166,7 @@ with (
                         ),
                     ),
                     polling=False,
-                    raw_response_hook=capture_created_job,
+                    raw_response_hook=raw_response_hook,
                 )
                 if not created_jobs:
                     raise RuntimeError("The create operation did not return a data generation job.")

@@ -98,7 +98,8 @@ with (
     # re-submitting with the same id returns the existing job.
     created_jobs: list[EvaluatorGenerationJob] = []
 
-    def capture_created_job(response):
+    def raw_response_hook(response):
+        response.http_response.read()
         created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
 
     # Alternatively, append `.result()` to block while the SDK handles polling.
@@ -106,7 +107,7 @@ with (
         job=job_body,
         operation_id=operation_id,
         polling=False,
-        raw_response_hook=capture_created_job,
+        raw_response_hook=raw_response_hook,
     )
     if not created_jobs:
         raise RuntimeError("The create operation did not return a generation job.")
