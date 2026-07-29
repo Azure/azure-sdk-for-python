@@ -29,7 +29,8 @@ USAGE:
 def sample_translation_with_glossaries():
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.translation.document import DocumentTranslationClient, TranslationGlossary
+    from azure.ai.translation.document import DocumentTranslationClient
+    from azure.ai.translation.document.models import TranslationGlossary
 
     endpoint = os.environ["AZURE_DOCUMENT_TRANSLATION_ENDPOINT"]
     key = os.environ["AZURE_DOCUMENT_TRANSLATION_KEY"]

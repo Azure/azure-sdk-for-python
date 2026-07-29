@@ -137,7 +137,7 @@ The M365 Agents SDK ships as a dependency of this package, so a standard
 packages from your environment, reinstall them:
 
 ```bash
-pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity azure-identity
+pip install microsoft-agents-hosting-core microsoft-agents-authentication-msal microsoft-agents-activity
 ```
 
 Alternatively, use `ActivityAgentServerHost(request_handler=...)`, which does

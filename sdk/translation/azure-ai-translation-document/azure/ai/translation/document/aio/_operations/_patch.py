@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -29,18 +30,19 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     _raise_if_bad_http_status_and_method,
 )
-from ..._vendor import prepare_multipart_form_data
-from ... import _model_base, models as _models
+from ..._utils.utils import prepare_multipart_form_data
+from ..._validation import api_version_validation
+from ... import models as _models
+from ..._utils import model_base as _model_base
 
-from ..._model_base import _deserialize
+from ..._utils.model_base import _deserialize
 from ...models import (
     TranslationStatus,
 )
 from ._operations import (
-    DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
-    SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
+    _DocumentTranslationClientOperationsMixin as GeneratedDocumentTranslationClientOperationsMixin,
+    _SingleDocumentTranslationClientOperationsMixin as GeneratedSingleDocumentTranslationClientOperationsMixin,
     build_single_document_translation_translate_request,
-    JSON,
     ClsType,
 )
 
@@ -61,7 +63,7 @@ _FAILED = frozenset(["validationfailed"])
 
 class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
     """An async custom poller implementation for Document Translation. Call `result()` on the poller to return
-    a pageable of :class:`~azure.ai.translation.document.DocumentStatus`."""
+    a pageable of :class:`~azure.ai.translation.document.models.DocumentStatus`."""
 
     _polling_method: "AsyncDocumentTranslationLROPollingMethod"
 
@@ -72,7 +74,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         :return: The str ID for the translation operation.
         :rtype: str
         """
-        if self._polling_method._current_body:
+        if self._polling_method._current_body and self._polling_method._current_body.id:
             return self._polling_method._current_body.id
         return self._polling_method._get_id_from_headers()
 
@@ -81,7 +83,7 @@ class AsyncDocumentTranslationLROPoller(AsyncLROPoller[PollingReturnType_co]):
         """The details for the translation operation
 
         :return: The details for the translation operation.
-        :rtype: ~azure.ai.translation.document.TranslationStatus
+        :rtype: ~azure.ai.translation.document.models.TranslationStatus
         """
         if self._polling_method._current_body:
             return TranslationStatus(self._polling_method._current_body)
@@ -113,7 +115,12 @@ class AsyncDocumentTranslationLROPollingMethod(AsyncLROBasePolling):
     @property
     def _current_body(self) -> TranslationStatus:
         try:
-            return TranslationStatus(self._pipeline_response.http_response.json())
+            response = self._pipeline_response.http_response
+            # Ignore non-success responses (e.g. a transient polling error) so they do not
+            # corrupt the operation status, id, or details reported by the poller.
+            if not 200 <= response.status_code < 300:
+                return TranslationStatus()  # type: ignore[call-overload]
+            return TranslationStatus(response.json())
         except Exception:  # pylint: disable=broad-exception-caught
             return TranslationStatus()  # type: ignore[call-overload]
 
@@ -201,8 +208,13 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self.__begin_translation_initial(  # type: ignore[func-returns-value]
-                body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
+            raw_result = await self._begin_translation_initial(  # type: ignore[func-returns-value]
+                body=body,  # type: ignore[arg-type]
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
             )
         kwargs.pop("error_map", None)
 
@@ -239,7 +251,10 @@ class DocumentTranslationClientOperationsMixin(GeneratedDocumentTranslationClien
                 deserialization_callback=get_long_running_output,
             )
         return AsyncDocumentTranslationLROPoller[_models.TranslationStatus](
-            self._client, raw_result, get_long_running_output, polling_method # pylint: disable=possibly-used-before-assignment
+            self._client,
+            raw_result,
+            get_long_running_output,
+            polling_method,  # pylint: disable=possibly-used-before-assignment
         )
 
 
@@ -247,7 +262,7 @@ class SingleDocumentTranslationClientOperationsMixin(
     GeneratedSingleDocumentTranslationClientOperationsMixin
 ):  # pylint: disable=name-too-long
 
-    @overload
+    @overload  # type: ignore[override]
     async def translate(
         self,
         body: _models.DocumentTranslateContent,
@@ -255,7 +270,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -282,10 +299,16 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -308,7 +331,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -335,16 +360,26 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
+    @api_version_validation(
+        params_added_on={"2026-03-01": ["deployment_name"], "2024-11-01-preview": ["translate_text_within_image"]},
+        api_versions_list=["2024-05-01", "2024-11-01-preview", "2025-12-01-preview", "2026-03-01"],
+    )
     async def translate(
         self,
         body: Union[_models.DocumentTranslateContent, JSON],
@@ -352,7 +387,9 @@ class SingleDocumentTranslationClientOperationsMixin(
         target_language: str,
         source_language: Optional[str] = None,
         category: Optional[str] = None,
+        deployment_name: Optional[str] = None,
         allow_fallback: Optional[bool] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Submit a single document translation request to the Document Translation service.
@@ -379,10 +416,16 @@ class SingleDocumentTranslationClientOperationsMixin(
          project details to this parameter to use your deployed customized system. Default value is:
          general. Default value is None.
         :paramtype category: str
+        :keyword deployment_name: Deployment name of the custom translation model for the translation
+         request. Default value is None.
+        :paramtype deployment_name: str
         :keyword allow_fallback: Specifies that the service is allowed to fall back to a general system
          when a custom system doesn't exist.
          Possible values are: true (default) or false. Default value is None.
         :paramtype allow_fallback: bool
+        :keyword translate_text_within_image: Optional boolean parameter to translate text within an
+         image in the document. Default value is None.
+        :paramtype translate_text_within_image: bool
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -412,16 +455,17 @@ class SingleDocumentTranslationClientOperationsMixin(
         _body = body.as_dict() if isinstance(body, _model_base.Model) else body
         _file_fields: List[str] = ["document", "glossary"]
         _data_fields: List[str] = []
-        _files, _data = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
 
         _request = build_single_document_translation_translate_request(
             target_language=target_language,
             source_language=source_language,
             category=category,
+            deployment_name=deployment_name,
             allow_fallback=allow_fallback,
+            translate_text_within_image=translate_text_within_image,
             api_version=self._config.api_version,
             files=_files,
-            data=_data,
             headers=_headers,
             params=_params,
         )
