@@ -10,8 +10,8 @@ DESCRIPTION:
     jobs. The sample exercises:
 
       * `begin_create_generation_job` with `operation_id` for idempotent re-submits;
-                returns `LROPoller[EvaluatorVersion]`, whose status is reported until
-                the job reaches a terminal state.
+         returns `LROPoller[EvaluatorVersion]`, whose status is reported until
+         the job reaches a terminal state.
       * `list_generation_jobs` to enumerate recent jobs in the project.
       * `delete_generation_job` to remove a finished job record.
       * `delete_version` to remove the persisted evaluator that the job produced.
