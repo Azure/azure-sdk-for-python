@@ -114,9 +114,10 @@ impl TokenCredential for PyCallbackCredential {
         scopes: &[&str],
         _options: Option<TokenRequestOptions<'_>>,
     ) -> azure_core::Result<AccessToken> {
-        // Re-acquire the GIL (valid to do inside the outer `allow_threads`) and call the
-        // Python token provider to obtain a fresh token and its real expiry.
-        Python::with_gil(|py| {
+        // Re-attach the current thread to the interpreter (valid to do inside the outer
+        // `detach`) and call the Python token provider to obtain a fresh token and its
+        // real expiry.
+        Python::attach(|py| {
             let scope_list: Vec<String> = scopes.iter().map(|s| s.to_string()).collect();
             let result = self.provider.bind(py).call1((scope_list,)).map_err(|e| {
                 azure_core::Error::with_message(
@@ -176,17 +177,17 @@ fn upload_blob<'py>(
 ) -> PyResult<Bound<'py, PyDict>> {
     let blob_client = build_blob_client(url, token_provider)?;
 
-    // We copy the payload once into a Rust-owned `Bytes` here, while the GIL is held.
+    // We copy the payload once into a Rust-owned `Bytes` here, while the interpreter is attached.
     //
-    // This single copy is required (not merely convenient): the upload below releases the
-    // GIL via `allow_threads`, so we must not hold a borrow into Python-owned memory that
-    // another Python thread could mutate or free. Accepting any buffer-protocol object
-    // (bytes, bytearray, contiguous memoryview) via `PyBuffer` lets the caller avoid a
-    // separate Python-side `bytes()` conversion.
+    // This single copy is required (not merely convenient): the upload below detaches the
+    // current thread from the interpreter via `detach`, so we must not hold a borrow into
+    // Python-owned memory that another Python thread could mutate or free. Accepting any
+    // buffer-protocol object (bytes, bytearray, contiguous memoryview) via `PyBuffer` lets
+    // the caller avoid a separate Python-side `bytes()` conversion.
     //
     // We intentionally do NOT stream across the FFI boundary: the Rust crate buffers each
     // partition into memory regardless, and a Python-backed stream would require per-chunk
-    // GIL re-acquisition from parallel tasks — more complex and slower than one bulk copy.
+    // re-attachment from parallel tasks — more complex and slower than one bulk copy.
     // For the buffered path, the crate partitions via zero-copy `Bytes::slice`.
     let buffer = PyBuffer::<u8>::get(data)?;
     if !buffer.is_c_contiguous() {
@@ -218,9 +219,9 @@ fn upload_blob<'py>(
         options.partition_size = NonZero::new(block_size);
     }
 
-    // Release GIL and perform the upload on the shared tokio runtime
+    // Release the interpreter (detach this thread) and perform the upload on the shared tokio runtime
     let result = py
-        .allow_threads(|| {
+        .detach(|| {
             RUNTIME.block_on(async { blob_client.upload(content, Some(options)).await })
         })
         .map_err(AzureError::from)?;
@@ -279,9 +280,9 @@ fn download_blob<'py>(
         .or(length.map(|l| l as usize))
         .unwrap_or(256 * 1024 * 1024); // 256 MiB default max
 
-    // Release GIL and perform the download on the shared tokio runtime
+    // Release the interpreter (detach this thread) and perform the download on the shared tokio runtime
     let (data, len) = py
-        .allow_threads(|| {
+        .detach(|| {
             RUNTIME.block_on(async {
                 let mut buffer = vec![0u8; buf_size];
                 let result = blob_client
