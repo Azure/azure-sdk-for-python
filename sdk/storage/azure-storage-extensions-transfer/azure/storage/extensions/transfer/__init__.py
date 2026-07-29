@@ -33,9 +33,7 @@ def is_available() -> bool:
 
 
 def upload_blob(
-    account_url: str,
-    container: str,
-    blob: str,
+    url: str,
     data: "bytes | bytearray | memoryview",
     *,
     token_provider: "Callable[[list], tuple] | None" = None,
@@ -48,10 +46,9 @@ def upload_blob(
 ) -> dict:
     """Upload a block blob using the native Rust extension.
 
-    :param str account_url: The storage account URL (e.g. https://account.blob.core.windows.net).
-        May include a SAS token in the query string.
-    :param str container: The container name.
-    :param str blob: The blob name.
+    :param str url: The fully-qualified blob URL
+        (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
+        percent-encoded and may include a SAS token in the query string.
     :param data: The blob content to upload. Accepts any C-contiguous buffer-protocol
         object (``bytes``, ``bytearray``, or ``memoryview``); no copy to ``bytes`` is required.
         The payload must already be fully in memory — this function does not accept
@@ -63,7 +60,7 @@ def upload_blob(
         ``(token: str, expires_on: int)`` tuple, where ``expires_on`` is a Unix timestamp in
         seconds. The extension calls it whenever a fresh token is needed (including on
         refresh), so token expiry during long transfers is handled transparently. Not
-        needed if ``account_url`` contains a SAS token.
+        needed if ``url`` contains a SAS token.
     :paramtype token_provider: callable or None
     :keyword bool overwrite: Whether to overwrite an existing blob. Defaults to False.
     :keyword str content_type: The content type of the blob.
@@ -81,9 +78,7 @@ def upload_blob(
             "Install azure-storage-extensions-transfer to use this function."
         )
     return _native_upload(
-        account_url,
-        container,
-        blob,
+        url,
         data,
         token_provider=token_provider,
         overwrite=overwrite,
@@ -96,9 +91,7 @@ def upload_blob(
 
 
 def download_blob(
-    account_url: str,
-    container: str,
-    blob: str,
+    url: str,
     *,
     token_provider: "Callable[[list], tuple] | None" = None,
     offset: "int | None" = None,
@@ -108,16 +101,15 @@ def download_blob(
 ) -> bytes:
     """Download a block blob using the native Rust extension.
 
-    :param str account_url: The storage account URL (e.g. https://account.blob.core.windows.net).
-        May include a SAS token in the query string.
-    :param str container: The container name.
-    :param str blob: The blob name.
+    :param str url: The fully-qualified blob URL
+        (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
+        percent-encoded and may include a SAS token in the query string.
     :keyword token_provider: A callable invoked on demand to obtain an OAuth bearer token.
         It is called as ``token_provider(scopes: list[str])`` and must return a
         ``(token: str, expires_on: int)`` tuple, where ``expires_on`` is a Unix timestamp in
         seconds. The extension calls it whenever a fresh token is needed (including on
         refresh), so token expiry during long transfers is handled transparently. Not
-        needed if ``account_url`` contains a SAS token.
+        needed if ``url`` contains a SAS token.
     :paramtype token_provider: callable or None
     :keyword int offset: Start of byte range to download.
     :keyword int length: Number of bytes to download from offset.
@@ -133,9 +125,7 @@ def download_blob(
             "Install azure-storage-extensions-transfer to use this function."
         )
     return _native_download(
-        account_url,
-        container,
-        blob,
+        url,
         token_provider=token_provider,
         offset=offset,
         length=length,
