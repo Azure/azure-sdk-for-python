@@ -13,7 +13,6 @@ from azure.storage.blob._transfer_native import (
     _build_token_provider,
     _can_use_native_download,
     _can_use_native_upload,
-    _extract_account_url,
     _is_native_available,
 )
 
@@ -270,26 +269,6 @@ class TestBuildTokenProvider(unittest.TestCase):
         for token, expires_on in results:
             self.assertTrue(token.startswith("tok-"))
             self.assertIsInstance(expires_on, int)
-
-
-class TestExtractAccountUrl(unittest.TestCase):
-    """Tests for account URL extraction from BlobClient."""
-
-    def test_basic_url(self):
-        client = MagicMock()
-        client.scheme = "https"
-        client.primary_hostname = "myaccount.blob.core.windows.net"
-        client._query_str = None
-        result = _extract_account_url(client)
-        self.assertEqual(result, "https://myaccount.blob.core.windows.net")
-
-    def test_url_with_sas(self):
-        client = MagicMock()
-        client.scheme = "https"
-        client.primary_hostname = "myaccount.blob.core.windows.net"
-        client._query_str = "sv=2021-06-08&sig=abc"
-        result = _extract_account_url(client)
-        self.assertEqual(result, "https://myaccount.blob.core.windows.net?sv=2021-06-08&sig=abc")
 
 
 class TestNativeStorageStreamDownloader(unittest.TestCase):
