@@ -59,7 +59,8 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._activity import ActivityAgentServerHost
 from ._config import get_hosted_agent_env
+from ._foundry_storage import FoundryStorage
 from ._version import VERSION
 
-__all__ = ["ActivityAgentServerHost", "get_hosted_agent_env"]
+__all__ = ["ActivityAgentServerHost", "FoundryStorage", "get_hosted_agent_env"]
 __version__ = VERSION
