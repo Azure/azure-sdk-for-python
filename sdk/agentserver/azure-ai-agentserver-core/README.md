@@ -176,6 +176,17 @@ export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
 python my_agent.py
 ```
 
+OTLP export is enabled when `OTEL_EXPORTER_OTLP_ENDPOINT` is set. HTTP/protobuf
+is the default protocol. To use an OTLP/gRPC collector, install the optional
+gRPC extra and set `OTEL_EXPORTER_OTLP_PROTOCOL=grpc`:
+
+```bash
+pip install "azure-ai-agentserver-core[otlp-grpc]"
+export OTEL_EXPORTER_OTLP_ENDPOINT="http://localhost:4317"
+export OTEL_EXPORTER_OTLP_PROTOCOL="grpc"
+python my_agent.py
+```
+
 ### Resilient long-running agents
 
 The `@task` decorator builds crash-resilient agents that survive container restarts, OOM kills, and redeployments. Task state is persisted to a task store, enabling automatic recovery and multi-turn suspend/resume patterns.
@@ -196,7 +207,7 @@ result = await process_document.run(
 )
 print(result)  # {"summary": "..."}
 ```
-
+See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 See the [Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for streaming, multi-turn suspend/resume, retries, timeouts, steering, and the patterns reference.
 
 ## Troubleshooting
