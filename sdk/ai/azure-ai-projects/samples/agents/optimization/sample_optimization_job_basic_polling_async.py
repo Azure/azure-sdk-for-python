@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an async AIProjectClient, this sample demonstrates how to create an
-    agent optimization job and poll its standard LRO to completion.
+    agent optimization job and poll it to completion.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
@@ -41,6 +41,7 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    JobStatus,
     OptimizationAgentIdentifier as AgentIdentifier,
     OptimizationEvaluatorRef as EvaluatorRef,
     OptimizationJob,
@@ -60,6 +61,9 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+
+
 async def main() -> None:
     async with (
         DefaultAzureCredential() as credential,
@@ -67,20 +71,17 @@ async def main() -> None:
     ):
 
         # ------------------------------------------------------------------
-        # 1. Create an optimization job.
+        # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        latest_lro_response = {}
+        created_jobs: list[OptimizationJob] = []
 
-        # Optionally capture LRO responses to extract an error message if the job fails.
-        def capture_lro_response(response):
-            body = json.loads(response.http_response.text())
-            if isinstance(body, dict) and "status" in body:
-                latest_lro_response.clear()
-                latest_lro_response.update(body)
+        def capture_created_job(response):
+            # Since `polling=False` is set below, it is guaranteed that `capture_created_job` will be
+            # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
+            created_jobs.append(OptimizationJob(json.loads(response.http_response.text())))
 
-        # Alternatively, await `.result()` on the returned poller to let the SDK handle polling.
-        poller = await project_client.beta.agents.begin_create_optimization_job(
+        await project_client.beta.agents.begin_create_optimization_job(
             job=OptimizationJob(
                 inputs=OptimizationJobInputs(
                     agent=AgentIdentifier(agent_name=agent_name),
@@ -96,32 +97,42 @@ async def main() -> None:
                     ),
                 )
             ),
-            polling_interval=poll_interval,
-            raw_response_hook=capture_lro_response,
+            polling=False,
+            raw_response_hook=capture_created_job,
         )
+        if not created_jobs:
+            raise RuntimeError("The create operation did not return an optimization job.")
+        job = created_jobs[0]
+        print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
-        # 2. Poll the job to completion.
+        # 2. Poll until the job reaches a terminal state.
         # ------------------------------------------------------------------
-        result_task = asyncio.create_task(poller.result())
-        while not poller.done():
-            print(f"Optimization job status: {poller.status()}")
+        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+        while job.status not in TERMINAL_STATUSES:
             await asyncio.sleep(poll_interval)
-        status = poller.status()
-        print(f"Final optimization job status: `{status}`.")
-        if status.lower() != "succeeded":
-            error = latest_lro_response.get("error")
-            message = error.get("message", "<no error message>") if isinstance(error, dict) else "<no error message>"
-            try:
-                await result_task
-            except Exception as exception:  # pylint: disable=broad-exception-caught
-                raise RuntimeError(f"Optimization job ended with status `{status}`: {message}") from exception
-            raise RuntimeError(f"Optimization job ended with status `{status}`: {message}")
+            job = await project_client.beta.agents.get_optimization_job(job_id=job.id)
+            print(".", end="", flush=True)
+        print()
+        print(f"Final job status: `{job.status}`.")
+
+        if job.warnings:
+            for warning in job.warnings:
+                print(f"[WARNING] {warning}")
+
+        if job.status == JobStatus.FAILED:
+            message = job.error.message if job.error else "<no error message>"
+            raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
+        if job.status == JobStatus.CANCELLED:
+            raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
 
         # ------------------------------------------------------------------
         # 3. Inspect the results.
         # ------------------------------------------------------------------
-        result = await result_task
+        if job.result is None:
+            raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
+
+        result = job.result
         print(f"\nBaseline candidate: {result.baseline}")
         print(f"Best candidate:     {result.best}")
         print(f"Candidates ({len(result.candidates or [])}):")
