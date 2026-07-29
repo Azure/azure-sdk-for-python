@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from azpysdk.pylint import SNIPPET_IMPORT_DISABLES, get_sample_pylint_commands
+from azpysdk.pylint import SNIPPET_SAMPLE_IMPORT_DISABLES, get_snippet_aware_sample_pylint_commands
 
 
-def test_get_sample_pylint_commands_separates_snippet_files(tmp_path):
+def test_get_snippet_aware_sample_pylint_commands_separates_snippet_files(tmp_path):
     samples_dir = tmp_path / "samples"
     nested_dir = samples_dir / "nested"
     nested_dir.mkdir(parents=True)
@@ -17,7 +17,7 @@ def test_get_sample_pylint_commands_separates_snippet_files(tmp_path):
         encoding="utf-8",
     )
 
-    commands = get_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir))
+    commands = get_snippet_aware_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir))
 
     assert commands == [
         [
@@ -34,15 +34,15 @@ def test_get_sample_pylint_commands_separates_snippet_files(tmp_path):
             "pylint",
             "--rcfile=samples_pylintrc",
             "--output-format=parseable",
-            f"--disable={','.join(SNIPPET_IMPORT_DISABLES)}",
+            f"--disable={','.join(SNIPPET_SAMPLE_IMPORT_DISABLES)}",
             str(snippet_sample),
         ],
     ]
 
 
-def test_get_sample_pylint_commands_ignores_non_python_files(tmp_path):
+def test_get_snippet_aware_sample_pylint_commands_ignores_non_python_files(tmp_path):
     samples_dir = tmp_path / "samples"
     samples_dir.mkdir()
     Path(samples_dir / "README.md").write_text("# [START example]\n", encoding="utf-8")
 
-    assert get_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir)) == []
+    assert get_snippet_aware_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir)) == []
