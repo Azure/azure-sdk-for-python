@@ -58,6 +58,33 @@ LONG_GRACE_S: int = 10
 _TEST_HANDLER_MODULE = "tests.e2e.resilience_contract._test_handler"
 
 
+def pytest_collection_modifyitems(config, items):  # noqa: ARG001
+    """Skip the resilience-contract suite on Windows.
+
+    Every cell test in this package drives real crash recovery through
+    ``CrashHarness``, which uses POSIX process-group signals
+    (``os.killpg`` / ``os.getpgid`` / ``start_new_session``) that do not
+    exist on Windows. Gate the whole package here so both the
+    fixture-based tests and the ones that construct ``CrashHarness``
+    directly are skipped on Windows.
+
+    ``pytest_collection_modifyitems`` in a conftest receives every item in
+    the session, so restrict the skip to items that live under this
+    package's directory.
+    """
+    if sys.platform != "win32":
+        return
+    package_dir = Path(__file__).parent
+    skip_win = pytest.mark.skip(reason="CrashHarness uses POSIX process-group signals (os.killpg)")
+    for item in items:
+        try:
+            item_path = Path(str(item.fspath))
+        except Exception:  # pragma: no cover - defensive
+            continue
+        if package_dir in item_path.parents:
+            item.add_marker(skip_win)
+
+
 @pytest.fixture
 def conformance_handler_module() -> str:
     """Importable module path for the conformance test handler."""
@@ -83,8 +110,6 @@ def make_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     harness.start()`` and ``await harness.close()`` (or use it as an
     async context manager).
     """
-    if sys.platform == "win32":
-        pytest.skip("CrashHarness uses POSIX process-group signals (os.killpg)")
 
     def _factory(
         *,
@@ -152,8 +177,6 @@ def make_checkpoint_harness(tmp_path: Path) -> Callable[..., CrashHarness]:
     Returns an unstarted ``CrashHarness`` (resilient_background is always True
     for Row 11 — it is a Row 1 extension).
     """
-    if sys.platform == "win32":
-        pytest.skip("CrashHarness uses POSIX process-group signals (os.killpg)")
 
     def _factory(
         *,

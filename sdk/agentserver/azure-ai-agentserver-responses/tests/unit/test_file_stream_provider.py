@@ -13,6 +13,7 @@ SDK primitive that has replaced the in-package provider.
 from __future__ import annotations
 
 import asyncio
+import sys
 from pathlib import Path
 from typing import Any, Iterator
 
@@ -204,6 +205,17 @@ class TestRehydration:
         # delete), then re-configuring against the same dir.
 
     @pytest.mark.asyncio
+    @pytest.mark.skipif(
+        sys.platform == "win32",
+        reason=(
+            "Rehydration here relies on POSIX fcntl.flock being released when the "
+            "abandoned stream instance is garbage-collected. On Windows the core "
+            "FileBackedReplayEventStream uses a best-effort .lock file that close() "
+            "intentionally does not remove (only _on_delete() does), so reopening the "
+            "same path fails. Core-side Windows limitation, not exercised by the "
+            "POSIX-only resilient background feature."
+        ),
+    )
     async def test_close_then_rehydrate_preserves_history(self, tmp_path: Path) -> None:
         _configure_file_backed(tmp_path)
         stream = await streams.get_or_create("resp_rehydrate")
