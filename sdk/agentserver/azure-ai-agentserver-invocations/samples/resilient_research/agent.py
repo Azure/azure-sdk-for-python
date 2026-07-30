@@ -69,9 +69,13 @@ from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 try:
-    from .store import CheckpointStore
+    from .store import CheckpointStore as _PackageCheckpointStore
 except ImportError:  # allows running the app as a script from inside this directory
-    from store import CheckpointStore
+    from store import CheckpointStore as _ScriptCheckpointStore
+
+    CheckpointStore = _ScriptCheckpointStore
+else:
+    CheckpointStore = _PackageCheckpointStore
 
 logger = logging.getLogger(__name__)
 

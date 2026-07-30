@@ -2,6 +2,19 @@
 
 ## 1.0.0b8 (Unreleased)
 
+### Features Added
+
+- Added Invocations package identity to the combined `x-platform-server` value.
+- Added the preview `azure.ai.agentserver.invocations.voice` submodule, a typed
+  implementation of Voice Live Bridge Protocol `1.0` over the existing
+  `invocations_ws` transport.
+- Added `VoiceAgentServerHost`, immutable Voice events, ordered multi-item text
+  output, proactive admission, cancellation and terminal arbitration, DTMF,
+  handoff, history mutation, and session controls without exposing wire frames.
+- Added exact-message deduplication, bounded callback coordination and cleanup,
+  cooperative cancellation, content-free protocol metrics, strict protocol
+  validation, and per-connection replay-free state.
+
 ### Samples
 
 - Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
@@ -9,10 +22,17 @@
 ### Bugs Fixed
 
 - The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
+- Preserved an application-selected WebSocket close code in structured close
+  diagnostics instead of recording a normal `1000` after the handler returned.
 
 ### Other Changes
 
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b9`.
+- Voice now ships in the Invocations distribution and shares its package version
+  and release artifact; no separate Voice package or server identity is required.
+- Voice follows the existing `invocations_ws` tracing behavior: the transport
+  emits structured close diagnostics but creates no framework-owned connection
+  or turn spans.
 
 ## 1.0.0b7 (2026-07-22)
 

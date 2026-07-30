@@ -5,6 +5,10 @@ The `azure-ai-agentserver-invocations` package provides the invocation protocol 
 - **HTTP** (`invocations` protocol) — `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, `GET /invocations/docs/openapi.json`, `GET /invocations/docs/asyncapi.{json,yaml}`.
 - **WebSocket** (`invocations_ws` protocol) — full-duplex streaming at `/invocations_ws`, registered with `@app.ws_handler`.
 
+The package also includes the preview
+`azure.ai.agentserver.invocations.voice` submodule: a typed implementation of
+Voice Live Bridge Protocol `1.0` on the existing `/invocations_ws` transport.
+
 ## Getting started
 
 ### Install the package
@@ -29,6 +33,15 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 - `@app.get_invocation_handler` — Optional. Handles `GET /invocations/{id}`.
 - `@app.cancel_invocation_handler` — Optional. Handles `POST /invocations/{id}/cancel`.
 - `@app.ws_handler` — Optional. Handles WebSocket connections at `/invocations_ws`.
+
+### Voice Live Bridge submodule
+
+`VoiceAgentServerHost` derives from `InvocationAgentServerHost` and owns the
+`/invocations_ws` route for exact Voice Live Bridge Protocol `1.0`. It exposes
+typed async callbacks, immutable inbound events, response and item helpers,
+terminal arbitration, DTMF, handoff, history mutation, and session controls.
+Voice Live continues to own audio, speech recognition, synthesis, voice
+activity detection, turn-taking, and barge-in.
 
 ### Protocol endpoints
 
@@ -296,12 +309,16 @@ app.run()
 - Calls `await websocket.accept()` before invoking your handler.
 - Runs WebSocket Ping/Pong keep-alive in the background — disabled by default; enable by setting the `WS_KEEPALIVE_INTERVAL` environment variable (auto-injected by AgentService into hosted-agent containers). Set the value to `0` to disable. Frames are sent at the WebSocket protocol layer (RFC 6455 opcode `0x9`/`0xA`) by the underlying Hypercorn server, which keeps the connection alive across upstream proxy / load-balancer idle timeouts without any extra application traffic.
 - Closes the connection cleanly on handler return (close code `1000`) or maps an uncaught handler exception to close code `1011`.
-- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`. The same fields are recorded as OpenTelemetry span attributes so the connection lifetime is visible end-to-end.
-- Inherits `/readiness`, OpenTelemetry export, graceful shutdown, and the `x-platform-server` identity header from `azure-ai-agentserver-core`.
+- Emits a structured close-event log line carrying `azure.ai.agentserver.invocations_ws.session_id`, `azure.ai.agentserver.invocations_ws.close_code`, and `azure.ai.agentserver.invocations_ws.duration_ms`.
+- Inherits `/readiness`, OpenTelemetry export configuration, and graceful shutdown from `azure-ai-agentserver-core`.
 
 ### Per-connection tracing
 
-A WebSocket connection is wrapped by the SDK in a single connection-scoped `websocket_session` OpenTelemetry span. The span carries the GenAI semantic-convention attributes plus `azure.ai.agentserver.invocations_ws.session_id`, `close_code`, and `duration_ms`. Any child spans your handler opens — e.g. via `opentelemetry.trace.get_tracer(...).start_as_current_span(...)` — are automatically parented to the connection span.
+`invocations_ws` does not create a framework-owned connection span. Application
+protocols and handlers own any spans they need, while the transport reports its
+connection outcome through the structured close-event log described above. The
+typed Voice submodule follows this same tracing behavior and does not add
+connection or turn spans.
 
 ### Handler signature
 
@@ -323,6 +340,40 @@ The handler receives a Starlette [`WebSocket`][starlette-ws] and returns `None`.
 | `1011` | Handler raised an unhandled exception (mapped by the SDK). |
 | `4000`-`4999` | Application-defined codes (set by the handler via `await websocket.close(code=...)` — surfaced unchanged to the client). |
 
+## Typed Voice Live Bridge (preview)
+
+No additional distribution is required. Import the typed protocol from the
+Invocations child namespace:
+
+```python
+from azure.ai.agentserver.invocations.voice import (
+    UserMessageEvent,
+    VoiceAgentServerHost,
+    VoiceResponse,
+    VoiceSession,
+)
+
+app = VoiceAgentServerHost()
+
+
+@app.on_user_message
+async def answer(
+    session: VoiceSession,
+    event: UserMessageEvent,
+    response: VoiceResponse,
+) -> None:
+    del session
+    await response.send_text(f"You said: {event.text}")
+
+
+app.run()
+```
+
+The host owns Bridge framing, IDs, ordering, callback coordination, bounded
+connection state, and terminal races. Application code remains text-in and
+text-out. See the [Voice Live Bridge guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-invocations/docs/voice-live-bridge.md) for
+streaming, DTMF, handoff, proactive responses, privacy, and troubleshooting.
+
 ## Troubleshooting
 
 ### Reporting issues
@@ -339,6 +390,7 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [async_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/async_invoke_agent/) | Long-running operations with polling and cancellation |
 | [ws_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_invoke_agent/) | Combined `POST /invocations` (HTTP) and `/invocations_ws` (WebSocket) host |
 | [ws_bidirectional_streaming_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/ws_bidirectional_streaming_agent/) | Full-duplex `/invocations_ws` agent: concurrent token streams + mid-flight cancel (relies on the SDK's WS protocol Ping/Pong keep-alive, not application-level heartbeats) |
+| [basic_voice_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/basic_voice_agent/) | Typed Voice Live Bridge `1.0` text-in/text-out agent |
 
 ## Contributing
 

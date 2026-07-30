@@ -1,7 +1,7 @@
 [project]
 name = "azure-ai-agentserver-invocations"
 dynamic = ["version", "readme"]
-description = "Invocations protocol for Azure AI Hosted Agents"
+description = "Invocations and typed Voice Live Bridge protocols for Azure AI Hosted Agents"
 requires-python = ">=3.10"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
@@ -18,10 +18,11 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations", "voice"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b9",
+    "opentelemetry-api>=1.43.0",
     # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
     # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
     # (<4.0.0 still admits 4.0.0a1 under PEP 440).
@@ -35,8 +36,9 @@ dev = [
     "azure-monitor-query",
     "azure-sdk-tools",
     "httpx",
+    "httpx2>=2.0.0",
     "opentelemetry-api>=1.40.0",
-    "opentelemetry-sdk>=1.40.0",
+    "opentelemetry-sdk>=1.43.0",
     "pytest-asyncio",
     "pytest",
 ]
@@ -72,7 +74,7 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b8 is not yet on PyPI
+# azure-ai-agentserver-core>=2.0.0b9 is not yet on PyPI
 mindependency = false
 pylint = true
 type_check_samples = false

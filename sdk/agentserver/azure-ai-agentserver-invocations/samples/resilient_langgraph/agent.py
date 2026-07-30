@@ -37,9 +37,13 @@ from azure.ai.agentserver.core.tasks import TaskContext, multi_turn_task
 from azure.ai.agentserver.core.streaming import streams
 
 try:
-    from .store import FileStore
+    from .store import FileStore as _PackageFileStore
 except ImportError:  # allows running the app as a script from inside this directory
-    from store import FileStore
+    from store import FileStore as _ScriptFileStore
+
+    FileStore = _ScriptFileStore
+else:
+    FileStore = _PackageFileStore
 
 logger = logging.getLogger(__name__)
 

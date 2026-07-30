@@ -63,6 +63,7 @@ import contextlib
 import json
 import logging
 from collections.abc import AsyncGenerator
+from functools import partial
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -160,6 +161,13 @@ async def _stream_tokens(
         logger.exception("_stream_tokens failed for prompt %s", prompt_id)
 
 
+def _remove_completed_task(
+    in_flight: dict[str, asyncio.Task[None]], prompt_id: str, _task: asyncio.Task[None]
+) -> None:
+    """Remove a completed generation task from the connection-local registry."""
+    in_flight.pop(prompt_id, None)
+
+
 async def _reader(
     websocket: WebSocket,
     in_flight: "dict[str, asyncio.Task[None]]",
@@ -199,30 +207,27 @@ async def _reader(
                 # Schedule the generation as an independent task so it
                 # runs in parallel with the reader (and any other
                 # in-flight generations).
-                task = asyncio.create_task(
+                stream_task = asyncio.create_task(
                     _stream_tokens(websocket, prompt_id, text),
                     name=f"stream-{prompt_id}",
                 )
-                in_flight[prompt_id] = task
-                # ``k=prompt_id`` captures the current value via a default
-                # argument so the callback removes the right entry even if
-                # ``prompt_id`` is rebound by a later iteration of the loop.
-                task.add_done_callback(
-                    lambda _t, k=prompt_id: in_flight.pop(k, None),
+                in_flight[prompt_id] = stream_task
+                stream_task.add_done_callback(
+                    partial(_remove_completed_task, in_flight, prompt_id),
                 )
 
             elif msg_type == "cancel":
                 prompt_id = str(msg.get("id", ""))
-                task = in_flight.get(prompt_id)
-                if task is not None and not task.done():
-                    task.cancel()
+                pending_task = in_flight.get(prompt_id)
+                if pending_task is not None and not pending_task.done():
+                    pending_task.cancel()
                     # Give the task a brief window to finish its courtesy
                     # ``cancelled`` frame before we move on — prevents the
                     # next prompt from racing against an in-flight close.
                     with contextlib.suppress(
                         asyncio.TimeoutError, asyncio.CancelledError, Exception,
                     ):
-                        await asyncio.wait_for(task, timeout=1.0)
+                        await asyncio.wait_for(pending_task, timeout=1.0)
 
             elif msg_type == "bye":
                 return

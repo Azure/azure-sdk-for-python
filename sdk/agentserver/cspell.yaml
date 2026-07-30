@@ -5,10 +5,12 @@ import:
 words:
   - aarguments
   - acode
+  - addinivalue
   - addl
   - agentserver
   - annot
   - aoutput
+  - APIView
   - appinsights
   - aread
   - arefusal
@@ -16,7 +18,10 @@ words:
   - asummary
   - atext
   - autouse
+  - AZURESUBSCRIPTION
+  - backpressure
   - badid
+  - barge
   - bkey
   - bval
   - BYOK
@@ -30,10 +35,13 @@ words:
   - ctco
   - dataclass
   - dedup
+  - dedupe
+  - DTMF
   - Dunders
   - elts
   - ename
   - finalizer
+  - foundrysdk
   - frontmatter
   - fstring
   - funcs
@@ -46,6 +54,7 @@ words:
   - impls
   - INPROCESS
   - invocations
+  - isinstance
   - isnotempty
   - JVBE
   - killpg
@@ -55,34 +64,47 @@ words:
   - mcpa
   - mcpl
   - mcpr
+  - misrouted
+  - multimodal
   - myhost
   - myproj
   - NCUS
   - ncusacr
   - nostream
+  - nottracing
   - openapi
   - paramtype
   - pathlib
   - precond
+  - pstn
   - pytestmark
   - PYTHONIOENCODING
   - RAPI
   - RDWR
+  - retriable
   - rtype
+  - sdist
   - sess
   - starlette
   - stubbable
   - TENANTID
+  - terminalizes
   - thresholded
+  - timespan
+  - timespec
   - TOCTOU
+  - tombstoned
   - tracecontext
   - traceparent
   - tracestate
   - transactionality
   - unimportable
   - unparseable
+  - unwritable
   - valeriepham
   - Vnext
+  - websocket
+  - worktree
   - xhigh
 ignorePaths:
   - sdk/agentserver/azure-ai-agentserver-activity/**/*.csv
@@ -96,6 +118,7 @@ ignorePaths:
   - sdk/agentserver/azure-ai-agentserver-invocations/**/*.csv
   - sdk/agentserver/azure-ai-agentserver-invocations/**/*.json
   - sdk/agentserver/azure-ai-agentserver-invocations/**/*.rst
+  - sdk/agentserver/azure-ai-agentserver-invocations/api.md
   - sdk/agentserver/azure-ai-agentserver-invocations/samples/**
   - sdk/agentserver/azure-ai-agentserver-optimization/**/*.json
   - sdk/agentserver/azure-ai-agentserver-optimization/**/*.rst

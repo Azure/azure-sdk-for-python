@@ -69,9 +69,17 @@ from azure.ai.agentserver.core.streaming import (
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import invocation_store, langgraph_session
+    from .agent import invocation_store as _package_invocation_store
+    from .agent import langgraph_session as _package_langgraph_session
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import invocation_store, langgraph_session
+    from agent import invocation_store as _script_invocation_store
+    from agent import langgraph_session as _script_langgraph_session
+
+    invocation_store = _script_invocation_store
+    langgraph_session = _script_langgraph_session
+else:
+    invocation_store = _package_invocation_store
+    langgraph_session = _package_langgraph_session
 
 logger = logging.getLogger(__name__)
 

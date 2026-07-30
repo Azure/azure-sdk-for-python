@@ -23,6 +23,7 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     FoundryAgentRequestContext,
+    build_server_version,
     create_error_response,
     reset_request_context,
     set_request_context,
@@ -38,6 +39,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 
 from ._constants import InvocationConstants
 from ._invocation_ws import _WSHandlerMixin
+from ._version import VERSION as _INVOCATIONS_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -273,6 +275,9 @@ class InvocationAgentServerHost(_WSHandlerMixin, AgentServerHost):
         # Merge with any routes from sibling mixins via cooperative init
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + invocation_routes, **kwargs)
+        self.register_server_version(
+            build_server_version("azure-ai-agentserver-invocations", _INVOCATIONS_VERSION)
+        )
 
         # --- Invocations startup configuration logging ---
         logger.info(

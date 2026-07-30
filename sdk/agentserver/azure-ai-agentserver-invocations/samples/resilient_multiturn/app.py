@@ -40,9 +40,13 @@ from azure.ai.agentserver.core.tasks import TaskConflictError
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
-    from .agent import session_workflow
+    from .agent import session_workflow as _package_session_workflow
 except ImportError:  # allows `python app.py` from inside this directory
-    from agent import session_workflow
+    from agent import session_workflow as _script_session_workflow
+
+    session_workflow = _script_session_workflow
+else:
+    session_workflow = _package_session_workflow
 
 app = InvocationAgentServerHost()
 

@@ -24,7 +24,7 @@ import inspect
 import logging
 import time
 import uuid
-from collections.abc import Awaitable, Callable
+from collections.abc import Awaitable, Callable, MutableMapping
 from typing import TYPE_CHECKING, Any, Optional
 
 from starlette.websockets import WebSocket, WebSocketDisconnect, WebSocketState
@@ -42,11 +42,15 @@ from ._constants import InvocationsWSConstants
 # ``InvocationAgentServerHost`` MRO actually inherits ``AgentServerHost``,
 # which keeps the diamond out of the runtime class graph.
 if TYPE_CHECKING:
-    _MixinBase = AgentServerHost
+    class _MixinBase(AgentServerHost):
+        """Static-checking base that exposes AgentServerHost attributes."""
 else:
-    _MixinBase = object
+    class _MixinBase:
+        """Runtime base that keeps AgentServerHost out of the mixin MRO."""
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+_APPLICATION_CLOSE_CODE = "azure.ai.agentserver.invocations_ws.application_close_code"
 
 
 WSHandler = Callable[[WebSocket], Awaitable[None]]
@@ -221,6 +225,16 @@ class _WSHandlerMixin(_MixinBase):
 
         close_code: int = InvocationsWSConstants.CLOSE_NORMAL
         handler_exc: Optional[BaseException] = None
+        original_send = websocket.send
+
+        async def _tracked_send(message: MutableMapping[str, Any]) -> None:
+            if message.get("type") == "websocket.close":
+                websocket.scope[_APPLICATION_CLOSE_CODE] = int(
+                    message.get("code", InvocationsWSConstants.CLOSE_NORMAL)
+                )
+            await original_send(message)
+
+        websocket.send = _tracked_send  # type: ignore[method-assign]
         try:
             close_code, handler_exc = await self._invoke_user_handler(websocket, session_id)
         except BaseException as exc:  # pylint: disable=broad-exception-caught
@@ -275,7 +289,12 @@ class _WSHandlerMixin(_MixinBase):
             raise RuntimeError("_invoke_user_handler called with no registered ws_handler")
         try:
             await ws_fn(websocket)
-            return InvocationsWSConstants.CLOSE_NORMAL, None
+            return int(
+                websocket.scope.get(
+                    _APPLICATION_CLOSE_CODE,
+                    InvocationsWSConstants.CLOSE_NORMAL,
+                )
+            ), None
         except WebSocketDisconnect as exc:
             # Client (or proxy) closed first — surface their code, not 1011.
             return (

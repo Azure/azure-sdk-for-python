@@ -5,6 +5,7 @@
 ../../identity/azure-identity
 pytest
 httpx
+httpx2>=2.0.0
 pytest-asyncio
 opentelemetry-api>=1.40.0
-opentelemetry-sdk>=1.40.0
+opentelemetry-sdk>=1.43.0
