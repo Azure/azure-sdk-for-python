@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,invalid-name,import-error,no-name-in-module,wrong-import-position,wrong-import-order,missing-function-docstring,too-few-public-methods,too-many-locals
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -31,8 +32,8 @@ Example JSON output:
 Notes:
     - Values are loaded from `.env` first. Explicit CLI arguments override environment variables.
     - `--sample-path` is the only dedicated CLI option. All other `--lower_case_name=value` arguments are mapped to uppercase environment variables and override `.env` values.
-        - Validation uses `LLM_VALIDATION_PROJECT_ENDPOINT` and `LLM_MODEL_NAME` only.
-            If `LLM_MODEL_NAME` is unset, the default validation model is `gpt-5.2`.
+    - Validation uses `LLM_VALIDATION_PROJECT_ENDPOINT` and `LLM_MODEL_NAME` only.
+      If `LLM_MODEL_NAME` is unset, the default validation model is `gpt-5.2`.
     - Extra lower-case CLI arguments are mapped to upper-case environment variables for the sample.
       Pass sample environment variables as extra CLI args using lower-case names. Examples:
           --foundry_project_endpoint="https://.../api/projects/..."
