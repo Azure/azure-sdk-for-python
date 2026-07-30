@@ -27,7 +27,7 @@ from azure.ai.agentserver.responses.hosting._validation import (
     service_unavailable_response,
     tag_platform_error,
 )
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
+from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 # ---------------------------------------------------------------------------
 # is_platform_error / tag_platform_error

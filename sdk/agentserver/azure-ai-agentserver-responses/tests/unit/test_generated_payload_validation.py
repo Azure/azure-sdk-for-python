@@ -8,7 +8,7 @@ import pytest
 
 from azure.ai.agentserver.responses.hosting._validation import parse_create_response
 from azure.ai.agentserver.responses.models._validators import validate_create_response_payload
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
+from azure.ai.agentserver.responses.models._errors import RequestValidationError
 
 # ---------------------------------------------------------------------------
 # parse_create_response integration tests (real validator + real model)

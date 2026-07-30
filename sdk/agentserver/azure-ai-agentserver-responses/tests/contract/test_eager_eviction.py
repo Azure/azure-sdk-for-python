@@ -314,7 +314,7 @@ class TestTryEvict:
     async def test_try_evict_removes_terminal_record(self) -> None:
         """try_evict on a terminal record removes it from _records."""
         from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-        from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+        from azure.ai.agentserver.responses.models._runtime import ResponseExecution, ResponseModeFlags
 
         state = _RuntimeState()
         record = ResponseExecution(
@@ -342,7 +342,7 @@ class TestTryEvict:
     async def test_try_evict_non_terminal_returns_false(self) -> None:
         """try_evict on an in-progress record returns False (not evicted)."""
         from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-        from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+        from azure.ai.agentserver.responses.models._runtime import ResponseExecution, ResponseModeFlags
 
         state = _RuntimeState()
         record = ResponseExecution(
@@ -365,7 +365,7 @@ class TestTryEvict:
         from the provider. Only explicit DELETE marks as deleted.
         """
         from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-        from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+        from azure.ai.agentserver.responses.models._runtime import ResponseExecution, ResponseModeFlags
 
         state = _RuntimeState()
         record = ResponseExecution(
@@ -382,7 +382,7 @@ class TestTryEvict:
     async def test_try_evict_removes_record_so_isolation_falls_to_storage(self) -> None:
         """After eviction the record is gone — isolation is enforced by Foundry storage, not locally."""
         from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
-        from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+        from azure.ai.agentserver.responses.models._runtime import ResponseExecution, ResponseModeFlags
 
         state = _RuntimeState()
         rid = "caresp_test123456789012345678901234567890"

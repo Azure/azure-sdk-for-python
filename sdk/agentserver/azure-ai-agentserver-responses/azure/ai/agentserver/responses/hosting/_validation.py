@@ -17,7 +17,7 @@ from azure.ai.agentserver.core._platform_headers import (  # pylint: disable=imp
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models import ApiErrorResponse, CreateResponse
-from azure.ai.agentserver.responses.models.errors import RequestValidationError
+from azure.ai.agentserver.responses.models._errors import RequestValidationError
 from azure.ai.agentserver.responses.models._validators import (
     validate_create_response_payload,
 )

@@ -10,7 +10,7 @@ import pytest
 
 from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
 from azure.ai.agentserver.responses.models import ResponseObject
-from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
+from azure.ai.agentserver.responses.models._runtime import ResponseExecution, ResponseModeFlags
 
 # ---------------------------------------------------------------------------
 # Helpers

@@ -16,7 +16,7 @@ from azure.ai.agentserver.responses.models import OutputItem, ResponseObject, Re
 
 from .._response_context import PlatformContext
 from ..models._helpers import get_conversation_id
-from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
+from ..models._runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
@@ -329,7 +329,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         """Create a new execution and replay container for ``execution.response_id``.
 
         :param execution: The execution state to store.
-        :type execution: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution
+        :type execution: ~azure.ai.agentserver.responses.models._runtime.ResponseExecution
         :keyword int or None ttl_seconds: Optional time-to-live in seconds for automatic expiration.
         :rtype: None
         :raises ValueError: If an entry with the same response ID already exists.
@@ -350,7 +350,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response_id: The unique identifier of the response execution to retrieve.
         :type response_id: str
         :returns: A deep copy of the execution state, or ``None`` if not found.
-        :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseExecution | None
+        :rtype: ~azure.ai.agentserver.responses.models._runtime.ResponseExecution | None
         """
         async with self._locked():
             entry = self._entries.get(response_id)
@@ -396,7 +396,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response_id: The unique identifier of the response execution to transition.
         :type response_id: str
         :param next_status: The target status to transition to.
-        :type next_status: ~azure.ai.agentserver.responses.models.runtime.ResponseStatus
+        :type next_status: ~azure.ai.agentserver.responses.models._runtime.ResponseStatus
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and transitioned, ``False`` otherwise.
         :rtype: bool
@@ -469,7 +469,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response_id: The unique identifier of the response to append the event to.
         :type response_id: str
         :param event: The stream event record to append.
-        :type event: ~azure.ai.agentserver.responses.models.runtime.StreamEventRecord
+        :type event: ~azure.ai.agentserver.responses.models._runtime.StreamEventRecord
         :keyword int or None ttl_seconds: Optional time-to-live in seconds to refresh expiration.
         :returns: ``True`` if the entry was found and the event was appended, ``False`` otherwise.
         :rtype: bool
@@ -492,7 +492,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
         :returns: A list of deep-copied stream event records, or ``None`` if not found.
-        :rtype: list[~azure.ai.agentserver.responses.models.runtime.StreamEventRecord] | None
+        :rtype: list[~azure.ai.agentserver.responses.models._runtime.StreamEventRecord] | None
         """
         async with self._locked():
             entry = self._entries.get(response_id)
@@ -715,7 +715,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param response: The response envelope to extract mode flags from.
         :type response: ~azure.ai.agentserver.responses.models.Response
         :returns: Mode flags derived from the response's ``stream``, ``store``, and ``background`` attributes.
-        :rtype: ~azure.ai.agentserver.responses.models.runtime.ResponseModeFlags
+        :rtype: ~azure.ai.agentserver.responses.models._runtime.ResponseModeFlags
         """
         return ResponseModeFlags(
             stream=bool(get_field(response, "stream", False)),

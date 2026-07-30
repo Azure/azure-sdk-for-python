@@ -8,7 +8,7 @@ import asyncio
 
 import pytest
 
-from azure.ai.agentserver.responses.models.runtime import (
+from azure.ai.agentserver.responses.models._runtime import (
     ResponseExecution,
     ResponseModeFlags,
     build_cancelled_response,

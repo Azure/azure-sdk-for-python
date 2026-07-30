@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Error model types for request validation failures."""
+"""Internal error model helpers for request validation failures."""
 
 from __future__ import annotations
 

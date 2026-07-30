@@ -221,7 +221,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             (used to extract the latest response snapshot).
         :type all_events: list[ResponseStreamEvent]
         """
-        # Lazy imports to avoid circular dependency (models.runtime ← streaming._helpers ← models.__init__)
+        # Lazy imports to avoid circular dependency (models._runtime <- streaming._helpers <- models.__init__)
         from ..streaming._helpers import (
             _extract_response_snapshot_from_events,  # pylint: disable=import-outside-toplevel
         )

@@ -46,7 +46,7 @@ from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from .._response_context import PlatformContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
-from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
+from ..models._runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._helpers import _encode_sse
