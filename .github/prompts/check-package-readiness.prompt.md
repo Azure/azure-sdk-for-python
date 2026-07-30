@@ -1,10 +1,10 @@
 ---
 mode: 'agent'
-tools: ['CheckPackageReleaseReadiness']
-description: 'This prompt is designed to check the release readiness of a SDK package.'
+description: 'Check the release readiness of an SDK package.'
 ---
 ## Goal
-Check the release readiness of an SDK package by collecting the required information from the user and executing the readiness check.
+Check the release readiness of an SDK package using the
+`azsdk-common-sdk-release` skill.
 
 ## Instructions
 1. **Collect Required Information**:
@@ -17,7 +17,8 @@ Check the release readiness of an SDK package by collecting the required informa
       - Go
 
 2. **Execute Readiness Check**:
-    - Use the `CheckPackageReleaseReadiness` tool with the provided package name and selected language
+    - Follow `.github/skills/azsdk-common-sdk-release/SKILL.md`.
+    - Use `azure-sdk-mcp:azsdk_release_sdk` with `checkReady: true`.
     - Do not check for existing pull requests to run this step.
     - Do not ask the user to create a release plan to run this step.
 

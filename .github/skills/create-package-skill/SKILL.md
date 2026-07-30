@@ -41,7 +41,8 @@ Run each phase in order. **Progressive loading:** Read only the current phase fi
 - Every line must be non-obvious and package-specific. No generic Python/SDK boilerplate.
 - SKILL.md should be under 500 tokens (soft limit). Move details to references/.
 - References under 1000 tokens each. Split if larger.
-- Never duplicate what's already in `.github/copilot-instructions.md` or shared skills.
+- Never duplicate what's already in `AGENTS.md`, shared skills, or path-scoped
+  reviewer instructions.
 
 **Relationship to existing SDK tools:**
 - Package skills **complement** the Azure SDK MCP tools (`azsdk_package_generate_code`, `azsdk_package_build_code`, `azsdk_customized_code_update`, etc.) — they do NOT replace them.
