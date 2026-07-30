@@ -298,24 +298,44 @@ class AgentServerHost(Starlette):
 
             # --- Resilient task manager auto-initialization ---
             #
-            # OPT-IN GATE: only stand up the TaskManager when the app has
-            # actually declared a durable task via ``@task`` /
-            # ``@multi_turn_task`` (both funnel through the shared
-            # ``_REGISTERED_DESCRIPTORS`` registry). Apps that never opt in
-            # — e.g. plain invocations servers — must NOT pay the task-store
-            # cost: without this gate the startup path issues a blocking
-            # hosted task-store ``list()`` (plus DefaultAzureCredential token
-            # acquisition) BEFORE the lifespan ``yield``, gating server
-            # readiness on a network round-trip that has nothing to recover
-            # (no registered descriptors == no recovery-routing targets).
+            # OPT-IN, with a lazy fallback for late registration.
+            #
+            # The TaskManager's startup recovery scan issues a blocking hosted
+            # task-store ``list()`` (plus DefaultAzureCredential token
+            # acquisition) that would otherwise gate server readiness on a
+            # network round-trip. Apps that never declare a durable task
+            # (``@task`` / ``@multi_turn_task`` — both funnel through the
+            # shared ``_REGISTERED_DESCRIPTORS`` registry) must not pay it.
+            #
+            # So: install a lazy factory unconditionally, then eagerly stand
+            # up the manager ONLY when a durable task was declared by startup.
+            #   - Opted in  -> eager init + recovery scan (unchanged behavior).
+            #   - Not opted -> nothing is constructed now; if a task is later
+            #     declared during the active lifespan (the late-registration
+            #     path in ``Task.__init__``), its first ``run``/``start``
+            #     triggers ``get_task_manager()``, which builds the manager via
+            #     this factory instead of raising ``TaskManagerNotInitialized``.
             task_manager = None
-            if _resilient_tasks_opted_in():
-                try:
-                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                        TaskManager,
-                        set_task_manager,
-                    )
+            try:
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                    TaskManager,
+                    set_task_manager,
+                    set_task_manager_factory,
+                )
 
+                def _bootstrap_task_manager() -> "TaskManager":
+                    manager = TaskManager(
+                        config=cfg,
+                        shutdown_event=asyncio.Event(),
+                        shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                    )
+                    manager.load_registered_descriptors()
+                    logger.info("TaskManager lazily initialized for a task declared after startup")
+                    return manager
+
+                set_task_manager_factory(_bootstrap_task_manager)
+
+                if _resilient_tasks_opted_in():
                     task_manager = TaskManager(
                         config=cfg,
                         shutdown_event=asyncio.Event(),
@@ -324,10 +344,15 @@ class AgentServerHost(Starlette):
                     set_task_manager(task_manager)
                     await task_manager.startup()
                     logger.info("TaskManager initialized automatically")
-                except ImportError:
-                    pass  # resilient module not available
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to initialize TaskManager", exc_info=True)
+                else:
+                    logger.info(
+                        "TaskManager auto-init deferred (no durable task declared); "
+                        "will lazily initialize on first task use"
+                    )
+            except ImportError:
+                pass  # resilient module not available
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize TaskManager", exc_info=True)
 
             yield
 
@@ -362,18 +387,28 @@ class AgentServerHost(Starlette):
 
             # Shutdown task manager AFTER on_shutdown so resilient handlers
             # have had time to checkpoint via the responses layer's
-            # ``handle_shutdown``.
-            if task_manager is not None:
-                try:
-                    await task_manager.shutdown()
-                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                        set_task_manager as _clear_manager,
-                    )
+            # ``handle_shutdown``. Tear down whichever manager is live —
+            # the eagerly-initialized one OR one lazily bootstrapped by a
+            # task declared during the active lifespan — via the peek helper
+            # (so a lazily-created manager not captured in ``task_manager``
+            # is still shut down and cleared).
+            from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                _peek_task_manager,
+                set_task_manager as _clear_manager,
+            )
 
+            live_task_manager = task_manager or _peek_task_manager()
+            if live_task_manager is not None:
+                try:
+                    await live_task_manager.shutdown()
                     _clear_manager(None)
                     logger.info("TaskManager shut down")
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error shutting down TaskManager", exc_info=True)
+            else:
+                # No manager was ever created; clear the lazy factory so the
+                # global state doesn't leak past this lifespan.
+                _clear_manager(None)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])

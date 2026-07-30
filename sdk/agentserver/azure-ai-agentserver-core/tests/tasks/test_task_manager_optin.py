@@ -63,7 +63,11 @@ class _FakeTaskManager:
         self.kwargs = kwargs
         self.startup_called = False
         self.shutdown_called = False
+        self.descriptors_loaded = False
         _FakeTaskManager.instances.append(self)
+
+    def load_registered_descriptors(self) -> None:
+        self.descriptors_loaded = True
 
     async def startup(self) -> None:
         self.startup_called = True
@@ -109,6 +113,14 @@ class TestOptInSignal:
 
         assert _resilient_tasks_opted_in() is True
 
+    def test_get_task_manager_still_raises_without_a_factory(
+        self, _isolate_registry
+    ) -> None:
+        """Outside an active host lifespan (no factory installed), the raise
+        behavior is preserved — lazy bootstrap only applies within a host."""
+        with pytest.raises(TaskManagerNotInitialized):
+            get_task_manager()
+
 
 # ------------------------------------------------------------------ #
 # Lifespan behaviour: gate is honoured at startup
@@ -119,29 +131,62 @@ class TestLifespanOptInGate:
     """Verify ``AgentServerHost`` lifespan honours the opt-in gate."""
 
     @pytest.mark.asyncio
-    async def test_not_opted_in_skips_task_manager(
+    async def test_not_opted_in_defers_eager_init(
         self,
         _isolate_registry,
         _fake_task_manager,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
-        """No durable task declared → TaskManager is never constructed."""
+        """No durable task declared → no manager is eagerly constructed and
+        no recovery scan runs; the expensive startup path is deferred."""
         from azure.ai.agentserver.core import AgentServerHost
 
         app = AgentServerHost()
 
         with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
             async with app.router.lifespan_context(app):
-                # During the active lifespan, no manager is installed.
-                with pytest.raises(TaskManagerNotInitialized):
-                    get_task_manager()
+                # Nothing eagerly built during startup — no provider / token /
+                # task-store round-trip happened.
+                assert _fake_task_manager.instances == []
 
-        # TaskManager was never even constructed — no provider / token /
-        # task-store work happened.
-        assert _fake_task_manager.instances == []
         assert not any(
             "TaskManager initialized automatically" in r.message for r in caplog.records
         )
+        assert any(
+            "TaskManager auto-init deferred" in r.message for r in caplog.records
+        )
+
+    @pytest.mark.asyncio
+    async def test_first_task_declared_in_lifespan_lazily_bootstraps(
+        self,
+        _isolate_registry,
+        _fake_task_manager,
+    ) -> None:
+        """Late-registration path: a task declared *during* the active
+        lifespan (when eager init was skipped) must not fail on first use —
+        ``get_task_manager()`` lazily bootstraps a manager instead of raising
+        ``TaskManagerNotInitialized``."""
+        from azure.ai.agentserver.core import AgentServerHost
+
+        app = AgentServerHost()
+
+        async with app.router.lifespan_context(app):
+            # Nothing built yet.
+            assert _fake_task_manager.instances == []
+
+            # Declare the FIRST durable task now, mid-lifespan.
+            @task(name="optin_late_declared_task")
+            async def _late(ctx: "TaskContext[dict]") -> None:
+                return None
+
+            # First use resolves the manager — must not raise, and must
+            # lazily construct + load descriptors.
+            mgr = get_task_manager()
+            assert mgr is _fake_task_manager.instances[0]
+            assert mgr.descriptors_loaded is True
+
+        # The lazily-bootstrapped manager is torn down on shutdown.
+        assert _fake_task_manager.instances[0].shutdown_called is True
 
     @pytest.mark.asyncio
     async def test_opted_in_initializes_task_manager(
