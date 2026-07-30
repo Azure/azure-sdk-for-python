@@ -6,10 +6,7 @@
 
 from azure.core.pipeline.transport import HttpRequest, HttpResponse
 from azure.core.pipeline import PipelineRequest, PipelineResponse
-from azure.appconfiguration._sync_token import (  # pylint: disable=no-cross-package-private-import
-    SyncToken,
-    SyncTokenPolicy,
-)
+from azure.appconfiguration._sync_token import SyncToken, SyncTokenPolicy
 
 
 def test_parse_sync_token():

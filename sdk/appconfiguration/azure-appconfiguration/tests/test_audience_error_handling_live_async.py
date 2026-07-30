@@ -8,7 +8,7 @@ from asynctestcase import AsyncAppConfigTestCase
 from consts import APPCONFIGURATION_ENDPOINT_STRING
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
-from azure.appconfiguration._audience_error_handling_policy import (  # pylint: disable=no-cross-package-private-import
+from azure.appconfiguration._audience_error_handling_policy import (
     AudienceErrorHandlingPolicy,
 )
 
