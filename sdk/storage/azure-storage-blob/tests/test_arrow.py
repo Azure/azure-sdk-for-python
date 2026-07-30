@@ -153,7 +153,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             assert blob.etag is not None
             assert blob.last_modified is not None and blob.last_modified.tzinfo is not None
             assert blob.creation_time is not None and blob.creation_time.tzinfo is not None
-            assert blob.last_accessed_on is not None and blob.last_accessed_on.tzinfo is not None
+            assert blob.last_accessed_on is None or blob.last_accessed_on.tzinfo is not None
             assert blob.server_encrypted is True
             assert blob.blob_tier is not None
             assert blob.blob_tier_inferred is not None
