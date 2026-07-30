@@ -180,10 +180,17 @@ class TestLifespanOptInGate:
                 return None
 
             # First use resolves the manager — must not raise, and must
-            # lazily construct + load descriptors.
+            # lazily construct + load descriptors. This is exactly the first
+            # thing ``Task.run``/``Task.start`` do, so it protects the
+            # advertised "first run/start no longer raises" behavior.
             mgr = get_task_manager()
             assert mgr is _fake_task_manager.instances[0]
             assert mgr.descriptors_loaded is True
+            # Intentional limitation: the sync lazy path does NOT run the
+            # async ``startup()`` (initial recovery scan + periodic loop).
+            # A task declared after startup already missed the startup
+            # recovery window; its own run/start works via the provider.
+            assert mgr.startup_called is False
 
         # The lazily-bootstrapped manager is torn down on shutdown.
         assert _fake_task_manager.instances[0].shutdown_called is True
@@ -236,3 +243,31 @@ class TestLifespanOptInGate:
 
         assert len(_fake_task_manager.instances) == 1
         assert _fake_task_manager.instances[0].startup_called is True
+
+    @pytest.mark.asyncio
+    async def test_lifespan_tears_down_cleanly_when_tasks_module_unavailable(
+        self,
+        _isolate_registry,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        """Task-less / optional install: both startup AND shutdown tolerate
+        the resilient-task module being unimportable (no crash on teardown)."""
+        import builtins
+
+        real_import = builtins.__import__
+
+        def _blocked_import(name, *args, **kwargs):
+            if name.endswith("tasks._manager") or name == "azure.ai.agentserver.core.tasks._manager":
+                raise ImportError("simulated: resilient tasks module unavailable")
+            return real_import(name, *args, **kwargs)
+
+        monkeypatch.setattr(builtins, "__import__", _blocked_import)
+
+        from azure.ai.agentserver.core import AgentServerHost
+
+        app = AgentServerHost()
+
+        # Entering AND exiting the lifespan must both succeed without raising
+        # ImportError — the shutdown import is guarded like the startup one.
+        async with app.router.lifespan_context(app):
+            pass

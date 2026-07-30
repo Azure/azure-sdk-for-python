@@ -391,24 +391,29 @@ class AgentServerHost(Starlette):
             # the eagerly-initialized one OR one lazily bootstrapped by a
             # task declared during the active lifespan — via the peek helper
             # (so a lazily-created manager not captured in ``task_manager``
-            # is still shut down and cleared).
-            from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                _peek_task_manager,
-                set_task_manager as _clear_manager,
-            )
-
-            live_task_manager = task_manager or _peek_task_manager()
-            if live_task_manager is not None:
-                try:
-                    await live_task_manager.shutdown()
-                    _clear_manager(None)
-                    logger.info("TaskManager shut down")
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Error shutting down TaskManager", exc_info=True)
+            # is still shut down and cleared). Guard the import with the same
+            # ``ImportError`` tolerance as startup: task-less / optional
+            # installations must still tear down cleanly.
+            try:
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                    _peek_task_manager,
+                    set_task_manager as _clear_manager,
+                )
+            except ImportError:
+                pass  # resilient module not available — nothing to tear down
             else:
-                # No manager was ever created; clear the lazy factory so the
-                # global state doesn't leak past this lifespan.
-                _clear_manager(None)
+                live_task_manager = task_manager or _peek_task_manager()
+                if live_task_manager is not None:
+                    try:
+                        await live_task_manager.shutdown()
+                        _clear_manager(None)
+                        logger.info("TaskManager shut down")
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Error shutting down TaskManager", exc_info=True)
+                else:
+                    # No manager was ever created; clear the lazy factory so
+                    # the global state doesn't leak past this lifespan.
+                    _clear_manager(None)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
