@@ -15,14 +15,11 @@ FEATURE_FLAG_REFERENCE_KEY = "FeatureFlagReference"
 ALLOCATION_ID_KEY = "AllocationId"
 ETAG_KEY = "ETag"
 
-# Identifier field required by the feature management library's schema for every feature flag entry. For
-# enhanced feature flags, which do not have their own "id" concept, the enhanced feature flag's name is used
-# as the value of this field.
+# Identifier field required by the feature management library's schema for every feature flag entry. 
 FEATURE_FLAG_ID_FIELD = "id"
 # Path segment used to build the feature flag reference URL for feature flags loaded from the key-value store.
 FEATURE_FLAG_KV_REFERENCE_SEGMENT = "kv"
-# Path segment used to build the feature flag reference URL for enhanced feature flags loaded from the enhanced
-# feature flag endpoint.
+# Path segment used to build the feature flag reference URL for enhanced feature flags.
 ENHANCED_FEATURE_FLAG_REFERENCE_SEGMENT = "ff"
 
 # ------------------------------------------------------------------------

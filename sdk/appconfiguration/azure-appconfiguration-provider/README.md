@@ -379,7 +379,7 @@ config = load(
 
 ### Loading Enhanced Feature Flags
 
-Feature flags can also be created using the dedicated enhanced feature flag endpoint (via `FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`), instead of as key-value configuration settings. The provider loads both kinds side by side into the same `feature_management.feature_flags` list, with enhanced feature flags taking precedence over key-value based feature flags when they share the same name. No additional `load()` options are required to enable this — it happens automatically whenever `feature_flag_enabled=True`, using the same `feature_flag_selectors`.
+Feature flags can also be created using the dedicated feature flag endpoint (via `FeatureFlagClient`/`FeatureFlag` in `azure-appconfiguration`), instead of as key-value configuration settings. These are referred to as enhanced feature flags. No additional `load()` options are required to load them — it happens automatically whenever `feature_flag_enabled=True`, and they are merged into the same `feature_management.feature_flags` list as key-value based feature flags, with enhanced feature flags taking precedence when both share the same name.
 
 <!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_loading -->
 
@@ -396,7 +396,29 @@ print(enhanced_flag_beta["enabled"])
 
 <!-- END SNIPPET -->
 
-The same `SettingSelector` used to filter key-value based feature flags also filters enhanced feature flags, by name, label, or tags. Note that selectors with a `snapshot_name` are not currently supported by the enhanced feature flag endpoint and are skipped when loading enhanced feature flags.
+`FeatureFlagSelector` is the dedicated selector type for filtering enhanced feature flags by name, label, or tags, and is the recommended way to select enhanced feature flags.
+
+<!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_selector_with_feature_flag_selector -->
+
+```python
+from azure.appconfiguration.provider import load, FeatureFlagSelector
+
+# FeatureFlagSelector is the dedicated selector type for filtering enhanced feature flags.
+config = load(
+    endpoint=endpoint,
+    credential=credential,
+    feature_flag_enabled=True,
+    feature_flag_selectors=[FeatureFlagSelector(name_filter="Enhanced*")],
+    **kwargs,
+)
+feature_flags = config["feature_management"]["feature_flags"]
+enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
+print(enhanced_flag_beta["enabled"])
+```
+
+<!-- END SNIPPET -->
+
+The same `SettingSelector` used to filter key-value based feature flags also filters enhanced feature flags, by name, label, or tags. A list of `feature_flag_selectors` must contain either `SettingSelector` or `FeatureFlagSelector` instances, but not both. Note that selectors with a `snapshot_name` are not currently supported for enhanced feature flags and are skipped when loading them.
 
 <!-- SNIPPET:enhanced_feature_flag_sample.enhanced_feature_flag_selector -->
 
@@ -418,6 +440,8 @@ print(enhanced_flag_beta["enabled"])
 ```
 
 <!-- END SNIPPET -->
+
+Existing customers using key-value based feature flags do not need to make any code changes to benefit from this feature. If enhanced feature flags are created in the same App Configuration store, the provider will automatically load and merge them alongside the existing key-value based feature flags whenever `feature_flag_enabled=True`.
 
 ## JSON Content Type
 

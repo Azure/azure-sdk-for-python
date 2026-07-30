@@ -74,11 +74,7 @@ async def main():
         from azure.appconfiguration.provider.aio import load
         from azure.appconfiguration.provider import FeatureFlagSelector
 
-        # FeatureFlagSelector is an alternative to SettingSelector for selecting feature flags. It uses
-        # name_filter instead of key_filter (the equivalent concept for enhanced feature flags), and has no
-        # snapshot_name since the enhanced feature flag endpoint does not support snapshots. A list of
-        # FeatureFlagSelector is used to filter both key-value based and enhanced feature flags; it cannot be
-        # mixed with SettingSelector in the same list.
+        # FeatureFlagSelector is the dedicated selector type for filtering enhanced feature flags.
         config = await load(
             endpoint=endpoint,
             credential=credential,

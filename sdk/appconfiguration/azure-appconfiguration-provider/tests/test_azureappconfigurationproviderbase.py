@@ -214,10 +214,6 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertEqual(provider._refresh_timer._interval, 60)
 
     def test_enhanced_feature_flag_selectors_excludes_snapshot_selectors(self):
-        """The enhanced feature flag endpoint doesn't support snapshots, so snapshot-name selectors should be
-        filtered out once at startup, while the original selector list (used for the key-value store, which does
-        support snapshots) is left untouched. Enhanced selectors are converted to FeatureFlagSelector, since the
-        enhanced feature flag endpoint filters by name_filter rather than key_filter."""
         key_select = SettingSelector(key_filter="app:*")
         snapshot_select = SettingSelector(snapshot_name="my-snapshot")
         feature_flag_selectors = [snapshot_select, key_select]
