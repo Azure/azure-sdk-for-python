@@ -59,6 +59,36 @@ def _read_task_manager_shutdown_grace() -> float:
         return 25.0
 
 
+def _resilient_tasks_opted_in() -> bool:
+    """Return True iff the app has declared at least one durable task.
+
+    The opt-in signal is a non-empty ``_REGISTERED_DESCRIPTORS`` registry,
+    which every durable decorator populates: ``@task`` and
+    ``@multi_turn_task`` both construct a :class:`~azure.ai.agentserver.core.
+    tasks.Task` whose ``__init__`` appends to the registry (``MultiTurnTask``
+    wraps an inner ``Task``, so it registers too). Declaring a durable task
+    is therefore the opt-in for standing up the ``TaskManager`` and its
+    (potentially network-backed) recovery scan.
+
+    Returns False — so ``AgentServerHost`` skips ``TaskManager`` auto-init
+    entirely — when the resilient tasks module is unavailable or no durable
+    task was declared. This keeps plain servers (e.g. invocations-only
+    hosts that never use ``@task``) from paying the hosted task-store
+    startup cost: a blocking ``list()`` round-trip plus credential-token
+    acquisition that gates server readiness while having nothing to recover.
+
+    :return: Whether resilient task auto-initialization should run.
+    :rtype: bool
+    """
+    try:
+        from .tasks._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+    except ImportError:
+        return False
+    return bool(_REGISTERED_DESCRIPTORS)
+
+
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
@@ -267,25 +297,37 @@ class AgentServerHost(Starlette):
             )
 
             # --- Resilient task manager auto-initialization ---
+            #
+            # OPT-IN GATE: only stand up the TaskManager when the app has
+            # actually declared a durable task via ``@task`` /
+            # ``@multi_turn_task`` (both funnel through the shared
+            # ``_REGISTERED_DESCRIPTORS`` registry). Apps that never opt in
+            # — e.g. plain invocations servers — must NOT pay the task-store
+            # cost: without this gate the startup path issues a blocking
+            # hosted task-store ``list()`` (plus DefaultAzureCredential token
+            # acquisition) BEFORE the lifespan ``yield``, gating server
+            # readiness on a network round-trip that has nothing to recover
+            # (no registered descriptors == no recovery-routing targets).
             task_manager = None
-            try:
-                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                    TaskManager,
-                    set_task_manager,
-                )
+            if _resilient_tasks_opted_in():
+                try:
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        TaskManager,
+                        set_task_manager,
+                    )
 
-                task_manager = TaskManager(
-                    config=cfg,
-                    shutdown_event=asyncio.Event(),
-                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
-                )
-                set_task_manager(task_manager)
-                await task_manager.startup()
-                logger.info("TaskManager initialized automatically")
-            except ImportError:
-                pass  # resilient module not available
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize TaskManager", exc_info=True)
+                    task_manager = TaskManager(
+                        config=cfg,
+                        shutdown_event=asyncio.Event(),
+                        shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                    )
+                    set_task_manager(task_manager)
+                    await task_manager.startup()
+                    logger.info("TaskManager initialized automatically")
+                except ImportError:
+                    pass  # resilient module not available
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize TaskManager", exc_info=True)
 
             yield
 

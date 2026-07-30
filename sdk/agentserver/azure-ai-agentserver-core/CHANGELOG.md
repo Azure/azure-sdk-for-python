@@ -8,6 +8,7 @@
 
 ### Bugs Fixed
 
+- `AgentServerHost` now only initializes the resilient `TaskManager` at startup when the app has declared a durable task via `@task` / `@multi_turn_task`. Plain servers (e.g. invocations-only hosts) that never use the task primitive no longer pay the task-store startup cost — a blocking hosted task-store `list()` round-trip plus credential-token acquisition that could gate server readiness (and add tens of seconds of connect latency) while having nothing to recover.
 - Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
 
 ## 2.0.0b9 (2026-07-28)
