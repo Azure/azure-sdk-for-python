@@ -7,7 +7,7 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import TYPE_CHECKING, Iterator, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from ... import models as response_models
 from ._base import BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
@@ -152,6 +152,8 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         yield self.emit_arguments_delta(args)
         yield self.emit_arguments_done(args)
+
+
 class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
     """Scoped builder for a function-call-output item in stream mode."""
 
@@ -196,13 +198,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
 
     def emit_added(
         self,
-        output: str
-        | list[
-            response_models.InputTextContentParam
-            | response_models.InputImageContentParamAutoParam
-            | response_models.InputFileContentParam
-        ]
-        | None = None,
+        output: (
+            str
+            | list[
+                response_models.InputTextContentParam
+                | response_models.InputImageContentParamAutoParam
+                | response_models.InputFileContentParam
+            ]
+            | None
+        ) = None,
     ) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
@@ -223,13 +227,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
 
     def emit_done(
         self,
-        output: str
-        | list[
-            response_models.InputTextContentParam
-            | response_models.InputImageContentParamAutoParam
-            | response_models.InputFileContentParam
-        ]
-        | None = None,
+        output: (
+            str
+            | list[
+                response_models.InputTextContentParam
+                | response_models.InputImageContentParamAutoParam
+                | response_models.InputFileContentParam
+            ]
+            | None
+        ) = None,
     ) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 

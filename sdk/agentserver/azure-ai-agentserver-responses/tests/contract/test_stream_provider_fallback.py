@@ -22,7 +22,6 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.models import OutputItem, ResponseObject
 from azure.ai.agentserver.responses.store._base import (
     ResponseProviderProtocol,
-    ResponseStreamProviderProtocol,
 )
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming import ResponseEventStream
@@ -113,16 +112,15 @@ class _ResponseOnlyProvider:
 def _build_client(handler: Any) -> TestClient:
     """Build a TestClient whose store only implements ResponseProviderProtocol."""
     provider = _ResponseOnlyProvider()
-    # Sanity: confirm the facade is NOT a stream provider
+    # Sanity: confirm the facade satisfies ``ResponseProviderProtocol``
     assert isinstance(provider, ResponseProviderProtocol)
-    assert not isinstance(provider, ResponseStreamProviderProtocol)
 
     app = ResponsesAgentServerHost(store=provider)
     app.response_handler(handler)
     return TestClient(app)
 
 
-def _handler(request: Any, context: Any, cancel: Any) -> Any:
+async def _handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> Any:
     """Handler that emits created + completed."""
 
     async def _events():

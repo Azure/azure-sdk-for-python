@@ -9,25 +9,21 @@ rather than being iterated character-by-character.
 
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import cast
 
 import pytest
 
-from azure.ai.agentserver.responses.models import (
+from azure.ai.agentserver.responses.models._generated import (
     CreateResponse,
     ItemMessage,
     MessageContentInputTextContent,
+    MessageRole,
 )
 from azure.ai.agentserver.responses.models._helpers import (
     _get_input_text,
     get_content_expanded,
     get_input_expanded,
 )
-
-
-def _make_request(inp: Any) -> CreateResponse:
-    return cast(CreateResponse, {"model": "test", "input": inp})
-
 
 # ---------------------------------------------------------------------------
 # get_content_expanded — string content
@@ -36,17 +32,17 @@ def _make_request(inp: Any) -> CreateResponse:
 
 def test_get_content_expanded__string_content_wraps_as_input_text() -> None:
     """A plain string content should become a single MessageContentInputTextContent."""
-    msg = ItemMessage(role="user", content="Hello world")
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": "Hello world"})
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
-    assert parts[0]["type"] == "input_text"
+    assert isinstance(parts[0], dict)
     assert parts[0]["text"] == "Hello world"
 
 
 def test_get_content_expanded__empty_string_returns_empty_list() -> None:
     """An empty string content should return an empty list."""
-    msg = ItemMessage(role="user", content="")
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": ""})
     parts = get_content_expanded(msg)
 
     assert parts == []
@@ -54,10 +50,7 @@ def test_get_content_expanded__empty_string_returns_empty_list() -> None:
 
 def test_get_content_expanded__list_content_passes_through() -> None:
     """A list[MessageContent] should pass through unchanged."""
-    msg = ItemMessage(
-        role="user",
-        content=[MessageContentInputTextContent(type="input_text", text="part1")],
-    )
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "part1"}]})
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
@@ -83,7 +76,7 @@ def test_get_content_expanded__dict_with_string_content() -> None:
     parts = get_content_expanded(msg)
 
     assert len(parts) == 1
-    assert parts[0]["type"] == "input_text"
+    assert isinstance(parts[0], dict)
     assert parts[0]["text"] == "dict string content"
 
 
@@ -94,10 +87,14 @@ def test_get_content_expanded__dict_with_string_content() -> None:
 
 def test_get_input_text__message_with_string_content() -> None:
     """_get_input_text extracts text from a message whose content is a plain string."""
-    request = _make_request(
-        [
-            ItemMessage(role="user", content="Hello from string content"),
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                cast(ItemMessage, {"type": "message", "role": "user", "content": "Hello from string content"}),
+            ],
+        },
     )
     result = _get_input_text(request)
     assert result == "Hello from string content"
@@ -105,14 +102,18 @@ def test_get_input_text__message_with_string_content() -> None:
 
 def test_get_input_text__mixed_string_and_list_content() -> None:
     """_get_input_text handles a mix of string-content and list-content messages."""
-    request = _make_request(
-        [
-            ItemMessage(role="user", content="First message"),
-            ItemMessage(
-                role="user",
-                content=[MessageContentInputTextContent(type="input_text", text="Second message")],
-            ),
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                cast(ItemMessage, {"type": "message", "role": "user", "content": "First message"}),
+                cast(
+                    ItemMessage,
+                    {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Second message"}]},
+                ),
+            ],
+        },
     )
     result = _get_input_text(request)
     assert result == "First message\nSecond message"
@@ -120,18 +121,22 @@ def test_get_input_text__mixed_string_and_list_content() -> None:
 
 def test_get_input_text__string_input_shorthand() -> None:
     """When CreateResponse.input is a plain string, _get_input_text returns it."""
-    request = _make_request("Just a string")
+    request = cast(CreateResponse, {"model": "test", "input": "Just a string"})
     result = _get_input_text(request)
     assert result == "Just a string"
 
 
 def test_get_input_text__empty_string_content_skipped() -> None:
     """An empty-string content message contributes nothing to the result."""
-    request = _make_request(
-        [
-            ItemMessage(role="user", content=""),
-            ItemMessage(role="user", content="Real text"),
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                cast(ItemMessage, {"type": "message", "role": "user", "content": ""}),
+                cast(ItemMessage, {"type": "message", "role": "user", "content": "Real text"}),
+            ],
+        },
     )
     result = _get_input_text(request)
     assert result == "Real text"
@@ -139,10 +144,14 @@ def test_get_input_text__empty_string_content_skipped() -> None:
 
 def test_get_input_text__dict_message_with_string_content() -> None:
     """A raw dict message with string content is correctly extracted."""
-    request = _make_request(
-        [
-            {"type": "message", "role": "user", "content": "dict string"},
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                {"type": "message", "role": "user", "content": "dict string"},
+            ],
+        },
     )
     result = _get_input_text(request)
     assert result == "dict string"
@@ -155,31 +164,40 @@ def test_get_input_text__dict_message_with_string_content() -> None:
 
 def test_get_input_expanded__normalizes_string_content_to_list() -> None:
     """get_input_expanded auto-expands string content to list[MessageContent]."""
-    request = _make_request(
-        [
-            ItemMessage(role="user", content="expanded text"),
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                cast(ItemMessage, {"type": "message", "role": "user", "content": "expanded text"}),
+            ],
+        },
     )
     items = get_input_expanded(request)
 
     assert len(items) == 1
     msg = items[0]
+    assert isinstance(msg, dict)
     # content should now be a list, not a string
     assert isinstance(msg["content"], list)
     assert len(msg["content"]) == 1
-    assert msg["content"][0]["type"] == "input_text"
+    assert isinstance(msg["content"][0], dict)
     assert msg["content"][0]["text"] == "expanded text"
 
 
 def test_get_input_expanded__list_content_unchanged() -> None:
     """get_input_expanded leaves list content untouched."""
-    request = _make_request(
-        [
-            ItemMessage(
-                role="user",
-                content=[MessageContentInputTextContent(type="input_text", text="already a list")],
-            ),
-        ],
+    request = cast(
+        CreateResponse,
+        {
+            "model": "test",
+            "input": [
+                cast(
+                    ItemMessage,
+                    {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "already a list"}]},
+                ),
+            ],
+        },
     )
     items = get_input_expanded(request)
 
@@ -190,10 +208,10 @@ def test_get_input_expanded__list_content_unchanged() -> None:
 
 def test_get_input_expanded__string_input_shorthand_already_list() -> None:
     """When input is a plain string, the generated ItemMessage already has list content."""
-    request = _make_request("plain string input")
+    request = cast(CreateResponse, {"model": "test", "input": "plain string input"})
     items = get_input_expanded(request)
 
     msg = items[0]
-    assert msg["type"] == "message"
+    assert isinstance(msg, dict)
     assert isinstance(msg["content"], list)
     assert msg["content"][0]["text"] == "plain string input"

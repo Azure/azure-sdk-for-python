@@ -19,12 +19,12 @@ import inspect
 from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from .. import models as response_models
 from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
-    from azure.ai.agentserver.responses.models import CreateResponse, ResponseObject
+    from ..models import CreateResponse, ResponseObject
 
 #: Union of all accepted text sources.
 TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
