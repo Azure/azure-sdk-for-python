@@ -78,15 +78,6 @@ Output = TypeVar("Output")
 # Module-level manager singleton
 _manager: TaskManager | None = None
 
-# Optional zero-arg factory that lazily builds (and registers) a TaskManager
-# on first use. Installed by ``AgentServerHost`` during lifespan startup so a
-# durable task declared *after* startup (the late-registration path in
-# ``Task.__init__``) can still bootstrap a manager on its first ``run``/
-# ``start`` — even when no task was declared at startup and eager auto-init
-# was therefore skipped. ``None`` outside an active host lifespan (e.g. unit
-# tests), in which case ``get_task_manager`` raises as before.
-_manager_factory: "Callable[[], TaskManager] | None" = None
-
 
 def _is_evicted(exc: BaseException) -> bool:
     """Return True if ``exc`` is the  eviction-classified rejection.
@@ -274,23 +265,12 @@ def _lease_is_dead(
 def get_task_manager() -> TaskManager:
     """Return the active TaskManager singleton.
 
-    If no manager has been installed but a lazy factory has been registered
-    (by ``AgentServerHost`` during lifespan startup), the manager is
-    constructed on demand and cached. This preserves the late-registration
-    path: a durable task declared *after* startup can still bootstrap the
-    manager on its first ``run``/``start`` even when eager auto-init was
-    skipped because no task was declared at startup.
-
     :raises ~azure.ai.agentserver.core.tasks.TaskManagerNotInitialized: If no
-        manager has been initialized and no lazy factory is available.
+        manager has been initialized.
     :return: The active manager.
     :rtype: TaskManager
     """
-    global _manager  # pylint: disable=global-statement
     if _manager is None:
-        if _manager_factory is not None:
-            _manager = _manager_factory()
-            return _manager
         from ._exceptions import (  # pylint: disable=import-outside-toplevel
             TaskManagerNotInitialized,
         )
@@ -302,49 +282,16 @@ def get_task_manager() -> TaskManager:
     return _manager
 
 
-def _peek_task_manager() -> "TaskManager | None":
-    """Return the installed manager without lazily creating one (or raising).
-
-    Used by the host shutdown path to tear down whichever manager is live —
-    whether it was eagerly initialized at startup or lazily bootstrapped by a
-    post-startup task registration.
-
-    :return: The current manager, or ``None`` if none is installed.
-    :rtype: TaskManager | None
-    """
-    return _manager
-
-
-def set_task_manager_factory(factory: "Callable[[], TaskManager] | None") -> None:
-    """Install (or clear) the lazy manager factory.
-
-    Called by ``AgentServerHost`` during lifespan startup with a factory that
-    builds a manager and loads the registered task descriptors into it. The
-    factory is invoked at most once, by :func:`get_task_manager`, when a task
-    is first used without an eagerly-initialized manager.
-
-    :param factory: A zero-arg callable returning a ready ``TaskManager``, or
-        ``None`` to clear.
-    :type factory: Callable[[], TaskManager] | None
-    """
-    global _manager_factory  # pylint: disable=global-statement
-    _manager_factory = factory
-
-
 def set_task_manager(manager: TaskManager | None) -> None:
     """Set the module-level TaskManager singleton.
 
-    Called by ``AgentServerHost`` during startup/shutdown. Clearing the
-    manager (``manager=None``) also clears any installed lazy factory, so a
-    full reset leaves neither a live manager nor a pending lazy bootstrap.
+    Called by ``AgentServerHost`` during startup/shutdown.
 
     :param manager: The manager to set, or ``None`` to clear.
     :type manager: TaskManager | None
     """
-    global _manager, _manager_factory  # pylint: disable=global-statement
+    global _manager  # pylint: disable=global-statement
     _manager = manager
-    if manager is None:
-        _manager_factory = None
 
 
 class _ActiveTask:  # pylint: disable=too-many-instance-attributes
@@ -757,23 +704,6 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
         if not future.done():
             future.set_exception(TaskCancelled())
 
-    def load_registered_descriptors(self) -> None:
-        """Load module-level ``@task`` / ``@multi_turn_task`` descriptors.
-
-        Populates ``_resume_callbacks`` / ``_resume_opts`` from the global
-        ``_REGISTERED_DESCRIPTORS`` registry so recovery routing and
-        multi-turn opts resolution can find the right handler. Called by
-        :meth:`startup` and by the lazy-bootstrap factory so a manager built
-        after startup still picks up every declared task.
-        """
-        from ._decorator import (  # pylint: disable=import-outside-toplevel
-            _REGISTERED_DESCRIPTORS,
-        )
-
-        for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
-            self._resume_callbacks[fn_name] = fn
-            self._resume_opts[fn_name] = opts
-
     async def startup(self) -> None:
         """Initialize the manager and recover stale tasks.
 
@@ -786,7 +716,13 @@ class TaskManager:  # pylint: disable=too-many-instance-attributes,protected-acc
             self._config.is_hosted,
         )
         # Pick up descriptors registered at import time (for recovery)
-        self.load_registered_descriptors()
+        from ._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+
+        for fn_name, fn, opts in _REGISTERED_DESCRIPTORS:
+            self._resume_callbacks[fn_name] = fn
+            self._resume_opts[fn_name] = opts
 
         await self._recover_stale_tasks()
 

@@ -59,25 +59,20 @@ def _read_task_manager_shutdown_grace() -> float:
         return 25.0
 
 
-def _resilient_tasks_opted_in() -> bool:
-    """Return True iff the app has declared at least one durable task.
+def _has_registered_tasks() -> bool:
+    """Return True iff the ``_REGISTERED_DESCRIPTORS`` list is non-empty.
 
-    The opt-in signal is a non-empty ``_REGISTERED_DESCRIPTORS`` registry,
-    which every durable decorator populates: ``@task`` and
-    ``@multi_turn_task`` both construct a :class:`~azure.ai.agentserver.core.
-    tasks.Task` whose ``__init__`` appends to the registry (``MultiTurnTask``
-    wraps an inner ``Task``, so it registers too). Declaring a durable task
-    is therefore the opt-in for standing up the ``TaskManager`` and its
-    (potentially network-backed) recovery scan.
+    That list is populated at import time by the durable-task decorators:
+    ``@task`` and ``@multi_turn_task`` both construct a
+    :class:`~azure.ai.agentserver.core.tasks.Task` whose ``__init__`` appends
+    to it (``MultiTurnTask`` wraps an inner ``Task``, so it registers too). It
+    is the SAME list ``TaskManager.startup()`` already reads to bind recovery
+    callbacks, so checking it here introduces no new timing assumption.
 
-    Returns False — so ``AgentServerHost`` skips ``TaskManager`` auto-init
-    entirely — when the resilient tasks module is unavailable or no durable
-    task was declared. This keeps plain servers (e.g. invocations-only
-    hosts that never use ``@task``) from paying the hosted task-store
-    startup cost: a blocking ``list()`` round-trip plus credential-token
-    acquisition that gates server readiness while having nothing to recover.
+    Returns False when the resilient tasks module is unavailable or no durable
+    task has been declared.
 
-    :return: Whether resilient task auto-initialization should run.
+    :return: Whether at least one durable task is registered.
     :rtype: bool
     """
     try:
@@ -87,6 +82,26 @@ def _resilient_tasks_opted_in() -> bool:
     except ImportError:
         return False
     return bool(_REGISTERED_DESCRIPTORS)
+
+
+def _resilient_tasks_enabled() -> bool:
+    """Return True iff the resilient task subsystem was explicitly enabled.
+
+    Reads the process-global switch toggled by
+    :func:`~azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`
+    (defaults to ``False``). Returns False when the resilient tasks module is
+    unavailable.
+
+    :return: Whether resilient tasks were explicitly enabled.
+    :rtype: bool
+    """
+    try:
+        from .tasks._enablement import (  # pylint: disable=import-outside-toplevel
+            resilient_tasks_enabled,
+        )
+    except ImportError:
+        return False
+    return resilient_tasks_enabled()
 
 
 def _mask_uri(uri: str) -> str:
@@ -298,44 +313,27 @@ class AgentServerHost(Starlette):
 
             # --- Resilient task manager auto-initialization ---
             #
-            # OPT-IN, with a lazy fallback for late registration.
+            # DOUBLE GATE (AND): the TaskManager — and its network-backed
+            # startup recovery scan (a blocking hosted task-store ``list()``
+            # plus DefaultAzureCredential token acquisition) — is stood up ONLY
+            # when BOTH hold:
+            #   (1) resilient tasks were explicitly enabled via
+            #       ``set_resilient_tasks_enabled(True)`` (default False), AND
+            #   (2) the ``_REGISTERED_DESCRIPTORS`` list is non-empty, i.e. at
+            #       least one durable task (``@task`` / ``@multi_turn_task``)
+            #       has been declared.
             #
-            # The TaskManager's startup recovery scan issues a blocking hosted
-            # task-store ``list()`` (plus DefaultAzureCredential token
-            # acquisition) that would otherwise gate server readiness on a
-            # network round-trip. Apps that never declare a durable task
-            # (``@task`` / ``@multi_turn_task`` — both funnel through the
-            # shared ``_REGISTERED_DESCRIPTORS`` registry) must not pay it.
-            #
-            # So: install a lazy factory unconditionally, then eagerly stand
-            # up the manager ONLY when a durable task was declared by startup.
-            #   - Opted in  -> eager init + recovery scan (unchanged behavior).
-            #   - Not opted -> nothing is constructed now; if a task is later
-            #     declared during the active lifespan (the late-registration
-            #     path in ``Task.__init__``), its first ``run``/``start``
-            #     triggers ``get_task_manager()``, which builds the manager via
-            #     this factory instead of raising ``TaskManagerNotInitialized``.
+            # Both are read directly here. If either is false, nothing is
+            # constructed and no task-store call is made — plain servers (e.g.
+            # invocations-only hosts) pay nothing.
             task_manager = None
-            try:
-                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                    TaskManager,
-                    set_task_manager,
-                    set_task_manager_factory,
-                )
-
-                def _bootstrap_task_manager() -> "TaskManager":
-                    manager = TaskManager(
-                        config=cfg,
-                        shutdown_event=asyncio.Event(),
-                        shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+            if _resilient_tasks_enabled() and _has_registered_tasks():
+                try:
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        TaskManager,
+                        set_task_manager,
                     )
-                    manager.load_registered_descriptors()
-                    logger.info("TaskManager lazily initialized for a task declared after startup")
-                    return manager
 
-                set_task_manager_factory(_bootstrap_task_manager)
-
-                if _resilient_tasks_opted_in():
                     task_manager = TaskManager(
                         config=cfg,
                         shutdown_event=asyncio.Event(),
@@ -344,15 +342,16 @@ class AgentServerHost(Starlette):
                     set_task_manager(task_manager)
                     await task_manager.startup()
                     logger.info("TaskManager initialized automatically")
-                else:
-                    logger.info(
-                        "TaskManager auto-init deferred (no durable task declared); "
-                        "will lazily initialize on first task use"
-                    )
-            except ImportError:
-                pass  # resilient module not available
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize TaskManager", exc_info=True)
+                except ImportError:
+                    pass  # resilient module not available
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize TaskManager", exc_info=True)
+            else:
+                logger.info(
+                    "TaskManager not initialized (enabled=%s, tasks_declared=%s)",
+                    _resilient_tasks_enabled(),
+                    _has_registered_tasks(),
+                )
 
             yield
 
@@ -387,33 +386,18 @@ class AgentServerHost(Starlette):
 
             # Shutdown task manager AFTER on_shutdown so resilient handlers
             # have had time to checkpoint via the responses layer's
-            # ``handle_shutdown``. Tear down whichever manager is live —
-            # the eagerly-initialized one OR one lazily bootstrapped by a
-            # task declared during the active lifespan — via the peek helper
-            # (so a lazily-created manager not captured in ``task_manager``
-            # is still shut down and cleared). Guard the import with the same
-            # ``ImportError`` tolerance as startup: task-less / optional
-            # installations must still tear down cleanly.
-            try:
-                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
-                    _peek_task_manager,
-                    set_task_manager as _clear_manager,
-                )
-            except ImportError:
-                pass  # resilient module not available — nothing to tear down
-            else:
-                live_task_manager = task_manager or _peek_task_manager()
-                if live_task_manager is not None:
-                    try:
-                        await live_task_manager.shutdown()
-                        _clear_manager(None)
-                        logger.info("TaskManager shut down")
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        logger.warning("Error shutting down TaskManager", exc_info=True)
-                else:
-                    # No manager was ever created; clear the lazy factory so
-                    # the global state doesn't leak past this lifespan.
+            # ``handle_shutdown``.
+            if task_manager is not None:
+                try:
+                    await task_manager.shutdown()
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        set_task_manager as _clear_manager,
+                    )
+
                     _clear_manager(None)
+                    logger.info("TaskManager shut down")
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])

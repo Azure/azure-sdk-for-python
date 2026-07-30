@@ -5,10 +5,11 @@
 ### Features Added
 
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
+- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — an explicit process-global switch (default **disabled**) that gates the resilient `TaskManager`.
 
 ### Bugs Fixed
 
-- `AgentServerHost` no longer eagerly initializes the resilient `TaskManager` at startup when the app has not declared a durable task via `@task` / `@multi_turn_task`. Plain servers (e.g. invocations-only hosts) that never use the task primitive no longer pay the task-store startup cost — a blocking hosted task-store `list()` round-trip plus credential-token acquisition that could gate server readiness (and add tens of seconds of connect latency) while having nothing to recover. A durable task declared *after* startup still works: its first `run`/`start` lazily bootstraps the `TaskManager` on demand instead of failing with `TaskManagerNotInitialized`.
+- `AgentServerHost` now initializes the resilient `TaskManager` (and its network-backed startup recovery scan) only when **both** the subsystem was explicitly enabled via `set_resilient_tasks_enabled(True)` **and** at least one durable task (`@task` / `@multi_turn_task`) has been declared. Plain servers (e.g. invocations-only hosts) that do not opt in no longer pay the task-store startup cost — a blocking hosted task-store `list()` round-trip plus credential-token acquisition that could gate server readiness and add tens of seconds of connect latency while having nothing to recover.
 - Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
 
 ## 2.0.0b9 (2026-07-28)

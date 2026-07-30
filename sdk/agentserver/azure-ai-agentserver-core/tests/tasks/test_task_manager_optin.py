@@ -1,56 +1,58 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for opt-in gating of resilient ``TaskManager`` auto-initialization.
+"""Tests for the double-gated resilient ``TaskManager`` auto-initialization.
 
-``AgentServerHost`` must only stand up the ``TaskManager`` (and its
-potentially network-backed startup recovery scan) when the application has
-actually declared a durable task via ``@task`` / ``@multi_turn_task``.
-Plain servers that never opt in — e.g. invocations-only hosts — must NOT
-pay the hosted task-store startup cost (a blocking ``list()`` round-trip
-plus credential-token acquisition that would gate server readiness while
-having nothing to recover).
+``AgentServerHost`` stands up the resilient ``TaskManager`` (and its
+potentially network-backed startup recovery scan) only when BOTH:
 
-The opt-in signal is a non-empty ``_REGISTERED_DESCRIPTORS`` registry.
-Both durable decorators funnel through the single ``Task.__init__``
-registration site (``MultiTurnTask`` wraps an inner ``Task``), so declaring
-either kind opts the app in.
+1. the resilient task subsystem was explicitly enabled via
+   ``set_resilient_tasks_enabled(True)`` (defaults to ``False``), AND
+2. at least one durable task has been declared (``@task`` /
+   ``@multi_turn_task``, tracked in the ``_REGISTERED_DESCRIPTORS`` list).
+
+Both conditions are read directly at lifespan startup. If either is false,
+nothing is constructed and no task-store call is made — plain servers (e.g.
+invocations-only hosts) pay nothing.
 """
 import logging
 
 import pytest
 
-from azure.ai.agentserver.core._base import _resilient_tasks_opted_in
+from azure.ai.agentserver.core._base import (
+    _has_registered_tasks,
+    _resilient_tasks_enabled,
+)
 from azure.ai.agentserver.core.tasks import (
     TaskContext,
-    TaskManagerNotInitialized,
     multi_turn_task,
+    resilient_tasks_enabled,
+    set_resilient_tasks_enabled,
     task,
 )
 from azure.ai.agentserver.core.tasks import _decorator as _decorator_mod
-from azure.ai.agentserver.core.tasks._manager import (
-    get_task_manager,
-    set_task_manager,
-)
+from azure.ai.agentserver.core.tasks._manager import set_task_manager
 
 
 @pytest.fixture
-def _isolate_registry():
-    """Snapshot/clear/restore the global durable-task registry + manager.
+def _clean_state():
+    """Snapshot/clear/restore the global registry, manager, and enable switch.
 
-    ``_REGISTERED_DESCRIPTORS`` is process-global and populated at
-    decoration time by other test modules; snapshot and clear it so each
-    test controls the opt-in state, then restore it (and reset the manager
-    singleton) afterwards.
+    ``_REGISTERED_DESCRIPTORS`` and the enable switch are process-global and
+    may be touched by other test modules; snapshot and reset them so each test
+    controls the gate, then restore afterwards.
     """
-    saved = list(_decorator_mod._REGISTERED_DESCRIPTORS)
+    saved_desc = list(_decorator_mod._REGISTERED_DESCRIPTORS)
+    saved_enabled = resilient_tasks_enabled()
     _decorator_mod._REGISTERED_DESCRIPTORS.clear()
+    set_resilient_tasks_enabled(False)
     set_task_manager(None)
     try:
-        yield _decorator_mod._REGISTERED_DESCRIPTORS
+        yield
     finally:
         _decorator_mod._REGISTERED_DESCRIPTORS.clear()
-        _decorator_mod._REGISTERED_DESCRIPTORS.extend(saved)
+        _decorator_mod._REGISTERED_DESCRIPTORS.extend(saved_desc)
+        set_resilient_tasks_enabled(saved_enabled)
         set_task_manager(None)
 
 
@@ -63,11 +65,7 @@ class _FakeTaskManager:
         self.kwargs = kwargs
         self.startup_called = False
         self.shutdown_called = False
-        self.descriptors_loaded = False
         _FakeTaskManager.instances.append(self)
-
-    def load_registered_descriptors(self) -> None:
-        self.descriptors_loaded = True
 
     async def startup(self) -> None:
         self.startup_called = True
@@ -78,8 +76,7 @@ class _FakeTaskManager:
 
 @pytest.fixture
 def _fake_task_manager(monkeypatch: pytest.MonkeyPatch):
-    """Patch the ``TaskManager`` the lifespan imports so no real provider,
-    token acquisition, or task-store round-trip happens during the test."""
+    """Patch ``TaskManager`` so no real provider/token/task-store call happens."""
     _FakeTaskManager.instances.clear()
     monkeypatch.setattr(
         "azure.ai.agentserver.core.tasks._manager.TaskManager",
@@ -88,129 +85,100 @@ def _fake_task_manager(monkeypatch: pytest.MonkeyPatch):
     return _FakeTaskManager
 
 
+def _declare_task(name: str = "gate_probe") -> None:
+    @task(name=name)
+    async def _probe(ctx: "TaskContext[dict]") -> None:
+        return None
+
+
 # ------------------------------------------------------------------ #
-# _resilient_tasks_opted_in(): the opt-in signal
+# The two gate signals
 # ------------------------------------------------------------------ #
 
 
-class TestOptInSignal:
-    """Unit tests for ``_resilient_tasks_opted_in()``."""
+class TestGateSignals:
+    """Unit tests for the enable switch and the descriptor-list check."""
 
-    def test_empty_registry_is_not_opted_in(self, _isolate_registry) -> None:
-        assert _resilient_tasks_opted_in() is False
+    def test_switch_defaults_false(self, _clean_state) -> None:
+        assert resilient_tasks_enabled() is False
+        assert _resilient_tasks_enabled() is False
 
-    def test_task_decorator_opts_in(self, _isolate_registry) -> None:
-        @task(name="optin_probe_one_shot")
+    def test_switch_toggles(self, _clean_state) -> None:
+        set_resilient_tasks_enabled(True)
+        assert _resilient_tasks_enabled() is True
+        set_resilient_tasks_enabled(False)
+        assert _resilient_tasks_enabled() is False
+
+    def test_set_with_no_arg_enables(self, _clean_state) -> None:
+        set_resilient_tasks_enabled()
+        assert resilient_tasks_enabled() is True
+
+    def test_has_registered_tasks_empty(self, _clean_state) -> None:
+        assert _has_registered_tasks() is False
+
+    def test_has_registered_tasks_after_task(self, _clean_state) -> None:
+        _declare_task()
+        assert _has_registered_tasks() is True
+
+    def test_has_registered_tasks_after_multi_turn(self, _clean_state) -> None:
+        @multi_turn_task(name="gate_probe_mt")
         async def _probe(ctx: "TaskContext[dict]") -> None:
             return None
 
-        assert _resilient_tasks_opted_in() is True
-
-    def test_multi_turn_task_decorator_opts_in(self, _isolate_registry) -> None:
-        @multi_turn_task(name="optin_probe_multi_turn")
-        async def _probe(ctx: "TaskContext[dict]") -> None:
-            return None
-
-        assert _resilient_tasks_opted_in() is True
-
-    def test_get_task_manager_still_raises_without_a_factory(
-        self, _isolate_registry
-    ) -> None:
-        """Outside an active host lifespan (no factory installed), the raise
-        behavior is preserved — lazy bootstrap only applies within a host."""
-        with pytest.raises(TaskManagerNotInitialized):
-            get_task_manager()
+        assert _has_registered_tasks() is True
 
 
 # ------------------------------------------------------------------ #
-# Lifespan behaviour: gate is honoured at startup
+# The AND gate at lifespan startup
 # ------------------------------------------------------------------ #
 
 
-class TestLifespanOptInGate:
-    """Verify ``AgentServerHost`` lifespan honours the opt-in gate."""
+class TestLifespanAndGate:
+    """The TaskManager runs iff (enabled AND at least one task declared)."""
 
     @pytest.mark.asyncio
-    async def test_not_opted_in_defers_eager_init(
-        self,
-        _isolate_registry,
-        _fake_task_manager,
-        caplog: pytest.LogCaptureFixture,
-    ) -> None:
-        """No durable task declared → no manager is eagerly constructed and
-        no recovery scan runs; the expensive startup path is deferred."""
+    async def test_disabled_and_no_task_skips(self, _clean_state, _fake_task_manager) -> None:
         from azure.ai.agentserver.core import AgentServerHost
 
         app = AgentServerHost()
-
-        with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
-            async with app.router.lifespan_context(app):
-                # Nothing eagerly built during startup — no provider / token /
-                # task-store round-trip happened.
-                assert _fake_task_manager.instances == []
-
-        assert not any(
-            "TaskManager initialized automatically" in r.message for r in caplog.records
-        )
-        assert any(
-            "TaskManager auto-init deferred" in r.message for r in caplog.records
-        )
-
-    @pytest.mark.asyncio
-    async def test_first_task_declared_in_lifespan_lazily_bootstraps(
-        self,
-        _isolate_registry,
-        _fake_task_manager,
-    ) -> None:
-        """Late-registration path: a task declared *during* the active
-        lifespan (when eager init was skipped) must not fail on first use —
-        ``get_task_manager()`` lazily bootstraps a manager instead of raising
-        ``TaskManagerNotInitialized``."""
-        from azure.ai.agentserver.core import AgentServerHost
-
-        app = AgentServerHost()
-
         async with app.router.lifespan_context(app):
-            # Nothing built yet.
-            assert _fake_task_manager.instances == []
-
-            # Declare the FIRST durable task now, mid-lifespan.
-            @task(name="optin_late_declared_task")
-            async def _late(ctx: "TaskContext[dict]") -> None:
-                return None
-
-            # First use resolves the manager — must not raise, and must
-            # lazily construct + load descriptors. This is exactly the first
-            # thing ``Task.run``/``Task.start`` do, so it protects the
-            # advertised "first run/start no longer raises" behavior.
-            mgr = get_task_manager()
-            assert mgr is _fake_task_manager.instances[0]
-            assert mgr.descriptors_loaded is True
-            # Intentional limitation: the sync lazy path does NOT run the
-            # async ``startup()`` (initial recovery scan + periodic loop).
-            # A task declared after startup already missed the startup
-            # recovery window; its own run/start works via the provider.
-            assert mgr.startup_called is False
-
-        # The lazily-bootstrapped manager is torn down on shutdown.
-        assert _fake_task_manager.instances[0].shutdown_called is True
+            pass
+        assert _fake_task_manager.instances == []
 
     @pytest.mark.asyncio
-    async def test_opted_in_initializes_task_manager(
-        self,
-        _isolate_registry,
-        _fake_task_manager,
-        caplog: pytest.LogCaptureFixture,
-    ) -> None:
-        """A declared ``@task`` → TaskManager is constructed and started."""
+    async def test_disabled_but_task_declared_skips(self, _clean_state, _fake_task_manager) -> None:
+        """Flag off wins: a declared task alone does NOT start the manager."""
         from azure.ai.agentserver.core import AgentServerHost
 
-        @task(name="optin_lifespan_task")
-        async def _probe(ctx: "TaskContext[dict]") -> None:
-            return None
+        _declare_task()
+        # switch left at default False
+        app = AgentServerHost()
+        async with app.router.lifespan_context(app):
+            pass
+        assert _fake_task_manager.instances == []
+
+    @pytest.mark.asyncio
+    async def test_enabled_but_no_task_skips(self, _clean_state, _fake_task_manager) -> None:
+        """Switch on but no task declared: registry empty -> manager not built."""
+        from azure.ai.agentserver.core import AgentServerHost
+
+        set_resilient_tasks_enabled(True)
+        app = AgentServerHost()
+        async with app.router.lifespan_context(app):
+            pass
+        assert _fake_task_manager.instances == []
+
+    @pytest.mark.asyncio
+    async def test_enabled_and_task_initializes(
+        self, _clean_state, _fake_task_manager, caplog: pytest.LogCaptureFixture
+    ) -> None:
+        """Both conditions true -> manager constructed, started, shut down."""
+        from azure.ai.agentserver.core import AgentServerHost
+
+        set_resilient_tasks_enabled(True)
+        _declare_task()
 
         app = AgentServerHost()
-
         with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
             async with app.router.lifespan_context(app):
                 pass
@@ -219,55 +187,21 @@ class TestLifespanOptInGate:
         mgr = _fake_task_manager.instances[0]
         assert mgr.startup_called is True
         assert mgr.shutdown_called is True
-        assert any(
-            "TaskManager initialized automatically" in r.message for r in caplog.records
-        )
+        assert any("TaskManager initialized automatically" in r.message for r in caplog.records)
 
     @pytest.mark.asyncio
-    async def test_multi_turn_opt_in_initializes_task_manager(
-        self,
-        _isolate_registry,
-        _fake_task_manager,
-    ) -> None:
-        """A declared ``@multi_turn_task`` also opts the host in."""
+    async def test_enabled_and_multi_turn_initializes(self, _clean_state, _fake_task_manager) -> None:
         from azure.ai.agentserver.core import AgentServerHost
 
-        @multi_turn_task(name="optin_lifespan_multi_turn")
+        set_resilient_tasks_enabled(True)
+
+        @multi_turn_task(name="gate_lifespan_mt")
         async def _probe(ctx: "TaskContext[dict]") -> None:
             return None
 
         app = AgentServerHost()
-
         async with app.router.lifespan_context(app):
             pass
 
         assert len(_fake_task_manager.instances) == 1
         assert _fake_task_manager.instances[0].startup_called is True
-
-    @pytest.mark.asyncio
-    async def test_lifespan_tears_down_cleanly_when_tasks_module_unavailable(
-        self,
-        _isolate_registry,
-        monkeypatch: pytest.MonkeyPatch,
-    ) -> None:
-        """Task-less / optional install: both startup AND shutdown tolerate
-        the resilient-task module being unimportable (no crash on teardown)."""
-        import builtins
-
-        real_import = builtins.__import__
-
-        def _blocked_import(name, *args, **kwargs):
-            if name.endswith("tasks._manager") or name == "azure.ai.agentserver.core.tasks._manager":
-                raise ImportError("simulated: resilient tasks module unavailable")
-            return real_import(name, *args, **kwargs)
-
-        monkeypatch.setattr(builtins, "__import__", _blocked_import)
-
-        from azure.ai.agentserver.core import AgentServerHost
-
-        app = AgentServerHost()
-
-        # Entering AND exiting the lifespan must both succeed without raising
-        # ImportError — the shutdown import is guarded like the startup one.
-        async with app.router.lifespan_context(app):
-            pass
