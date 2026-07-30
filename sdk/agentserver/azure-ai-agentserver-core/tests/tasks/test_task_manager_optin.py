@@ -1,19 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for the double-gated resilient ``TaskManager`` auto-initialization.
+"""Tests for the gated resilient ``TaskManager`` startup recovery scan.
 
-``AgentServerHost`` stands up the resilient ``TaskManager`` (and its
-potentially network-backed startup recovery scan) only when BOTH:
+``AgentServerHost`` always constructs the resilient ``TaskManager`` (a cheap,
+in-memory object that makes no task-store calls), so ``get_task_manager()`` and
+``.run()`` / ``.start()`` work regardless. Its network-backed **startup
+recovery scan** (and the periodic recovery loop it spawns) runs when EITHER:
 
-1. the resilient task subsystem was explicitly enabled via
-   ``set_resilient_tasks_enabled(True)`` (defaults to ``False``), AND
-2. at least one durable task has been declared (``@task`` /
-   ``@multi_turn_task``, tracked in the ``_REGISTERED_DESCRIPTORS`` list).
+1. at least one durable task has been declared (``@task`` /
+   ``@multi_turn_task``, tracked in the ``_REGISTERED_DESCRIPTORS`` list), OR
+2. the switch was set via ``set_resilient_tasks_enabled(True)`` (default
+   ``False``) — a force-enable.
 
-Both conditions are read directly at lifespan startup. If either is false,
-nothing is constructed and no task-store call is made — plain servers (e.g.
-invocations-only hosts) pay nothing.
+Both signals are read directly at lifespan startup. When neither is true, no
+task-store call is made — plain servers (e.g. invocations-only hosts) pay
+nothing.
 """
 import logging
 
@@ -190,7 +192,7 @@ class TestLifespanManagerAndRecovery:
     async def test_switch_and_task_runs_recovery(
         self, _clean_state, _fake_task_manager, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """Both true -> manager built AND startup recovery runs."""
+        """Both signals true -> manager built and startup recovery runs."""
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)
