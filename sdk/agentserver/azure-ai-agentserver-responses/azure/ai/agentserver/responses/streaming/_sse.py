@@ -8,10 +8,12 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
 import json
 from contextvars import ContextVar
+from copy import deepcopy
 from datetime import date, datetime, time, timedelta
-from typing import Any, AsyncIterator, Mapping
+from typing import Any, AsyncIterator, Mapping, cast
 
-from azure.ai.agentserver.responses.models import ResponseStreamEvent
+from .._egress import strip_internal_metadata
+from ..models._generated import ResponseStreamEvent
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
@@ -19,7 +21,8 @@ _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_v
 def _json_default(o: Any) -> Any:
     """JSON encoder default for datetime and bytes.
 
-    Serializes datetime-like values to JSON-friendly wire values.
+    Handles datetime objects that leak through model ``as_dict()`` calls
+    by serializing to ISO-8601 strings (or Unix timestamps for datetime).
 
     :param o: The object to encode.
     :type o: Any
@@ -68,7 +71,9 @@ def _next_sequence_number() -> int:
 
 
 def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
-    """Extract and normalize event type and payload from an event mapping.
+    """Extract and normalize event type and payload from an event object.
+
+    Supports dict-like, model-with-``as_dict()``, and plain-object event sources.
 
     :param event: The SSE event object to coerce.
     :type event: Any
@@ -76,36 +81,44 @@ def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
     :rtype: tuple[str, dict[str, Any]]
     :raises ValueError: If the event does not include a non-empty ``type``.
     """
-    if not isinstance(event, Mapping):
-        raise TypeError("SSE event must be a mapping")
-    payload = event.copy() if isinstance(event, dict) else dict(event.items())
-    event_type = payload.get("type")
+    event_type = getattr(event, "type", None)
+
+    if isinstance(event, Mapping):
+        payload = dict(event)
+        if event_type is None:
+            event_type = payload.get("type")
+    elif hasattr(event, "as_dict"):
+        payload = event.as_dict()  # type: ignore[assignment]
+        if event_type is None:
+            event_type = payload.get("type")
+    else:
+        payload = {key: value for key, value in vars(event).items() if not key.startswith("_")}
 
     if not event_type:
         raise ValueError("SSE event must include a non-empty 'type'")
 
     payload.pop("type", None)
-    payload.pop("_saved_at", None)
     return str(event_type), payload
 
 
 def _ensure_sequence_number(event: Any, payload: dict[str, Any]) -> None:
     """Ensure the payload has a valid ``sequence_number``, assigning one if missing.
 
-    :param event: The original event mapping.
+    :param event: The original event object (used for attribute fallback).
     :type event: Any
     :param payload: The payload dict to mutate.
     :type payload: dict[str, Any]
     :rtype: None
     """
     explicit = payload.get("sequence_number")
-    event_value = event.get("sequence_number") if isinstance(event, Mapping) else None
+    event_value = getattr(event, "sequence_number", None)
     candidate = explicit if explicit is not None else event_value
 
     if not isinstance(candidate, int) or candidate < 0:
         candidate = _next_sequence_number()
 
     payload["sequence_number"] = candidate
+    payload.pop("_saved_at", None)
 
 
 def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
@@ -130,14 +143,34 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
 def encode_sse_event(event: ResponseStreamEvent) -> str:
     """Encode a response stream event into SSE wire format.
 
-    :param event: Response stream event wire payload.
-    :type event: ~azure.ai.agentserver.responses.models.ResponseStreamEvent
+    The serialised payload is passed through :func:`strip_internal_metadata`
+    so framework-internal metadata never reaches a client (live and replay
+    both route here).
+
+    :param event: Generated response stream event model.
+    :type event: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
     :returns: Encoded SSE payload string.
     :rtype: str
     """
+    event_any = cast(Any, event)
+    if isinstance(event, Mapping):
+        wire = dict(event)
+        event_type = str(wire.get("type", ""))
+        _ensure_sequence_number(event, wire)
+        strip_internal_metadata(wire)
+        return _build_sse_frame(event_type, wire)
+    if hasattr(event_any, "as_dict"):
+        wire = event_any.as_dict()
+        event_type = str(wire.get("type", ""))
+        _ensure_sequence_number(event, wire)
+        strip_internal_metadata(wire)
+        return _build_sse_frame(event_type, wire)
+    # Fallback for non-model event objects (e.g. plain dataclass-like).
+    # Deep-copy so stripping cannot mutate a shared/persisted source dict.
     event_type, payload = _coerce_payload(event)
     _ensure_sequence_number(event, payload)
-    return _build_sse_frame(event_type, {"type": event_type, **payload})
+    frame_payload = strip_internal_metadata(deepcopy({"type": event_type, **payload}))
+    return _build_sse_frame(event_type, frame_payload)
 
 
 def encode_sse_any_event(event: ResponseStreamEvent) -> str:

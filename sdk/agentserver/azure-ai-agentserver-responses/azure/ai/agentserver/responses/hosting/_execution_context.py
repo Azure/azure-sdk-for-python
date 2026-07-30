@@ -7,7 +7,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import TYPE_CHECKING, Any
 
-from azure.ai.agentserver.responses.models import AgentReference, CreateResponse, OutputItem
+from ..models import AgentReference, CreateResponse, OutputItem
 
 from .._response_context import ResponseContext
 
