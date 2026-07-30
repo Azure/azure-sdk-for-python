@@ -47,7 +47,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
 )
 from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
-from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
 
 app = ResponsesAgentServerHost()
 
@@ -55,8 +54,8 @@ app = ResponsesAgentServerHost()
 async def _find_function_call_output(context: ResponseContext) -> str | None:
     """Return the output string from the first function_call_output item, or None."""
     for item in await context.get_input_items():
-        if isinstance(item, FunctionCallOutputItemParam):
-            output = item.output
+        if item.get("type") == "function_call_output":
+            output = item.get("output")
             if isinstance(output, str):
                 return output
     return None

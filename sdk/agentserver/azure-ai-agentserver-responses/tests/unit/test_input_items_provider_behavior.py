@@ -5,22 +5,24 @@
 from __future__ import annotations
 
 import asyncio
+from typing import cast
 
 import pytest
 
-from azure.ai.agentserver.responses.models import _generated as generated_models
+from azure.ai.agentserver.responses.models import ResponseObject
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
 
-def _response(response_id: str, *, store: bool = True) -> generated_models.ResponseObject:
-    return generated_models.ResponseObject(
+def _response(response_id: str, *, store: bool = True) -> ResponseObject:
+    return cast(
+        ResponseObject,
         {
             "id": response_id,
             "object": "response",
             "output": [],
             "store": store,
             "status": "completed",
-        }
+        },
     )
 
 
