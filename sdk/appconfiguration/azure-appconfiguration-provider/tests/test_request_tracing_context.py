@@ -521,7 +521,7 @@ class TestEnhancedFeatureFlagTracking(unittest.TestCase):
 
     def test_enhanced_feature_flag_tag_constant(self):
         """Test that the enhanced feature flag tag constant has the expected value."""
-        self.assertEqual(ENHANCED_FEATURE_FLAG_TAG, "EnhancedFF")
+        self.assertEqual(ENHANCED_FEATURE_FLAG_TAG, "EnhFF")
 
     def test_initialization(self):
         """Test that request tracing context initializes enhanced feature flag tracking to False."""
