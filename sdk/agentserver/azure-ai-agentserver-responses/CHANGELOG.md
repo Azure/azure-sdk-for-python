@@ -41,7 +41,21 @@ async for event in stream.output_item_message(token_stream()):
 
 Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
 
-Request payloads such as `CreateResponse` are now dict-native. Response protocol models keep object-style access while remaining wire-serializable:
+Request payloads such as `CreateResponse` are now dict-native. Previously, request model construction returned generated model objects with attribute access:
+
+```python
+request = CreateResponse(model="test-model", input="hello")
+model = request.model
+```
+
+Now, request construction returns a plain dictionary:
+
+```python
+request = CreateResponse(model="test-model", input="hello")
+model = request["model"]
+```
+
+Response protocol models keep object-style access while remaining wire-serializable:
 
 ```python
 from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputTextContent
