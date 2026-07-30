@@ -325,9 +325,10 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blobs_list = list(container.list_blobs(response_format="arrow", include=["versions"]))
 
-        assert len(blobs_list) == 1
-        assert not blobs_list[0].is_current_version
+        assert len(blobs_list) == 2
         assert blobs_list[0].version_id == create_resp["version_id"]
+        assert not blobs_list[0].is_current_version
+        assert blobs_list[-1].is_current_version
 
     @BlobPreparer()
     @recorded_by_proxy
