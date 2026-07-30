@@ -225,12 +225,15 @@ class BaseExporter:
             self._enable_local_storage()
 
         # Register a OneSettings callback so local (offline) storage can be toggled remotely via the
-        # FEATURE_LOCAL_STORAGE feature flag. Skip the statsbeat/customer-sdkstats exporters: their
-        # storage is managed independently and does not participate in the remote toggle - statsbeat
-        # never persists to disk, and customer-sdkstats mirrors the user's setting via its own manager.
+        # FEATURE_LOCAL_STORAGE feature flag. The customer-sdkstats exporter participates because it
+        # writes to the same on-disk folder as the main exporter (keyed on the customer's ikey), so it
+        # must follow the same remote kill-switch; its own manager still applies the user's static
+        # disable_offline_storage, and the callback's hard gate never re-enables a user opt-out. The
+        # statsbeat exporter is skipped: it never persists to disk (isolated Microsoft-ikey folder) and
+        # does not participate in the remote toggle.
         # register_callback is a NoOp if the control plane worker never starts, and
         # get_configuration_manager() returns None when the control plane is disabled via env var.
-        if not self._is_stats_exporter() and not self._is_customer_sdkstats_exporter():
+        if not self._is_stats_exporter():
             config_manager = get_configuration_manager()
             if config_manager:
                 config_manager.register_callback(self._local_storage_configuration_callback)
