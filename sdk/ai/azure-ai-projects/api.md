@@ -2274,6 +2274,7 @@ namespace azure.ai.projects.aio.operations
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> AsyncOpenEnvClient: ...
@@ -8003,7 +8004,7 @@ namespace azure.ai.projects.models
         created_at_utc: datetime
         disk_image_conversion_error: Optional[str]
         disk_image_conversion_status: Union[str, RLEnvironmentDiskImageConversionStatus]
-        environment_id: str
+        id: str
         name: Optional[str]
         project_id: str
         updated_at_utc: datetime
@@ -12207,6 +12208,7 @@ namespace azure.ai.projects.operations
                 create_timeout_s: float = _DEFAULT_CREATE_TIMEOUT_S, 
                 env_vars: Optional[Mapping[str, str]] = ..., 
                 name: str, 
+                num_instances: int = 1, 
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> OpenEnvClient: ...
