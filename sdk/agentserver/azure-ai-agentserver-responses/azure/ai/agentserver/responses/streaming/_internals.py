@@ -14,8 +14,8 @@ from datetime import datetime
 from types import GeneratorType
 from typing import Any, cast
 
-from azure.ai.agentserver.responses import models as response_models
-from azure.ai.agentserver.responses.models import AgentReference
+from .. import models as response_models
+from ..models import AgentReference
 
 # Event types whose ``response`` field is a full Response snapshot.
 # Only these events should carry id/response_id/object/agent_reference/model.

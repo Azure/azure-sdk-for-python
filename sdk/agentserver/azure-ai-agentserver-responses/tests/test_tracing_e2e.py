@@ -77,6 +77,7 @@ def _empty_events_handler_factory(on_call):
 # Warm-up fixture: initialize app and wait for App Insights to be ready
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture(scope="module", autouse=True)
 def _warmup_appinsights():
     """Initialize the application and send a warm-up span to App Insights.
@@ -111,9 +112,11 @@ def _warmup_appinsights():
 
     if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
         from azure.identity import AzurePowerShellCredential
+
         credential = AzurePowerShellCredential(tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"])
     else:
         from azure.identity import DefaultAzureCredential
+
         credential = DefaultAzureCredential()
 
     client = LogsQueryClient(credential)
@@ -125,6 +128,7 @@ def _warmup_appinsights():
 # ---------------------------------------------------------------------------
 # E2E test
 # ---------------------------------------------------------------------------
+
 
 class TestResponsesTracingE2E:
     """Verify that user-created spans inside ResponsesAgentServerHost handlers land in App Insights."""

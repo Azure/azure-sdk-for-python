@@ -48,9 +48,14 @@ def _item_ref(item_id: str) -> ItemReferenceParam:
 @pytest.mark.asyncio
 async def test_resolves_references_via_context() -> None:
     """item_reference entries are resolved to concrete OutputItem for persistence."""
-    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = cast(
+        ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
+    )
     ref = _item_ref("item_ref1")
-    resolved = OutputItemMessage(id="item_ref1", role="assistant", content=[], status="completed")
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_ref1", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
 
     request = _make_request([inline_msg, ref])
@@ -82,7 +87,7 @@ async def test_resolves_references_via_context() -> None:
 @pytest.mark.asyncio
 async def test_fallback_when_no_context() -> None:
     """When context is None, returns the fallback items."""
-    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]})
     fallback = [out for item in [msg] if (out := to_output_item(item, "resp_002")) is not None]
 
     result = await _resolve_input_items_for_persistence(None, fallback)
@@ -99,7 +104,7 @@ async def test_fallback_when_no_context() -> None:
 @pytest.mark.asyncio
 async def test_fallback_on_resolution_error() -> None:
     """When context._get_input_items_for_persistence raises, falls back."""
-    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]})
     ref = _item_ref("item_bad")
     provider = _mock_provider()
     provider.get_items = AsyncMock(side_effect=RuntimeError("provider down"))
@@ -150,7 +155,10 @@ async def test_returns_none_for_empty_inputs() -> None:
 async def test_no_double_fetch_via_cache() -> None:
     """The provider is called only once even if both handler and persistence paths run."""
     ref = _item_ref("item_cache")
-    resolved = OutputItemMessage(id="item_cache", role="assistant", content=[], status="completed")
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_cache", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
 
     request = _make_request([ref])

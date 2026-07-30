@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from ... import models as response_models
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
