@@ -128,13 +128,18 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
         """
         return self._status == CustomerSdkStatsStatus.SHUTDOWN  # type: ignore
 
-    def initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
+    def initialize(
+        self, connection_string: str, credential: Optional[Any] = None, disable_offline_storage: bool = False
+    ) -> bool:
         """Initialize Customer SDKStats collection with the provided connection string.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
         :param credential: Token credential for AAD authentication. Defaults to None.
         :type credential: ~azure.core.credentials.TokenCredential or None
+        :param disable_offline_storage: Whether local (offline) storage is disabled. Mirrors the
+            user's setting on the originating exporter, whose storage directory it shares. Defaults to False.
+        :type disable_offline_storage: bool
 
         :return: True if initialization was successful, False otherwise
         :rtype: bool
@@ -150,15 +155,21 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
                 # Already initialized, return True
                 return True
 
-            return self._do_initialize(connection_string, credential=credential)
+            return self._do_initialize(
+                connection_string, credential=credential, disable_offline_storage=disable_offline_storage
+            )
 
-    def _do_initialize(self, connection_string: str, credential: Optional[Any] = None) -> bool:
+    def _do_initialize(
+        self, connection_string: str, credential: Optional[Any] = None, disable_offline_storage: bool = False
+    ) -> bool:
         """Internal initialization method.
 
         :param connection_string: Azure Monitor connection string
         :type connection_string: str
         :param credential: Token credential for AAD authentication. Defaults to None.
         :type credential: ~azure.core.credentials.TokenCredential or None
+        :param disable_offline_storage: Whether local (offline) storage is disabled. Defaults to False.
+        :type disable_offline_storage: bool
 
         :return: True if initialization was successful, False otherwise
         :rtype: bool
@@ -170,6 +181,7 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
             exporter_kwargs: Dict[str, Any] = {
                 "connection_string": connection_string,
                 "is_customer_sdkstats": True,
+                "disable_offline_storage": disable_offline_storage,
             }
             if credential is not None:
                 exporter_kwargs["credential"] = credential
