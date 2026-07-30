@@ -175,5 +175,5 @@
         "azure.mgmt.reservations.ReservationsMgmtClient.get_applied_reservation_list": "Reservations.getAppliedReservationList",
         "azure.mgmt.reservations.aio.ReservationsMgmtClient.get_applied_reservation_list": "Reservations.getAppliedReservationList"
     },
-    "CrossLanguageVersion": "f97e7ee88162"
+    "CrossLanguageVersion": "67e1540eed55"
 }

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -35,7 +36,7 @@ from ._shared.response_handlers import process_storage_error, return_context_and
 
 if TYPE_CHECKING:
     from datetime import datetime
-    from ._generated.models import ShareRootSquash
+    from ._generated.models import ShareFileRangeList, ShareRootSquash
 
 
 def _wrap_item(item):
@@ -792,7 +793,7 @@ class ShareProperties(DictMixin):
     snapshot: Optional[str] = None
     """Snapshot of the share."""
     deleted: Optional[bool] = None
-    """Whether this share was deleted. 
+    """Whether this share was deleted.
         This is a service returned value, and the value will be set when list shared including deleted ones."""
     deleted_time: Optional["datetime"] = None
     """A datetime object representing the time at which the share was deleted.
@@ -1348,6 +1349,96 @@ class DirectoryPropertiesPaged(PageIterator):
             FileProperties._from_generated(i)  # pylint: disable = protected-access
             for i in self._response.segment.file_items
         )
+        return self._response.next_marker or None, self.current_page
+
+
+class FileRange(DictMixin):
+    """File Range.
+
+    :param int start:
+        Start of file range in bytes.
+    :param int end:
+        End of file range in bytes.
+    """
+
+    start: int
+    """Start of file range in bytes."""
+    end: int
+    """End of file range in bytes."""
+    cleared: bool
+    """Whether the range has been cleared. Only applicable when using list_ranges_diff."""
+
+    def __init__(self, start: int, end: int, *, cleared: bool = False) -> None:
+        self.start = start
+        self.end = end
+        self.cleared = cleared
+
+
+def parse_file_range_list(ranges: "ShareFileRangeList") -> List[FileRange]:
+    file_ranges = ranges.ranges or []
+    clear_ranges = ranges.clear_ranges or []
+
+    result: List[FileRange] = []
+    f_i, c_i = 0, 0
+
+    # Combine file ranges and clear ranges into a single list, sorted by start
+    while f_i < len(file_ranges) and c_i < len(clear_ranges):
+        f, c = file_ranges[f_i], clear_ranges[c_i]
+        if f.start < c.start:
+            result.append(FileRange(start=f.start, end=f.end, cleared=False))
+            f_i += 1
+        else:
+            result.append(FileRange(start=c.start, end=c.end, cleared=True))
+            c_i += 1
+
+    # Grab remaining elements in either list
+    result += [FileRange(start=r.start, end=r.end, cleared=False) for r in file_ranges[f_i:]]
+    result += [FileRange(start=r.start, end=r.end, cleared=True) for r in clear_ranges[c_i:]]
+
+    return result
+
+
+class FileRangePaged(PageIterator):
+    """An iterable of File Ranges.
+
+    :param Callable command: Function to retrieve the next page of items.
+    :param Optional[int] results_per_page: The maximum number of file ranges to retrieve per call.
+    :param Optional[str] continuation_token: An opaque continuation token to retrieve the next page of results.
+    """
+
+    results_per_page: Optional[int] = None
+    """The maximum number of results retrieved per API call."""
+    location_mode: Optional[str] = None
+    """The location mode being used to list results.
+        The available options include "primary" and "secondary"."""
+    current_page: List[FileRange]
+    """The current page of listed results."""
+
+    def __init__(
+        self, command: Callable, results_per_page: Optional[int] = None, continuation_token: Optional[str] = None
+    ) -> None:
+        super(FileRangePaged, self).__init__(
+            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+        )
+        self._command = command
+        self.results_per_page = results_per_page
+        self.location_mode = None
+        self.current_page = []
+
+    def _get_next_cb(self, continuation_token):
+        try:
+            return self._command(
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=return_context_and_deserialized,
+                use_location=self.location_mode,
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    def _extract_data_cb(self, get_next_return):
+        self.location_mode, self._response = get_next_return
+        self.current_page = parse_file_range_list(self._response)
         return self._response.next_marker or None, self.current_page
 
 

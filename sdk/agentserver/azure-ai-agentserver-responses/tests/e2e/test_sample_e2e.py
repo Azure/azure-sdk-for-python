@@ -19,8 +19,8 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
-from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
-from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -82,6 +82,10 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
     }
     payload.update(overrides)
     return payload
+
+
+def _is_item_type(item: dict[str, Any], item_type: str) -> bool:
+    return item.get("type") == item_type
 
 
 # ---------------------------------------------------------------------------
@@ -191,7 +195,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 
 async def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Convenience handler: emits a greeting using output_item_message()."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
 
     stream.response.temperature = 0.7
     stream.response.max_output_tokens = 1024
@@ -200,7 +204,7 @@ async def _sample3_handler(request: CreateResponse, context: ResponseContext, ca
     yield stream.emit_in_progress()
 
     user_text = await context.get_input_text()
-    for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
+    async for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
         yield event
 
     yield stream.emit_completed()
@@ -245,7 +249,7 @@ def test_sample3_greeting_includes_input() -> None:
 async def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Function-calling handler: uses convenience generators for both turns."""
     items = await context.get_input_items()
-    has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
+    has_fn_output = any(_is_item_type(item, "function_call_output") for item in items)
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -255,8 +259,8 @@ async def _sample4_handler(request: CreateResponse, context: ResponseContext, ca
         # Second turn: extract function output and echo it as text
         fn_output_text = ""
         for item in items:
-            if isinstance(item, FunctionCallOutputItemParam):
-                fn_output_text = item.output or ""
+            if _is_item_type(item, "function_call_output"):
+                fn_output_text = item.get("output") or ""
                 break
         for event in stream.output_item_message(f"The weather is: {fn_output_text}"):
             yield event
@@ -316,10 +320,11 @@ def test_sample4_turn2_returns_weather_text() -> None:
 async def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Study tutor handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
-    has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
+    previous_response_id = request.get("previous_response_id")
+    has_previous = previous_response_id is not None and str(previous_response_id).strip() != ""
     user_text = await context.get_input_text()
     if has_previous:
-        text = f"Building on our previous discussion ({request.previous_response_id}): {user_text}"
+        text = f"Building on our previous discussion ({previous_response_id}): {user_text}"
     else:
         text = f"Welcome! I'm your study tutor. You asked: {user_text}"
 
@@ -422,7 +427,7 @@ def _sample7_handler(request: CreateResponse, context: ResponseContext, cancella
     return TextResponse(
         context,
         request,
-        text=lambda: f"[model={request.model}]",
+        text=lambda: f"[model={request.get('model')}]",
     )
 
 
@@ -625,7 +630,7 @@ def _sample10_handler(request: CreateResponse, context: ResponseContext, cancell
             "id": context.response_id,
             "object": "response",
             "status": "in_progress",
-            "model": request.model or "",
+            "model": request.get("model") or "",
             "output": [],
         }
 
@@ -787,15 +792,15 @@ async def _item_ref_echo_handler(request: CreateResponse, context: ResponseConte
     items = await context.get_input_items()
     summaries = []
     for item in items:
-        if isinstance(item, ItemMessage):
+        if _is_item_type(item, "message"):
             texts = []
-            for part in getattr(item, "content", None) or []:
-                t = getattr(part, "text", None)
+            for part in item.get("content") or []:
+                t = part.get("text") if isinstance(part, dict) else None
                 if t:
                     texts.append(t)
             summaries.append({"type": "message", "text": " ".join(texts)})
         else:
-            summaries.append({"type": getattr(item, "type", "unknown")})
+            summaries.append({"type": item.get("type", "unknown")})
 
     return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
@@ -950,7 +955,7 @@ def test_item_reference_resolve_references_false() -> None:
         items = await context.get_input_items(resolve_references=False)
         summaries = []
         for item in items:
-            item_type = getattr(item, "type", "unknown")
+            item_type = item.get("type", "unknown")
             summaries.append({"type": item_type})
         return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
@@ -1047,10 +1052,10 @@ TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8
 async def _image_gen_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+    async for event in stream.output_item_image_gen_call(TINY_IMAGE_B64):
         yield event
     yield stream.emit_completed()
 
@@ -1111,53 +1116,50 @@ def test_sample12_image_gen_non_streaming_returns_result() -> None:
 
 async def _image_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import is_data_url
-    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
 
     items = await context.get_input_items()
     images = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputImageContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_image":
                 images.append(content)
-    urls = [img.image_url for img in images if img.image_url and not is_data_url(img.image_url)]
+    urls = [img["image_url"] for img in images if img.get("image_url") and not is_data_url(img["image_url"])]
     return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
 
 
 async def _image_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
 
     items = await context.get_input_items()
     images = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputImageContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_image":
                 images.append(content)
     results = []
     for img in images:
-        if img.image_url and is_data_url(img.image_url):
-            raw = try_decode_bytes(img.image_url)
-            media = get_media_type(img.image_url)
+        image_url = img.get("image_url")
+        if image_url and is_data_url(image_url):
+            raw = try_decode_bytes(image_url)
+            media = get_media_type(image_url)
             results.append(f"{media} ({len(raw)} bytes)")
     return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
 
 
 async def _image_file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
-
     items = await context.get_input_items()
     images = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputImageContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_image":
                 images.append(content)
-    file_ids = [img.file_id for img in images if img.file_id]
+    file_ids = [img["file_id"] for img in images if img.get("file_id")]
     return TextResponse(context, request, text=f"File IDs: {', '.join(file_ids)}")
 
 
@@ -1208,52 +1210,48 @@ def test_sample13_image_input_file_id_handler() -> None:
 
 async def _file_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
-    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
 
     items = await context.get_input_items()
     files = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputFileContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_file":
                 files.append(content)
     results = []
     for f in files:
-        if f.file_data and is_data_url(f.file_data):
-            raw = try_decode_bytes(f.file_data)
-            media = get_media_type(f.file_data)
+        file_data = f.get("file_data")
+        if file_data and is_data_url(file_data):
+            raw = try_decode_bytes(file_data)
+            media = get_media_type(file_data)
             results.append(f"{media} ({len(raw)} bytes)")
     return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
 
 
 async def _file_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
-
     items = await context.get_input_items()
     files = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputFileContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_file":
                 files.append(content)
-    urls = [f.file_url for f in files if f.file_url]
+    urls = [f["file_url"] for f in files if f.get("file_url")]
     return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
 
 
 async def _file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
-
     items = await context.get_input_items()
     files = []
     for item in items:
-        if not isinstance(item, ItemMessage):
+        if not _is_item_type(item, "message"):
             continue
-        for content in item.content or []:
-            if isinstance(content, MessageContentInputFileContent):
+        for content in item.get("content") or []:
+            if isinstance(content, dict) and content.get("type") == "input_file":
                 files.append(content)
-    file_ids = [f.file_id for f in files if f.file_id]
+    file_ids = [f["file_id"] for f in files if f.get("file_id")]
     return TextResponse(context, request, text=f"File IDs: {', '.join(file_ids)}")
 
 
@@ -1303,7 +1301,7 @@ def test_sample14_file_input_file_id_handler() -> None:
 async def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
 
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
     annotations = [
@@ -1311,7 +1309,7 @@ async def _annotations_handler(request: CreateResponse, context: ResponseContext
         FileCitationBody(file_id="/sources/paper.pdf", index=1, filename="paper.pdf"),
         UrlCitationBody(url="https://example.com/guide", start_index=0, end_index=10, title="Guide"),
     ]
-    async for event in stream.aoutput_item_message("Here are your sources.", annotations=annotations):
+    async for event in stream.output_item_message("Here are your sources.", annotations=annotations):
         yield event
     yield stream.emit_completed()
 
@@ -1349,10 +1347,10 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 async def _structured_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    async for event in stream.aoutput_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
+    async for event in stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
         yield event
     yield stream.emit_completed()
 

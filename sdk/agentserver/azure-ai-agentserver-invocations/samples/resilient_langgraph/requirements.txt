@@ -1,0 +1,9 @@
+# Preview: the azure-ai-agentserver-* packages are installed from the in-repo
+# source below — their PyPI releases predate the resilient-task surface.
+# Run `pip install -r requirements.txt` from THIS directory so the paths resolve.
+-e ../../../azure-ai-agentserver-core
+-e ../../../azure-ai-agentserver-invocations
+
+langgraph>=0.2
+langgraph-checkpoint-sqlite>=2.0
+langchain-core>=0.3

@@ -34,6 +34,7 @@ Usage::
 
 import asyncio
 from collections.abc import Sequence
+from typing import cast
 
 from azure.ai.agentserver.responses import (
     CreateResponse,
@@ -42,7 +43,7 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
-from azure.ai.agentserver.responses.models import OutputItem
+from azure.ai.agentserver.responses.models import OutputItem, OutputItemMessage
 
 app = ResponsesAgentServerHost(
     options=ResponsesServerOptions(default_fetch_history_count=20),
@@ -51,7 +52,7 @@ app = ResponsesAgentServerHost(
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
     """Compose a study-tutor reply that references the conversation history."""
-    history_messages = [item for item in history if getattr(item, "type", None) == "message"]
+    history_messages = [cast(OutputItemMessage, item) for item in history if item.get("type") == "message"]
     turn_number = len(history_messages) + 1
 
     if not history_messages:
@@ -59,8 +60,9 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 
     last = history_messages[-1]
     last_text = "(none)"
-    if last.get("content"):
-        raw = last["content"][0].get("text", "(none)")
+    content = last.get("content")
+    if content:
+        raw = content[0].get("text", "(none)")
         last_text = raw[:50] + "..." if len(raw) > 50 else raw
 
     return (

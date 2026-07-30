@@ -1,12 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Strongly-typed return type assertions for every public emit_* method.
+"""Wire-event return assertions for every public emit_* method.
 
-Every builder ``emit_*`` method must return the specific ``ResponseStreamEvent``
-subtype per spec (e.g. ``emit_added()`` on a message
-builder returns ``ResponseOutputItemAddedEvent``, not the base
-``ResponseStreamEvent``).  These tests assert the ``isinstance`` contract for
-every public emit method on every builder class.
+Every builder ``emit_*`` method must return a dict-native ``ResponseStreamEvent``
+with the specific wire ``type`` per spec (e.g. ``emit_added()`` on a message
+builder returns a payload with ``type == "response.output_item.added"``).
 
 Builder classes covered:
   - ResponseEventStream (lifecycle: queued, created, in_progress, completed, failed, incomplete)
@@ -33,59 +31,131 @@ Builder classes covered:
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses.models._generated import (
-    ResponseCodeInterpreterCallCodeDeltaEvent,
-    ResponseCodeInterpreterCallCodeDoneEvent,
-    ResponseCodeInterpreterCallCompletedEvent,
-    ResponseCodeInterpreterCallInProgressEvent,
-    ResponseCodeInterpreterCallInterpretingEvent,
-    ResponseCompletedEvent,
-    ResponseContentPartAddedEvent,
-    ResponseContentPartDoneEvent,
-    ResponseCreatedEvent,
-    ResponseCustomToolCallInputDeltaEvent,
-    ResponseCustomToolCallInputDoneEvent,
-    ResponseFailedEvent,
-    ResponseFileSearchCallCompletedEvent,
-    ResponseFileSearchCallInProgressEvent,
-    ResponseFileSearchCallSearchingEvent,
-    ResponseFunctionCallArgumentsDeltaEvent,
-    ResponseFunctionCallArgumentsDoneEvent,
-    ResponseImageGenCallCompletedEvent,
-    ResponseImageGenCallGeneratingEvent,
-    ResponseImageGenCallInProgressEvent,
-    ResponseImageGenCallPartialImageEvent,
-    ResponseIncompleteEvent,
-    ResponseInProgressEvent,
-    ResponseMCPCallArgumentsDeltaEvent,
-    ResponseMCPCallArgumentsDoneEvent,
-    ResponseMCPCallCompletedEvent,
-    ResponseMCPCallFailedEvent,
-    ResponseMCPCallInProgressEvent,
-    ResponseMCPListToolsCompletedEvent,
-    ResponseMCPListToolsFailedEvent,
-    ResponseMCPListToolsInProgressEvent,
-    ResponseOutputItemAddedEvent,
-    ResponseOutputItemDoneEvent,
-    ResponseOutputTextAnnotationAddedEvent,
-    ResponseQueuedEvent,
-    ResponseReasoningSummaryPartAddedEvent,
-    ResponseReasoningSummaryPartDoneEvent,
-    ResponseReasoningSummaryTextDeltaEvent,
-    ResponseReasoningSummaryTextDoneEvent,
-    ResponseRefusalDeltaEvent,
-    ResponseRefusalDoneEvent,
-    ResponseTextDeltaEvent,
-    ResponseTextDoneEvent,
-    ResponseWebSearchCallCompletedEvent,
-    ResponseWebSearchCallInProgressEvent,
-    ResponseWebSearchCallSearchingEvent,
+from typing import Any
+
+from azure.ai.agentserver.responses.models import (
     StructuredOutputsOutputItem,
     UrlCitationBody,
 )
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 # ---- helper ----
+
+
+def _event_type_checker(name: str, event_type: str) -> type:
+    class _EventTypeMeta(type):
+        def __instancecheck__(cls, instance: Any) -> bool:  # pylint: disable=unused-argument
+            return isinstance(instance, dict) and instance.get("type") == event_type
+
+    return _EventTypeMeta(name, (), {})
+
+
+ResponseCodeInterpreterCallCodeDeltaEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCodeDeltaEvent", "response.code_interpreter_call_code.delta"
+)
+ResponseCodeInterpreterCallCodeDoneEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCodeDoneEvent", "response.code_interpreter_call_code.done"
+)
+ResponseCodeInterpreterCallCompletedEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallCompletedEvent", "response.code_interpreter_call.completed"
+)
+ResponseCodeInterpreterCallInProgressEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallInProgressEvent", "response.code_interpreter_call.in_progress"
+)
+ResponseCodeInterpreterCallInterpretingEvent = _event_type_checker(
+    "ResponseCodeInterpreterCallInterpretingEvent", "response.code_interpreter_call.interpreting"
+)
+ResponseCompletedEvent = _event_type_checker("ResponseCompletedEvent", "response.completed")
+ResponseContentPartAddedEvent = _event_type_checker("ResponseContentPartAddedEvent", "response.content_part.added")
+ResponseContentPartDoneEvent = _event_type_checker("ResponseContentPartDoneEvent", "response.content_part.done")
+ResponseCreatedEvent = _event_type_checker("ResponseCreatedEvent", "response.created")
+ResponseCustomToolCallInputDeltaEvent = _event_type_checker(
+    "ResponseCustomToolCallInputDeltaEvent", "response.custom_tool_call_input.delta"
+)
+ResponseCustomToolCallInputDoneEvent = _event_type_checker(
+    "ResponseCustomToolCallInputDoneEvent", "response.custom_tool_call_input.done"
+)
+ResponseFailedEvent = _event_type_checker("ResponseFailedEvent", "response.failed")
+ResponseFileSearchCallCompletedEvent = _event_type_checker(
+    "ResponseFileSearchCallCompletedEvent", "response.file_search_call.completed"
+)
+ResponseFileSearchCallInProgressEvent = _event_type_checker(
+    "ResponseFileSearchCallInProgressEvent", "response.file_search_call.in_progress"
+)
+ResponseFileSearchCallSearchingEvent = _event_type_checker(
+    "ResponseFileSearchCallSearchingEvent", "response.file_search_call.searching"
+)
+ResponseFunctionCallArgumentsDeltaEvent = _event_type_checker(
+    "ResponseFunctionCallArgumentsDeltaEvent", "response.function_call_arguments.delta"
+)
+ResponseFunctionCallArgumentsDoneEvent = _event_type_checker(
+    "ResponseFunctionCallArgumentsDoneEvent", "response.function_call_arguments.done"
+)
+ResponseImageGenCallCompletedEvent = _event_type_checker(
+    "ResponseImageGenCallCompletedEvent", "response.image_generation_call.completed"
+)
+ResponseImageGenCallGeneratingEvent = _event_type_checker(
+    "ResponseImageGenCallGeneratingEvent", "response.image_generation_call.generating"
+)
+ResponseImageGenCallInProgressEvent = _event_type_checker(
+    "ResponseImageGenCallInProgressEvent", "response.image_generation_call.in_progress"
+)
+ResponseImageGenCallPartialImageEvent = _event_type_checker(
+    "ResponseImageGenCallPartialImageEvent", "response.image_generation_call.partial_image"
+)
+ResponseIncompleteEvent = _event_type_checker("ResponseIncompleteEvent", "response.incomplete")
+ResponseInProgressEvent = _event_type_checker("ResponseInProgressEvent", "response.in_progress")
+ResponseMCPCallArgumentsDeltaEvent = _event_type_checker(
+    "ResponseMCPCallArgumentsDeltaEvent", "response.mcp_call_arguments.delta"
+)
+ResponseMCPCallArgumentsDoneEvent = _event_type_checker(
+    "ResponseMCPCallArgumentsDoneEvent", "response.mcp_call_arguments.done"
+)
+ResponseMCPCallCompletedEvent = _event_type_checker("ResponseMCPCallCompletedEvent", "response.mcp_call.completed")
+ResponseMCPCallFailedEvent = _event_type_checker("ResponseMCPCallFailedEvent", "response.mcp_call.failed")
+ResponseMCPCallInProgressEvent = _event_type_checker(
+    "ResponseMCPCallInProgressEvent", "response.mcp_call.in_progress"
+)
+ResponseMCPListToolsCompletedEvent = _event_type_checker(
+    "ResponseMCPListToolsCompletedEvent", "response.mcp_list_tools.completed"
+)
+ResponseMCPListToolsFailedEvent = _event_type_checker(
+    "ResponseMCPListToolsFailedEvent", "response.mcp_list_tools.failed"
+)
+ResponseMCPListToolsInProgressEvent = _event_type_checker(
+    "ResponseMCPListToolsInProgressEvent", "response.mcp_list_tools.in_progress"
+)
+ResponseOutputItemAddedEvent = _event_type_checker("ResponseOutputItemAddedEvent", "response.output_item.added")
+ResponseOutputItemDoneEvent = _event_type_checker("ResponseOutputItemDoneEvent", "response.output_item.done")
+ResponseOutputTextAnnotationAddedEvent = _event_type_checker(
+    "ResponseOutputTextAnnotationAddedEvent", "response.output_text.annotation.added"
+)
+ResponseQueuedEvent = _event_type_checker("ResponseQueuedEvent", "response.queued")
+ResponseReasoningSummaryPartAddedEvent = _event_type_checker(
+    "ResponseReasoningSummaryPartAddedEvent", "response.reasoning_summary_part.added"
+)
+ResponseReasoningSummaryPartDoneEvent = _event_type_checker(
+    "ResponseReasoningSummaryPartDoneEvent", "response.reasoning_summary_part.done"
+)
+ResponseReasoningSummaryTextDeltaEvent = _event_type_checker(
+    "ResponseReasoningSummaryTextDeltaEvent", "response.reasoning_summary_text.delta"
+)
+ResponseReasoningSummaryTextDoneEvent = _event_type_checker(
+    "ResponseReasoningSummaryTextDoneEvent", "response.reasoning_summary_text.done"
+)
+ResponseRefusalDeltaEvent = _event_type_checker("ResponseRefusalDeltaEvent", "response.refusal.delta")
+ResponseRefusalDoneEvent = _event_type_checker("ResponseRefusalDoneEvent", "response.refusal.done")
+ResponseTextDeltaEvent = _event_type_checker("ResponseTextDeltaEvent", "response.output_text.delta")
+ResponseTextDoneEvent = _event_type_checker("ResponseTextDoneEvent", "response.output_text.done")
+ResponseWebSearchCallCompletedEvent = _event_type_checker(
+    "ResponseWebSearchCallCompletedEvent", "response.web_search_call.completed"
+)
+ResponseWebSearchCallInProgressEvent = _event_type_checker(
+    "ResponseWebSearchCallInProgressEvent", "response.web_search_call.in_progress"
+)
+ResponseWebSearchCallSearchingEvent = _event_type_checker(
+    "ResponseWebSearchCallSearchingEvent", "response.web_search_call.searching"
+)
 
 
 def _stream() -> ResponseEventStream:

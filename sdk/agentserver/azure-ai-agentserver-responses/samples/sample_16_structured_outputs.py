@@ -23,7 +23,8 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
 )
-from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
+from azure.ai.agentserver.responses.aio import ResponseEventStream as AsyncResponseEventStream
+from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 
 app = ResponsesAgentServerHost()
 
@@ -32,7 +33,7 @@ app = ResponsesAgentServerHost()
 @app.create("structured.convenience")
 async def convenience_handler(request: CreateResponse, context: ResponseContext):
     """Return structured analysis results using the convenience method."""
-    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
@@ -49,7 +50,7 @@ async def convenience_handler(request: CreateResponse, context: ResponseContext)
         ],
     }
 
-    async for event in stream.aoutput_item_structured_outputs(result):
+    async for event in stream.output_item_structured_outputs(result):
         yield event
 
     yield stream.emit_completed()
@@ -64,7 +65,11 @@ async def full_control_handler(request: CreateResponse, context: ResponseContext
     yield stream.emit_in_progress()
 
     builder = stream.add_output_item_structured_outputs()
-    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok", "count": 42})
+    item: StructuredOutputsOutputItem = {
+        "type": "structured_outputs",
+        "id": builder.item_id,
+        "output": {"status": "ok", "count": 42},
+    }
     yield builder.emit_added(item)
     yield builder.emit_done(item)
 

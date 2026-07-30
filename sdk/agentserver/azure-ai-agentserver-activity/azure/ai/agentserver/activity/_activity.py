@@ -379,6 +379,7 @@ class ActivityAgentServerHost(AgentServerHost):
         self._adapter: Optional[HttpAdapterBase] = None
         self._handler: Optional[Callable[[Request], Awaitable[Response]]] = None
         self._connection_config: Optional[Mapping[str, str]] = None
+        self._owned_storage: Optional[Any] = None
 
         # Register the activity routes and initialize the base host first, so the
         # core-resolved configuration (``self.config``, resolved once) is available
@@ -468,7 +469,6 @@ class ActivityAgentServerHost(AgentServerHost):
         )
         bot_app_id = self._connection_config.get(ConnectionSettings.CLIENT_ID, "").strip()
         self._agent_app, self._adapter = build_m365_app(
-            digital_worker=self._digital_worker,
             connection_config=self._connection_config,
             storage=self._resolve_storage(storage) if agent_app is None else storage,
             connection_manager=connection_manager,
@@ -511,9 +511,9 @@ class ActivityAgentServerHost(AgentServerHost):
     def _resolve_storage(self, storage: Optional[Storage]) -> Storage:
         """Resolve the storage backend for the built M365 stack.
 
-        Resolution order: the caller-supplied ``storage`` if provided, otherwise
-        an in-memory store suitable for local testing. Override in a subclass to
-        plug a durable backend (for example a hosted persistent store).
+        Resolution order: the caller-supplied ``storage`` if provided,
+        :class:`~azure.ai.agentserver.activity.FoundryStorage` in a Foundry-hosted
+        container, otherwise an in-memory store suitable for local testing.
 
         :param storage: The caller-supplied storage backend, or ``None``.
         :type storage: Optional[~microsoft_agents.hosting.core.Storage]
@@ -522,12 +522,27 @@ class ActivityAgentServerHost(AgentServerHost):
         """
         if storage is not None:
             return storage
-        # TODO: use a durable hosted store (FoundryStorage) when running in a
-        # Foundry-hosted container; MemoryStorage is the local-testing default.
+        if self.config.is_hosted:
+            from ._foundry_storage import FoundryStorage
+
+            resolved_storage = FoundryStorage()
+            self._owned_storage = resolved_storage
+            return resolved_storage
+
         # pylint: disable=import-error,no-name-in-module
         from microsoft_agents.hosting.core import MemoryStorage
 
         return MemoryStorage()
+
+    async def _dispatch_shutdown(self) -> None:
+        """Run the user shutdown handler, then close host-owned storage."""
+        try:
+            await super()._dispatch_shutdown()
+        finally:
+            storage = self._owned_storage
+            self._owned_storage = None
+            if storage is not None:
+                await storage.aclose()
 
     @property
     def connection_config(self) -> Optional[Mapping[str, str]]:
