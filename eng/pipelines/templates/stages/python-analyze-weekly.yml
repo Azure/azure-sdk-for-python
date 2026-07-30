@@ -28,9 +28,8 @@ stages:
           os: linux
 
         steps:
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.10'
-            inputs:
+          - template: /eng/pipelines/templates/steps/use-python-version.yml
+            parameters:
               versionSpec: '3.10'
 
           # Authenticate pip to the configured Azure DevOps feed before installs.
@@ -102,9 +101,8 @@ stages:
               GH_TOKEN: $(GH_TOKEN)
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.13 for docs generation'
-            inputs:
+          - template: /eng/pipelines/templates/steps/use-python-version.yml
+            parameters:
               versionSpec: '3.13'
 
           - script: |
