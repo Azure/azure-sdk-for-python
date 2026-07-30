@@ -5,11 +5,11 @@
 ### Features Added
 
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
-- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — an explicit process-global switch (default **disabled**) that gates the resilient `TaskManager`.
+- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — an explicit process-global switch (default **disabled**) that gates the resilient `TaskManager`'s startup recovery scan.
 
 ### Bugs Fixed
 
-- `AgentServerHost` now initializes the resilient `TaskManager` (and its network-backed startup recovery scan) only when **both** the subsystem was explicitly enabled via `set_resilient_tasks_enabled(True)` **and** at least one durable task (`@task` / `@multi_turn_task`) has been declared. Plain servers (e.g. invocations-only hosts) that do not opt in no longer pay the task-store startup cost — a blocking hosted task-store `list()` round-trip plus credential-token acquisition that could gate server readiness and add tens of seconds of connect latency while having nothing to recover.
+- `AgentServerHost` no longer makes a blocking hosted task-store `list()` round-trip (plus credential-token acquisition) at startup unless resilient tasks are actually in use. The `TaskManager` is still constructed so `get_task_manager()` keeps working (no `TaskManagerNotInitialized` for existing `@task` apps), but its network-backed **startup recovery scan** now runs only when **both** the subsystem was explicitly enabled via `set_resilient_tasks_enabled(True)` **and** at least one durable task (`@task` / `@multi_turn_task`) has been declared. Plain servers (e.g. invocations-only hosts) no longer pay tens of seconds of startup latency for a scan that has nothing to recover.
 - Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
 
 ## 2.0.0b9 (2026-07-28)

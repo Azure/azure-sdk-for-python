@@ -133,21 +133,35 @@ class TestGateSignals:
 # ------------------------------------------------------------------ #
 
 
-class TestLifespanAndGate:
-    """The TaskManager runs iff (enabled AND at least one task declared)."""
+class TestLifespanManagerAndRecovery:
+    """The TaskManager is ALWAYS constructed (cheap, no task-store calls);
+    the network-backed startup recovery scan runs only when BOTH the switch
+    is enabled AND at least one durable task is declared."""
 
     @pytest.mark.asyncio
-    async def test_disabled_and_no_task_skips(self, _clean_state, _fake_task_manager) -> None:
+    async def test_manager_always_constructed_and_available(
+        self, _clean_state, _fake_task_manager
+    ) -> None:
+        """Even with no opt-in, the manager is constructed and installed so
+        ``get_task_manager()`` works (no ``TaskManagerNotInitialized``) — but
+        its startup recovery scan does NOT run."""
         from azure.ai.agentserver.core import AgentServerHost
+        from azure.ai.agentserver.core.tasks._manager import get_task_manager
 
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
-            pass
-        assert _fake_task_manager.instances == []
+            # A manager exists and is retrievable during the active lifespan.
+            assert len(_fake_task_manager.instances) == 1
+            assert get_task_manager() is _fake_task_manager.instances[0]
+            # No recovery scan happened (no opt-in).
+            assert _fake_task_manager.instances[0].startup_called is False
+
+        # Torn down + cleared on shutdown.
+        assert _fake_task_manager.instances[0].shutdown_called is True
 
     @pytest.mark.asyncio
-    async def test_disabled_but_task_declared_skips(self, _clean_state, _fake_task_manager) -> None:
-        """Flag off wins: a declared task alone does NOT start the manager."""
+    async def test_disabled_but_task_declared_no_recovery(self, _clean_state, _fake_task_manager) -> None:
+        """Switch off + a task declared: manager built, but no recovery scan."""
         from azure.ai.agentserver.core import AgentServerHost
 
         _declare_task()
@@ -155,24 +169,26 @@ class TestLifespanAndGate:
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
             pass
-        assert _fake_task_manager.instances == []
+        assert len(_fake_task_manager.instances) == 1
+        assert _fake_task_manager.instances[0].startup_called is False
 
     @pytest.mark.asyncio
-    async def test_enabled_but_no_task_skips(self, _clean_state, _fake_task_manager) -> None:
-        """Switch on but no task declared: registry empty -> manager not built."""
+    async def test_enabled_but_no_task_no_recovery(self, _clean_state, _fake_task_manager) -> None:
+        """Switch on + no task declared: manager built, but no recovery scan."""
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)
         app = AgentServerHost()
         async with app.router.lifespan_context(app):
             pass
-        assert _fake_task_manager.instances == []
+        assert len(_fake_task_manager.instances) == 1
+        assert _fake_task_manager.instances[0].startup_called is False
 
     @pytest.mark.asyncio
-    async def test_enabled_and_task_initializes(
+    async def test_enabled_and_task_runs_recovery(
         self, _clean_state, _fake_task_manager, caplog: pytest.LogCaptureFixture
     ) -> None:
-        """Both conditions true -> manager constructed, started, shut down."""
+        """Both conditions true -> manager built AND startup recovery runs."""
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)
@@ -187,10 +203,10 @@ class TestLifespanAndGate:
         mgr = _fake_task_manager.instances[0]
         assert mgr.startup_called is True
         assert mgr.shutdown_called is True
-        assert any("TaskManager initialized automatically" in r.message for r in caplog.records)
+        assert any("TaskManager initialized with startup recovery" in r.message for r in caplog.records)
 
     @pytest.mark.asyncio
-    async def test_enabled_and_multi_turn_initializes(self, _clean_state, _fake_task_manager) -> None:
+    async def test_enabled_and_multi_turn_runs_recovery(self, _clean_state, _fake_task_manager) -> None:
         from azure.ai.agentserver.core import AgentServerHost
 
         set_resilient_tasks_enabled(True)

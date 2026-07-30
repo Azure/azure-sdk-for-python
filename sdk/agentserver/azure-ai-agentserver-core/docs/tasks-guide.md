@@ -115,9 +115,10 @@ What this primitive deliberately does **not** do:
 
 ### Enabling resilient tasks
 
-The resilient `TaskManager` — and its startup recovery scan against the hosted
-task store — is **opt-in**. `AgentServerHost` only stands it up when **both**
-of the following are true:
+The resilient `TaskManager`'s **startup recovery scan** — a network round-trip
+to the hosted task store that reclaims tasks left in-flight by a crashed prior
+instance — is **opt-in**. `AgentServerHost` runs it only when **both** of the
+following are true:
 
 1. the subsystem was explicitly enabled via `set_resilient_tasks_enabled(True)`
    (it defaults to disabled), **and**
@@ -129,11 +130,14 @@ module import). Use `resilient_tasks_enabled()` to read the current state.
 ```python
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
-set_resilient_tasks_enabled(True)  # required for the TaskManager to run
+set_resilient_tasks_enabled(True)  # run the startup recovery scan for tasks
 ```
 
-Servers that never declare a task — or never enable the switch — skip the
-TaskManager entirely and pay none of its startup cost.
+The `TaskManager` itself is always constructed (a cheap, in-memory object that
+makes no task-store calls until a task is used), so `get_task_manager()` and
+`.run()` / `.start()` work regardless. Servers that never declare a task — or
+never enable the switch — simply skip the startup recovery scan and pay none of
+its latency.
 
 ### One-shot
 
