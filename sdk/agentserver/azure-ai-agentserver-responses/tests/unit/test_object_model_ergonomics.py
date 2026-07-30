@@ -62,3 +62,31 @@ def test_response_models_remain_wire_serializable() -> None:
 
     assert wire == {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
     assert json.dumps(wire)
+
+
+def test_response_models_can_be_reused_as_later_request_input() -> None:
+    response = ResponseObject(
+        id="resp_123",
+        status="completed",
+        output=[
+            ItemMessage(
+                type="message",
+                role="assistant",
+                content=[MessageContentInputTextContent(type="input_text", text="previous answer")],
+            )
+        ],
+    )
+    request = CreateResponse(model="test-model", input=response.output)
+
+    wire = to_wire_dict(request)
+
+    assert wire == {
+        "model": "test-model",
+        "input": [
+            {
+                "type": "message",
+                "role": "assistant",
+                "content": [{"type": "input_text", "text": "previous answer"}],
+            }
+        ],
+    }
