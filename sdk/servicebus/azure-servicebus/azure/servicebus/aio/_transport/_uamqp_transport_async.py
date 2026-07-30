@@ -80,7 +80,7 @@ try:
             """
             retry_policy = kwargs.pop("retry_policy")
             return AMQPClientAsync(
-                "amqps://" + config.hostname,
+                ("amqps://" if config.use_tls else "amqp://") + config.hostname,
                 debug=config.logging_enable,
                 error_policy=retry_policy,
                 keep_alive_interval=config.keep_alive,
