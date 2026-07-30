@@ -5,16 +5,17 @@
 import asyncio  # pylint:disable=do-not-import-asyncio
 import time
 import uuid
-from datetime import datetime, timedelta, timezone
-from typing import AsyncIterator, Optional
+from datetime import datetime
+from typing import Callable, Optional
+
+from azure.core.async_paging import AsyncItemPaged
 
 from ._base_handler_async import BaseHandler as AsyncBaseHandler
 from .._common.constants import (
     REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
 )
 from .._common import mgmt_handlers
-from .._session_browser import _amqp_int_value, _EPOCH, _MAX_DATETIME_MS, _PAGE_SIZE
-from .._pyamqp.types import AMQPTypes, TYPE, VALUE
+from .._session_browser import _to_last_updated_ms, _page_request_body, _PAGE_SIZE
 from ..exceptions import OperationTimeoutError
 from ._async_utils import create_authentication
 
@@ -64,20 +65,24 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             await self._close_handler()
             raise
 
-    async def list_sessions(
+    def list_sessions(
         self,
         *,
         state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-    ) -> AsyncIterator[str]:
+        _now: Callable[[], float] = time.monotonic,
+    ) -> AsyncItemPaged[str]:
         """List session IDs for this entity.
 
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned. If not specified,
             returns sessions with active messages in the entity.
-        :keyword float timeout: The total operation timeout in seconds.
-        :returns: An async iterator of session ID strings.
-        :rtype: AsyncIterator[str]
+        :keyword float timeout: The total operation timeout in seconds, spent across
+            every page of the enumeration.
+        :keyword _now: Monotonic clock function, injectable for tests. Internal.
+        :paramtype _now: callable
+        :returns: A paged async iterable of session ID strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
 
         .. note::
 
@@ -85,50 +90,29 @@ class _SessionBrowserAsync(AsyncBaseHandler):
             are added or removed between page requests, the iterator may yield duplicate
             session IDs or skip some. Callers should not assume uniqueness.
         """
-        if state_updated_after is None:
-            last_updated_time_ms = _MAX_DATETIME_MS
-        else:
-            # Normalize naive datetimes to UTC. Python's datetime.timestamp()
-            # interprets naive values as local time, which would make the wire
-            # value depend on the host's timezone. Treat naive values as UTC
-            # (consistent with how naive datetimes are handled elsewhere in
-            # this SDK) and convert aware values to UTC before serializing.
-            if state_updated_after.tzinfo is None:
-                normalized = state_updated_after.replace(tzinfo=timezone.utc)
-            else:
-                normalized = state_updated_after.astimezone(timezone.utc)
-            # Compute milliseconds with integer timedelta arithmetic rather than
-            # float `timestamp() * 1000`. The float path rounds the maximum
-            # representable datetime up to _MAX_DATETIME_MS, which would silently
-            # switch an explicit filter into active-messages mode, and truncates
-            # pre-epoch fractional milliseconds toward zero. Floor division keeps
-            # datetime.max at 253402300799999 and rounds consistently downward.
-            last_updated_time_ms = (normalized - _EPOCH) // timedelta(milliseconds=1)
+        last_updated_time_ms = _to_last_updated_ms(state_updated_after)
+        # `timeout` is the total budget across every page. AsyncItemPaged is lazy,
+        # so establish the deadline on the first page fetch and share it, so a
+        # multi-page enumeration cannot run for `timeout` seconds per page.
+        deadline_state: list = [None]
 
-        skip = 0
-        # `timeout` is the total operation budget across every page. Compute one
-        # deadline up front and pass each page the remaining time, so a multi-page
-        # enumeration cannot run for `timeout` seconds per page.
-        deadline = None if timeout is None else time.monotonic() + timeout
-
-        while True:
+        async def _get_next(continuation_token):
+            skip = int(continuation_token) if continuation_token else 0
             # A paused iterator must not reopen the connection after the owning
             # ServiceBusClient has been closed. _check_live() raises once the
             # handler is shut down, before _open() could resurrect resources.
             self._check_live()
-            if deadline is None:
+            if timeout is None:
                 page_timeout = None
             else:
-                page_timeout = deadline - time.monotonic()
+                if deadline_state[0] is None:
+                    deadline_state[0] = _now() + timeout
+                page_timeout = deadline_state[0] - _now()
                 if page_timeout <= 0:
                     raise OperationTimeoutError(
                         message="Listing sessions did not complete within the specified timeout."
                     )
-            message = {
-                "last-updated-time": {TYPE: AMQPTypes.timestamp, VALUE: last_updated_time_ms},
-                "skip": _amqp_int_value(skip),
-                "top": _amqp_int_value(_PAGE_SIZE),
-            }
+            message = _page_request_body(self._amqp_transport, last_updated_time_ms, skip)
             result = await self._mgmt_request_response_with_retry(
                 REQUEST_RESPONSE_GET_MESSAGE_SESSIONS_OPERATION,
                 message,
@@ -136,10 +120,18 @@ class _SessionBrowserAsync(AsyncBaseHandler):
                 keep_alive_associated_link=False,
                 timeout=page_timeout,
             )
-            if not result:
-                break
-            for sid in result:
-                yield sid
-            if len(result) < _PAGE_SIZE:
-                break
-            skip += len(result)
+            return skip, (result or [])
+
+        async def _extract_data(page_response):
+            skip, page = page_response
+            if not page or len(page) < _PAGE_SIZE:
+                # Terminal page: eagerly release the connection for the common
+                # full-enumeration case. A caller that abandons the iterator
+                # early leaves cleanup to the owning client (which holds the
+                # shared connection) and to garbage collection - the client's
+                # handler set holds only a weak reference.
+                await self.close()
+                return None, iter(page)
+            return str(skip + len(page)), iter(page)
+
+        return AsyncItemPaged(_get_next, _extract_data)

@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator,client-method-missing-tracing-decorator-async
-from typing import Any, AsyncIterator, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, Union, Optional, TYPE_CHECKING, Type
 from datetime import datetime
 import logging
 import warnings
@@ -11,6 +11,7 @@ from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
 
+from azure.core.async_paging import AsyncItemPaged
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
 
 from ._transport._pyamqp_transport_async import PyamqpTransportAsync
@@ -731,7 +732,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-    ) -> AsyncIterator[str]:
+    ) -> AsyncItemPaged[str]:
         """List session IDs with active messages in a session-enabled queue.
 
         If ``state_updated_after`` is specified, only sessions whose
@@ -741,9 +742,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :param str queue_name: The name of the session-enabled queue.
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned.
-        :keyword float timeout: The total operation timeout in seconds.
-        :returns: An async iterator of session ID strings.
-        :rtype: AsyncIterator[str]
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged async iterable of session ID strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         """
         if self._entity_name and queue_name != self._entity_name:
             raise ValueError(
@@ -753,17 +754,8 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        async def _iter():
-            browser = self._create_session_browser(queue_name)
-            try:
-                async for sid in browser.list_sessions(
-                    state_updated_after=state_updated_after, timeout=timeout
-                ):
-                    yield sid
-            finally:
-                await browser.close()
-
-        return _iter()
+        browser = self._create_session_browser(queue_name)
+        return browser.list_sessions(state_updated_after=state_updated_after, timeout=timeout)
 
     def list_subscription_sessions(
         self,
@@ -772,7 +764,7 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         *,
         state_updated_after: Optional[datetime] = None,
         timeout: Optional[float] = None,
-    ) -> AsyncIterator[str]:
+    ) -> AsyncItemPaged[str]:
         """List session IDs with active messages in a session-enabled subscription.
 
         If ``state_updated_after`` is specified, only sessions whose
@@ -783,9 +775,9 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         :param str subscription_name: The name of the subscription.
         :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
             session state was set or updated after this time are returned.
-        :keyword float timeout: The total operation timeout in seconds.
-        :returns: An async iterator of session ID strings.
-        :rtype: AsyncIterator[str]
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged async iterable of session ID strings.
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[str]
         """
         if self._entity_name and topic_name != self._entity_name:
             raise ValueError(
@@ -795,14 +787,5 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
 
-        async def _iter():
-            browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
-            try:
-                async for sid in browser.list_sessions(
-                    state_updated_after=state_updated_after, timeout=timeout
-                ):
-                    yield sid
-            finally:
-                await browser.close()
-
-        return _iter()
+        browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
+        return browser.list_sessions(state_updated_after=state_updated_after, timeout=timeout)

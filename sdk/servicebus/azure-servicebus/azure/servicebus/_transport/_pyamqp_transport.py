@@ -30,7 +30,14 @@ from .._pyamqp.error import (
     AuthenticationException,
     MessageException,
 )
-from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
+from .._pyamqp.utils import (
+    amqp_long_value,
+    amqp_array_value,
+    amqp_string_value,
+    amqp_uint_value,
+    amqp_int_value,
+    amqp_timestamp_value,
+)
 from .._pyamqp._encode import encode_payload
 from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
@@ -195,6 +202,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     AMQP_LONG_VALUE: Callable = amqp_long_value
     AMQP_ARRAY_VALUE: Callable = amqp_array_value
     AMQP_UINT_VALUE: Callable = amqp_uint_value
+    AMQP_INT_VALUE: Callable = amqp_int_value
+    AMQP_TIMESTAMP_VALUE: Callable = amqp_timestamp_value
 
     # errors
     TIMEOUT_ERROR = TimeoutError
