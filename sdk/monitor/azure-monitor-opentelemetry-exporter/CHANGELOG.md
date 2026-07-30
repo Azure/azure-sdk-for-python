@@ -24,6 +24,8 @@
   ([#48027](https://github.com/Azure/azure-sdk-for-python/pull/48027))
 - Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present <!-- cspell:ignore ikey -->
   ([#48059](https://github.com/Azure/azure-sdk-for-python/pull/48059))
+- Support remote toggling of local (offline) storage via the OneSettings `FEATURE_LOCAL_STORAGE` feature flag: the control plane can disable or re-enable disk-backed retry storage at runtime, but never overrides an explicit `disable_offline_storage=True` user opt-out. Statsbeat storage is decoupled from the user setting (always off), while customer-sdkstats honors the user setting and follows the remote toggle.
+  ([#48059](https://github.com/Azure/azure-sdk-for-python/pull/48059))
 
 ## 1.0.0b55 (2026-07-01)
 
