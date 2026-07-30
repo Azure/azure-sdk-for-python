@@ -29,8 +29,8 @@ DO NOT USE FOR: fixing APIView comments, SDK code generation, pipeline debugging
 - If `baseTag` is omitted, ask the user to choose one of:
   - Use the latest GA (non-beta) release tag for `packageName`.
   - Provide a specific tag or version to use as baseline.
-- `targetOwner` defaults to `Azure` when omitted.
-- `targetRepo` is optional. When omitted, API Review Hub resolves repo by language.
+- Direct MCP calls require `targetRepo: azure-sdk-for-python`; `targetOwner` defaults to `Azure` unless explicitly provided (for example, a fork), so pass both explicitly when overriding defaults.
+- The CLI may supply repository defaults, but the MCP method does not.
 - `targetOwner`, `targetRepo`, and `targetBranch` define where the review PR branch is created.
 - Wait behavior mapping: `--no-wait` corresponds to `waitForCompletion: false`.
 - Poll behavior mapping: `--poll-interval-seconds` corresponds to `pollIntervalSeconds` (default `30`).
@@ -45,13 +45,13 @@ DO NOT USE FOR: fixing APIView comments, SDK code generation, pipeline debugging
 
 ## Steps
 
-1. **Collect Inputs** - Get required `packageName` and `targetBranch`. Optionally collect `baseTag`, `targetOwner`, and `targetRepo`.
+1. **Collect Inputs** - Get required `packageName` and `targetBranch`. Optionally collect `baseTag`.
 2. **Prompt For Baseline** - If `baseTag` is not provided, ask the user to choose latest GA (non-beta) or provide a specific tag/version.
 3. **Resolve Baseline** - If the user chooses latest GA, resolve and use the latest GA (non-beta) release tag for `packageName`. If the user provides a tag/version, use that value.
 4. **Validate MCP Version** - Ensure `azure-sdk-mcp` is `0.6.32+`.
 5. **Set Wait Mode** - Default to wait for completion. Use `waitForCompletion: false` only when user asks for no-wait behavior.
 6. **Set Poll Interval** - If waiting for completion, use `pollIntervalSeconds` (default `30`, override only if requested).
-7. **Request Review PR** - Run `azure-sdk-mcp:azsdk_apireviewhub_request_review_pr` with `language: python` and collected inputs.
+7. **Request Review PR** - Run `azure-sdk-mcp:azsdk_apireviewhub_request_review_pr` with `language: python`, `targetRepo: azure-sdk-for-python`, and `targetOwner` (default `Azure` unless explicitly provided), plus collected inputs.
 8. **Return Result** - Provide review PR URL and operation status.
 9. **Optional CLI Output** - If useful or requested, provide the equivalent `azsdk api-review create` command with all resolved arguments.
 
@@ -75,10 +75,10 @@ Optional flags:
 
 ## Example
 
-For `azure-storage-blobs` comparing `1.0.0` to the latest on main:
+For `azure-storage-blob` comparing `1.0.0` to the latest on main:
 
-- `packageName`: `azure-storage-blobs`
-- `baseTag`: `azure-storage-blobs_1.0.0`
+- `packageName`: `azure-storage-blob`
+- `baseTag`: `azure-storage-blob_1.0.0`
 - `targetOwner`: `Azure`
 - `targetRepo`: `azure-sdk-for-python`
 - `targetBranch`: `main`
