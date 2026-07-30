@@ -403,10 +403,6 @@ def test_load_enhanced_feature_flags_no_feature_flag_client():
 
 
 def test_load_enhanced_feature_flags_assumes_pre_filtered_selectors():
-    """The enhanced feature flag endpoint does not support snapshots. Filtering out selectors with a
-    snapshot_name is the caller's responsibility (done once at startup via
-    ConfigurationProviderBase._enhanced_feature_flag_selectors), so this method should simply process whatever
-    selectors it is given."""
     mock_client = Mock()
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
