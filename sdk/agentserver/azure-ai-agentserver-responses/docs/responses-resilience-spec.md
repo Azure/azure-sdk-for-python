@@ -8,7 +8,7 @@
 > **conformance contract** — the dispatch matrix and its per-cell dispositions,
 > the streaming sub-contract, the recovered-entry precondition, and the
 > handler/framework obligations — is owned by
-> [`resilience-contract.md`](resilience-contract.md). That doc is parsed by the
+> [`resilience-contract.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md). That doc is parsed by the
 > conformance meta-tests and pinned by the Constitution. Where this spec restates
 > any of those clauses it is a **non-normative summary for readability**; on any
 > conflict, `resilience-contract.md` is authoritative, and the normative edit is
@@ -109,7 +109,7 @@ decisions; developers CANNOT override end-user request flags. This
 separation is normative.
 
 > **Normative source:** the four rows and their per-cell dispositions are the
-> matrix in [`resilience-contract.md` § The matrix](resilience-contract.md). The
+> matrix in [`resilience-contract.md` § The matrix](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md). The
 > table below is a readability summary; the contract is authoritative.
 
 | # | `store` | `background` | `resilient_background` | Behaviour |
@@ -455,7 +455,7 @@ also get distinct task_ids when they should.
 
 > **Normative source:** the per-row recovery dispositions and the
 > recovered-entry precondition (drop when the response was never resiliently
-> created) are owned by [`resilience-contract.md`](resilience-contract.md)
+> created) are owned by [`resilience-contract.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md)
 > (§ Recovered entry, Per-row contracts). This section is the design detail.
 
 The recovered entry of any resilient task body inspects the
@@ -763,7 +763,7 @@ the framework recognises the recovered entry and accepts the seeded output
 via builder events — the persisted response is the watermark, so there is no
 replay or breadcrumb reconstruction. The per-row × per-path conformance for
 this write point is **Row 11** in
-[`resilience-contract.md`](resilience-contract.md).
+[`resilience-contract.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md).
 
 **`internal_metadata`** — a single-turn, platform-internal key/value bag on
 each output item and on the response (via `stream.internal_metadata` /
@@ -788,7 +788,7 @@ flush-controlled — §8.1). Rule of thumb: cross-turn state →
 > **Normative source:** the streaming sub-contract — event-persistence
 > ordering, `starting_after=` reconnect, the single-`response.created`
 > per-stream rule, and the `response.in_progress` reset — is owned by
-> [`resilience-contract.md` § Streaming sub-contract](resilience-contract.md).
+> [`resilience-contract.md` § Streaming sub-contract](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md).
 > This section is the design detail; the contract is authoritative.
 
 For every `stream=true` request with `store=true`:

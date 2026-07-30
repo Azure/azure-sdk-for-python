@@ -11,5 +11,3 @@ AGENTS.md
 eng/**
 # Allow relative links for the top-level eval suite (evals is a cross-cutting asset at repo root).
 evals/**
-# Allow relative links between the agent-server responses design docs (they cross-reference each other).
-sdk/agentserver/azure-ai-agentserver-responses/docs/**

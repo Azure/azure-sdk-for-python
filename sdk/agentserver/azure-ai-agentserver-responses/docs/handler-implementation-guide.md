@@ -1360,7 +1360,7 @@ The deeper "how does this all fit together" view — the four-row dispatch matri
 the three termination paths (handler completes within grace, grace exhausted,
 crash), the exact persistence guarantees the framework makes, and the full
 conformance items — is in
-[`responses-resilience-spec.md`](responses-resilience-spec.md). That document is
+[`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md). That document is
 language-agnostic and intentionally exhaustive; this section is the developer
 how-to with worked Python examples. The conformance suite at
 `tests/e2e/resilience_contract/` exercises every cell of the matrix.
@@ -1468,8 +1468,8 @@ async def handler(request, context, cancellation_signal):
 ```
 
 Semantics (the full normative list is in
-[`responses-resilience-spec.md`](responses-resilience-spec.md) and
-[`resilience-contract.md`](resilience-contract.md) Row 11):
+[`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md) and
+[`resilience-contract.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilience-contract.md) Row 11):
 
 - **Deterministic + developer-driven.** Checkpoints happen ONLY where you yield
   one. There are no periodic, timer, or implicit checkpoints.
@@ -1908,7 +1908,7 @@ with recovery cleanly:
 | `resilient_background` | `False` | Opt INTO crash-recoverable background responses |
 | `steerable_conversations` | `False` | Multi-turn conversation steering (see [Cancellation](#cancellation)) |
 
-See the [Resilient Responses Developer Guide](resilient-responses-developer-guide.md)
+See the [Resilient Responses Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/resilient-responses-developer-guide.md)
 for the configuration matrix (`store` × `background` × `resilient_background`),
 the flat `ResponseContext` recovery + steering surface, and client-side
 reconciliation rules.

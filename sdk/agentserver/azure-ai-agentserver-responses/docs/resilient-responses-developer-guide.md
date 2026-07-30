@@ -127,7 +127,7 @@ def my_acceptor(request: CreateResponse, context: ResponseContext) -> ResponseOb
 
 This is optional — the default queued envelope is fine for most agents. See
 the handler guide's
-[steering API](handler-implementation-guide.md#steering-api) for the hook
+[steering API](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#steering-api) for the hook
 mechanics.
 
 ## Configuration
@@ -143,7 +143,7 @@ Recovery semantics depend on three request flags and one server option. The
 table below is a quick orientation. For the **normative** specification — the
 exact behaviour you can rely on per row, per termination path, and per
 stream/poll mode — see
-[`responses-resilience-spec.md`](responses-resilience-spec.md). That document
+[`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md). That document
 is the source of truth; this section summarises it for developer ergonomics.
 
 | `store` | `background` | `resilient_background` | Summary |
@@ -162,7 +162,7 @@ or the spec — open an issue.
 
 `steerable_conversations=True` composes orthogonally: it enables multi-turn
 steering on top of any row above. Recovery composes with steering — see the
-[handler guide's Recovery × Cancellation Composition](handler-implementation-guide.md#recovery--cancellation-composition).
+[handler guide's Recovery × Cancellation Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#recovery--cancellation-composition).
 
 > **`conversation_id` chains**: when a request supplies
 > `conversation_id`, sequential turns extend the chain even when
@@ -362,7 +362,7 @@ state live?**
 | In an upstream framework/store | **Upstream-owned** | Rebuild a resumption `ResponseObject` from the upstream's state (Copilot session, LangGraph checkpoint, your DB) and emit it as the reset. |
 
 Minimal skeletons (full templates are in the handler guide's
-[Resilience section](handler-implementation-guide.md#resilience)):
+[Resilience section](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#resilience)):
 
 ```python
 # Framework checkpoint — state lives in the response snapshot
@@ -398,7 +398,7 @@ non-response side effect in the same turn.
 ## Crash recovery — what you get, what you owe
 
 Re-entry is governed by the recovery contract in the
-[handler guide's Resilience section](handler-implementation-guide.md#resilience)
+[handler guide's Resilience section](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#resilience)
 (the canonical mental model and worked templates). This section is the
 configuration / decision context.
 
@@ -408,7 +408,7 @@ configuration / decision context.
   resiliently-persisted snapshot (last `stream.checkpoint()`, else the
   `response.created` snapshot, else `None`).
 - `context.conversation_chain_metadata` carrying whatever watermarks you stamped.
-- The cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel surface is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither for steering pressure) on re-entry.
+- The cancellation contract from the [Cancellation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#cancellation) continues to apply. If the prior attempt was cancelled (steering, client cancel, shutdown), the cancel surface is pre-set with the appropriate cause-boolean (`context.client_cancelled` for explicit cancel / non-bg disconnect; `context.shutdown.is_set()` for graceful shutdown; neither for steering pressure) on re-entry.
 - The framework persists the response object at `response.created`, at **each
   successful `stream.checkpoint()`**, and at the terminal event; the
   `response.created` and terminal writes are **deduplicated** across recovery
@@ -498,7 +498,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 snapshot (gated to resilient background responses; a no-op otherwise) and is
 backpressured — control does not return from the `yield` until the write
 completes. See the handler guide's
-[Stream Checkpoints](handler-implementation-guide.md#stream-checkpoints) for
+[Stream Checkpoints](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#stream-checkpoints) for
 the full semantics and `resilience-contract.md` Row 11 for the conformance
 contract.
 
@@ -554,7 +554,7 @@ response.completed
 ```
 
 The post-recovery part of this guarantee is normative per
-[`responses-resilience-spec.md`](responses-resilience-spec.md): for
+[`responses-resilience-spec.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/responses-resilience-spec.md): for
 `(store=true, background=true, resilient_background=True, stream=true)` —
 the row that supports handler re-invoke — a client reconnecting AFTER a
 crash receives the events the recovered handler emits, framed by the
@@ -647,7 +647,7 @@ point; and clients supporting resilient streams treat any later
    LangGraph has `AsyncSqliteSaver` checkpoints. Reconstructing upstream state from
    your own metadata is usually more work and more fragile. **When the upstream
    is a durable engine with its own checkpointer, follow the
-   [Composing an External Durable Engine](handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph)
+   [Composing an External Durable Engine](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph)
    pattern**: checkpoint 1:1 with the engine, store the engine's resume checkpoint
    id in `internal_metadata`, and rewind to *that* point on recovery — resuming
    from the engine's latest tip instead opens a reply-loss window.
@@ -664,7 +664,7 @@ point; and clients supporting resilient streams treat any later
    never bulk data (it hits task-store payload limits and slows recovery).
 
 5. **Honour the cancellation contract on recovery.** Recovery doesn't change the
-   cancellation contract from the [Cancellation guide](handler-implementation-guide.md#cancellation):
+   cancellation contract from the [Cancellation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#cancellation):
    the same pre-entry / mid-stream / shutdown rules apply on recovered entries.
 
 6. **Don't store secrets in metadata.** The task store persists it.
@@ -686,6 +686,6 @@ See the `samples/` directory for canonical resilient handler shapes:
   (client-visible items + ids). Checkpoints 1:1 with the graph and records the
   graph checkpoint id in `internal_metadata`, so recovery rewinds the graph to
   the point matching the persisted items — no dual-store divergence window. See
-  [Composing an External Durable Engine](handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph).
+  [Composing an External Durable Engine](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md#composing-an-external-durable-engine-eg-langgraph).
 - `sample_22_resilient_multiturn.py` — Multi-turn conversation with
   `resilient_background=True, steerable_conversations=False`.
