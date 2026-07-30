@@ -59,7 +59,7 @@ from ..models.runtime import (
     resolve_cancelled_response,
     resolve_failed_response,
 )
-from ..store._base import ResponseProviderProtocol
+from ..store._base import ResponseProviderProtocol, ResponseStoreCorruptionError
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._sse import encode_sse_any_event, with_keep_alive
 from ..streaming._state_machine import _normalize_lifecycle_events
@@ -673,7 +673,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
         agent_session_id = _resolve_session_id(
-            parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
+            parsed,
+            payload,
+            env_session_id=config_session_id,
+            agent_reference=agent_reference,
+            response_id=response_id,
+            steerable=self._runtime_options.steerable_conversations,
         )
 
         ctx = self._build_execution_context(
@@ -1052,7 +1057,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         return self._build_live_stream_response(record, parsed_cursor, _hdrs)
 
-    async def _handle_get_fallback(  # pylint: disable=too-many-return-statements
+    async def _handle_get_fallback(  # pylint: disable=too-many-return-statements,too-many-statements
         self,
         request: Request,
         response_id: str,
@@ -1101,6 +1106,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return _invalid_request(str(exc), _hdrs, param="response_id")
             except FoundryApiError as exc:
                 logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, _hdrs)
+            except ResponseStoreCorruptionError as exc:
+                # Envelope exists but its backing data is corrupt/missing. This is
+                # a server/storage error, NOT not-found — surface a 500 instead of
+                # falling through to 404 (which would hide the corruption).
+                logger.error("Store corruption for GET response_id=%s: %s", response_id, exc, exc_info=True)
                 return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
@@ -1184,6 +1195,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     exc,
                     exc_info=True,
                 )
+                return _error_response(exc, _hdrs)
+            except ResponseStoreCorruptionError as exc:
+                # Envelope exists but its backing data is corrupt/missing — a
+                # server/storage error, not not-found. Surface a 500.
+                logger.error("Store corruption for GET SSE replay response_id=%s: %s", response_id, exc, exc_info=True)
                 return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # Response doesn't exist in provider either — fall through to 404

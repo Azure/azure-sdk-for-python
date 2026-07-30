@@ -291,6 +291,8 @@ def _resolve_session_id(
     *,
     env_session_id: str = "",
     agent_reference: AgentReference | dict[str, Any] | None = None,
+    response_id: str | None = None,
+    steerable: bool = False,
 ) -> str:
     """Resolve the session ID for a create-response request.
 
@@ -313,6 +315,11 @@ def _resolve_session_id(
     :keyword agent_reference: Agent reference containing name/version for
         deterministic session derivation.
     :keyword type agent_reference: AgentReference | dict[str, Any] | None
+    :keyword response_id: This turn's own response ID, used as the partition
+        source for a steerable first turn with no conversation/previous context.
+    :keyword type response_id: str | None
+    :keyword steerable: Whether the deployment enables steerable conversations.
+    :keyword type steerable: bool
     :returns: The resolved session ID string.
     :rtype: str
     """
@@ -340,6 +347,8 @@ def _resolve_session_id(
         conversation_id=conversation_id,
         previous_response_id=previous_response_id,
         agent_reference=agent_reference,
+        response_id=response_id,
+        steerable=steerable,
     )
 
 
@@ -348,6 +357,8 @@ def derive_session_id(
     conversation_id: str | None = None,
     previous_response_id: str | None = None,
     agent_reference: AgentReference | dict[str, Any] | None = None,
+    response_id: str | None = None,
+    steerable: bool = False,
 ) -> str:
     """Derive a deterministic session ID from conversational context.
 
@@ -357,6 +368,9 @@ def derive_session_id(
     - If *conversation_id* or *previous_response_id* is available, extract
       the partition hint via :meth:`IdGenerator.extract_partition_key` and
       SHA-256 hash it with the agent identity.
+    - Otherwise, if this is a *steerable* first turn, derive from this turn's
+      own *response_id* so later steered turns (which reference it via
+      ``previous_response_id``) resolve to the SAME session.
     - Otherwise, generate a random 63-char lowercase hex string.
 
     :keyword conversation_id: Conversation ID from the request, if any.
@@ -365,11 +379,25 @@ def derive_session_id(
     :keyword type previous_response_id: str | None
     :keyword agent_reference: Agent reference containing name/version.
     :keyword type agent_reference: AgentReference | dict[str, Any] | None
+    :keyword response_id: This turn's own response ID, used as the partition
+        source for a steerable first turn (no conversation/previous context).
+    :keyword type response_id: str | None
+    :keyword steerable: Whether the deployment enables steerable conversations.
+        Only then does a first turn derive its session from *response_id*.
+    :keyword type steerable: bool
     :returns: A 63-char lowercase hex session ID.
     :rtype: str
     """
     # Select partition source: conversation_id first, then previous_response_id
     partition_source = conversation_id or previous_response_id
+
+    # Steerable first turn (no conversation/previous context): derive the session
+    # from this turn's OWN response_id so a later steered turn — which references
+    # it via previous_response_id — derives the SAME session (and thus the same
+    # conversation chain / resilient task identity). Without this the first turn
+    # would get a random session that later turns can never reproduce.
+    if not partition_source and steerable and response_id:
+        partition_source = response_id
 
     if partition_source:
         try:

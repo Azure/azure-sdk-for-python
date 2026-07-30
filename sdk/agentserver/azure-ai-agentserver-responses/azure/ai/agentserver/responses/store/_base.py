@@ -30,6 +30,19 @@ class ResponseAlreadyExistsError(Exception):
         self.response_id = response_id
 
 
+class ResponseStoreCorruptionError(RuntimeError):
+    """Raised when a persisted response envelope exists but its backing data is
+    incomplete or corrupt (e.g. an ``output[]`` item file referenced by the
+    envelope is missing).
+
+    This is deliberately **distinct from not-found**: the response WAS persisted
+    (it was resiliently created), so callers must surface a server/storage error
+    rather than a 404, and recovery must treat it as transient corruption rather
+    than the "never persisted" drop signal. Subclasses :class:`RuntimeError` so
+    existing broad ``RuntimeError`` handling continues to apply.
+    """
+
+
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
     """Protocol for response storage providers.

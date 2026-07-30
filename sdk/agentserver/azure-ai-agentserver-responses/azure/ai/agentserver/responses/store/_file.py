@@ -81,7 +81,7 @@ from typing import Any, Iterable, cast
 from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject
 from ..models._helpers import get_conversation_id
-from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
+from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol, ResponseStoreCorruptionError
 
 # Sentinel key marking an ``output[]`` entry as a pointer to an item stored
 # under ``items/{id}.json`` (spec 028). A real response output item is a typed
@@ -672,7 +672,7 @@ class FileResponseStore(ResponseProviderProtocol):
                 iid = entry[_ITEM_REF_KEY]
                 item = _read_json_or_none(self._global_item_path(iid))
                 if item is None:
-                    raise RuntimeError(
+                    raise ResponseStoreCorruptionError(
                         f"FileResponseStore: response envelope references item "
                         f"'{iid}' but items/{iid}.json is missing (store corruption)"
                     )
