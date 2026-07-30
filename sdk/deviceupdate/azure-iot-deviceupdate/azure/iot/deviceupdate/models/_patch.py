@@ -7,6 +7,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+import sys
 
 
 __all__: list[str] = []  # Add all objects you want publicly available to users at this package level
@@ -19,3 +20,5 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
+    models_module = sys.modules[__package__]
+    models_module.__all__.clear()
