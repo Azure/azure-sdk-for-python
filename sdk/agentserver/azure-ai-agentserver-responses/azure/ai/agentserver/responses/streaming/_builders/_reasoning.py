@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterator, cast
 
-from ...models import _generated as generated_models
+from azure.ai.agentserver.responses import models as response_models
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
@@ -53,7 +53,7 @@ class ReasoningSummaryPartBuilder:
         """
         return self._summary_index
 
-    def emit_added(self) -> generated_models.ResponseReasoningSummaryPartAddedEvent:
+    def emit_added(self) -> response_models.ResponseReasoningSummaryPartAddedEvent:
         """Emit a ``reasoning_summary_part.added`` event.
 
         :returns: The emitted event.
@@ -64,10 +64,10 @@ class ReasoningSummaryPartBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            generated_models.ResponseReasoningSummaryPartAddedEvent,
+            response_models.ResponseReasoningSummaryPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
+                    "type": "response.reasoning_summary_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -76,7 +76,7 @@ class ReasoningSummaryPartBuilder:
             ),
         )
 
-    def emit_text_delta(self, text: str) -> generated_models.ResponseReasoningSummaryTextDeltaEvent:
+    def emit_text_delta(self, text: str) -> response_models.ResponseReasoningSummaryTextDeltaEvent:
         """Emit a reasoning summary text delta event.
 
         :param text: The incremental summary text fragment.
@@ -85,10 +85,10 @@ class ReasoningSummaryPartBuilder:
         :rtype: ResponseReasoningSummaryTextDeltaEvent
         """
         return cast(
-            generated_models.ResponseReasoningSummaryTextDeltaEvent,
+            response_models.ResponseReasoningSummaryTextDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
+                    "type": "response.reasoning_summary_text.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -97,7 +97,7 @@ class ReasoningSummaryPartBuilder:
             ),
         )
 
-    def emit_text_done(self, final_text: str) -> generated_models.ResponseReasoningSummaryTextDoneEvent:
+    def emit_text_done(self, final_text: str) -> response_models.ResponseReasoningSummaryTextDoneEvent:
         """Emit a reasoning summary text done event.
 
         :param final_text: The final, complete summary text.
@@ -107,10 +107,10 @@ class ReasoningSummaryPartBuilder:
         """
         self._final_text = final_text
         return cast(
-            generated_models.ResponseReasoningSummaryTextDoneEvent,
+            response_models.ResponseReasoningSummaryTextDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
+                    "type": "response.reasoning_summary_text.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -119,7 +119,7 @@ class ReasoningSummaryPartBuilder:
             ),
         )
 
-    def emit_done(self) -> generated_models.ResponseReasoningSummaryPartDoneEvent:
+    def emit_done(self) -> response_models.ResponseReasoningSummaryPartDoneEvent:
         """Emit a ``reasoning_summary_part.done`` event.
 
         :returns: The emitted event.
@@ -130,10 +130,10 @@ class ReasoningSummaryPartBuilder:
             raise ValueError(f"cannot call emit_done in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            generated_models.ResponseReasoningSummaryPartDoneEvent,
+            response_models.ResponseReasoningSummaryPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
+                    "type": "response.reasoning_summary_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -160,7 +160,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         self._summary_index = 0
         self._summary_builders: list[ReasoningSummaryPartBuilder] = []
 
-    def emit_added(self) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(self) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this reasoning item.
 
         :returns: The emitted event.
@@ -180,7 +180,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         self._summary_builders.append(part)
         return part
 
-    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(self) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this reasoning item.
 
         :returns: The emitted event.
@@ -198,7 +198,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def summary_part(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def summary_part(self, text: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a reasoning summary part.
 
         Creates the sub-builder, emits ``reasoning_summary_part.added``,

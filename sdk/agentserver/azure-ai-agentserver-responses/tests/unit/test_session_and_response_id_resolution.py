@@ -25,25 +25,8 @@ from azure.ai.agentserver.responses.streaming._internals import (
 # ---------------------------------------------------------------------------
 
 
-class _FakeParsed:
-    """Minimal stub matching the CreateResponse model interface."""
-
-    def __init__(self, **kwargs):
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-        if not hasattr(self, "agent_reference"):
-            self.agent_reference = None
-        if not hasattr(self, "conversation"):
-            self.conversation = None
-        if not hasattr(self, "previous_response_id"):
-            self.previous_response_id = None
-
-    def as_dict(self):
-        d = {}
-        for key in ("response_id", "agent_reference", "conversation", "previous_response_id", "agent_session_id"):
-            if hasattr(self, key):
-                d[key] = getattr(self, key)
-        return d
+class _FakeParsed(dict):
+    """Minimal dict-native parsed CreateResponse payload."""
 
 
 # ===================================================================

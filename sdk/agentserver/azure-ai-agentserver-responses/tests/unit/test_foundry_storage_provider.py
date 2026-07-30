@@ -6,7 +6,7 @@ response deserialization by mocking AsyncPipelineClient responses."""
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -25,6 +25,7 @@ from azure.ai.agentserver.responses.store._foundry_provider import (
     FoundryStorageProvider,
 )
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
+from azure.ai.agentserver.responses.models import ResponseObject
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -87,6 +88,10 @@ def _make_provider(credential: Any, settings: FoundryStorageSettings, response: 
     return provider
 
 
+def _response_object() -> ResponseObject:
+    return cast(ResponseObject, _RESPONSE_DICT)
+
+
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
@@ -110,9 +115,7 @@ def settings() -> FoundryStorageSettings:
 @pytest.mark.asyncio
 async def test_create_response__posts_to_responses_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
-    response = ResponseObject(_RESPONSE_DICT)
+    response = _response_object()
     await provider.create_response(response, None, None)
 
     request = provider._client.send_request.call_args[0][0]
@@ -124,10 +127,8 @@ async def test_create_response__posts_to_responses_endpoint(credential: Any, set
 @pytest.mark.asyncio
 async def test_create_response__sends_correct_envelope(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
-    response = ResponseObject(_RESPONSE_DICT)
-    await provider.create_response(response, [MagicMock(as_dict=lambda: _INPUT_ITEM_DICT)], ["prev_item_1"])
+    response = _response_object()
+    await provider.create_response(response, [_INPUT_ITEM_DICT], ["prev_item_1"])
 
     request = provider._client.send_request.call_args[0][0]
     payload = json.loads(request.content.decode("utf-8"))
@@ -141,10 +142,8 @@ async def test_create_response__raises_foundry_api_error_on_500(
     credential: Any, settings: FoundryStorageSettings
 ) -> None:
     provider = _make_provider(credential, settings, _make_response(500, {"error": {"message": "server fault"}}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
     with pytest.raises(FoundryApiError) as exc_info:
-        await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None)
+        await provider.create_response(_response_object(), None, None)
 
     assert "server fault" in exc_info.value.message
 
@@ -205,9 +204,7 @@ async def test_get_response__url_encodes_special_characters(credential: Any, set
 @pytest.mark.asyncio
 async def test_update_response__posts_to_response_id_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
-    response = ResponseObject(_RESPONSE_DICT)
+    response = _response_object()
     await provider.update_response(response)
 
     request = provider._client.send_request.call_args[0][0]
@@ -220,9 +217,7 @@ async def test_update_response__sends_serialized_response_body(
     credential: Any, settings: FoundryStorageSettings
 ) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
-    response = ResponseObject(_RESPONSE_DICT)
+    response = _response_object()
     await provider.update_response(response)
 
     request = provider._client.send_request.call_args[0][0]
@@ -233,10 +228,8 @@ async def test_update_response__sends_serialized_response_body(
 @pytest.mark.asyncio
 async def test_update_response__raises_bad_request_on_409(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(409, {"error": {"message": "conflict"}}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
-
     with pytest.raises(FoundryBadRequestError) as exc_info:
-        await provider.update_response(ResponseObject(_RESPONSE_DICT))
+        await provider.update_response(_response_object())
 
     assert "conflict" in exc_info.value.message
 
@@ -466,10 +459,10 @@ async def test_get_history_item_ids__omits_optional_params_when_none(
 @pytest.mark.asyncio
 async def test_create_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
+    from azure.ai.agentserver.responses.models import ResponseObject
 
     isolation = PlatformContext(user_id_key="u_key_1", call_id="c_key_1")
-    await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, context=isolation)
+    await provider.create_response(_response_object(), None, None, context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
     assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
@@ -491,10 +484,10 @@ async def test_get_response__sends_platform_headers(credential: Any, settings: F
 @pytest.mark.asyncio
 async def test_update_response__sends_platform_headers(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
+    from azure.ai.agentserver.responses.models import ResponseObject
 
     isolation = PlatformContext(user_id_key="u_key_3", call_id="c_key_3")
-    await provider.update_response(ResponseObject(_RESPONSE_DICT), context=isolation)
+    await provider.update_response(_response_object(), context=isolation)
 
     request = provider._client.send_request.call_args[0][0]
     assert _USER_ID_HEADER not in request.headers  # user_id is not forwarded to 1P
