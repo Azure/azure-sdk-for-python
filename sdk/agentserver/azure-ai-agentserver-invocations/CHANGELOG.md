@@ -25,7 +25,7 @@
   returns `404` if not registered. See README for details.
 
 ### Other Changes
-- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
+
 - Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
 
 ## 1.0.0b6 (2026-06-28)

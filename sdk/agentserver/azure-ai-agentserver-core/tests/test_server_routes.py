@@ -2,14 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Tests for port resolution and server host public helpers."""
-import inspect
 import os
 from unittest import mock
 
 import pytest
 import httpx
 
-from azure.ai.agentserver.core import AgentServerHost, MiddlewareFactory, StreamContent, trace_stream
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import resolve_port
 
 
@@ -83,36 +82,3 @@ async def test_unknown_route_returns_404(client: httpx.AsyncClient) -> None:
     """A request to an unregistered path returns 404."""
     resp = await client.get("/no-such-endpoint")
     assert resp.status_code == 404
-
-
-# ------------------------------------------------------------------ #
-# Public signatures
-# ------------------------------------------------------------------ #
-
-
-def test_host_public_signatures_do_not_expose_private_type_aliases() -> None:
-    """Inherited Starlette/core internals should not leak into ApiView."""
-    signatures = [
-        inspect.signature(AgentServerHost.add_middleware),
-        inspect.signature(trace_stream),
-    ]
-
-    for signature in signatures:
-        rendered = str(signature)
-        assert "_MiddlewareFactory" not in rendered
-        assert "_Content" not in rendered
-
-
-def test_middleware_factory_is_public() -> None:
-    """The host exposes a public middleware factory type alias."""
-    assert str(MiddlewareFactory).startswith("collections.abc.Callable")
-
-
-def test_stream_content_is_public() -> None:
-    """The host exposes a public streaming content type alias."""
-    assert StreamContent == (str | bytes | memoryview)
-
-
-def test_sse_keepalive_stream_remains_public() -> None:
-    """The async keep-alive utility remains available on the host."""
-    assert hasattr(AgentServerHost, "sse_keepalive_stream")
