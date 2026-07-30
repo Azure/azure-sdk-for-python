@@ -18,11 +18,14 @@ PYLINT_VERSION = "4.0.4"
 PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.7"
 NEXT_PYLINT_VERSION = "4.0.6"
 NEXT_PYLINT_GUIDELINES_CHECKER_VERSION = "0.5.9"
+# README snippet files can contain independent code blocks, so imports may be
+# repeated or appear after executable statements when the blocks share a file.
 SNIPPET_SAMPLE_IMPORT_DISABLES = (
     "reimported",
     "wrong-import-position",
     "wrong-import-order",
     "ungrouped-imports",
+    "redefined-outer-name"
 )
 
 
