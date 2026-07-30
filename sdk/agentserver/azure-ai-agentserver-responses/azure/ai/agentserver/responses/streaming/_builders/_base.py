@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from ... import models as response_models
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -68,6 +69,37 @@ class BaseOutputItemBuilder:
         self._output_index = output_index
         self._item_id = item_id
         self._lifecycle_state = BuilderLifecycleState.NOT_STARTED
+        self._internal_metadata: dict[str, Any] = {}
+
+    @property
+    def internal_metadata(self) -> MutableMapping[str, Any]:
+        """Live, mutable framework-internal metadata for this output item.
+
+        Read / write / delete in place (``message.internal_metadata["step"] = "n3"``).
+        Whatever is set here is merged into the emitted ``output_item.added`` /
+        ``output_item.done`` payloads under the item's ``internal_metadata`` key
+        (and thus onto ``stream.response.output[i]``), and is stripped from every
+        client-facing payload. Values may be any JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return self._internal_metadata
+
+    @internal_metadata.setter
+    def internal_metadata(self, value: "MutableMapping[str, Any] | None") -> None:
+        self._internal_metadata = dict(value) if value else {}
+
+    def _stamp_internal_metadata(self, item: dict[str, Any]) -> dict[str, Any]:
+        """Merge the builder's internal metadata into an item payload (if any).
+
+        :param item: The output item dict being emitted.
+        :type item: dict[str, Any]
+        :returns: The item dict with ``internal_metadata`` merged in when non-empty.
+        :rtype: dict[str, Any]
+        """
+        if self._internal_metadata:
+            item = {**item, "internal_metadata": dict(self._internal_metadata)}
+        return item
 
     @property
     def item_id(self) -> str:
@@ -115,6 +147,7 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
+        item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
             response_models.ResponseOutputItemAddedEvent,
@@ -137,6 +170,7 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
+        item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
             response_models.ResponseOutputItemDoneEvent,
