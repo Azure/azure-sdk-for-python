@@ -23,7 +23,7 @@ from tests._helpers import poll_until
 # ════════════════════════════════════════════════════════════
 
 
-def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_text_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits a complete text message output."""
 
     async def _events():
@@ -44,7 +44,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _failing_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _failing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then raises an exception."""
 
     async def _events():
@@ -55,7 +55,7 @@ def _failing_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _incomplete_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits response.created then response.incomplete."""
 
     async def _events():
@@ -66,7 +66,7 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     async def _events():
         if False:
             yield None

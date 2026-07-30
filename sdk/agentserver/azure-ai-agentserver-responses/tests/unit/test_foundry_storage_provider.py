@@ -555,9 +555,7 @@ async def test_platform_headers__omitted_when_none(credential: Any, settings: Fo
 
 
 @pytest.mark.asyncio
-async def test_platform_headers__user_id_alone_sends_nothing(
-    credential: Any, settings: FoundryStorageSettings
-) -> None:
+async def test_platform_headers__user_id_alone_sends_nothing(credential: Any, settings: FoundryStorageSettings) -> None:
     """user_id is never forwarded to 1P; with only user_id_key set, no headers are sent."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
@@ -570,9 +568,7 @@ async def test_platform_headers__user_id_alone_sends_nothing(
 
 
 @pytest.mark.asyncio
-async def test_platform_headers__call_id_alone_sends_call_id(
-    credential: Any, settings: FoundryStorageSettings
-) -> None:
+async def test_platform_headers__call_id_alone_sends_call_id(credential: Any, settings: FoundryStorageSettings) -> None:
     """With only call_id set, only the call-id header is forwarded."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
@@ -682,9 +678,7 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
                 policies_in_chain = list(chain)
                 break
 
-        assert policies_in_chain, (
-            "Could not find policy list on the pipeline; azure-core internals may have changed."
-        )
+        assert policies_in_chain, "Could not find policy list on the pipeline; azure-core internals may have changed."
 
         # Each chain entry wraps a policy via ``._policy`` or is the policy itself.
         policy_classes = []
@@ -693,8 +687,7 @@ async def test_pipeline__does_not_include_content_decode_policy(credential: Any)
             policy_classes.append(type(policy))
 
         assert ContentDecodePolicy not in policy_classes, (
-            "ContentDecodePolicy must not be in the Foundry storage pipeline; "
-            "it crashes on binary response bodies."
+            "ContentDecodePolicy must not be in the Foundry storage pipeline; " "it crashes on binary response bodies."
         )
     finally:
         await provider.aclose()

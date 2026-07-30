@@ -4,12 +4,13 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, Iterator, Sequence, cast
 
-from azure.ai.agentserver.responses import models as response_models
-from azure.ai.agentserver.responses.models import AgentReference
+from .. import models as response_models
+from ..models import AgentReference
 
 from .._id_generator import IdGenerator
 from . import _internals
@@ -28,6 +29,7 @@ from ._builders import (
     OutputItemWebSearchCallBuilder,
 )
 from ._state_machine import EventStreamValidator
+from ._checkpoint import ResponseCheckpointEvent
 
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
@@ -179,7 +181,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         )
         self._events: list[response_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
-        self._output_index = 0
+        output = self._response.get("output")
+        self._output_index = len(output) if isinstance(output, list) else 0
 
     @property
     def response(self) -> dict[str, Any]:
@@ -189,6 +192,65 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: ~azure.ai.agentserver.responses.models.ResponseObject
         """
         return self._response
+
+    @property
+    def internal_metadata(self) -> "MutableMapping[str, Any]":
+        """Live, mutable response-level framework-internal metadata.
+
+        A convenience proxy backed by a reserved ``_internal_metadata`` key
+        inside the response's public ``metadata`` map — read / write / delete in
+        place (``stream.internal_metadata["phase"] = 3``). Stripped from every
+        client-facing payload and persisted at the next ``yield
+        stream.checkpoint()`` (and at terminal). Values may be any
+        JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        metadata = self._response.get("metadata")
+        if not isinstance(metadata, dict):
+            metadata = {}
+            self._response["metadata"] = metadata
+        bag = metadata.get("_internal_metadata")
+        if not isinstance(bag, dict):
+            bag = {}
+            metadata["_internal_metadata"] = bag
+        return bag
+
+    def checkpoint(self) -> "ResponseCheckpointEvent":
+        """Return a checkpoint event to ``yield`` for persistence.
+
+        Usage (inside a resilient background response handler)::
+
+            yield stream.checkpoint()
+
+        Yielding the event persists the current ``stream.response``
+        snapshot via the storage provider. It is processed by the orchestrator
+        and is NOT forwarded to the SSE wire (internal control signal).
+
+        Semantics (enforced by the orchestrator):
+
+        - **Deterministic + developer-driven** — only where the handler yields
+          one; there are no periodic / implicit checkpoints.
+        - **Backpressure** — because the orchestrator fully processes the event
+          (awaiting the provider write) before requesting the next event, the
+          handler is suspended at the yield until the persist completes.
+        - **Resilient background only** — persists only when the deployment has
+          ``resilient_background=True`` and the request is ``background=True``
+          (⇒ ``store=True``); a no-op otherwise.
+        - **Idempotent** — a snapshot byte-identical to the last persisted one
+          is skipped.
+        - **Failures swallowed** — provider errors are logged, never raised into
+          the handler; recovery falls back to the previously-persisted snapshot.
+        - **After terminal** — a checkpoint yielded after a terminal event is
+          dropped.
+
+        Persists the response with whatever ``status`` it currently has — the
+        checkpoint never overrides it.
+
+        :returns: The checkpoint event to yield.
+        :rtype: ~azure.ai.agentserver.responses.streaming._checkpoint.ResponseCheckpointEvent
+        """
+        return ResponseCheckpointEvent(cast(response_models.ResponseObject, self._response))
 
     def emit_queued(self) -> response_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.

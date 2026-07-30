@@ -67,6 +67,14 @@ class EventStreamValidator:
 
         stage = _EVENT_STAGES.get(event_type)
         if stage is not None:
+            # Recovery contract: duplicate terminal events are no-ops.
+            # Once we have observed a terminal event, ignore subsequent
+            # ones rather than erroring. This makes the response handler
+            # idempotent against "crashed after emit_completed but before
+            # persistence" — re-entry re-emits the terminal, and the
+            # state machine accepts it silently.
+            if self._terminal_seen and event_type in _TERMINAL_EVENT_TYPES:
+                return
             if stage < self._last_stage:
                 raise ValueError("lifecycle events are out of order")
             if event_type in _TERMINAL_EVENT_TYPES:
@@ -186,7 +194,19 @@ def _normalize_lifecycle_events(
 
     _validate_response_event_stream(normalized)
 
-    terminal_count = sum(1 for event in normalized if event["type"] in _TERMINAL_EVENT_TYPES)
+    # Recovery contract: duplicate terminal events are no-ops. Keep
+    # only the first terminal in the normalized output.
+    first_terminal_seen = False
+    deduped: list[dict[str, Any]] = []
+    for event in normalized:
+        if event["type"] in _TERMINAL_EVENT_TYPES:
+            if first_terminal_seen:
+                continue
+            first_terminal_seen = True
+        deduped.append(event)
+    normalized = deduped
+
+    terminal_count = 1 if first_terminal_seen else 0
 
     if terminal_count == 0:
         normalized.append(

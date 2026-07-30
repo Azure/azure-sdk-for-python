@@ -49,7 +49,11 @@ app = ResponsesAgentServerHost()
 
 
 @app.response_handler
-async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Echo the user's input back as a single message."""
     input_text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {input_text}")
