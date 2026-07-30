@@ -108,7 +108,6 @@ stream = ResponseEventStream(response_id=context.response_id, request=request)
 async for event in stream.output_item_message(token_stream()):
     yield event
 ```
-
 Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
 
 Protocol models are now dict-native. Construction still works, but the result is a dictionary:
