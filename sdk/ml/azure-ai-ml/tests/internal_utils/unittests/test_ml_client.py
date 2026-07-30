@@ -548,9 +548,13 @@ class TestMachineLearningClient:
 
         online_endpoint_scope = captured["OnlineEndpointOperations"]["scope"]
         online_deployment_scope = captured["OnlineDeploymentOperations"]["scope"]
+        online_endpoint_client = captured["OnlineEndpointOperations"]["args"][2]
+        online_deployment_client = captured["OnlineDeploymentOperations"]["args"][2]
         model_scope = captured["ModelOperations"]["scope"]
         data_scope = captured["DataOperations"]["scope"]
 
+        assert online_endpoint_client._config.subscription_id == workspace_sub
+        assert online_deployment_client._config.subscription_id == workspace_sub
         assert online_endpoint_scope.subscription_id == workspace_sub
         assert online_endpoint_scope.resource_group_name == workspace_rg
         assert online_endpoint_scope.workspace_name == workspace_name

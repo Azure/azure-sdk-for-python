@@ -281,7 +281,7 @@ class MLClient:
                 workspace_id=workspace_id,
                 workspace_location=workspace_location,
             )
-            if workspace_reference or registry_reference
+            if registry_name or registry_reference
             else self._operation_scope
         )
 
