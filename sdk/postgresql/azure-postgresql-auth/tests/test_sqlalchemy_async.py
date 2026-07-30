@@ -9,18 +9,23 @@
 from __future__ import annotations
 
 import asyncio
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from azure_postgresql_auth.errors import CredentialValueError, EntraConnectionValueError
+from azure_postgresql_auth.sqlalchemy import create_asyncpg_engine, enable_entra_authentication_async
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine
-
-from azure_postgresql_auth.errors import CredentialValueError, EntraConnectionValueError
-from azure_postgresql_auth.sqlalchemy import enable_entra_authentication_async
-
-from utils import TEST_USERS, MockTokenCredential, capture_event_handler, create_valid_jwt_token
+from utils import (
+    TEST_USERS,
+    MockAsyncTokenCredential,
+    MockTokenCredential,
+    capture_event_handler,
+    create_valid_jwt_token,
+)
 
 ASYNC_MODULE = "azure_postgresql_auth.sqlalchemy.async_entra_connection"
+ASYNCPG_MODULE = "azure_postgresql_auth.sqlalchemy.asyncpg"
 
 
 class TestSqlalchemyAsyncEntraAuthentication:
@@ -137,6 +142,59 @@ class TestSqlalchemyAsyncEntraAuthentication:
 
         with pytest.raises(EntraConnectionValueError, match="Could not retrieve Entra credentials"):
             handler(MagicMock(), MagicMock(), [], {"credential": credential})
+
+
+class TestSqlalchemyAsyncpgEntraAuthentication:
+    """Tests for asyncpg SQLAlchemy Entra authentication integration."""
+
+    @patch(f"{ASYNCPG_MODULE}.create_async_engine")
+    @patch(f"{ASYNCPG_MODULE}.get_entra_conninfo_async", new_callable=AsyncMock)
+    @patch("asyncpg.connect", new_callable=AsyncMock)
+    @pytest.mark.asyncio
+    async def test_creates_asyncpg_connection_with_entra_credentials(
+        self, mock_connect, mock_get_conninfo, mock_create_engine
+    ):
+        """Test that the async creator injects Entra credentials into asyncpg."""
+        token = create_valid_jwt_token(TEST_USERS["ENTRA_USER"])
+        credential = MockAsyncTokenCredential(token)
+        mock_get_conninfo.return_value = {"user": TEST_USERS["ENTRA_USER"], "password": token}
+
+        create_asyncpg_engine(
+            "postgresql+asyncpg://server.example:5432/database?sslmode=require",
+            credential,
+        )
+
+        async_creator = mock_create_engine.call_args.kwargs["async_creator"]
+        await async_creator()
+
+        mock_get_conninfo.assert_awaited_once_with(credential)
+        mock_connect.assert_awaited_once_with(
+            host="server.example",
+            port=5432,
+            database="database",
+            user=TEST_USERS["ENTRA_USER"],
+            password=token,
+            ssl="require",
+        )
+
+    def test_invalid_asyncpg_credential_raises_error(self):
+        """Test that a synchronous credential is rejected before creating an engine."""
+        with pytest.raises(CredentialValueError, match="AsyncTokenCredential"):
+            create_asyncpg_engine("postgresql+asyncpg://server.example/database", MagicMock())
+
+    @patch(f"{ASYNCPG_MODULE}.create_async_engine")
+    @patch(f"{ASYNCPG_MODULE}.get_entra_conninfo_async", new_callable=AsyncMock)
+    @pytest.mark.asyncio
+    async def test_asyncpg_credential_failure_raises_connection_error(self, mock_get_conninfo, mock_create_engine):
+        """Test that async credential failures are surfaced as Entra connection errors."""
+        mock_get_conninfo.side_effect = Exception("auth failed")
+        credential = MockAsyncTokenCredential(create_valid_jwt_token(TEST_USERS["ENTRA_USER"]))
+
+        create_asyncpg_engine("postgresql+asyncpg://server.example/database", credential)
+
+        async_creator = mock_create_engine.call_args.kwargs["async_creator"]
+        with pytest.raises(EntraConnectionValueError, match="Could not retrieve Entra credentials"):
+            await async_creator()
 
 
 @pytest.mark.live_test_only
