@@ -95,14 +95,28 @@ def _encode(value: str) -> str:
 def _apply_platform_headers(request: HttpRequest, context: PlatformContext | None) -> None:
     """Forward the per-request call ID on an outbound storage request when present.
 
-    On protocol version ``2.0.0`` the storage service binds a response to the
-    ``call_id`` supplied on the originating ``CreateResponse`` call and resolves
-    the caller context server-side from it. That ``call_id`` is captured at
-    response creation and persisted as durable resilient-task input (see
-    :func:`platform_context_from_params`), so every storage operation over the
-    response's lifetime — including reads/updates/deletes after cross-process
-    crash-recovery — replays the SAME value (a mismatched/absent value is
-    rejected: "does not match an active turn").
+    On protocol version ``2.0.0`` the ``call_id`` (``x-agent-foundry-call-id``)
+    is a platform-minted, **per-request** identity credential: the platform mints
+    a fresh value each turn and records it server-side against the resolved
+    end-user identity. The container forwards it opaquely (never parsing it) so
+    the storage service can resolve the caller and scope every operation to the
+    stable ``(user_id, agentGuid)`` partition the response lives under. ``call_id``
+    is therefore an identity handle, **not** a per-response binding — any valid
+    call ID for the same end-user resolves to the same ``user_id`` and thus the
+    same stored data.
+
+    Two provenance cases forward different values, both correct:
+
+    - **Request-driven** ops (create, and post-eviction fallback
+      get/update/delete/cancel/input-items) forward the **current** request's
+      ``call_id`` — a fresh, active value that resolves to the same end-user
+      partition.
+    - **Crash-recovery** re-invocation runs with no inbound request, so there is
+      no fresh ``call_id`` to forward; it replays the ``call_id`` captured at
+      creation and persisted as durable resilient-task input (see
+      :func:`platform_context_from_params`). The storage service retains the
+      originating call record for a started response, so the replayed value still
+      resolves.
 
     The ``x-agent-user-id`` header is **not** forwarded — it is not
     accepted/trusted by 1P services and is used only for container-side state

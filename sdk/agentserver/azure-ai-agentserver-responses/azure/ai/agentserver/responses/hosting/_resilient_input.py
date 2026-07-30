@@ -59,11 +59,16 @@ def platform_context_from_params(params: dict[str, Any]) -> PlatformContext:
     cannot be derived inconsistently.
 
     Both the ``user_id_key`` and the ``call_id`` are captured on the originating
-    ``CreateResponse`` call and persisted here: the storage service binds a
-    response to the ``(user_id, call_id)`` pair used at creation, so every later
-    storage operation over that response's lifetime — including after
-    crash-recovery in a different process — MUST replay the same pair. They are
-    therefore durable task input, not request-scoped values.
+    ``CreateResponse`` call and persisted here because crash-recovery re-invokes
+    the handler with no inbound request — there is no fresh ``call_id`` to source,
+    so the persisted create-time value is replayed for the recovered process's
+    storage operations (the storage service retains the originating call record
+    for a started response, so it still resolves). This replay is specific to the
+    recovery path; request-driven operations forward the current request's
+    ``call_id``. ``user_id`` is the stable, deterministically-hashed end-user
+    identity that anchors the ``(user_id, agentGuid)`` storage partition; ``call_id``
+    is a per-request identity handle that resolves to it. They are persisted as
+    durable task input so recovery can reconstruct the caller context.
 
     :param params: The persisted resilient-task input dict.
     :type params: dict[str, Any]
