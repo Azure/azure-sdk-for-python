@@ -377,8 +377,6 @@ class AgentServerHost(Starlette):
         :type middleware_class: MiddlewareFactory
         :param args: Positional arguments forwarded to the middleware.
         :type args: Any
-        :param kwargs: Keyword arguments forwarded to the middleware.
-        :type kwargs: Any
         """
         super().add_middleware(middleware_class, *args, **kwargs)
 

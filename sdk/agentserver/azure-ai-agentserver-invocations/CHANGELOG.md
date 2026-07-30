@@ -12,7 +12,7 @@
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10` to pick up cleaned inherited host API signatures.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b9`.
 
 ## 1.0.0b7 (2026-07-22)
 
