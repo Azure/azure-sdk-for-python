@@ -40,6 +40,7 @@ LOAD_BALANCING_FEATURE = "LB"
 AI_CONFIGURATION_FEATURE = "AI"
 AI_CHAT_COMPLETION_FEATURE = "AICC"
 SNAPSHOT_REFERENCE_TAG = "SnapshotRef"
+ENHANCED_FEATURE_FLAG_TAG = "EnhancedFF"
 
 # Correlation context constants
 FEATUREMANAGEMENT_PACKAGE = "featuremanagement"
@@ -84,6 +85,7 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
         self.uses_ai_configuration = False
         self.uses_aicc_configuration = False  # AI Chat Completion
         self.uses_snapshot_reference = False
+        self.uses_enhanced_feature_flags = False
         self.uses_telemetry = False
         self.uses_seed = False
         self.max_variants: Optional[int] = None
@@ -285,6 +287,8 @@ class _RequestTracingContext:  # pylint: disable=too-many-instance-attributes
             features_list.append(AI_CHAT_COMPLETION_FEATURE)
         if self.uses_snapshot_reference:
             features_list.append(SNAPSHOT_REFERENCE_TAG)
+        if self.uses_enhanced_feature_flags:
+            features_list.append(ENHANCED_FEATURE_FLAG_TAG)
 
         return Delimiter.join(features_list)
 

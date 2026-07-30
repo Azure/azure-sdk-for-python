@@ -7,7 +7,7 @@ import unittest
 from unittest.mock import patch, call, Mock, MagicMock
 import pytest
 from azure.appconfiguration.provider._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper
-from azure.appconfiguration.provider._models import SettingSelector
+from azure.appconfiguration.provider._models import SettingSelector, FeatureFlagSelector
 
 
 def _create_mock_credential():
@@ -411,7 +411,7 @@ def test_load_enhanced_feature_flags_assumes_pre_filtered_selectors():
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*")]
 
     flag1 = Mock(name="flag1")
     mock_response = Mock()
@@ -433,7 +433,7 @@ def test_load_enhanced_feature_flags_multiple_pages():
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*")]
 
     flag1 = Mock(name="flag1")
     flag2 = Mock(name="flag2")
@@ -481,7 +481,7 @@ def test_check_enhanced_feature_flag_etags_no_change():
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*")]
     page_etags = [["etag1"]]
 
     mock_response = Mock()
@@ -503,7 +503,7 @@ def test_check_enhanced_feature_flag_etags_change_detected():
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*")]
     page_etags = [["etag1"]]
 
     mock_response = Mock()
@@ -524,7 +524,7 @@ def test_check_enhanced_feature_flag_etags_assumes_pre_filtered_selectors():
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*")]
     page_etags = [["etag1"]]
 
     mock_response = Mock()
@@ -545,7 +545,7 @@ def test_check_enhanced_feature_flag_etags_missing_page_etags_triggers_refresh()
     mock_feature_flag_client = Mock()
     wrapper = _ConfigurationClientWrapper("https://fake.endpoint", mock_client, mock_feature_flag_client)
 
-    selects = [SettingSelector(key_filter="app/*"), SettingSelector(key_filter="other/*")]
+    selects = [FeatureFlagSelector(name_filter="app/*"), FeatureFlagSelector(name_filter="other/*")]
     # Only one entry provided for two selectors; the first selector's page hasn't changed.
     mock_response = Mock()
     mock_response.by_page.return_value = iter([])

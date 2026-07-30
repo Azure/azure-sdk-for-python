@@ -27,7 +27,7 @@ from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
     _build_watched_setting,
     AzureAppConfigurationProviderBase,
 )
-from azure.appconfiguration.provider._models import SettingSelector
+from azure.appconfiguration.provider._models import SettingSelector, FeatureFlagSelector
 from azure.appconfiguration.provider._constants import (
     NULL_CHAR,
     TELEMETRY_KEY,
@@ -216,7 +216,8 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
     def test_enhanced_feature_flag_selectors_excludes_snapshot_selectors(self):
         """The enhanced feature flag endpoint doesn't support snapshots, so snapshot-name selectors should be
         filtered out once at startup, while the original selector list (used for the key-value store, which does
-        support snapshots) is left untouched."""
+        support snapshots) is left untouched. Enhanced selectors are converted to FeatureFlagSelector, since the
+        enhanced feature flag endpoint filters by name_filter rather than key_filter."""
         key_select = SettingSelector(key_filter="app:*")
         snapshot_select = SettingSelector(snapshot_name="my-snapshot")
         feature_flag_selectors = [snapshot_select, key_select]
@@ -227,7 +228,10 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         )
 
         self.assertEqual(provider._feature_flag_selectors, feature_flag_selectors)
-        self.assertEqual(provider._enhanced_feature_flag_selectors, [key_select])
+        self.assertEqual(len(provider._enhanced_feature_flag_selectors), 1)
+        self.assertIsInstance(provider._enhanced_feature_flag_selectors[0], FeatureFlagSelector)
+        self.assertEqual(provider._enhanced_feature_flag_selectors[0].name_filter, key_select.key_filter)
+        self.assertEqual(provider._enhanced_feature_flag_selectors[0].label_filter, key_select.label_filter)
 
     def test_process_key_name_with_no_prefix(self):
         """Test key name processing with no matching prefix."""
@@ -460,6 +464,16 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         # telemetry configuration on the enhanced feature flag.
         self.assertIn("telemetry", result)
         self.assertNotIn("enabled", result["telemetry"])
+
+    def test_process_enhanced_feature_flag_sets_uses_enhanced_feature_flags_tracing(self):
+        """Processing an enhanced feature flag should mark the tracing context as having used the enhanced
+        feature flag endpoint, for the Correlation-Context telemetry header."""
+        self.assertFalse(self.provider._tracing_context.uses_enhanced_feature_flags)
+
+        feature_flag = FeatureFlag(name="MyFeature", enabled=True)
+        self.provider._process_enhanced_feature_flag(feature_flag)
+
+        self.assertTrue(self.provider._tracing_context.uses_enhanced_feature_flags)
 
     def test_process_enhanced_feature_flag_with_label_and_description(self):
         """Test processing an enhanced feature flag with label and description."""

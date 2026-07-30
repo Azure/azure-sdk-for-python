@@ -59,6 +59,26 @@ try:
     enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
     print(enhanced_flag_beta["enabled"])
     # [END enhanced_feature_flag_selector]
+
+    # [START enhanced_feature_flag_selector_with_feature_flag_selector]
+    from azure.appconfiguration.provider import load, FeatureFlagSelector
+
+    # FeatureFlagSelector is an alternative to SettingSelector for selecting feature flags. It uses
+    # name_filter instead of key_filter (the equivalent concept for enhanced feature flags), and has no
+    # snapshot_name since the enhanced feature flag endpoint does not support snapshots. A list of
+    # FeatureFlagSelector is used to filter both key-value based and enhanced feature flags; it cannot be
+    # mixed with SettingSelector in the same list.
+    config = load(
+        endpoint=endpoint,
+        credential=credential,
+        feature_flag_enabled=True,
+        feature_flag_selectors=[FeatureFlagSelector(name_filter="Enhanced*")],
+        **kwargs,
+    )
+    feature_flags = config["feature_management"]["feature_flags"]
+    enhanced_flag_beta = next(flag for flag in feature_flags if flag.get("id") == "EnhancedFeatureBeta")
+    print(enhanced_flag_beta["enabled"])
+    # [END enhanced_feature_flag_selector_with_feature_flag_selector]
 finally:
     # Cleaning up the enhanced feature flag created for this sample.
     feature_flag_client.delete_feature_flag("EnhancedFeatureBeta")

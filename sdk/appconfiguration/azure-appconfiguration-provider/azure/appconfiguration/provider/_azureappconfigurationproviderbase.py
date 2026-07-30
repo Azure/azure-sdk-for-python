@@ -27,7 +27,7 @@ from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-
     FeatureFlagConfigurationSetting,
     FeatureFlag,
 )
-from ._models import SettingSelector
+from ._models import FeatureFlagSelector, SettingSelector
 from ._constants import (
     NULL_CHAR,
     TELEMETRY_KEY,
@@ -84,6 +84,53 @@ def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, s
     return key, label
 
 
+def _normalize_feature_flag_selectors(
+    selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]]
+) -> Tuple[List[SettingSelector], List[FeatureFlagSelector]]:
+    """
+    Normalizes the customer-provided ``feature_flag_selectors``, which may be either a ``List[SettingSelector]``
+    or a ``List[FeatureFlagSelector]`` (the two types cannot be mixed in the same list), into the two selector
+    lists used internally to load both kinds of feature flags:
+
+    - kv_selectors: Used to load key-value based feature flags (``SettingSelector.key_filter`` is used as the key
+      filter).
+    - enhanced_selectors: Used to load enhanced feature flags from the dedicated feature flag resource endpoint
+      (``FeatureFlagSelector.name_filter`` is used as the name filter). 
+
+    :param selectors: The customer-provided feature flag selectors, or None to use the default (all feature flags
+     without a label).
+    :type selectors: Optional[Union[List[SettingSelector], List[FeatureFlagSelector]]]
+    :return: A tuple of (kv_selectors, enhanced_selectors).
+    :rtype: Tuple[List[SettingSelector], List[FeatureFlagSelector]]
+    """
+    if not selectors:
+        return [SettingSelector(key_filter="*")], [FeatureFlagSelector(name_filter="*")]
+
+    is_feature_flag_selector = [isinstance(select, FeatureFlagSelector) for select in selectors]
+    if any(is_feature_flag_selector) and not all(is_feature_flag_selector):
+        raise TypeError(
+            "feature_flag_selectors must be either a list of SettingSelector or a list of FeatureFlagSelector, "
+            "not a mix of both."
+        )
+
+    if all(is_feature_flag_selector):
+        kv_selectors = [
+            SettingSelector(key_filter=select.name_filter, label_filter=select.label_filter, tag_filters=select.tag_filters)
+            for select in selectors
+        ]
+        # FeatureFlagSelector has no snapshot_name, so every selector is used for enhanced feature flags.
+        enhanced_selectors = list(selectors)
+        return kv_selectors, enhanced_selectors
+
+    kv_selectors = list(selectors)
+    enhanced_selectors = [
+        FeatureFlagSelector(name_filter=select.key_filter, label_filter=select.label_filter, tag_filters=select.tag_filters)
+        for select in selectors
+        if select.snapshot_name is None
+    ]
+    return kv_selectors, enhanced_selectors
+
+
 class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pylint: disable=too-many-instance-attributes
     """
     Provides a dictionary-like interface to Azure App Configuration settings. Enables loading of sets of configuration
@@ -106,14 +153,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         }
         self._refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
-        self._feature_flag_selectors = kwargs.pop("feature_flag_selectors", None)
-        if self._feature_flag_selectors is None:
-            self._feature_flag_selectors = [SettingSelector(key_filter="*")]
-        # The enhanced feature flag currently does not support snapshots, so selectors with a snapshot_name are
-        # filtered out.
-        self._enhanced_feature_flag_selectors = [
-            select for select in self._feature_flag_selectors if select.snapshot_name is None
-        ]
+        self._feature_flag_selectors, self._enhanced_feature_flag_selectors = _normalize_feature_flag_selectors(
+            kwargs.pop("feature_flag_selectors", None)
+        )
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
         refresh_enabled = kwargs.pop("refresh_enabled", None)
@@ -588,6 +630,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
         self._update_enhanced_feature_flag_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
         self._tracing_context.update_feature_filter_telemetry_by_names(filter_names)
+        self._tracing_context.uses_enhanced_feature_flags = True
         return feature_flag_value
 
     def _update_watched_settings(

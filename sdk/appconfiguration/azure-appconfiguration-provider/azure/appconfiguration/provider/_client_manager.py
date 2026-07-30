@@ -27,7 +27,7 @@ from ._client_manager_base import (
     FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
     MINIMAL_CLIENT_REFRESH_INTERVAL,
 )
-from ._models import SettingSelector
+from ._models import FeatureFlagSelector, SettingSelector
 from ._constants import FEATURE_FLAG_PREFIX
 from ._discovery import find_auto_failover_endpoints
 from ._snapshot_reference_parser import SnapshotReferenceParser
@@ -310,14 +310,13 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def load_enhanced_feature_flags(
-        self, feature_flag_selectors: List[SettingSelector], **kwargs
+        self, feature_flag_selectors: List[FeatureFlagSelector], **kwargs
     ) -> Tuple[List[FeatureFlag], List[List[str]]]:
         """
         Loads enhanced feature flags from the enhanced feature flag endpoint using page-based iteration.
-        The enhanced feature flag endpoint currently does not support snapshots.
 
-        :param feature_flag_selectors: List of setting selectors to filter feature flags
-        :type feature_flag_selectors: List[SettingSelector]
+        :param feature_flag_selectors: List of feature flag selectors to filter feature flags
+        :type feature_flag_selectors: List[FeatureFlagSelector]
         :return: A tuple of (feature_flags, page_etags_per_selector), with one page etags entry per selector, in the
          same relative order as ``feature_flag_selectors``.
         :rtype: Tuple[List[~azure.appconfiguration.FeatureFlag], List[List[str]]]
@@ -329,7 +328,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         for select in feature_flag_selectors:
             selector_etags: List[str] = []
             feature_flags = self._enhanced_feature_flag_client.list_feature_flags(
-                name_filter=select.key_filter,
+                name_filter=select.name_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
                 **kwargs,
@@ -343,13 +342,13 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
 
     @distributed_trace
     def check_enhanced_feature_flag_etags(
-        self, feature_flag_selectors: List[SettingSelector], page_etags: List[List[str]], **kwargs
+        self, feature_flag_selectors: List[FeatureFlagSelector], page_etags: List[List[str]], **kwargs
     ) -> bool:
         """
         Checks if any enhanced feature flag page has changed using page etags.
 
-        :param feature_flag_selectors: List of setting selectors for feature flags
-        :type feature_flag_selectors: List[SettingSelector]
+        :param feature_flag_selectors: List of feature flag selectors for feature flags
+        :type feature_flag_selectors: List[FeatureFlagSelector]
         :param page_etags: The page etags from the last load, one entry per selector, in the same relative order as
          ``feature_flag_selectors``.
         :type page_etags: List[List[str]]
@@ -364,7 +363,7 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 return True
             selector_etags = page_etags[i]
             feature_flags = self._enhanced_feature_flag_client.list_feature_flags(
-                name_filter=select.key_filter,
+                name_filter=select.name_filter,
                 label_filter=select.label_filter,
                 tags_filter=select.tag_filters,
                 **kwargs,
