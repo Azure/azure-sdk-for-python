@@ -264,10 +264,13 @@ class BaseExporter:
     _MAX_STORAGE_DRAIN_BATCH = 10
 
     def _transmit_from_storage(self) -> None:
-        if not self.storage:
+        # Capture the reference once: OneSettings can null self.storage on a worker
+        # thread at any time, so a check-then-use on the attribute could race.
+        storage = self.storage
+        if not storage:
             return
         drained = 0
-        for blob in self.storage.gets():
+        for blob in storage.gets():
             if drained >= self._MAX_STORAGE_DRAIN_BATCH:
                 break
             # give a few more seconds for blob lease operation
@@ -291,15 +294,18 @@ class BaseExporter:
                 drained += 1
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
-        if self.storage:
+        # Capture the reference once: OneSettings can null self.storage on a worker
+        # thread at any time, so a check-then-use on the attribute could race.
+        storage = self.storage
+        if storage:
             if result == ExportResult.FAILED_RETRYABLE:
                 envelopes_to_store = [x.as_dict() for x in envelopes]
                 if self._retry_after_delay_seconds is not None:
-                    result_from_storage_put = self.storage.put(
+                    result_from_storage_put = storage.put(
                         envelopes_to_store, lease_period=self._retry_after_delay_seconds
                     )
                 else:
-                    result_from_storage_put = self.storage.put(envelopes_to_store)
+                    result_from_storage_put = storage.put(envelopes_to_store)
                 if self._should_collect_customer_sdkstats():
                     track_dropped_items_from_storage(result_from_storage_put, envelopes)
                 self._retry_after_delay_seconds = None
@@ -361,8 +367,9 @@ class BaseExporter:
                         granted + len(overflow),
                         len(overflow),
                     )
-                    if self.storage:
-                        self.storage.put([x.as_dict() for x in overflow])
+                    storage = self.storage
+                    if storage:
+                        storage.put([x.as_dict() for x in overflow])
                     else:
                         logger.warning(
                             "Rate limiter deferred %d envelopes but offline "
@@ -446,14 +453,15 @@ class BaseExporter:
                                     error.message,
                                     (envelopes[error.index] if error.index is not None else ""),
                                 )
-                    if self.storage and resend_envelopes:
+                    storage = self.storage
+                    if storage and resend_envelopes:
                         envelopes_to_store = [x.as_dict() for x in resend_envelopes]
                         lease_period = (
                             retry_after_delay_seconds
                             if retry_after_delay_seconds is not None
                             else self._storage_min_retry_interval
                         )
-                        result_from_storage = self.storage.put(envelopes_to_store, lease_period)
+                        result_from_storage = storage.put(envelopes_to_store, lease_period)
                         if self._should_collect_customer_sdkstats():
                             track_dropped_items_from_storage(result_from_storage, resend_envelopes)
                         self._consecutive_redirects = 0
