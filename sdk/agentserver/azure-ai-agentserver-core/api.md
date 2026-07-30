@@ -96,42 +96,11 @@ namespace azure.ai.agentserver.core
                 **kwargs: Any
             ) -> None: ...
 
-        def add_exception_handler(
-                self, 
-                exc_class_or_status_code: int | type[Exception], 
-                handler: ExceptionHandler
-            ) -> None: ...
-
         def add_middleware(
                 self, 
                 middleware_class: MiddlewareFactory[P], 
                 *args: args, 
                 **kwargs: kwargs
-            ) -> None: ...
-
-        def add_route(
-                self, 
-                path: str, 
-                route: Callable[[Request], Awaitable[Response] | Response], 
-                methods: list[str] | None = None, 
-                name: str | None = None, 
-                include_in_schema: bool = True
-            ) -> None: ...
-
-        def build_middleware_stack(self) -> ASGIApp: ...
-
-        def host(
-                self, 
-                host: str, 
-                app: ASGIApp, 
-                name: str | None = None
-            ) -> None: ...
-
-        def mount(
-                self, 
-                path: str, 
-                app: ASGIApp, 
-                name: str | None = None
             ) -> None: ...
 
         def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
