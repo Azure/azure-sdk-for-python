@@ -1775,6 +1775,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             response_headers["x-ms-structured-content-length"] = self._deserialize(
                 "int", response.headers.get("x-ms-structured-content-length")
             )
+            response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+            response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+                "bool", response.headers.get("x-ms-access-tier-inferred")
+            )
+            response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+            )
+            response_headers["x-ms-smart-access-tier"] = self._deserialize(
+                "str", response.headers.get("x-ms-smart-access-tier")
+            )
 
         if response.status_code == 206:
             response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
@@ -1862,6 +1872,16 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
             )
             response_headers["x-ms-structured-content-length"] = self._deserialize(
                 "int", response.headers.get("x-ms-structured-content-length")
+            )
+            response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
+            response_headers["x-ms-access-tier-inferred"] = self._deserialize(
+                "bool", response.headers.get("x-ms-access-tier-inferred")
+            )
+            response_headers["x-ms-access-tier-change-time"] = self._deserialize(
+                "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
+            )
+            response_headers["x-ms-smart-access-tier"] = self._deserialize(
+                "str", response.headers.get("x-ms-smart-access-tier")
             )
 
         deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)

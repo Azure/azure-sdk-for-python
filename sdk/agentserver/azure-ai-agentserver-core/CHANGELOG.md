@@ -2,7 +2,13 @@
 
 ## 2.0.0b10 (Unreleased)
 
+### Features Added
+
+- Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
+
 ### Bugs Fixed
+
+- Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
 
 - Extended W3C trace context and baggage propagation to WebSocket connections so spans created by `invocations_ws` handlers inherit caller context and A365 correlation data.
 

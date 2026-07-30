@@ -71,8 +71,8 @@ async def handler(
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     # Configure Response properties BEFORE emit_created().
-    stream.response.temperature = 0.7
-    stream.response.max_output_tokens = 1024
+    stream.response["temperature"] = 0.7
+    stream.response["max_output_tokens"] = 1024
 
     yield stream.emit_created()
     yield stream.emit_in_progress()
@@ -134,8 +134,8 @@ async def handler_builder(
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
     # Configure Response properties BEFORE emit_created().
-    stream.response.temperature = 0.7
-    stream.response.max_output_tokens = 1024
+    stream.response["temperature"] = 0.7
+    stream.response["max_output_tokens"] = 1024
 
     yield stream.emit_created()
     yield stream.emit_in_progress()

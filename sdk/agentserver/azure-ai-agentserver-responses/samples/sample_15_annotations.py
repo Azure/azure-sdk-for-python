@@ -16,6 +16,8 @@ Usage::
         -d '{"model": "annotated", "input": "Show me the sources"}'
 """
 
+from typing import cast
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -23,6 +25,7 @@ from azure.ai.agentserver.responses import (
 )
 from azure.ai.agentserver.responses.aio import ResponseEventStream
 from azure.ai.agentserver.responses.models import (
+    Annotation,
     FileCitationBody,
     FilePath,
     UrlCitationBody,
@@ -38,15 +41,27 @@ async def annotations_handler(request: CreateResponse, context: ResponseContext)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
-    annotations = [
-        FilePath(file_id="/reports/monthly-summary.pdf", index=0),
-        FilePath(file_id="/exports/data.csv", index=1),
-        FileCitationBody(file_id="/sources/research-paper.pdf", index=2, filename="research-paper.pdf"),
-        UrlCitationBody(
-            url="https://example.com/docs/guide",
-            start_index=0,
-            end_index=29,
-            title="Developer Guide",
+    annotations: list[Annotation] = [
+        cast(FilePath, {"type": "file_path", "file_id": "/reports/monthly-summary.pdf", "index": 0}),
+        cast(FilePath, {"type": "file_path", "file_id": "/exports/data.csv", "index": 1}),
+        cast(
+            FileCitationBody,
+            {
+                "type": "file_citation",
+                "file_id": "/sources/research-paper.pdf",
+                "index": 2,
+                "filename": "research-paper.pdf",
+            },
+        ),
+        cast(
+            UrlCitationBody,
+            {
+                "type": "url_citation",
+                "url": "https://example.com/docs/guide",
+                "start_index": 0,
+                "end_index": 29,
+                "title": "Developer Guide",
+            },
         ),
     ]
 

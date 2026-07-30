@@ -14,7 +14,7 @@ from collections.abc import (  # pylint: disable=import-error
     Awaitable,
     Callable,
 )
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Optional
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -27,6 +27,7 @@ from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
+from ._types import MiddlewareFactory, P, StreamContent
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -362,6 +363,24 @@ class AgentServerHost(Starlette):
 
         self.add_middleware(TraceContextMiddleware)
 
+    def add_middleware(
+        self,
+        middleware_class: MiddlewareFactory[P],
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> None:
+        """Add middleware to the host.
+
+        This exposes Starlette's middleware extension point without leaking
+        Starlette's private type aliases in this package's public API.
+
+        :param middleware_class: Middleware class or factory to add.
+        :type middleware_class: MiddlewareFactory
+        :param args: Positional arguments forwarded to the middleware.
+        :type args: Any
+        """
+        super().add_middleware(middleware_class, *args, **kwargs)
+
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
     # ------------------------------------------------------------------
@@ -565,13 +584,11 @@ class AgentServerHost(Starlette):
     # Streaming utilities
     # ------------------------------------------------------------------
 
-    _Content = Union[str, bytes, memoryview]
-
     @staticmethod
     async def sse_keepalive_stream(
-        iterator: "AsyncIterable[AgentServerHost._Content]",
+        iterator: AsyncIterable[StreamContent],
         interval: int,
-    ) -> "AsyncIterator[AgentServerHost._Content]":
+    ) -> AsyncIterator[StreamContent]:
         """Interleave SSE keep-alive comment frames into a streaming body.
 
         Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
@@ -579,16 +596,16 @@ class AgentServerHost(Starlette):
         proxies/load-balancers from closing idle connections.
 
         :param iterator: The async iterable to wrap.
-        :type iterator: AsyncIterable[str or bytes or memoryview]
+        :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
         :param interval: Seconds between keep-alive frames. Must be > 0.
         :type interval: int
         :return: An async iterator with interleaved keep-alive frames.
-        :rtype: AsyncIterator[str or bytes or memoryview]
+        :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
         """
         ait = iterator.__aiter__()
         # Reuse the same __anext__ task across timeouts to avoid cancelling
         # the upstream iterator when wait_for expires.
-        pending: "Optional[asyncio.Task[AgentServerHost._Content]]" = None
+        pending: Optional[asyncio.Task[StreamContent]] = None
         while True:
             if pending is None:
                 pending = asyncio.ensure_future(ait.__anext__())
