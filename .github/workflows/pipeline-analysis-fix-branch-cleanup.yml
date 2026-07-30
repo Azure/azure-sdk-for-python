@@ -1,0 +1,73 @@
+# Pipeline Analysis - Fix Branch Cleanup
+#
+# `pipeline-analysis-auto-fix.md` publishes automated fixes to `copilot-pipeline-fix/*` branches
+# and offers them as draft PRs against the contributor's branch. Those branches are disposable:
+# once the author has merged or ignored the suggestion, the branch is dead weight.
+#
+# This workflow deletes any `copilot-pipeline-fix/*` branch whose last commit is older than 7 days.
+# A branch with an open PR is kept, so a suggestion still under review is never pulled out from
+# under the author. (The draft PRs themselves also auto-close after 7 days via `expires: 7`.)
+name: Pipeline Analysis - Fix Branch Cleanup
+
+on:
+  schedule:
+    # Daily at 06:00 UTC.
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write # delete stale fix branches
+
+concurrency:
+  group: pipeline-analysis-fix-branch-cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete stale copilot-pipeline-fix branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          MAX_AGE_DAYS: "7"
+        run: |
+          set -euo pipefail
+
+          cutoff=$(( $(date -u +%s) - (MAX_AGE_DAYS * 86400) ))
+          echo "Deleting copilot-pipeline-fix/* branches with no commit after $(date -u -d "@$cutoff" '+%Y-%m-%dT%H:%M:%SZ')."
+
+          # Branches that still have an open PR are exempt.
+          open_pr_branches="$(gh pr list --repo "$REPOSITORY" --state open --limit 1000 --json headRefName --jq '.[].headRefName' || true)"
+
+          # matching-refs returns each branch with its last commit date, newest first.
+          gh api --paginate \
+            "repos/$REPOSITORY/git/matching-refs/heads/copilot-pipeline-fix/" \
+            --jq '.[].ref' | sed 's#^refs/heads/##' | while read -r branch; do
+            [ -z "$branch" ] && continue
+
+            if printf '%s\n' "$open_pr_branches" | grep -qxF "$branch"; then
+              echo "keep   $branch (open pull request)"
+              continue
+            fi
+
+            commit_date="$(gh api "repos/$REPOSITORY/commits/$branch" --jq '.commit.committer.date' 2>/dev/null || true)"
+            if [ -z "$commit_date" ]; then
+              echo "skip   $branch (could not resolve last commit date)"
+              continue
+            fi
+
+            commit_epoch="$(date -u -d "$commit_date" +%s)"
+            if [ "$commit_epoch" -ge "$cutoff" ]; then
+              echo "keep   $branch (last commit $commit_date)"
+              continue
+            fi
+
+            if gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$branch" >/dev/null 2>&1; then
+              echo "delete $branch (last commit $commit_date)"
+            else
+              echo "::warning::Failed to delete branch $branch"
+            fi
+          done
+
+          echo "Cleanup complete."

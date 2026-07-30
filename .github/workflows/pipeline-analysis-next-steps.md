@@ -8,9 +8,22 @@
 # Copilot runs on the built-in token via `copilot-requests: write` (billed to the org) # The agent job is read-only; the comment is posted by a separate
 # gh-aw safe-outputs job.
 #
+# The agent has read-only access to the repository's skills under `.github/skills/` (checked
+# out from the default branch, NOT the PR branch). It consults the azsdk pipeline-analysis skill
+# to categorize failures; drop in additional pipeline skills and the agent will pick them up.
+#
+# Skill invocations emit usage telemetry to the azsdk producer (Application Insights) via the
+# Copilot PostToolUse hook in `.github/hooks/hooks.json`. That hook only recognizes a skill
+# invocation from the `skill`, `view`, or `read_file` tools (matching `/skills/<name>/SKILL.md`),
+# so the prompt requires skills to be read with `view` - reading them via shell `cat` would make
+# the invocations invisible to telemetry. Ingestion uses the InstrumentationKey baked into the
+# azsdk connection string, so it only needs egress to the ingestion endpoint (see network.allowed)
+# - not an Azure login.
+#
 # After editing this file, run 'gh aw compile pipeline-analysis-next-steps' to regenerate the
 # lock file.
 description: "Analyze a pull request's failing Azure DevOps pipeline with the azsdk analyze tool and post a Copilot-authored 'Pipeline Analysis Next Steps' comment."
+run-name: "Pipeline Analysis - Next Steps / PR #${{ github.event.inputs.pr_number }} / ${{ github.event.inputs.ci_head_sha }}"
 
 on:
   workflow_dispatch:
@@ -45,16 +58,29 @@ permissions:
 
 # network.allowed also governs content sanitization: dev.azure.com and aka.ms must be allowed
 # so the Azure DevOps build links and the CI-fix link in the analysis survive in the comment.
+# *.in.applicationinsights.azure.com lets the azsdk telemetry producer (the Copilot PostToolUse
+# hook -> `azsdk ingest-telemetry`) upload skill-invocation telemetry from inside the sandbox;
+# ingestion authenticates with the InstrumentationKey in the azsdk connection string, so no Azure
+# login is required - only egress to the ingestion endpoint. Mirrors issue-triage.
 network:
   allowed:
     - defaults
     - github
     - dev.azure.com
     - aka.ms
+    - "*.in.applicationinsights.azure.com"
 
+# Sparse-checkout keeps the agent's tree minimal: eng (azsdk CLI installer + telemetry hook
+# script), .github/skills (read-only skills the agent consults), and .github/hooks (so Copilot
+# loads the PostToolUse hook that emits skill-invocation telemetry to the azsdk producer).
+# `documentation` is only present in azure-rest-api-specs; sparse-checkout silently ignores it in
+# repos that do not have it, so the same workflow file stays syncable across all language repos.
 checkout:
   sparse-checkout: |
     eng
+    .github/skills
+    .github/hooks
+    documentation/ci-fix.md
 
 # Deterministic pre-agent steps: install the azsdk CLI (the analyze tool is a plain stdio MCP
 # server that gh-aw's MCP Gateway cannot host, so we drive its CLI surface) and run the
@@ -63,7 +89,11 @@ steps:
   - name: Install azsdk CLI
     shell: pwsh
     run: |
-      $dir = Join-Path $env:RUNNER_TEMP 'azsdk-cli'
+      # Install to the azsdk common install directory ($HOME/bin) rather than a custom path so the
+      # Copilot telemetry hook (eng/common/scripts/azsdk_tool_telemetry.ps1), which locates the
+      # binary via Get-CommonInstallDirectory, can run `azsdk ingest-telemetry` on skill
+      # invocations. Still add it to PATH so the analyze step below resolves `azsdk`.
+      $dir = Join-Path $HOME 'bin'
       ./eng/common/mcp/azure-sdk-mcp.ps1 -InstallDirectory $dir
       Add-Content -Path $env:GITHUB_PATH -Value $dir
   - name: Analyze failing pipeline
@@ -95,11 +125,23 @@ steps:
         fi
       fi
 
+post-steps:
+  - name: Upload pipeline analysis
+    uses: actions/upload-artifact@v7
+    with:
+      name: pipeline-analysis
+      path: pipeline-analysis.txt
+      if-no-files-found: error
+      retention-days: 7
+
 tools:
   github:
     toolsets: [context, repos, pull_requests, actions]
-  # Read-only: the agent only needs to read the analysis file produced above.
-  bash: ["cat", "ls", "head", "tail", "wc"]
+  # Read-only: the agent reads the analysis file plus the checked-out skills under
+  # `.github/skills/` (find/ls to discover them, cat/head/tail to read). No write tools.
+  # `azsdk ci test-results` is allowed because `azsdk ci analyze` reports artifact *names* only;
+  # fetching their contents is a read-only download and is often required to explain a failure.
+  bash: ["cat", "ls", "head", "tail", "wc", "find", "azsdk ci test-results:*"]
 
 safe-outputs:
   # A single, self-updating "Pipeline Analysis Next Steps" comment on the PR. hide-older-comments
@@ -148,19 +190,53 @@ workspace root. Your job is to turn that raw tool output into one concise, actio
 
 ## Step 1 - Analyze the failures
 
-From the tool output, determine what failed and the most likely cause(s):
+**Consult the repository's skills first.** The skills directory is checked out read-only at
+`.github/skills/` (from the default branch — this is *not* the PR's code):
 
-- Group the failures (by pipeline/stage/job, failed build task, and/or failed tests).
-- Categorize each failure as one of: **test** (assertion/test-case failure), **build**
-  (compilation error), **validation** (lint/format/analyzer/spec violation), or
-  **infrastructure** (network timeout, agent crash/disconnect, throttling, image/tooling
-  outage). Note when several failures share one root cause.
-- Identify concrete signals (compiler/build errors, failed test names, timeouts, missing
-  files, lint/format violations, etc.). Rely **only** on what the tool output actually shows -
-  do not invent failures or speculate beyond the evidence. If the cause is unclear, say so.
-- For **infrastructure** failures, recommend re-running the pipeline rather than changing code;
-  only recommend code changes for test/build/validation failures.
-- Preserve any Azure DevOps build URLs from the output so reviewers can jump to the logs.
+> **Read every `SKILL.md` with the `view` tool, not with `cat`/`head`/`tail`.** Skill-usage
+> telemetry is emitted by the Copilot `PostToolUse` hook, which only recognizes a skill invocation
+> from the `view`/`read_file` tools (or an explicit `skill` call). A skill read through a shell
+> command is invisible to telemetry and will not be counted.
+
+- Read `.github/skills/azsdk-common-pipeline-analysis/SKILL.md` and its
+  `references/failure-patterns.md` - they define the failure categories and the pattern-to-fix
+  mappings you apply below.
+- The pipeline analysis has **already been run for you** (its output is in
+  `pipeline-analysis.txt`), so ignore any skill instructions about invoking `azsdk` /
+  `azsdk_analyze_pipeline` MCP tools - you do not have them and do not need them.
+- Keep the comment in the exact format defined in Step 2; do **not** adopt the skill's own
+  output format from `references/output-format.md`.
+- If another skill under `.github/skills/` is directly relevant to the specific failure you are
+  analyzing (for example, a skill describing how to fix a particular pipeline failure), read its
+  `SKILL.md` with the `view` tool and apply it too. Ignore skills unrelated to the failures at hand.
+
+Apply those categories and pattern-to-fix mappings to the `pipeline-analysis.txt` output to
+determine what failed and the most likely root cause(s), and preserve any Azure DevOps build URLs
+from the output so reviewers can jump to the logs.
+
+### Step 1a - Fetch artifact contents if the analysis only names them
+
+`azsdk ci analyze` reports the *names* of published artifacts, not their contents. If
+`pipeline-analysis.txt` references artifacts (for example test-results or log artifacts) and their
+names alone are not enough to explain the failure, download them:
+
+```bash
+azsdk ci test-results "https://github.com/${{ github.repository }}/pull/${{ github.event.inputs.pr_number }}"
+```
+
+Only do this when the analysis is insufficient on its own - it is an extra network call. If the
+command fails or returns nothing, continue with what `pipeline-analysis.txt` already gave you and
+do not treat the failure as fatal.
+
+### Step 1b - azure-rest-api-specs only: consult the CI fix guide
+
+If `${{ github.repository }}` is `Azure/azure-rest-api-specs`, also read `documentation/ci-fix.md`
+from the checked-out tree. It documents how to reproduce and fix that repo's specific checks
+(Swagger BreakingChange, ModelValidation, SemanticValidation, PrettierCheck, TypeSpec Validation,
+Avocado, and the SDK Validation suites), including the exact local commands. Prefer its guidance
+over generic advice, and cite the relevant commands in your recommended next steps.
+
+For every other repository this file does not exist - skip this step entirely and do not mention it.
 
 ## Step 2 - Compose the "Pipeline Analysis Next Steps" comment
 
@@ -201,9 +277,11 @@ root cause, with Azure DevOps build links where available>
 
 ## Constraints (non-negotiable)
 
-1. **Read-only.** Do not check out, build, run, or modify PR code. Your only external action is
-   posting the single comment via the `add-comment` safe output. Do not use `gh`, the GitHub
-   MCP write tools, or direct API calls to comment.
+1. **Read-only.** Do not check out, build, run, or modify PR code. (Reading the repository's own
+   checked-out `.github/skills/` guidance is fine - that is not PR code, and `azsdk ci test-results`
+   only downloads published artifacts.) Your only mutating action is posting the single comment via
+   the `add-comment` safe output. Do not use `gh`, the GitHub MCP write tools, or direct API calls
+   to comment.
 2. **One comment.** Emit at most one `add-comment`. Keep it concise and skimmable; put the raw
    tool output inside the collapsible `<details>` block, trimming it if it is very long.
 3. **The `@copilot` line is an example only.** Write it in backticks exactly as shown so it does
