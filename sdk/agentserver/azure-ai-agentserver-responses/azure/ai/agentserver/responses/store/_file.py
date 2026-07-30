@@ -72,6 +72,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import json
 import os
+import re
 import shutil
 from copy import deepcopy
 from pathlib import Path
@@ -87,6 +88,29 @@ from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 # model that always carries at least a ``type`` field, so a dict whose ONLY
 # key is this sentinel is unambiguously a pointer stub.
 _ITEM_REF_KEY = "$item_ref"
+
+# Store paths are built from response/item/conversation IDs, some of which can
+# originate from client input (e.g. a client-supplied ``conversation``). Enforce
+# the Public Task API contract so a value like ``"../../etc"`` cannot escape the
+# store directory (path traversal).
+_VALID_STORE_ID = re.compile(r"^[A-Za-z0-9_-]{1,128}$")
+
+
+def _validate_store_id(value: str, kind: str) -> str:
+    """Return *value* if it is a safe on-disk identifier, else raise.
+
+    :param value: The identifier used to build a file path.
+    :type value: str
+    :param kind: A human-readable name for the identifier (for error messages).
+    :type kind: str
+    :returns: The validated identifier, unchanged.
+    :rtype: str
+    :raises ValueError: If *value* contains path separators, ``..``, or any
+        character outside ``[A-Za-z0-9_-]``.
+    """
+    if not isinstance(value, str) or not _VALID_STORE_ID.match(value):
+        raise ValueError(f"Invalid {kind}: {value!r} (must match {_VALID_STORE_ID.pattern})")
+    return value
 
 
 def _atomic_write_json(path: Path, data: dict[str, Any]) -> None:
@@ -235,22 +259,22 @@ class FileResponseStore(ResponseProviderProtocol):
     # ------------------------------------------------------------------
 
     def _response_path(self, response_id: str) -> Path:
-        return self._responses_dir / f"{response_id}.json"
+        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.json"
 
     def _per_response_items_dir(self, response_id: str) -> Path:
-        return self._responses_dir / f"{response_id}.items"
+        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.items"
 
     def _indexes_path(self, response_id: str) -> Path:
-        return self._responses_dir / f"{response_id}.indexes.json"
+        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.indexes.json"
 
     def _deleted_marker(self, response_id: str) -> Path:
-        return self._responses_dir / f"{response_id}.deleted"
+        return self._responses_dir / f"{_validate_store_id(response_id, 'response_id')}.deleted"
 
     def _global_item_path(self, item_id: str) -> Path:
-        return self._items_dir_global / f"{item_id}.json"
+        return self._items_dir_global / f"{_validate_store_id(item_id, 'item_id')}.json"
 
     def _conversation_path(self, conversation_id: str) -> Path:
-        return self._conversations_dir / f"{conversation_id}.json"
+        return self._conversations_dir / f"{_validate_store_id(conversation_id, 'conversation_id')}.json"
 
     # ------------------------------------------------------------------
     # ResponseProviderProtocol — envelope CRUD

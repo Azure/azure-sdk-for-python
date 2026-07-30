@@ -279,6 +279,10 @@ class ResponsesAgentServerHost(AgentServerHost):
         self._create_fn: Optional[CreateHandlerFn] = None
         # Acceptance hook — populated via @app.response_acceptor decorator
         self._acceptance_hook: Optional[Any] = None
+        # The orchestrator captures the acceptance hook at construction. Keep a
+        # reference so a hook registered *after* construction (the normal
+        # ``@app.response_acceptor`` case) can be propagated to it live.
+        self._orchestrator: Optional[Any] = None
 
         # Normalize prefix
         normalized_prefix = prefix.strip()
@@ -397,6 +401,7 @@ class ResponsesAgentServerHost(AgentServerHost):
             provider=resolved_provider,
             acceptance_hook=self._acceptance_hook,
         )
+        self._orchestrator = orchestrator
         endpoint = _ResponseEndpointHandler(
             orchestrator=orchestrator,
             runtime_state=runtime_state,
@@ -585,6 +590,11 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: Callable
         """
         self._acceptance_hook = fn
+        # Propagate to the already-constructed orchestrator so hooks registered
+        # after host construction (the normal decorator usage) take effect for
+        # queued/steered turns, which read the orchestrator's hook at dispatch.
+        if self._orchestrator is not None:
+            self._orchestrator._acceptance_hook = fn  # pylint: disable=protected-access
         return fn
 
     # ------------------------------------------------------------------
