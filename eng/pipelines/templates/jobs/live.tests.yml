@@ -167,11 +167,9 @@ jobs:
               Pool: $(Pool)
               ${{ insert }}: ${{ parameters.EnvVars }}
 
-      # A package under test can list a compiled sibling (today: azure-storage-extensions) as a relative
-      # dev requirement. build_whl_for_req -> create_package then shells out to cibuildwheel, which reaches
-      # pypi.org from inside its manylinux container and api.nuget.org on Windows -- both blackholed on
-      # isolated agents. The build pipeline handles this in steps/build-package-artifacts.yml; live test
-      # jobs never did, so every storage live test job has been failing at dev requirement install.
+      # This is a heuristic to detect compiled requirements in the service 
+      # directory. If compiled requirements are found, install dependencies for
+      # and configure cibuildwheel. 
       - pwsh: |
           $ErrorActionPreference = 'Stop'
           $found = @()
@@ -190,11 +188,6 @@ jobs:
           }
         displayName: 'Check for compiled dev requirements'
 
-      # These wheels are only pip installed into this job's venv, so build the single wheel this
-      # interpreter can actually use instead of cibuildwheel's full release matrix (8 wheels on Linux,
-      # 4 on Windows). That also removes the need for QEMU (aarch64) and pythonarm64 (win_arm64), which
-      # the build pipeline has to provision. Verified with `cibuildwheel --print-build-identifiers`:
-      # each platform resolves to exactly one identifier.
       - pwsh: |
           Write-Host "##vso[task.setvariable variable=CIBW_ARCHS]native"
           Write-Host "##vso[task.setvariable variable=CIBW_SKIP]pp* *musllinux*"
