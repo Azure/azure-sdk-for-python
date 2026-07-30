@@ -375,6 +375,7 @@ class TestBaseExporter(unittest.TestCase):
     def test_constructor_registers_local_storage_callback(self, mock_get_config_manager):
         """A normal exporter registers its local storage callback with the config manager."""
         mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
         mock_get_config_manager.return_value = mock_manager
         base = BaseExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
@@ -422,6 +423,7 @@ class TestBaseExporter(unittest.TestCase):
         """The customer-sdkstats exporter shares the customer's storage folder, so it participates
         in the remote FEATURE_LOCAL_STORAGE toggle and must register the base callback."""
         mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
         mock_get_config_manager.return_value = mock_manager
         base = AzureMonitorMetricExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
@@ -430,6 +432,41 @@ class TestBaseExporter(unittest.TestCase):
         )
         try:
             mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_late_exporter_applies_cached_disabled_settings(self, mock_get_config_manager):
+        """An exporter created after FEATURE_LOCAL_STORAGE=disabled was cached applies that cached
+        state at registration time (no config change needed) and starts with storage disabled."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = self._make_local_storage_settings(False)
+        mock_get_config_manager.return_value = mock_manager
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            mock_manager.get_settings.assert_called_once()
+            self.assertIsNone(base.storage)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_late_exporter_empty_cache_leaves_storage_active(self, mock_get_config_manager):
+        """When the cached settings are empty (worker has not fetched yet), the replay is a no-op and
+        storage remains active per the user's disable_offline_storage setting."""
+        mock_manager = mock.Mock()
+        mock_manager.get_settings.return_value = {}
+        mock_get_config_manager.return_value = mock_manager
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            self.assertIsNotNone(base.storage)
         finally:
             if base.storage is not None:
                 clean_folder(base.storage._path)
