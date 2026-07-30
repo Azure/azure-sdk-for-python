@@ -16,6 +16,7 @@ from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
+from .._console import console_print as print
 from .._patch import (
     _AuthSecretsFilter,
     _build_openai_user_agent,

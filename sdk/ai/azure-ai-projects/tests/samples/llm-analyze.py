@@ -9,34 +9,50 @@ Example:
     python .\\tests\\samples\\llm-analyze.py --sample-path="samples\\agents\\tools\\sample_agent_file_search.py" \
         --foundry_project_endpoint="https://foundy6maq.services.ai.azure.com/api/projects/project6maq" \
         --foundry_model_name="gpt-5" \
-        --llm_endpoint="https://foundy6maq.services.ai.azure.com/api/projects/project6maq", \
+        --llm_validation_project_endpoint="https://foundy6maq.services.ai.azure.com/api/projects/project6maq" \
         --llm_model_name="gpt-5"
+
+Example using environment variables:
+    python .\\tests\\samples\\llm-analyze.py --sample-path="samples\\agents\\tools\\sample_agent_file_search.py"
+    This uses `.env` or existing environment variables for values such as
+    `FOUNDRY_PROJECT_ENDPOINT`, `FOUNDRY_MODEL_NAME`,
+    `LLM_VALIDATION_PROJECT_ENDPOINT`, and `LLM_MODEL_NAME`.
+    If `LLM_MODEL_NAME` is not set, validation defaults to `gpt-5.2`.
 
 Example JSON output:
     {
       "correct": true,
       "llm_comment": "Execution completed successfully with substantive output.",
       "log_file": "C:\\Users\\<user>\\AppData\\Local\\Temp\\sample_agent_file_search_success_<timestamp>.log",
+      "captured_prints_file": "C:\\Users\\<user>\\AppData\\Local\\Temp\\sample_agent_file_search_output_<timestamp>.txt",
       "duration": 117.912
     }
 
 Notes:
+    - Values are loaded from `.env` first. Explicit CLI arguments override environment variables.
+    - `--sample-path` is the only dedicated CLI option. All other `--lower_case_name=value` arguments are mapped to uppercase environment variables and override `.env` values.
+        - Validation uses `LLM_VALIDATION_PROJECT_ENDPOINT` and `LLM_MODEL_NAME` only.
+            If `LLM_MODEL_NAME` is unset, the default validation model is `gpt-5.2`.
     - Extra lower-case CLI arguments are mapped to upper-case environment variables for the sample.
-        - Pass sample environment variables as extra CLI args using lower-case names. Examples:
-                --foundry_project_endpoint="https://.../api/projects/..."
-                --foundry_model_name="gpt-5"
-                --ai_search_index_name="index_sample"
-            These become:
-                FOUNDRY_PROJECT_ENDPOINT
-                FOUNDRY_MODEL_NAME
-                AI_SEARCH_INDEX_NAME
-    - The final output is JSON only: correctness, LLM comment, temp log path, and duration.
+      Pass sample environment variables as extra CLI args using lower-case names. Examples:
+          --foundry_project_endpoint="https://.../api/projects/..."
+          --foundry_model_name="gpt-5"
+          --llm_validation_project_endpoint="https://.../api/projects/..."
+          --llm_model_name="gpt-5"
+          --ai_search_index_name="index_sample"
+      These become:
+          FOUNDRY_PROJECT_ENDPOINT
+          FOUNDRY_MODEL_NAME
+          LLM_VALIDATION_PROJECT_ENDPOINT
+          LLM_MODEL_NAME
+          AI_SEARCH_INDEX_NAME
+    - The final output is JSON only: correctness, LLM comment, temp log path, captured prints path, and duration.
 """
 
 from __future__ import annotations
 
-import asyncio
 import argparse
+import asyncio
 import json
 import os
 import sys
@@ -44,28 +60,38 @@ import time
 from contextlib import contextmanager, redirect_stderr, redirect_stdout
 from io import BytesIO
 from pathlib import Path
+from typing import cast
 
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+from dotenv import load_dotenv
+
+SAMPLES_ROOT = Path(__file__).resolve().parent
+TESTS_ROOT = SAMPLES_ROOT.parent
+PROJECT_ROOT = TESTS_ROOT.parent
+
+load_dotenv(PROJECT_ROOT / ".env")
+
+sys.path.insert(0, str(PROJECT_ROOT))
+try:
+    from azure.ai.projects import AIProjectClient
+    from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
+finally:
+    sys.path.pop(0)
+
+sys.path.insert(0, str(TESTS_ROOT))
+
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 
-SAMPLES_ROOT = Path(__file__).resolve().parent
-TESTS_ROOT = SAMPLES_ROOT.parent
-PROJECT_ROOT = TESTS_ROOT.parent
-sys.path.insert(0, str(TESTS_ROOT))
-
-from sample_executor import AsyncSampleExecutor, SyncSampleExecutor  # pylint: disable=wrong-import-position
+from sample_executor import (  # pylint: disable=wrong-import-position
+    LIVE_LLM_VALIDATION_MODEL,
+    AsyncSampleExecutor,
+    SyncSampleExecutor,
+)
 from test_base import patched_open_crlf_to_lf  # pylint: disable=wrong-import-position
 
-LOG_FILE_PATTERNS = {
-    "AZURE_TEST_RUN_LIVE": "true",
-    "SAMPLE_TEST_PASSED_LOG": "<sample_filename>_success_<timestamp>.log",
-    "SAMPLE_TEST_FAILED_LOG": "<sample_filename>_failed_<timestamp>.log",
-    "SAMPLE_TEST_ERROR_LOG": "<sample_filename>_errors_<timestamp>.log",
-}
+LIVE_MODE_ENV = {"AZURE_TEST_RUN_LIVE": "true"}
 
 
 class _CredentialProvider:
@@ -89,9 +115,6 @@ class _CliSampleExecutor(SyncSampleExecutor):
         super().__init__(*args, **kwargs)
         self.log_file_path: str | None = None
 
-    def _capture_print(self, *args, **_kwargs):
-        self.print_calls.append(" ".join(str(arg) for arg in args))
-
     def _write_error_log(self, reason: str, exception_info: str) -> str | None:
         self.log_file_path = super()._write_error_log(reason, exception_info)
         return self.log_file_path
@@ -104,14 +127,15 @@ class _CliSampleExecutor(SyncSampleExecutor):
         self.log_file_path = super()._write_passed_log(reason)
         return self.log_file_path
 
-    def validate_print_calls_by_llm(self, *, endpoint: str, model: str, instructions: str | None = None) -> dict:
+    def validate_print_calls_by_llm_cli(self, *, endpoint: str, model: str, instructions: str | None = None) -> dict:
         instructions = self._resolve_validation_instructions(instructions)
         response = None
         uploaded_file_ids: list[str] = []
+        credential = cast(TokenCredential, self.tokenCredential)
         with (
             AIProjectClient(
                 endpoint=endpoint,
-                credential=self.tokenCredential,
+                credential=credential,
                 logging_enable=True,
             ) as project_client,
             project_client.get_openai_client() as openai_client,
@@ -160,9 +184,6 @@ class _CliAsyncSampleExecutor(AsyncSampleExecutor):
         super().__init__(*args, **kwargs)
         self.log_file_path: str | None = None
 
-    def _capture_print(self, *args, **_kwargs):
-        self.print_calls.append(" ".join(str(arg) for arg in args))
-
     def _write_error_log(self, reason: str, exception_info: str) -> str | None:
         self.log_file_path = super()._write_error_log(reason, exception_info)
         return self.log_file_path
@@ -175,16 +196,17 @@ class _CliAsyncSampleExecutor(AsyncSampleExecutor):
         self.log_file_path = super()._write_passed_log(reason)
         return self.log_file_path
 
-    async def validate_print_calls_by_llm_async(
+    async def validate_print_calls_by_llm_async_cli(
         self, *, endpoint: str, model: str, instructions: str | None = None
     ) -> dict:
         instructions = self._resolve_validation_instructions(instructions)
         response = None
         uploaded_file_ids: list[str] = []
+        credential = cast(AsyncTokenCredential, self.tokenCredential)
         async with (
             AsyncAIProjectClient(
                 endpoint=endpoint,
-                credential=self.tokenCredential,
+                credential=credential,
                 logging_enable=True,
             ) as project_client,
             project_client.get_openai_client() as openai_client,
@@ -251,9 +273,7 @@ def _suppress_terminal_output():
 
 def _parse_args() -> tuple[argparse.Namespace, dict[str, str]]:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--sample-path", "--sample_path", dest="sample_path", required=True)
-    parser.add_argument("--llm-endpoint", "--llm_endpoint", dest="llm_endpoint", required=True)
-    parser.add_argument("--llm-model-name", "--llm_model_name", dest="llm_model_name", required=True)
+    parser.add_argument("--sample-path", "--sample_path", dest="sample_path")
     args, unknown = parser.parse_known_args()
 
     def _clean_cli_value(value: str) -> str:
@@ -264,11 +284,10 @@ def _parse_args() -> tuple[argparse.Namespace, dict[str, str]]:
             cleaned = cleaned[1:].lstrip()
         return cleaned
 
-    args.sample_path = _clean_cli_value(args.sample_path)
-    args.llm_endpoint = _clean_cli_value(args.llm_endpoint)
-    args.llm_model_name = _clean_cli_value(args.llm_model_name)
+    if args.sample_path:
+        args.sample_path = _clean_cli_value(args.sample_path)
 
-    env_vars: dict[str, str] = {}
+    arg_env_vars: dict[str, str] = {}
     i = 0
     while i < len(unknown):
         item = unknown[i]
@@ -282,56 +301,78 @@ def _parse_args() -> tuple[argparse.Namespace, dict[str, str]]:
             if i >= len(unknown):
                 raise SystemExit(f"Missing value for argument: --{name}")
             value = unknown[i]
-        env_vars[name.replace("-", "_").upper()] = _clean_cli_value(value)
+        arg_env_vars[name.replace("-", "_").upper()] = _clean_cli_value(value)
         i += 1
 
-    return args, env_vars
+    args.sample_path = args.sample_path or os.environ.get("SAMPLE_PATH")
+    args.llm_endpoint = arg_env_vars.get("LLM_VALIDATION_PROJECT_ENDPOINT") or os.environ.get(
+        "LLM_VALIDATION_PROJECT_ENDPOINT"
+    )
+    args.llm_model_name = (
+        arg_env_vars.get("LLM_MODEL_NAME") or os.environ.get("LLM_MODEL_NAME") or LIVE_LLM_VALIDATION_MODEL
+    )
+
+    if not args.sample_path:
+        raise SystemExit("Missing sample path. Provide --sample-path or set SAMPLE_PATH.")
+    if not args.llm_endpoint:
+        raise SystemExit(
+            "Missing LLM endpoint. Set LLM_VALIDATION_PROJECT_ENDPOINT or pass --llm_validation_project_endpoint."
+        )
+    return args, arg_env_vars
 
 
-def _build_result(report: dict, *, log_file: str | None, start_time: float) -> dict:
+def _build_result(report: dict, *, log_file: str | None, duration: float) -> dict:
+    captured_prints_file = report.get("captured_prints_file")
     return {
         "correct": report.get("correct", False),
         "llm_comment": report.get("reason"),
         "log_file": log_file,
-        "duration": round(time.perf_counter() - start_time, 3),
+        "captured_prints_file": captured_prints_file,
+        "duration": round(duration, 3),
     }
 
 
-def _run_sync_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[str, str], start_time: float) -> dict:
+def _run_sync_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[str, str]) -> dict:
     with DefaultAzureCredential() as credential:
         executor = _CliSampleExecutor(
             _CredentialProvider(credential),
             sample_path,
-            env_vars={**LOG_FILE_PATTERNS, **env_vars},
+            env_vars=env_vars,
         )
         try:
             with _suppress_terminal_output():
+                sample_start_time = time.perf_counter()
                 executor.execute(patched_open_fn=patched_open_crlf_to_lf)
-                report = executor.validate_print_calls_by_llm(endpoint=args.llm_endpoint, model=args.llm_model_name)
+                sample_duration = time.perf_counter() - sample_start_time
+                report = executor.validate_print_calls_by_llm_cli(endpoint=args.llm_endpoint, model=args.llm_model_name)
         except Exception as ex:  # pylint: disable=broad-exception-caught
             report = {"correct": False, "reason": f"Sample execution failed: {type(ex).__name__}: {ex}"}
-    return _build_result(report, log_file=executor.log_file_path, start_time=start_time)
+            sample_duration = 0.0
+    report["captured_prints_file"] = executor.output_file_path
+    return _build_result(report, log_file=executor.log_file_path, duration=sample_duration)
 
 
-async def _run_async_sample(
-    sample_path: str, args: argparse.Namespace, env_vars: dict[str, str], start_time: float
-) -> dict:
+async def _run_async_sample(sample_path: str, args: argparse.Namespace, env_vars: dict[str, str]) -> dict:
     async with AsyncDefaultAzureCredential() as credential:
         executor = _CliAsyncSampleExecutor(
             _AsyncCredentialProvider(credential),
             sample_path,
-            env_vars={**LOG_FILE_PATTERNS, **env_vars},
+            env_vars=env_vars,
         )
         try:
             with _suppress_terminal_output():
+                sample_start_time = time.perf_counter()
                 await executor.execute_async(patched_open_fn=patched_open_crlf_to_lf)
-                report = await executor.validate_print_calls_by_llm_async(
+                sample_duration = time.perf_counter() - sample_start_time
+                report = await executor.validate_print_calls_by_llm_async_cli(
                     endpoint=args.llm_endpoint,
                     model=args.llm_model_name,
                 )
         except Exception as ex:  # pylint: disable=broad-exception-caught
             report = {"correct": False, "reason": f"Sample execution failed: {type(ex).__name__}: {ex}"}
-    return _build_result(report, log_file=executor.log_file_path, start_time=start_time)
+            sample_duration = 0.0
+    report["captured_prints_file"] = executor.output_file_path
+    return _build_result(report, log_file=executor.log_file_path, duration=sample_duration)
 
 
 def main() -> int:
@@ -339,12 +380,11 @@ def main() -> int:
     sample_path = (
         str((PROJECT_ROOT / args.sample_path).resolve()) if not os.path.isabs(args.sample_path) else args.sample_path
     )
-    start_time = time.perf_counter()
-    with _temporary_env(LOG_FILE_PATTERNS):
+    with _temporary_env(LIVE_MODE_ENV):
         result = (
-            asyncio.run(_run_async_sample(sample_path, args, env_vars, start_time))
+            asyncio.run(_run_async_sample(sample_path, args, env_vars))
             if sample_path.endswith("_async.py")
-            else _run_sync_sample(sample_path, args, env_vars, start_time)
+            else _run_sync_sample(sample_path, args, env_vars)
         )
 
     print(json.dumps(result, indent=2))
