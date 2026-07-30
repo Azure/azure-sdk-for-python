@@ -9,8 +9,11 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 from typing import Any
 
+from azure.core.credentials import TokenCredential
+from azure.core.rest import HttpRequest, HttpResponse
 
-__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+
+__all__: list[str] = []
 
 
 def patch_sdk():
@@ -23,8 +26,13 @@ def patch_sdk():
     from ._client import DeviceUpdateClient
 
     generated_init = DeviceUpdateClient.__init__
+    generated_send_request = DeviceUpdateClient.send_request
 
-    def legacy_init(self, endpoint: str, instance_id: str, credential: Any, **kwargs: Any) -> None:
+    def __init__(self, endpoint: str, instance_id: str, credential: TokenCredential, **kwargs: Any) -> None:
         generated_init(self, endpoint=endpoint, credential=credential, instance_id=instance_id, **kwargs)
 
-    DeviceUpdateClient.__init__ = legacy_init
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+        return generated_send_request(self, request, **kwargs)
+
+    setattr(DeviceUpdateClient, "__init__", __init__)
+    setattr(DeviceUpdateClient, "send_request", send_request)
