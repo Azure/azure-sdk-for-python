@@ -7,14 +7,15 @@
 """
 DESCRIPTION:
     Given an async AIProjectClient, this sample demonstrates how to create an
-    agent optimization job and poll it to completion.
+    agent optimization job, observe the SDK poller until it is done, and then
+    get the result.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_basic_polling_async.py
+    python sample_optimization_job_app_polling_async.py
 
     Before running the sample:
 
@@ -40,7 +41,6 @@ from dotenv import load_dotenv
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
-    JobStatus,
     OptimizationAgentIdentifier as AgentIdentifier,
     OptimizationEvaluatorRef as EvaluatorRef,
     OptimizationJob,
@@ -60,8 +60,6 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 
 async def main() -> None:
     async with (
@@ -70,18 +68,10 @@ async def main() -> None:
     ):
 
         # ------------------------------------------------------------------
-        # 1. Create an optimization job without SDK polling.
+        # 1. Create an optimization job and observe the SDK-managed poller.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        pipeline_responses = []
-
-        def raw_response_hook(response):
-            # The raw_response_hook is called synchronously before the generated LRO method
-            # awaits read() on the initial response.  Capture the pipeline response object here
-            # and parse the body afterwards, when read() has already been awaited.
-            pipeline_responses.append(response)
-
-        await project_client.beta.agents.begin_create_optimization_job(
+        poller = await project_client.beta.agents.begin_create_optimization_job(
             job=OptimizationJob(
                 inputs=OptimizationJobInputs(
                     agent=AgentIdentifier(agent_name=agent_name),
@@ -97,42 +87,22 @@ async def main() -> None:
                     ),
                 )
             ),
-            polling=False,
-            raw_response_hook=raw_response_hook,
+            polling_interval=poll_interval,
         )
-        if not pipeline_responses:
-            raise RuntimeError("The create operation did not return an optimization job.")
-        job = OptimizationJob(pipeline_responses[0].http_response.json())
-        print(f"Created job: id={job.id}, status={job.status}")
 
-        # ------------------------------------------------------------------
-        # 2. Poll until the job reaches a terminal state.
-        # ------------------------------------------------------------------
-        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-        while job.status not in TERMINAL_STATUSES:
+        print("SDK is polling the optimization job to completion")
+        while not poller.done():
             await asyncio.sleep(poll_interval)
-            job = await project_client.beta.agents.get_optimization_job(job_id=job.id)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{job.status}`.")
+            print(f"status=`{poller.status()}`")
 
-        if job.warnings:
-            for warning in job.warnings:
-                print(f"[WARNING] {warning}")
-
-        if job.status == JobStatus.FAILED:
-            message = job.error.message if job.error else "<no error message>"
-            raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
-        if job.status == JobStatus.CANCELLED:
-            raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
+        # done() is true, so awaiting result() returns without waiting further and
+        # propagates any exception raised by the SDK's LRO polling operation.
+        result = await poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
 
         # ------------------------------------------------------------------
-        # 3. Inspect the results.
+        # 2. Inspect the results.
         # ------------------------------------------------------------------
-        if job.result is None:
-            raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
-
-        result = job.result
         print(f"\nBaseline candidate: {result.baseline}")
         print(f"Best candidate:     {result.best}")
         print(f"Candidates ({len(result.candidates or [])}):")

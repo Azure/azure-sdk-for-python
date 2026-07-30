@@ -187,7 +187,8 @@ async def main() -> None:
             polling=False,
             raw_response_hook=raw_response_hook,
         )
-        # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
+        # Alternatively, have the SDK handle polling by removing `polling=False`, assigning the awaited call
+        # to a poller, and then awaiting `poller.result()`.
         if not pipeline_responses:
             raise RuntimeError("The create operation did not return a data generation job.")
         job = DataGenerationJob(pipeline_responses[0].http_response.json())

@@ -7,14 +7,15 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to create an agent
-    optimization job and poll its standard LRO to completion.
+    optimization job, observe the SDK poller until it is done, and then get
+    the result.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_basic_polling.py
+    python sample_optimization_job_app_polling.py
 
     Before running the sample:
 
@@ -40,7 +41,6 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    JobStatus,
     OptimizationAgentIdentifier as AgentIdentifier,
     OptimizationEvaluatorRef as EvaluatorRef,
     OptimizationJob,
@@ -60,26 +60,16 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 
     # ------------------------------------------------------------------
-    # 1. Create an optimization job without SDK polling.
+    # 1. Create an optimization job and observe the SDK-managed poller.
     # ------------------------------------------------------------------
     print("Creating optimization job...")
-    created_jobs: list[OptimizationJob] = []
-
-    def raw_response_hook(response):
-        # Since `polling=False` is set below, it is guaranteed that `raw_response_hook` will be
-        # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
-        response.http_response.read()
-        created_jobs.append(OptimizationJob(response.http_response.json()))
-
-    project_client.beta.agents.begin_create_optimization_job(
+    poller = project_client.beta.agents.begin_create_optimization_job(
         job=OptimizationJob(
             inputs=OptimizationJobInputs(
                 agent=AgentIdentifier(agent_name=agent_name),
@@ -95,42 +85,22 @@ with (
                 ),
             )
         ),
-        polling=False,
-        raw_response_hook=raw_response_hook,
+        polling_interval=poll_interval,
     )
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return an optimization job.")
-    job = created_jobs[0]
-    print(f"Created job: id={job.id}, status={job.status}")
 
-    # ------------------------------------------------------------------
-    # 2. Poll until the job reaches a terminal state.
-    # ------------------------------------------------------------------
-    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-    while job.status not in TERMINAL_STATUSES:
+    print("SDK is polling the optimization job to completion")
+    while not poller.done():
         time.sleep(poll_interval)
-        job = project_client.beta.agents.get_optimization_job(job_id=job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
+        print(f"status=`{poller.status()}`")
 
-    if job.warnings:
-        for warning in job.warnings:
-            print(f"[WARNING] {warning}")
-
-    if job.status == JobStatus.FAILED:
-        message = job.error.message if job.error else "<no error message>"
-        raise RuntimeError(f"Optimization job `{job.id}` failed: {message}")
-    if job.status == JobStatus.CANCELLED:
-        raise RuntimeError(f"Optimization job `{job.id}` was cancelled.")
+    # done() is true, so result() returns without waiting further and propagates
+    # any exception raised by the SDK's LRO polling operation.
+    result = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
 
     # ------------------------------------------------------------------
-    # 3. Inspect the results.
+    # 2. Inspect the results.
     # ------------------------------------------------------------------
-    if job.result is None:
-        raise RuntimeError(f"Optimization job `{job.id}` completed without a result.")
-
-    result = job.result
     print(f"\nBaseline candidate: {result.baseline}")
     print(f"Best candidate:     {result.best}")
     print(f"Candidates ({len(result.candidates or [])}):")
