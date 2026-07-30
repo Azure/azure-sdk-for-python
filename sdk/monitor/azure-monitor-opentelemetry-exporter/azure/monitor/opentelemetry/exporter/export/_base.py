@@ -50,6 +50,9 @@ from azure.monitor.opentelemetry.exporter._connection_string_parser import (
     ConnectionStringParser,
 )
 from azure.monitor.opentelemetry.exporter._storage import LocalFileStorage
+from azure.monitor.opentelemetry.exporter._configuration._state import (
+    get_configuration_manager,
+)
 from azure.monitor.opentelemetry.exporter._configuration._utils import (
     evaluate_feature,
 )
@@ -220,6 +223,17 @@ class BaseExporter:
         self.storage: Optional[LocalFileStorage] = None
         if not self._disable_offline_storage:
             self._enable_local_storage()
+
+        # Register a OneSettings callback so local (offline) storage can be toggled remotely via the
+        # FEATURE_LOCAL_STORAGE feature flag. Skip the statsbeat/customer-sdkstats exporters: their
+        # storage is managed independently and does not participate in the remote toggle - statsbeat
+        # never persists to disk, and customer-sdkstats mirrors the user's setting via its own manager.
+        # register_callback is a NoOp if the control plane worker never starts, and
+        # get_configuration_manager() returns None when the control plane is disabled via env var.
+        if not self._is_stats_exporter() and not self._is_customer_sdkstats_exporter():
+            config_manager = get_configuration_manager()
+            if config_manager:
+                config_manager.register_callback(self._local_storage_configuration_callback)
 
         # statsbeat initialization
         if self._should_collect_stats():

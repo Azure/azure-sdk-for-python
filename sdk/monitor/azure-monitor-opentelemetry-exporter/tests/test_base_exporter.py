@@ -371,6 +371,52 @@ class TestBaseExporter(unittest.TestCase):
             if base.storage is not None:
                 clean_folder(base.storage._path)
 
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_registers_local_storage_callback(self, mock_get_config_manager):
+        """A normal exporter registers its local storage callback with the config manager."""
+        mock_manager = mock.Mock()
+        mock_get_config_manager.return_value = mock_manager
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            mock_manager.register_callback.assert_called_once_with(base._local_storage_configuration_callback)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_constructor_no_callback_when_control_plane_disabled(self, mock_get_config_manager):
+        """When the control plane is disabled (manager is None), no callback is registered."""
+        mock_get_config_manager.return_value = None
+        base = BaseExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+        )
+        try:
+            # No exception means the None manager was handled gracefully.
+            self.assertIsNotNone(base)
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
+    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
+    def test_stats_exporter_does_not_register_local_storage_callback(self, mock_get_config_manager):
+        """The statsbeat exporter manages its own storage and must not register the base callback."""
+        mock_manager = mock.Mock()
+        mock_get_config_manager.return_value = mock_manager
+        base = AzureMonitorMetricExporter(
+            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+            disable_offline_storage=False,
+            is_sdkstats=True,
+        )
+        try:
+            mock_manager.register_callback.assert_not_called()
+        finally:
+            if base.storage is not None:
+                clean_folder(base.storage._path)
+
     def test_normal_exporter_includes_http_logging_policy(self):
         from azure.core.pipeline.policies import HttpLoggingPolicy
 
