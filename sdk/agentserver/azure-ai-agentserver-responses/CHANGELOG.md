@@ -1,14 +1,19 @@
 # Release History
 
-## 2.0.0b0 (Unreleased)
+## 2.0.0b0 (2026-07-29)
 
 ### Features Added
 
 - Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
+- Added local `TypedDict` model contract generation for the Responses protocol, including generated type aliases, union aliases, and `py.typed` packaging support.
+- Added dict-native wire payload helpers and request validators for validating protocol payloads without depending on generated model internals.
 
 ### Breaking Changes
 
 - Removed a-prefixed async convenience generator methods from the sync `ResponseEventStream` and sync builder classes. Use `azure.ai.agentserver.responses.aio.ResponseEventStream` for async streaming convenience methods.
+- Replaced generated model classes in `azure.ai.agentserver.responses.models` with dict-native `TypedDict` contracts. Model constructors such as `ItemMessage(...)` and `CreateResponse(...)` now produce plain dictionaries instead of generated model instances.
+- Removed runtime model-class behavior from response protocol models. Code should no longer rely on attribute access, `isinstance(..., ModelType)`, `.as_dict()`, or generated model base-class behavior.
+- Replaced most generated enum classes with string literal type aliases. Use string values directly for protocol fields, for example `"completed"`, `"message"`, or `"function_call_output"`.
 
 ### Migration Guide
 
@@ -33,8 +38,49 @@ stream = ResponseEventStream(response_id=context.response_id, request=request)
 async for event in stream.output_item_message(token_stream()):
     yield event
 ```
-
 Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
+
+Protocol models are now dict-native. Construction still works, but the result is a dictionary:
+
+```python
+from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputTextContent
+
+message = ItemMessage(
+    role="user",
+    content=[MessageContentInputTextContent(type="input_text", text="hello")],
+)
+```
+
+Before:
+
+```python
+if isinstance(item, ItemMessage):
+    text = item.content[0].text
+```
+
+After:
+
+```python
+if item.get("type") == "message":
+    text = item.get("content", [{}])[0].get("text")
+```
+
+Before:
+
+```python
+status = ResponseStatus.COMPLETED
+```
+
+After:
+
+```python
+status = "completed"
+```
+
+### Other Changes
+
+- Updated response hosting, persistence, streaming, validation, samples, and tests to operate on JSON-compatible wire dictionaries.
+- Updated model generation tooling to use TypeSpec Python `models-mode=typeddict` and removed generated model shim files.
 
 ## 1.0.0b9 (2026-07-22)
 
