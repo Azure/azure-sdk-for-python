@@ -117,33 +117,39 @@ What this primitive deliberately does **not** do:
 
 The resilient `TaskManager`'s **startup recovery scan** — a network round-trip
 to the hosted task store that reclaims tasks left in-flight by a crashed prior
-instance — is **opt-in**. `AgentServerHost` runs it only when **both** of the
-following are true:
+instance — runs at startup when **either** of the following holds:
 
-1. the subsystem was explicitly enabled via `set_resilient_tasks_enabled(True)`
-   (it defaults to disabled), **and**
-2. at least one durable task has been declared (`@task` / `@multi_turn_task`).
+1. at least one durable task has been declared (`@task` / `@multi_turn_task`) —
+   an app that uses tasks gets recovery automatically, **or**
+2. it was explicitly force-enabled via `set_resilient_tasks_enabled(True)`.
 
-Call `set_resilient_tasks_enabled(True)` once, before the host starts (e.g. at
-module import). Use `resilient_tasks_enabled()` to read the current state.
+The force-enable is useful when tasks are registered *lazily* (declared after
+startup): it starts the periodic recovery loop up front so a task declared
+later is still recovered.
 
 ```python
 from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
-set_resilient_tasks_enabled(True)  # run the startup recovery scan for tasks
+set_resilient_tasks_enabled(True)  # force-enable recovery before any task
 ```
+
+Use `resilient_tasks_enabled()` to read the current switch state.
 
 The `TaskManager` itself is always constructed (a cheap, in-memory object that
 makes no task-store calls until a task is used), so `get_task_manager()` and
-`.run()` / `.start()` work regardless. Servers that never declare a task — or
-never enable the switch — simply skip the startup recovery scan and pay none of
-its latency.
+`.run()` / `.start()` work regardless of the switch. A server that neither
+declares a task nor sets the switch (e.g. an invocations-only host) simply
+skips the startup recovery scan and pays none of its latency.
 
 ### One-shot
 
 ```python
 import asyncio
-from azure.ai.agentserver.core.tasks import task, TaskContext
+from azure.ai.agentserver.core.tasks import task, TaskContext, set_resilient_tasks_enabled
+
+# Optional: force-enable recovery even before the first task is declared.
+# Declaring the @task below already enables recovery on its own.
+set_resilient_tasks_enabled(True)
 
 @task(name="summarize")
 async def summarize(ctx: TaskContext[str]) -> str:
@@ -163,7 +169,11 @@ asyncio.run(main())
 
 ```python
 import asyncio
-from azure.ai.agentserver.core.tasks import multi_turn_task, TaskContext
+from azure.ai.agentserver.core.tasks import multi_turn_task, TaskContext, set_resilient_tasks_enabled
+
+# Optional: force-enable recovery even before the first task is declared.
+# Declaring the @multi_turn_task below already enables recovery on its own.
+set_resilient_tasks_enabled(True)
 
 @multi_turn_task(name="chat")
 async def chat(ctx: TaskContext[dict]) -> dict:

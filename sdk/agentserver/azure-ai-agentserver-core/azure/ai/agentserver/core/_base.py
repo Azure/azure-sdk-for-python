@@ -323,14 +323,26 @@ class AgentServerHost(Starlette):
             #
             # The network-backed startup RECOVERY SCAN (a blocking hosted
             # task-store ``list()`` plus ``DefaultAzureCredential`` token
-            # acquisition, which would otherwise gate server readiness) runs
-            # ONLY when BOTH hold:
-            #   (1) resilient tasks were explicitly enabled via
-            #       ``set_resilient_tasks_enabled(True)`` (default False), AND
-            #   (2) the ``_REGISTERED_DESCRIPTORS`` list is non-empty (at least
-            #       one ``@task`` / ``@multi_turn_task`` was declared).
-            # So plain servers (e.g. invocations-only hosts) make no task-store
-            # call at startup, and the switch gates all eager task-store work.
+            # acquisition, which would otherwise gate server readiness) — and
+            # the periodic recovery loop it spawns — run when EITHER holds:
+            #   (1) at least one durable task was declared (``@task`` /
+            #       ``@multi_turn_task``, tracked in ``_REGISTERED_DESCRIPTORS``)
+            #       — an app that uses tasks gets recovery automatically, OR
+            #   (2) resilient tasks were explicitly enabled via
+            #       ``set_resilient_tasks_enabled(True)`` — a force-enable that
+            #       starts the recovery loop even before any task is declared,
+            #       so a task declared later is picked up by the loop.
+            # A plain server that neither declares a task nor sets the switch
+            # (e.g. an invocations-only host) makes no task-store call at
+            # startup.
+            #
+            # NOTE (deferred): if the switch is OFF and no task is declared at
+            # startup, the recovery loop is not started, so a task declared
+            # LATER in that lifetime will run but its prior-crash orphans are
+            # not scanned until the next restart. Fully closing that requires a
+            # lazy manager-start on first late registration; tracked as future
+            # work (the manager cannot be made fully async, only lazily
+            # started).
             task_manager = None
             try:
                 from .tasks._manager import (  # pylint: disable=import-outside-toplevel
@@ -345,7 +357,7 @@ class AgentServerHost(Starlette):
                 )
                 set_task_manager(task_manager)
 
-                if _resilient_tasks_enabled() and _has_registered_tasks():
+                if _resilient_tasks_enabled() or _has_registered_tasks():
                     await task_manager.startup()
                     logger.info("TaskManager initialized with startup recovery")
                 else:
