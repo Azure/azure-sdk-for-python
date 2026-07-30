@@ -46,3 +46,31 @@ def test_get_snippet_aware_sample_pylint_commands_ignores_non_python_files(tmp_p
     Path(samples_dir / "README.md").write_text("# [START example]\n", encoding="utf-8")
 
     assert get_snippet_aware_sample_pylint_commands("python", "samples_pylintrc", str(samples_dir)) == []
+
+
+def test_get_snippet_aware_sample_pylint_commands_respects_ignore_patterns(tmp_path):
+    """Files matching ignore-patterns in the rcfile must be excluded even when passed explicitly."""
+    samples_dir = tmp_path / "samples"
+    samples_dir.mkdir()
+
+    # A normal sample that should be linted
+    regular_sample = samples_dir / "sample_hello.py"
+    regular_sample.write_text("print('hello')\n", encoding="utf-8")
+
+    # conftest.py and setup.py match the ignore-patterns in samples_pylintrc
+    conftest = samples_dir / "conftest.py"
+    conftest.write_text("import pytest\n", encoding="utf-8")
+    setup = samples_dir / "setup.py"
+    setup.write_text("from setuptools import setup\n", encoding="utf-8")
+
+    # Write a minimal rcfile with the same ignore-patterns as eng/samples_pylintrc
+    rcfile = tmp_path / "samples_pylintrc"
+    rcfile.write_text("[MASTER]\nignore-patterns=conftest,setup\n", encoding="utf-8")
+
+    commands = get_snippet_aware_sample_pylint_commands("python", str(rcfile), str(samples_dir))
+
+    # Only sample_hello.py should appear; conftest.py and setup.py must be excluded
+    assert len(commands) == 1
+    assert str(regular_sample) in commands[0]
+    assert str(conftest) not in commands[0]
+    assert str(setup) not in commands[0]

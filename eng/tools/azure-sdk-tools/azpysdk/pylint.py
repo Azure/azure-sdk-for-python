@@ -1,5 +1,7 @@
 import argparse
+import configparser
 import os
+import re
 import sys
 from pathlib import Path
 
@@ -28,10 +30,26 @@ SNIPPET_SAMPLE_IMPORT_DISABLES = (
 
 def get_snippet_aware_sample_pylint_commands(executable: str, rcfile: str, samples_dir: str) -> List[List[str]]:
     """Build the normal sample command plus an exception for README snippet files."""
+    # When files are passed explicitly to pylint, ignore-patterns from the rcfile are NOT applied
+    # (they only apply during directory-based discovery). Parse and apply the patterns ourselves
+    # to preserve the same exclusion behaviour (e.g. conftest/setup files in samples/).
+    ignore_patterns: List[re.Pattern] = []
+    _config = configparser.ConfigParser()
+    _config.read(rcfile)
+    _raw = _config.get("MASTER", "ignore-patterns", fallback="")
+    if _raw:
+        ignore_patterns = [
+            re.compile(p.strip())
+            for p in _raw.replace("\n", ",").split(",")
+            if p.strip()
+        ]
+
     regular_samples: List[str] = []
     snippet_samples: List[str] = []
 
     for sample_file in sorted(Path(samples_dir).rglob("*.py")):
+        if any(pat.match(sample_file.name) for pat in ignore_patterns):
+            continue
         targets = snippet_samples if b"# [START" in sample_file.read_bytes() else regular_samples
         targets.append(str(sample_file))
 
