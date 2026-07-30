@@ -99,8 +99,8 @@ class StatsbeatConfig:
 
         Creates a new StatsbeatConfig instance with the same base configuration but an updated
         `connection_string` from the provided dictionary. The customer's `disable_offline_storage`
-        setting is preserved for DISK_RETRY reporting; statsbeat's own storage is always enabled and
-        is not controlled by OneSettings.
+        setting is preserved for DISK_RETRY reporting; sdkstats's own storage is always disabled
+        (it never persists to disk) and is not controlled by OneSettings.
 
         :param base_config: Base configuration to update
         :type base_config: StatsbeatConfig
