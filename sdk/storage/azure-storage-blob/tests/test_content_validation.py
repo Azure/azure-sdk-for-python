@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
+from unittest import mock
 
 import pytest
 from devtools_testutils import is_live, recorded_by_proxy
@@ -15,6 +16,7 @@ from devtools_testutils.storage import (
 )
 from encryption_test_helper import KeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobClient, BlobServiceClient, BlobType, ContainerClient
@@ -198,26 +200,34 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         byte_iter = TestIter(byte_data)
         str_iter = TestIter(str_data)
 
-        blob.upload_blob(byte_data, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method)
-        assert blob.download_blob().read() == byte_data
-        blob.upload_blob(
-            str_data, blob_type=a, encoding="utf-8", validate_content=b, overwrite=True, raw_request_hook=assert_method
-        )
-        assert blob.download_blob().read() == str_data_encoded
-        blob.upload_blob(byte_stream, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method)
-        assert blob.download_blob().read() == byte_data
-        blob.upload_blob(byte_iter, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method)
-        assert blob.download_blob().read() == byte_data
-        blob.upload_blob(
-            str_iter,
-            blob_type=a,
-            length=len(str_data_encoded),
-            encoding="utf-8",
-            validate_content=b,
-            overwrite=True,
-            raw_request_hook=assert_method,
-        )
-        assert blob.download_blob().read() == str_data_encoded
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(byte_data, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method)
+            assert blob.download_blob().read() == byte_data
+            blob.upload_blob(
+                str_data,
+                blob_type=a,
+                encoding="utf-8",
+                validate_content=b,
+                overwrite=True,
+                raw_request_hook=assert_method,
+            )
+            assert blob.download_blob().read() == str_data_encoded
+            blob.upload_blob(
+                byte_stream, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
+            )
+            assert blob.download_blob().read() == byte_data
+            blob.upload_blob(byte_iter, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method)
+            assert blob.download_blob().read() == byte_data
+            blob.upload_blob(
+                str_iter,
+                blob_type=a,
+                length=len(str_data_encoded),
+                encoding="utf-8",
+                validate_content=b,
+                overwrite=True,
+                raw_request_hook=assert_method,
+            )
+            assert blob.download_blob().read() == str_data_encoded
 
     @BlobPreparer()
     @pytest.mark.parametrize("a", [True, "md5", "crc64"])  # a: validate_content
@@ -238,7 +248,8 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         io = BytesIO(data)
 
         # Act
-        blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = blob.download_blob()

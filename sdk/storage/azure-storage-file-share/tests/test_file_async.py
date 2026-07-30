@@ -34,6 +34,7 @@ from azure.storage.fileshare import (
     StorageErrorCode,
 )
 from azure.storage.fileshare.aio import ShareFileClient, ShareServiceClient
+from azure.storage.fileshare import FileRange
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = "share"
@@ -1209,7 +1210,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -1241,7 +1242,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             assert md["hello"] == "world"
             assert md["number"] == "42"
             assert md["UP"] == "UPval"
-            assert not "up" in md
+            assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -1293,7 +1294,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy_async
@@ -1959,6 +1960,178 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert ranges is not None
         assert len(ranges) == 0
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        await file_client.create_file(2560)
+        data = b"abcdefghijklmnop" * 32
+        await file_client.upload_range(data, offset=0, length=512)
+        await file_client.upload_range(data * 2, offset=1024, length=1024)
+
+        # Act
+        ranges = [r async for r in file_client.list_ranges()]
+
+        # Assert
+        assert ranges is not None
+        assert len(ranges) == 2
+        assert isinstance(ranges[0], FileRange)
+        assert ranges[0].start == 0
+        assert ranges[0].end == 511
+        assert not ranges[0].cleared
+        assert ranges[1].start == 1024
+        assert ranges[1].end == 2047
+        assert not ranges[1].cleared
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges_empty(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        await file_client.create_file(1024)
+
+        # Act
+        ranges = [r async for r in file_client.list_ranges()]
+
+        # Assert
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 0
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges_offset(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        await file_client.create_file(2560)
+        data = b"abcdefghijklmnop" * 32
+        await file_client.upload_range(data * 3, offset=0, length=1536)
+        await file_client.upload_range(data, offset=2048, length=512)
+
+        # Act
+        ranges = [r async for r in file_client.list_ranges(offset=1024, length=1024)]
+
+        # Assert
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 1
+        assert ranges[0].start == 1024
+        assert ranges[0].end == 1535
+        assert not ranges[0].cleared
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges_pagination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        await file_client.create_file(3072)
+        data = b"abcdefghijklmnop" * 32
+        await file_client.upload_range(data, offset=0, length=512)
+        await file_client.upload_range(data, offset=1024, length=512)
+        await file_client.upload_range(data * 2, offset=2048, length=1024)
+
+        # Act
+        page_list = file_client.list_ranges(results_per_page=2).by_page()
+        first_page = await page_list.__anext__()
+        items_on_page1 = [r async for r in first_page]
+        second_page = await page_list.__anext__()
+        items_on_page2 = [r async for r in second_page]
+
+        # Assert
+        assert len(items_on_page1) == 2
+        assert len(items_on_page2) == 1
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_list_ranges_diff_paged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+
+        await file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = await share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        await file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = await share_client.create_snapshot()
+        await file_client.clear_range(offset=512, length=512)
+
+        # Act
+        ranges1 = [r async for r in file_client.list_ranges_diff(previous_sharesnapshot=snapshot1)]
+        ranges2 = [r async for r in file_client.list_ranges_diff(previous_sharesnapshot=snapshot2["snapshot"])]
+
+        # Assert
+        assert ranges1 is not None
+        assert isinstance(ranges1, list)
+        assert len(ranges1) == 3
+        assert ranges1[0].start == 0
+        assert ranges1[0].end == 511
+        assert not ranges1[0].cleared
+        assert ranges1[1].start == 512
+        assert ranges1[1].end == 1023
+        assert ranges1[1].cleared
+        assert ranges1[2].start == 1024
+        assert ranges1[2].end == 1535
+        assert not ranges1[2].cleared
+
+        assert ranges2 is not None
+        assert isinstance(ranges2, list)
+        assert len(ranges2) == 1
+        assert ranges2[0].start == 512
+        assert ranges2[0].end == 1023
+        assert ranges2[0].cleared
 
     @FileSharePreparer()
     @recorded_by_proxy_async
