@@ -17,6 +17,7 @@ from ._helpers import (  # pylint: disable=unused-import
     get_input_expanded,
     get_tool_choice_expanded,
 )
+from ._object_model import ResponseModel, create_response_model_type
 from .runtime import (  # pylint: disable=unused-import
     ResponseStatus,
     TerminalResponseStatus,
@@ -53,6 +54,25 @@ _generated_all = [
 ]
 
 
+def _is_request_payload_name(name: str) -> bool:
+    return name == "CreateResponse" or "Param" in name or name.endswith("Request")
+
+
+def _install_response_object_models() -> list[str]:
+    model_names: list[str] = []
+    for name in _generated_all:
+        if _is_request_payload_name(name):
+            continue
+        value = globals().get(name)
+        if isinstance(value, type):
+            globals()[name] = create_response_model_type(name, __name__)
+            model_names.append(name)
+    return model_names
+
+
+_object_model_names = _install_response_object_models()
+
+
 class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Reason a response finished as incomplete."""
 
@@ -63,6 +83,7 @@ class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 __all__ = [
+    "ResponseModel",
     "ResponseIncompleteReason",
     "ResponseStatus",
     "TerminalResponseStatus",

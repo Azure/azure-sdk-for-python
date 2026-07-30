@@ -23,6 +23,8 @@ def get_field(payload: Any, field: str, default: Any = None) -> Any:
     """
     if isinstance(payload, Mapping):
         return payload.get(field, default)
+    if hasattr(payload, field):
+        return getattr(payload, field)
     return default
 
 
@@ -52,6 +54,10 @@ def to_wire_dict(value: Any) -> Any:
         return value
     if isinstance(value, datetime):
         return int(value.timestamp())
+    if hasattr(value, "as_dict") and callable(value.as_dict):
+        return to_wire_dict(value.as_dict())
+    if hasattr(value, "to_dict") and callable(value.to_dict):
+        return to_wire_dict(value.to_dict())
     if isinstance(value, Mapping):
         return {str(k): to_wire_dict(v) for k, v in value.items()}
     if isinstance(value, (list, tuple)):
