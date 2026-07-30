@@ -673,12 +673,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
         agent_session_id = _resolve_session_id(
-            parsed,
-            payload,
-            env_session_id=config_session_id,
-            agent_reference=agent_reference,
-            response_id=response_id,
-            steerable=self._runtime_options.steerable_conversations,
+            parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
         )
 
         ctx = self._build_execution_context(

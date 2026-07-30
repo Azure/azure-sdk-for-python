@@ -189,35 +189,3 @@ def test_chain_id_steered_turn_shares_first_turn() -> None:
         previous_response_id=turn1_resp,
     ).conversation_chain_id
     assert turn1 == turn2
-
-
-def test_resolve_session_id_steerable_first_turn_matches_later_turn() -> None:
-    """A steerable first turn derives its session from its own response_id, so a
-    later steered turn (previous_response_id = turn 1) resolves the SAME session.
-
-    Exercises the real ``_resolve_session_id`` derivation (not a fixed session),
-    covering the regression where a first turn's random session could never be
-    reproduced by later steered turns — giving them a different resilient task.
-    """
-    from azure.ai.agentserver.responses.hosting._request_parsing import _resolve_session_id
-
-    agent_ref = {"name": "agentX", "version": "1"}
-    turn1_resp = IdGenerator.new_response_id("")
-
-    # Turn 1: no conversation_id / previous_response_id — steerable first turn.
-    s1 = _resolve_session_id({}, {}, agent_reference=agent_ref, response_id=turn1_resp, steerable=True)
-    # Turn 2: references turn 1 via previous_response_id.
-    turn2_resp = IdGenerator.new_response_id(turn1_resp)
-    s2 = _resolve_session_id(
-        {"previous_response_id": turn1_resp},
-        {"previous_response_id": turn1_resp},
-        agent_reference=agent_ref,
-        response_id=turn2_resp,
-        steerable=True,
-    )
-    assert s1 == s2, "steerable first turn must share the session later steered turns derive"
-
-    # Non-steerable first turns keep the original random behavior (independent of response_id).
-    r1 = _resolve_session_id({}, {}, agent_reference=agent_ref, response_id=turn1_resp, steerable=False)
-    r2 = _resolve_session_id({}, {}, agent_reference=agent_ref, response_id=turn1_resp, steerable=False)
-    assert r1 != r2, "non-steerable first turns must stay random"
