@@ -1,5 +1,11 @@
 # Release History
 
+## 4.12.0 (FAKE)
+
+### Features Added
+
+- GA release
+
 ## 4.12.0b3 (2026-07-08)
 
 ### Features Added
