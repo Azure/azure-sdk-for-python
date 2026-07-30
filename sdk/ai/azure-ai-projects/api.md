@@ -2268,6 +2268,36 @@ namespace azure.ai.projects.aio.operations
                 **kwargs: Any
             ) -> None: ...
 
+        @distributed_trace_async
+        async def create_environment(
+                self, 
+                body: Union[CreateRLEnvironmentRequest, IO[bytes]], 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace_async
+        async def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace_async
+        async def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
         def get_openenv_client(
                 self, 
                 *, 
@@ -2278,6 +2308,23 @@ namespace azure.ai.projects.aio.operations
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> AsyncOpenEnvClient: ...
+
+        @distributed_trace_async
+        async def list_environment_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> List[RLEnvironmentVersion]: ...
+
+        @distributed_trace_async
+        async def list_environments(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLEnvironmentsResponse: ...
 
 
     class azure.ai.projects.aio.operations.RLESandboxesOperations:
@@ -12202,6 +12249,36 @@ namespace azure.ai.projects.operations
             ) -> None: ...
 
         @distributed_trace
+        def create_environment(
+                self, 
+                body: Union[CreateRLEnvironmentRequest, IO[bytes]], 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def delete_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> None: ...
+
+        @distributed_trace
+        def get_environment(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
+        def get_environment_version(
+                self, 
+                name: str, 
+                version: str, 
+                **kwargs: Any
+            ) -> RLEnvironment: ...
+
+        @distributed_trace
         def get_openenv_client(
                 self, 
                 *, 
@@ -12212,6 +12289,23 @@ namespace azure.ai.projects.operations
                 poll_interval_s: float = _DEFAULT_POLL_INTERVAL_S, 
                 version: Optional[str] = ...
             ) -> OpenEnvClient: ...
+
+        @distributed_trace
+        def list_environment_versions(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> List[RLEnvironmentVersion]: ...
+
+        @distributed_trace
+        def list_environments(
+                self, 
+                *, 
+                name: Optional[str] = ..., 
+                skip: Optional[int] = ..., 
+                top: Optional[int] = ..., 
+                **kwargs: Any
+            ) -> ListRLEnvironmentsResponse: ...
 
 
     class azure.ai.projects.operations.RLESandboxesOperations:

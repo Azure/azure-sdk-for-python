@@ -14,14 +14,18 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import time
-from typing import Any, Dict, List, Mapping, Optional
+from typing import IO, Any, Dict, List, Mapping, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ...models import (
+    CreateRLEnvironmentRequest,
     CreateRLESandboxRequest,
+    ListRLEnvironmentsResponse,
+    RLEnvironment,
     RLEnvironmentState,
+    RLEnvironmentVersion,
     RLEResetRequest,
     RLESandbox,
     RLEStepRequest,
@@ -417,18 +421,119 @@ class AsyncOpenEnvClient:
 
 
 class RLEOperations:
-    """Async factory for the OpenEnv client over hosted RLE environments.
+    """Async operations for hosted RLE environments, accessed through the client's ``rle`` attribute.
 
-    Accessed through the client's ``rle`` attribute, this operation group exposes a single entry
-    point, :meth:`get_openenv_client`, which resolves a hosted RLE environment and returns an
-    :class:`AsyncOpenEnvClient`. Customers drive environments entirely through that client and the
-    :class:`AsyncOpenEnvInstance` objects it hands out (reset/step/state/health/metadata/schema); the
-    underlying environment and sandbox management operations are internal.
+    This operation group exposes environment management (:meth:`create_environment`,
+    :meth:`list_environments`, :meth:`get_environment`, :meth:`get_environment_version`,
+    :meth:`list_environment_versions`, :meth:`delete_environment_version`) alongside
+    :meth:`get_openenv_client`, which resolves a hosted RLE environment and returns an
+    :class:`AsyncOpenEnvClient`. Episodes are then driven through that client and the
+    :class:`AsyncOpenEnvInstance` objects it hands out (reset/step/state/health/metadata/schema).
     """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         self._environments = _RLEnvironmentsOperationsGenerated(*args, **kwargs)
         self._sandboxes = RLESandboxesOperations(*args, **kwargs)
+
+    @distributed_trace_async
+    async def create_environment(
+        self, body: Union[CreateRLEnvironmentRequest, IO[bytes]], **kwargs: Any
+    ) -> RLEnvironment:
+        """Create a new hosted RLE environment.
+
+        :param body: The environment to create. Is either a
+         :class:`~azure.ai.projects.models.CreateRLEnvironmentRequest` or a binary body. Required.
+        :type body: ~azure.ai.projects.models.CreateRLEnvironmentRequest or IO[bytes]
+        :return: The created RLEnvironment.
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._environments.create_environment(body, foundry_features=_RLE_FEATURE, **kwargs)
+
+    @distributed_trace_async
+    async def list_environments(
+        self,
+        *,
+        name: Optional[str] = None,
+        skip: Optional[int] = None,
+        top: Optional[int] = None,
+        **kwargs: Any,
+    ) -> ListRLEnvironmentsResponse:
+        """List all hosted RLE environments in the project.
+
+        :keyword name: Optional environment name filter. When set, returns at most a single matching
+         environment. Default value is None.
+        :paramtype name: str or None
+        :keyword skip: Number of environments to skip. Defaults to 0. Default value is None.
+        :paramtype skip: int or None
+        :keyword top: Maximum number of environments to return. Defaults to 50; valid range is
+         [1, 200]. Default value is None.
+        :paramtype top: int or None
+        :return: The list of hosted RLE environments.
+        :rtype: ~azure.ai.projects.models.ListRLEnvironmentsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._environments.list_environments(
+            foundry_features=_RLE_FEATURE, name=name, skip=skip, top=top, **kwargs
+        )
+
+    @distributed_trace_async
+    async def get_environment(self, name: str, **kwargs: Any) -> RLEnvironment:
+        """Get a hosted RLE environment by name. Returns the latest version of the environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :return: The requested RLEnvironment.
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._environments.get_environment(name, foundry_features=_RLE_FEATURE, **kwargs)
+
+    @distributed_trace_async
+    async def get_environment_version(self, name: str, version: str, **kwargs: Any) -> RLEnvironment:
+        """Get a specific version of a hosted RLE environment by name and version.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :param version: Environment version identifier. Required.
+        :type version: str
+        :return: The requested RLEnvironment at the given version.
+        :rtype: ~azure.ai.projects.models.RLEnvironment
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._environments.get_environment_version(
+            name, version, foundry_features=_RLE_FEATURE, **kwargs
+        )
+
+    @distributed_trace_async
+    async def list_environment_versions(self, name: str, **kwargs: Any) -> List[RLEnvironmentVersion]:
+        """List historical versions of a hosted RLE environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :return: The list of environment versions.
+        :rtype: list[~azure.ai.projects.models.RLEnvironmentVersion]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        return await self._environments.list_rl_environment_versions(
+            name, foundry_features=_RLE_FEATURE, **kwargs
+        )
+
+    @distributed_trace_async
+    async def delete_environment_version(self, name: str, version: str, **kwargs: Any) -> None:
+        """Delete a specific version of a hosted RLE environment.
+
+        :param name: Environment name. Required.
+        :type name: str
+        :param version: Environment version identifier. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        await self._environments.delete_environment_version(
+            name, version, foundry_features=_RLE_FEATURE, **kwargs
+        )
 
     def get_openenv_client(
         self,
