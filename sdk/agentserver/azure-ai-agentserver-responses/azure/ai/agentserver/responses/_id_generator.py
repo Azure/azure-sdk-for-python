@@ -6,9 +6,8 @@ from __future__ import annotations
 
 import base64
 import secrets
-from typing import Callable, Sequence
-
-from .models import _generated as generated_models
+from collections.abc import Mapping
+from typing import Any, Callable, Sequence
 
 
 class IdGenerator:  # pylint: disable=too-many-public-methods
@@ -41,7 +40,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         if len(prefix) == 0:
             raise ValueError("Prefix must not be empty.")
 
-        extracted, partition_key = IdGenerator._try_extract_partition_key_raw(partition_key_hint)
+        extracted, partition_key = IdGenerator._try_extract_partition_key_raw(
+            partition_key_hint
+        )
         if extracted:
             if len(partition_key) == IdGenerator._LEGACY_PARTITION_KEY_LENGTH:
                 partition_key = partition_key + IdGenerator._PARTITION_KEY_SUFFIX
@@ -250,7 +251,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("lsh", partition_key_hint)
 
     @staticmethod
-    def new_function_shell_call_output_item_id(partition_key_hint: str | None = "") -> str:
+    def new_function_shell_call_output_item_id(
+        partition_key_hint: str | None = "",
+    ) -> str:
         """Generate a new function shell call output item ID with the ``lsho`` prefix.
 
         :param partition_key_hint: An existing ID to extract the partition key from for co-location.
@@ -349,55 +352,100 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("om", partition_key_hint)
 
     @staticmethod
-    def new_item_id(item: generated_models.Item, partition_key_hint: str | None = "") -> str | None:
-        """Generate a type-specific ID for a generated Item subtype.
+    def new_item_id(
+        item: Mapping[str, Any], partition_key_hint: str | None = ""
+    ) -> str | None:
+        """Generate a type-specific ID for an item wire payload.
 
-        Dispatches to the appropriate ``new_*_item_id`` factory method based on the
-        runtime type of *item*. Returns None for ``ItemReferenceParam`` or unrecognized types.
+        Dispatches to the appropriate ``new_*_item_id`` factory method based on
+        the item ``type`` discriminator. Returns ``None`` for item references or
+        unrecognized payloads.
 
-        :param item: The generated Item instance to create an ID for.
-        :type item: generated_models.Item
+        :param item: The item wire payload to create an ID for.
+        :type item: Mapping[str, Any]
         :param partition_key_hint: An existing ID from which to extract the partition key
             for co-location. Defaults to an empty string.
         :type partition_key_hint: str | None
         :returns: A new unique ID string, or None if the item type is a reference or unrecognized.
         :rtype: str | None
         """
-        dispatch_map: tuple[tuple[type[object], Callable[..., str]], ...] = (
-            (generated_models.ItemMessage, IdGenerator.new_message_item_id),
-            (generated_models.ItemOutputMessage, IdGenerator.new_output_message_item_id),
-            (generated_models.ItemFunctionToolCall, IdGenerator.new_function_call_item_id),
-            (generated_models.FunctionCallOutputItemParam, IdGenerator.new_function_call_output_item_id),
-            (generated_models.ItemCustomToolCall, IdGenerator.new_custom_tool_call_item_id),
-            (generated_models.ItemCustomToolCallOutput, IdGenerator.new_custom_tool_call_output_item_id),
-            (generated_models.ItemComputerToolCall, IdGenerator.new_computer_call_item_id),
-            (generated_models.ComputerCallOutputItemParam, IdGenerator.new_computer_call_output_item_id),
-            (generated_models.ItemFileSearchToolCall, IdGenerator.new_file_search_call_item_id),
-            (generated_models.ItemWebSearchToolCall, IdGenerator.new_web_search_call_item_id),
-            (generated_models.ItemImageGenToolCall, IdGenerator.new_image_gen_call_item_id),
-            (generated_models.ItemCodeInterpreterToolCall, IdGenerator.new_code_interpreter_call_item_id),
-            (generated_models.ItemLocalShellToolCall, IdGenerator.new_local_shell_call_item_id),
-            (generated_models.ItemLocalShellToolCallOutput, IdGenerator.new_local_shell_call_output_item_id),
-            (generated_models.FunctionShellCallItemParam, IdGenerator.new_function_shell_call_item_id),
-            (generated_models.FunctionShellCallOutputItemParam, IdGenerator.new_function_shell_call_output_item_id),
-            (generated_models.ApplyPatchToolCallItemParam, IdGenerator.new_apply_patch_call_item_id),
-            (generated_models.ApplyPatchToolCallOutputItemParam, IdGenerator.new_apply_patch_call_output_item_id),
-            (generated_models.ItemMcpListTools, IdGenerator.new_mcp_list_tools_item_id),
-            (generated_models.ItemMcpToolCall, IdGenerator.new_mcp_call_item_id),
-            (generated_models.ItemMcpApprovalRequest, IdGenerator.new_mcp_approval_request_item_id),
-            (generated_models.MCPApprovalResponse, IdGenerator.new_mcp_approval_response_item_id),
-            (generated_models.ItemReasoningItem, IdGenerator.new_reasoning_item_id),
-            (generated_models.CompactionSummaryItemParam, IdGenerator.new_compaction_item_id),
-            (generated_models.StructuredOutputsOutputItem, IdGenerator.new_structured_output_item_id),
-        )
-
-        for model_type, generator in dispatch_map:
-            if isinstance(item, model_type):
-                return generator(partition_key_hint)
-
-        if isinstance(item, generated_models.ItemReferenceParam):
+        discriminator_dispatch: dict[str, Callable[[str | None], str]] = {
+            "message": IdGenerator.new_message_item_id,
+            "output_message": IdGenerator.new_output_message_item_id,
+            "function_call": IdGenerator.new_function_call_item_id,
+            "function_call_output": IdGenerator.new_function_call_output_item_id,
+            "custom_tool_call": IdGenerator.new_custom_tool_call_item_id,
+            "custom_tool_call_output": IdGenerator.new_custom_tool_call_output_item_id,
+            "computer_call": IdGenerator.new_computer_call_item_id,
+            "computer_call_output": IdGenerator.new_computer_call_output_item_id,
+            "file_search_call": IdGenerator.new_file_search_call_item_id,
+            "web_search_call": IdGenerator.new_web_search_call_item_id,
+            "image_generation_call": IdGenerator.new_image_gen_call_item_id,
+            "code_interpreter_call": IdGenerator.new_code_interpreter_call_item_id,
+            "local_shell_call": IdGenerator.new_local_shell_call_item_id,
+            "local_shell_call_output": IdGenerator.new_local_shell_call_output_item_id,
+            "shell_call": IdGenerator.new_function_shell_call_item_id,
+            "shell_call_output": IdGenerator.new_function_shell_call_output_item_id,
+            "apply_patch_call": IdGenerator.new_apply_patch_call_item_id,
+            "apply_patch_call_output": IdGenerator.new_apply_patch_call_output_item_id,
+            "mcp_list_tools": IdGenerator.new_mcp_list_tools_item_id,
+            "mcp_call": IdGenerator.new_mcp_call_item_id,
+            "mcp_approval_request": IdGenerator.new_mcp_approval_request_item_id,
+            "mcp_approval_response": IdGenerator.new_mcp_approval_response_item_id,
+            "reasoning": IdGenerator.new_reasoning_item_id,
+            "compaction": IdGenerator.new_compaction_item_id,
+            "compaction_summary": IdGenerator.new_compaction_item_id,
+            "structured_outputs": IdGenerator.new_structured_output_item_id,
+            "tool_search_call": lambda hint: IdGenerator.new_id("ts", hint),
+            "tool_search_output": lambda hint: IdGenerator.new_id("tso", hint),
+            "additional_tools": lambda hint: IdGenerator.new_id("adt", hint),
+            "oauth_consent_request": lambda hint: IdGenerator.new_id("oauth", hint),
+            "memory_search_call": lambda hint: IdGenerator.new_id("mem", hint),
+            "workflow_action": IdGenerator.new_workflow_action_item_id,
+            "a2a_preview_call": lambda hint: IdGenerator.new_id("a2a", hint),
+            "a2a_preview_call_output": lambda hint: IdGenerator.new_id("a2ao", hint),
+            "bing_grounding_call": lambda hint: IdGenerator.new_id("bg", hint),
+            "bing_grounding_call_output": lambda hint: IdGenerator.new_id("bgo", hint),
+            "sharepoint_grounding_preview_call": lambda hint: IdGenerator.new_id(
+                "sp", hint
+            ),
+            "sharepoint_grounding_preview_call_output": lambda hint: IdGenerator.new_id(
+                "spo", hint
+            ),
+            "azure_ai_search_call": lambda hint: IdGenerator.new_id("ais", hint),
+            "azure_ai_search_call_output": lambda hint: IdGenerator.new_id(
+                "aiso", hint
+            ),
+            "bing_custom_search_preview_call": lambda hint: IdGenerator.new_id(
+                "bcs", hint
+            ),
+            "bing_custom_search_preview_call_output": lambda hint: IdGenerator.new_id(
+                "bcso", hint
+            ),
+            "openapi_call": lambda hint: IdGenerator.new_id("oa", hint),
+            "openapi_call_output": lambda hint: IdGenerator.new_id("oao", hint),
+            "browser_automation_preview_call": lambda hint: IdGenerator.new_id(
+                "ba", hint
+            ),
+            "browser_automation_preview_call_output": lambda hint: IdGenerator.new_id(
+                "bao", hint
+            ),
+            "fabric_dataagent_preview_call": lambda hint: IdGenerator.new_id(
+                "fda", hint
+            ),
+            "fabric_dataagent_preview_call_output": lambda hint: IdGenerator.new_id(
+                "fdao", hint
+            ),
+            "azure_function_call": lambda hint: IdGenerator.new_id("azf", hint),
+            "azure_function_call_output": lambda hint: IdGenerator.new_id("azfo", hint),
+        }
+        if not isinstance(item, Mapping):
             return None
-        return None
+        item_type = item.get("type")
+        if item_type is None and ("role" in item or "content" in item):
+            item_type = "message"
+        generator = discriminator_dispatch.get(str(item_type or ""))
+        return generator(partition_key_hint) if generator else None
 
     @staticmethod
     def extract_partition_key(id_value: str) -> str:
@@ -421,7 +469,9 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         raise ValueError(f"ID '{id_value}' has unexpected body length.")
 
     @staticmethod
-    def is_valid(id_value: str | None, allowed_prefixes: Sequence[str] | None = None) -> tuple[bool, str | None]:
+    def is_valid(
+        id_value: str | None, allowed_prefixes: Sequence[str] | None = None
+    ) -> tuple[bool, str | None]:
         """Validate whether an ID string conforms to the expected format.
 
         :param id_value: The ID string to validate.
@@ -444,7 +494,10 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             return False, "ID has an empty prefix."
 
         body = id_value[delimiter_index + 1 :]
-        if len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH and len(body) != IdGenerator._LEGACY_BODY_LENGTH:
+        if (
+            len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH
+            and len(body) != IdGenerator._LEGACY_BODY_LENGTH
+        ):
             return (
                 False,
                 f"ID '{id_value}' has unexpected body length {len(body)}"
@@ -453,7 +506,10 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             )
 
         if allowed_prefixes is not None and prefix not in allowed_prefixes:
-            return False, f"ID prefix '{prefix}' is not in the allowed set [{', '.join(allowed_prefixes)}]."
+            return (
+                False,
+                f"ID prefix '{prefix}' is not in the allowed set [{', '.join(allowed_prefixes)}].",
+            )
 
         return True, None
 

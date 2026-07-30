@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import inspect
 
 from typing import Callable, List, Optional
 from urllib.parse import unquote
@@ -12,6 +13,7 @@ from azure.core.exceptions import HttpResponseError
 
 from .._deserialize import get_blob_properties_from_generated_code, load_many_xml_nodes, load_xml_int, load_xml_string
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from .._list_blobs_helper import _ARROW_CONTENT_TYPE, _parse_arrow_response
 from .._models import BlobProperties
 from .._shared.models import DictMixin
 from .._shared.response_handlers import process_storage_error, return_context_and_deserialized, return_raw_deserialized
@@ -239,3 +241,130 @@ class BlobPrefixPaged(BlobPropertiesPaged):
                 location_mode=self.location_mode,
             )
         return item
+
+
+class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
+    """An async PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
+
+    _xml_response_type = "ListBlobsFlatSegmentResponse"
+
+    def __init__(self, *args, deserializer=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._deserializer = deserializer
+        self._arrow_response = None
+
+    async def _arrow_cls(self, pipeline_response, deserialized, response_headers):
+        content_type = response_headers.get("Content-Type", "")
+        location_mode = getattr(pipeline_response.http_response, "location_mode", None)
+        # The response is Arrow only when the service returns the Arrow stream media type.
+        if _ARROW_CONTENT_TYPE in content_type:
+            raw_bytes = bytearray()
+            async for chunk in deserialized:
+                raw_bytes += chunk
+            next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
+            self._arrow_response = (next_marker, blob_items)
+            return location_mode, raw_bytes
+        if hasattr(pipeline_response.http_response, "read"):
+            read_result = pipeline_response.http_response.read()
+            if inspect.isawaitable(read_result):
+                await read_result
+        xml_response = self._deserializer(self._xml_response_type, pipeline_response.http_response)
+        self._arrow_response = None
+        return location_mode, xml_response
+
+    async def _get_next_cb(self, continuation_token):
+        try:
+            result = await self._command(
+                prefix=self.prefix,
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=self._arrow_cls,
+                use_location=self.location_mode,
+            )
+            return await result
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    async def _extract_data_cb(self, get_next_return):
+        if self._arrow_response is not None:
+            self.location_mode, _ = get_next_return
+            next_marker, self.current_page = self._arrow_response
+            self._arrow_response = None
+            return next_marker or None, self.current_page or []
+        return await super()._extract_data_cb(get_next_return)
+
+
+class ArrowBlobNamesPaged(ArrowBlobPropertiesPaged):
+    """An async Arrow-backed PageIterator that projects each list-blobs page down to blob names.
+
+    Reuses all of ``ArrowBlobPropertiesPaged``'s Arrow parsing, request routing, and XML
+    fallback, and simply yields ``blob.name`` for each item.
+    """
+
+    async def _extract_data_cb(self, get_next_return):
+        next_marker, blobs = await super()._extract_data_cb(get_next_return)
+        names = [blob.name for blob in blobs]
+        self.current_page = names  # type: ignore[assignment]
+        return next_marker, names
+
+
+class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
+    """Arrow-backed AsyncPageIterator for walk_blobs."""
+
+    _xml_response_type = "ListBlobsHierarchySegmentResponse"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = self.prefix
+        self.delimiter = kwargs.get("delimiter")
+
+    async def _extract_data_cb(self, get_next_return):
+        # Arrow hierarchy responses interleave virtual directories (BlobPrefix) with blobs,
+        # tagged by _parse_arrow_response via the "ResourceType" column.
+        if self._arrow_response is not None:
+            next_marker, page = await super()._extract_data_cb(get_next_return)
+            self.current_page = [self._build_item(item) for item in page]
+            return next_marker, self.current_page
+        # XML fallback: reuse the base to populate the response, then preserve the
+        # hierarchy's virtual directories (BlobPrefix) alongside the blobs.
+        next_marker, _ = await super()._extract_data_cb(get_next_return)
+        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        self.current_page = [self._build_item(item) for item in self.current_page]
+        self.delimiter = self._response.delimiter
+        return next_marker, self.current_page
+
+    def _build_item(self, item):
+        item = super()._build_item(item)
+        if isinstance(item, GenBlobPrefix):
+            if item.name.encoded:
+                name = unquote(item.name.content)
+            else:
+                name = item.name.content
+            return ArrowBlobPrefix(
+                self._command,
+                container=self.container,
+                prefix=name,
+                results_per_page=self.results_per_page,
+                location_mode=self.location_mode,
+                delimiter=self.delimiter,
+                deserializer=self._deserializer,
+            )
+        return item
+
+
+class ArrowBlobPrefix(BlobPrefix):
+    """An Arrow-backed virtual blob directory returned from walk_blobs.
+
+    Drilling into this prefix re-lists using the Apache Arrow operation, so nested pages
+    are parsed the same way (Arrow when available, XML otherwise)."""
+
+    def __init__(self, *args, **kwargs):
+        super(BlobPrefix, self).__init__(  # pylint: disable=bad-super-call
+            *args, page_iterator_class=ArrowBlobPrefixPaged, **kwargs
+        )
+        self.name = kwargs.get("prefix")
+        self.prefix = kwargs.get("prefix")
+        self.results_per_page = kwargs.get("results_per_page")
+        self.container = kwargs.get("container")
+        self.delimiter = kwargs.get("delimiter")
+        self.location_mode = kwargs.get("location_mode")

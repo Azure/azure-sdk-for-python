@@ -8,7 +8,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from typing import Any
 
-from ..models._generated import OutputItem
+from azure.ai.agentserver.responses.models import OutputItem
 from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
 
@@ -181,8 +181,8 @@ class _RuntimeState:
     def to_snapshot(execution: ResponseExecution) -> dict[str, Any]:
         """Build a normalized response snapshot dictionary from an execution.
 
-        Uses ``execution.response.as_dict()`` directly when a response snapshot is
-        available, avoiding an unnecessary ``Response(dict).as_dict()`` round-trip.
+        Uses the execution's response dict directly when a response snapshot is
+        available.
         Falls back to a minimal status-only dict when no response has been set yet.
 
         :param execution: The execution whose response snapshot to build.
@@ -191,7 +191,7 @@ class _RuntimeState:
         :rtype: dict[str, Any]
         """
         if execution.response is not None:
-            result: dict[str, Any] = execution.response.as_dict()
+            result: dict[str, Any] = deepcopy(execution.response)
             result.setdefault("id", execution.response_id)
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")

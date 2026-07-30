@@ -21,14 +21,16 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
-    3) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
+    4) AI_SEARCH_PROJECT_CONNECTION_ID - The AI Search project connection ID,
        as found in the "Connections" tab in your Microsoft Foundry project.
-    4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
-    5) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+    5) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
+    6) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
 """
 
 import os
 from dotenv import load_dotenv
+from util import create_version_with_endpoint
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
@@ -42,27 +44,27 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
+
+
+tool = AzureAISearchTool(
+    azure_ai_search=AzureAISearchToolResource(
+        indexes=[
+            AISearchIndexResource(
+                project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
+                index_name=os.environ["AI_SEARCH_INDEX_NAME"],
+                query_type=AzureAISearchQueryType.SIMPLE,
+            ),
+        ]
+    )
+)
 
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-    project_client.get_openai_client() as openai_client,
-):
-
-    tool = AzureAISearchTool(
-        azure_ai_search=AzureAISearchToolResource(
-            indexes=[
-                AISearchIndexResource(
-                    project_connection_id=os.environ["AI_SEARCH_PROJECT_CONNECTION_ID"],
-                    index_name=os.environ["AI_SEARCH_INDEX_NAME"],
-                    query_type=AzureAISearchQueryType.SIMPLE,
-                ),
-            ]
-        )
-    )
-
-    agent = project_client.agents.create_version(
-        agent_name="MyAgent",
+    create_version_with_endpoint(
+        project_client=project_client,
+        agent_name=agent_name,
         definition=PromptAgentDefinition(
             model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="""You are a helpful assistant. You must always provide citations for
@@ -70,9 +72,9 @@ with (
             tools=[tool],
         ),
         description="You are a helpful agent.",
-    )
-    print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
+    ),
+    project_client.get_openai_client(agent_name=agent_name) as openai_client,
+):
     # Get user input from environment variable or prompt
     user_input = os.environ.get("AI_SEARCH_USER_INPUT")
     if not user_input:
@@ -82,7 +84,6 @@ with (
         stream=True,
         tool_choice="required",
         input=user_input,
-        extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
     )
 
     for event in stream_response:
@@ -107,7 +108,3 @@ with (
         elif event.type == "response.completed":
             print("\nFollow-up completed!")
             print(f"Agent response: {event.response.output_text}")
-
-    print("\nCleaning up...")
-    project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-    print("Agent deleted")

@@ -4,13 +4,14 @@
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import itertools
 import json
 from contextvars import ContextVar
 from datetime import date, datetime, time, timedelta
-from typing import Any, Mapping
+from typing import Any, AsyncIterator, Mapping
 
-from ..models._generated import ResponseStreamEvent
+from azure.ai.agentserver.responses.models import ResponseStreamEvent
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
@@ -18,8 +19,7 @@ _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_v
 def _json_default(o: Any) -> Any:
     """JSON encoder default for datetime and bytes.
 
-    Handles datetime objects that leak through model ``as_dict()`` calls
-    by serializing to ISO-8601 strings (or Unix timestamps for datetime).
+    Serializes datetime-like values to JSON-friendly wire values.
 
     :param o: The object to encode.
     :type o: Any
@@ -68,9 +68,7 @@ def _next_sequence_number() -> int:
 
 
 def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
-    """Extract and normalize event type and payload from an event object.
-
-    Supports dict-like, model-with-``as_dict()``, and plain-object event sources.
+    """Extract and normalize event type and payload from an event mapping.
 
     :param event: The SSE event object to coerce.
     :type event: Any
@@ -78,37 +76,30 @@ def _coerce_payload(event: Any) -> tuple[str, dict[str, Any]]:
     :rtype: tuple[str, dict[str, Any]]
     :raises ValueError: If the event does not include a non-empty ``type``.
     """
-    event_type = getattr(event, "type", None)
-
-    if isinstance(event, Mapping):
-        payload = dict(event)
-        if event_type is None:
-            event_type = payload.get("type")
-    elif hasattr(event, "as_dict"):
-        payload = event.as_dict()  # type: ignore[assignment]
-        if event_type is None:
-            event_type = payload.get("type")
-    else:
-        payload = {key: value for key, value in vars(event).items() if not key.startswith("_")}
+    if not isinstance(event, Mapping):
+        raise TypeError("SSE event must be a mapping")
+    payload = event.copy() if isinstance(event, dict) else dict(event.items())
+    event_type = payload.get("type")
 
     if not event_type:
         raise ValueError("SSE event must include a non-empty 'type'")
 
     payload.pop("type", None)
+    payload.pop("_saved_at", None)
     return str(event_type), payload
 
 
 def _ensure_sequence_number(event: Any, payload: dict[str, Any]) -> None:
     """Ensure the payload has a valid ``sequence_number``, assigning one if missing.
 
-    :param event: The original event object (used for attribute fallback).
+    :param event: The original event mapping.
     :type event: Any
     :param payload: The payload dict to mutate.
     :type payload: dict[str, Any]
     :rtype: None
     """
     explicit = payload.get("sequence_number")
-    event_value = getattr(event, "sequence_number", None)
+    event_value = event.get("sequence_number") if isinstance(event, Mapping) else None
     candidate = explicit if explicit is not None else event_value
 
     if not isinstance(candidate, int) or candidate < 0:
@@ -139,17 +130,11 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
 def encode_sse_event(event: ResponseStreamEvent) -> str:
     """Encode a response stream event into SSE wire format.
 
-    :param event: Generated response stream event model.
-    :type event: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+    :param event: Response stream event wire payload.
+    :type event: ~azure.ai.agentserver.responses.models.ResponseStreamEvent
     :returns: Encoded SSE payload string.
     :rtype: str
     """
-    if hasattr(event, "as_dict"):
-        wire = event.as_dict()
-        event_type = str(wire.get("type", ""))
-        _ensure_sequence_number(event, wire)
-        return _build_sse_frame(event_type, wire)
-    # Fallback for non-model event objects (e.g. plain dataclass-like)
     event_type, payload = _coerce_payload(event)
     _ensure_sequence_number(event, payload)
     return _build_sse_frame(event_type, {"type": event_type, **payload})
@@ -177,3 +162,69 @@ def encode_keep_alive_comment(comment: str = "keep-alive") -> str:
     :rtype: str
     """
     return f": {comment}\n\n"
+
+
+async def with_keep_alive(
+    source: AsyncIterator[str],
+    interval_seconds: float | None,
+) -> AsyncIterator[str]:
+    """Interleave SSE keep-alive comment frames into ``source`` during idle gaps.
+
+    Yields the source unchanged when ``interval_seconds`` is falsy. Otherwise a keep-alive
+    comment frame is emitted whenever no upstream item arrives within ``interval_seconds``;
+    real items are never dropped or reordered. The source is advanced by a single task, so
+    any ``contextvars`` it sets (request context, SSE sequence counter) persist across the
+    whole stream.
+
+    :param source: The upstream async iterator of SSE-encoded strings.
+    :type source: AsyncIterator[str]
+    :param interval_seconds: Idle interval before emitting a keep-alive frame, or ``None`` to disable.
+    :type interval_seconds: float | None
+    :returns: An async iterator that yields the source's items plus periodic keep-alive frames.
+    :rtype: AsyncIterator[str]
+    """
+    if not interval_seconds:
+        async for item in source:
+            yield item
+        return
+
+    queue: asyncio.Queue[Any] = asyncio.Queue()
+    sentinel = object()
+    pump_error: BaseException | None = None
+
+    async def _pump() -> None:
+        nonlocal pump_error
+        try:
+            async for item in source:
+                queue.put_nowait(item)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            pump_error = exc
+        finally:
+            queue.put_nowait(sentinel)
+
+    pump_task = asyncio.ensure_future(_pump())
+    get_task: "asyncio.Future[Any] | None" = None
+    try:
+        while True:
+            if get_task is None:
+                get_task = asyncio.ensure_future(queue.get())
+            done, _ = await asyncio.wait({get_task}, timeout=interval_seconds)
+            if get_task not in done:
+                # No item within the interval; emit a heartbeat and keep the pending
+                # get_task so the next item is not dropped.
+                yield encode_keep_alive_comment()
+                continue
+            item = get_task.result()
+            get_task = None
+            if item is sentinel:
+                break
+            yield item
+        if pump_error is not None:
+            raise pump_error
+    finally:
+        # Stop the pump and any pending get, and await them so the source's finally
+        # (finalize, request-context reset) runs before returning.
+        pending = [task for task in (pump_task, get_task) if task is not None]
+        for task in pending:
+            task.cancel()
+        await asyncio.gather(*pending, return_exceptions=True)
