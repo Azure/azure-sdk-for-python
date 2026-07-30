@@ -7,13 +7,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Awaitable
-
-from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 
-__all__: list[str] = []
+__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
 
 
 def patch_sdk():
@@ -23,16 +19,3 @@ def patch_sdk():
     you can't accomplish using the techniques described in
     https://aka.ms/azsdk/python/dpcodegen/python/customize
     """
-    from ._client import DeviceUpdateClient
-
-    generated_init = DeviceUpdateClient.__init__
-    generated_send_request = DeviceUpdateClient.send_request
-
-    def __init__(self, endpoint: str, instance_id: str, credential: AsyncTokenCredential, **kwargs: Any) -> None:
-        generated_init(self, endpoint=endpoint, credential=credential, instance_id=instance_id, **kwargs)
-
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
-        return generated_send_request(self, request, **kwargs)
-
-    setattr(DeviceUpdateClient, "__init__", __init__)
-    setattr(DeviceUpdateClient, "send_request", send_request)

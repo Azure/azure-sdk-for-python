@@ -8,7 +8,6 @@
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
 from io import IOBase
-import json
 from typing import Any, Callable, IO, Iterator, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
@@ -32,12 +31,11 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
-from .. import models as _models, types as _types
 from .._configuration import DeviceUpdateClientConfiguration
-from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
 
+JSON = MutableMapping[str, Any]
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
 
@@ -553,7 +551,7 @@ def build_device_management_list_devices_request(  # pylint: disable=name-too-lo
 
 
 def build_device_management_import_devices_request(  # pylint: disable=name-too-long
-    instance_id: str, **kwargs: Any
+    instance_id: str, *, json: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -574,7 +572,7 @@ def build_device_management_import_devices_request(  # pylint: disable=name-too-
     # Construct headers
     _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, **kwargs)
 
 
 def build_device_management_get_device_request(  # pylint: disable=name-too-long
@@ -1494,21 +1492,73 @@ class DeviceUpdateOperations:
     @distributed_trace
     def list_updates(
         self, *, search: Optional[str] = None, filter: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.Update"]:
+    ) -> ItemPaged[JSON]:
         """Get a list of all updates that have been imported to Device Update for IoT Hub.
 
         :keyword search: Request updates matching a free-text search expression. Default value is None.
         :paramtype search: str
         :keyword filter: Optional to filter updates by isDeployable property. Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of Update
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.Update]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {}
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "importedDateTime": "2020-02-20 00:00:00",
+                    "manifestVersion": "str",
+                    "updateId": {
+                        "name": "str",
+                        "provider": "str",
+                        "version": "str"
+                    },
+                    "description": "str",
+                    "etag": "str",
+                    "friendlyName": "str",
+                    "installedCriteria": "str",
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",
+                                "files": [
+                                    "str"
+                                ],
+                                "handler": "str",
+                                "handlerProperties": {
+                                    "str": {}
+                                },
+                                "type": "str",
+                                "updateId": {
+                                    "name": "str",
+                                    "provider": "str",
+                                    "version": "str"
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": bool,
+                    "referencedBy": [
+                        {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "scanResult": "str",
+                    "updateType": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Update]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1559,10 +1609,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.Update],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -1578,21 +1625,13 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
-    def _import_update_initial(
-        self,
-        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
-        **kwargs: Any
-    ) -> Iterator[bytes]:
+    def _import_update_initial(self, update_to_import: Union[list[JSON], IO[bytes]], **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1608,16 +1647,18 @@ class DeviceUpdateOperations:
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
+        _json = None
         _content = None
         if isinstance(update_to_import, (IOBase, bytes)):
             _content = update_to_import
         else:
-            _content = json.dumps(update_to_import, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _json = update_to_import
 
         _request = build_device_update_import_update_request(
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -1641,11 +1682,7 @@ class DeviceUpdateOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         if response.status_code == 202:
@@ -1656,17 +1693,13 @@ class DeviceUpdateOperations:
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @overload
     def begin_import_update(
-        self,
-        update_to_import: list[_models.ImportUpdateInputItem],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, update_to_import: list[JSON], *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[None]:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
@@ -1675,37 +1708,36 @@ class DeviceUpdateOperations:
          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
          details). Required.
-        :type update_to_import: list[~azure.iot.deviceupdate.models.ImportUpdateInputItem]
+        :type update_to_import: list[JSON]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def begin_import_update(
-        self,
-        update_to_import: list[_types.ImportUpdateInputItem],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> LROPoller[None]:
-        """Import new update version. This is a long-running-operation; use Operation-Location response
-        header value to check for operation status.
+        Example:
+            .. code-block:: python
 
-        :param update_to_import: The update to be imported (see schema
-         `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
-         <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
-         details). Required.
-        :type update_to_import: list[~azure.iot.deviceupdate.types.ImportUpdateInputItem]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: An instance of LROPoller that returns None
-        :rtype: ~azure.core.polling.LROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template you can fill out and use as your body input.
+                update_to_import = [
+                    {
+                        "importManifest": {
+                            "hashes": {
+                                "str": "str"
+                            },
+                            "sizeInBytes": 0,
+                            "url": "str"
+                        },
+                        "files": [
+                            {
+                                "filename": "str",
+                                "url": "str"
+                            }
+                        ],
+                        "friendlyName": "str"
+                    }
+                ]
         """
 
     @overload
@@ -1729,20 +1761,15 @@ class DeviceUpdateOperations:
         """
 
     @distributed_trace
-    def begin_import_update(
-        self,
-        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_import_update(self, update_to_import: Union[list[JSON], IO[bytes]], **kwargs: Any) -> LROPoller[None]:
         """Import new update version. This is a long-running-operation; use Operation-Location response
         header value to check for operation status.
 
         :param update_to_import: The update to be imported (see schema
          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
-         details). Is either a [ImportUpdateInputItem] type or a IO[bytes] type. Required.
-        :type update_to_import: list[~azure.iot.deviceupdate.models.ImportUpdateInputItem] or
-         list[~azure.iot.deviceupdate.types.ImportUpdateInputItem] or IO[bytes]
+         details). Is either a [JSON] type or a IO[bytes] type. Required.
+        :type update_to_import: list[JSON] or IO[bytes]
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1802,7 +1829,7 @@ class DeviceUpdateOperations:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models.Update:
+    ) -> JSON:
         """Get a specific update version.
 
         :param provider: Update provider. Required.
@@ -1816,9 +1843,61 @@ class DeviceUpdateOperations:
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: Update. The Update is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Update
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "compatibility": [
+                        {}
+                    ],
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "importedDateTime": "2020-02-20 00:00:00",
+                    "manifestVersion": "str",
+                    "updateId": {
+                        "name": "str",
+                        "provider": "str",
+                        "version": "str"
+                    },
+                    "description": "str",
+                    "etag": "str",
+                    "friendlyName": "str",
+                    "installedCriteria": "str",
+                    "instructions": {
+                        "steps": [
+                            {
+                                "description": "str",
+                                "files": [
+                                    "str"
+                                ],
+                                "handler": "str",
+                                "handlerProperties": {
+                                    "str": {}
+                                },
+                                "type": "str",
+                                "updateId": {
+                                    "name": "str",
+                                    "provider": "str",
+                                    "version": "str"
+                                }
+                            }
+                        ]
+                    },
+                    "isDeployable": bool,
+                    "referencedBy": [
+                        {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        }
+                    ],
+                    "scanResult": "str",
+                    "updateType": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -1837,7 +1916,7 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Update] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_update_get_update_request(
             provider=provider,
@@ -1870,21 +1949,20 @@ class DeviceUpdateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Update, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     def _delete_update_initial(self, provider: str, name: str, version: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1928,11 +2006,7 @@ class DeviceUpdateOperations:
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
@@ -1940,9 +2014,9 @@ class DeviceUpdateOperations:
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @distributed_trace
     def begin_delete_update(self, provider: str, name: str, version: str, **kwargs: Any) -> LROPoller[None]:
@@ -2011,6 +2085,12 @@ class DeviceUpdateOperations:
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == "str"
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2064,10 +2144,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[str],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2083,11 +2160,7 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2102,6 +2175,12 @@ class DeviceUpdateOperations:
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == "str"
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2156,10 +2235,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[str],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2175,11 +2251,7 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2198,6 +2270,12 @@ class DeviceUpdateOperations:
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == "str"
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2254,10 +2332,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[str],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2273,11 +2348,7 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2296,6 +2367,12 @@ class DeviceUpdateOperations:
         :return: An iterator like instance of str
         :rtype: ~azure.core.paging.ItemPaged[str]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == "str"
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
@@ -2352,10 +2429,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[str],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2371,11 +2445,7 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2392,7 +2462,7 @@ class DeviceUpdateOperations:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models.UpdateFile:
+    ) -> JSON:
         """Get a specific update file from the version.
 
         :param provider: Update provider. Required.
@@ -2408,9 +2478,47 @@ class DeviceUpdateOperations:
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: UpdateFile. The UpdateFile is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.UpdateFile
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "fileId": "str",
+                    "fileName": "str",
+                    "hashes": {
+                        "str": "str"
+                    },
+                    "sizeInBytes": 0,
+                    "downloadHandler": {
+                        "id": "str"
+                    },
+                    "etag": "str",
+                    "mimeType": "str",
+                    "properties": {
+                        "str": "str"
+                    },
+                    "relatedFiles": [
+                        {
+                            "fileName": "str",
+                            "hashes": {
+                                "str": "str"
+                            },
+                            "sizeInBytes": 0,
+                            "mimeType": "str",
+                            "properties": {
+                                "str": "str"
+                            },
+                            "scanDetails": "str",
+                            "scanResult": "str"
+                        }
+                    ],
+                    "scanDetails": "str",
+                    "scanResult": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2429,7 +2537,7 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UpdateFile] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_update_get_file_request(
             provider=provider,
@@ -2463,26 +2571,25 @@ class DeviceUpdateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.UpdateFile, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_operation_statuses(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.UpdateOperation"]:
+    ) -> ItemPaged[JSON]:
         """Get a list of all import update operations. Completed operations are kept for 7 days before
         auto-deleted. Delete operations are not returned by this API version.
 
@@ -2493,14 +2600,52 @@ class DeviceUpdateOperations:
          from a collection. The service returns the number of available items up to but
          not greater than the specified value n. Default value is None.
         :paramtype top: int
-        :return: An iterator like instance of UpdateOperation
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.UpdateOperation]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "lastActionDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    },
+                    "etag": "str",
+                    "resourceLocation": "str",
+                    "traceId": "str",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.UpdateOperation]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2551,10 +2696,7 @@ class DeviceUpdateOperations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.UpdateOperation],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2570,11 +2712,7 @@ class DeviceUpdateOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -2588,7 +2726,7 @@ class DeviceUpdateOperations:
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models.UpdateOperation:
+    ) -> JSON:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier. Required.
@@ -2598,9 +2736,47 @@ class DeviceUpdateOperations:
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: UpdateOperation. The UpdateOperation is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.UpdateOperation
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "lastActionDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    },
+                    "etag": "str",
+                    "resourceLocation": "str",
+                    "traceId": "str",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2619,7 +2795,7 @@ class DeviceUpdateOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UpdateOperation] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_update_get_operation_status_request(
             operation_id=operation_id,
@@ -2650,11 +2826,7 @@ class DeviceUpdateOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
@@ -2662,12 +2834,15 @@ class DeviceUpdateOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.UpdateOperation, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
 
 class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
@@ -2688,7 +2863,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_device_classes(self, *, filter: Optional[str] = None, **kwargs: Any) -> ItemPaged["_models.DeviceClass"]:
+    def list_device_classes(self, *, filter: Optional[str] = None, **kwargs: Any) -> ItemPaged[JSON]:
         """Gets a list of all device classes (sets of devices compatible with the same updates based on
         the model Id and compat properties reported in the Device Update PnP interface in IoT Hub) for
         all devices connected to Device Update for IoT Hub.
@@ -2696,14 +2871,41 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword filter: Restricts the set of device classes returned. You can filter on friendly name.
          Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of DeviceClass
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeviceClass]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"
+                        },
+                        "contractModel": {
+                            "id": "str",
+                            "name": "str"
+                        }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "friendlyName": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeviceClass]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2753,10 +2955,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeviceClass],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -2772,25 +2971,48 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_device_class(self, device_class_id: str, **kwargs: Any) -> _models.DeviceClass:
+    def get_device_class(self, device_class_id: str, **kwargs: Any) -> JSON:
         """Gets the properties of a device class.
 
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: DeviceClass. The DeviceClass is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"
+                        },
+                        "contractModel": {
+                            "id": "str",
+                            "name": "str"
+                        }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "friendlyName": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2803,7 +3025,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeviceClass] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_class_request(
             device_class_id=device_class_id,
@@ -2832,31 +3054,30 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceClass, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     def update_device_class(
         self,
         device_class_id: str,
-        device_class_patch: _models.PatchBody,
+        device_class_patch: JSON,
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.DeviceClass:
+    ) -> JSON:
         """Update device class details.
 
         :param device_class_id: Device class identifier. Required.
@@ -2864,38 +3085,45 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :param device_class_patch: The device class json merge patch body. Currently only supports
          patching
          friendlyName. Required.
-        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody
+        :type device_class_patch: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: DeviceClass. The DeviceClass is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def update_device_class(
-        self,
-        device_class_id: str,
-        device_class_patch: _types.PatchBody,
-        *,
-        content_type: str = "application/merge-patch+json",
-        **kwargs: Any
-    ) -> _models.DeviceClass:
-        """Update device class details.
+        Example:
+            .. code-block:: python
 
-        :param device_class_id: Device class identifier. Required.
-        :type device_class_id: str
-        :param device_class_patch: The device class json merge patch body. Currently only supports
-         patching
-         friendlyName. Required.
-        :type device_class_patch: ~azure.iot.deviceupdate.types.PatchBody
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: DeviceClass. The DeviceClass is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClass
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template you can fill out and use as your body input.
+                device_class_patch = {
+                    "friendlyName": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"
+                        },
+                        "contractModel": {
+                            "id": "str",
+                            "name": "str"
+                        }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "friendlyName": "str"
+                }
         """
 
     @overload
@@ -2906,7 +3134,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/merge-patch+json",
         **kwargs: Any
-    ) -> _models.DeviceClass:
+    ) -> JSON:
         """Update device class details.
 
         :param device_class_id: Device class identifier. Required.
@@ -2918,30 +3146,85 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/merge-patch+json".
         :paramtype content_type: str
-        :return: DeviceClass. The DeviceClass is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"
+                        },
+                        "contractModel": {
+                            "id": "str",
+                            "name": "str"
+                        }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "friendlyName": "str"
+                }
         """
 
     @distributed_trace
     def update_device_class(
-        self,
-        device_class_id: str,
-        device_class_patch: Union[_models.PatchBody, _types.PatchBody, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.DeviceClass:
+        self, device_class_id: str, device_class_patch: Union[JSON, IO[bytes]], **kwargs: Any
+    ) -> JSON:
         """Update device class details.
 
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
         :param device_class_patch: The device class json merge patch body. Currently only supports
          patching
-         friendlyName. Is either a PatchBody type or a IO[bytes] type. Required.
-        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody or
-         ~azure.iot.deviceupdate.types.PatchBody or IO[bytes]
-        :return: DeviceClass. The DeviceClass is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+         friendlyName. Is either a JSON type or a IO[bytes] type. Required.
+        :type device_class_patch: JSON or IO[bytes]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                device_class_patch = {
+                    "friendlyName": "str"
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceClassProperties": {
+                        "compatProperties": {
+                            "str": "str"
+                        },
+                        "contractModel": {
+                            "id": "str",
+                            "name": "str"
+                        }
+                    },
+                    "bestCompatibleUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "friendlyName": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -2955,20 +3238,22 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DeviceClass] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
+        _json = None
         _content = None
         if isinstance(device_class_patch, (IOBase, bytes)):
             _content = device_class_patch
         else:
-            _content = json.dumps(device_class_patch, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _json = device_class_patch
 
         _request = build_device_management_update_device_class_request(
             device_class_id=device_class_id,
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -2993,21 +3278,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceClass, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_device_class(  # pylint: disable=inconsistent-return-statements
@@ -3060,11 +3344,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -3072,19 +3352,33 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_installable_updates_for_device_class(  # pylint: disable=name-too-long
         self, device_class_id: str, **kwargs: Any
-    ) -> ItemPaged["_models.UpdateInfo"]:
+    ) -> ItemPaged[JSON]:
         """Gets a list of installable updates for a device class.
 
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: An iterator like instance of UpdateInfo
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.UpdateInfo]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "updateId": {
+                        "name": "str",
+                        "provider": "str",
+                        "version": "str"
+                    },
+                    "description": "str",
+                    "friendlyName": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.UpdateInfo]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3134,10 +3428,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.UpdateInfo],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3153,18 +3444,14 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_devices(self, *, filter: Optional[str] = None, **kwargs: Any) -> ItemPaged["_models.Device"]:
+    def list_devices(self, *, filter: Optional[str] = None, **kwargs: Any) -> ItemPaged[JSON]:
         """Gets a list of devices connected to Device Update for IoT Hub.
 
         :keyword filter: Restricts the set of devices returned. You can filter on GroupId,
@@ -3172,14 +3459,68 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
          query for devices with no deployment status (that have never been deployed to). Default value
          is None.
         :paramtype filter: str
-        :return: An iterator like instance of Device
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.Device]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceId": "str",
+                    "onLatestUpdate": bool,
+                    "deploymentStatus": "str",
+                    "groupId": "str",
+                    "installedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastAttemptedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastDeploymentId": "str",
+                    "lastInstallResult": {
+                        "extendedResultCode": 0,
+                        "resultCode": 0,
+                        "resultDetails": "str",
+                        "stepResults": [
+                            {
+                                "extendedResultCode": 0,
+                                "resultCode": 0,
+                                "description": "str",
+                                "resultDetails": "str",
+                                "update": {
+                                    "updateId": {
+                                        "name": "str",
+                                        "provider": "str",
+                                        "version": "str"
+                                    },
+                                    "description": "str",
+                                    "friendlyName": "str"
+                                }
+                            }
+                        ]
+                    },
+                    "moduleId": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Device]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3229,10 +3570,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.Device],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3248,17 +3586,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
-    def _import_devices_initial(self, import_type: Union[str, _models.ImportType], **kwargs: Any) -> Iterator[bytes]:
+    def _import_devices_initial(self, import_type: str, **kwargs: Any) -> Iterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3273,13 +3607,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _content = json.dumps(import_type, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+        _json = import_type
 
         _request = build_device_management_import_devices_request(
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
-            content=_content,
+            json=_json,
             headers=_headers,
             params=_params,
         )
@@ -3302,11 +3636,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
@@ -3314,18 +3644,18 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(Iterator[bytes], deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(Iterator[bytes], deserialized)  # type: ignore
 
     @distributed_trace
-    def begin_import_devices(self, import_type: Union[str, _models.ImportType], **kwargs: Any) -> LROPoller[None]:
+    def begin_import_devices(self, import_type: str, **kwargs: Any) -> LROPoller[None]:
         """Import existing devices from IoT Hub. This is a long-running-operation; use Operation-Location
         response header value to check for operation status.
 
         :param import_type: The types of devices to import. Known values are: "Devices", "Modules", and
          "All". Required.
-        :type import_type: str or ~azure.iot.deviceupdate.models.ImportType
+        :type import_type: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -3376,15 +3706,69 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         return LROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def get_device(self, device_id: str, **kwargs: Any) -> _models.Device:
+    def get_device(self, device_id: str, **kwargs: Any) -> JSON:
         """Gets the device properties and latest deployment status for a device connected to Device Update
         for IoT Hub.
 
         :param device_id: Device identifier in Azure IoT Hub. Required.
         :type device_id: str
-        :return: Device. The Device is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Device
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceId": "str",
+                    "onLatestUpdate": bool,
+                    "deploymentStatus": "str",
+                    "groupId": "str",
+                    "installedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastAttemptedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastDeploymentId": "str",
+                    "lastInstallResult": {
+                        "extendedResultCode": 0,
+                        "resultCode": 0,
+                        "resultDetails": "str",
+                        "stepResults": [
+                            {
+                                "extendedResultCode": 0,
+                                "resultCode": 0,
+                                "description": "str",
+                                "resultDetails": "str",
+                                "update": {
+                                    "updateId": {
+                                        "name": "str",
+                                        "provider": "str",
+                                        "version": "str"
+                                    },
+                                    "description": "str",
+                                    "friendlyName": "str"
+                                }
+                            }
+                        ]
+                    },
+                    "moduleId": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3397,7 +3781,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Device] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_request(
             device_id=device_id,
@@ -3426,24 +3810,23 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Device, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_device_module(self, device_id: str, module_id: str, **kwargs: Any) -> _models.Device:
+    def get_device_module(self, device_id: str, module_id: str, **kwargs: Any) -> JSON:
         """Gets the device module properties and latest deployment status for a device module connected to
         Device Update for IoT Hub.
 
@@ -3451,9 +3834,63 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type device_id: str
         :param module_id: Device module identifier in Azure IoT Hub. Required.
         :type module_id: str
-        :return: Device. The Device is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Device
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceId": "str",
+                    "onLatestUpdate": bool,
+                    "deploymentStatus": "str",
+                    "groupId": "str",
+                    "installedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastAttemptedUpdate": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "lastDeploymentId": "str",
+                    "lastInstallResult": {
+                        "extendedResultCode": 0,
+                        "resultCode": 0,
+                        "resultDetails": "str",
+                        "stepResults": [
+                            {
+                                "extendedResultCode": 0,
+                                "resultCode": 0,
+                                "description": "str",
+                                "resultDetails": "str",
+                                "update": {
+                                    "updateId": {
+                                        "name": "str",
+                                        "provider": "str",
+                                        "version": "str"
+                                    },
+                                    "description": "str",
+                                    "friendlyName": "str"
+                                }
+                            }
+                        ]
+                    },
+                    "moduleId": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3466,7 +3903,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Device] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_module_request(
             device_id=device_id,
@@ -3496,30 +3933,40 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Device, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_update_compliance(self, **kwargs: Any) -> _models.UpdateCompliance:
+    def get_update_compliance(self, **kwargs: Any) -> JSON:
         """Gets the breakdown of how many devices are on their latest update, have new updates available,
         or are in progress receiving new updates.
 
-        :return: UpdateCompliance. The UpdateCompliance is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.UpdateCompliance
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,
+                    "onLatestUpdateDeviceCount": 0,
+                    "totalDeviceCount": 0,
+                    "updatesInProgressDeviceCount": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3532,7 +3979,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UpdateCompliance] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_update_compliance_request(
             instance_id=self._config.instance_id,
@@ -3560,38 +4007,54 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.UpdateCompliance, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def list_groups(self, *, order_by: Optional[str] = None, **kwargs: Any) -> ItemPaged["_models.Group"]:
+    def list_groups(self, *, order_by: Optional[str] = None, **kwargs: Any) -> ItemPaged[JSON]:
         """Gets a list of all device groups.  The $default group will always be returned first.
 
         :keyword order_by: Orders the set of groups returned. You can order by groupId, deviceCount,
          createdDate, subgroupsWithNewUpdatesAvailableCount,
          subgroupsWithUpdatesInProgressCount, or subgroupsOnLatestUpdateCount. Default value is None.
         :paramtype order_by: str
-        :return: An iterator like instance of Group
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.Group]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",
+                    "groupId": "str",
+                    "groupType": "str",
+                    "deployments": [
+                        "str"
+                    ],
+                    "deviceCount": 0,
+                    "subgroupsWithNewUpdatesAvailableCount": 0,
+                    "subgroupsWithOnLatestUpdateCount": 0,
+                    "subgroupsWithUpdatesInProgressCount": 0
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Group]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3641,10 +4104,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.Group],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3660,25 +4120,38 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_group(self, group_id: str, **kwargs: Any) -> _models.Group:
+    def get_group(self, group_id: str, **kwargs: Any) -> JSON:
         """Gets the device group properties.
 
         :param group_id: Group identifier. Required.
         :type group_id: str
-        :return: Group. The Group is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Group
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",
+                    "groupId": "str",
+                    "groupType": "str",
+                    "deployments": [
+                        "str"
+                    ],
+                    "deviceCount": 0,
+                    "subgroupsWithNewUpdatesAvailableCount": 0,
+                    "subgroupsWithOnLatestUpdateCount": 0,
+                    "subgroupsWithUpdatesInProgressCount": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3691,7 +4164,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Group] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_group_request(
             group_id=group_id,
@@ -3720,21 +4193,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Group, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_group(self, group_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
@@ -3785,25 +4257,32 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_update_compliance_for_group(self, group_id: str, **kwargs: Any) -> _models.UpdateCompliance:
+    def get_update_compliance_for_group(self, group_id: str, **kwargs: Any) -> JSON:
         """Get device group update compliance information such as how many devices are on their latest
         update, how many need new updates, and how many are in progress on receiving a new update.
 
         :param group_id: Group identifier. Required.
         :type group_id: str
-        :return: UpdateCompliance. The UpdateCompliance is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.UpdateCompliance
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,
+                    "onLatestUpdateDeviceCount": 0,
+                    "totalDeviceCount": 0,
+                    "updatesInProgressDeviceCount": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3816,7 +4295,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UpdateCompliance] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_update_compliance_for_group_request(
             group_id=group_id,
@@ -3845,40 +4324,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.UpdateCompliance, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def list_best_updates_for_group(
-        self, group_id: str, **kwargs: Any
-    ) -> ItemPaged["_models.DeviceClassSubgroupUpdatableDevices"]:
+    def list_best_updates_for_group(self, group_id: str, **kwargs: Any) -> ItemPaged[JSON]:
         """Get the best available updates for a device group and a count of how many devices need each
         update.
 
         :param group_id: Group identifier. Required.
         :type group_id: str
-        :return: An iterator like instance of DeviceClassSubgroupUpdatableDevices
-        :rtype:
-         ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeviceClassSubgroupUpdatableDevices]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceCount": 0,
+                    "groupId": "str",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeviceClassSubgroupUpdatableDevices]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -3928,10 +4422,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeviceClassSubgroupUpdatableDevices],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -3947,11 +4438,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -3960,7 +4447,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def list_deployments_for_group(
         self, group_id: str, *, order_by: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.Deployment"]:
+    ) -> ItemPaged[JSON]:
         """Gets a list of deployments for a device group.
 
         :param group_id: Group identifier. Required.
@@ -3968,14 +4455,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
         :paramtype order_by: str
-        :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.Deployment]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Deployment]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4026,10 +4554,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.Deployment],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4045,27 +4570,64 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> _models.Deployment:
+    def get_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Gets the deployment properties.
 
         :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4078,7 +4640,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_deployment_request(
             group_id=group_id,
@@ -4108,32 +4670,31 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @overload
     def create_or_update_deployment(
         self,
         group_id: str,
         deployment_id: str,
-        deployment: _models.Deployment,
+        deployment: JSON,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Deployment:
+    ) -> JSON:
         """Creates or updates a deployment.
 
         :param group_id: Group identifier. Required.
@@ -4141,39 +4702,92 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
         :param deployment: The deployment properties. Required.
-        :type deployment: ~azure.iot.deviceupdate.models.Deployment
+        :type deployment: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def create_or_update_deployment(
-        self,
-        group_id: str,
-        deployment_id: str,
-        deployment: _types.Deployment,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.Deployment:
-        """Creates or updates a deployment.
+        Example:
+            .. code-block:: python
 
-        :param group_id: Group identifier. Required.
-        :type group_id: str
-        :param deployment_id: Deployment identifier. Required.
-        :type deployment_id: str
-        :param deployment: The deployment properties. Required.
-        :type deployment: ~azure.iot.deviceupdate.types.Deployment
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template you can fill out and use as your body input.
+                deployment = {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
 
     @overload
@@ -4185,7 +4799,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.Deployment:
+    ) -> JSON:
         """Creates or updates a deployment.
 
         :param group_id: Group identifier. Required.
@@ -4197,32 +4811,147 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
 
     @distributed_trace
     def create_or_update_deployment(
-        self,
-        group_id: str,
-        deployment_id: str,
-        deployment: Union[_models.Deployment, _types.Deployment, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.Deployment:
+        self, group_id: str, deployment_id: str, deployment: Union[JSON, IO[bytes]], **kwargs: Any
+    ) -> JSON:
         """Creates or updates a deployment.
 
         :param group_id: Group identifier. Required.
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :param deployment: The deployment properties. Is either a Deployment type or a IO[bytes] type.
+        :param deployment: The deployment properties. Is either a JSON type or a IO[bytes] type.
          Required.
-        :type deployment: ~azure.iot.deviceupdate.models.Deployment or
-         ~azure.iot.deviceupdate.types.Deployment or IO[bytes]
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :type deployment: JSON or IO[bytes]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                deployment = {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4236,14 +4965,15 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
+        _json = None
         _content = None
         if isinstance(deployment, (IOBase, bytes)):
             _content = deployment
         else:
-            _content = json.dumps(deployment, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _json = deployment
 
         _request = build_device_management_create_or_update_deployment_request(
             group_id=group_id,
@@ -4251,6 +4981,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -4275,21 +5006,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_deployment(  # pylint: disable=inconsistent-return-statements
@@ -4340,17 +5070,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def get_deployment_status(self, group_id: str, deployment_id: str, **kwargs: Any) -> _models.DeploymentStatus:
+    def get_deployment_status(self, group_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
@@ -4358,9 +5084,60 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: DeploymentStatus. The DeploymentStatus is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeploymentStatus
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentState": "str",
+                    "groupId": "str",
+                    "subgroupStatus": [
+                        {
+                            "deploymentState": "str",
+                            "deviceClassId": "str",
+                            "groupId": "str",
+                            "devicesCanceledCount": 0,
+                            "devicesCompletedFailedCount": 0,
+                            "devicesCompletedSucceededCount": 0,
+                            "devicesInProgressCount": 0,
+                            "error": {
+                                "code": "str",
+                                "message": "str",
+                                "details": [
+                                    ...
+                                ],
+                                "innererror": {
+                                    "code": "str",
+                                    "errorDetail": "str",
+                                    "innerError": ...,
+                                    "message": "str"
+                                },
+                                "occurredDateTime": "2020-02-20 00:00:00",
+                                "target": "str"
+                            },
+                            "totalDevices": 0
+                        }
+                    ],
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4373,7 +5150,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeploymentStatus] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_deployment_status_request(
             group_id=group_id,
@@ -4403,26 +5180,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeploymentStatus, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_device_class_subgroups_for_group(
         self, group_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.DeviceClassSubgroup"]:
+    ) -> ItemPaged[JSON]:
         """Get the device class subgroups for the group. A device class subgroup is the set of devices
         within the group that share the same device class. All devices within the same device class are
         compatible with the same updates.
@@ -4433,14 +5209,26 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
          properties by name and value. (i.e. filter=compatProperties/propertyName1 eq
          'value1' and compatProperties/propertyName2 eq 'value2'). Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of DeviceClassSubgroup
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeviceClassSubgroup]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",
+                    "deviceClassId": "str",
+                    "groupId": "str",
+                    "deploymentId": "str",
+                    "deviceCount": 0
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeviceClassSubgroup]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4491,10 +5279,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeviceClassSubgroup],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4510,20 +5295,14 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_device_class_subgroup(
-        self, group_id: str, device_class_id: str, **kwargs: Any
-    ) -> _models.DeviceClassSubgroup:
+    def get_device_class_subgroup(self, group_id: str, device_class_id: str, **kwargs: Any) -> JSON:
         """Gets device class subgroup details. A device class subgroup is the set of devices within the
         group that share the same device class. All devices within the same device class are compatible
         with the same updates.
@@ -4532,9 +5311,21 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: DeviceClassSubgroup. The DeviceClassSubgroup is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClassSubgroup
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",
+                    "deviceClassId": "str",
+                    "groupId": "str",
+                    "deploymentId": "str",
+                    "deviceCount": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4547,7 +5338,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeviceClassSubgroup] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_class_subgroup_request(
             group_id=group_id,
@@ -4577,21 +5368,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceClassSubgroup, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_device_class_subgroup(  # pylint: disable=inconsistent-return-statements
@@ -4647,11 +5437,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -4659,7 +5445,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_device_class_subgroup_update_compliance(  # pylint: disable=name-too-long
         self, group_id: str, device_class_id: str, **kwargs: Any
-    ) -> _models.UpdateCompliance:
+    ) -> JSON:
         """Get device class subgroup update compliance information such as how many devices are on their
         latest update, how many need new updates, and how many are in progress on receiving a new
         update.
@@ -4668,9 +5454,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: UpdateCompliance. The UpdateCompliance is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.UpdateCompliance
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "newUpdatesAvailableDeviceCount": 0,
+                    "onLatestUpdateDeviceCount": 0,
+                    "totalDeviceCount": 0,
+                    "updatesInProgressDeviceCount": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4683,7 +5480,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.UpdateCompliance] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_class_subgroup_update_compliance_request(
             group_id=group_id,
@@ -4713,26 +5510,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.UpdateCompliance, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_best_updates_for_device_class_subgroup(  # pylint: disable=name-too-long
         self, group_id: str, device_class_id: str, **kwargs: Any
-    ) -> _models.DeviceClassSubgroupUpdatableDevices:
+    ) -> JSON:
         """Get the best available update for a device class subgroup and a count of how many devices need
         this update.
 
@@ -4740,10 +5536,28 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type group_id: str
         :param device_class_id: Device class identifier. Required.
         :type device_class_id: str
-        :return: DeviceClassSubgroupUpdatableDevices. The DeviceClassSubgroupUpdatableDevices is
-         compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClassSubgroupUpdatableDevices
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceClassId": "str",
+                    "deviceCount": 0,
+                    "groupId": "str",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4756,7 +5570,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeviceClassSubgroupUpdatableDevices] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_best_updates_for_device_class_subgroup_request(
             group_id=group_id,
@@ -4786,26 +5600,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceClassSubgroupUpdatableDevices, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_deployments_for_device_class_subgroup(  # pylint: disable=name-too-long
         self, group_id: str, device_class_id: str, *, order_by: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.Deployment"]:
+    ) -> ItemPaged[JSON]:
         """Gets a list of deployments for a device class subgroup.
 
         :param group_id: Group identifier. Required.
@@ -4815,14 +5628,55 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword order_by: Orders the set of deployments returned. You can order by start date. Default
          value is None.
         :paramtype order_by: str
-        :return: An iterator like instance of Deployment
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.Deployment]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.Deployment]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4874,10 +5728,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.Deployment],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -4893,11 +5744,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -4906,7 +5753,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
     @distributed_trace
     def get_deployment_for_device_class_subgroup(
         self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
-    ) -> _models.Deployment:
+    ) -> JSON:
         """Gets the deployment properties.
 
         :param group_id: Group identifier. Required.
@@ -4915,9 +5762,50 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type device_class_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -4930,7 +5818,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_deployment_for_device_class_subgroup_request(
             group_id=group_id,
@@ -4961,21 +5849,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements,name-too-long
@@ -5029,19 +5916,13 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def stop_deployment(
-        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
-    ) -> _models.Deployment:
+    def stop_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Stops a deployment.
 
         :param group_id: Group identifier. Required.
@@ -5050,9 +5931,50 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type device_class_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5065,7 +5987,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_stop_deployment_request(
             group_id=group_id,
@@ -5096,26 +6018,23 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def retry_deployment(
-        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
-    ) -> _models.Deployment:
+    def retry_deployment(self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any) -> JSON:
         """Retries a deployment with failed devices.
 
         :param group_id: Group identifier. Required.
@@ -5124,9 +6043,50 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type device_class_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: Deployment. The Deployment is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.Deployment
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentId": "str",
+                    "groupId": "str",
+                    "startDateTime": "2020-02-20 00:00:00",
+                    "update": {
+                        "updateId": {
+                            "name": "str",
+                            "provider": "str",
+                            "version": "str"
+                        },
+                        "description": "str",
+                        "friendlyName": "str"
+                    },
+                    "deviceClassSubgroups": [
+                        "str"
+                    ],
+                    "downloadSecurity": "str",
+                    "isCanceled": bool,
+                    "isCloudInitiatedRollback": bool,
+                    "isRetried": bool,
+                    "rollbackPolicy": {
+                        "failure": {
+                            "devicesFailedCount": 0,
+                            "devicesFailedPercentage": 0
+                        },
+                        "update": {
+                            "updateId": {
+                                "name": "str",
+                                "provider": "str",
+                                "version": "str"
+                            },
+                            "description": "str",
+                            "friendlyName": "str"
+                        }
+                    }
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5139,7 +6099,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Deployment] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_retry_deployment_request(
             group_id=group_id,
@@ -5170,26 +6130,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.Deployment, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def get_device_class_subgroup_deployment_status(  # pylint: disable=name-too-long
         self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
-    ) -> _models.DeviceClassSubgroupDeploymentStatus:
+    ) -> JSON:
         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
         in progress, completed, or failed.
 
@@ -5199,10 +6158,39 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :type device_class_id: str
         :param deployment_id: Deployment identifier. Required.
         :type deployment_id: str
-        :return: DeviceClassSubgroupDeploymentStatus. The DeviceClassSubgroupDeploymentStatus is
-         compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceClassSubgroupDeploymentStatus
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentState": "str",
+                    "deviceClassId": "str",
+                    "groupId": "str",
+                    "devicesCanceledCount": 0,
+                    "devicesCompletedFailedCount": 0,
+                    "devicesCompletedSucceededCount": 0,
+                    "devicesInProgressCount": 0,
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    },
+                    "totalDevices": 0
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5215,7 +6203,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeviceClassSubgroupDeploymentStatus] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_device_class_subgroup_deployment_status_request(
             group_id=group_id,
@@ -5246,26 +6234,25 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceClassSubgroupDeploymentStatus, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_device_states_for_device_class_subgroup_deployment(  # pylint: disable=name-too-long
         self, group_id: str, device_class_id: str, deployment_id: str, *, filter: Optional[str] = None, **kwargs: Any
-    ) -> ItemPaged["_models.DeploymentDeviceState"]:
+    ) -> ItemPaged[JSON]:
         """Gets a list of devices in a deployment along with their state. Useful for getting a list of
         failed devices.
 
@@ -5278,14 +6265,26 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword filter: Restricts the set of deployment device states returned. You can filter on
          deviceId and moduleId and/or deviceState. Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of DeploymentDeviceState
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeploymentDeviceState]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceId": "str",
+                    "deviceState": "str",
+                    "movedOnToNewDeployment": bool,
+                    "retryCount": 0,
+                    "moduleId": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeploymentDeviceState]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5338,10 +6337,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeploymentDeviceState],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5357,11 +6353,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -5375,7 +6367,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         etag: Optional[str] = None,
         match_condition: Optional[MatchConditions] = None,
         **kwargs: Any
-    ) -> _models.DeviceOperation:
+    ) -> JSON:
         """Retrieve operation status.
 
         :param operation_id: Operation identifier. Required.
@@ -5385,9 +6377,37 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :paramtype etag: str
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
-        :return: DeviceOperation. The DeviceOperation is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.DeviceOperation
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "lastActionDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    },
+                    "etag": "str",
+                    "traceId": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5406,7 +6426,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeviceOperation] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_operation_status_request(
             operation_id=operation_id,
@@ -5437,11 +6457,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         response_headers = {}
         response_headers["Retry-After"] = self._deserialize("str", response.headers.get("Retry-After"))
@@ -5449,17 +6465,20 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeviceOperation, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
     def list_operation_statuses(
         self, *, filter: Optional[str] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> ItemPaged["_models.DeviceOperation"]:
+    ) -> ItemPaged[JSON]:
         """Get a list of all device import operations. Completed operations are kept for 7 days before
         auto-deleted.
 
@@ -5470,14 +6489,42 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
          from a collection. The service returns the number of available items up to but
          not greater than the specified value n. Default value is None.
         :paramtype top: int
-        :return: An iterator like instance of DeviceOperation
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeviceOperation]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",
+                    "lastActionDateTime": "2020-02-20 00:00:00",
+                    "operationId": "str",
+                    "status": "str",
+                    "error": {
+                        "code": "str",
+                        "message": "str",
+                        "details": [
+                            ...
+                        ],
+                        "innererror": {
+                            "code": "str",
+                            "errorDetail": "str",
+                            "innerError": ...,
+                            "message": "str"
+                        },
+                        "occurredDateTime": "2020-02-20 00:00:00",
+                        "target": "str"
+                    },
+                    "etag": "str",
+                    "traceId": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeviceOperation]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5528,10 +6575,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeviceOperation],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5547,11 +6591,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
@@ -5559,48 +6599,53 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
     @overload
     def start_log_collection(
-        self,
-        log_collection_id: str,
-        log_collection: _models.LogCollection,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.LogCollection:
+        self, log_collection_id: str, log_collection: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Start the device diagnostics log collection on specified devices.
 
         :param log_collection_id: Log collection identifier. Required.
         :type log_collection_id: str
         :param log_collection: The log collection properties. Required.
-        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection
+        :type log_collection: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LogCollection. The LogCollection is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollection
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
-        """
 
-    @overload
-    def start_log_collection(
-        self,
-        log_collection_id: str,
-        log_collection: _types.LogCollection,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.LogCollection:
-        """Start the device diagnostics log collection on specified devices.
+        Example:
+            .. code-block:: python
 
-        :param log_collection_id: Log collection identifier. Required.
-        :type log_collection_id: str
-        :param log_collection: The log collection properties. Required.
-        :type log_collection: ~azure.iot.deviceupdate.types.LogCollection
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: LogCollection. The LogCollection is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollection
-        :raises ~azure.core.exceptions.HttpResponseError:
+                # JSON input template you can fill out and use as your body input.
+                log_collection = {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
 
     @overload
@@ -5611,7 +6656,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.LogCollection:
+    ) -> JSON:
         """Start the device diagnostics log collection on specified devices.
 
         :param log_collection_id: Log collection identifier. Required.
@@ -5621,29 +6666,76 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LogCollection. The LogCollection is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollection
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
 
     @distributed_trace
     def start_log_collection(
-        self,
-        log_collection_id: str,
-        log_collection: Union[_models.LogCollection, _types.LogCollection, IO[bytes]],
-        **kwargs: Any
-    ) -> _models.LogCollection:
+        self, log_collection_id: str, log_collection: Union[JSON, IO[bytes]], **kwargs: Any
+    ) -> JSON:
         """Start the device diagnostics log collection on specified devices.
 
         :param log_collection_id: Log collection identifier. Required.
         :type log_collection_id: str
-        :param log_collection: The log collection properties. Is either a LogCollection type or a
-         IO[bytes] type. Required.
-        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection or
-         ~azure.iot.deviceupdate.types.LogCollection or IO[bytes]
-        :return: LogCollection. The LogCollection is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollection
+        :param log_collection: The log collection properties. Is either a JSON type or a IO[bytes]
+         type. Required.
+        :type log_collection: JSON or IO[bytes]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                log_collection = {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
+
+                # response body for status code(s): 201
+                response == {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5657,20 +6749,22 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LogCollection] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
+        _json = None
         _content = None
         if isinstance(log_collection, (IOBase, bytes)):
             _content = log_collection
         else:
-            _content = json.dumps(log_collection, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+            _json = log_collection
 
         _request = build_device_management_start_log_collection_request(
             log_collection_id=log_collection_id,
             instance_id=self._config.instance_id,
             content_type=content_type,
             api_version=self._config.api_version,
+            json=_json,
             content=_content,
             headers=_headers,
             params=_params,
@@ -5695,31 +6789,48 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.LogCollection, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def get_log_collection(self, log_collection_id: str, **kwargs: Any) -> _models.LogCollection:
+    def get_log_collection(self, log_collection_id: str, **kwargs: Any) -> JSON:
         """Get the device diagnostics log collection.
 
         :param log_collection_id: Log collection identifier. Required.
         :type log_collection_id: str
-        :return: LogCollection. The LogCollection is compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollection
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5732,7 +6843,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.LogCollection] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_log_collection_request(
             log_collection_id=log_collection_id,
@@ -5761,34 +6872,51 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.LogCollection, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def list_log_collections(self, **kwargs: Any) -> ItemPaged["_models.LogCollection"]:
+    def list_log_collections(self, **kwargs: Any) -> ItemPaged[JSON]:
         """Get all device diagnostics log collections.
 
-        :return: An iterator like instance of LogCollection
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.LogCollection]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceList": [
+                        {
+                            "deviceId": "str",
+                            "moduleId": "str"
+                        }
+                    ],
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.LogCollection]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5837,10 +6965,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.LogCollection],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -5856,28 +6981,43 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_log_collection_detailed_status(
-        self, log_collection_id: str, **kwargs: Any
-    ) -> _models.LogCollectionOperationDetailedStatus:
+    def get_log_collection_detailed_status(self, log_collection_id: str, **kwargs: Any) -> JSON:
         """Get log collection with detailed status.
 
         :param log_collection_id: Log collection identifier. Required.
         :type log_collection_id: str
-        :return: LogCollectionOperationDetailedStatus. The LogCollectionOperationDetailedStatus is
-         compatible with MutableMapping
-        :rtype: ~azure.iot.deviceupdate.models.LogCollectionOperationDetailedStatus
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "str",
+                    "description": "str",
+                    "deviceStatus": [
+                        {
+                            "deviceId": "str",
+                            "status": "str",
+                            "extendedResultCode": "str",
+                            "logLocation": "str",
+                            "moduleId": "str",
+                            "resultCode": "str"
+                        }
+                    ],
+                    "lastActionDateTime": "str",
+                    "operationId": "str",
+                    "status": "str"
+                }
         """
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5890,7 +7030,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.LogCollectionOperationDetailedStatus] = kwargs.pop("cls", None)
+        cls: ClsType[JSON] = kwargs.pop("cls", None)
 
         _request = build_device_management_get_log_collection_detailed_status_request(
             log_collection_id=log_collection_id,
@@ -5919,37 +7059,53 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.LogCollectionOperationDetailedStatus, response.json())
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return cls(pipeline_response, cast(JSON, deserialized), {})  # type: ignore
 
-        return deserialized  # type: ignore
+        return cast(JSON, deserialized)  # type: ignore
 
     @distributed_trace
-    def list_health_of_devices(self, *, filter: str, **kwargs: Any) -> ItemPaged["_models.DeviceHealth"]:
+    def list_health_of_devices(self, *, filter: str, **kwargs: Any) -> ItemPaged[JSON]:
         """Get list of device health.
 
         :keyword filter: Restricts the set of devices for which device health is returned. You can
          filter on status, device id and module id. Required.
         :paramtype filter: str
-        :return: An iterator like instance of DeviceHealth
-        :rtype: ~azure.core.paging.ItemPaged[~azure.iot.deviceupdate.models.DeviceHealth]
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deviceId": "str",
+                    "healthChecks": [
+                        {
+                            "name": "str",
+                            "result": "str"
+                        }
+                    ],
+                    "state": "str",
+                    "digitalTwinModelId": "str",
+                    "moduleId": "str"
+                }
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[list[_models.DeviceHealth]] = kwargs.pop("cls", None)
+        cls: ClsType[list[JSON]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -5999,10 +7155,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                list[_models.DeviceHealth],
-                deserialized.get("value", []),
-            )
+            list_of_elem = deserialized.get("value", [])
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -6018,11 +7171,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 

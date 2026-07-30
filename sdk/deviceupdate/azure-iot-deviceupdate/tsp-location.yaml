@@ -1,4 +1,4 @@
 directory: specification/deviceupdate/data-plane/duiothub
-commit: 67ffbb6bee462e36bcdd3b93cffca6942c3a35f7
+commit: a1e083316c4db68aac174e4039aa47c618ba41c1
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 
