@@ -41,7 +41,6 @@ from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
-    AsyncRetryPolicy,
     HttpLoggingPolicy,
     SensitiveHeaderCleanupPolicy,
 )

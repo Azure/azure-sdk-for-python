@@ -695,7 +695,7 @@ def test_cache_model_equality():
 
 def test_dictionary_set_datetime():
     """Test that dictionary with datetime values properly serializes/deserializes."""
-    from datetime import datetime, timezone
+    from datetime import timezone
 
     class MyModel(HybridModel):
         my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])

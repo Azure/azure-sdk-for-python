@@ -23,6 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint: disable=reimported
 from typing import Iterable, MutableSequence, Union
 
 import pytest

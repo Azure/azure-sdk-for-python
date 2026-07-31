@@ -33,7 +33,7 @@ except ImportError:
 import pytest
 
 from azure.core import AsyncPipelineClient
-from azure.core.polling import *
+from azure.core.polling import NoPolling, AsyncNoPolling, AsyncPollingMethod, AsyncLROPoller
 from azure.core.exceptions import ServiceResponseError
 
 # from msrest.serialization import Model

@@ -49,7 +49,6 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HttpLoggingPolicy,
     HTTPPolicy,
-    SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section

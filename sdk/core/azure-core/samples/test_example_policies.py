@@ -32,7 +32,6 @@ def test_example_raw_response_hook():
 
     from azure.core.pipeline import Pipeline
     from azure.core.rest import HttpRequest
-    from azure.core.pipeline.policies import RedirectPolicy, UserAgentPolicy
     from azure.core.pipeline.transport import RequestsTransport
     from azure.core.pipeline.policies import CustomHookPolicy
 
