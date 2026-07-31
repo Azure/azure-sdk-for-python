@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+# pylint: disable=line-too-long,useless-suppression
 from http.client import HTTPConnection
 from collections import OrderedDict
 import logging

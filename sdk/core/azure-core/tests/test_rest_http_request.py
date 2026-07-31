@@ -7,6 +7,7 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
+# pylint: disable=line-too-long,useless-suppression
 import io
 import sys
 import os

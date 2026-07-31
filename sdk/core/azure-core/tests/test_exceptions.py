@@ -260,7 +260,8 @@ class TestExceptions(object):
                             "code": "Conflict",
                             "message": "The maximum number of Free ServerFarms allowed in a Subscription is 10.",
                             "extendedCode": "59301",
-                            "messageTemplate": "The maximum number of {0} ServerFarms allowed in a Subscription is {1}.",
+                            "messageTemplate": "The maximum number of {0} ServerFarms allowed "
+                            "in a Subscription is {1}.",
                             "parameters": ["Free", "10"],
                             "innerErrors": None,
                         }
@@ -292,9 +293,9 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert (
-            str(ex.value)
-            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}'
+        assert str(ex.value) == (
+            "Operation returned an invalid status 'BAD REQUEST'\n"
+            'Content: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]}}'
         )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -303,9 +304,9 @@ class TestExceptions(object):
         response = client.send_request(request)
         with pytest.raises(HttpResponseError) as ex:
             response.raise_for_status()
-        assert (
-            str(ex.value)
-            == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
+        assert str(ex.value) == (
+            "Operation returned an invalid status 'BAD REQUEST'\n"
+            'Content: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
         )
 
     @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

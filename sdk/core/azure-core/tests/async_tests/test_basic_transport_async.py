@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import asyncio
 from unittest import mock
