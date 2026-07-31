@@ -114,9 +114,9 @@ class FoundryStorage(AsyncStorageBase):
     one key).
 
     Subclasses :class:`~microsoft_agents.hosting.core.storage.AsyncStorageBase`,
-    which implements the batch :meth:`read` / :meth:`write` / :meth:`delete`
-    (validation + concurrent fan-out) in terms of the single-item
-    ``_read_item`` / ``_write_item`` / ``_delete_item`` hooks below.
+    and implements the batch :meth:`read` / :meth:`write` / :meth:`delete`
+    methods in terms of the single-item ``_read_item`` / ``_write_item`` /
+    ``_delete_item`` hooks below.
 
     :keyword credential: Async token credential shared by every per-key store.
         Defaults to ``DefaultAzureCredential`` (requires ``azure-identity``).
@@ -305,6 +305,60 @@ class FoundryStorage(AsyncStorageBase):
         :rtype: None
         """
         await self.aclose()
+
+    async def read(
+        self,
+        keys: list[str],
+        *,
+        target_cls: type[StoreItemT] | None = None,
+        **kwargs: Any,
+    ) -> dict[str, StoreItemT]:
+        """Read a batch of M365 storage keys.
+
+        :param keys: M365 storage keys to read.
+        :type keys: list[str]
+        :keyword target_cls: The ``StoreItem`` subclass to deserialize into.
+        :paramtype target_cls: type[StoreItemT] | None
+        :return: Mapping of found keys to deserialized store items.
+        :rtype: dict[str, StoreItemT]
+        :raises ValueError: If ``keys`` is empty or ``target_cls`` is ``None``.
+        """
+        if not keys:
+            raise ValueError("Keys are required")
+        if target_cls is None:
+            raise ValueError("target_cls cannot be None")
+        results = await asyncio.gather(
+            *(self._read_item(key, target_cls=target_cls, **kwargs) for key in keys)
+        )
+        return {
+            key: value
+            for key, value in results
+            if key is not None and value is not None
+        }
+
+    async def write(self, changes: dict[str, StoreItemT]) -> None:
+        """Write a batch of M365 storage items.
+
+        :param changes: Mapping of M365 storage keys to store items.
+        :type changes: dict[str, StoreItemT]
+        :raises ValueError: If ``changes`` is empty.
+        """
+        if not changes:
+            raise ValueError("Changes are required")
+        await asyncio.gather(
+            *(self._write_item(key, value) for key, value in changes.items())
+        )
+
+    async def delete(self, keys: list[str]) -> None:
+        """Delete a batch of M365 storage keys.
+
+        :param keys: M365 storage keys to delete.
+        :type keys: list[str]
+        :raises ValueError: If ``keys`` is empty.
+        """
+        if not keys:
+            raise ValueError("Keys are required")
+        await asyncio.gather(*(self._delete_item(key) for key in keys))
 
     async def _read_item(
         self,
