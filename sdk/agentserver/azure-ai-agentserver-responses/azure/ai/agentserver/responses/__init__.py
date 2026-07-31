@@ -6,6 +6,7 @@ from ._version import VERSION
 
 __version__ = VERSION
 
+from . import _data_url as data_url
 from ._options import ResponsesServerOptions
 from ._response_context import PlatformContext, ResponseContext
 from .hosting._routing import ResponsesAgentServerHost
@@ -28,6 +29,7 @@ from .streaming._text_response import TextResponse
 
 __all__ = [
     "__version__",
+    "data_url",  # pylint: disable=naming-mismatch
     "ResponsesAgentServerHost",
     "ResponseContext",
     "PlatformContext",
