@@ -1,0 +1,2752 @@
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/CHANGELOG.md b/sdk/deviceupdate/azure-iot-deviceupdate/CHANGELOG.md
+index 2c82bfd62b..992f0a2c7e 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/CHANGELOG.md
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/CHANGELOG.md
+@@ -1,19 +1,8 @@
+ # Release History
+ 
+-## 1.1.0 (2026-06-15)
++## 1.1.0 (2026-07-29)
+ 
+-### Features Added
+-
+-- Regenerated client from TypeSpec specification. The library now uses the unified
+-  `azure.core` HTTP pipeline and shares model infrastructure with other modern
+-  Azure Python SDKs.
+-
+-### Other Changes
+-
+-- Migrated source of truth from Swagger to TypeSpec
+-  (`specification/deviceupdate/data-plane/duiothub`).
+-- Updated minimum required `azure-core` to `1.37.0`.
+-- Dropped support for Python 3.8 and 3.9; minimum supported Python is 3.10.
++skip changelog generation for data-plane package and please add changelog manually.
+ 
+ ## 1.0.0 (2022-09-09)
+ 
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/_metadata.json b/sdk/deviceupdate/azure-iot-deviceupdate/_metadata.json
+index 614a01ddd5..f1a5c7e5f9 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/_metadata.json
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/_metadata.json
+@@ -3,9 +3,9 @@
+   "apiVersions": {
+     "DeviceUpdateClient": "2026-06-01"
+   },
+-  "commit": "292231b1131ff9fd070377372a0647c6ac7a6ce2",
++  "commit": "67ffbb6bee462e36bcdd3b93cffca6942c3a35f7",
+   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+   "typespec_src": "specification/deviceupdate/data-plane/duiothub",
+-  "emitterVersion": "0.63.1",
+-  "httpClientPythonVersion": "^0.31.1"
++  "emitterVersion": "0.63.3",
++  "httpClientPythonVersion": "^0.34.2"
+ }
+\ No newline at end of file
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/api.md b/sdk/deviceupdate/azure-iot-deviceupdate/api.md
+index 061ec5136e..3df29b42d6 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/api.md
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/api.md
+@@ -1,15 +1,18 @@
+ ```py
+ namespace azure.iot.deviceupdate
+ 
+-    class azure.iot.deviceupdate.DeviceUpdateClient(DeviceUpdateClientGenerated): implements ContextManager 
++    class azure.iot.deviceupdate.DeviceUpdateClient: implements ContextManager 
++        device_management: DeviceManagementOperations
++        device_update: DeviceUpdateOperations
+ 
+         def __init__(
+                 self, 
+                 endpoint: str, 
+-                instance_id: str, 
+                 credential: TokenCredential, 
++                instance_id: str, 
+                 *, 
+-                api_version: Optional[str] = ..., 
++                api_version: str = ..., 
++                polling_interval: Optional[int] = ..., 
+                 **kwargs: Any
+             ) -> None: ...
+ 
+@@ -26,15 +29,18 @@ namespace azure.iot.deviceupdate
+ 
+ namespace azure.iot.deviceupdate.aio
+ 
+-    class azure.iot.deviceupdate.aio.DeviceUpdateClient(DeviceUpdateClientGenerated): implements AsyncContextManager 
++    class azure.iot.deviceupdate.aio.DeviceUpdateClient: implements AsyncContextManager 
++        device_management: DeviceManagementOperations
++        device_update: DeviceUpdateOperations
+ 
+         def __init__(
+                 self, 
+                 endpoint: str, 
+-                instance_id: str, 
+                 credential: AsyncTokenCredential, 
++                instance_id: str, 
+                 *, 
+-                api_version: Optional[str] = ..., 
++                api_version: str = ..., 
++                polling_interval: Optional[int] = ..., 
+                 **kwargs: Any
+             ) -> None: ...
+ 
+@@ -51,7 +57,7 @@ namespace azure.iot.deviceupdate.aio
+ 
+ namespace azure.iot.deviceupdate.aio.operations
+ 
+-    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
++    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations:
+ 
+         def __init__(
+                 self, 
+@@ -82,7 +88,7 @@ namespace azure.iot.deviceupdate.aio.operations
+                 self, 
+                 group_id: str, 
+                 deployment_id: str, 
+-                deployment: JSON, 
++                deployment: Deployment, 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -239,15 +245,15 @@ namespace azure.iot.deviceupdate.aio.operations
+                 **kwargs: Any
+             ) -> LogCollectionOperationDetailedStatus: ...
+ 
++        @distributed_trace_async
+         async def get_operation_status(
+                 self, 
+                 operation_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> DeviceOperation: ...
+ 
+         @distributed_trace_async
+         async def get_update_compliance(self, **kwargs: Any) -> UpdateCompliance: ...
+@@ -379,7 +385,7 @@ namespace azure.iot.deviceupdate.aio.operations
+         async def start_log_collection(
+                 self, 
+                 log_collection_id: str, 
+-                log_collection: JSON, 
++                log_collection: LogCollection, 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -418,7 +424,7 @@ namespace azure.iot.deviceupdate.aio.operations
+         async def update_device_class(
+                 self, 
+                 device_class_id: str, 
+-                device_class_patch: JSON, 
++                device_class_patch: PatchBody, 
+                 *, 
+                 content_type: str = "application/merge-patch+json", 
+                 **kwargs: Any
+@@ -435,7 +441,7 @@ namespace azure.iot.deviceupdate.aio.operations
+             ) -> DeviceClass: ...
+ 
+ 
+-    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
++    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations:
+ 
+         def __init__(
+                 self, 
+@@ -464,7 +470,7 @@ namespace azure.iot.deviceupdate.aio.operations
+         @overload
+         async def begin_import_update(
+                 self, 
+-                update_to_import: list[JSON], 
++                update_to_import: list[ImportUpdateInputItem], 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -479,6 +485,7 @@ namespace azure.iot.deviceupdate.aio.operations
+                 **kwargs: Any
+             ) -> AsyncLROPoller[None]: ...
+ 
++        @distributed_trace_async
+         async def get_file(
+                 self, 
+                 provider: str, 
+@@ -487,21 +494,21 @@ namespace azure.iot.deviceupdate.aio.operations
+                 file_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> UpdateFile: ...
+ 
++        @distributed_trace_async
+         async def get_operation_status(
+                 self, 
+                 operation_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> UpdateOperation: ...
+ 
++        @distributed_trace_async
+         async def get_update(
+                 self, 
+                 provider: str, 
+@@ -509,10 +516,9 @@ namespace azure.iot.deviceupdate.aio.operations
+                 version: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> Update: ...
+ 
+         @distributed_trace
+         def list_files(
+@@ -1470,7 +1476,7 @@ namespace azure.iot.deviceupdate.models
+ 
+ namespace azure.iot.deviceupdate.operations
+ 
+-    class azure.iot.deviceupdate.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
++    class azure.iot.deviceupdate.operations.DeviceManagementOperations:
+ 
+         def __init__(
+                 self, 
+@@ -1501,7 +1507,7 @@ namespace azure.iot.deviceupdate.operations
+                 self, 
+                 group_id: str, 
+                 deployment_id: str, 
+-                deployment: JSON, 
++                deployment: Deployment, 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -1658,15 +1664,15 @@ namespace azure.iot.deviceupdate.operations
+                 **kwargs: Any
+             ) -> LogCollectionOperationDetailedStatus: ...
+ 
++        @distributed_trace
+         def get_operation_status(
+                 self, 
+                 operation_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> DeviceOperation: ...
+ 
+         @distributed_trace
+         def get_update_compliance(self, **kwargs: Any) -> UpdateCompliance: ...
+@@ -1798,7 +1804,7 @@ namespace azure.iot.deviceupdate.operations
+         def start_log_collection(
+                 self, 
+                 log_collection_id: str, 
+-                log_collection: JSON, 
++                log_collection: LogCollection, 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -1837,7 +1843,7 @@ namespace azure.iot.deviceupdate.operations
+         def update_device_class(
+                 self, 
+                 device_class_id: str, 
+-                device_class_patch: JSON, 
++                device_class_patch: PatchBody, 
+                 *, 
+                 content_type: str = "application/merge-patch+json", 
+                 **kwargs: Any
+@@ -1854,7 +1860,7 @@ namespace azure.iot.deviceupdate.operations
+             ) -> DeviceClass: ...
+ 
+ 
+-    class azure.iot.deviceupdate.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
++    class azure.iot.deviceupdate.operations.DeviceUpdateOperations:
+ 
+         def __init__(
+                 self, 
+@@ -1883,7 +1889,7 @@ namespace azure.iot.deviceupdate.operations
+         @overload
+         def begin_import_update(
+                 self, 
+-                update_to_import: list[JSON], 
++                update_to_import: list[ImportUpdateInputItem], 
+                 *, 
+                 content_type: str = "application/json", 
+                 **kwargs: Any
+@@ -1898,6 +1904,7 @@ namespace azure.iot.deviceupdate.operations
+                 **kwargs: Any
+             ) -> LROPoller[None]: ...
+ 
++        @distributed_trace
+         def get_file(
+                 self, 
+                 provider: str, 
+@@ -1906,21 +1913,21 @@ namespace azure.iot.deviceupdate.operations
+                 file_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> UpdateFile: ...
+ 
++        @distributed_trace
+         def get_operation_status(
+                 self, 
+                 operation_id: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> UpdateOperation: ...
+ 
++        @distributed_trace
+         def get_update(
+                 self, 
+                 provider: str, 
+@@ -1928,10 +1935,9 @@ namespace azure.iot.deviceupdate.operations
+                 version: str, 
+                 *, 
+                 etag: Optional[str] = ..., 
+-                if_none_match: Optional[str] = ..., 
+                 match_condition: Optional[MatchConditions] = ..., 
+                 **kwargs: Any
+-            ): ...
++            ) -> Update: ...
+ 
+         @distributed_trace
+         def list_files(
+@@ -1981,4 +1987,112 @@ namespace azure.iot.deviceupdate.operations
+             ) -> ItemPaged[str]: ...
+ 
+ 
++namespace azure.iot.deviceupdate.types
++
++    class azure.iot.deviceupdate.types.CloudInitiatedRollbackPolicy(TypedDict, total=False):
++        key "failure": Required[CloudInitiatedRollbackPolicyFailure]
++        key "update": Required[UpdateInfo]
++        failure: CloudInitiatedRollbackPolicyFailure
++        update_property: UpdateInfo
++
++
++    class azure.iot.deviceupdate.types.CloudInitiatedRollbackPolicyFailure(TypedDict, total=False):
++        key "devicesFailedCount": Required[int]
++        key "devicesFailedPercentage": Required[int]
++        devices_failed_count: int
++        devices_failed_percentage: int
++
++
++    class azure.iot.deviceupdate.types.Deployment(TypedDict, total=False):
++        key "deploymentId": Required[str]
++        key "downloadSecurity": Union[str, DownloadSecurity]
++        key "groupId": Required[str]
++        key "isCanceled": bool
++        key "isCloudInitiatedRollback": bool
++        key "isRetried": bool
++        key "rollbackPolicy": ForwardRef('CloudInitiatedRollbackPolicy', module='types')
++        key "startDateTime": Required[str]
++        key "update": Required[UpdateInfo]
++        deployment_id: str
++        deviceClassSubgroups: list[str]
++        device_class_subgroups: list[str]
++        download_security: Union[str, DownloadSecurity]
++        group_id: str
++        is_canceled: bool
++        is_cloud_initiated_rollback: bool
++        is_retried: bool
++        rollback_policy: CloudInitiatedRollbackPolicy
++        start_date_time: str
++        update_property: UpdateInfo
++
++
++    class azure.iot.deviceupdate.types.DeviceUpdateAgentId(TypedDict, total=False):
++        key "deviceId": Required[str]
++        key "moduleId": str
++        device_id: str
++        module_id: str
++
++
++    class azure.iot.deviceupdate.types.FileImportMetadata(TypedDict, total=False):
++        key "filename": Required[str]
++        key "url": Required[str]
++        filename: str
++        url: str
++
++
++    class azure.iot.deviceupdate.types.ImportManifestMetadata(TypedDict, total=False):
++        key "hashes": Required[dict[str, str]]
++        key "sizeInBytes": Required[int]
++        key "url": Required[str]
++        hashes: dict[str, str]
++        size_in_bytes: int
++        url: str
++
++
++    class azure.iot.deviceupdate.types.ImportUpdateInputItem(TypedDict, total=False):
++        key "friendlyName": str
++        key "importManifest": Required[ImportManifestMetadata]
++        files: list[FileImportMetadata]
++        friendly_name: str
++        import_manifest: ImportManifestMetadata
++
++
++    class azure.iot.deviceupdate.types.LogCollection(TypedDict, total=False):
++        key "createdDateTime": str
++        key "description": str
++        key "deviceList": Required[list[DeviceUpdateAgentId]]
++        key "lastActionDateTime": str
++        key "operationId": str
++        key "status": Union[str, OperationStatus]
++        created_date_time: str
++        description: str
++        device_list: list[DeviceUpdateAgentId]
++        last_action_date_time: str
++        log_collection_id: str
++        status: Union[str, OperationStatus]
++
++
++    class azure.iot.deviceupdate.types.PatchBody(TypedDict, total=False):
++        key "friendlyName": Required[str]
++        friendly_name: str
++
++
++    class azure.iot.deviceupdate.types.UpdateId(TypedDict, total=False):
++        key "name": Required[str]
++        key "provider": Required[str]
++        key "version": Required[str]
++        name: str
++        provider: str
++        version: str
++
++
++    class azure.iot.deviceupdate.types.UpdateInfo(TypedDict, total=False):
++        key "description": str
++        key "friendlyName": str
++        key "updateId": Required[UpdateId]
++        description: str
++        friendly_name: str
++        update_id: UpdateId
++
++
+ ```
+\ No newline at end of file
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/api.metadata.yml b/sdk/deviceupdate/azure-iot-deviceupdate/api.metadata.yml
+index 408933ae1c..a4a121bbf9 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/api.metadata.yml
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/api.metadata.yml
+@@ -1,3 +1,3 @@
+-apiMdSha256: 555c6332bae64960b1565938ed0453aac0b22874c60b4c3c7ed0d8de8156c371
+-parserVersion: 0.3.28
+-pythonVersion: 3.13.12
++apiMdSha256: e6da310dba4ea5263163ad432f276371b3025fcca87680847e130581a6157980
++parserVersion: 0.3.30
++pythonVersion: 3.13.14
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/apiview-properties.json b/sdk/deviceupdate/azure-iot-deviceupdate/apiview-properties.json
+index 5d72b7c262..d5edd1a085 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/apiview-properties.json
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/apiview-properties.json
+@@ -51,106 +51,106 @@
+         "azure.iot.deviceupdate.models.DeviceClassSubgroupDeploymentState": "DeviceUpdateClient.DeviceClassSubgroupDeploymentState",
+         "azure.iot.deviceupdate.models.DeviceHealthState": "DeviceUpdateClient.DeviceHealthState",
+         "azure.iot.deviceupdate.models.HealthCheckResult": "DeviceUpdateClient.HealthCheckResult",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_updates": "DeviceUpdateClient.DeviceUpdateOperationGroup.listUpdates",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_updates": "DeviceUpdateClient.DeviceUpdateOperationGroup.listUpdates",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.begin_import_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.importUpdate",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.begin_import_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.importUpdate",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.getUpdate",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.getUpdate",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.begin_delete_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.deleteUpdate",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.begin_delete_update": "DeviceUpdateClient.DeviceUpdateOperationGroup.deleteUpdate",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_providers": "DeviceUpdateClient.DeviceUpdateOperationGroup.listProviders",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_providers": "DeviceUpdateClient.DeviceUpdateOperationGroup.listProviders",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_names": "DeviceUpdateClient.DeviceUpdateOperationGroup.listNames",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_names": "DeviceUpdateClient.DeviceUpdateOperationGroup.listNames",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_versions": "DeviceUpdateClient.DeviceUpdateOperationGroup.listVersions",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_versions": "DeviceUpdateClient.DeviceUpdateOperationGroup.listVersions",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_files": "DeviceUpdateClient.DeviceUpdateOperationGroup.listFiles",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_files": "DeviceUpdateClient.DeviceUpdateOperationGroup.listFiles",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_file": "DeviceUpdateClient.DeviceUpdateOperationGroup.getFile",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_file": "DeviceUpdateClient.DeviceUpdateOperationGroup.getFile",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_operation_statuses": "DeviceUpdateClient.DeviceUpdateOperationGroup.listOperationStatuses",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_operation_statuses": "DeviceUpdateClient.DeviceUpdateOperationGroup.listOperationStatuses",
+-        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_operation_status": "DeviceUpdateClient.DeviceUpdateOperationGroup.getOperationStatus",
+-        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_operation_status": "DeviceUpdateClient.DeviceUpdateOperationGroup.getOperationStatus",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_classes": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceClasses",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_classes": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceClasses",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClass",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClass",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.update_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.updateDeviceClass",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.update_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.updateDeviceClass",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteDeviceClass",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteDeviceClass",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_installable_updates_for_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.listInstallableUpdatesForDeviceClass",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_installable_updates_for_device_class": "DeviceUpdateClient.DeviceManagementOperationGroup.listInstallableUpdatesForDeviceClass",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.listDevices",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.listDevices",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.begin_import_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.importDevices",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.begin_import_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.importDevices",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device": "DeviceUpdateClient.DeviceManagementOperationGroup.getDevice",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device": "DeviceUpdateClient.DeviceManagementOperationGroup.getDevice",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_module": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceModule",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_module": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceModule",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_update_compliance": "DeviceUpdateClient.DeviceManagementOperationGroup.getUpdateCompliance",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_update_compliance": "DeviceUpdateClient.DeviceManagementOperationGroup.getUpdateCompliance",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_groups": "DeviceUpdateClient.DeviceManagementOperationGroup.listGroups",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_groups": "DeviceUpdateClient.DeviceManagementOperationGroup.listGroups",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_group": "DeviceUpdateClient.DeviceManagementOperationGroup.getGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_group": "DeviceUpdateClient.DeviceManagementOperationGroup.getGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_group": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_group": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_update_compliance_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.getUpdateComplianceForGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_update_compliance_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.getUpdateComplianceForGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_best_updates_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listBestUpdatesForGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_best_updates_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listBestUpdatesForGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_deployments_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeploymentsForGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_deployments_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeploymentsForGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.create_or_update_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.createOrUpdateDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.create_or_update_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.createOrUpdateDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeploymentStatus",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeploymentStatus",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_class_subgroups_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceClassSubgroupsForGroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_class_subgroups_for_group": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceClassSubgroupsForGroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.deleteDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup_update_compliance": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroupUpdateCompliance",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup_update_compliance": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroupUpdateCompliance",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_best_updates_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getBestUpdatesForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_best_updates_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getBestUpdatesForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_deployments_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeploymentsForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_deployments_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeploymentsForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeploymentForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment_for_device_class_subgroup": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeploymentForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.stop_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.stopDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.stop_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.stopDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.retry_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.retryDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.retry_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.retryDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup_deployment_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroupDeploymentStatus",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup_deployment_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getDeviceClassSubgroupDeploymentStatus",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_states_for_device_class_subgroup_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceStatesForDeviceClassSubgroupDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_states_for_device_class_subgroup_deployment": "DeviceUpdateClient.DeviceManagementOperationGroup.listDeviceStatesForDeviceClassSubgroupDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_operation_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getOperationStatus",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_operation_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getOperationStatus",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_operation_statuses": "DeviceUpdateClient.DeviceManagementOperationGroup.listOperationStatuses",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_operation_statuses": "DeviceUpdateClient.DeviceManagementOperationGroup.listOperationStatuses",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.start_log_collection": "DeviceUpdateClient.DeviceManagementOperationGroup.startLogCollection",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.start_log_collection": "DeviceUpdateClient.DeviceManagementOperationGroup.startLogCollection",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_log_collection": "DeviceUpdateClient.DeviceManagementOperationGroup.getLogCollection",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_log_collection": "DeviceUpdateClient.DeviceManagementOperationGroup.getLogCollection",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_log_collections": "DeviceUpdateClient.DeviceManagementOperationGroup.listLogCollections",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_log_collections": "DeviceUpdateClient.DeviceManagementOperationGroup.listLogCollections",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_log_collection_detailed_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getLogCollectionDetailedStatus",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_log_collection_detailed_status": "DeviceUpdateClient.DeviceManagementOperationGroup.getLogCollectionDetailedStatus",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_health_of_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.listHealthOfDevices",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_health_of_devices": "DeviceUpdateClient.DeviceManagementOperationGroup.listHealthOfDevices",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_deployment": "DeviceUpdateClient.DeploymentManagementOperationGroup.deleteDeployment",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_deployment": "DeviceUpdateClient.DeploymentManagementOperationGroup.deleteDeployment",
+-        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_deployment_for_device_class_subgroup": "DeviceUpdateClient.DeploymentManagementOperationGroup.deleteDeploymentForDeviceClassSubgroup",
+-        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_deployment_for_device_class_subgroup": "DeviceUpdateClient.DeploymentManagementOperationGroup.deleteDeploymentForDeviceClassSubgroup"
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_updates": "Customization.ClientDeviceUpdateService.DeviceUpdate.listUpdates",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_updates": "Customization.ClientDeviceUpdateService.DeviceUpdate.listUpdates",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.begin_import_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.importUpdate",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.begin_import_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.importUpdate",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.getUpdate",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.getUpdate",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.begin_delete_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.deleteUpdate",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.begin_delete_update": "Customization.ClientDeviceUpdateService.DeviceUpdate.deleteUpdate",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_providers": "Customization.ClientDeviceUpdateService.DeviceUpdate.listProviders",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_providers": "Customization.ClientDeviceUpdateService.DeviceUpdate.listProviders",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_names": "Customization.ClientDeviceUpdateService.DeviceUpdate.listNames",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_names": "Customization.ClientDeviceUpdateService.DeviceUpdate.listNames",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_versions": "Customization.ClientDeviceUpdateService.DeviceUpdate.listVersions",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_versions": "Customization.ClientDeviceUpdateService.DeviceUpdate.listVersions",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_files": "Customization.ClientDeviceUpdateService.DeviceUpdate.listFiles",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_files": "Customization.ClientDeviceUpdateService.DeviceUpdate.listFiles",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_file": "Customization.ClientDeviceUpdateService.DeviceUpdate.getFile",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_file": "Customization.ClientDeviceUpdateService.DeviceUpdate.getFile",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.list_operation_statuses": "Customization.ClientDeviceUpdateService.DeviceUpdate.listOperationStatuses",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.list_operation_statuses": "Customization.ClientDeviceUpdateService.DeviceUpdate.listOperationStatuses",
++        "azure.iot.deviceupdate.operations.DeviceUpdateOperations.get_operation_status": "Customization.ClientDeviceUpdateService.DeviceUpdate.getOperationStatus",
++        "azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations.get_operation_status": "Customization.ClientDeviceUpdateService.DeviceUpdate.getOperationStatus",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_classes": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceClasses",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_classes": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceClasses",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClass",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClass",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.update_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.updateDeviceClass",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.update_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.updateDeviceClass",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeviceClass",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeviceClass",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_installable_updates_for_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.listInstallableUpdatesForDeviceClass",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_installable_updates_for_device_class": "Customization.ClientDeviceUpdateService.DeviceManagement.listInstallableUpdatesForDeviceClass",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.listDevices",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.listDevices",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.begin_import_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.importDevices",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.begin_import_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.importDevices",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device": "Customization.ClientDeviceUpdateService.DeviceManagement.getDevice",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device": "Customization.ClientDeviceUpdateService.DeviceManagement.getDevice",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_module": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceModule",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_module": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceModule",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_update_compliance": "Customization.ClientDeviceUpdateService.DeviceManagement.getUpdateCompliance",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_update_compliance": "Customization.ClientDeviceUpdateService.DeviceManagement.getUpdateCompliance",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_groups": "Customization.ClientDeviceUpdateService.DeviceManagement.listGroups",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_groups": "Customization.ClientDeviceUpdateService.DeviceManagement.listGroups",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_group": "Customization.ClientDeviceUpdateService.DeviceManagement.getGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_group": "Customization.ClientDeviceUpdateService.DeviceManagement.getGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_group": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_group": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_update_compliance_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.getUpdateComplianceForGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_update_compliance_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.getUpdateComplianceForGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_best_updates_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listBestUpdatesForGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_best_updates_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listBestUpdatesForGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_deployments_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeploymentsForGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_deployments_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeploymentsForGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.create_or_update_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.createOrUpdateDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.create_or_update_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.createOrUpdateDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeploymentStatus",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeploymentStatus",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_class_subgroups_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceClassSubgroupsForGroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_class_subgroups_for_group": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceClassSubgroupsForGroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup_update_compliance": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroupUpdateCompliance",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup_update_compliance": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroupUpdateCompliance",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_best_updates_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getBestUpdatesForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_best_updates_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getBestUpdatesForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_deployments_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeploymentsForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_deployments_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeploymentsForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_deployment_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeploymentForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_deployment_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeploymentForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.delete_deployment_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeploymentForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.delete_deployment_for_device_class_subgroup": "Customization.ClientDeviceUpdateService.DeviceManagement.deleteDeploymentForDeviceClassSubgroup",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.stop_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.stopDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.stop_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.stopDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.retry_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.retryDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.retry_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.retryDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_device_class_subgroup_deployment_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroupDeploymentStatus",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_device_class_subgroup_deployment_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getDeviceClassSubgroupDeploymentStatus",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_device_states_for_device_class_subgroup_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceStatesForDeviceClassSubgroupDeployment",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_device_states_for_device_class_subgroup_deployment": "Customization.ClientDeviceUpdateService.DeviceManagement.listDeviceStatesForDeviceClassSubgroupDeployment",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_operation_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getOperationStatus",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_operation_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getOperationStatus",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_operation_statuses": "Customization.ClientDeviceUpdateService.DeviceManagement.listOperationStatuses",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_operation_statuses": "Customization.ClientDeviceUpdateService.DeviceManagement.listOperationStatuses",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.start_log_collection": "Customization.ClientDeviceUpdateService.DeviceManagement.startLogCollection",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.start_log_collection": "Customization.ClientDeviceUpdateService.DeviceManagement.startLogCollection",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_log_collection": "Customization.ClientDeviceUpdateService.DeviceManagement.getLogCollection",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_log_collection": "Customization.ClientDeviceUpdateService.DeviceManagement.getLogCollection",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_log_collections": "Customization.ClientDeviceUpdateService.DeviceManagement.listLogCollections",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_log_collections": "Customization.ClientDeviceUpdateService.DeviceManagement.listLogCollections",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.get_log_collection_detailed_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getLogCollectionDetailedStatus",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.get_log_collection_detailed_status": "Customization.ClientDeviceUpdateService.DeviceManagement.getLogCollectionDetailedStatus",
++        "azure.iot.deviceupdate.operations.DeviceManagementOperations.list_health_of_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.listHealthOfDevices",
++        "azure.iot.deviceupdate.aio.operations.DeviceManagementOperations.list_health_of_devices": "Customization.ClientDeviceUpdateService.DeviceManagement.listHealthOfDevices"
+     },
+-    "CrossLanguageVersion": "2152dadbc310"
++    "CrossLanguageVersion": "c1a73ac75a65"
+ }
+\ No newline at end of file
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_client.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_client.py
+index c696364981..0b2f1892b1 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_client.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_client.py
+@@ -28,12 +28,7 @@ if TYPE_CHECKING:
+ 
+ 
+ class DeviceUpdateClient:
+-    """Device Update for IoT Hub is an Azure service that enables customers to publish updates for
+-    their IoT devices to the cloud, and then deploy that update to their devices (approve updates
+-    to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
+-    reliability of the Windows Update platform, optimized for IoT devices. It works globally and
+-    knows when and how to update devices, enabling customers to focus on their business goals and
+-    let Device Update for IoT Hub handle the updates.
++    """DeviceUpdateClient.
+ 
+     :ivar device_update: DeviceUpdateOperations operations
+     :vartype device_update: azure.iot.deviceupdate.operations.DeviceUpdateOperations
+@@ -107,7 +102,7 @@ class DeviceUpdateClient:
+ 
+         request_copy = deepcopy(request)
+         path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+         }
+ 
+         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_configuration.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_configuration.py
+index f3dc84c614..2431c67afc 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_configuration.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_configuration.py
+@@ -29,9 +29,9 @@ class DeviceUpdateClientConfiguration:  # pylint: disable=too-many-instance-attr
+     :type credential: ~azure.core.credentials.TokenCredential
+     :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
+     :type instance_id: str
+-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01".
+-     Default value is "2026-06-01". Note that overriding this default value may result in unsupported
+-     behavior.
++    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
++     and None. Default value is None. If not set, the operation's default API version will be used.
++     Note that overriding this default value may result in unsupported behavior.
+     :paramtype api_version: str
+     """
+ 
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_patch.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_patch.py
+index 2485462aff..87676c65a8 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_patch.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_patch.py
+@@ -8,48 +8,8 @@
+ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+ """
+ 
+-from typing import Any, List, Optional, TYPE_CHECKING
+ 
+-from ._client import DeviceUpdateClient as DeviceUpdateClientGenerated
+-
+-if TYPE_CHECKING:
+-    from azure.core.credentials import TokenCredential
+-
+-
+-class DeviceUpdateClient(DeviceUpdateClientGenerated):
+-    """Device Update for IoT Hub client.
+-
+-    This override preserves the constructor parameter order shipped in 1.0.0
+-    (``endpoint``, ``instance_id``, ``credential``). The TypeSpec-generated client
+-    orders the hoisted ``instance_id`` after ``credential``; restoring the original
+-    order here avoids a breaking change for existing callers.
+-
+-    :param endpoint: The Device Update for IoT Hub account endpoint. Required.
+-    :type endpoint: str
+-    :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
+-    :type instance_id: str
+-    :param credential: Credential used to authenticate requests to the service. Required.
+-    :type credential: ~azure.core.credentials.TokenCredential
+-    :keyword api_version: The API version to use for this operation. Default value is "2026-06-01".
+-     Note that overriding this default value may result in unsupported behavior.
+-    :paramtype api_version: str
+-    """
+-
+-    def __init__(
+-        self,
+-        endpoint: str,
+-        instance_id: str,
+-        credential: "TokenCredential",
+-        *,
+-        api_version: Optional[str] = None,
+-        **kwargs: Any,
+-    ) -> None:
+-        if api_version is not None:
+-            kwargs["api_version"] = api_version
+-        super().__init__(endpoint=endpoint, credential=credential, instance_id=instance_id, **kwargs)
+-
+-
+-__all__: List[str] = ["DeviceUpdateClient"]  # Add all objects you want publicly available at this package level
++__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+ 
+ 
+ def patch_sdk():
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/model_base.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/model_base.py
+index bd5b9caf10..1934415c13 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/model_base.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/model_base.py
+@@ -109,6 +109,29 @@ def _serialize_bytes(o, format: typing.Optional[str] = None) -> str:
+     return encoded
+ 
+ 
++def _serialize_duration(td: timedelta, format: typing.Optional[str] = None):
++    """Serialize a timedelta to its wire representation.
++
++    For the ``seconds``/``milliseconds`` encodings the value is converted to a
++    numeric value, otherwise it falls back to an ISO 8601 duration string.
++
++    :param timedelta td: The timedelta to serialize.
++    :param str format: The duration encoding format.
++    :rtype: int or float or str
++    :return: serialized duration
++    """
++    seconds = td.total_seconds()
++    if format == "duration-seconds-int":
++        return int(seconds)
++    if format == "duration-seconds-float":
++        return seconds
++    if format == "duration-milliseconds-int":
++        return int(seconds * 1000)
++    if format == "duration-milliseconds-float":
++        return seconds * 1000
++    return _timedelta_as_isostr(td)
++
++
+ def _serialize_datetime(o, format: typing.Optional[str] = None):
+     if hasattr(o, "year") and hasattr(o, "hour"):
+         if format == "rfc7231":
+@@ -301,6 +324,12 @@ def _deserialize_duration(attr):
+     return isodate.parse_duration(attr)
+ 
+ 
++def _deserialize_duration_numeric(attr, unit):
++    if isinstance(attr, timedelta):
++        return attr
++    return timedelta(**{unit: float(attr)})
++
++
+ def _deserialize_decimal(attr):
+     if isinstance(attr, decimal.Decimal):
+         return attr
+@@ -330,6 +359,10 @@ _DESERIALIZE_MAPPING_WITHFORMAT = {
+     "unix-timestamp": _deserialize_datetime_unix_timestamp,
+     "base64": _deserialize_bytes,
+     "base64url": _deserialize_bytes_base64,
++    "duration-seconds-int": functools.partial(_deserialize_duration_numeric, unit="seconds"),
++    "duration-seconds-float": functools.partial(_deserialize_duration_numeric, unit="seconds"),
++    "duration-milliseconds-int": functools.partial(_deserialize_duration_numeric, unit="milliseconds"),
++    "duration-milliseconds-float": functools.partial(_deserialize_duration_numeric, unit="milliseconds"),
+ }
+ 
+ 
+@@ -425,21 +458,21 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
+ 
+     def keys(self) -> typing.KeysView[str]:
+         """
+-        :returns: a set-like object providing a view on D's keys
++        :returns: a set-like object providing a view on the mapping's keys
+         :rtype: ~typing.KeysView
+         """
+         return self._data.keys()
+ 
+     def values(self) -> typing.ValuesView[typing.Any]:
+         """
+-        :returns: an object providing a view on D's values
++        :returns: an object providing a view on the mapping's values
+         :rtype: ~typing.ValuesView
+         """
+         return self._data.values()
+ 
+     def items(self) -> typing.ItemsView[str, typing.Any]:
+         """
+-        :returns: set-like object providing a view on D's items
++        :returns: a set-like object providing a view on the mapping's items
+         :rtype: ~typing.ItemsView
+         """
+         return self._data.items()
+@@ -449,7 +482,7 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
+         Get the value for key if key is in the dictionary, else default.
+         :param str key: The key to look up.
+         :param any default: The value to return if key is not in the dictionary. Defaults to None
+-        :returns: D[k] if k in D, else d.
++        :returns: The value for key if key is in the dictionary, else default.
+         :rtype: any
+         """
+         try:
+@@ -484,19 +517,19 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
+         Removes and returns some (key, value) pair
+         :returns: The (key, value) pair.
+         :rtype: tuple
+-        :raises KeyError: if D is empty.
++        :raises KeyError: if the dictionary is empty.
+         """
+         return self._data.popitem()
+ 
+     def clear(self) -> None:
+         """
+-        Remove all items from D.
++        Remove all items from the dictionary.
+         """
+         self._data.clear()
+ 
+     def update(self, *args: typing.Any, **kwargs: typing.Any) -> None:  # pylint: disable=arguments-differ
+         """
+-        Updates D from mapping/iterable E and F.
++        Update the dictionary from a mapping or an iterable of key-value pairs.
+         :param any args: Either a mapping object or an iterable of key-value pairs.
+         """
+         self._data.update(*args, **kwargs)
+@@ -509,10 +542,11 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
+ 
+     def setdefault(self, key: str, default: typing.Any = _UNSET) -> typing.Any:
+         """
+-        Same as calling D.get(k, d), and setting D[k]=d if k not found
++        Return the value for key if key is in the dictionary; otherwise set the key to
++        default and return default.
+         :param str key: The key to look up.
+         :param any default: The value to set if key is not in the dictionary
+-        :returns: D[k] if k in D, else d.
++        :returns: The value for key if key is in the dictionary, else default.
+         :rtype: any
+         """
+         if default is _UNSET:
+@@ -564,7 +598,7 @@ def _serialize(o, format: typing.Optional[str] = None):  # pylint: disable=too-m
+         pass
+     # Last, try datetime.timedelta
+     try:
+-        return _timedelta_as_isostr(o)
++        return _serialize_duration(o, format)
+     except AttributeError:
+         # This will be raised when it hits value.total_seconds in the method above
+         pass
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/serialization.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/serialization.py
+index a088671e9c..75906e2eb7 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/serialization.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/_utils/serialization.py
+@@ -520,6 +520,10 @@ class Serializer:  # pylint: disable=too-many-public-methods
+             "rfc-1123": Serializer.serialize_rfc,
+             "unix-time": Serializer.serialize_unix,
+             "duration": Serializer.serialize_duration,
++            "duration-seconds-int": Serializer.serialize_duration_seconds_int,
++            "duration-seconds-float": Serializer.serialize_duration_seconds_float,
++            "duration-milliseconds-int": Serializer.serialize_duration_milliseconds_int,
++            "duration-milliseconds-float": Serializer.serialize_duration_milliseconds_float,
+             "date": Serializer.serialize_date,
+             "time": Serializer.serialize_time,
+             "decimal": Serializer.serialize_decimal,
+@@ -1109,6 +1113,61 @@ class Serializer:  # pylint: disable=too-many-public-methods
+             attr = isodate.parse_duration(attr)
+         return isodate.duration_isoformat(attr)
+ 
++    @staticmethod
++    def _serialize_duration_numeric(attr, scale, as_int):
++        """Serialize a TimeDelta into a numeric value scaled to the wire unit.
++
++        :param TimeDelta attr: Object to be serialized.
++        :param int scale: Multiplier applied to total seconds (1 for seconds, 1000 for milliseconds).
++        :param bool as_int: Whether to truncate the result to an int.
++        :rtype: int or float
++        :return: serialized duration
++        """
++        if isinstance(attr, str):
++            attr = isodate.parse_duration(attr)
++        value = attr.total_seconds() * scale if isinstance(attr, datetime.timedelta) else attr
++        return int(value) if as_int else float(value)
++
++    @staticmethod
++    def serialize_duration_seconds_int(attr, **kwargs):  # pylint: disable=unused-argument
++        """Serialize TimeDelta object into an integer number of seconds.
++
++        :param TimeDelta attr: Object to be serialized.
++        :rtype: int
++        :return: serialized duration
++        """
++        return Serializer._serialize_duration_numeric(attr, 1, True)
++
++    @staticmethod
++    def serialize_duration_seconds_float(attr, **kwargs):  # pylint: disable=unused-argument
++        """Serialize TimeDelta object into a floating point number of seconds.
++
++        :param TimeDelta attr: Object to be serialized.
++        :rtype: float
++        :return: serialized duration
++        """
++        return Serializer._serialize_duration_numeric(attr, 1, False)
++
++    @staticmethod
++    def serialize_duration_milliseconds_int(attr, **kwargs):  # pylint: disable=unused-argument
++        """Serialize TimeDelta object into an integer number of milliseconds.
++
++        :param TimeDelta attr: Object to be serialized.
++        :rtype: int
++        :return: serialized duration
++        """
++        return Serializer._serialize_duration_numeric(attr, 1000, True)
++
++    @staticmethod
++    def serialize_duration_milliseconds_float(attr, **kwargs):  # pylint: disable=unused-argument
++        """Serialize TimeDelta object into a floating point number of milliseconds.
++
++        :param TimeDelta attr: Object to be serialized.
++        :rtype: float
++        :return: serialized duration
++        """
++        return Serializer._serialize_duration_numeric(attr, 1000, False)
++
+     @staticmethod
+     def serialize_rfc(attr, **kwargs):  # pylint: disable=unused-argument
+         """Serialize Datetime object into RFC-1123 formatted string.
+@@ -1381,6 +1440,10 @@ class Deserializer:
+             "rfc-1123": Deserializer.deserialize_rfc,
+             "unix-time": Deserializer.deserialize_unix,
+             "duration": Deserializer.deserialize_duration,
++            "duration-seconds-int": Deserializer.deserialize_duration_seconds,
++            "duration-seconds-float": Deserializer.deserialize_duration_seconds,
++            "duration-milliseconds-int": Deserializer.deserialize_duration_milliseconds,
++            "duration-milliseconds-float": Deserializer.deserialize_duration_milliseconds,
+             "date": Deserializer.deserialize_date,
+             "time": Deserializer.deserialize_time,
+             "decimal": Deserializer.deserialize_decimal,
+@@ -1393,6 +1456,10 @@ class Deserializer:
+         }
+         self.deserialize_expected_types = {
+             "duration": (isodate.Duration, datetime.timedelta),
++            "duration-seconds-int": (isodate.Duration, datetime.timedelta),
++            "duration-seconds-float": (isodate.Duration, datetime.timedelta),
++            "duration-milliseconds-int": (isodate.Duration, datetime.timedelta),
++            "duration-milliseconds-float": (isodate.Duration, datetime.timedelta),
+             "iso-8601": (datetime.datetime),
+         }
+         self.dependencies: dict[str, type] = dict(classes) if classes else {}
+@@ -1954,6 +2021,48 @@ class Deserializer:
+             raise DeserializationError(msg) from err
+         return duration
+ 
++    @staticmethod
++    def _deserialize_duration_numeric(attr, unit):
++        """Deserialize a numeric duration value into a TimeDelta object.
++
++        :param float attr: response value to be deserialized.
++        :param str unit: The wire unit, used as the ``timedelta`` keyword
++            (``"seconds"`` or ``"milliseconds"``).
++        :return: Deserialized duration
++        :rtype: TimeDelta
++        :raises DeserializationError: if value is invalid.
++        """
++        if isinstance(attr, ET.Element):
++            attr = attr.text
++        try:
++            duration = datetime.timedelta(**{unit: float(attr)})  # type: ignore
++        except (ValueError, OverflowError, TypeError) as err:
++            msg = "Cannot deserialize duration object."
++            raise DeserializationError(msg) from err
++        return duration
++
++    @staticmethod
++    def deserialize_duration_seconds(attr):
++        """Deserialize a numeric number of seconds into a TimeDelta object.
++
++        :param float attr: response value to be deserialized.
++        :return: Deserialized duration
++        :rtype: TimeDelta
++        :raises DeserializationError: if value is invalid.
++        """
++        return Deserializer._deserialize_duration_numeric(attr, "seconds")
++
++    @staticmethod
++    def deserialize_duration_milliseconds(attr):
++        """Deserialize a numeric number of milliseconds into a TimeDelta object.
++
++        :param float attr: response value to be deserialized.
++        :return: Deserialized duration
++        :rtype: TimeDelta
++        :raises DeserializationError: if value is invalid.
++        """
++        return Deserializer._deserialize_duration_numeric(attr, "milliseconds")
++
+     @staticmethod
+     def deserialize_date(attr):
+         """Deserialize ISO-8601 formatted string into Date object.
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_client.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_client.py
+index 0d79358c1d..a9f9801b41 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_client.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_client.py
+@@ -28,12 +28,7 @@ if TYPE_CHECKING:
+ 
+ 
+ class DeviceUpdateClient:
+-    """Device Update for IoT Hub is an Azure service that enables customers to publish updates for
+-    their IoT devices to the cloud, and then deploy that update to their devices (approve updates
+-    to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
+-    reliability of the Windows Update platform, optimized for IoT devices. It works globally and
+-    knows when and how to update devices, enabling customers to focus on their business goals and
+-    let Device Update for IoT Hub handle the updates.
++    """DeviceUpdateClient.
+ 
+     :ivar device_update: DeviceUpdateOperations operations
+     :vartype device_update: azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations
+@@ -109,7 +104,7 @@ class DeviceUpdateClient:
+ 
+         request_copy = deepcopy(request)
+         path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+         }
+ 
+         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_configuration.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_configuration.py
+index 4ba8e0abc8..39d2645ab5 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_configuration.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_configuration.py
+@@ -29,9 +29,9 @@ class DeviceUpdateClientConfiguration:  # pylint: disable=too-many-instance-attr
+     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+     :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
+     :type instance_id: str
+-    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01".
+-     Default value is "2026-06-01". Note that overriding this default value may result in unsupported
+-     behavior.
++    :keyword api_version: The API version to use for this operation. Known values are "2026-06-01"
++     and None. Default value is None. If not set, the operation's default API version will be used.
++     Note that overriding this default value may result in unsupported behavior.
+     :paramtype api_version: str
+     """
+ 
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_patch.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_patch.py
+index 73feb5caa7..87676c65a8 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_patch.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/_patch.py
+@@ -8,48 +8,8 @@
+ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+ """
+ 
+-from typing import Any, List, Optional, TYPE_CHECKING
+ 
+-from ._client import DeviceUpdateClient as DeviceUpdateClientGenerated
+-
+-if TYPE_CHECKING:
+-    from azure.core.credentials_async import AsyncTokenCredential
+-
+-
+-class DeviceUpdateClient(DeviceUpdateClientGenerated):
+-    """Device Update for IoT Hub async client.
+-
+-    This override preserves the constructor parameter order shipped in 1.0.0
+-    (``endpoint``, ``instance_id``, ``credential``). The TypeSpec-generated client
+-    orders the hoisted ``instance_id`` after ``credential``; restoring the original
+-    order here avoids a breaking change for existing callers.
+-
+-    :param endpoint: The Device Update for IoT Hub account endpoint. Required.
+-    :type endpoint: str
+-    :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
+-    :type instance_id: str
+-    :param credential: Credential used to authenticate requests to the service. Required.
+-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+-    :keyword api_version: The API version to use for this operation. Default value is "2026-06-01".
+-     Note that overriding this default value may result in unsupported behavior.
+-    :paramtype api_version: str
+-    """
+-
+-    def __init__(
+-        self,
+-        endpoint: str,
+-        instance_id: str,
+-        credential: "AsyncTokenCredential",
+-        *,
+-        api_version: Optional[str] = None,
+-        **kwargs: Any,
+-    ) -> None:
+-        if api_version is not None:
+-            kwargs["api_version"] = api_version
+-        super().__init__(endpoint=endpoint, credential=credential, instance_id=instance_id, **kwargs)
+-
+-
+-__all__: List[str] = ["DeviceUpdateClient"]  # Add all objects you want publicly available at this package level
++__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+ 
+ 
+ def patch_sdk():
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_operations.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_operations.py
+index 47aaedcfd5..72351924fa 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_operations.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_operations.py
+@@ -33,7 +33,7 @@ from azure.core.tracing.decorator import distributed_trace
+ from azure.core.tracing.decorator_async import distributed_trace_async
+ from azure.core.utils import case_insensitive_dict
+ 
+-from ... import models as _models
++from ... import models as _models, types as _types
+ from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+ from ..._utils.serialization import Deserializer, Serializer
+ from ...operations._operations import (
+@@ -90,7 +90,6 @@ from ...operations._operations import (
+ )
+ from .._configuration import DeviceUpdateClientConfiguration
+ 
+-JSON = MutableMapping[str, Any]
+ T = TypeVar("T")
+ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+ 
+@@ -210,7 +209,9 @@ class DeviceUpdateOperations:
+         return AsyncItemPaged(get_next, extract_data)
+ 
+     async def _import_update_initial(
+-        self, update_to_import: Union[list[_models.ImportUpdateInputItem], list[JSON], IO[bytes]], **kwargs: Any
++        self,
++        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
++        **kwargs: Any
+     ) -> AsyncIterator[bytes]:
+         error_map: MutableMapping = {
+             401: ClientAuthenticationError,
+@@ -305,7 +306,11 @@ class DeviceUpdateOperations:
+ 
+     @overload
+     async def begin_import_update(
+-        self, update_to_import: list[JSON], *, content_type: str = "application/json", **kwargs: Any
++        self,
++        update_to_import: list[_types.ImportUpdateInputItem],
++        *,
++        content_type: str = "application/json",
++        **kwargs: Any
+     ) -> AsyncLROPoller[None]:
+         """Import new update version. This is a long-running-operation; use Operation-Location response
+         header value to check for operation status.
+@@ -314,7 +319,7 @@ class DeviceUpdateOperations:
+          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
+          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
+          details). Required.
+-        :type update_to_import: list[JSON]
++        :type update_to_import: list[~azure.iot.deviceupdate.types.ImportUpdateInputItem]
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -345,7 +350,9 @@ class DeviceUpdateOperations:
+ 
+     @distributed_trace_async
+     async def begin_import_update(
+-        self, update_to_import: Union[list[_models.ImportUpdateInputItem], list[JSON], IO[bytes]], **kwargs: Any
++        self,
++        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
++        **kwargs: Any
+     ) -> AsyncLROPoller[None]:
+         """Import new update version. This is a long-running-operation; use Operation-Location response
+         header value to check for operation status.
+@@ -353,9 +360,9 @@ class DeviceUpdateOperations:
+         :param update_to_import: The update to be imported (see schema
+          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
+          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
+-         details). Is one of the following types: [ImportUpdateInputItem], [JSON], IO[bytes] Required.
++         details). Is either a [ImportUpdateInputItem] type or a IO[bytes] type. Required.
+         :type update_to_import: list[~azure.iot.deviceupdate.models.ImportUpdateInputItem] or
+-         list[JSON] or IO[bytes]
++         list[~azure.iot.deviceupdate.types.ImportUpdateInputItem] or IO[bytes]
+         :return: An instance of AsyncLROPoller that returns None
+         :rtype: ~azure.core.polling.AsyncLROPoller[None]
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -1498,7 +1505,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+     async def update_device_class(
+         self,
+         device_class_id: str,
+-        device_class_patch: JSON,
++        device_class_patch: _types.PatchBody,
+         *,
+         content_type: str = "application/merge-patch+json",
+         **kwargs: Any
+@@ -1510,7 +1517,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :param device_class_patch: The device class json merge patch body. Currently only supports
+          patching
+          friendlyName. Required.
+-        :type device_class_patch: JSON
++        :type device_class_patch: ~azure.iot.deviceupdate.types.PatchBody
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/merge-patch+json".
+         :paramtype content_type: str
+@@ -1546,7 +1553,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace_async
+     async def update_device_class(
+-        self, device_class_id: str, device_class_patch: Union[_models.PatchBody, JSON, IO[bytes]], **kwargs: Any
++        self,
++        device_class_id: str,
++        device_class_patch: Union[_models.PatchBody, _types.PatchBody, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.DeviceClass:
+         """Update device class details.
+ 
+@@ -1554,8 +1564,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :type device_class_id: str
+         :param device_class_patch: The device class json merge patch body. Currently only supports
+          patching
+-         friendlyName. Is one of the following types: PatchBody, JSON, IO[bytes] Required.
+-        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody or JSON or IO[bytes]
++         friendlyName. Is either a PatchBody type or a IO[bytes] type. Required.
++        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody or
++         ~azure.iot.deviceupdate.types.PatchBody or IO[bytes]
+         :return: DeviceClass. The DeviceClass is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -2775,7 +2786,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         self,
+         group_id: str,
+         deployment_id: str,
+-        deployment: JSON,
++        deployment: _types.Deployment,
+         *,
+         content_type: str = "application/json",
+         **kwargs: Any
+@@ -2787,7 +2798,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :param deployment_id: Deployment identifier. Required.
+         :type deployment_id: str
+         :param deployment: The deployment properties. Required.
+-        :type deployment: JSON
++        :type deployment: ~azure.iot.deviceupdate.types.Deployment
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -2824,7 +2835,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace_async
+     async def create_or_update_deployment(
+-        self, group_id: str, deployment_id: str, deployment: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
++        self,
++        group_id: str,
++        deployment_id: str,
++        deployment: Union[_models.Deployment, _types.Deployment, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.Deployment:
+         """Creates or updates a deployment.
+ 
+@@ -2832,9 +2847,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :type group_id: str
+         :param deployment_id: Deployment identifier. Required.
+         :type deployment_id: str
+-        :param deployment: The deployment properties. Is one of the following types: Deployment, JSON,
+-         IO[bytes] Required.
+-        :type deployment: ~azure.iot.deviceupdate.models.Deployment or JSON or IO[bytes]
++        :param deployment: The deployment properties. Is either a Deployment type or a IO[bytes] type.
++         Required.
++        :type deployment: ~azure.iot.deviceupdate.models.Deployment or
++         ~azure.iot.deviceupdate.types.Deployment or IO[bytes]
+         :return: Deployment. The Deployment is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.Deployment
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -2906,6 +2922,62 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+         return deserialized  # type: ignore
+ 
++    @distributed_trace_async
++    async def delete_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> None:
++        """Deletes a deployment.
++
++        :param group_id: Group identifier. Required.
++        :type group_id: str
++        :param deployment_id: Deployment identifier. Required.
++        :type deployment_id: str
++        :return: None
++        :rtype: None
++        :raises ~azure.core.exceptions.HttpResponseError:
++        """
++        error_map: MutableMapping = {
++            401: ClientAuthenticationError,
++            404: ResourceNotFoundError,
++            409: ResourceExistsError,
++            304: ResourceNotModifiedError,
++        }
++        error_map.update(kwargs.pop("error_map", {}) or {})
++
++        _headers = kwargs.pop("headers", {}) or {}
++        _params = kwargs.pop("params", {}) or {}
++
++        cls: ClsType[None] = kwargs.pop("cls", None)
++
++        _request = build_device_management_delete_deployment_request(
++            group_id=group_id,
++            deployment_id=deployment_id,
++            instance_id=self._config.instance_id,
++            api_version=self._config.api_version,
++            headers=_headers,
++            params=_params,
++        )
++        path_format_arguments = {
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
++        }
++        _request.url = self._client.format_url(_request.url, **path_format_arguments)
++
++        _stream = False
++        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
++            _request, stream=_stream, **kwargs
++        )
++
++        response = pipeline_response.http_response
++
++        if response.status_code not in [204]:
++            map_error(status_code=response.status_code, response=response, error_map=error_map)
++            error = _failsafe_deserialize(
++                _models.ErrorResponse,
++                response,
++            )
++            raise HttpResponseError(response=response, model=error)
++
++        if cls:
++            return cls(pipeline_response, None, {})  # type: ignore
++
+     @distributed_trace_async
+     async def get_deployment_status(self, group_id: str, deployment_id: str, **kwargs: Any) -> _models.DeploymentStatus:
+         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
+@@ -3533,6 +3605,67 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+         return deserialized  # type: ignore
+ 
++    @distributed_trace_async
++    async def delete_deployment_for_device_class_subgroup(  # pylint: disable=name-too-long
++        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
++    ) -> None:
++        """Deletes a device class subgroup deployment.
++
++        :param group_id: Group identifier. Required.
++        :type group_id: str
++        :param device_class_id: Device class identifier. Required.
++        :type device_class_id: str
++        :param deployment_id: Deployment identifier. Required.
++        :type deployment_id: str
++        :return: None
++        :rtype: None
++        :raises ~azure.core.exceptions.HttpResponseError:
++        """
++        error_map: MutableMapping = {
++            401: ClientAuthenticationError,
++            404: ResourceNotFoundError,
++            409: ResourceExistsError,
++            304: ResourceNotModifiedError,
++        }
++        error_map.update(kwargs.pop("error_map", {}) or {})
++
++        _headers = kwargs.pop("headers", {}) or {}
++        _params = kwargs.pop("params", {}) or {}
++
++        cls: ClsType[None] = kwargs.pop("cls", None)
++
++        _request = build_device_management_delete_deployment_for_device_class_subgroup_request(
++            group_id=group_id,
++            device_class_id=device_class_id,
++            deployment_id=deployment_id,
++            instance_id=self._config.instance_id,
++            api_version=self._config.api_version,
++            headers=_headers,
++            params=_params,
++        )
++        path_format_arguments = {
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
++        }
++        _request.url = self._client.format_url(_request.url, **path_format_arguments)
++
++        _stream = False
++        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
++            _request, stream=_stream, **kwargs
++        )
++
++        response = pipeline_response.http_response
++
++        if response.status_code not in [204]:
++            map_error(status_code=response.status_code, response=response, error_map=error_map)
++            error = _failsafe_deserialize(
++                _models.ErrorResponse,
++                response,
++            )
++            raise HttpResponseError(response=response, model=error)
++
++        if cls:
++            return cls(pipeline_response, None, {})  # type: ignore
++
+     @distributed_trace_async
+     async def stop_deployment(
+         self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
+@@ -4078,14 +4211,19 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @overload
+     async def start_log_collection(
+-        self, log_collection_id: str, log_collection: JSON, *, content_type: str = "application/json", **kwargs: Any
++        self,
++        log_collection_id: str,
++        log_collection: _types.LogCollection,
++        *,
++        content_type: str = "application/json",
++        **kwargs: Any
+     ) -> _models.LogCollection:
+         """Start the device diagnostics log collection on specified devices.
+ 
+         :param log_collection_id: Log collection identifier. Required.
+         :type log_collection_id: str
+         :param log_collection: The log collection properties. Required.
+-        :type log_collection: JSON
++        :type log_collection: ~azure.iot.deviceupdate.types.LogCollection
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -4119,15 +4257,19 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace_async
+     async def start_log_collection(
+-        self, log_collection_id: str, log_collection: Union[_models.LogCollection, JSON, IO[bytes]], **kwargs: Any
++        self,
++        log_collection_id: str,
++        log_collection: Union[_models.LogCollection, _types.LogCollection, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.LogCollection:
+         """Start the device diagnostics log collection on specified devices.
+ 
+         :param log_collection_id: Log collection identifier. Required.
+         :type log_collection_id: str
+-        :param log_collection: The log collection properties. Is one of the following types:
+-         LogCollection, JSON, IO[bytes] Required.
+-        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection or JSON or IO[bytes]
++        :param log_collection: The log collection properties. Is either a LogCollection type or a
++         IO[bytes] type. Required.
++        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection or
++         ~azure.iot.deviceupdate.types.LogCollection or IO[bytes]
+         :return: LogCollection. The LogCollection is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.LogCollection
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -4514,120 +4656,3 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+             return pipeline_response
+ 
+         return AsyncItemPaged(get_next, extract_data)
+-
+-    @distributed_trace_async
+-    async def delete_deployment(self, group_id: str, deployment_id: str, **kwargs: Any) -> None:
+-        """Deletes a deployment.
+-
+-        :param group_id: Group identifier. Required.
+-        :type group_id: str
+-        :param deployment_id: Deployment identifier. Required.
+-        :type deployment_id: str
+-        :return: None
+-        :rtype: None
+-        :raises ~azure.core.exceptions.HttpResponseError:
+-        """
+-        error_map: MutableMapping = {
+-            401: ClientAuthenticationError,
+-            404: ResourceNotFoundError,
+-            409: ResourceExistsError,
+-            304: ResourceNotModifiedError,
+-        }
+-        error_map.update(kwargs.pop("error_map", {}) or {})
+-
+-        _headers = kwargs.pop("headers", {}) or {}
+-        _params = kwargs.pop("params", {}) or {}
+-
+-        cls: ClsType[None] = kwargs.pop("cls", None)
+-
+-        _request = build_device_management_delete_deployment_request(
+-            group_id=group_id,
+-            deployment_id=deployment_id,
+-            instance_id=self._config.instance_id,
+-            api_version=self._config.api_version,
+-            headers=_headers,
+-            params=_params,
+-        )
+-        path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+-        }
+-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+-
+-        _stream = False
+-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+-            _request, stream=_stream, **kwargs
+-        )
+-
+-        response = pipeline_response.http_response
+-
+-        if response.status_code not in [204]:
+-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+-            error = _failsafe_deserialize(
+-                _models.ErrorResponse,
+-                response,
+-            )
+-            raise HttpResponseError(response=response, model=error)
+-
+-        if cls:
+-            return cls(pipeline_response, None, {})  # type: ignore
+-
+-    @distributed_trace_async
+-    async def delete_deployment_for_device_class_subgroup(  # pylint: disable=name-too-long
+-        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
+-    ) -> None:
+-        """Deletes a device class subgroup deployment.
+-
+-        :param group_id: Group identifier. Required.
+-        :type group_id: str
+-        :param device_class_id: Device class identifier. Required.
+-        :type device_class_id: str
+-        :param deployment_id: Deployment identifier. Required.
+-        :type deployment_id: str
+-        :return: None
+-        :rtype: None
+-        :raises ~azure.core.exceptions.HttpResponseError:
+-        """
+-        error_map: MutableMapping = {
+-            401: ClientAuthenticationError,
+-            404: ResourceNotFoundError,
+-            409: ResourceExistsError,
+-            304: ResourceNotModifiedError,
+-        }
+-        error_map.update(kwargs.pop("error_map", {}) or {})
+-
+-        _headers = kwargs.pop("headers", {}) or {}
+-        _params = kwargs.pop("params", {}) or {}
+-
+-        cls: ClsType[None] = kwargs.pop("cls", None)
+-
+-        _request = build_device_management_delete_deployment_for_device_class_subgroup_request(
+-            group_id=group_id,
+-            device_class_id=device_class_id,
+-            deployment_id=deployment_id,
+-            instance_id=self._config.instance_id,
+-            api_version=self._config.api_version,
+-            headers=_headers,
+-            params=_params,
+-        )
+-        path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+-        }
+-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+-
+-        _stream = False
+-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+-            _request, stream=_stream, **kwargs
+-        )
+-
+-        response = pipeline_response.http_response
+-
+-        if response.status_code not in [204]:
+-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+-            error = _failsafe_deserialize(
+-                _models.ErrorResponse,
+-                response,
+-            )
+-            raise HttpResponseError(response=response, model=error)
+-
+-        if cls:
+-            return cls(pipeline_response, None, {})  # type: ignore
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_patch.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_patch.py
+index 0cc0120119..87676c65a8 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_patch.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/aio/operations/_patch.py
+@@ -8,94 +8,8 @@
+ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+ """
+ 
+-from typing import Any, List, Optional
+ 
+-from azure.core import MatchConditions
+-
+-from ._operations import (
+-    DeviceManagementOperations as DeviceManagementOperationsGenerated,
+-    DeviceUpdateOperations as DeviceUpdateOperationsGenerated,
+-)
+-
+-
+-def _apply_if_none_match(kwargs: Any, if_none_match: Optional[str]) -> None:
+-    """Restore the 1.0.0 ``if_none_match`` behavior by sending the raw
+-    ``If-None-Match`` header value as-is (the generated client instead exposes the
+-    ``etag`` / ``match_condition`` pattern).
+-
+-    :param kwargs: The keyword arguments forwarded to the generated operation.
+-    :type kwargs: any
+-    :param if_none_match: The raw ``If-None-Match`` header value, or ``None``.
+-    :type if_none_match: str or None
+-    """
+-    if if_none_match is not None:
+-        headers = kwargs.setdefault("headers", {})
+-        headers.setdefault("If-None-Match", if_none_match)
+-
+-
+-class DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
+-    async def get_update(
+-        self,
+-        provider: str,
+-        name: str,
+-        version: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return await super().get_update(provider, name, version, etag=etag, match_condition=match_condition, **kwargs)
+-
+-    async def get_file(
+-        self,
+-        provider: str,
+-        name: str,
+-        version: str,
+-        file_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return await super().get_file(
+-            provider, name, version, file_id, etag=etag, match_condition=match_condition, **kwargs
+-        )
+-
+-    async def get_operation_status(
+-        self,
+-        operation_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return await super().get_operation_status(operation_id, etag=etag, match_condition=match_condition, **kwargs)
+-
+-
+-class DeviceManagementOperations(DeviceManagementOperationsGenerated):
+-    async def get_operation_status(
+-        self,
+-        operation_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return await super().get_operation_status(operation_id, etag=etag, match_condition=match_condition, **kwargs)
+-
+-
+-__all__: List[str] = [
+-    "DeviceUpdateOperations",
+-    "DeviceManagementOperations",
+-]  # Add all objects you want publicly available at this package level
++__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+ 
+ 
+ def patch_sdk():
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_operations.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_operations.py
+index 44b7f9e907..399aa0d59b 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_operations.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_operations.py
+@@ -32,13 +32,12 @@ from azure.core.rest import HttpRequest, HttpResponse
+ from azure.core.tracing.decorator import distributed_trace
+ from azure.core.utils import case_insensitive_dict
+ 
+-from .. import models as _models
++from .. import models as _models, types as _types
+ from .._configuration import DeviceUpdateClientConfiguration
+ from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+ from .._utils.serialization import Deserializer, Serializer
+ from .._utils.utils import prep_if_match, prep_if_none_match
+ 
+-JSON = MutableMapping[str, Any]
+ T = TypeVar("T")
+ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+ 
+@@ -877,6 +876,28 @@ def build_device_management_create_or_update_deployment_request(  # pylint: disa
+     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+ 
+ 
++def build_device_management_delete_deployment_request(  # pylint: disable=name-too-long
++    group_id: str, deployment_id: str, instance_id: str, **kwargs: Any
++) -> HttpRequest:
++    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
++
++    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
++    # Construct URL
++    _url = "/deviceUpdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}"
++    path_format_arguments = {
++        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
++        "groupId": _SERIALIZER.url("group_id", group_id, "str"),
++        "deploymentId": _SERIALIZER.url("deployment_id", deployment_id, "str"),
++    }
++
++    _url: str = _url.format(**path_format_arguments)  # type: ignore
++
++    # Construct parameters
++    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
++
++    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
++
++
+ def build_device_management_get_deployment_status_request(  # pylint: disable=name-too-long
+     group_id: str, deployment_id: str, instance_id: str, **kwargs: Any
+ ) -> HttpRequest:
+@@ -1101,6 +1122,29 @@ def build_device_management_get_deployment_for_device_class_subgroup_request(  #
+     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+ 
+ 
++def build_device_management_delete_deployment_for_device_class_subgroup_request(  # pylint: disable=name-too-long
++    group_id: str, device_class_id: str, deployment_id: str, instance_id: str, **kwargs: Any
++) -> HttpRequest:
++    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
++
++    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
++    # Construct URL
++    _url = "/deviceUpdate/{instanceId}/management/groups/{groupId}/deviceClassSubgroups/{deviceClassId}/deployments/{deploymentId}"
++    path_format_arguments = {
++        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
++        "groupId": _SERIALIZER.url("group_id", group_id, "str"),
++        "deviceClassId": _SERIALIZER.url("device_class_id", device_class_id, "str"),
++        "deploymentId": _SERIALIZER.url("deployment_id", deployment_id, "str"),
++    }
++
++    _url: str = _url.format(**path_format_arguments)  # type: ignore
++
++    # Construct parameters
++    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
++
++    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
++
++
+ def build_device_management_stop_deployment_request(  # pylint: disable=name-too-long
+     group_id: str, device_class_id: str, deployment_id: str, instance_id: str, **kwargs: Any
+ ) -> HttpRequest:
+@@ -1430,51 +1474,6 @@ def build_device_management_list_health_of_devices_request(  # pylint: disable=n
+     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+ 
+ 
+-def build_device_management_delete_deployment_request(  # pylint: disable=name-too-long
+-    group_id: str, deployment_id: str, instance_id: str, **kwargs: Any
+-) -> HttpRequest:
+-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+-
+-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+-    # Construct URL
+-    _url = "/deviceUpdate/{instanceId}/management/groups/{groupId}/deployments/{deploymentId}"
+-    path_format_arguments = {
+-        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+-        "groupId": _SERIALIZER.url("group_id", group_id, "str"),
+-        "deploymentId": _SERIALIZER.url("deployment_id", deployment_id, "str"),
+-    }
+-
+-    _url: str = _url.format(**path_format_arguments)  # type: ignore
+-
+-    # Construct parameters
+-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+-
+-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+-
+-
+-def build_device_management_delete_deployment_for_device_class_subgroup_request(  # pylint: disable=name-too-long
+-    group_id: str, device_class_id: str, deployment_id: str, instance_id: str, **kwargs: Any
+-) -> HttpRequest:
+-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+-
+-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-06-01"))
+-    # Construct URL
+-    _url = "/deviceUpdate/{instanceId}/management/groups/{groupId}/deviceClassSubgroups/{deviceClassId}/deployments/{deploymentId}"
+-    path_format_arguments = {
+-        "instanceId": _SERIALIZER.url("instance_id", instance_id, "str"),
+-        "groupId": _SERIALIZER.url("group_id", group_id, "str"),
+-        "deviceClassId": _SERIALIZER.url("device_class_id", device_class_id, "str"),
+-        "deploymentId": _SERIALIZER.url("deployment_id", deployment_id, "str"),
+-    }
+-
+-    _url: str = _url.format(**path_format_arguments)  # type: ignore
+-
+-    # Construct parameters
+-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+-
+-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+-
+-
+ class DeviceUpdateOperations:
+     """
+     .. warning::
+@@ -1590,7 +1589,9 @@ class DeviceUpdateOperations:
+         return ItemPaged(get_next, extract_data)
+ 
+     def _import_update_initial(
+-        self, update_to_import: Union[list[_models.ImportUpdateInputItem], list[JSON], IO[bytes]], **kwargs: Any
++        self,
++        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
++        **kwargs: Any
+     ) -> Iterator[bytes]:
+         error_map: MutableMapping = {
+             401: ClientAuthenticationError,
+@@ -1685,7 +1686,11 @@ class DeviceUpdateOperations:
+ 
+     @overload
+     def begin_import_update(
+-        self, update_to_import: list[JSON], *, content_type: str = "application/json", **kwargs: Any
++        self,
++        update_to_import: list[_types.ImportUpdateInputItem],
++        *,
++        content_type: str = "application/json",
++        **kwargs: Any
+     ) -> LROPoller[None]:
+         """Import new update version. This is a long-running-operation; use Operation-Location response
+         header value to check for operation status.
+@@ -1694,7 +1699,7 @@ class DeviceUpdateOperations:
+          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
+          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
+          details). Required.
+-        :type update_to_import: list[JSON]
++        :type update_to_import: list[~azure.iot.deviceupdate.types.ImportUpdateInputItem]
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -1725,7 +1730,9 @@ class DeviceUpdateOperations:
+ 
+     @distributed_trace
+     def begin_import_update(
+-        self, update_to_import: Union[list[_models.ImportUpdateInputItem], list[JSON], IO[bytes]], **kwargs: Any
++        self,
++        update_to_import: Union[list[_models.ImportUpdateInputItem], list[_types.ImportUpdateInputItem], IO[bytes]],
++        **kwargs: Any
+     ) -> LROPoller[None]:
+         """Import new update version. This is a long-running-operation; use Operation-Location response
+         header value to check for operation status.
+@@ -1733,9 +1740,9 @@ class DeviceUpdateOperations:
+         :param update_to_import: The update to be imported (see schema
+          `https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json
+          <https://json.schemastore.org/azure-deviceupdate-import-manifest-5.0.json>`_ for
+-         details). Is one of the following types: [ImportUpdateInputItem], [JSON], IO[bytes] Required.
++         details). Is either a [ImportUpdateInputItem] type or a IO[bytes] type. Required.
+         :type update_to_import: list[~azure.iot.deviceupdate.models.ImportUpdateInputItem] or
+-         list[JSON] or IO[bytes]
++         list[~azure.iot.deviceupdate.types.ImportUpdateInputItem] or IO[bytes]
+         :return: An instance of LROPoller that returns None
+         :rtype: ~azure.core.polling.LROPoller[None]
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -2870,7 +2877,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+     def update_device_class(
+         self,
+         device_class_id: str,
+-        device_class_patch: JSON,
++        device_class_patch: _types.PatchBody,
+         *,
+         content_type: str = "application/merge-patch+json",
+         **kwargs: Any
+@@ -2882,7 +2889,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :param device_class_patch: The device class json merge patch body. Currently only supports
+          patching
+          friendlyName. Required.
+-        :type device_class_patch: JSON
++        :type device_class_patch: ~azure.iot.deviceupdate.types.PatchBody
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/merge-patch+json".
+         :paramtype content_type: str
+@@ -2918,7 +2925,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace
+     def update_device_class(
+-        self, device_class_id: str, device_class_patch: Union[_models.PatchBody, JSON, IO[bytes]], **kwargs: Any
++        self,
++        device_class_id: str,
++        device_class_patch: Union[_models.PatchBody, _types.PatchBody, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.DeviceClass:
+         """Update device class details.
+ 
+@@ -2926,8 +2936,9 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :type device_class_id: str
+         :param device_class_patch: The device class json merge patch body. Currently only supports
+          patching
+-         friendlyName. Is one of the following types: PatchBody, JSON, IO[bytes] Required.
+-        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody or JSON or IO[bytes]
++         friendlyName. Is either a PatchBody type or a IO[bytes] type. Required.
++        :type device_class_patch: ~azure.iot.deviceupdate.models.PatchBody or
++         ~azure.iot.deviceupdate.types.PatchBody or IO[bytes]
+         :return: DeviceClass. The DeviceClass is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.DeviceClass
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -4144,7 +4155,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         self,
+         group_id: str,
+         deployment_id: str,
+-        deployment: JSON,
++        deployment: _types.Deployment,
+         *,
+         content_type: str = "application/json",
+         **kwargs: Any
+@@ -4156,7 +4167,7 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :param deployment_id: Deployment identifier. Required.
+         :type deployment_id: str
+         :param deployment: The deployment properties. Required.
+-        :type deployment: JSON
++        :type deployment: ~azure.iot.deviceupdate.types.Deployment
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -4193,7 +4204,11 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace
+     def create_or_update_deployment(
+-        self, group_id: str, deployment_id: str, deployment: Union[_models.Deployment, JSON, IO[bytes]], **kwargs: Any
++        self,
++        group_id: str,
++        deployment_id: str,
++        deployment: Union[_models.Deployment, _types.Deployment, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.Deployment:
+         """Creates or updates a deployment.
+ 
+@@ -4201,9 +4216,10 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+         :type group_id: str
+         :param deployment_id: Deployment identifier. Required.
+         :type deployment_id: str
+-        :param deployment: The deployment properties. Is one of the following types: Deployment, JSON,
+-         IO[bytes] Required.
+-        :type deployment: ~azure.iot.deviceupdate.models.Deployment or JSON or IO[bytes]
++        :param deployment: The deployment properties. Is either a Deployment type or a IO[bytes] type.
++         Required.
++        :type deployment: ~azure.iot.deviceupdate.models.Deployment or
++         ~azure.iot.deviceupdate.types.Deployment or IO[bytes]
+         :return: Deployment. The Deployment is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.Deployment
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -4275,6 +4291,64 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+         return deserialized  # type: ignore
+ 
++    @distributed_trace
++    def delete_deployment(  # pylint: disable=inconsistent-return-statements
++        self, group_id: str, deployment_id: str, **kwargs: Any
++    ) -> None:
++        """Deletes a deployment.
++
++        :param group_id: Group identifier. Required.
++        :type group_id: str
++        :param deployment_id: Deployment identifier. Required.
++        :type deployment_id: str
++        :return: None
++        :rtype: None
++        :raises ~azure.core.exceptions.HttpResponseError:
++        """
++        error_map: MutableMapping = {
++            401: ClientAuthenticationError,
++            404: ResourceNotFoundError,
++            409: ResourceExistsError,
++            304: ResourceNotModifiedError,
++        }
++        error_map.update(kwargs.pop("error_map", {}) or {})
++
++        _headers = kwargs.pop("headers", {}) or {}
++        _params = kwargs.pop("params", {}) or {}
++
++        cls: ClsType[None] = kwargs.pop("cls", None)
++
++        _request = build_device_management_delete_deployment_request(
++            group_id=group_id,
++            deployment_id=deployment_id,
++            instance_id=self._config.instance_id,
++            api_version=self._config.api_version,
++            headers=_headers,
++            params=_params,
++        )
++        path_format_arguments = {
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
++        }
++        _request.url = self._client.format_url(_request.url, **path_format_arguments)
++
++        _stream = False
++        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
++            _request, stream=_stream, **kwargs
++        )
++
++        response = pipeline_response.http_response
++
++        if response.status_code not in [204]:
++            map_error(status_code=response.status_code, response=response, error_map=error_map)
++            error = _failsafe_deserialize(
++                _models.ErrorResponse,
++                response,
++            )
++            raise HttpResponseError(response=response, model=error)
++
++        if cls:
++            return cls(pipeline_response, None, {})  # type: ignore
++
+     @distributed_trace
+     def get_deployment_status(self, group_id: str, deployment_id: str, **kwargs: Any) -> _models.DeploymentStatus:
+         """Gets the status of a deployment including a breakdown of how many devices in the deployment are
+@@ -4903,6 +4977,67 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+         return deserialized  # type: ignore
+ 
++    @distributed_trace
++    def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements,name-too-long
++        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
++    ) -> None:
++        """Deletes a device class subgroup deployment.
++
++        :param group_id: Group identifier. Required.
++        :type group_id: str
++        :param device_class_id: Device class identifier. Required.
++        :type device_class_id: str
++        :param deployment_id: Deployment identifier. Required.
++        :type deployment_id: str
++        :return: None
++        :rtype: None
++        :raises ~azure.core.exceptions.HttpResponseError:
++        """
++        error_map: MutableMapping = {
++            401: ClientAuthenticationError,
++            404: ResourceNotFoundError,
++            409: ResourceExistsError,
++            304: ResourceNotModifiedError,
++        }
++        error_map.update(kwargs.pop("error_map", {}) or {})
++
++        _headers = kwargs.pop("headers", {}) or {}
++        _params = kwargs.pop("params", {}) or {}
++
++        cls: ClsType[None] = kwargs.pop("cls", None)
++
++        _request = build_device_management_delete_deployment_for_device_class_subgroup_request(
++            group_id=group_id,
++            device_class_id=device_class_id,
++            deployment_id=deployment_id,
++            instance_id=self._config.instance_id,
++            api_version=self._config.api_version,
++            headers=_headers,
++            params=_params,
++        )
++        path_format_arguments = {
++            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
++        }
++        _request.url = self._client.format_url(_request.url, **path_format_arguments)
++
++        _stream = False
++        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
++            _request, stream=_stream, **kwargs
++        )
++
++        response = pipeline_response.http_response
++
++        if response.status_code not in [204]:
++            map_error(status_code=response.status_code, response=response, error_map=error_map)
++            error = _failsafe_deserialize(
++                _models.ErrorResponse,
++                response,
++            )
++            raise HttpResponseError(response=response, model=error)
++
++        if cls:
++            return cls(pipeline_response, None, {})  # type: ignore
++
+     @distributed_trace
+     def stop_deployment(
+         self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
+@@ -5447,14 +5582,19 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @overload
+     def start_log_collection(
+-        self, log_collection_id: str, log_collection: JSON, *, content_type: str = "application/json", **kwargs: Any
++        self,
++        log_collection_id: str,
++        log_collection: _types.LogCollection,
++        *,
++        content_type: str = "application/json",
++        **kwargs: Any
+     ) -> _models.LogCollection:
+         """Start the device diagnostics log collection on specified devices.
+ 
+         :param log_collection_id: Log collection identifier. Required.
+         :type log_collection_id: str
+         :param log_collection: The log collection properties. Required.
+-        :type log_collection: JSON
++        :type log_collection: ~azure.iot.deviceupdate.types.LogCollection
+         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+          Default value is "application/json".
+         :paramtype content_type: str
+@@ -5488,15 +5628,19 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+ 
+     @distributed_trace
+     def start_log_collection(
+-        self, log_collection_id: str, log_collection: Union[_models.LogCollection, JSON, IO[bytes]], **kwargs: Any
++        self,
++        log_collection_id: str,
++        log_collection: Union[_models.LogCollection, _types.LogCollection, IO[bytes]],
++        **kwargs: Any
+     ) -> _models.LogCollection:
+         """Start the device diagnostics log collection on specified devices.
+ 
+         :param log_collection_id: Log collection identifier. Required.
+         :type log_collection_id: str
+-        :param log_collection: The log collection properties. Is one of the following types:
+-         LogCollection, JSON, IO[bytes] Required.
+-        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection or JSON or IO[bytes]
++        :param log_collection: The log collection properties. Is either a LogCollection type or a
++         IO[bytes] type. Required.
++        :type log_collection: ~azure.iot.deviceupdate.models.LogCollection or
++         ~azure.iot.deviceupdate.types.LogCollection or IO[bytes]
+         :return: LogCollection. The LogCollection is compatible with MutableMapping
+         :rtype: ~azure.iot.deviceupdate.models.LogCollection
+         :raises ~azure.core.exceptions.HttpResponseError:
+@@ -5883,122 +6027,3 @@ class DeviceManagementOperations:  # pylint: disable=too-many-public-methods
+             return pipeline_response
+ 
+         return ItemPaged(get_next, extract_data)
+-
+-    @distributed_trace
+-    def delete_deployment(  # pylint: disable=inconsistent-return-statements
+-        self, group_id: str, deployment_id: str, **kwargs: Any
+-    ) -> None:
+-        """Deletes a deployment.
+-
+-        :param group_id: Group identifier. Required.
+-        :type group_id: str
+-        :param deployment_id: Deployment identifier. Required.
+-        :type deployment_id: str
+-        :return: None
+-        :rtype: None
+-        :raises ~azure.core.exceptions.HttpResponseError:
+-        """
+-        error_map: MutableMapping = {
+-            401: ClientAuthenticationError,
+-            404: ResourceNotFoundError,
+-            409: ResourceExistsError,
+-            304: ResourceNotModifiedError,
+-        }
+-        error_map.update(kwargs.pop("error_map", {}) or {})
+-
+-        _headers = kwargs.pop("headers", {}) or {}
+-        _params = kwargs.pop("params", {}) or {}
+-
+-        cls: ClsType[None] = kwargs.pop("cls", None)
+-
+-        _request = build_device_management_delete_deployment_request(
+-            group_id=group_id,
+-            deployment_id=deployment_id,
+-            instance_id=self._config.instance_id,
+-            api_version=self._config.api_version,
+-            headers=_headers,
+-            params=_params,
+-        )
+-        path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+-        }
+-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+-
+-        _stream = False
+-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+-            _request, stream=_stream, **kwargs
+-        )
+-
+-        response = pipeline_response.http_response
+-
+-        if response.status_code not in [204]:
+-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+-            error = _failsafe_deserialize(
+-                _models.ErrorResponse,
+-                response,
+-            )
+-            raise HttpResponseError(response=response, model=error)
+-
+-        if cls:
+-            return cls(pipeline_response, None, {})  # type: ignore
+-
+-    @distributed_trace
+-    def delete_deployment_for_device_class_subgroup(  # pylint: disable=inconsistent-return-statements,name-too-long
+-        self, group_id: str, device_class_id: str, deployment_id: str, **kwargs: Any
+-    ) -> None:
+-        """Deletes a device class subgroup deployment.
+-
+-        :param group_id: Group identifier. Required.
+-        :type group_id: str
+-        :param device_class_id: Device class identifier. Required.
+-        :type device_class_id: str
+-        :param deployment_id: Deployment identifier. Required.
+-        :type deployment_id: str
+-        :return: None
+-        :rtype: None
+-        :raises ~azure.core.exceptions.HttpResponseError:
+-        """
+-        error_map: MutableMapping = {
+-            401: ClientAuthenticationError,
+-            404: ResourceNotFoundError,
+-            409: ResourceExistsError,
+-            304: ResourceNotModifiedError,
+-        }
+-        error_map.update(kwargs.pop("error_map", {}) or {})
+-
+-        _headers = kwargs.pop("headers", {}) or {}
+-        _params = kwargs.pop("params", {}) or {}
+-
+-        cls: ClsType[None] = kwargs.pop("cls", None)
+-
+-        _request = build_device_management_delete_deployment_for_device_class_subgroup_request(
+-            group_id=group_id,
+-            device_class_id=device_class_id,
+-            deployment_id=deployment_id,
+-            instance_id=self._config.instance_id,
+-            api_version=self._config.api_version,
+-            headers=_headers,
+-            params=_params,
+-        )
+-        path_format_arguments = {
+-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+-        }
+-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+-
+-        _stream = False
+-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+-            _request, stream=_stream, **kwargs
+-        )
+-
+-        response = pipeline_response.http_response
+-
+-        if response.status_code not in [204]:
+-            map_error(status_code=response.status_code, response=response, error_map=error_map)
+-            error = _failsafe_deserialize(
+-                _models.ErrorResponse,
+-                response,
+-            )
+-            raise HttpResponseError(response=response, model=error)
+-
+-        if cls:
+-            return cls(pipeline_response, None, {})  # type: ignore
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_patch.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_patch.py
+index dd6b7c08ad..87676c65a8 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_patch.py
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/operations/_patch.py
+@@ -8,92 +8,8 @@
+ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+ """
+ 
+-from typing import Any, List, Optional
+ 
+-from azure.core import MatchConditions
+-
+-from ._operations import (
+-    DeviceManagementOperations as DeviceManagementOperationsGenerated,
+-    DeviceUpdateOperations as DeviceUpdateOperationsGenerated,
+-)
+-
+-
+-def _apply_if_none_match(kwargs: Any, if_none_match: Optional[str]) -> None:
+-    """Restore the 1.0.0 ``if_none_match`` behavior by sending the raw
+-    ``If-None-Match`` header value as-is (the generated client instead exposes the
+-    ``etag`` / ``match_condition`` pattern).
+-
+-    :param kwargs: The keyword arguments forwarded to the generated operation.
+-    :type kwargs: any
+-    :param if_none_match: The raw ``If-None-Match`` header value, or ``None``.
+-    :type if_none_match: str or None
+-    """
+-    if if_none_match is not None:
+-        headers = kwargs.setdefault("headers", {})
+-        headers.setdefault("If-None-Match", if_none_match)
+-
+-
+-class DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
+-    def get_update(
+-        self,
+-        provider: str,
+-        name: str,
+-        version: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return super().get_update(provider, name, version, etag=etag, match_condition=match_condition, **kwargs)
+-
+-    def get_file(
+-        self,
+-        provider: str,
+-        name: str,
+-        version: str,
+-        file_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return super().get_file(provider, name, version, file_id, etag=etag, match_condition=match_condition, **kwargs)
+-
+-    def get_operation_status(
+-        self,
+-        operation_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return super().get_operation_status(operation_id, etag=etag, match_condition=match_condition, **kwargs)
+-
+-
+-class DeviceManagementOperations(DeviceManagementOperationsGenerated):
+-    def get_operation_status(
+-        self,
+-        operation_id: str,
+-        *,
+-        etag: Optional[str] = None,
+-        match_condition: Optional[MatchConditions] = None,
+-        if_none_match: Optional[str] = None,
+-        **kwargs: Any,
+-    ):
+-        _apply_if_none_match(kwargs, if_none_match)
+-        return super().get_operation_status(operation_id, etag=etag, match_condition=match_condition, **kwargs)
+-
+-
+-__all__: List[str] = [
+-    "DeviceUpdateOperations",
+-    "DeviceManagementOperations",
+-]  # Add all objects you want publicly available at this package level
++__all__: list[str] = []  # Add all objects you want publicly available to users at this package level
+ 
+ 
+ def patch_sdk():
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/types.py b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/types.py
+new file mode 100644
+index 0000000000..c198e1ee1c
+--- /dev/null
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/azure/iot/deviceupdate/types.py
+@@ -0,0 +1,269 @@
++# coding=utf-8
++# --------------------------------------------------------------------------
++# Copyright (c) Microsoft Corporation. All rights reserved.
++# Licensed under the MIT License. See License.txt in the project root for license information.
++# Code generated by Microsoft (R) Python Code Generator.
++# Changes may cause incorrect behavior and will be lost if the code is regenerated.
++# --------------------------------------------------------------------------
++
++from typing import TYPE_CHECKING, Union
++from typing_extensions import Required, TypedDict
++
++if TYPE_CHECKING:
++    from .models import DownloadSecurity, OperationStatus
++
++
++class CloudInitiatedRollbackPolicy(TypedDict, total=False):
++    """Rollback policy for deployment.
++
++    :ivar update_property: Update to rollback to. Required.
++    :vartype update_property: "UpdateInfo"
++    :ivar failure: Failure conditions to initiate rollback policy. Required.
++    :vartype failure: "CloudInitiatedRollbackPolicyFailure"
++    """
++
++    update: Required["UpdateInfo"]
++    """Update to rollback to. Required."""
++    failure: Required["CloudInitiatedRollbackPolicyFailure"]
++    """Failure conditions to initiate rollback policy. Required."""
++
++
++class CloudInitiatedRollbackPolicyFailure(TypedDict, total=False):
++    """Failure conditions to initiate rollback policy.
++
++    :ivar devices_failed_percentage: Percentage of devices that failed. Required.
++    :vartype devices_failed_percentage: int
++    :ivar devices_failed_count: Number of devices that failed. Required.
++    :vartype devices_failed_count: int
++    """
++
++    devicesFailedPercentage: Required[int]
++    """Percentage of devices that failed. Required."""
++    devicesFailedCount: Required[int]
++    """Number of devices that failed. Required."""
++
++
++class Deployment(TypedDict, total=False):
++    """Deployment metadata.
++
++    :ivar deployment_id: The caller-provided deployment identifier. This cannot be longer than 73
++     characters, must be all lower-case, and cannot contain '&', '^', '[', ']', '{', '}', '|', '<',
++     '>', forward slash, backslash, or double quote. The Updates view in the Azure Portal IoT Hub
++     resource generates a GUID for deploymentId when you create a deployment. Required.
++    :vartype deployment_id: str
++    :ivar start_date_time: The deployment start datetime. Required.
++    :vartype start_date_time: str
++    :ivar update_property: Update information for the update in the deployment. Required.
++    :vartype update_property: "UpdateInfo"
++    :ivar group_id: The group identity for the devices the deployment is intended to update.
++     Required.
++    :vartype group_id: str
++    :ivar device_class_subgroups: The device class subgroups the deployment is compatible with and
++     subgroup deployments have been created for. This is not provided by the caller during
++     CreateOrUpdateDeployment but is automatically determined by Device Update.
++    :vartype device_class_subgroups: list[str]
++    :ivar is_canceled: Boolean flag indicating whether the deployment was canceled.
++    :vartype is_canceled: bool
++    :ivar is_retried: Boolean flag indicating whether the deployment has been retried.
++    :vartype is_retried: bool
++    :ivar rollback_policy: The rollback policy for the deployment.
++    :vartype rollback_policy: "CloudInitiatedRollbackPolicy"
++    :ivar is_cloud_initiated_rollback: Boolean flag indicating whether the deployment is a rollback
++     deployment.
++    :vartype is_cloud_initiated_rollback: bool
++    :ivar download_security: The protocol the device should use when downloading the update
++     payload. Defaults to "https". Known values are: "https" and "http".
++    :vartype download_security: Union[str, "DownloadSecurity"]
++    """
++
++    deploymentId: Required[str]
++    """The caller-provided deployment identifier. This cannot be longer than 73 characters, must be
++     all lower-case, and cannot contain '&', '^', '[', ']', '{', '}', '|', '<', '>', forward slash,
++     backslash, or double quote. The Updates view in the Azure Portal IoT Hub resource generates a
++     GUID for deploymentId when you create a deployment. Required."""
++    startDateTime: Required[str]
++    """The deployment start datetime. Required."""
++    update: Required["UpdateInfo"]
++    """Update information for the update in the deployment. Required."""
++    groupId: Required[str]
++    """The group identity for the devices the deployment is intended to update. Required."""
++    deviceClassSubgroups: list[str]
++    """The device class subgroups the deployment is compatible with and subgroup deployments have been
++     created for. This is not provided by the caller during CreateOrUpdateDeployment but is
++     automatically determined by Device Update."""
++    isCanceled: bool
++    """Boolean flag indicating whether the deployment was canceled."""
++    isRetried: bool
++    """Boolean flag indicating whether the deployment has been retried."""
++    rollbackPolicy: "CloudInitiatedRollbackPolicy"
++    """The rollback policy for the deployment."""
++    isCloudInitiatedRollback: bool
++    """Boolean flag indicating whether the deployment is a rollback deployment."""
++    downloadSecurity: Union[str, "DownloadSecurity"]
++    """The protocol the device should use when downloading the update payload. Defaults to \"https\".
++     Known values are: \"https\" and \"http\"."""
++
++
++class DeviceUpdateAgentId(TypedDict, total=False):
++    """Device Update agent id.
++
++    :ivar device_id: Device Id. Required.
++    :vartype device_id: str
++    :ivar module_id: Module Id.
++    :vartype module_id: str
++    """
++
++    deviceId: Required[str]
++    """Device Id. Required."""
++    moduleId: str
++    """Module Id."""
++
++
++class FileImportMetadata(TypedDict, total=False):
++    """Metadata describing an update file.
++
++    :ivar filename: Update file name as specified inside import manifest. Required.
++    :vartype filename: str
++    :ivar url: Azure Blob location from which the update file can be downloaded by Device Update
++     for IoT Hub. This is typically a read-only SAS-protected blob URL with an expiration set to at
++     least 4 hours. Required.
++    :vartype url: str
++    """
++
++    filename: Required[str]
++    """Update file name as specified inside import manifest. Required."""
++    url: Required[str]
++    """Azure Blob location from which the update file can be downloaded by Device Update for IoT Hub.
++     This is typically a read-only SAS-protected blob URL with an expiration set to at least 4
++     hours. Required."""
++
++
++class ImportManifestMetadata(TypedDict, total=False):
++    """Metadata describing the import manifest, a document which describes the files and other
++    metadata about an update version.
++
++    :ivar url: Azure Blob location from which the import manifest can be downloaded by Device
++     Update for IoT Hub. This is typically a read-only SAS-protected blob URL with an expiration set
++     to at least 4 hours. Required.
++    :vartype url: str
++    :ivar size_in_bytes: File size in number of bytes. Required.
++    :vartype size_in_bytes: int
++    :ivar hashes: A JSON object containing the hash(es) of the file. At least SHA256 hash is
++     required. This object can be thought of as a set of key-value pairs where the key is the hash
++     algorithm, and the value is the hash of the file calculated using that algorithm. Required.
++    :vartype hashes: dict[str, str]
++    """
++
++    url: Required[str]
++    """Azure Blob location from which the import manifest can be downloaded by Device Update for IoT
++     Hub. This is typically a read-only SAS-protected blob URL with an expiration set to at least 4
++     hours. Required."""
++    sizeInBytes: Required[int]
++    """File size in number of bytes. Required."""
++    hashes: Required[dict[str, str]]
++    """A JSON object containing the hash(es) of the file. At least SHA256 hash is required. This
++     object can be thought of as a set of key-value pairs where the key is the hash algorithm, and
++     the value is the hash of the file calculated using that algorithm. Required."""
++
++
++class ImportUpdateInputItem(TypedDict, total=False):
++    """Import update input item metadata.
++
++    :ivar import_manifest: Import manifest metadata like source URL, file size/hashes, etc.
++     Required.
++    :vartype import_manifest: "ImportManifestMetadata"
++    :ivar friendly_name: Friendly update name.
++    :vartype friendly_name: str
++    :ivar files: One or more update file properties like filename and source URL.
++    :vartype files: list["FileImportMetadata"]
++    """
++
++    importManifest: Required["ImportManifestMetadata"]
++    """Import manifest metadata like source URL, file size/hashes, etc. Required."""
++    friendlyName: str
++    """Friendly update name."""
++    files: list["FileImportMetadata"]
++    """One or more update file properties like filename and source URL."""
++
++
++class LogCollection(TypedDict, total=False):
++    """Diagnostics request body.
++
++    :ivar log_collection_id: The log collection id.
++    :vartype log_collection_id: str
++    :ivar device_list: Array of Device Update agent ids. Required.
++    :vartype device_list: list["DeviceUpdateAgentId"]
++    :ivar description: Description of the diagnostics operation.
++    :vartype description: str
++    :ivar created_date_time: The timestamp when the operation was created.
++    :vartype created_date_time: str
++    :ivar last_action_date_time: A timestamp for when the current state was entered.
++    :vartype last_action_date_time: str
++    :ivar status: Operation status. Known values are: "NotStarted", "Running", "Succeeded", and
++     "Failed".
++    :vartype status: Union[str, "OperationStatus"]
++    """
++
++    operationId: str
++    """The log collection id."""
++    deviceList: Required[list["DeviceUpdateAgentId"]]
++    """Array of Device Update agent ids. Required."""
++    description: str
++    """Description of the diagnostics operation."""
++    createdDateTime: str
++    """The timestamp when the operation was created."""
++    lastActionDateTime: str
++    """A timestamp for when the current state was entered."""
++    status: Union[str, "OperationStatus"]
++    """Operation status. Known values are: \"NotStarted\", \"Running\", \"Succeeded\", and \"Failed\"."""
++
++
++class PatchBody(TypedDict, total=False):
++    """Device Class JSON Merge Patch request body.
++
++    :ivar friendly_name: The device class friendly name. Friendly name can be 1-100 characters,
++     alphanumeric, dot, and dash. Required.
++    :vartype friendly_name: str
++    """
++
++    friendlyName: Required[str]
++    """The device class friendly name. Friendly name can be 1-100 characters, alphanumeric, dot, and
++     dash. Required."""
++
++
++class UpdateId(TypedDict, total=False):
++    """Update identifier.
++
++    :ivar provider: Update provider. Required.
++    :vartype provider: str
++    :ivar name: Update name. Required.
++    :vartype name: str
++    :ivar version: Update version. Required.
++    :vartype version: str
++    """
++
++    provider: Required[str]
++    """Update provider. Required."""
++    name: Required[str]
++    """Update name. Required."""
++    version: Required[str]
++    """Update version. Required."""
++
++
++class UpdateInfo(TypedDict, total=False):
++    """Update information.
++
++    :ivar update_id: Update identifier. Required.
++    :vartype update_id: "UpdateId"
++    :ivar description: Update description.
++    :vartype description: str
++    :ivar friendly_name: Friendly update name.
++    :vartype friendly_name: str
++    """
++
++    updateId: Required["UpdateId"]
++    """Update identifier. Required."""
++    description: str
++    """Update description."""
++    friendlyName: str
++    """Friendly update name."""
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/pyproject.toml b/sdk/deviceupdate/azure-iot-deviceupdate/pyproject.toml
+index a77c2ee731..211c5f15dd 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/pyproject.toml
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/pyproject.toml
+@@ -1,19 +1,23 @@
++# --------------------------------------------------------------------------
++# Copyright (c) Microsoft Corporation. All rights reserved.
++# Licensed under the MIT License. See License.txt in the project root for license information.
++# Code generated by Microsoft (R) Python Code Generator.
++# Changes may cause incorrect behavior and will be lost if the code is regenerated.
++# --------------------------------------------------------------------------
++
+ [build-system]
+-requires = [
+-    "setuptools>=77.0.3",
+-    "wheel",
+-]
++requires = ["setuptools>=77.0.3", "wheel"]
+ build-backend = "setuptools.build_meta"
+ 
+ [project]
+ name = "azure-iot-deviceupdate"
+ authors = [
+-    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
++  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+ ]
+ description = "Microsoft Corporation Azure Iot Deviceupdate Client Library for Python"
+ license = "MIT"
+ classifiers = [
+-    "Development Status :: 5 - Production/Stable",
++    "Development Status :: 4 - Beta",
+     "Programming Language :: Python",
+     "Programming Language :: Python :: 3 :: Only",
+     "Programming Language :: Python :: 3",
+@@ -24,32 +28,23 @@ classifiers = [
+     "Programming Language :: Python :: 3.14",
+ ]
+ requires-python = ">=3.10"
+-keywords = [
+-    "azure",
+-    "azure sdk",
+-]
++keywords = ["azure", "azure sdk"]
++
+ dependencies = [
+     "isodate>=0.6.1",
+     "azure-core>=1.37.0",
+     "typing-extensions>=4.6.0",
+ ]
+ dynamic = [
+-    "version",
+-    "readme",
++"version", "readme"
+ ]
+ 
+ [project.urls]
+ repository = "https://github.com/Azure/azure-sdk-for-python"
+ 
+-[tool.setuptools.dynamic.version]
+-attr = "azure.iot.deviceupdate._version.VERSION"
+-
+-[tool.setuptools.dynamic.readme]
+-file = [
+-    "README.md",
+-    "CHANGELOG.md",
+-]
+-content-type = "text/markdown"
++[tool.setuptools.dynamic]
++version = {attr = "azure.iot.deviceupdate._version.VERSION"}
++readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
+ 
+ [tool.setuptools.packages.find]
+ exclude = [
+@@ -63,9 +58,7 @@ exclude = [
+ ]
+ 
+ [tool.setuptools.package-data]
+-pytyped = [
+-    "py.typed",
+-]
++pytyped = ["py.typed"]
+ 
+ [tool.azure-sdk-build]
+ pyright = false
+diff --git a/sdk/deviceupdate/azure-iot-deviceupdate/tsp-location.yaml b/sdk/deviceupdate/azure-iot-deviceupdate/tsp-location.yaml
+index dfe6b1560e..f8595069c1 100644
+--- a/sdk/deviceupdate/azure-iot-deviceupdate/tsp-location.yaml
++++ b/sdk/deviceupdate/azure-iot-deviceupdate/tsp-location.yaml
+@@ -1,4 +1,4 @@
+ directory: specification/deviceupdate/data-plane/duiothub
+-commit: 292231b1131ff9fd070377372a0647c6ac7a6ce2
++commit: 67ffbb6bee462e36bcdd3b93cffca6942c3a35f7
+ repo: Azure/azure-rest-api-specs
+ additionalDirectories: 

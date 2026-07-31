@@ -2,7 +2,16 @@
 
 ## 1.1.0 (2026-07-30)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Regenerated the client library from the TypeSpec specification for the Device Update for IoT Hub `2026-06-01` GA API version.
+
+### Breaking Changes
+
+- Changed the positional parameter order of `DeviceUpdateClient` from `endpoint, instance_id, credential` to `endpoint, credential, instance_id` for both synchronous and asynchronous clients.
+- Replaced the `if_none_match` keyword parameter with `etag` and `match_condition` in `get_update`, `get_file`, and `get_operation_status` for both synchronous and asynchronous clients.
+- Raised the minimum supported Python version from 3.6 to 3.10.
+- Raised the minimum supported `azure-core` version from 1.24.0 to 1.37.0.
 
 ## 1.0.0 (2022-09-09)
 
