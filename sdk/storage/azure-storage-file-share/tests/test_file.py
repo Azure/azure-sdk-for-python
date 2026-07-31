@@ -2770,12 +2770,19 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         copy_resp = file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = file_client.download_file()
-        assert target_file.readall() == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = file_client.download_file()
+            assert target_file.readall() == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2817,12 +2824,19 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         copy_resp = file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = file_client.download_file()
-        assert target_file.readall() == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = file_client.download_file()
+            assert target_file.readall() == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @FileSharePreparer()
     @recorded_by_proxy
