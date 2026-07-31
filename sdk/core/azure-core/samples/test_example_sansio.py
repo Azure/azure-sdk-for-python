@@ -23,7 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-# pylint: disable=reimported
 
 from azure.core.pipeline import PipelineRequest
 from azure.core.rest import HttpRequest, HttpResponse

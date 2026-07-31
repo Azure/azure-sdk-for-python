@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-# pylint: disable=reimported,non-abstract-transport-import,networking-import-outside-azure-core-transport
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 from typing import Iterable, MutableSequence, Union
 
 import pytest

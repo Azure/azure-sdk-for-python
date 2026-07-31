@@ -970,9 +970,6 @@ async def test_recursive_multipart_receive(http_request, mock_response):
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():
-    import asyncio
-    from azure.core.pipeline.transport import AioHttpTransport
-
     loop = asyncio.new_event_loop()
     try:
         with pytest.raises(ValueError):
