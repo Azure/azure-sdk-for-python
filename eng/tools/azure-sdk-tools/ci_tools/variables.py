@@ -89,6 +89,12 @@ def in_analyze_weekly() -> int:
     # The analyze-weekly stage sets AZURE_SDK_ANALYZE_WEEKLY=1 (see python-analyze-weekly.yml).
     if os.getenv("AZURE_SDK_ANALYZE_WEEKLY", "") == "1":
         return 4
+    # Fallback for pipelines still keyed on the 'tests-weekly' definition name (e.g. identity).
+    if (
+        "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
+        and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
+    ):
+        return 4
     return 0
 
 
