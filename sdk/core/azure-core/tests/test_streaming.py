@@ -24,11 +24,12 @@
 #
 # --------------------------------------------------------------------------
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.pipeline.transport import RequestsTransport
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
 from azure.core.pipeline.transport import RequestsTransport
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

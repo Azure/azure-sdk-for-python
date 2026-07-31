@@ -38,6 +38,8 @@ except ImportError:
 import pytest
 
 from requests import Request, Response
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
+from rest_client import MockRestClient
 
 from azure.core.polling import LROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
@@ -46,9 +48,7 @@ from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
-from rest_client import MockRestClient
 
 
 class SimpleResource:

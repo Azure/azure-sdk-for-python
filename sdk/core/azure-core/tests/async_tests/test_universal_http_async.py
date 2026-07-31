@@ -23,18 +23,17 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+import aiohttp
+import trio
+import pytest
+from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
+
 from azure.core.pipeline.transport import (
     AioHttpTransport,
     AioHttpTransportResponse,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
 )
-
-import aiohttp
-import trio
-
-import pytest
-from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
 from azure.core.pipeline._tools import is_rest
 
 

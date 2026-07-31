@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 import json
-import requests
 
 try:
     from io import BytesIO
@@ -35,6 +34,8 @@ import xml.etree.ElementTree as ET
 import sys
 
 import pytest
+import requests
+from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
@@ -56,8 +57,6 @@ from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
 )
-from utils import HTTP_REQUESTS, is_rest
-
 from azure.core.exceptions import AzureError
 from azure.core.pipeline._base import cleanup_kwargs_for_transport
 

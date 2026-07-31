@@ -11,15 +11,6 @@ import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
-from azure.core.serialization import (
-    AzureJSONEncoder,
-    NULL,
-    as_attribute_dict,
-    get_backcompat_attr_name,
-    is_generated_model,
-    attribute_list,
-)
-from azure.core.exceptions import DeserializationError
 import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
@@ -30,6 +21,16 @@ from modeltypes._utils.model_base import (
 )
 from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
+
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    get_backcompat_attr_name,
+    is_generated_model,
+    attribute_list,
+)
+from azure.core.exceptions import DeserializationError
 
 
 def _expand_value(obj):

@@ -4,13 +4,14 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import pytest
 import sys
 import asyncio
-from packaging.version import Version
 from unittest import mock
 
+import pytest
+from packaging.version import Version
 import aiohttp
+from utils import HTTP_REQUESTS, request_and_responses_product
 
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
@@ -30,8 +31,6 @@ from azure.core.exceptions import (
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,
 )
-
-from utils import HTTP_REQUESTS, request_and_responses_product
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)

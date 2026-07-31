@@ -26,10 +26,10 @@
 
 from typing import AsyncIterator, TypeVar, List
 
+import pytest
+
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError
-
-import pytest
 
 
 T = TypeVar("T")

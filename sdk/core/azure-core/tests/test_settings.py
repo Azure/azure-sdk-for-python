@@ -26,9 +26,10 @@
 import logging
 import os
 import sys
-import pytest
 from typing import NamedTuple
 from unittest.mock import patch, MagicMock
+
+import pytest
 
 # module under test
 import azure.core.settings as m

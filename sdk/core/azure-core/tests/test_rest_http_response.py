@@ -10,12 +10,14 @@
 # Thank you httpx for your wonderful tests!
 import io
 import sys
+import xml.etree.ElementTree as ET
+
 import pytest
+from utils import readonly_checks
+
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.rest._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
-import xml.etree.ElementTree as ET
-from utils import readonly_checks
 
 
 @pytest.fixture

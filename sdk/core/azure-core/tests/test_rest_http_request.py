@@ -8,7 +8,6 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
-import pytest
 import sys
 import os
 
@@ -17,13 +16,15 @@ try:
 except ImportError:
     import collections  # type: ignore
 
+import pytest
+from rest_client import MockRestClient
+from utils import NamedIo
+
 from azure.core.configuration import Configuration
 from azure.core.rest import HttpRequest
 from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
 from azure.core.pipeline._tools import is_rest
-from rest_client import MockRestClient
 from azure.core import PipelineClient
-from utils import NamedIo
 
 
 @pytest.fixture

@@ -3,12 +3,24 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the retry policy."""
+import tempfile
+import os
+import time
+from itertools import product
+
 try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
+
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
+
 import pytest
-from itertools import product
+from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_RESPONSES, create_http_response
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -25,15 +37,6 @@ from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpTransport,
 )
-import tempfile
-import os
-import time
-
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
-from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_RESPONSES, create_http_response
 
 
 def test_retry_code_class_variables():
