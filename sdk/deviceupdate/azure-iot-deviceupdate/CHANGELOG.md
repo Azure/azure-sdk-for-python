@@ -5,6 +5,7 @@
 ### Features Added
 
 - Regenerated the client library from the TypeSpec specification for the Device Update for IoT Hub `2026-06-01` GA API version.
+- Added support for configuring TLS-secured update payload downloads through the `downloadSecurity` property when creating or updating a deployment.
 
 ### Breaking Changes
 
