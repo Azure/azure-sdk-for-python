@@ -271,15 +271,38 @@ class TestBuildTokenProvider(unittest.TestCase):
             self.assertIsInstance(expires_on, int)
 
 
+class _FakeNativeStream:
+    """Minimal stand-in for the native windowed download stream.
+
+    Yields the provided windows and exposes ``size``/``etag``/``last_modified`` like the real
+    native object. Single-pass, matching the native stream's semantics.
+    """
+
+    def __init__(self, windows, size=None):
+        self._windows = iter(windows)
+        self.size = size if size is not None else sum(len(w) for w in windows)
+        self.etag = None
+        self.last_modified = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        return next(self._windows)
+
+
 class TestNativeStorageStreamDownloader(unittest.TestCase):
     """Tests for the lightweight NativeStorageStreamDownloader wrapper."""
 
     def setUp(self):
         from azure.storage.blob._transfer_native import NativeStorageStreamDownloader
         self.data = b"hello world blob content"
-        self.downloader = NativeStorageStreamDownloader(
-            data=self.data, name="myblob.txt", container="mycontainer"
+        self._make = lambda windows=None: NativeStorageStreamDownloader(
+            stream=_FakeNativeStream(windows if windows is not None else [self.data], size=len(self.data)),
+            name="myblob.txt",
+            container="mycontainer",
         )
+        self.downloader = self._make()
 
     def test_attributes(self):
         self.assertEqual(self.downloader.name, "myblob.txt")
@@ -293,6 +316,10 @@ class TestNativeStorageStreamDownloader(unittest.TestCase):
     def test_readall(self):
         self.assertEqual(self.downloader.readall(), self.data)
 
+    def test_readall_multiple_windows(self):
+        downloader = self._make([b"hello ", b"world ", b"blob content"])
+        self.assertEqual(downloader.readall(), self.data)
+
     def test_read_all_at_once(self):
         self.assertEqual(self.downloader.read(), self.data)
         # Second read returns empty
@@ -303,6 +330,11 @@ class TestNativeStorageStreamDownloader(unittest.TestCase):
         self.assertEqual(self.downloader.read(6), b" world")
         self.assertEqual(self.downloader.read(), b" blob content")
 
+    def test_read_with_size_across_windows(self):
+        downloader = self._make([b"hello ", b"world ", b"blob content"])
+        self.assertEqual(downloader.read(8), b"hello wo")
+        self.assertEqual(downloader.read(), b"rld blob content")
+
     def test_readinto(self):
         from io import BytesIO
         stream = BytesIO()
@@ -310,9 +342,22 @@ class TestNativeStorageStreamDownloader(unittest.TestCase):
         self.assertEqual(written, len(self.data))
         self.assertEqual(stream.getvalue(), self.data)
 
+    def test_readinto_multiple_windows(self):
+        from io import BytesIO
+        downloader = self._make([b"hello ", b"world ", b"blob content"])
+        stream = BytesIO()
+        written = downloader.readinto(stream)
+        self.assertEqual(written, len(self.data))
+        self.assertEqual(stream.getvalue(), self.data)
+
     def test_chunks(self):
         chunks = list(self.downloader.chunks())
         self.assertEqual(chunks, [self.data])
+
+    def test_chunks_multiple_windows(self):
+        windows = [b"hello ", b"world ", b"blob content"]
+        downloader = self._make(windows)
+        self.assertEqual(list(downloader.chunks()), windows)
 
     def test_iter(self):
         chunks = list(self.downloader)
