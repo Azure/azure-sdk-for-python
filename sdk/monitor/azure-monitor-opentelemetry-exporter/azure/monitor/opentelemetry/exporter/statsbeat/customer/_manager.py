@@ -223,7 +223,8 @@ class CustomerSdkStatsManager(metaclass=Singleton):  # pylint: disable=too-many-
 
     def _cleanup(self) -> None:
         """Clean up resources on initialization failure."""
-        # TODO: shut down _customer_sdkstats_exporter before nulling it, else a failed init orphans its LocalFileStorage maintenance thread.
+        # TODO: shut down _customer_sdkstats_exporter before nulling it, else a failed
+        # init orphans its LocalFileStorage maintenance thread.
         self._customer_sdkstats_exporter = None
         self._customer_sdkstats_metric_reader = None
         self._customer_sdkstats_meter_provider = None

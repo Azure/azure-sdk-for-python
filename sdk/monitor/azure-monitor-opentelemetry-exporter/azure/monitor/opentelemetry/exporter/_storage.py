@@ -222,15 +222,15 @@ class LocalFileStorage:
 
     def put(self, data: List[Any], lease_period: Optional[int] = None) -> Union[StorageExportResult, str]:
         try:
-            if not self._active:
-                # Remotely disabled via FEATURE_LOCAL_STORAGE; do not persist new telemetry.
-                return StorageExportResult.CLIENT_STORAGE_DISABLED
-            if not self._enabled:
-                if get_local_storage_setup_state_readonly():
-                    return StorageExportResult.CLIENT_READONLY
-                if get_local_storage_setup_state_exception() != "":
-                    # Type conversion has been done to match the return type of this function
-                    return str(get_local_storage_setup_state_exception())
+            # Storage is unavailable when remotely disabled (_active) or never set up (_enabled).
+            if not self._active or not self._enabled:
+                # Only report the specific setup-failure reason when not remotely disabled.
+                if self._active:
+                    if get_local_storage_setup_state_readonly():
+                        return StorageExportResult.CLIENT_READONLY
+                    if get_local_storage_setup_state_exception() != "":
+                        # Type conversion has been done to match the return type of this function
+                        return str(get_local_storage_setup_state_exception())
                 return StorageExportResult.CLIENT_STORAGE_DISABLED
             if not self._check_storage_size():
                 return StorageExportResult.CLIENT_PERSISTENCE_CAPACITY_REACHED
