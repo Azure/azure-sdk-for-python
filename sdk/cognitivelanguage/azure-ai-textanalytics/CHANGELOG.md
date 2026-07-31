@@ -1,5 +1,9 @@
 # Release History
 
+## 6.0.0b3 (2026-06-08)
+
+skip changelog generation for data-plane package and please add changelog manually.
+
 ## 6.0.0b2 (2025-11-06)
 
 This version of the client library defaults to the service API version `2025-11-15-preview`.
