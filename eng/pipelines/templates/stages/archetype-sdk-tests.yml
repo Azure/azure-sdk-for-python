@@ -112,8 +112,6 @@ extends:
         displayName: 'Check Schedule'
         variables:
           - template: /eng/pipelines/templates/variables/image.yml
-          - name: PipelineStartTimeUtc
-            value: $[ format('{0:O}', pipeline.startTime) ]
         jobs:
           - job: check
             pool:
@@ -125,8 +123,7 @@ extends:
                   # Use the same timezone the pipeline schedule is configured in so the
                   # weekend boundary matches when the run was actually scheduled.
                   $tz  = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Los_Angeles')
-                  $runStart = ([datetimeoffset]'$(PipelineStartTimeUtc)').UtcDateTime
-                  $now = [System.TimeZoneInfo]::ConvertTimeFromUtc($runStart, $tz)
+                  $now = [System.TimeZoneInfo]::ConvertTimeFromUtc([datetime]::UtcNow, $tz)
                   $weekend = $now.DayOfWeek -in 'Saturday','Sunday'
                   Write-Host "Local time ($($tz.Id)): $now -> IsWeekend=$weekend"
                   Write-Host "##vso[task.setvariable variable=IsWeekend;isOutput=true]$weekend"
