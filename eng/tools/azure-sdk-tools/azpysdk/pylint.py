@@ -25,7 +25,7 @@ SNIPPET_SAMPLE_IMPORT_DISABLES = (
     "wrong-import-position",
     "wrong-import-order",
     "ungrouped-imports",
-    "redefined-outer-name"
+    "redefined-outer-name",
 )
 
 
