@@ -14,6 +14,10 @@
 - Live Metrics now honors the `APPLICATIONINSIGHTS_AUTHENTICATION_STRING` environment variable for AAD
   authentication as a fallback when no explicit credential is supplied and local authentication is disabled.
   ([#48284](https://github.com/Azure/azure-sdk-for-python/pull/48284))
+- Fix a memory leak where exporters registered as OneSettings configuration callbacks were retained for the
+  process lifetime; bound-method callbacks are now held via weak references so discarded exporters can be
+  garbage collected.
+  ([#48379](https://github.com/Azure/azure-sdk-for-python/pull/48379))
 
 ### Other Changes
 
