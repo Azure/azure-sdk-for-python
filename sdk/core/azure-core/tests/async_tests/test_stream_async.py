@@ -281,3 +281,21 @@ async def test_stream_sse_id_and_retry(sse_stream):
         ServerSentEvent(event="message", data="first", id="42", retry=3000),
         ServerSentEvent(event="message", data="second", id="42", retry=3000),
     ]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_bom(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_bom")
+    assert events == [ServerSentEvent(event="message", data="with-bom")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_bom_split(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_bom_split")
+    assert events == [ServerSentEvent(event="message", data="split-bom")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_invalid_utf8(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_invalid_utf8")
+    assert events == [ServerSentEvent(event="message", data="caf\ufffd")]

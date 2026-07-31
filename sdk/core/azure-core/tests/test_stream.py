@@ -251,3 +251,20 @@ def test_stream_sse_id_and_retry(sse_stream):
         ServerSentEvent(event="message", data="first", id="42", retry=3000),
         ServerSentEvent(event="message", data="second", id="42", retry=3000),
     ]
+
+
+def test_stream_sse_bom(sse_stream):
+    # A single leading UTF-8 BOM is ignored, so the first field is not corrupted.
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_bom")))
+    assert events == [ServerSentEvent(event="message", data="with-bom")]
+
+
+def test_stream_sse_bom_split(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_bom_split")))
+    assert events == [ServerSentEvent(event="message", data="split-bom")]
+
+
+def test_stream_sse_invalid_utf8(sse_stream):
+    # Invalid UTF-8 becomes U+FFFD instead of crashing the stream.
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_invalid_utf8")))
+    assert events == [ServerSentEvent(event="message", data="caf\ufffd")]

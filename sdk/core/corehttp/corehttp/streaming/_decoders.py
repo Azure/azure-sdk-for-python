@@ -242,7 +242,9 @@ def _iter_sse_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
     :rtype: Iterator[str]
     :return: An iterator of decoded lines.
     """
-    decoder = codecs.getincrementaldecoder("utf-8")()
+    # SSE is always UTF-8 (WHATWG spec). Use utf-8-sig to drop one leading BOM and
+    # errors="replace" so invalid byte sequences become U+FFFD instead of crashing.
+    decoder = codecs.getincrementaldecoder("utf-8-sig")(errors="replace")
 
     buf = ""
     for chunk in iter_bytes:
@@ -265,7 +267,9 @@ async def _aiter_sse_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[st
     :rtype: AsyncIterator[str]
     :return: An asynchronous iterator of decoded lines.
     """
-    decoder = codecs.getincrementaldecoder("utf-8")()
+    # SSE is always UTF-8 (WHATWG spec). Use utf-8-sig to drop one leading BOM and
+    # errors="replace" so invalid byte sequences become U+FFFD instead of crashing.
+    decoder = codecs.getincrementaldecoder("utf-8-sig")(errors="replace")
 
     buf = ""
     async for chunk in iter_bytes:

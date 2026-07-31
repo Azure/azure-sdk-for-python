@@ -357,3 +357,44 @@ def sse_broken_up():
 @streams_api.route("/sse_id_and_retry", methods=["GET"])
 def sse_id_and_retry():
     return Response(stream_sse_id_and_retry(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+def stream_sse_bom():
+    # A single leading UTF-8 BOM must be ignored per the SSE spec.
+    data = [
+        b"\xef\xbb\xbfdata: with-bom\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_bom_split():
+    # The leading BOM may be split across chunk boundaries.
+    data = [
+        b"\xef",
+        b"\xbb\xbf",
+        b"data: split-bom\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_invalid_utf8():
+    # Invalid UTF-8 byte sequences must be replaced with U+FFFD, not crash the stream.
+    data = [
+        b"data: caf\xff\n\n",
+    ]
+    yield from data
+
+
+@streams_api.route("/sse_bom", methods=["GET"])
+def sse_bom():
+    return Response(stream_sse_bom(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_bom_split", methods=["GET"])
+def sse_bom_split():
+    return Response(stream_sse_bom_split(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_invalid_utf8", methods=["GET"])
+def sse_invalid_utf8():
+    return Response(stream_sse_invalid_utf8(), status=200, headers={"Content-Type": "text/event-stream"})
