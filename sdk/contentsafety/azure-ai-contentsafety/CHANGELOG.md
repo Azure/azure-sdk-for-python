@@ -2,7 +2,14 @@
 
 ## 1.1.0b1 (2026-07-30)
 
-skip changelog generation for data-plane package and please add changelog manually.
+### Features Added
+
+- Added support for the `2026-07-01-preview` API version.
+- Added `ContentProvenanceClient`, which detects whether media was generated or modified by an AI system:
+  - `begin_detect` starts a long-running provenance detection operation.
+  - `get_operation_status` returns the status and result of a detection operation.
+- Added models `DetectProvenanceOptions`, `DetectProvenanceResult`, `DetectedProvenance`, `ProvenanceContent`, and `ProvenanceDetectOperation`.
+- Added enums `DetectedProvenanceType` and `ProvenanceOperationKind`.
 
 ## 1.0.0 (2023-12-15)
 
