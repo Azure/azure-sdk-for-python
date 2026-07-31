@@ -23,6 +23,7 @@ import asyncio
 import concurrent.futures
 import inspect
 import logging
+import os
 import re
 import subprocess
 import sys
@@ -106,7 +107,7 @@ def _isolate_driver_registry():
     _reset_driver_registry()
 
 
-def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path):
+def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path, monkeypatch):
     """The driver is told where the wheel put QueryPlanInterop.
 
     QueryPlanInterop is the compiled library that lets the driver work out a
@@ -120,15 +121,16 @@ def test_configure_packaged_query_plan_interop_uses_package_libs(tmp_path):
     sidecar_directory.mkdir(parents=True)
     rust_module = MagicMock()
     rust_module.__file__ = str(package_directory / "_rust.pyd")
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
 
     configure_packaged_query_plan_interop(rust_module)
 
-    rust_module.configure_query_plan_interop_directory.assert_called_once_with(
-        str(sidecar_directory.resolve())
+    assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(
+        sidecar_directory.resolve()
     )
 
 
-def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path):
+def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path, monkeypatch):
     """A source checkout has no ``.libs`` directory, and that has to be fine.
 
     Anyone running from a clone instead of a wheel would otherwise get an import
@@ -136,35 +138,31 @@ def test_configure_packaged_query_plan_interop_skips_missing_directory(tmp_path)
     """
     rust_module = MagicMock()
     rust_module.__file__ = str(tmp_path / "azure" / "cosmos" / "_rust.pyd")
+    monkeypatch.delenv("AZURE_COSMOS_QUERYPLANINTEROP_DIR", raising=False)
 
     configure_packaged_query_plan_interop(rust_module)
 
-    rust_module.configure_query_plan_interop_directory.assert_not_called()
+    assert "AZURE_COSMOS_QUERYPLANINTEROP_DIR" not in os.environ
 
 
-def test_configure_packaged_query_plan_interop_preserves_gateway_fallback(
-    tmp_path, caplog
+def test_configure_packaged_query_plan_interop_preserves_explicit_directory(
+    tmp_path, monkeypatch
 ):
-    """If the driver refuses the directory, queries still work.
-
-    The driver accepts this directory only once and only before it loads the
-    library, so a second call raises. Local query planning is a speed
-    improvement, not a correctness one, so failing here must not break the
-    customer's client -- it logs a warning and leaves the Gateway fallback in
-    place.
-    """
+    """A caller-provided native-library directory has priority over the wheel."""
     package_directory = tmp_path / "azure" / "cosmos"
     (package_directory / ".libs").mkdir(parents=True)
     rust_module = MagicMock()
     rust_module.__file__ = str(package_directory / "_rust.pyd")
-    rust_module.configure_query_plan_interop_directory.side_effect = RuntimeError(
-        "already loaded"
+    explicit_directory = tmp_path / "explicit"
+    monkeypatch.setenv(
+        "AZURE_COSMOS_QUERYPLANINTEROP_DIR", str(explicit_directory)
     )
 
-    with caplog.at_level(logging.WARNING):
-        configure_packaged_query_plan_interop(rust_module)
+    configure_packaged_query_plan_interop(rust_module)
 
-    assert "queries will use Gateway fallback" in caplog.text
+    assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(
+        explicit_directory
+    )
 
 
 @pytest.mark.parametrize(
@@ -186,6 +184,7 @@ def test_backend_import_configures_packaged_query_plan_interop(module_name):
     script = textwrap.dedent(
         f"""
         import importlib
+        import os
         import sys
         import tempfile
         import types
@@ -196,17 +195,18 @@ def test_backend_import_configures_packaged_query_plan_interop(module_name):
         package_directory = Path(tempfile.mkdtemp()) / "azure" / "cosmos"
         sidecar_directory = package_directory / ".libs"
         sidecar_directory.mkdir(parents=True)
-        calls = []
+        os.environ.pop("AZURE_COSMOS_QUERYPLANINTEROP_DIR", None)
         fake_rust = types.ModuleType("azure.cosmos._rust")
         fake_rust.__file__ = str(package_directory / "_rust.pyd")
-        fake_rust.configure_query_plan_interop_directory = calls.append
         azure.cosmos._rust = fake_rust
         sys.modules["azure.cosmos._rust"] = fake_rust
         sys.modules.pop({module_name!r}, None)
 
         importlib.import_module({module_name!r})
 
-        assert calls == [str(sidecar_directory.resolve())], calls
+        assert os.environ["AZURE_COSMOS_QUERYPLANINTEROP_DIR"] == str(
+            sidecar_directory.resolve()
+        )
         """
     )
 
@@ -1888,7 +1888,7 @@ def test_build_client_config_rejects_driver_unsupported_transport_timeouts(
 
 def test_build_client_config_carries_user_agent_suffix():
     """A non-empty user_agent_suffix is carried for the driver to stamp on every
-    request's User-Agent (the label that previously went nowhere on Rust)."""
+    request's User-Agent, so a customer can tell which service made a call."""
     config = build_client_config(None, user_agent_suffix="checkout-westus2")
     assert isinstance(config, PreparedClientConfig)
     assert config.user_agent_suffix == "checkout-westus2"
@@ -2186,7 +2186,7 @@ def test_resolve_credential_sync_token_credential():
 
 
 def test_resolve_credential_async_token_credential_wrapped():
-    """An async credential is no longer rejected: it is wrapped in a bridge that
+    """An async credential is accepted: it is wrapped in a bridge that
     drives its coroutine and exposes a synchronous get_token."""
     cred = _AsyncTokenCredential()
     master_key, token_credential = _resolve_credential(cred)

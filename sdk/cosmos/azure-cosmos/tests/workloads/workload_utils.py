@@ -166,10 +166,12 @@ def get_existing_random_item():
 
 
 def create_random_item():
-    # "default" serializes to about 730 bytes of JSON (a single fixed flat shape).
-    # "large" grows the body and adds nested objects/arrays (about 8 KB) so a run
-    # can check whether conclusions hold for a bigger, deeper document. Selected by
-    # WORKLOAD_DOC_PROFILE.
+    # "default" serializes to about 732 bytes of JSON (a single fixed flat shape).
+    # "large" grows the body and adds nested objects/arrays (about 4,670 bytes,
+    # roughly 6.4x the default) so a run can check whether conclusions hold for a
+    # bigger, deeper document. Selected by WORKLOAD_DOC_PROFILE. Both sizes are
+    # means over 200,000 generated documents; individual documents vary by a byte
+    # or two because the random integer fields differ in digit count.
     paragraph1 = (
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "

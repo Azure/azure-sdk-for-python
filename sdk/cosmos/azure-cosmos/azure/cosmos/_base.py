@@ -29,7 +29,7 @@ import json
 import uuid
 import re
 import binascii
-from typing import Any, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Mapping, Optional, Sequence, Union, Tuple, TYPE_CHECKING
 
 from urllib.parse import quote as urllib_quote
 from urllib.parse import unquote as urllib_unquote
@@ -49,10 +49,9 @@ from .auth import _get_authorization_header
 from .offer import ThroughputProperties
 from .partition_key import _Empty, _Undefined
 # COMMON_OPTIONS (kwarg name -> internal option-key) lives in
-# ``_helpers/_options.py`` so the future rust-backend item helper and the
-# existing core-python ``build_options`` consume the same mapping table.
-# The leading-underscore alias is kept here for source compatibility with
-# anything still grepping the old name.
+# ``_helpers/_options.py`` so the rust-backend item helper and the
+# core-python ``build_options`` consume the same mapping table.
+# The leading-underscore alias is kept here for source compatibility.
 from ._helpers._options import COMMON_OPTIONS as _COMMON_OPTIONS
 
 if TYPE_CHECKING:
@@ -447,6 +446,32 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     headers[http_constants.HttpHeaders.ThinClientProxyOperationType] = operation_type
 
     return headers
+
+def resolve_initial_headers(
+        default_headers: Mapping[str, Any],
+        options: Optional[Mapping[str, Any]]) -> Optional[Dict[str, Any]]:
+    """Return the header map a resource method should hand to ``GetHeaders``.
+
+    A caller can pass ``initial_headers`` to a public method; ``build_options``
+    stores it under ``initialHeaders``. ``GetHeaders`` starts from whatever map
+    it is given, so the caller's headers have to be layered over the client's
+    default headers here or they never reach the wire. The caller wins on a
+    name collision, which is the point of passing them.
+
+    Returns ``None`` when the caller supplied nothing, so the resource method
+    keeps the existing "fall back to the client's default headers" behaviour.
+
+    Written once and shared by the sync and async connections. Without it each
+    connection merges the two maps itself, and the copies drift -- one gets the
+    override order right and the other does not, with nothing failing to say so.
+    A customer's routing or audit header then arrives on some calls and not
+    others.
+    """
+    initial_headers = (options or {}).get("initialHeaders")
+    if not initial_headers:
+        return None
+    return {**default_headers, **initial_headers}
+
 
 def _is_session_token_request(
         cosmos_client_connection: Union["CosmosClientConnection", "AsyncClientConnection"],

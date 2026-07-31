@@ -1,9 +1,11 @@
 """Unit coverage for account-level database backend routing (no network).
 
-``create_database`` sends one request. ``create_database_if_not_exists`` sends
-one or two: read the database, and create it only if the read comes back
-not-found. The Rust driver has a read call and a create call but no combined
-one, so Python decides between them.
+Three public methods land here. ``create_database`` sends one request.
+``DatabaseProxy.read`` sends one request -- a customer asking for a database's
+properties. ``create_database_if_not_exists`` sends one or two: read the
+database, and create it only if the read comes back not-found. The Rust driver
+has a read call and a create call but no combined one, so Python decides between
+them.
 
 That split is what these tests protect. The public methods must stay thin and
 must not pick an engine themselves; the database coordinator owns the branch,
@@ -14,6 +16,30 @@ different diagnostics, or a per-call timeout silently dropped.
 
 The tests also check that the database properties handed back are identical on
 both paths, since customers read those directly.
+
+What the read-specific tests cover, and the customer behavior behind each:
+
+* the request the rust engine is handed -- database name, no body, the headers
+  built from the caller's options, and the per-call ``timeout``. If any of that
+  is wrong the call reads the wrong database or drops an option.
+* routing away from rust when rust cannot honor an option exactly -- a
+  sub-second ``timeout``, a socket-level ``read_timeout``, or a transport
+  keyword. A customer who sets ``timeout=0.5`` must get 0.5 seconds, not a
+  silently rounded-up value.
+* ``response_hook`` firing exactly once, with the response headers and the
+  properties, on **both** engines. Customers use it for cost and audit logging,
+  so firing twice double-counts and firing zero times loses the record.
+* a missing database raising the typed not-found error, with the hook not
+  firing. Customers catch that type to decide whether to create the database.
+* the same eligibility answer being used by ``DatabaseProxy.read`` and by the
+  existence check inside ``create_database_if_not_exists``, so one call cannot
+  run on different engines in the two methods.
+* ``initial_headers`` layering over the client's default headers, with the
+  caller winning a name collision -- that is the point of passing them.
+
+Every read test is written twice, once sync and once async. That is not
+duplication for its own sake: the async path builds its request through a
+different wrapper, so it is separate code that can break on its own.
 
 All fakes, no Cosmos account.
 """
@@ -30,6 +56,7 @@ import pytest
 from azure.core import MatchConditions
 from azure.core.utils import CaseInsensitiveDict
 
+from azure.cosmos import _base as base
 from azure.cosmos._backend.base import BackendResponse, CosmosBackend
 from azure.cosmos._backend.base import (
     OP_CREATE_DATABASE,
@@ -37,15 +64,25 @@ from azure.cosmos._backend.base import (
     OP_TO_BINDING_METHOD,
 )
 from azure.cosmos._constants import _Constants as Constants
+from azure.cosmos._cosmos_client_connection import (
+    CosmosClientConnection as SyncClientConnection,
+)
+from azure.cosmos._cosmos_responses import CosmosDict
 from azure.cosmos._helpers._request_prep import (
     build_create_database_prepared,
     build_read_database_prepared,
+    is_read_database_rust_eligible,
 )
 from azure.cosmos._helpers.database_helper import DatabaseHelper
 from azure.cosmos.aio._backend.base import AsyncCosmosBackend
+from azure.cosmos.aio._cosmos_client_connection_async import (
+    CosmosClientConnection as AsyncClientConnection,
+)
 from azure.cosmos.aio._cosmos_client import CosmosClient as AsyncCosmosClient
+from azure.cosmos.aio._database import DatabaseProxy as AsyncDatabaseProxy
 from azure.cosmos.aio._helpers.database_helper import AsyncDatabaseHelper
 from azure.cosmos.cosmos_client import CosmosClient
+from azure.cosmos.database import DatabaseProxy
 from azure.cosmos.exceptions import CosmosResourceExistsError, CosmosResourceNotFoundError
 from azure.cosmos.offer import ThroughputProperties
 
@@ -109,7 +146,7 @@ def test_read_database_prepared_request_is_bodiless():
     up the create's body while still carrying the caller's options and timeout.
     """
     prepared = build_read_database_prepared(
-        {"id": "db1"},
+        "db1",
         {"throughputBucket": 7},
         kwargs={"timeout": 3.5},
     )
@@ -119,6 +156,138 @@ def test_read_database_prepared_request_is_bodiless():
     assert prepared.item_id == "db1"
     assert prepared.headers["throughputBucket"] == 7
     assert prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+
+
+def test_read_database_prepared_preserves_legacy_option_headers():
+    """Every truthy option that legacy GetHeaders emits reaches the binding."""
+    initial_headers = {"x-custom": "value"}
+    options = {
+        "initialHeaders": initial_headers,
+        "maxItemCount": 10,
+        "enableScanInQuery": True,
+        "resourceTokenExpirySeconds": 60,
+        "offerType": "S1",
+        "contentType": "application/custom+json",
+        "isQueryPlanRequest": True,
+        "supportedQueryFeatures": "Aggregate",
+        "queryVersion": "1.0",
+        "enableCrossPartitionQuery": True,
+        "populateQueryMetrics": True,
+        "populateIndexMetrics": True,
+        "populateQueryAdvice": True,
+        "responseContinuationTokenLimitInKb": 4,
+        "enableScriptLogging": True,
+        "offerEnableRUPerMinuteThroughput": True,
+        "disableRUPerMinuteUsage": True,
+        "continuation": "token",
+        "populatePartitionKeyRangeStatistics": True,
+        "populateQuotaInfo": True,
+        "correlatedActivityId": "correlated-id",
+        "sessionToken": "master-resource-token-is-ignored",
+    }
+
+    prepared = build_read_database_prepared("db1", options)
+
+    assert prepared.headers["initialHeaders"] == initial_headers
+    assert prepared.headers["initialHeaders"] is not initial_headers
+    for option_key, option_value in options.items():
+        if option_key not in ("initialHeaders", "sessionToken"):
+            assert prepared.headers[option_key] == option_value
+    assert "sessionToken" not in prepared.headers
+
+
+@pytest.mark.parametrize(
+    "option_key",
+    [
+        "continuation",
+        "contentType",
+        "enableScanInQuery",
+        "maxItemCount",
+        "populateQueryMetrics",
+        "resourceTokenExpirySeconds",
+        "sessionToken",
+        "throughputBucket",
+    ],
+)
+def test_read_database_prepared_omits_falsy_legacy_headers(option_key):
+    prepared = build_read_database_prepared("db1", {option_key: None})
+
+    assert option_key not in prepared.headers
+
+
+def test_read_database_prepared_preserves_legacy_id_stringification():
+    """Read keeps its own id rules: it stringifies and tolerates a trailing slash,
+    where create validates."""
+    assert build_read_database_prepared(123, {}).item_id == "123"
+    assert build_read_database_prepared("db1/", {}).item_id == "db1"
+
+
+@pytest.mark.parametrize("database_id", ["", "/", "///"])
+def test_read_database_prepared_rejects_empty_normalized_id(database_id):
+    with pytest.raises(ValueError, match="Failed Parsing ResourceID from link: /dbs/"):
+        build_read_database_prepared(database_id, {})
+
+
+@pytest.mark.parametrize(
+    "request_options,operation_kwargs,expected",
+    [
+        ({}, {}, True),
+        ({}, {"timeout": 1.0}, True),
+        ({}, {"timeout": 0.5}, False),
+        ({}, {"timeout": 0}, False),
+        ({}, {"timeout": -1}, False),
+        ({}, {"timeout": float("-inf")}, False),
+        ({}, {"timeout": "1"}, False),
+        ({}, {"timeout": float("nan")}, True),
+        ({}, {"timeout": float("inf")}, True),
+        ({"read_timeout": 2}, {"read_timeout": 2}, False),
+        ({}, {"connection_timeout": 2}, False),
+        ({}, {"raw_request_hook": object()}, False),
+        ({}, {"response_hook": object()}, True),
+        ({"initialHeaders": {"x-custom": "value"}}, {}, True),
+        ({"initialHeaders": {"Accept": "application/custom"}}, {}, False),
+        ({"initialHeaders": {"CACHE-CONTROL": "max-age=60"}}, {}, False),
+        ({"initialHeaders": {"User-Agent": "custom"}}, {}, False),
+        ({"initialHeaders": {"X-MS-VERSION": "2018-12-31"}}, {}, False),
+    ],
+)
+def test_read_database_rust_eligibility_never_drops_transport_kwargs(
+    request_options, operation_kwargs, expected
+):
+    assert (
+        is_read_database_rust_eligible(request_options, operation_kwargs)
+        is expected
+    )
+
+
+def test_sync_connection_read_database_forwards_initial_headers():
+    connection = SimpleNamespace(
+        Read=MagicMock(return_value={"id": "db1"}),
+        default_headers={
+            "x-ms-version": "2020-07-15",
+            "Cache-Control": "no-cache",
+        },
+    )
+    options = {"initialHeaders": {"x-custom": "value"}}
+
+    result = SyncClientConnection.ReadDatabase(
+        connection,
+        "dbs/db1",
+        options=options,
+    )
+
+    assert result == {"id": "db1"}
+    connection.Read.assert_called_once_with(
+        "/dbs/db1/",
+        "dbs",
+        "dbs/db1",
+        {
+            "x-ms-version": "2020-07-15",
+            "Cache-Control": "no-cache",
+            "x-custom": "value",
+        },
+        options,
+    )
 
 
 @pytest.mark.parametrize(
@@ -174,6 +343,143 @@ def test_sync_helper_routes_to_rust_and_parses_response():
     assert backend.prepared.headers["offerThroughput"] == 400
     assert connection.last_response_headers["x-ms-request-charge"] == "5.25"
     assert hooks[0][1] == {"id": "db1", "_rid": "rid1"}
+
+
+def test_sync_read_database_routes_to_rust_and_parses_response():
+    """A proxy database read uses the Rust read primitive and never calls legacy."""
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
+        last_response_headers={},
+    )
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+            body=b'{"id":"db1","_rid":"existing"}',
+        )
+    )
+    hook_calls = []
+
+    result = DatabaseHelper(connection, backend).read_database(
+        "db1",
+        {"throughputBucket": 7},
+        response_hook=lambda headers, body: hook_calls.append((headers, body)),
+        kwargs={"timeout": 3.5},
+    )
+
+    assert result == {"id": "db1", "_rid": "existing"}
+    assert backend.prepared.op == OP_READ_DATABASE
+    assert backend.prepared.item_id == "db1"
+    assert backend.prepared.headers["throughputBucket"] == 7
+    assert backend.prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+    connection.ReadDatabase.assert_not_called()
+    assert hook_calls == [
+        ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
+    ]
+    assert isinstance(result, CosmosDict)
+    assert type(hook_calls[0][1]) is dict
+
+
+def test_sync_read_database_keeps_legacy_path_and_read_timeout():
+    """Core Python and per-call socket timeouts retain the legacy read behavior."""
+    response_headers = {"x-ms-request-charge": "1.0"}
+    legacy_body = {"id": "db1", "_rid": "legacy"}
+    hook_calls = []
+
+    def response_hook(headers, body):
+        hook_calls.append((headers, body))
+
+    def legacy_read(_link, *, options, **kwargs):
+        kwargs["response_hook"](response_headers, legacy_body)
+        return legacy_body
+
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(side_effect=legacy_read),
+        last_response_headers=response_headers,
+    )
+    backend = _RustBackend()
+
+    result = DatabaseHelper(connection, backend).read_database(
+        "db1",
+        {Constants.Kwargs.READ_TIMEOUT: 2},
+        response_hook=response_hook,
+        kwargs={Constants.Kwargs.READ_TIMEOUT: 2, "response_hook": MagicMock()},
+    )
+
+    assert result == {"id": "db1", "_rid": "legacy"}
+    assert backend.prepared is None
+    connection.ReadDatabase.assert_called_once_with(
+        "dbs/db1",
+        options={Constants.Kwargs.READ_TIMEOUT: 2},
+        **{
+            Constants.Kwargs.READ_TIMEOUT: 2,
+            "response_hook": response_hook,
+        },
+    )
+    assert hook_calls == [
+        ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "legacy"})
+    ]
+
+
+def test_sync_read_database_maps_not_found_and_skips_hook():
+    """A Rust 404 preserves the typed not-found exception contract."""
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=404,
+            headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
+            body=b'{"message":"missing"}',
+        )
+    )
+    hook_calls = []
+
+    with pytest.raises(CosmosResourceNotFoundError):
+        DatabaseHelper(SimpleNamespace(last_response_headers={}), backend).read_database(
+            "missing",
+            {},
+            response_hook=lambda headers, body: hook_calls.append((headers, body)),
+        )
+
+    assert not hook_calls
+
+
+def test_sync_database_proxy_read_selects_rust_backend():
+    """The public sync proxy delegates its read through the stored backend."""
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+            body=b'{"id":"db1","_rid":"existing"}',
+        )
+    )
+    connection = SimpleNamespace(
+        _backend=backend,
+        ReadDatabase=MagicMock(side_effect=AssertionError("legacy read called")),
+        last_response_headers={},
+    )
+
+    result = DatabaseProxy(connection, "db1").read(throughput_bucket=7)
+
+    assert result == {"id": "db1", "_rid": "existing"}
+    assert backend.prepared.op == OP_READ_DATABASE
+    assert backend.prepared.headers["throughputBucket"] == 7
+    connection.ReadDatabase.assert_not_called()
+
+
+def test_sync_database_proxy_read_drops_deprecated_session_token():
+    """The ignored session token must not reach the Rust wire request."""
+    backend = _RustBackend(
+        BackendResponse(
+            status_code=200,
+            headers=CaseInsensitiveDict({}),
+            body=b'{"id":"db1"}',
+        )
+    )
+    connection = SimpleNamespace(_backend=backend, last_response_headers={})
+
+    with pytest.warns(DeprecationWarning, match="session_token"):
+        DatabaseProxy(connection, "db1").read(session_token="ignored")
+
+    assert "sessionToken" not in backend.prepared.headers
 
 
 def test_sync_helper_keeps_legacy_create_database_behind_boundary():
@@ -468,6 +774,13 @@ def test_sync_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
     [
         ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
         ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
+        # Both legs share DatabaseProxy.read's eligibility rule, so every option
+        # that sends a plain read to the legacy path stops a get-or-create here.
+        # The driver clamps a sub-second end-to-end timeout to 1 second, and a
+        # transport keyword is consumed by the azure-core pipeline the Rust path
+        # never runs.
+        ({}, {Constants.Kwargs.TIMEOUT: 0.5}),
+        ({}, {"connection_timeout": 2}),
     ],
 )
 def test_sync_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(
@@ -539,6 +852,359 @@ def test_async_helper_routes_to_rust():
                 {"id": "db1", "_rid": "rid1"},
             )
         ]
+
+    asyncio.run(run())
+
+
+def test_async_read_database_routes_to_rust():
+    """Async database reads use the existing Rust read binding."""
+    async def run():
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                body=b'{"id":"db1","_rid":"existing"}',
+            )
+        )
+        hook_calls = []
+
+        result = await AsyncDatabaseHelper(connection, backend).read_database(
+            "db1",
+            {"throughputBucket": 9},
+            response_hook=lambda headers, body: hook_calls.append((headers, body)),
+            kwargs={"timeout": 3.5},
+        )
+
+        assert result == {"id": "db1", "_rid": "existing"}
+        assert backend.prepared.op == OP_READ_DATABASE
+        # The async coordinator builds the request through an ``async def``
+        # wrapper, so assert the same request fields the sync test does: a
+        # wrapper that dropped an argument would otherwise go unnoticed.
+        assert backend.prepared.item_id == "db1"
+        assert backend.prepared.body_bytes == b""
+        assert backend.prepared.headers["throughputBucket"] == 9
+        assert backend.prepared.headers[Constants.OVERALL_TIMEOUT_SECONDS] == 3.5
+        connection.ReadDatabase.assert_not_awaited()
+        assert hook_calls == [
+            ({"x-ms-request-charge": "1.0"}, {"id": "db1", "_rid": "existing"})
+        ]
+        assert isinstance(result, CosmosDict)
+        assert type(hook_calls[0][1]) is dict
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "options,expected",
+    [
+        # Nothing supplied: return None so the resource method keeps its
+        # existing "fall back to the client's default headers" behavior.
+        (None, None),
+        ({}, None),
+        ({"initialHeaders": {}}, None),
+        # Supplied: the caller's headers layer over the defaults.
+        (
+            {"initialHeaders": {"x-custom": "value"}},
+            {"x-ms-version": "2020-07-15", "x-custom": "value"},
+        ),
+        # A name collision goes to the caller -- that is the point of passing it.
+        (
+            {"initialHeaders": {"x-ms-version": "2018-12-31"}},
+            {"x-ms-version": "2018-12-31"},
+        ),
+    ],
+)
+def test_resolve_initial_headers_layers_caller_headers_over_defaults(options, expected):
+    """The sync and async connections share one merge, so it is tested once.
+
+    Duplicating the merge in each connection is how the two paths drift: one
+    gets the override order right and the other does not, and nothing fails.
+    """
+    default_headers = {"x-ms-version": "2020-07-15"}
+
+    resolved = base.resolve_initial_headers(default_headers, options)
+
+    assert resolved == expected
+    # Never mutate the client's shared default headers.
+    assert default_headers == {"x-ms-version": "2020-07-15"}
+
+
+def test_async_connection_read_database_forwards_initial_headers():
+    async def run():
+        connection = SimpleNamespace(Read=AsyncMock(return_value={"id": "db1"}))
+        connection.default_headers = {
+            "x-ms-version": "2020-07-15",
+            "Cache-Control": "no-cache",
+        }
+        options = {"initialHeaders": {"x-custom": "value"}}
+
+        result = await AsyncClientConnection.ReadDatabase(
+            connection,
+            "dbs/db1",
+            options=options,
+        )
+
+        assert result == {"id": "db1"}
+        connection.Read.assert_awaited_once_with(
+            "/dbs/db1/",
+            "dbs",
+            "dbs/db1",
+            {
+                "x-ms-version": "2020-07-15",
+                "Cache-Control": "no-cache",
+                "x-custom": "value",
+            },
+            options,
+        )
+
+    asyncio.run(run())
+
+
+def test_async_read_database_keeps_legacy_read_timeout():
+    """Async per-call socket timeouts continue through the legacy transport."""
+    async def run():
+        response_headers = {"x-ms-request-charge": "1.0"}
+        legacy_body = {"id": "db1", "_rid": "legacy"}
+        hook_calls = []
+
+        async def legacy_read(_link, *, options, **kwargs):
+            kwargs["response_hook"](response_headers, legacy_body)
+            return legacy_body
+
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(side_effect=legacy_read),
+            last_response_headers=response_headers,
+        )
+        backend = _AsyncRustBackend()
+
+        result = await AsyncDatabaseHelper(connection, backend).read_database(
+            "db1",
+            {Constants.Kwargs.READ_TIMEOUT: 2},
+            response_hook=lambda headers, body: hook_calls.append((headers, body)),
+            kwargs={Constants.Kwargs.READ_TIMEOUT: 2},
+        )
+
+        assert result == {"id": "db1", "_rid": "legacy"}
+        assert backend.prepared is None
+        connection.ReadDatabase.assert_awaited_once()
+        link, = connection.ReadDatabase.await_args.args
+        awaited_kwargs = connection.ReadDatabase.await_args.kwargs
+        assert link == "dbs/db1"
+        assert awaited_kwargs["options"] == {Constants.Kwargs.READ_TIMEOUT: 2}
+        assert awaited_kwargs[Constants.Kwargs.READ_TIMEOUT] == 2
+        assert callable(awaited_kwargs["response_hook"])
+        # The hook must fire exactly once on the legacy path too -- the
+        # coordinator hands it to the legacy call instead of to the parser.
+        assert hook_calls == [(response_headers, legacy_body)]
+
+    asyncio.run(run())
+
+
+def test_async_read_database_maps_not_found_and_skips_hook():
+    """Async twin: a Rust 404 raises the typed error and runs no response hook.
+
+    ``response_hook`` receives the properties of a database that was read. A 404
+    means there are none, so calling the hook would hand the caller an error
+    payload where they expect database properties.
+    """
+    async def run():
+        backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=404,
+                headers=CaseInsensitiveDict({"x-ms-substatus": "0"}),
+                body=b'{"message":"missing"}',
+            )
+        )
+        hook_calls = []
+
+        with pytest.raises(CosmosResourceNotFoundError):
+            await AsyncDatabaseHelper(
+                SimpleNamespace(last_response_headers={}),
+                backend,
+            ).read_database(
+                "missing",
+                {},
+                response_hook=lambda headers, body: hook_calls.append((headers, body)),
+            )
+
+        assert not hook_calls
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "operation_kwargs",
+    [
+        # The driver clamps a sub-second end-to-end timeout up to 1 second.
+        {Constants.Kwargs.TIMEOUT: 0.5},
+        # The binding ignores non-positive timeouts instead of raising the
+        # legacy CosmosClientTimeoutError.
+        {Constants.Kwargs.TIMEOUT: 0},
+        {Constants.Kwargs.TIMEOUT: -1},
+        # Preserve the legacy validation error for malformed values.
+        {Constants.Kwargs.TIMEOUT: "1"},
+        # Transport keywords are consumed by the azure-core pipeline, which the
+        # Rust path does not run.
+        {"connection_timeout": 2},
+        {"raw_response_hook": object()},
+    ],
+)
+def test_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
+    operation_kwargs,
+):
+    """A plain read still succeeds -- on the engine that honors the option.
+
+    Unlike ``create_database_if_not_exists``, a single read has nothing to keep
+    consistent across two requests, so falling back to legacy is better than
+    failing: the caller gets the option they asked for and a database back.
+    """
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
+        last_response_headers={},
+    )
+    backend = _RustBackend()
+
+    result = DatabaseHelper(connection, backend).read_database(
+        "db1",
+        {},
+        kwargs=dict(operation_kwargs),
+    )
+
+    assert result == {"id": "db1", "_rid": "legacy"}
+    assert backend.prepared is None
+    connection.ReadDatabase.assert_called_once_with(
+        "dbs/db1", options={}, **operation_kwargs
+    )
+
+
+def test_read_database_falls_back_when_driver_would_replace_initial_header():
+    request_options = {"initialHeaders": {"Accept": "application/custom"}}
+    connection = SimpleNamespace(
+        ReadDatabase=MagicMock(return_value={"id": "db1", "_rid": "legacy"}),
+        last_response_headers={},
+    )
+    backend = _RustBackend()
+
+    result = DatabaseHelper(connection, backend).read_database(
+        "db1",
+        request_options,
+    )
+
+    assert result == {"id": "db1", "_rid": "legacy"}
+    assert backend.prepared is None
+    connection.ReadDatabase.assert_called_once_with(
+        "dbs/db1",
+        options=request_options,
+    )
+
+
+@pytest.mark.parametrize(
+    "operation_kwargs",
+    [
+        {Constants.Kwargs.TIMEOUT: 0.5},
+        {Constants.Kwargs.TIMEOUT: 0},
+        {Constants.Kwargs.TIMEOUT: -1},
+        {Constants.Kwargs.TIMEOUT: "1"},
+        {"connection_timeout": 2},
+        {"raw_response_hook": object()},
+    ],
+)
+def test_async_read_database_falls_back_to_legacy_for_options_rust_cannot_honor(
+    operation_kwargs,
+):
+    """Async twin of the single-read fallback."""
+    async def run():
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend()
+
+        result = await AsyncDatabaseHelper(connection, backend).read_database(
+            "db1",
+            {},
+            kwargs=dict(operation_kwargs),
+        )
+
+        assert result == {"id": "db1", "_rid": "legacy"}
+        assert backend.prepared is None
+        connection.ReadDatabase.assert_awaited_once_with(
+            "dbs/db1", options={}, **operation_kwargs
+        )
+
+    asyncio.run(run())
+
+
+def test_async_read_database_falls_back_when_driver_would_replace_initial_header():
+    async def run():
+        request_options = {"initialHeaders": {"x-ms-version": "2018-12-31"}}
+        connection = SimpleNamespace(
+            ReadDatabase=AsyncMock(return_value={"id": "db1", "_rid": "legacy"}),
+            last_response_headers={},
+        )
+        backend = _AsyncRustBackend()
+
+        result = await AsyncDatabaseHelper(connection, backend).read_database(
+            "db1",
+            request_options,
+        )
+
+        assert result == {"id": "db1", "_rid": "legacy"}
+        assert backend.prepared is None
+        connection.ReadDatabase.assert_awaited_once_with(
+            "dbs/db1",
+            options=request_options,
+        )
+
+    asyncio.run(run())
+
+
+def test_async_database_proxy_read_selects_rust_backend():
+    """The public async proxy delegates its read through the stored backend."""
+    async def run():
+        backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({"x-ms-request-charge": "1.0"}),
+                body=b'{"id":"db1","_rid":"existing"}',
+            )
+        )
+        connection = SimpleNamespace(
+            _backend=backend,
+            ReadDatabase=AsyncMock(side_effect=AssertionError("legacy read called")),
+            last_response_headers={},
+        )
+
+        result = await AsyncDatabaseProxy(connection, "db1").read(throughput_bucket=9)
+
+        assert result == {"id": "db1", "_rid": "existing"}
+        assert backend.prepared.op == OP_READ_DATABASE
+        assert backend.prepared.headers["throughputBucket"] == 9
+        connection.ReadDatabase.assert_not_awaited()
+
+    asyncio.run(run())
+
+
+def test_async_database_proxy_read_drops_deprecated_session_token():
+    """The async proxy also drops the deprecated token before Rust dispatch."""
+    async def run():
+        backend = _AsyncRustBackend(
+            BackendResponse(
+                status_code=200,
+                headers=CaseInsensitiveDict({}),
+                body=b'{"id":"db1"}',
+            )
+        )
+        connection = SimpleNamespace(_backend=backend, last_response_headers={})
+
+        with pytest.warns(DeprecationWarning, match="session_token"):
+            await AsyncDatabaseProxy(connection, "db1").read(session_token="ignored")
+
+        assert "sessionToken" not in backend.prepared.headers
 
     asyncio.run(run())
 
@@ -1107,6 +1773,13 @@ def test_async_if_not_exists_legacy_preserves_read_timeout_on_both_legs():
     [
         ({Constants.Kwargs.READ_TIMEOUT: 2}, {}),
         ({}, {Constants.Kwargs.READ_TIMEOUT: 2}),
+        # Both legs share DatabaseProxy.read's eligibility rule, so every option
+        # that sends a plain read to the legacy path stops a get-or-create here.
+        # The driver clamps a sub-second end-to-end timeout to 1 second, and a
+        # transport keyword is consumed by the azure-core pipeline the Rust path
+        # never runs.
+        ({}, {Constants.Kwargs.TIMEOUT: 0.5}),
+        ({}, {"connection_timeout": 2}),
     ],
 )
 def test_async_if_not_exists_read_timeout_never_crosses_from_rust_to_legacy(

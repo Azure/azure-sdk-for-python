@@ -77,6 +77,17 @@ def test_exception_normalization_keeps_semantic_words_and_numbers():
     )
 
 
+def test_exception_normalization_scrubs_service_replica_ids():
+    """Different responding replicas do not change the customer error contract."""
+    first = ValueError("Request URI: /partitions/abc/replicas/134135831941489642s")
+    second = ValueError("Request URI: /partitions/abc/replicas/134203270553494317s")
+
+    assert (
+        _parity_helpers._normalize_exception_message(first)
+        == _parity_helpers._normalize_exception_message(second)
+    )
+
+
 def test_exception_assertion_checks_normalized_message():
     """Typed exceptions with different meanings must not pass parity."""
     comparison = _parity_helpers.BackendComparison(

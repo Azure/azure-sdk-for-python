@@ -107,6 +107,7 @@ struct RuntimeSettings {
     proxy_allowed: Option<bool>,
     max_connect_timeout: Option<Duration>,
     max_dataplane_request_timeout: Option<Duration>,
+    max_metadata_request_timeout: Option<Duration>,
 }
 
 /// One cached driver plus a count of how many live clients use it.
@@ -249,6 +250,10 @@ fn runtime_settings_conflict(initialized: RuntimeSettings, requested: RuntimeSet
             initialized.max_dataplane_request_timeout,
             requested.max_dataplane_request_timeout,
         )
+        || setting_conflicts(
+            initialized.max_metadata_request_timeout,
+            requested.max_metadata_request_timeout,
+        )
 }
 
 fn setting_conflicts<T: PartialEq>(initialized: Option<T>, requested: Option<T>) -> bool {
@@ -348,6 +353,9 @@ fn connection_pool_from_settings(
     }
     if let Some(timeout) = settings.max_dataplane_request_timeout {
         builder = builder.with_max_dataplane_request_timeout(timeout);
+    }
+    if let Some(timeout) = settings.max_metadata_request_timeout {
+        builder = builder.with_max_metadata_request_timeout(timeout);
     }
     builder
         .build()
@@ -470,11 +478,10 @@ pub(crate) fn init_client(
         }
     };
 
-    // `create_driver` takes a single `DriverOptions` that now carries the account
-    // itself, and it is no longer optional, so always build one. When the client
-    // tuned nothing, the builder gets only the account and the driver keeps its
-    // defaults (equivalent to the old no-options path); each present setting is
-    // layered on top.
+    // `create_driver` takes a single required `DriverOptions` that carries the
+    // account itself, so always build one. When the client tuned nothing, the
+    // builder gets only the account and the driver keeps its defaults; each
+    // present setting is layered on top.
     let driver_options = {
         let mut builder = DriverOptions::builder(account);
         if !preferred_regions.is_empty() {
@@ -542,10 +549,12 @@ fn runtime_settings_from_config(config: Option<&Bound<'_, PyAny>>) -> PyResult<R
     let Some(client_config) = config else {
         return Ok(RuntimeSettings::default());
     };
+    let read_timeout = timeout_from_config(client_config, "read_timeout_seconds")?;
     Ok(RuntimeSettings {
         proxy_allowed: get_config_opt::<bool>(client_config, "proxy_allowed")?,
         max_connect_timeout: timeout_from_config(client_config, "connection_timeout_seconds")?,
-        max_dataplane_request_timeout: timeout_from_config(client_config, "read_timeout_seconds")?,
+        max_dataplane_request_timeout: read_timeout,
+        max_metadata_request_timeout: read_timeout,
     })
 }
 
@@ -841,6 +850,7 @@ mod tests {
             proxy_allowed: Some(true),
             max_connect_timeout: Some(Duration::from_secs(5)),
             max_dataplane_request_timeout: Some(Duration::from_secs(65)),
+            max_metadata_request_timeout: Some(Duration::from_secs(65)),
         };
         assert!(!runtime_settings_conflict(
             initialized,
@@ -895,6 +905,10 @@ class Config:
                 settings.max_dataplane_request_timeout,
                 Some(Duration::from_millis(42_500))
             );
+            assert_eq!(
+                settings.max_metadata_request_timeout,
+                Some(Duration::from_millis(42_500))
+            );
         });
     }
 
@@ -904,6 +918,7 @@ class Config:
             proxy_allowed: Some(false),
             max_connect_timeout: Some(Duration::from_millis(1_250)),
             max_dataplane_request_timeout: Some(Duration::from_millis(42_500)),
+            max_metadata_request_timeout: Some(Duration::from_millis(42_500)),
         };
         let pool = connection_pool_from_settings(settings)
             .expect("connection pool settings should be valid")
@@ -912,6 +927,10 @@ class Config:
         assert_eq!(pool.max_connect_timeout(), Duration::from_millis(1_250));
         assert_eq!(
             pool.max_dataplane_request_timeout(),
+            Duration::from_millis(42_500)
+        );
+        assert_eq!(
+            pool.max_metadata_request_timeout(),
             Duration::from_millis(42_500)
         );
     }

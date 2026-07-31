@@ -242,6 +242,25 @@ _register_op(
 )
 
 
+# read_database ---------------------------------------------------------------
+
+def _sync_read_database_target() -> Tuple[Any, str, str]:
+    from azure.cosmos import database as _sync_database_mod
+    return _sync_database_mod, "DatabaseProxy", "read"
+
+
+def _aio_read_database_target() -> Tuple[Any, str, str]:
+    from azure.cosmos.aio import _database as _aio_database_mod
+    return _aio_database_mod, "DatabaseProxy", "read"
+
+
+_register_op(
+    "read_database",
+    sync=_sync_read_database_target,
+    aio=_aio_read_database_target,
+)
+
+
 # delete_item ----------------------------------------------------------------
 
 def _sync_delete_item_target() -> Tuple[Any, str, str]:

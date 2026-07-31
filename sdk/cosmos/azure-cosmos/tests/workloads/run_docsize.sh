@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Document size/shape sensitivity run: does the latency/RU conclusion hold beyond
-# one document shape? Runs a CREATE leg with the DEFAULT (~730 B flat) body and
-# again with the LARGE (~8 KB nested) body, for each backend.
+# one document shape? Runs a CREATE leg with the DEFAULT (732-byte flat) body and
+# again with the LARGE (4,670-byte nested) body, for each backend.
 #
 # Why: every other phase uses one fixed item shape. Bigger, deeper documents cost
 # more to serialize, transfer and index, so a conclusion drawn on one shape may not

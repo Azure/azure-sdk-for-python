@@ -431,11 +431,10 @@ def build_client_config(
     :class:`PreparedClientConfig`, and return ``None``
     when the customer tuned nothing.
 
-    Why the ``None`` matters: an untuned client then takes the exact same simple
-    path as before (the binding builds the driver with its defaults), so it
-    behaves identically to the old code -- no behavior change for people who
-    didn't ask for one. Shared by the sync and async factories so the
-    kwarg-to-config mapping lives in exactly one place.
+    Why the ``None`` matters: an untuned client takes the simplest path -- the
+    binding builds the driver with its defaults -- so a customer who asked for
+    no tuning gets no behavior change. Shared by the sync and async factories so
+    the kwarg-to-config mapping lives in exactly one place.
 
     Most settings are carried only when the customer actually expressed them.
     The public clients always pass the effective transport timeouts, including
@@ -463,7 +462,8 @@ def build_client_config(
     * ``connection_timeout_seconds`` maps exactly to the driver's whole-process
       connection timeout.
     * ``read_timeout_seconds`` is approximate: Python treats it as socket-read
-      inactivity, while the Rust transport caps the complete HTTP attempt.
+      inactivity, while the Rust transport caps the complete HTTP attempt on
+      both data-plane and metadata requests.
     """
     if proxy_allowed is not None and not isinstance(proxy_allowed, bool):
         raise ValueError(

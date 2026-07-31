@@ -48,8 +48,8 @@ use azure_data_cosmos_driver::models::CosmosOperation;
 
 use crate::wire::{
     extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
-    extract_read_feed_ranges_force_refresh, extract_required_item_id,
-    run_create_database_operation, run_create_database_operation_async,
+    extract_database_prepared_inputs, extract_read_feed_ranges_force_refresh,
+    extract_required_item_id, run_create_database_operation, run_create_database_operation_async,
     run_feed_range_from_partition_key_operation, run_feed_range_from_partition_key_operation_async,
     run_is_feed_range_subset_operation, run_is_feed_range_subset_operation_async,
     run_item_operation, run_item_operation_async, run_query_operation, run_query_operation_async,

@@ -175,8 +175,8 @@ def test_L1_read_by_document_dict(container_for):
     """L1: read by passing the document dict (uses ``_self`` lookup).
 
     Same precedent as ``delete_item``'s L1: ``Container._get_document_link``
-    accepts either a bare id string or a dict the SDK previously returned
-    (which carries ``_self``).
+    accepts either a bare id string or a full document dict (which carries
+    ``_self``).
     """
     _run_read(container_for, level="L1",
               summary="read by document dict",
@@ -556,7 +556,7 @@ def test_L4_conditional_etag_if_not_modified_mismatch_observes_actual_behavior(c
     # same observable state" -- either both raise the same typed
     # exception, or both return the same body. The harness's diff
     # logic handles both shapes uniformly. Tolerate header-surface
-    # divergence per the pushback #6/#7 reporting gap.
+    # divergence, which the rust backend still reports less of.
     cmp.assert_functional_parity()
     # Pin the SUCCEEDED bit explicitly so a future change where the
     # SDK actually starts enforcing this (or the service starts

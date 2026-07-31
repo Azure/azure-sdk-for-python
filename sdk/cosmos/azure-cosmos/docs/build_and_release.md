@@ -115,9 +115,6 @@ dependencies, and what kind of output to produce; it uses the same TOML format a
   protocol and transport behavior still belongs in the driver rather than being duplicated
   here.
 
-So the repository boundary is simple: Python-specific integration changes belong in the
-**binding** crate. Driver changes belong in `azure-sdk-for-rust` and follow that repository's
-ownership and review process rather than being copied into the Python repository.
 
 > **How the current build resolves the driver.** The binding's `Cargo.toml` declares
 > `azure_data_cosmos_driver` as a local **path dependency** pointing to the sibling
@@ -685,27 +682,24 @@ For a normal Windows installation, the result is similar to:
 C:\venv\Lib\site-packages\azure\cosmos\.libs
 ```
 
-The driver tries these locations in order, and stops at the first one that loads:
+Before the driver is initialized, the Python wrapper sets
+`AZURE_COSMOS_QUERYPLANINTEROP_DIR` to that installed `.libs` directory. If a developer or test
+already supplied the variable, the wrapper preserves that explicit value.
 
-1. the installed `.libs` directory, as an absolute path;
-2. `AZURE_COSMOS_QUERYPLANINTEROP_DIR`, if a developer or test set it, also as an absolute
-   path; and
-3. the bare library name, which hands the search to the operating system's normal rules.
+The driver then tries these locations in order:
 
-The directory can be set once per Python process. Setting the same directory again succeeds.
-Trying to replace it with a different directory fails. A small lock covers only the first
-directory setup and the first library load, so two threads cannot perform those actions at the
-same time. Query requests do not take this lock after the first load has finished.
+1. `AZURE_COSMOS_QUERYPLANINTEROP_DIR`, using the absolute directory supplied by the caller or
+   the Python wrapper; and
+2. the bare library name, which hands the search to the operating system's normal rules.
 
-For attempts 1 and 2 Windows loads the DLL by its full Unicode path with `LoadLibraryExW`, and
-the `LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR` flag tells Windows to look beside
-`Cosmos.QueryPlanInterop.dll` for its other DLLs. This does not change the DLL search rules for
-the rest of the Python process. Attempt 3 passes the bare name with no flags, so Windows applies
-its default search.
+The driver loads the library lazily on the first native query-plan attempt and caches that
+result for the process lifetime. The environment variable therefore must be set before the
+first query reaches the native provider; importing either Rust backend performs that setup.
 
-Linux and macOS behave the same way: attempts 1 and 2 pass a full path to `dlopen`, and attempt
-3 passes the bare name. The Linux wheel repair step must make dependent-library paths relative
-to `$ORIGIN`. The macOS equivalent is `@loader_path`.
+On Windows, the first attempt passes the absolute DLL path to `LoadLibraryA`; the second passes
+the bare name and uses the normal Windows DLL search. Linux and macOS use the same two-step
+model with `dlopen`. The Linux wheel repair step must make dependent-library paths relative to
+`$ORIGIN`. The macOS equivalent is `@loader_path`.
 
 ### What customers see when the library is missing
 
@@ -756,7 +750,7 @@ The code now builds the `.libs` wheel layout, checks native file types and CPU v
 installed files from both sync and async clients, and uses Gateway planning when the files are
 missing.
 
-Four release checks are still missing:
+Five release checks are still missing:
 
 1. **Supply the libraries.** No checked-in Python pipeline sets
    `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, so no pipeline currently gives the build the
@@ -768,28 +762,16 @@ Four release checks are still missing:
    present.
 4. **Run native-library tests in CI.** The Rust native tests exist, but all 64 are ignored unless
    CI enables `test_category="native_query_plan"`. No checked-in CI configuration enables it.
-
-The driver and Python binding now expose process-wide counters:
-
-```python
-native_before = _rust.native_query_plan_count()
-gateway_before = _rust.gateway_query_plan_count()
-
-list(container.query_items("SELECT TOP 1 * FROM c"))
-
-native_delta = _rust.native_query_plan_count() - native_before
-gateway_delta = _rust.gateway_query_plan_count() - gateway_before
-```
-
-For a clean installed wheel containing QueryPlanInterop, the example query must produce
-`native_delta == 1` and `gateway_delta == 0`. For the no-library fallback test, it must produce
-`native_delta == 0` and `gateway_delta == 1`. The counters are better release evidence than a
-debug log because the test can make exact assertions without changing logging settings.
+5. **Restore query-plan-source observability.** The current driver `main` no longer exposes
+   native-plan and Gateway-plan counters to the binding. The release test still needs a
+   deterministic driver-supported signal proving that an installed wheel used QueryPlanInterop,
+   and a second signal proving Gateway fallback when the library is absent.
 
 The release therefore still needs licensed and signed files for every supported operating system
 and CPU. For each wheel, the pipeline must build, repair, sign, open the final archive to check
-its native files, install it in a clean environment, run both counter checks above, and run the 64
-native tests with their test category enabled.
+its native files, install it in a clean environment, prove both native selection and Gateway
+fallback with the restored driver-supported signal, and run the 64 native tests with their test
+category enabled.
 
 ---
 
@@ -998,9 +980,9 @@ Other changes to be made:
    artifacts and dependencies for every supported OS/architecture, supply each build through
    `AZURE_COSMOS_QUERYPLANINTEROP_SOURCE_DIR`, run the platform wheel repair/signing step, inspect
    the final wheel archive, and prove both native selection and no-library Gateway fallback from
-   clean installed wheels with `_rust.native_query_plan_count()` and
-   `_rust.gateway_query_plan_count()`. CI must also enable `test_category="native_query_plan"` so
-   the 64 existing native-library tests run instead of being ignored.
+   clean installed wheels using a deterministic signal supported by the selected driver revision.
+   CI must also enable `test_category="native_query_plan"` so the 64 existing native-library tests
+   run instead of being ignored.
 
 
 5. **Distribution identity — make the build produce `azure-cosmos`.**

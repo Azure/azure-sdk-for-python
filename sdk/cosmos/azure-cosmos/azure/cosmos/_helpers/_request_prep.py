@@ -58,6 +58,8 @@ The public builders:
 """
 from __future__ import annotations
 
+import math
+
 from typing import Any, Dict, Mapping, Optional, Tuple
 
 from .._base import _validate_resource
@@ -96,7 +98,37 @@ _SEQUENCE_VALUED_OPTION_KEYS = frozenset({"preTriggerInclude", "postTriggerInclu
 # ``throughput_bucket=0`` is not a real bucket, so both must send no header to
 # match v4. (``maxIntegratedCacheStaleness`` is also truthy-gated but keeps its
 # own wire-name branch in ``flatten_options_to_headers``.)
-_TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
+_TRUTHY_GATED_OPTION_KEYS = frozenset({
+    "autoUpgradePolicy",
+    "containerRID",
+    "continuation",
+    "contentType",
+    "correlatedActivityId",
+    "disableRUPerMinuteUsage",
+    "enableCrossPartitionQuery",
+    "enableScanInQuery",
+    "enableScriptLogging",
+    "indexingDirective",
+    "isQueryPlanRequest",
+    "maxItemCount",
+    "offerEnableRUPerMinuteThroughput",
+    "offerThroughput",
+    "offerType",
+    "populateIndexMetrics",
+    "populatePartitionKeyRangeStatistics",
+    "populateQueryAdvice",
+    "populateQueryMetrics",
+    "populateQuotaInfo",
+    "postTriggerInclude",
+    "preTriggerInclude",
+    "priorityLevel",
+    "queryVersion",
+    "resourceTokenExpirySeconds",
+    "responseContinuationTokenLimitInKb",
+    "sessionToken",
+    "supportedQueryFeatures",
+    "throughputBucket",
+})
 
 # Internal option-keys that live in the options dict for the legacy pipeline's
 # own use but are NOT wire headers, so ``flatten_options_to_headers`` must never
@@ -112,13 +144,18 @@ _TRUTHY_GATED_OPTION_KEYS = frozenset({"indexingDirective", "throughputBucket"})
 #   * ``timeoutScope`` / ``timeout`` / ``read_timeout`` -- legacy timeout policy
 #     inputs; the Rust path takes the timeout via the ``__overall_timeout_seconds``
 #     sentinel header instead, set from the ``timeout`` kwarg.
-#   * ``enableCrossPartitionQuery`` -- a query knob with no meaning on a point read.
+#   * ``retry_write`` -- how many times to retry a non-idempotent write. It is a
+#     retry-policy input, not a header: the legacy path reads it in
+#     ``_request_object.RequestObject.set_retry_write`` and ``GetHeaders`` never
+#     looks at it. ``_base.build_options`` copies it into the options dict for
+#     every operation (it is in ``COMMON_OPTIONS``), so without this entry it
+#     rides to the binding as a header named ``retry_write``.
 _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset({
     Constants.OperationStartTime,
     Constants.TimeoutScope,
     Constants.Kwargs.TIMEOUT,
     Constants.Kwargs.READ_TIMEOUT,
-    "enableCrossPartitionQuery",
+    Constants.Kwargs.RETRY_WRITE,
 })
 
 # Option-keys that ``flatten_options_to_headers`` hands to the binding as their
@@ -126,7 +163,7 @@ _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset({
 # ``x-ms-*`` wire header (or lift them to a typed driver field). This is the
 # shared vocabulary of the header/option mapping that is split across two
 # languages: this module owns truthy-gating and a handful of translations, while
-# ``extract_op_modifiers`` (azure_cosmos_rust/src/wire.rs) owns the camelCase ->
+# ``extract_op_modifiers`` (azure_cosmos_rust/src/wire/request.rs) owns the camelCase ->
 # ``x-ms-`` table and the typed-field lifting.
 #
 # WHY THIS MATTERS (the landmine): the Rust match ends in ``_ => continue``, so
@@ -134,10 +171,10 @@ _NON_WIRE_INTERNAL_OPTION_KEYS = frozenset({
 # no error, wrong wire bytes, green tests. Adding a knob on the Python side alone
 # would therefore quietly no-op on the fast path. Two guards defend this:
 #   1. ``test_rust_option_key_parity`` enforces that every key below has a matching
-#      arm in ``wire.rs`` (and vice versa), turning contract drift into a loud test
+#      arm in ``wire/request.rs`` (and vice versa), turning contract drift into a loud test
 #      failure. This relies on the new key being added to *this* set.
 #   2. The Rust ``COSMOS_WIRE_STRICT=1`` runtime gate (extract_op_modifiers in
-#      wire.rs) hard-errors on any unrecognised, non-allowlisted key that actually
+#      wire/request.rs) hard-errors on any unrecognised, non-allowlisted key that actually
 #      reaches the binding -- catching a key that drifted into
 #      ``flatten_options_to_headers`` / ``COMMON_OPTIONS`` even when this set was
 #      not updated. Off by default (production keeps the lenient silent drop, zero
@@ -148,6 +185,7 @@ RUST_HANDLED_OPTION_KEYS = frozenset({
     "preTriggerInclude",
     "postTriggerInclude",
     "indexingDirective",
+    "maxItemCount",
     "priorityLevel",
     "throughputBucket",
     "containerRID",
@@ -162,6 +200,49 @@ RUST_HANDLED_OPTION_KEYS = frozenset({
     "initialHeaders",
     "offerThroughput",
     "autoUpgradePolicy",
+    "continuation",
+    "contentType",
+    "correlatedActivityId",
+    "disableRUPerMinuteUsage",
+    "enableCrossPartitionQuery",
+    "enableScanInQuery",
+    "enableScriptLogging",
+    "isQueryPlanRequest",
+    "offerEnableRUPerMinuteThroughput",
+    "offerType",
+    "populateIndexMetrics",
+    "populatePartitionKeyRangeStatistics",
+    "populateQueryAdvice",
+    "populateQueryMetrics",
+    "populateQuotaInfo",
+    "queryVersion",
+    "resourceTokenExpirySeconds",
+    "responseContinuationTokenLimitInKb",
+    "supportedQueryFeatures",
+})
+
+# The only per-call keyword arguments a database read can carry onto the Rust
+# path. ``timeout`` becomes the ``__overall_timeout_seconds`` sentinel header;
+# ``response_hook`` is invoked by the coordinator after the response is parsed,
+# so it never has to reach the binding. Anything else -- ``connection_timeout``,
+# ``raw_request_hook``, ``raw_response_hook`` -- is consumed by the legacy
+# azure-core pipeline, which the Rust path does not run, so its presence sends
+# the read to the legacy path instead of dropping it (see
+# ``is_read_database_rust_eligible``).
+_RUST_READ_DATABASE_SUPPORTED_KWARGS = frozenset({
+    Constants.Kwargs.TIMEOUT,
+    "response_hook",
+})
+
+# The Rust driver intentionally owns these standard headers and overwrites
+# custom values after the binding adds ``initial_headers``. The legacy pipeline
+# preserves per-call overrides for the same names, so such reads must stay on
+# legacy until the driver exposes an equivalent override contract.
+_RUST_READ_DATABASE_NON_OVERRIDABLE_INITIAL_HEADERS = frozenset({
+    "accept",
+    "cache-control",
+    "user-agent",
+    "x-ms-version",
 })
 
 
@@ -185,36 +266,22 @@ def _normalize_option_value(option_key: str, value: Any) -> Any:
     return value
 
 
-def _build_database_prepared(
-    op: str,
-    database: Dict[str, Any],
+def _account_level_headers(
     request_options: Mapping[str, Any],
-    *,
-    include_database_body: bool,
-    kwargs: Optional[Mapping[str, Any]] = None,
-) -> PreparedRequest:
-    """Build an account-level database request consumed by the Rust backend.
+    kwargs: Optional[Mapping[str, Any]],
+) -> Dict[str, Any]:
+    """Flatten one account-level operation's options into wire headers.
 
-    Creating a database and reading one differ in exactly one way: create sends
-    the database document in the request body, read sends no body and identifies
-    the database by id alone. Everything else -- validation, header flattening,
-    timeout handling -- is the same, so both callers share this and pass
-    ``include_database_body``. Duplicating it would be two places to keep in step
-    every time header handling changes.
+    Create-database and read-database share exactly this much: the option ->
+    header flattening plus the overall-timeout sentinel the binding reads. They
+    differ in everything else (create validates and sends a body, read sends
+    none and drops the session token), so only this part is shared.
     """
-    _validate_resource(database)
     headers = flatten_options_to_headers(request_options)
     timeout = (kwargs or {}).get(Constants.Kwargs.TIMEOUT)
     if timeout is not None:
         headers[Constants.OVERALL_TIMEOUT_SECONDS] = timeout
-    return PreparedRequest(
-        op=op,
-        container_link="",
-        body_bytes=serialize_body_to_bytes(database) if include_database_body else b"",
-        partition_key_header="[]",
-        headers=headers,
-        item_id=database["id"],
-    )
+    return headers
 
 
 def build_create_database_prepared(
@@ -223,41 +290,168 @@ def build_create_database_prepared(
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
-    """Build the request for a plain account-level create-database."""
-    return _build_database_prepared(
-        OP_CREATE_DATABASE,
-        database,
-        request_options,
-        include_database_body=True,
-        kwargs=kwargs,
+    """Build the account-level create-database request consumed by the Rust backend."""
+    _validate_resource(database)
+    return PreparedRequest(
+        op=OP_CREATE_DATABASE,
+        container_link="",
+        body_bytes=serialize_body_to_bytes(database),
+        partition_key_header="[]",
+        headers=_account_level_headers(request_options, kwargs),
+        item_id=database["id"],
     )
 
 
 def build_read_database_prepared(
-    database: Dict[str, Any],
+    database_id: Any,
     request_options: Mapping[str, Any],
     *,
     kwargs: Optional[Mapping[str, Any]] = None,
 ) -> PreparedRequest:
     """Build the account-level read-database request consumed by the Rust backend.
 
-    Exists so ``create_database_if_not_exists`` can do its existence check on the
-    Rust path. Before this, that check had no Rust request to send, so the whole
-    get-or-create had to run on the legacy path even for a customer who selected
-    the Rust backend.
+    Two callers: ``DatabaseProxy.read`` and the existence check inside
+    ``create_database_if_not_exists``. Without it a Rust-backed client has to
+    run both of those on the legacy transport, because there is no Rust request
+    to send.
     """
-    return _build_database_prepared(
-        OP_READ_DATABASE,
-        database,
-        request_options,
-        include_database_body=False,
-        kwargs=kwargs,
+    read_options = dict(request_options)
+    # Database reads are master-resource requests. The legacy session layer never
+    # attaches a session token to them (``_base._is_session_token_request`` returns
+    # False for a master resource), and ``_base.GetHeaders`` suppresses
+    # x-ms-cosmos-intended-collection-rid when resource_type == 'dbs'. Drop both so
+    # the Rust request carries the same headers the legacy request would.
+    read_options.pop("sessionToken", None)
+    read_options.pop(Constants.ContainerRID, None)
+    normalized_database_id = str(database_id).rstrip("/")
+    if not normalized_database_id:
+        # Match the legacy link parser instead of sending an account-level
+        # ``/dbs/`` request that fails later with a different service error.
+        raise ValueError("Failed Parsing ResourceID from link: /dbs/")
+    return PreparedRequest(
+        op=OP_READ_DATABASE,
+        container_link="",
+        body_bytes=b"",
+        partition_key_header="[]",
+        headers=_account_level_headers(read_options, kwargs),
+        # The legacy path routes the id through ``base.GetPathFromLink`` /
+        # ``GetResourceIdOrFullNameFromLink``, which tolerate a trailing slash
+        # ("dbs/mydb/" reads database "mydb"). The binding takes the bare name and
+        # builds the path itself, so strip the slash here to keep the two paths
+        # reading the same database.
+        item_id=normalized_database_id,
     )
+
+
+def is_read_database_rust_eligible(
+    request_options: Mapping[str, Any],
+    operation_kwargs: Mapping[str, Any],
+) -> bool:
+    """Return whether Rust can honor every per-call option on a database read.
+
+    The single definition of "representable" for a database read, shared by
+    ``DatabaseProxy.read`` and the existence check in
+    ``create_database_if_not_exists``. Both ask the same question, so they must
+    not answer it differently: the same call would otherwise run on Rust in one
+    method and on legacy Python in the other, honoring a different set of the
+    caller's options each time.
+
+    Returns ``False`` when the caller asked for
+    something the Rust path would drop without saying so:
+
+    * ``read_timeout`` -- a socket-level timeout. The Rust path has no
+      per-request equivalent; the driver takes its read timeout from the client
+      configuration.
+    * any operation kwarg outside ``_RUST_READ_DATABASE_SUPPORTED_KWARGS`` --
+      for example ``connection_timeout`` or ``raw_request_hook``, which the
+      legacy azure-core pipeline consumes and the Rust path never sees.
+    * a ``timeout`` below 1 second, including zero and negative values, or a
+      non-numeric timeout. The driver clamps positive sub-second values and
+      ignores non-positive values, while the legacy path either honors the
+      exact value or raises its established validation error.
+    * ``initial_headers`` containing a standard header the driver always
+      overwrites. The legacy pipeline preserves those caller overrides.
+
+    Without this check the read would run on Rust regardless, and these options
+    would be accepted and then quietly not applied. A customer who
+    sets ``timeout=0.5`` to fail fast would wait a full second and have no way to
+    tell from logs that their number was replaced.
+
+    :param request_options: The internal options dict for this read.
+    :type request_options: Mapping[str, Any]
+    :param operation_kwargs: The kwargs left over after ``build_options``.
+    :type operation_kwargs: Mapping[str, Any]
+    :returns: ``True`` when the Rust path preserves every option the caller set.
+    :rtype: bool
+    """
+    if (
+        request_options.get(Constants.Kwargs.READ_TIMEOUT) is not None
+        or operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT) is not None
+    ):
+        return False
+    if set(operation_kwargs).difference(_RUST_READ_DATABASE_SUPPORTED_KWARGS):
+        return False
+    if _overrides_driver_owned_header(request_options):
+        return False
+    return _timeout_is_representable(operation_kwargs)
+
+
+def _overrides_driver_owned_header(request_options: Mapping[str, Any]) -> bool:
+    """Return whether ``initial_headers`` sets a header the driver would replace.
+
+    The legacy pipeline lets the caller's value win for these names, so a read
+    that sets one has to stay on the legacy path or the caller's header is
+    dropped without a word.
+    """
+    initial_headers = request_options.get("initialHeaders")
+    if not isinstance(initial_headers, Mapping):
+        return False
+    return any(
+        isinstance(name, str)
+        and name.lower() in _RUST_READ_DATABASE_NON_OVERRIDABLE_INITIAL_HEADERS
+        for name in initial_headers
+    )
+
+
+def _timeout_is_representable(operation_kwargs: Mapping[str, Any]) -> bool:
+    """Return whether the caller's ``timeout`` survives the trip to the driver.
+
+    The driver clamps a positive sub-second value up to one second and drops a
+    zero, negative, or non-numeric one, in both cases without an error. The
+    legacy path either honors the exact number or raises its own validation
+    error, so anything the driver would change is kept off the Rust path.
+    """
+    timeout = operation_kwargs.get(Constants.Kwargs.TIMEOUT)
+    if timeout is None:
+        return True
+    if not isinstance(timeout, (int, float)):
+        return False
+    seconds = float(timeout)
+    # ``nan`` reaches neither engine's timeout logic -- the driver drops it as
+    # non-finite and the legacy retry loop never finds it elapsed -- so it is
+    # representable even though it fails every numeric bound.
+    if math.isnan(seconds):
+        return True
+    return seconds >= 1.0
+
+
+# Shown when a get-or-create cannot run on the Rust backend. The read and the
+# create are one workflow, so the coordinator refuses rather than running one
+# leg on Rust and the other on the legacy transport, which would honor a
+# different set of the caller's options on each leg.
+RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE = (
+    "create_database_if_not_exists cannot run on the Rust backend for this call: "
+    "it was given a per-call option the Rust path cannot honor (read_timeout, a "
+    "timeout the driver would interpret differently, an overridden standard "
+    "request header, or a transport keyword such as connection_timeout). "
+    "Remove the option, or build the client with the core-python backend."
+)
 
 
 def _availability_strategy_to_wire(value: Any) -> Optional[str]:
     """Normalize a per-request ``availability_strategy`` into the compact string
-    the rust binding parses (see ``parse_availability_strategy`` in wire.rs).
+    the rust binding parses (see ``parse_availability_strategy`` in
+    ``wire/request.rs``).
 
     The customer's value has already been validated into one of:
       * ``False`` -> hedging explicitly disabled -> ``"disabled"``
@@ -307,16 +501,15 @@ def flatten_options_to_headers(options: Mapping[str, Any]) -> Dict[str, Any]:
       ``consistencyLevel`` key would be sent as a header the driver ignores.
     - ``preTriggerInclude`` / ``postTriggerInclude`` supplied as a list/tuple
       of trigger ids are comma-joined (see ``_normalize_option_value``).
-    - ``indexingDirective`` / ``throughputBucket`` are emitted **only when
-      truthy** -- ``indexing_directive=Default(0)`` and ``throughput_bucket=0``
-      ship no header, matching the legacy ``GetHeaders`` truthy gate.
+    - ``indexingDirective`` / ``throughputBucket`` / ``containerRID`` are emitted
+      **only when truthy** -- ``indexing_directive=Default(0)`` and
+      ``throughput_bucket=0`` ship no header, matching the legacy ``GetHeaders``
+      truthy gate.
     - pipeline-internal keys that are not wire headers
       (``_NON_WIRE_INTERNAL_OPTION_KEYS``: ``operationStartTime``,
-      ``timeoutScope``, ``timeout``, ``read_timeout``,
-      ``enableCrossPartitionQuery``) are skipped -- they only appear when a
-      caller reuses a query / ``build_options`` options dict for a point op
-      (e.g. ``read_items``' single-item legs), and the legacy path ignores them
-      too.
+      ``timeoutScope``, ``timeout``, ``read_timeout``, ``retry_write``) are
+      skipped -- the legacy path reads them from the options dict directly
+      (timeout policy, retry policy) and ``GetHeaders`` never emits them.
     - every other option-key is copied through unchanged.
 
     Does **not** stamp the container rid or the overall-timeout sentinel:

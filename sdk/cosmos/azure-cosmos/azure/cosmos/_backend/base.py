@@ -274,8 +274,8 @@ class PreparedClientConfig:
 
     #: Effective client socket-read timeout in seconds. The Rust transport has no
     #: read-inactivity timeout, so the binding uses this as the process-wide cap
-    #: for one complete data-plane HTTP attempt (connect, send, and receive).
-    #: ``None`` leaves the driver default unchanged.
+    #: for one complete HTTP attempt (connect, send, and receive) on both the
+    #: data-plane and metadata transports. ``None`` leaves driver defaults unchanged.
     read_timeout_seconds: Optional[float] = None
 
 

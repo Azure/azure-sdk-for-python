@@ -38,6 +38,8 @@ from .exceptions import CosmosResourceNotFoundError
 from .user import UserProxy
 from .documents import IndexingMode
 from ._cosmos_responses import CosmosDict
+from ._helpers._item_dispatch import pick_backend
+from ._helpers.database_helper import DatabaseHelper
 
 __all__ = ("DatabaseProxy",)
 
@@ -143,18 +145,25 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
+            kwargs.pop('session_token')
         if populate_query_metrics is not None:
             warnings.warn(
                 "the populate_query_metrics flag does not apply to this method and will be removed in the future",
                 DeprecationWarning,
             )
 
-        database_link = _get_database_link(self)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        response_hook = kwargs.pop("response_hook", None)
         request_options = build_options(kwargs)
-        self._properties = self.client_connection.ReadDatabase(
-            database_link, options=request_options, **kwargs
+        self._properties = DatabaseHelper(
+            self.client_connection,
+            pick_backend(self.client_connection),
+        ).read_database(
+            self.id,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
         )
         return self._properties
 

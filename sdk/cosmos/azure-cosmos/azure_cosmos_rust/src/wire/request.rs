@@ -64,6 +64,32 @@ pub(crate) fn extract_common_prepared_inputs<'py>(
     Ok((container_link, partition_key_header, modifiers))
 }
 
+/// Read the fields an account-level database operation needs from a
+/// ``PreparedRequest``.
+///
+/// Separate from `extract_common_prepared_inputs` because a database operation
+/// has no container and no partition key: reading `container_link` and
+/// `partition_key_header` here would be two attribute lookups whose results are
+/// thrown away, and it would let a caller believe those fields mean something
+/// for a database request. The tuple orders its parts like
+/// `extract_common_prepared_inputs`: the identifying value first, the modifiers
+/// last.
+///
+/// Without it a database request goes through the container-shaped reader, which
+/// still works -- the prepared request carries an empty container link and an
+/// empty partition key -- but it reads two fields that mean nothing here and
+/// suggests to the next reader that they do.
+pub(crate) fn extract_database_prepared_inputs<'py>(
+    prepared: &Bound<'py, PyAny>,
+    error_message: &'static str,
+) -> PyResult<(String, OpModifiers)> {
+    let database_id = extract_required_item_id(prepared, error_message)?;
+    let headers_obj = prepared.getattr("headers")?;
+    let headers_dict: &Bound<'py, PyDict> = headers_obj.downcast::<PyDict>()?;
+    let modifiers = extract_op_modifiers(headers_dict)?;
+    Ok((database_id, modifiers))
+}
+
 pub(crate) fn extract_body_bytes<'py>(prepared: &Bound<'py, PyAny>) -> PyResult<Vec<u8>> {
     prepared.getattr("body_bytes")?.extract()
 }
@@ -298,10 +324,36 @@ fn extract_op_modifiers(headers_dict: &Bound<'_, PyDict>) -> PyResult<OpModifier
             "pretriggerinclude" => Some("x-ms-documentdb-pre-trigger-include"),
             "posttriggerinclude" => Some("x-ms-documentdb-post-trigger-include"),
             "indexingdirective" => Some("x-ms-indexing-directive"),
+            "maxitemcount" => Some("x-ms-max-item-count"),
             "prioritylevel" => Some("x-ms-cosmos-priority-level"),
             "throughputbucket" => Some("x-ms-cosmos-throughput-bucket"),
             "offerthroughput" => Some("x-ms-offer-throughput"),
             "autoupgradepolicy" => Some("x-ms-cosmos-offer-autopilot-settings"),
+            "continuation" => Some("x-ms-continuation"),
+            "contenttype" => Some("content-type"),
+            "correlatedactivityid" => Some("x-ms-cosmos-correlated-activityid"),
+            "disableruperminuteusage" => Some("x-ms-documentdb-disable-ru-per-minute-usage"),
+            "enablecrosspartitionquery" => Some("x-ms-documentdb-query-enablecrosspartition"),
+            "enablescaninquery" => Some("x-ms-documentdb-query-enable-scan"),
+            "enablescriptlogging" => Some("x-ms-documentdb-script-enable-logging"),
+            "isqueryplanrequest" => Some("x-ms-cosmos-is-query-plan-request"),
+            "offerenableruperminutethroughput" => {
+                Some("x-ms-offer-is-ru-per-minute-throughput-enabled")
+            }
+            "offertype" => Some("x-ms-offer-type"),
+            "populateindexmetrics" => Some("x-ms-cosmos-populateindexmetrics"),
+            "populatepartitionkeyrangestatistics" => {
+                Some("x-ms-documentdb-populatepartitionstatistics")
+            }
+            "populatequeryadvice" => Some("x-ms-cosmos-populatequeryadvice"),
+            "populatequerymetrics" => Some("x-ms-documentdb-populatequerymetrics"),
+            "populatequotainfo" => Some("x-ms-documentdb-populatequotainfo"),
+            "queryversion" => Some("x-ms-cosmos-query-version"),
+            "resourcetokenexpiryseconds" => Some("x-ms-documentdb-expiry-seconds"),
+            "responsecontinuationtokenlimitinkb" => {
+                Some("x-ms-documentdb-responsecontinuationtokenlimitinkb")
+            }
+            "supportedqueryfeatures" => Some("x-ms-cosmos-supported-query-features"),
             "containerrid" => Some("x-ms-cosmos-intended-collection-rid"),
             // Read-side cache-validation kwarg. Accept the option-key
             // form as a defensive fallback; the Python prep already
@@ -630,11 +682,12 @@ pub(crate) fn extract_create_item_id<'py>(
 #[cfg(test)]
 mod tests {
     use super::{
-        extract_item_id, extract_op_modifiers, is_intentionally_ignored_option_key,
-        json_value_to_pk_component, parse_availability_strategy, parse_container_link,
-        parse_feed_range_partition_key_header, parse_partition_key_header,
-        parse_query_target_header, parse_read_feed_ranges_force_refresh,
-        FeedRangePartitionKeySource, QueryTarget, DEFAULT_HEDGE_THRESHOLD_MS,
+        extract_database_prepared_inputs, extract_item_id, extract_op_modifiers,
+        is_intentionally_ignored_option_key, json_value_to_pk_component,
+        parse_availability_strategy, parse_container_link, parse_feed_range_partition_key_header,
+        parse_partition_key_header, parse_query_target_header,
+        parse_read_feed_ranges_force_refresh, FeedRangePartitionKeySource, QueryTarget,
+        DEFAULT_HEDGE_THRESHOLD_MS,
     };
     use azure_core::http::headers::{HeaderName, HeaderValue};
     use azure_data_cosmos_driver::options::{
@@ -888,6 +941,76 @@ mod tests {
                         "unexpected error: {err}"
                     );
                 }
+            }
+        });
+    }
+
+    #[test]
+    fn database_input_extraction_does_not_require_container_fields() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let attributes = PyDict::new_bound(py);
+            attributes
+                .set_item("headers", PyDict::new_bound(py))
+                .unwrap();
+            attributes.set_item("item_id", "db1").unwrap();
+            let prepared = py
+                .import_bound("types")
+                .unwrap()
+                .getattr("SimpleNamespace")
+                .unwrap()
+                .call((), Some(&attributes))
+                .unwrap();
+
+            let (database_id, modifiers) =
+                extract_database_prepared_inputs(&prepared, "database id required")
+                    .expect("database extraction must succeed");
+
+            assert_eq!(database_id, "db1");
+            assert!(modifiers.custom_headers.is_empty());
+        });
+    }
+
+    #[test]
+    fn legacy_option_keys_map_to_their_wire_header_names() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let headers = PyDict::new_bound(py);
+            let expected = [
+                ("maxItemCount", "x-ms-max-item-count"),
+                (
+                    "resourceTokenExpirySeconds",
+                    "x-ms-documentdb-expiry-seconds",
+                ),
+                ("contentType", "content-type"),
+                ("isQueryPlanRequest", "x-ms-cosmos-is-query-plan-request"),
+                (
+                    "supportedQueryFeatures",
+                    "x-ms-cosmos-supported-query-features",
+                ),
+                ("queryVersion", "x-ms-cosmos-query-version"),
+                ("continuation", "x-ms-continuation"),
+                (
+                    "populateQueryMetrics",
+                    "x-ms-documentdb-populatequerymetrics",
+                ),
+                ("populateIndexMetrics", "x-ms-cosmos-populateindexmetrics"),
+                ("populateQueryAdvice", "x-ms-cosmos-populatequeryadvice"),
+                ("populateQuotaInfo", "x-ms-documentdb-populatequotainfo"),
+            ];
+            for (option_key, _) in expected {
+                headers.set_item(option_key, "value").unwrap();
+            }
+
+            let modifiers = extract_op_modifiers(&headers).expect("extraction must succeed");
+            for (_, wire_name) in expected {
+                assert_eq!(
+                    modifiers
+                        .custom_headers
+                        .get(&HeaderName::from(wire_name.to_string())),
+                    Some(&HeaderValue::from("value".to_string())),
+                    "missing mapping for {wire_name}"
+                );
             }
         });
     }

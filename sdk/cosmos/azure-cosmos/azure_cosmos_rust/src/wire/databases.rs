@@ -126,11 +126,11 @@ async fn run_create_database_future(
     let account = driver.account().clone();
     let mut op = CosmosOperation::create_database(account).with_body(body_bytes);
 
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    if let Some(activity) = modifiers.activity_header {
+        op = op.with_activity_id(ActivityId::from(activity));
     }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
+    if let Some(session) = modifiers.session_header {
+        op = op.with_session_token(SessionToken::from(session));
     }
 
     let options = build_operation_options(
@@ -151,11 +151,11 @@ async fn run_read_database_future(
     let database = DatabaseReference::from_name(driver.account().clone(), database_id);
     let mut op = CosmosOperation::read_database(database);
 
-    if let Some(activity) = modifiers.activity_header.as_ref() {
-        op = op.with_activity_id(ActivityId::from(activity.clone()));
+    if let Some(activity) = modifiers.activity_header {
+        op = op.with_activity_id(ActivityId::from(activity));
     }
-    if let Some(session) = modifiers.session_header.as_ref() {
-        op = op.with_session_token(SessionToken::from(session.clone()));
+    if let Some(session) = modifiers.session_header {
+        op = op.with_session_token(SessionToken::from(session));
     }
 
     let options = build_operation_options(

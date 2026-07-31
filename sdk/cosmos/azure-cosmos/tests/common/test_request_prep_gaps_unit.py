@@ -80,17 +80,27 @@ def test_internal_option_keys_are_not_emitted_as_headers():
     This is the ``read_items`` shape: its single-item legs route through the
     point-read prep with the batch's query / ``build_options`` options dict,
     which carries pipeline-internal keys (``operationStartTime``,
-    ``timeoutScope``, ``timeout``, ``read_timeout``, ``enableCrossPartitionQuery``).
+    ``timeoutScope``, ``timeout``, ``read_timeout``, ``retry_write``).
     The Rust prep's catch-all would otherwise copy them through as bogus headers
     (silently dropped by the binding in production, a hard error under
-    ``COSMOS_WIRE_STRICT``)."""
+    ``COSMOS_WIRE_STRICT``).
+
+    ``enableCrossPartitionQuery`` is deliberately not on that list: legacy
+    ``_base.GetHeaders`` emits it as
+    ``x-ms-documentdb-query-enablecrosspartition``, so the Rust path must too.
+
+    What this looked like to a customer: ``create_item(order, retry_write=3)``
+    put ``retry_write`` on the request as if it were a header. ``retry_write``
+    is a retry setting the SDK reads itself; it was never meant to leave the
+    process."""
     options = {
         "operationStartTime": 1784323061.0,
         "timeoutScope": "operation",
         "timeout": 5,
         "read_timeout": 3,
-        "enableCrossPartitionQuery": True,
+        "retry_write": 3,
         # Real customer options that must still reach the wire.
+        "enableCrossPartitionQuery": True,
         "sessionToken": "0:-1#5",
         "priorityLevel": "High",
         "consistencyLevel": "Session",
@@ -101,12 +111,29 @@ def test_internal_option_keys_are_not_emitted_as_headers():
         "timeoutScope",
         "timeout",
         "read_timeout",
-        "enableCrossPartitionQuery",
+        "retry_write",
     ):
         assert internal_key not in headers
+    assert headers["enableCrossPartitionQuery"] is True
     assert headers["sessionToken"] == "0:-1#5"
     assert headers["priorityLevel"] == "High"
     assert headers[HttpHeaders.ConsistencyLevel] == "Session"
+
+
+def test_container_rid_is_truthy_gated():
+    """An empty container rid sends no header.
+
+    Legacy ``_base.GetHeaders`` gates it with ``options.get(containerRID)``, so a
+    ``""`` / ``None`` rid never becomes
+    ``x-ms-cosmos-intended-collection-rid: ""`` on the wire.
+
+    This header names the container a request is meant for. A database read has
+    no container, so it must not send one -- an empty value is not the same as
+    no value.
+    """
+    assert "containerRID" not in flatten_options_to_headers({"containerRID": ""})
+    assert "containerRID" not in flatten_options_to_headers({"containerRID": None})
+    assert flatten_options_to_headers({"containerRID": "rid1"})["containerRID"] == "rid1"
 
 
 # ---------------------------------------------------------------------------

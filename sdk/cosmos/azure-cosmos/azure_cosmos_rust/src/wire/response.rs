@@ -227,7 +227,7 @@ fn backend_response_tuple<'py>(
         Some(value) => value.into_py(py),
         None => py.None().into_py(py),
     };
-    let items: Vec<PyObject> = vec![
+    let items: [PyObject; 5] = [
         status_code.into_py(py),
         sub_status.into_py(py),
         response_headers.into_any().unbind(),
@@ -261,15 +261,28 @@ fn backend_response_tuple_from_success<'py>(
     let response_headers = PyDict::new_bound(py);
     write_response_headers(&response_headers, driver_headers)?;
 
-    let body_vec = response_body_to_vec(response.into_body())?;
-    backend_response_tuple(
-        py,
-        status_code,
-        sub_status,
-        response_headers,
-        &body_vec,
-        Some(diagnostics.as_str()),
-    )
+    match response.into_body() {
+        ResponseBody::NoPayload => backend_response_tuple(
+            py,
+            status_code,
+            sub_status,
+            response_headers,
+            b"",
+            Some(diagnostics.as_str()),
+        ),
+        ResponseBody::Bytes(body) => backend_response_tuple(
+            py,
+            status_code,
+            sub_status,
+            response_headers,
+            body.as_ref(),
+            Some(diagnostics.as_str()),
+        ),
+        ResponseBody::Items(items) => Err(PyRuntimeError::new_err(format!(
+            "unexpected feed response body for point operation: got {} item(s)",
+            items.len()
+        ))),
+    }
 }
 
 /// Query-page version of `backend_response_tuple_from_success`: same steps, but the

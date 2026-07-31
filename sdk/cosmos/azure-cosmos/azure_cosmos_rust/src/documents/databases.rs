@@ -31,14 +31,15 @@ pub(crate) fn create_database_async<'py>(
 
 /// Read an account-level database and return its service properties.
 ///
-/// The public API this serves is `create_database_if_not_exists`, which first
-/// asks whether the database is already there and creates it only if the read
-/// comes back not-found. The Rust driver has a create-database call and a
-/// read-database call, but no combined get-or-create, so Python does the
-/// combining and needs both halves available here.
+/// Two public APIs land here. `DatabaseProxy.read` is the direct one: a customer
+/// asks for a database's properties. `create_database_if_not_exists` is the
+/// indirect one -- it first asks whether the database is already there and
+/// creates it only if this read comes back not-found. The Rust driver has a
+/// create-database call and a read-database call, but no combined get-or-create,
+/// so Python does the combining and needs both halves available here.
 ///
 /// Without this the read half had no Rust call to make, and a customer on the
-/// Rust backend would have had that one method drop to the older Python
+/// Rust backend would have had both of those methods drop to the older Python
 /// transport -- different retry behavior and different diagnostics from every
 /// other call on the same client.
 #[pyfunction]
@@ -47,9 +48,8 @@ pub(crate) fn read_database<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyTuple>> {
-    let (_container_link, _partition_key_header, modifiers) =
-        extract_common_prepared_inputs(prepared)?;
-    let database_id = extract_required_item_id(prepared, "read_database requires a database id")?;
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
     run_read_database_operation(py, handle, modifiers, database_id, "read_database")
 }
 
@@ -60,8 +60,7 @@ pub(crate) fn read_database_async<'py>(
     handle: &str,
     prepared: &Bound<'py, PyAny>,
 ) -> PyResult<Bound<'py, PyAny>> {
-    let (_container_link, _partition_key_header, modifiers) =
-        extract_common_prepared_inputs(prepared)?;
-    let database_id = extract_required_item_id(prepared, "read_database requires a database id")?;
+    let (database_id, modifiers) =
+        extract_database_prepared_inputs(prepared, "read_database requires a database id")?;
     run_read_database_operation_async(py, handle, modifiers, database_id, "read_database_async")
 }

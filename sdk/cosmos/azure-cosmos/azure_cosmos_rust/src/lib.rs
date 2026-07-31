@@ -158,12 +158,6 @@ mod wire;
 
 use pyo3::prelude::*;
 
-#[pyfunction]
-fn configure_query_plan_interop_directory(directory: String) -> PyResult<()> {
-    azure_data_cosmos_driver::configure_query_plan_interop_directory(directory)
-        .map_err(pyo3::exceptions::PyRuntimeError::new_err)
-}
-
 macro_rules! add_pyfn {
     ($module:expr, $function:path) => {
         $module.add_function(wrap_pyfunction!($function, $module)?)?;
@@ -176,7 +170,6 @@ macro_rules! add_pyfn {
 
 #[pymodule]
 fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
-    add_pyfn!(m, configure_query_plan_interop_directory);
     add_pyfn!(m, runtime::init_client);
     add_pyfn!(m, runtime::close_client);
     add_pyfn!(m, documents::create_item);
@@ -223,10 +216,6 @@ fn _rust(_py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     // retry count means the retry machinery fired even with 0 terminal errors).
     add_pyfn!(m, wire::attempt_count);
     add_pyfn!(m, wire::retry_count);
-    // Query-plan source counters let an installed-wheel test prove whether a
-    // query used packaged QueryPlanInterop or the Gateway fallback.
-    add_pyfn!(m, wire::native_query_plan_count);
-    add_pyfn!(m, wire::gateway_query_plan_count);
     // Typed transport error the Python backend maps to azure-core's
     // ServiceResponseError (see wire::DriverTransportError).
     m.add(

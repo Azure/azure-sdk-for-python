@@ -5,10 +5,12 @@
 # -------------------------------------------------------------------------
 """Async backend-neutral coordination for account-level database operations.
 
-Async twin of :mod:`azure.cosmos._helpers.database_helper`. The async
-``create_database`` and ``create_database_if_not_exists`` methods delegate here.
-This module runs each operation through the selected engine and returns the final
-database properties.
+Async twin of :mod:`azure.cosmos._helpers.database_helper`, which carries the
+end-to-end walk-through of what ``DatabaseProxy.read`` does on the rust path and
+what breaks without each piece. The async ``create_database``,
+``create_database_if_not_exists`` and ``DatabaseProxy.read`` methods delegate
+here. This module runs each operation through the selected engine and returns the
+final database properties.
 
 A "database" is the top-level container-of-containers a customer makes once per
 tenant or app. Creating one is an account-level write, so there is no container
@@ -21,6 +23,12 @@ public methods coerce the client's backend selection to a concrete backend
 :meth:`~azure.cosmos.aio._backend.base.AsyncCosmosBackend.run_operation`, so a
 public method names no engine. Without this module that branching would live in
 the public methods.
+
+One thing is genuinely different here, not just ``async``/``await``: the async
+``run_operation`` awaits the request builder, so each operation wraps its builder
+in a small ``async def`` instead of passing a lambda. Everything else follows the
+sync module line for line, on purpose -- the two paths must not answer the same
+question differently.
 """
 from __future__ import annotations
 
@@ -37,6 +45,8 @@ from ..._cosmos_responses import CosmosDict
 from ..._helpers._request_prep import (
     build_create_database_prepared,
     build_read_database_prepared,
+    is_read_database_rust_eligible,
+    RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
 )
 from ..._helpers._response_parse import parse_backend_response
 from .._backend.base import AsyncCosmosBackend
@@ -97,6 +107,50 @@ class AsyncDatabaseHelper:
             response_hook(self._client_connection.last_response_headers, result)
         return result
 
+    async def read_database(
+        self,
+        database_id: Any,
+        request_options: Mapping[str, Any],
+        *,
+        response_hook: Optional[Callable[[Mapping[str, Any], CosmosDict], None]] = None,
+        kwargs: Optional[Mapping[str, Any]] = None,
+    ) -> CosmosDict:
+        """Async twin of
+        :meth:`azure.cosmos._helpers.database_helper.DatabaseHelper.read_database`."""
+        operation_kwargs = dict(kwargs or {})
+        operation_kwargs.pop("response_hook", None)
+        if response_hook is not None:
+            operation_kwargs["response_hook"] = response_hook
+
+        async def build_prepared():
+            return build_read_database_prepared(
+                database_id,
+                request_options,
+                kwargs=operation_kwargs,
+            )
+
+        result = await self._backend.run_operation(
+            build_prepared=build_prepared,
+            legacy_operation=LegacyOperation(
+                op=OP_READ_DATABASE,
+                invoke=lambda: self._client_connection.ReadDatabase(
+                    "dbs/{}".format(database_id),
+                    options=request_options,
+                    **operation_kwargs,
+                ),
+            ),
+            parse_response=lambda response: parse_backend_response(
+                response,
+                client_connection=self._client_connection,
+                response_hook=response_hook,
+            ),
+            rust_eligible=is_read_database_rust_eligible(
+                request_options,
+                operation_kwargs,
+            ),
+        )
+        return result
+
     async def create_database_if_not_exists(
         self,
         database: dict[str, Any],
@@ -115,9 +169,11 @@ class AsyncDatabaseHelper:
         coordinator owns this compound workflow because the public Rust driver
         exposes the individual primitives, but not a database get-or-create
         primitive. Each primitive still runs through the selected backend, so
-        Rust-backed clients do not invoke the legacy transport.
-        A per-call ``read_timeout`` is rejected on Rust rather than routed
-        through legacy Python. ``response_hook`` fires once on success.
+        Rust-backed clients do not invoke the legacy transport. Both legs share
+        one eligibility answer (``is_read_database_rust_eligible``): a per-call
+        option the Rust path cannot honor fails the whole call with a readable
+        message instead of being silently dropped or routed through legacy
+        Python halfway. ``response_hook`` fires once on success.
         """
         operation_kwargs = dict(kwargs or {})
         operation_kwargs.pop("response_hook", None)
@@ -126,15 +182,16 @@ class AsyncDatabaseHelper:
         read_options = dict(request_options)
         read_options.pop("offerThroughput", None)
         read_options.pop("autoUpgradePolicy", None)
-        database_link = "dbs/{}".format(database["id"])
-        read_timeout = request_options.get(Constants.Kwargs.READ_TIMEOUT)
-        if read_timeout is None:
-            read_timeout = operation_kwargs.get(Constants.Kwargs.READ_TIMEOUT)
-        rust_eligible = read_timeout is None
+        # One definition of "Rust can honor this read", shared with
+        # DatabaseProxy.read, so the same call never runs on Rust here and on
+        # legacy Python there. Both legs use it: reaching the create means the
+        # read already ran on Rust, and the workflow must not switch engines
+        # halfway through.
+        rust_eligible = is_read_database_rust_eligible(read_options, operation_kwargs)
 
         async def build_read_prepared():
             return build_read_database_prepared(
-                database,
+                database["id"],
                 read_options,
                 kwargs=operation_kwargs,
             )
@@ -145,7 +202,7 @@ class AsyncDatabaseHelper:
                 legacy_operation=LegacyOperation(
                     op=OP_READ_DATABASE,
                     invoke=lambda: self._client_connection.ReadDatabase(
-                        database_link,
+                        "dbs/{}".format(database["id"]),
                         options=read_options,
                         **operation_kwargs,
                     ),
@@ -156,10 +213,7 @@ class AsyncDatabaseHelper:
                 ),
                 rust_eligible=rust_eligible,
                 allow_legacy_fallback=False,
-                unsupported_message=(
-                    "create_database_if_not_exists with a per-call read_timeout "
-                    "is not supported on the Rust backend"
-                ),
+                unsupported_message=RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
             )
         except exceptions.CosmosResourceNotFoundError:
             async def build_create_prepared():
@@ -183,6 +237,9 @@ class AsyncDatabaseHelper:
                     response,
                     client_connection=self._client_connection,
                 ),
+                rust_eligible=rust_eligible,
+                allow_legacy_fallback=False,
+                unsupported_message=RUST_GET_OR_CREATE_DATABASE_UNSUPPORTED_MESSAGE,
             )
         if response_hook is not None:
             response_hook(self._client_connection.last_response_headers, result)

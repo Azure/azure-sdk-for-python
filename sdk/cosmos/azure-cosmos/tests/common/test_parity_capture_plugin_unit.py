@@ -62,6 +62,7 @@ class PluginRegistryTests(unittest.TestCase):
             "read_feed_ranges",
             "feed_range_from_partition_key",
             "create_database",
+            "read_database",
         ):
             self.assertIn(op, registry)
             self.assertIn("sync", registry[op])

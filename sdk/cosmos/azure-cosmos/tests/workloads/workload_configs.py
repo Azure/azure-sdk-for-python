@@ -202,11 +202,13 @@ if _raw_mix:
         )
 
 # Document size/shape profile for GENERATED item bodies (create/upsert/replace/
-# patch). "default" is the ~730 B flat document. "large" is a bigger, nested shape
-# (~8 KB with nested objects and arrays) so a run can check whether the latency/RU
-# conclusions hold beyond one document shape. Reads return whatever already exists
-# in the container, so a read-side size test needs the container seeded with that
-# profile separately.
+# patch). "default" is the 732-byte flat document. "large" is a bigger, nested
+# shape (4,670 bytes with nested objects and arrays, roughly 6.4x the default) so
+# a run can check whether the latency/RU conclusions hold beyond one document
+# shape. "nested" is an alias for "large" and generates the identical body. Both
+# sizes are means over 200,000 generated documents. Reads return whatever already
+# exists in the container, so a read-side size test needs the container seeded
+# with that profile separately.
 WORKLOAD_DOC_PROFILE = os.environ.get("WORKLOAD_DOC_PROFILE", "default").strip().lower()
 _VALID_DOC_PROFILES = {"default", "large", "nested"}
 if WORKLOAD_DOC_PROFILE not in _VALID_DOC_PROFILES:

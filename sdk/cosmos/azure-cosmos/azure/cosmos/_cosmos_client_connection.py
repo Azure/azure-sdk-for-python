@@ -484,7 +484,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         path = base.GetPathFromLink(database_link)
         database_id = base.GetResourceIdOrFullNameFromLink(database_link)
-        return self.Read(path, http_constants.ResourceType.Database, database_id, None, options, **kwargs)
+        initial_headers = base.resolve_initial_headers(self.default_headers, options)
+        return self.Read(
+            path,
+            http_constants.ResourceType.Database,
+            database_id,
+            initial_headers,
+            options,
+            **kwargs
+        )
 
     def ReadDatabases(
         self,

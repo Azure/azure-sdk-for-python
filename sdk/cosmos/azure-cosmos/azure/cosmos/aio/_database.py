@@ -40,6 +40,8 @@ from ._user import UserProxy
 from ..documents import IndexingMode
 from ..partition_key import PartitionKey
 from .._cosmos_responses import CosmosDict
+from .._helpers._item_dispatch import pick_backend
+from ._helpers.database_helper import AsyncDatabaseHelper
 
 
 __all__ = ("DatabaseProxy",)
@@ -149,14 +151,21 @@ class DatabaseProxy(object):
                 "The 'session_token' flag does not apply to this method and is always ignored even if passed."
                 " It will now be removed in the future.",
                 DeprecationWarning)
+            kwargs.pop('session_token')
 
-        database_link = _get_database_link(self)
         if initial_headers is not None:
             kwargs['initial_headers'] = initial_headers
+        response_hook = kwargs.pop("response_hook", None)
         request_options = _build_options(kwargs)
 
-        self._properties = await self.client_connection.ReadDatabase(
-            database_link, options=request_options, **kwargs
+        self._properties = await AsyncDatabaseHelper(
+            self.client_connection,
+            pick_backend(self.client_connection),
+        ).read_database(
+            self.id,
+            request_options,
+            response_hook=response_hook,
+            kwargs=kwargs,
         )
 
         return self._properties

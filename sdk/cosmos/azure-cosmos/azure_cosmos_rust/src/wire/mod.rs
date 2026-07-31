@@ -43,15 +43,14 @@ mod response;
 pub use errors::{DriverTransportError, UnsupportedQueryFeatureError};
 
 // ── Diagnostics counter re-exports (pub(crate) so lib.rs can register them) ──
-pub(crate) use diagnostics::{
-    attempt_count, gateway_query_plan_count, native_query_plan_count, operation_count, retry_count,
-};
+pub(crate) use diagnostics::{attempt_count, operation_count, retry_count};
 
 // ── Request-side re-exports ───────────────────────────────────────────────────
 // pub(crate): documents/mod.rs imports these by explicit crate::wire:: path.
 pub(crate) use request::{
     extract_body_bytes, extract_common_prepared_inputs, extract_create_item_id,
-    extract_read_feed_ranges_force_refresh, extract_required_item_id, OpModifiers,
+    extract_database_prepared_inputs, extract_read_feed_ranges_force_refresh,
+    extract_required_item_id, OpModifiers,
 };
 // ---------------------------------------------------------------------------
 // Shared singleton-operation runner (sync + async)

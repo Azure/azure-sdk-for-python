@@ -493,22 +493,13 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     #   * the cosmos-prefixed double-l names (``x-ms-cosmos-llsn``,
     #     ``x-ms-cosmos-item-llsn``);
     #   * the un-prefixed single-l names (``x-ms-item-lsn``, ``lsn``).
-    # The rust binding no longer synthesises the un-prefixed *double*-l
-    # aliases (``x-ms-llsn`` / ``x-ms-item-llsn``) -- the gateway never
-    # emitted them and the legacy SDK never produced them, so neither
-    # backend surfaces them and they are not presence-checked.
+    # The un-prefixed *double*-l aliases (``x-ms-llsn`` /
+    # ``x-ms-item-llsn``) are not on this list: the gateway does not
+    # emit them and neither backend surfaces them, so there is nothing
+    # to presence-check.
     "x-ms-cosmos-llsn",
     "x-ms-cosmos-item-llsn",
     "x-ms-item-lsn",
-    # NOTE: ``x-ms-quorum-acked-lsn``, ``x-ms-quorum-acked-llsn``, and
-    # ``x-ms-cosmos-quorum-acked-llsn`` used to be in this presence-
-    # required bucket. They were moved to ``_WIRE_NONDETERMINISTIC_HEADERS``
-    # below in June 2026 after the V5_PARITY_AUDIT_read_item.md audit
-    # showed the gateway emits them non-deterministically -- the same
-    # header appeared as "only on core-python" in one test and "only
-    # on rust" in another test in the same audit run. Enforcing
-    # presence on every call produced false-positive "rust gaps" the
-    # binding could not fix.
     # Topology / diagnostic IDs — which replica answered, the routing
     # decision the gateway made, the schema version of the responding
     # replica. Values differ across replicas / calls; presence is part
@@ -536,7 +527,7 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
     "x-ms-last-state-change-utc",
 })
 
-# Headers (and one body-field leftover) where both value and presence
+# Headers (and one body field) where both value and presence
 # are dropped from the diff. The bar for adding to this set is very
 # high: an entry only qualifies if *neither* backend can plausibly
 # surface the value to a customer. "Undocumented" alone is not enough,
@@ -548,41 +539,40 @@ _VALUE_VOLATILE_REQUIRED_HEADERS = frozenset({
 # Python↔Rust header-surface drift (the binding dropping something the
 # legacy path is surfacing).
 #
-# Two entries that previously lived here — ``x-ms-session-token-rid``
-# and ``x-ms-cosmos-replica-side-cache-token`` — have been moved out
-# for exactly that reason: both *can* appear in core-python's
-# ``last_response_headers`` whenever the gateway echoes them, so they
-# belong in the full presence-and-value diff bucket (the implicit
-# "everything else" population). The parity diff will tell us how
-# often they actually appear and whether either backend needs a tweak.
+# So a header the gateway may echo into core-python's
+# ``last_response_headers`` -- ``x-ms-session-token-rid`` and
+# ``x-ms-cosmos-replica-side-cache-token`` are two -- does not belong
+# here. It belongs in the full presence-and-value diff bucket (the
+# implicit "everything else" population), where the diff will show how
+# often it appears and whether either backend needs a tweak.
 _FULLY_IGNORED_HEADERS = frozenset({
     # Body field, not a response header (the ``etag`` response header
-    # is a separate key). Leftover from when body and header filtering
-    # shared code; lives here as a defence-in-depth belt-and-braces
-    # with ``_DEFAULT_IGNORED_BODY_FIELDS`` below in case a future
-    # caller wires the body field set into the header filter by
-    # mistake. Safe to keep because it is structurally not a header
-    # name either backend could ever surface from a response.
+    # is a separate key). Kept as defence in depth alongside
+    # ``_DEFAULT_IGNORED_BODY_FIELDS`` below, in case a caller wires
+    # the body field set into the header filter by mistake. Safe to
+    # keep because it is structurally not a header name either backend
+    # could ever surface from a response.
     "_etag",
 })
 
 # Headers the Cosmos gateway emits *non-deterministically* -- whether
 # the header appears on a given response depends on which replica
 # answered, the consistency level on the request, and other server-
-# side conditions outside the SDK's control. The V5_PARITY_AUDIT
-# evidence is that the SAME header can appear "only on core-python"
-# in one test and "only on rust" in the next test of the same audit
-# run (see the ``read_item`` audit's ``TestNoneOptions`` vs
-# ``TestNoneOptionsAsync`` rows). Enforcing presence here would
-# produce false-positive "rust gaps" the binding cannot fix, so
-# these headers are dropped from BOTH the value diff (they're in
-# ``_DEFAULT_IGNORED_HEADERS`` below) AND the value-volatile
-# presence-required loop (``diff_outcomes`` skips them explicitly).
+# side conditions outside the SDK's control. The evidence is that the
+# SAME header can appear "only on core-python" in one test and "only
+# on rust" in the next test of the same parity run (compare the
+# ``read_item`` ``TestNoneOptions`` and ``TestNoneOptionsAsync``
+# results). Enforcing presence here would produce false-positive
+# "rust gaps" the binding cannot fix, so these headers are dropped
+# from BOTH the value diff (they're in ``_DEFAULT_IGNORED_HEADERS``
+# below) AND the value-volatile presence-required loop
+# (``diff_outcomes`` skips them explicitly).
 #
-# The bar for adding to this set is high: pick this only when audit
+# The bar for adding to this set is high: pick this only when the
 # evidence shows the gateway sometimes-emits-sometimes-omits on the
 # SAME backend, not just "one backend doesn't surface it". The
-# latter is a real binding gap and belongs in a pushback.
+# latter is a real binding gap and belongs in a tracked rust-side
+# issue.
 _WIRE_NONDETERMINISTIC_HEADERS = frozenset({
     # Quorum-acked family -- replication-quorum diagnostics that the
     # gateway emits per request based on which replica answered.
@@ -696,6 +686,9 @@ _EXCEPTION_MESSAGE_NOISE = [
     (re.compile(r"\b[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}\b"), "<uuid>"),
     # ISO-8601 timestamps the driver embeds in diagnostics summaries.
     (re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?"), "<ts>"),
+    # The service-generated replica identifier in a not-found Request URI.
+    # Separate backend calls can legitimately reach different replicas.
+    (re.compile(r"(?<=/replicas/)\d+(?=s\b)"), "<replica>"),
     # Collapse any whitespace run -- including embedded newlines from
     # the driver's multi-line diagnostics dump -- to a single space so
     # platform line-endings don't matter.
