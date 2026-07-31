@@ -276,8 +276,8 @@ class BaseExporter:
     _MAX_STORAGE_DRAIN_BATCH = 10
 
     def _transmit_from_storage(self) -> None:
-        # Capture the reference once: OneSettings can null self.storage on a worker
-        # thread at any time, so a check-then-use on the attribute could race.
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
         storage = self.storage
         if not storage:
             return
@@ -306,8 +306,8 @@ class BaseExporter:
                 drained += 1
 
     def _handle_transmit_from_storage(self, envelopes: List[TelemetryItem], result: ExportResult) -> None:
-        # Capture the reference once: OneSettings can null self.storage on a worker
-        # thread at any time, so a check-then-use on the attribute could race.
+        # self.storage is None only when the user opted out of offline storage (it is constructed
+        # once at init and never nulled by the remote toggle, which only flips it active/inactive).
         storage = self.storage
         if storage:
             if result == ExportResult.FAILED_RETRYABLE:

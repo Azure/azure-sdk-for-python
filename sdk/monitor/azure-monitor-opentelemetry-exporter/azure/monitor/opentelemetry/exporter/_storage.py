@@ -210,7 +210,8 @@ class LocalFileStorage:
             pass
 
     def get(self) -> Optional[LocalFileBlob]:
-        if not self._enabled or not self._active:
+        # gets() already gates on _enabled and _active, so no need to re-check _active here.
+        if not self._enabled:
             return None
         cursor = self.gets()
         try:
