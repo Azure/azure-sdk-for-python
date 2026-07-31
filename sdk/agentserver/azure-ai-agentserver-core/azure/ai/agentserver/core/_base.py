@@ -59,6 +59,51 @@ def _read_task_manager_shutdown_grace() -> float:
         return 25.0
 
 
+def _has_registered_tasks() -> bool:
+    """Return True iff the ``_REGISTERED_DESCRIPTORS`` list is non-empty.
+
+    That list is populated at import time by the durable-task decorators:
+    ``@task`` and ``@multi_turn_task`` both construct a
+    :class:`~azure.ai.agentserver.core.tasks.Task` whose ``__init__`` appends
+    to it (``MultiTurnTask`` wraps an inner ``Task``, so it registers too). It
+    is the SAME list ``TaskManager.startup()`` already reads to bind recovery
+    callbacks, so checking it here introduces no new timing assumption.
+
+    Returns False when the resilient tasks module is unavailable or no durable
+    task has been declared.
+
+    :return: Whether at least one durable task is registered.
+    :rtype: bool
+    """
+    try:
+        from .tasks._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+    except ImportError:
+        return False
+    return bool(_REGISTERED_DESCRIPTORS)
+
+
+def _resilient_tasks_enabled() -> bool:
+    """Return True iff the resilient task subsystem was explicitly enabled.
+
+    Reads the process-global switch toggled by
+    :func:`~azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`
+    (defaults to ``False``). Returns False when the resilient tasks module is
+    unavailable.
+
+    :return: Whether resilient tasks were explicitly enabled.
+    :rtype: bool
+    """
+    try:
+        from .tasks._enablement import (  # pylint: disable=import-outside-toplevel
+            resilient_tasks_enabled,
+        )
+    except ImportError:
+        return False
+    return resilient_tasks_enabled()
+
+
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
@@ -266,7 +311,38 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
-            # --- Resilient task manager auto-initialization ---
+            # --- Resilient task manager initialization ---
+            #
+            # The TaskManager is CONSTRUCTED unconditionally (whenever the
+            # resilient tasks module is importable). Construction is cheap and
+            # makes NO task-store calls — it only builds in-memory state (an
+            # idle provider client, empty routing tables, a lease-owner string).
+            # This keeps ``get_task_manager()`` working so a ``@task``-based app
+            # can run tasks without hitting ``TaskManagerNotInitialized``,
+            # while paying zero network cost until a task is actually used.
+            #
+            # The network-backed startup RECOVERY SCAN (a blocking hosted
+            # task-store ``list()`` plus ``DefaultAzureCredential`` token
+            # acquisition, which would otherwise gate server readiness) — and
+            # the periodic recovery loop it spawns — run when EITHER holds:
+            #   (1) at least one durable task was declared (``@task`` /
+            #       ``@multi_turn_task``, tracked in ``_REGISTERED_DESCRIPTORS``)
+            #       — an app that uses tasks gets recovery automatically, OR
+            #   (2) resilient tasks were explicitly enabled via
+            #       ``set_resilient_tasks_enabled(True)`` — a force-enable that
+            #       starts the recovery loop even before any task is declared,
+            #       so a task declared later is picked up by the loop.
+            # A plain server that neither declares a task nor sets the switch
+            # (e.g. an invocations-only host) makes no task-store call at
+            # startup.
+            #
+            # NOTE (deferred): if the switch is OFF and no task is declared at
+            # startup, the recovery loop is not started, so a task declared
+            # LATER in that lifetime will run but its prior-crash orphans are
+            # not scanned until the next restart. Fully closing that requires a
+            # lazy manager-start on first late registration; tracked as future
+            # work (the manager cannot be made fully async, only lazily
+            # started).
             task_manager = None
             try:
                 from .tasks._manager import (  # pylint: disable=import-outside-toplevel
@@ -280,8 +356,16 @@ class AgentServerHost(Starlette):
                     shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
                 set_task_manager(task_manager)
-                await task_manager.startup()
-                logger.info("TaskManager initialized automatically")
+
+                if _resilient_tasks_enabled() or _has_registered_tasks():
+                    await task_manager.startup()
+                    logger.info("TaskManager initialized with startup recovery")
+                else:
+                    logger.info(
+                        "TaskManager initialized (recovery deferred; enabled=%s, tasks_declared=%s)",
+                        _resilient_tasks_enabled(),
+                        _has_registered_tasks(),
+                    )
             except ImportError:
                 pass  # resilient module not available
             except Exception:  # pylint: disable=broad-exception-caught

@@ -973,9 +973,12 @@ def test_aiohttp_loop():
     import asyncio
     from azure.core.pipeline.transport import AioHttpTransport
 
-    loop = asyncio.get_event_loop()
-    with pytest.raises(ValueError):
-        transport = AioHttpTransport(loop=loop)
+    loop = asyncio.new_event_loop()
+    try:
+        with pytest.raises(ValueError):
+            transport = AioHttpTransport(loop=loop)
+    finally:
+        loop.close()
 
 
 class MockAiohttpResponse:

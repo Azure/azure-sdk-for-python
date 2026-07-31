@@ -70,11 +70,13 @@ def is_json_content_type(content_type: str) -> bool:
 
 
 def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
-    try:
-        key, label = setting  # type:ignore
-    except (IndexError, ValueError):
-        key = str(setting)  # Ensure key is a string
-        label = NULL_CHAR
+    if isinstance(setting, str):
+        key, label = setting, NULL_CHAR
+    else:
+        try:
+            key, label = setting
+        except (TypeError, ValueError):
+            key, label = str(setting), NULL_CHAR
     if "*" in key or "*" in label:
         raise ValueError("Wildcard key or label filters are not supported for refresh.")
     return key, label
