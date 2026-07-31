@@ -19,8 +19,9 @@ USAGE:
     1) AZURE_STORAGE_CONNECTION_STRING - the endpoint of your Azure Metrics Advisor service
 """
 
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 import os
-from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=non-abstract-transport-import
+from azure.core.pipeline.transport import RequestsTransport
 from azure.storage.blob import BlobServiceClient
 
 connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]

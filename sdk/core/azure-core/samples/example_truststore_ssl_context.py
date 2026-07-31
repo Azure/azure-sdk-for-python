@@ -22,6 +22,7 @@ USAGE:
     python example_truststore_ssl_context.py
 """
 
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 import ssl
 import asyncio
 import truststore
@@ -33,10 +34,7 @@ from azure.identity import DefaultAzureCredential
 from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
-from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
-    RequestsTransport,
-    AioHttpTransport,
-)
+from azure.core.pipeline.transport import RequestsTransport, AioHttpTransport
 
 
 # =============================================================================
