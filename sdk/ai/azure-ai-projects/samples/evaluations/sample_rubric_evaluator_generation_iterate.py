@@ -50,7 +50,6 @@ from azure.ai.projects.models import (
     EvaluatorDefinitionType,
     EvaluatorGenerationInputs,
     EvaluatorGenerationJob,
-    JobStatus,
     PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
 )
@@ -60,8 +59,6 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Unique per-run name so repeated runs do not collide.
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
@@ -73,14 +70,8 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
-    print("Waiting for generation job to complete...")
-    created_jobs: list[EvaluatorGenerationJob] = []
-
-    def raw_response_hook(response):
-        response.http_response.read()
-        created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
-
-    project_client.beta.evaluators.begin_create_generation_job(
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
         job=EvaluatorGenerationJob(
             inputs=EvaluatorGenerationInputs(
                 model=model_name,
@@ -101,29 +92,19 @@ with (
             ),
         ),
         operation_id=f"rubric-iterate-{short}",
-        polling=False,
-        raw_response_hook=raw_response_hook,
+        polling_interval=poll_interval_seconds,
     )
-    # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return a generation job.")
-    job = created_jobs[0]
-    print(f"Created job: id={job.id}, status={job.status}")
 
-    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-    while job.status not in TERMINAL_STATUSES:
+    print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+    while not poller.done():
         time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
+        print(f"\tstatus=`{poller.status()}`")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error else "<no error message>"
-        raise RuntimeError(f"Generation job `{job.id}` ended with status `{job.status}`: {message}")
-    if job.result is None:
-        raise RuntimeError(f"Generation job `{job.id}` completed without a result.")
-    v1 = job.result
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    v1 = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {v1}")
 
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
     v1_definition = v1.definition

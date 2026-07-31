@@ -66,8 +66,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 # Unique per-run name so repeated runs do not collide.
 ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
@@ -94,51 +92,36 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # 1. Create the generation job. `operation_id` makes the call idempotent -
-    # re-submitting with the same id returns the existing job.
-    created_jobs: list[EvaluatorGenerationJob] = []
-
-    def raw_response_hook(response):
-        response.http_response.read()
-        created_jobs.append(EvaluatorGenerationJob(response.http_response.json()))
-
-    project_client.beta.evaluators.begin_create_generation_job(
+    # 1. Create the generation job. `operation_id` makes the call idempotent.
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
         job=job_body,
         operation_id=operation_id,
-        polling=False,
-        raw_response_hook=raw_response_hook,
+        polling_interval=poll_interval_seconds,
     )
-    # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return a generation job.")
-    job = created_jobs[0]
-    print(f"Created job: id={job.id}, status={job.status}")
 
-    # Idempotency: a second call with the same operation_id returns the same job.
-    replay_job = project_client.beta.evaluators.get_generation_job(job.id)
-    assert replay_job.id == job.id
-
-    # 2. Poll until the job reaches a terminal state.
-    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-    while job.status not in TERMINAL_STATUSES:
+    print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+    while not poller.done():
         time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
+        print(f"\tstatus=`{poller.status()}`")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error else "<no error message>"
-        raise RuntimeError(f"Generation job `{job.id}` ended with status `{job.status}`: {message}")
-    if job.result is None:
-        raise RuntimeError(f"Generation job `{job.id}` completed without a result.")
-    evaluator: EvaluatorVersion = job.result
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    evaluator: EvaluatorVersion = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {evaluator}")
     print(
         f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
         f"(job `{evaluator.generation_job_id}`)."
     )
 
-    # 3. List the 5 most recent generation jobs in this project.
+    # Retrieve the persisted generation job using the id returned in the LRO result.
+    if evaluator.generation_job_id is None:
+        raise RuntimeError("The generated evaluator did not include a generation job id.")
+    replay_job = project_client.beta.evaluators.get_generation_job(evaluator.generation_job_id)
+    assert replay_job.id == evaluator.generation_job_id
+
+    # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
     for entry in itertools.islice(
@@ -147,10 +130,10 @@ with (
         entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
-    # 4. Cancel a running job (not exercised here; the job above already completed).
+    # 3. Cancel a running job (not exercised here; the job above already completed).
     # cancelled = project_client.beta.evaluators.cancel_generation_job(some_running_job_id)
 
-    # 5. Clean up. `delete_version` cascades to the generation job record, so
+    # 4. Clean up. `delete_version` cascades to the generation job record, so
     # the explicit delete below may return 404.
     print("Cleaning up.")
     project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
