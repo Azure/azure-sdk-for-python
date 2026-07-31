@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "azure-ai-extensions-openai"
+dynamic = ["version", "readme"]
+description = "Azure AI OpenAI extension types and helpers"
+requires-python = ">=3.9"
+license = "MIT"
+authors = [{ name = "Microsoft Corporation" }]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+dependencies = [
+    "openai>=2.8.0",
+    "typing-extensions>=4.11",
+]
+keywords = ["azure", "azure sdk", "openai"]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[tool.setuptools.dynamic]
+version = { attr = "azure.ai.extensions.openai._version.VERSION" }
+readme = { file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown" }
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "samples*",
+    "doc*",
+    "azure",
+    "azure.ai",
+]
+
+[tool.setuptools.package-data]
+"azure.ai.extensions.openai" = ["py.typed"]
+"azure.ai.extensions.openai.projects._generated" = ["py.typed"]
+"azure.ai.extensions.openai.responses._generated.sdk.models" = ["py.typed"]
+
+[tool.azure-sdk-build]
+verifytypes = false
+latestdependency = false
+mindependency = false
