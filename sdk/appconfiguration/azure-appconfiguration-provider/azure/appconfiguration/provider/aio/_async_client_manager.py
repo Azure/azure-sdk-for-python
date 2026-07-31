@@ -15,16 +15,17 @@ from azure.core.exceptions import HttpResponseError
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
     FeatureFlagConfigurationSetting,
+    FeatureFlag,
     SnapshotComposition,
 )
-from azure.appconfiguration.aio import AzureAppConfigurationClient
+from azure.appconfiguration.aio import AzureAppConfigurationClient, FeatureFlagClient
 from .._client_manager_base import (
     _ConfigurationClientWrapperBase,
     ConfigurationClientManagerBase,
     FALLBACK_CLIENT_REFRESH_EXPIRED_INTERVAL,
     MINIMAL_CLIENT_REFRESH_INTERVAL,
 )
-from .._models import SettingSelector
+from .._models import FeatureFlagSelector, SettingSelector
 from .._constants import FEATURE_FLAG_PREFIX
 from .._snapshot_reference_parser import SnapshotReferenceParser
 from .._constants import SNAPSHOT_REF_CONTENT_TYPE
@@ -37,6 +38,7 @@ if TYPE_CHECKING:
 @dataclass
 class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     _client: AzureAppConfigurationClient
+    _enhanced_feature_flag_client: Optional[FeatureFlagClient] = None
     backoff_end_time: float = 0
     failed_attempts: int = 0
     LOGGER = getLogger(__name__)
@@ -63,6 +65,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :return: A new instance of the _AsyncConfigurationClientWrapper class
         :rtype: _AsyncConfigurationClientWrapper
         """
+        feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         return cls(
             endpoint,
             AzureAppConfigurationClient(
@@ -72,6 +75,18 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
                 **kwargs,
+            ),
+            (
+                FeatureFlagClient(
+                    endpoint,
+                    credential,
+                    user_agent=user_agent,
+                    retry_total=retry_total,
+                    retry_backoff_max=retry_backoff_max,
+                    **kwargs,
+                )
+                if feature_flag_enabled
+                else None
             ),
         )
 
@@ -91,6 +106,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :return: A new instance of the _AsyncConfigurationClientWrapper class
         :rtype: _AsyncConfigurationClientWrapper
         """
+        feature_flag_enabled = kwargs.pop("feature_flag_enabled", False)
         return cls(
             endpoint,
             AzureAppConfigurationClient.from_connection_string(
@@ -99,6 +115,17 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 retry_total=retry_total,
                 retry_backoff_max=retry_backoff_max,
                 **kwargs,
+            ),
+            (
+                FeatureFlagClient.from_connection_string(
+                    connection_string,
+                    user_agent=user_agent,
+                    retry_total=retry_total,
+                    retry_backoff_max=retry_backoff_max,
+                    **kwargs,
+                )
+                if feature_flag_enabled
+                else None
             ),
         )
 
@@ -172,7 +199,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     async for config in page:
                         if not isinstance(config, FeatureFlagConfigurationSetting):
                             configuration_settings.append(config)
-                    selector_etags.append(iterator.etag)  # type: ignore[attr-defined]
+                    selector_etags.append(iterator.etag)
             page_etags.append(selector_etags)
         return configuration_settings, page_etags
 
@@ -220,8 +247,6 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         """
         loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
         page_etags: List[List[str]] = []
-        # Needs to be removed unknown keyword argument for list_configuration_settings
-        kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
             selector_etags: List[str] = []
             if select.snapshot_name is not None:
@@ -247,7 +272,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     async for ff in page:
                         if isinstance(ff, FeatureFlagConfigurationSetting):
                             loaded_feature_flags.append(ff)
-                    selector_etags.append(iterator.etag)  # type: ignore[attr-defined]
+                    selector_etags.append(iterator.etag)
             page_etags.append(selector_etags)
 
         return loaded_feature_flags, page_etags
@@ -282,6 +307,72 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                 async for _ in feature_flags.by_page(match_conditions=selector_etags):  # type: ignore[call-arg]
                     # If any page is returned, it means that page has changed
                     return True
+        return False
+
+    @distributed_trace
+    async def load_enhanced_feature_flags(
+        self, feature_flag_selectors: List[FeatureFlagSelector], **kwargs
+    ) -> Tuple[List[FeatureFlag], List[List[str]]]:
+        """
+        Loads enhanced feature flags from the enhanced feature flag endpoint using page-based iteration.
+
+        :param feature_flag_selectors: List of feature flag selectors to filter feature flags
+        :type feature_flag_selectors: List[FeatureFlagSelector]
+        :return: A tuple of (feature_flags, page_etags_per_selector), with one page etags entry per selector, in the
+         same relative order as ``feature_flag_selectors``.
+        :rtype: Tuple[List[~azure.appconfiguration.FeatureFlag], List[List[str]]]
+        """
+        loaded_feature_flags: List[FeatureFlag] = []
+        if self._enhanced_feature_flag_client is None:
+            return loaded_feature_flags, [[] for _ in feature_flag_selectors]
+        page_etags: List[List[str]] = []
+        for select in feature_flag_selectors:
+            selector_etags: List[str] = []
+            feature_flags = self._enhanced_feature_flag_client.list_feature_flags(
+                name_filter=select.name_filter,
+                label_filter=select.label_filter,
+                tags_filter=select.tag_filters,
+                **kwargs,
+            )
+            iterator = feature_flags.by_page()
+            async for page in iterator:
+                async for ff in page:
+                    loaded_feature_flags.append(ff)
+                selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
+        return loaded_feature_flags, page_etags
+
+    @distributed_trace
+    async def check_enhanced_feature_flag_etags(
+        self, feature_flag_selectors: List[FeatureFlagSelector], page_etags: List[List[str]], **kwargs
+    ) -> bool:
+        """
+        Checks if any enhanced feature flag page has changed using page etags.
+
+        :param feature_flag_selectors: List of feature flag selectors for feature flags
+        :type feature_flag_selectors: List[FeatureFlagSelector]
+        :param page_etags: The page etags from the last load, one entry per selector, in the same relative order as
+         ``feature_flag_selectors``.
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        if self._enhanced_feature_flag_client is None:
+            return False
+        for i, select in enumerate(feature_flag_selectors):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
+            selector_etags = page_etags[i]
+            feature_flags = self._enhanced_feature_flag_client.list_feature_flags(
+                name_filter=select.name_filter,
+                label_filter=select.label_filter,
+                tags_filter=select.tag_filters,
+                **kwargs,
+            )
+            async for _ in feature_flags.by_page(match_conditions=selector_etags):  # type: ignore[call-arg]
+                # If any page is returned, it means that page has changed
+                return True
         return False
 
     @distributed_trace
@@ -364,13 +455,19 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         Closes the connection to Azure App Configuration.
         """
         await self._client.close()
+        if self._enhanced_feature_flag_client is not None:
+            await self._enhanced_feature_flag_client.close()
 
     async def __aenter__(self):
         await self._client.__aenter__()
+        if self._enhanced_feature_flag_client is not None:
+            await self._enhanced_feature_flag_client.__aenter__()
         return self
 
     async def __aexit__(self, *args):
         await self._client.__aexit__(*args)
+        if self._enhanced_feature_flag_client is not None:
+            await self._enhanced_feature_flag_client.__aexit__(*args)
 
     async def resolve_snapshot_reference(self, setting: ConfigurationSetting, **kwargs) -> List[ConfigurationSetting]:
         """
