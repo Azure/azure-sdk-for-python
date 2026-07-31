@@ -4,7 +4,9 @@
 ``from tests._helpers import …`` works regardless of how pytest is invoked."""
 
 import os
+import shutil
 import sys
+import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
@@ -16,10 +18,45 @@ if _PROJECT_ROOT not in sys.path:
 
 
 def pytest_configure(config):
+    """Register custom pytest markers used by this package."""
+    config.addinivalue_line(
+        "markers",
+        "live: end-to-end tests that hit a real external SDK (e.g. gh copilot). "
+        "Skipped by default; opt in with `-m live` or `--run-live`.",
+    )
     config.addinivalue_line(
         "markers",
         "tracing_e2e: end-to-end tracing tests against live Application Insights",
     )
+
+
+@pytest.fixture(autouse=True)
+def _isolated_resilient_tasks_root(tmp_path):
+    """Isolate the LocalFileTaskProvider's default storage per test.
+
+    (Spec 013) Without this, the LocalFileTaskProvider defaults to
+    ``~/.agentserver-tasks`` which is shared across all test runs and lets
+    in-progress task state leak between tests — when resilient_background
+    actually works, recovery on startup fires for these stale tasks and
+    breaks tests that assume a clean slate.
+
+    Per-test scope (autouse) so every test starts with a clean resilient
+    task store.
+
+    (Spec 024 Phase 3a) Uses ``AGENTSERVER_STATE_ROOT`` — the unified
+    env var that controls tasks/responses/streams subdirs together.
+    """
+    root = tmp_path / "resilient-tasks-isolated"
+    root.mkdir(parents=True, exist_ok=True)
+    prior = os.environ.get("AGENTSERVER_STATE_ROOT")
+    os.environ["AGENTSERVER_STATE_ROOT"] = str(root)
+    try:
+        yield
+    finally:
+        if prior is None:
+            os.environ.pop("AGENTSERVER_STATE_ROOT", None)
+        else:
+            os.environ["AGENTSERVER_STATE_ROOT"] = prior
 
 
 @pytest.fixture(autouse=True, scope="session")

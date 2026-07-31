@@ -6,9 +6,9 @@ from __future__ import annotations
 
 from typing import Any, Optional, cast
 
-from azure.ai.agentserver.responses.models._wire import get_field as _get_field
-from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
-from azure.ai.agentserver.responses.models import (
+from ._wire import get_field as _get_field
+from ._wire import is_type as _is_wire_type
+from ._generated import (
     ConversationParam_2,
     CreateResponse,
     Item,
@@ -54,8 +54,10 @@ def is_item_reference(item: Any) -> bool:
 
 
 def _ensure_item_type(data: dict[str, Any]) -> dict[str, Any]:
-    if "type" in data or is_item_reference(data):
+    if "type" in data:
         return data
+    if is_item_reference(data):
+        return {**data, "type": "item_reference"}
     if "role" in data or "content" in data:
         return {**data, "type": "message"}
     return data
@@ -109,9 +111,9 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
             cast(
                 Item,
                 {
-                "type": "message",
-                "role": "user",
-                "content": [{"type": "input_text", "text": inp}],
+                    "type": "message",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": inp}],
                 },
             )
         ]
