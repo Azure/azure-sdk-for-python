@@ -62,7 +62,7 @@ def test_retry_types():
 
 @pytest.mark.parametrize(
     "retry_after_input,http_request,http_response",
-    product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES),
+    list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES)),
 )
 def test_retry_after(retry_after_input, http_request, http_response):
     retry_policy = RetryPolicy()
@@ -84,7 +84,7 @@ def test_retry_after(retry_after_input, http_request, http_response):
 
 @pytest.mark.parametrize(
     "retry_after_input,http_request,http_response",
-    product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES),
+    list(product(["0", "800", "1000", "1200", "0.9"], HTTP_REQUESTS, HTTP_RESPONSES)),
 )
 def test_x_ms_retry_after(retry_after_input, http_request, http_response):
     retry_policy = RetryPolicy()
@@ -295,7 +295,7 @@ combinations = [(ServiceRequestError, ServiceRequestTimeoutError), (ServiceRespo
 
 @pytest.mark.parametrize(
     "combinations,http_request",
-    product(combinations, HTTP_REQUESTS),
+    list(product(combinations, HTTP_REQUESTS)),
 )
 def test_does_not_sleep_after_timeout(combinations, http_request):
     # With default settings policy will sleep twice before exhausting its retries: 1.6s, 3.2s.
