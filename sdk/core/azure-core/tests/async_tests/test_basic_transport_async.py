@@ -7,6 +7,8 @@
 import pytest
 import sys
 import asyncio
+import hashlib
+import ssl
 from packaging.version import Version
 from unittest import mock
 
@@ -16,11 +18,15 @@ from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
     AsyncHttpTransport,
     AioHttpTransport,
+    AsyncioRequestsTransport,
     HttpRequest,
     AioHttpTransportResponse,
+    TrioRequestsTransport,
 )
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
+from azure.core.rest._http_response_impl_async import (
+    AsyncHttpResponseImpl as RestAsyncHttpResponse,
+)
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import AsyncPipeline
 from azure.core.exceptions import (
@@ -201,7 +207,10 @@ async def test_multipart_send_with_context(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_multipart_send_with_one_changeset(http_request):
     transport = MockAsyncHttpTransport()
-    requests = [http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")]
+    requests = [
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
+    ]
     changeset = http_request("", "")
     changeset.set_multipart_mixed(*requests, boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525")
 
@@ -324,7 +333,9 @@ async def test_multipart_send_with_combination_changeset_first(http_request):
     )
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        changeset, http_request("DELETE", "/container2/blob2"), boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+        changeset,
+        http_request("DELETE", "/container2/blob2"),
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -376,7 +387,9 @@ async def test_multipart_send_with_combination_changeset_last(http_request):
     )
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), changeset, boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+        http_request("DELETE", "/container0/blob0"),
+        changeset,
+        boundary="batch_357de4f7-6d0b-4e02-8cd2-6361411a9525",
     )
 
     async with AsyncPipeline(transport) as pipeline:
@@ -422,7 +435,8 @@ async def test_multipart_send_with_combination_changeset_middle(http_request):
     transport = MockAsyncHttpTransport()
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"), boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+        http_request("DELETE", "/container1/blob1"),
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525",
     )
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
@@ -543,7 +557,8 @@ async def test_multipart_receive(http_request, mock_response):
 async def test_multipart_receive_with_one_changeset(http_request, mock_response):
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -578,7 +593,9 @@ async def test_multipart_receive_with_one_changeset(http_request, mock_response)
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -595,11 +612,13 @@ async def test_multipart_receive_with_one_changeset(http_request, mock_response)
 async def test_multipart_receive_with_multiple_changesets(http_request, mock_response):
     changeset1 = http_request("", "")
     changeset1.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
     changeset2 = http_request("", "")
     changeset2.set_multipart_mixed(
-        http_request("DELETE", "/container2/blob2"), http_request("DELETE", "/container3/blob3")
+        http_request("DELETE", "/container2/blob2"),
+        http_request("DELETE", "/container3/blob3"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -659,7 +678,9 @@ async def test_multipart_receive_with_multiple_changesets(http_request, mock_res
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -677,7 +698,8 @@ async def test_multipart_receive_with_multiple_changesets(http_request, mock_res
 async def test_multipart_receive_with_combination_changeset_first(http_request, mock_response):
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -722,7 +744,9 @@ async def test_multipart_receive_with_combination_changeset_first(http_request, 
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -757,7 +781,9 @@ async def test_multipart_receive_with_combination_changeset_middle(http_request,
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), changeset, http_request("DELETE", "/container2/blob2")
+        http_request("DELETE", "/container0/blob0"),
+        changeset,
+        http_request("DELETE", "/container2/blob2"),
     )
     body_as_bytes = (
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
@@ -799,7 +825,9 @@ async def test_multipart_receive_with_combination_changeset_middle(http_request,
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -816,7 +844,8 @@ async def test_multipart_receive_with_combination_changeset_middle(http_request,
 async def test_multipart_receive_with_combination_changeset_last(http_request, mock_response):
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"), http_request("DELETE", "/container2/blob2")
+        http_request("DELETE", "/container1/blob1"),
+        http_request("DELETE", "/container2/blob2"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -862,7 +891,9 @@ async def test_multipart_receive_with_combination_changeset_last(http_request, m
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -898,7 +929,9 @@ async def test_multipart_receive_with_bom(http_request, mock_response):
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -976,6 +1009,251 @@ def test_aiohttp_loop():
     loop = asyncio.get_event_loop()
     with pytest.raises(ValueError):
         transport = AioHttpTransport(loop=loop)
+
+
+class MockAioHttpSession:
+    auto_decompress = False
+
+    def __init__(self):
+        self.request = mock.AsyncMock(side_effect=RuntimeError("request sent"))
+
+    async def __aenter__(self):
+        return self
+
+    async def close(self):
+        pass
+
+
+class MockRequestsSession:
+    def __init__(self):
+        self.kwargs = None
+
+    def request(self, *args, **kwargs):
+        self.kwargs = kwargs
+        raise RuntimeError("request sent")
+
+    def close(self):
+        pass
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_async_pipeline_aiohttp_transport_rejects_unknown_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    pipeline = AsyncPipeline(transport)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AioHttpTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await pipeline.run(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_awaited()
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_consumes_supported_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            proxy="http://proxy",
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert=None,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["proxy"] == "http://proxy"
+    assert kwargs["timeout"].sock_connect == 1
+    assert kwargs["timeout"].sock_read == 2
+    assert "connection_timeout" not in kwargs
+    assert "read_timeout" not in kwargs
+    assert "connection_verify" not in kwargs
+    assert "connection_cert" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_forwards_aiohttp_ssl_kwargs():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+    ssl_context = object()
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            connection_verify=False,
+            server_hostname="token.proxy.local",
+            ssl=ssl_context,
+        )
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["server_hostname"] == "token.proxy.local"
+    assert kwargs["ssl"] is ssl_context
+    assert "connection_verify" not in kwargs
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "ssl_value",
+    [False, ssl.create_default_context(), aiohttp.Fingerprint(hashlib.sha256(b"certdigest").digest())],
+    ids=["false", "sslcontext", "fingerprint"],
+)
+async def test_aiohttp_transport_forwards_caller_ssl_values(ssl_value):
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, ssl=ssl_value)
+
+    kwargs = session.request.await_args.kwargs
+    assert kwargs["ssl"] is ssl_value
+
+
+@pytest.mark.asyncio
+async def test_aiohttp_transport_default_ssl_not_forwarded():
+    session = MockAioHttpSession()
+    transport = AioHttpTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "https://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request)
+
+    kwargs = session.request.await_args.kwargs
+    assert "ssl" not in kwargs
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_rejects_unknown_kwargs():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"AsyncioRequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    assert session.kwargs is None
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_consumes_supported_kwargs():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            loop=asyncio.get_running_loop(),
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    assert session.kwargs["stream"] is True
+    assert session.kwargs["timeout"] == (1, 2)
+    assert session.kwargs["verify"] is False
+    assert session.kwargs["cert"] == "cert.pem"
+    assert "loop" not in session.kwargs
+    assert "read_timeout" not in session.kwargs
+    assert "connection_timeout" not in session.kwargs
+    assert "connection_verify" not in session.kwargs
+    assert "connection_cert" not in session.kwargs
+
+
+@pytest.mark.asyncio
+async def test_asyncio_requests_transport_connection_timeout_only_uses_default_read_timeout():
+    session = MockRequestsSession()
+    transport = AsyncioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, connection_timeout=1)
+
+    assert session.kwargs["timeout"] == (1, transport.connection_config.read_timeout)
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_rejects_unknown_kwargs():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"TrioRequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        await transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    assert session.kwargs is None
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_consumes_supported_kwargs():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(
+            request,
+            stream=True,
+            trio_limiter=None,
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    assert session.kwargs["stream"] is True
+    assert session.kwargs["timeout"] == (1, 2)
+    assert session.kwargs["verify"] is False
+    assert session.kwargs["cert"] == "cert.pem"
+    assert "trio_limiter" not in session.kwargs
+    assert "read_timeout" not in session.kwargs
+    assert "connection_timeout" not in session.kwargs
+    assert "connection_verify" not in session.kwargs
+    assert "connection_cert" not in session.kwargs
+
+
+@pytest.mark.trio
+async def test_trio_requests_transport_connection_timeout_only_uses_default_read_timeout():
+    session = MockRequestsSession()
+    transport = TrioRequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        await transport.send(request, connection_timeout=1)
+
+    assert session.kwargs["timeout"] == (1, transport.connection_config.read_timeout)
 
 
 class MockAiohttpResponse:
@@ -1061,7 +1339,9 @@ async def test_aiohttp_timeout_response(port, http_request):
         request = http_request("GET", f"http://localhost:{port}/basic/string")
 
         with mock.patch.object(
-            aiohttp.ClientResponse, "start", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.ClientResponse,
+            "start",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 await transport.send(request)
@@ -1075,7 +1355,9 @@ async def test_aiohttp_timeout_response(port, http_request):
 
         stream_resp = await transport.send(stream_resp, stream=True)
         with mock.patch.object(
-            aiohttp.streams.StreamReader, "read", side_effect=asyncio.TimeoutError("Too slow!")
+            aiohttp.streams.StreamReader,
+            "read",
+            side_effect=asyncio.TimeoutError("Too slow!"),
         ) as mock_method:
             with pytest.raises(ServiceResponseTimeoutError) as err:
                 try:

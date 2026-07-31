@@ -63,6 +63,7 @@ from ._requests_basic import (
     RequestsTransportResponse,
     _read_raw_stream,
     AzureErrorUnion,
+    _pop_requests_send_options,
 )
 from ._base_requests_async import RequestsAsyncTransportBase
 from .._tools import is_rest as _is_rest
@@ -228,7 +229,11 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
         :keyword MutableMapping proxies: will define the proxy to use. Proxy is a dict (protocol, url)
         """
         self.open()
-        trio_limiter = kwargs.get("trio_limiter", None)
+        trio_limiter = kwargs.pop("trio_limiter", None)
+        stream, connection_verify, connection_cert, timeout = _pop_requests_send_options(
+            "TrioRequestsTransport", self.connection_config, kwargs
+        )
+
         response = None
         error: Optional[AzureErrorUnion] = None
         data_to_send = await self._retrieve_request_data(request)
@@ -242,12 +247,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                         headers=request.headers,
                         data=data_to_send,
                         files=request.files,
-                        verify=kwargs.pop("connection_verify", self.connection_config.verify),
-                        timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
-                        cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                        verify=connection_verify,
+                        timeout=timeout,
+                        cert=connection_cert,
                         allow_redirects=False,
                         proxies=proxies,
-                        **kwargs
+                        stream=stream,
                     ),
                     limiter=trio_limiter,
                 )
@@ -260,12 +265,12 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                         headers=request.headers,
                         data=request.data,
                         files=request.files,
-                        verify=kwargs.pop("connection_verify", self.connection_config.verify),
-                        timeout=kwargs.pop("connection_timeout", self.connection_config.timeout),
-                        cert=kwargs.pop("connection_cert", self.connection_config.cert),
+                        verify=connection_verify,
+                        timeout=timeout,
+                        cert=connection_cert,
                         allow_redirects=False,
                         proxies=proxies,
-                        **kwargs
+                        stream=stream,
                     ),
                     limiter=trio_limiter,
                 )
@@ -304,7 +309,7 @@ class TrioRequestsTransport(RequestsAsyncTransportBase):
                 internal_response=response,
                 block_size=self.connection_config.data_block_size,
             )
-            if not kwargs.get("stream"):
+            if not stream:
                 await _handle_no_stream_rest_response(retval)
             return retval
 

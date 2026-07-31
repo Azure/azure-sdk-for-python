@@ -5,12 +5,21 @@
 ### Features Added
 
 - Introduced the keyword argument `additional_allowed_query_params` to `DistributedHttpTracingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes. [#46657](https://github.com/Azure/azure-sdk-for-python/pull/46657)
+- `AioHttpTransport` now supports the `ssl` and `server_hostname` per-request keyword arguments. #46365
 
 ### Breaking Changes
+
+- Built-in transports now reject unsupported per-request keyword arguments instead of forwarding them
+  to the underlying HTTP library. #46365
+- `HttpXTransport` and `AsyncHttpXTransport` now reject the per-request `connection_verify` and
+  `connection_cert` keyword arguments with a `TypeError`. Previously, a per-request `connection_verify`
+  was silently ignored and `connection_cert` leaked into `httpx` as an unexpected keyword argument. #46365
 
 ### Bugs Fixed
 
 - Fixed `PipelineClient.format_url` to avoid adding trailing slashes when the URL template contains only query parameters. [#45113](https://github.com/Azure/azure-sdk-for-python/pull/45113)
+- `AioHttpTransport` now preserves a caller-provided per-request `ssl` value instead of replacing it
+  with the transport's generated SSL configuration. #46365
 
 ### Other Changes
 

@@ -60,7 +60,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import AsyncPipeline
 
-from ._base import HttpRequest
+from ._base import HttpRequest, _raise_for_unexpected_kwargs
 from ._base_async import AsyncHttpTransport, AsyncHttpResponse, _ResponseStopIteration
 from ...utils._pipeline_transport_rest_shared import (
     _aiohttp_body_helper,
@@ -321,7 +321,8 @@ class AioHttpTransport(AsyncHttpTransport):
             # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
-        proxy = config.pop("proxy", None)
+        proxy, connection_timeout, read_timeout, ssl, server_hostname = self._pop_send_options(config)
+
         if proxies and not proxy:
             # aiohttp needs a single proxy, so iterating until we found the right protocol
 
@@ -332,13 +333,11 @@ class AioHttpTransport(AsyncHttpTransport):
                     break
 
         response: Optional[Union[AsyncHttpResponse, RestAsyncHttpResponse]] = None
-        ssl = self._build_ssl_config(
-            cert=config.pop("connection_cert", self.connection_config.cert),
-            verify=config.pop("connection_verify", self.connection_config.verify),
-        )
         # If ssl=True, we just use default ssl context from aiohttp
         if ssl is not True:
             config["ssl"] = ssl
+        if server_hostname is not None:
+            config["server_hostname"] = server_hostname
         # If we know for sure there is not body, disable "auto content type"
         # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
@@ -346,9 +345,7 @@ class AioHttpTransport(AsyncHttpTransport):
             config["skip_auto_headers"] = ["Content-Type"]
         try:
             stream_response = stream
-            timeout = config.pop("connection_timeout", self.connection_config.timeout)
-            read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
-            socket_timeout = aiohttp.ClientTimeout(sock_connect=timeout, sock_read=read_timeout)
+            socket_timeout = aiohttp.ClientTimeout(sock_connect=connection_timeout, sock_read=read_timeout)
             result = await self.session.request(  # type: ignore
                 request.method,
                 request.url,
@@ -398,6 +395,18 @@ class AioHttpTransport(AsyncHttpTransport):
         except aiohttp.client_exceptions.ClientError as err:
             raise ServiceRequestError(err, error=err) from err
         return response
+
+    def _pop_send_options(self, config):
+        proxy = config.pop("proxy", None)
+        connection_cert = config.pop("connection_cert", self.connection_config.cert)
+        connection_verify = config.pop("connection_verify", self.connection_config.verify)
+        connection_timeout = config.pop("connection_timeout", self.connection_config.timeout)
+        read_timeout = config.pop("read_timeout", self.connection_config.read_timeout)
+        caller_ssl = config.pop("ssl", None)
+        server_hostname = config.pop("server_hostname", None)
+        _raise_for_unexpected_kwargs("AioHttpTransport", config)
+        ssl = caller_ssl if caller_ssl is not None else self._build_ssl_config(connection_cert, connection_verify)
+        return proxy, connection_timeout, read_timeout, ssl, server_hostname
 
 
 class AioHttpStreamDownloadGenerator(AsyncIterator):

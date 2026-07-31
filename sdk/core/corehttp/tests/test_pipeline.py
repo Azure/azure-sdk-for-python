@@ -53,6 +53,48 @@ def test_sans_io_exception():
         pipeline.run(req)
 
 
+def test_custom_transport_receives_unknown_kwargs():
+    class CustomTransport(HttpTransport):
+        def __init__(self):
+            self.kwargs = None
+
+        def send(self, request, **kwargs):
+            self.kwargs = kwargs
+            return object()
+
+        def open(self):
+            pass
+
+        def close(self):
+            pass
+
+        def __exit__(self, exc_type, exc_value, traceback):
+            pass
+
+    transport = CustomTransport()
+    pipeline = Pipeline(transport)
+    pipeline.run(HttpRequest("GET", "/"), custom_option="allowed")
+
+    assert transport.kwargs == {"custom_option": "allowed"}
+
+
+def test_pipeline_builtin_transport_rejects_unknown_kwargs():
+    session = Mock()
+    transport = RequestsTransport(session=session, session_owner=False)
+    pipeline = Pipeline(transport)
+
+    with pytest.raises(
+        TypeError,
+        match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        pipeline.run(
+            HttpRequest("GET", "http://localhost"),
+            query_filter="PartitionKey eq 'pk001'",
+        )
+
+    session.request.assert_not_called()
+
+
 def test_invalid_policy_error():
     # non-HTTPPolicy/non-SansIOHTTPPolicy should raise an error
     class FooPolicy:
@@ -337,7 +379,10 @@ def test_add_custom_policy():
     assert pos_boo > pos_retry
 
     client = PipelineClient(
-        endpoint="test", policies=[retry_policy], per_call_policies=boo_policy, per_retry_policies=foo_policy
+        endpoint="test",
+        policies=[retry_policy],
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     policies = client.pipeline._impl_policies
     assert boo_policy in policies
@@ -349,7 +394,10 @@ def test_add_custom_policy():
     assert pos_foo > pos_retry
 
     client = PipelineClient(
-        endpoint="test", policies=[retry_policy], per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        endpoint="test",
+        policies=[retry_policy],
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     policies = client.pipeline._impl_policies
     assert boo_policy in policies
@@ -376,13 +424,19 @@ def test_add_custom_policy():
     assert foo_policy == actual_policies[2]
 
     client = PipelineClient(
-        endpoint="test", policies=policies, per_call_policies=boo_policy, per_retry_policies=foo_policy
+        endpoint="test",
+        policies=policies,
+        per_call_policies=boo_policy,
+        per_retry_policies=foo_policy,
     )
     actual_policies = client.pipeline._impl_policies
     assert boo_policy == actual_policies[0]
     assert foo_policy == actual_policies[3]
     client = PipelineClient(
-        endpoint="test", policies=policies, per_call_policies=[boo_policy], per_retry_policies=[foo_policy]
+        endpoint="test",
+        policies=policies,
+        per_call_policies=[boo_policy],
+        per_retry_policies=[foo_policy],
     )
     actual_policies = client.pipeline._impl_policies
     assert boo_policy == actual_policies[0]

@@ -7,14 +7,122 @@ import pytest
 from unittest import mock
 from socket import timeout as SocketTimeout
 
+import httpx
 from urllib3.util import connection as urllib_connection
 from urllib3.response import HTTPResponse as UrllibResponse
 from urllib3.connection import HTTPConnection as UrllibConnection
 
 from corehttp.rest import HttpRequest
 from corehttp.transport.requests import RequestsTransport
+from corehttp.transport.httpx import HttpXTransport
 from corehttp.runtime.pipeline import Pipeline
-from corehttp.exceptions import ServiceResponseError, ServiceResponseTimeoutError, ServiceRequestTimeoutError
+from corehttp.exceptions import (
+    ServiceResponseError,
+    ServiceResponseTimeoutError,
+    ServiceRequestTimeoutError,
+)
+
+
+class MockRequestsSession:
+    def __init__(self):
+        self.request = mock.Mock(side_effect=RuntimeError("request sent"))
+
+    def close(self):
+        pass
+
+
+def _make_httpx_client_mock():
+    client = mock.create_autospec(httpx.Client, instance=True)
+    client.request.side_effect = RuntimeError("request sent")
+    return client
+
+
+def test_requests_transport_rejects_unknown_kwargs():
+    session = MockRequestsSession()
+    transport = RequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    session.request.assert_not_called()
+
+
+def test_requests_transport_consumes_supported_kwargs():
+    session = MockRequestsSession()
+    transport = RequestsTransport(session=session, session_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        transport.send(
+            request,
+            stream=True,
+            connection_timeout=1,
+            read_timeout=2,
+            connection_verify=False,
+            connection_cert="cert.pem",
+        )
+
+    kwargs = session.request.call_args.kwargs
+    assert kwargs["stream"] is True
+    assert kwargs["timeout"] == (1, 2)
+    assert kwargs["verify"] is False
+    assert kwargs["cert"] == "cert.pem"
+    assert "read_timeout" not in kwargs
+    assert "connection_timeout" not in kwargs
+    assert "connection_verify" not in kwargs
+    assert "connection_cert" not in kwargs
+
+
+def test_httpx_transport_rejects_unknown_kwargs():
+    client = _make_httpx_client_mock()
+    transport = HttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=r"HttpXTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
+        transport.send(request, query_filter="PartitionKey eq 'pk001'")
+
+    client.request.assert_not_called()
+
+
+@pytest.mark.parametrize("tls_kwarg", ["connection_verify", "connection_cert"])
+def test_httpx_transport_rejects_per_request_tls_kwargs(tls_kwarg):
+    client = _make_httpx_client_mock()
+    transport = HttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(
+        TypeError,
+        match=f"HttpXTransport.send\\(\\) got an unexpected keyword argument '{tls_kwarg}'",
+    ):
+        transport.send(request, **{tls_kwarg: "cert.pem"})
+
+    client.request.assert_not_called()
+
+
+def test_httpx_transport_consumes_supported_kwargs():
+    client = _make_httpx_client_mock()
+    transport = HttpXTransport(client=client, client_owner=False)
+    request = HttpRequest("GET", "http://localhost")
+
+    with pytest.raises(RuntimeError, match="request sent"):
+        transport.send(
+            request,
+            connection_timeout=1,
+            read_timeout=2,
+        )
+
+    kwargs = client.request.call_args.kwargs
+    assert kwargs["timeout"].connect == 1
+    assert kwargs["timeout"].read == 2
+    assert "connection_timeout" not in kwargs
+    assert "read_timeout" not in kwargs
 
 
 def test_already_close_with_with(caplog, port):
