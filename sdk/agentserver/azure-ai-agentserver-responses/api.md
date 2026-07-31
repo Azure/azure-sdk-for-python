@@ -4,6 +4,55 @@ namespace azure.ai.agentserver.responses
     def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
 
 
+    class azure.ai.agentserver.responses.ConversationChainMetadataNamespace(Protocol): implements Collection 
+
+        def __call__(self, name: Optional[str] = None) -> ConversationChainMetadataNamespace: ...
+
+        def __delitem__(self, key: str) -> None: ...
+
+        def __getitem__(self, key: str) -> Any: ...
+
+        def __setitem__(
+                self, 
+                key: str, 
+                value: Any
+            ) -> None: ...
+
+        def clear(self) -> None: ...
+
+        async def flush(self) -> None: ...
+
+        def get(
+                self, 
+                key: str, 
+                default: Any = None
+            ) -> Any: ...
+
+        def items(self) -> Any: ...
+
+        def keys(self) -> Any: ...
+
+        def pop(
+                self, 
+                key: str, 
+                *default: Any
+            ) -> Any: ...
+
+        def setdefault(
+                self, 
+                key: str, 
+                default: Any = None
+            ) -> Any: ...
+
+        def update(
+                self, 
+                *args: Any, 
+                **kwargs: Any
+            ) -> None: ...
+
+        def values(self) -> Any: ...
+
+
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
         key "agent_reference": ForwardRef('AgentReference', module='types')
         key "background": Optional[bool]
@@ -67,6 +116,68 @@ namespace azure.ai.agentserver.responses
         top_p: float
         truncation: Literal[auto, disabled]
         user: str
+
+
+    class azure.ai.agentserver.responses.FileResponseStore(ResponseProviderProtocol):
+
+        def __init__(self, storage_dir: str | Path | None = None) -> None: ...
+
+        async def create_response(
+                self, 
+                response: ResponseObject, 
+                input_items: Iterable[OutputItem] | None, 
+                history_item_ids: Iterable[str] | None, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> None: ...
+
+        async def delete_response(
+                self, 
+                response_id: str, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> None: ...
+
+        async def get_history_item_ids(
+                self, 
+                previous_response_id: str | None, 
+                conversation_id: str | None, 
+                limit: int, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> list[str]: ...
+
+        async def get_input_items(
+                self, 
+                response_id: str, 
+                limit: int = 20, 
+                ascending: bool = False, 
+                after: str | None = None, 
+                before: str | None = None, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> list[OutputItem]: ...
+
+        async def get_items(
+                self, 
+                item_ids: Iterable[str], 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> list[OutputItem | None]: ...
+
+        async def get_response(
+                self, 
+                response_id: str, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> ResponseObject: ...
+
+        async def update_response(
+                self, 
+                response: ResponseObject, 
+                *, 
+                context: PlatformContext | None = ...
+            ) -> None: ...
 
 
     class azure.ai.agentserver.responses.FoundryApiError(FoundryStorageError):
@@ -199,7 +310,7 @@ namespace azure.ai.agentserver.responses
             ) -> str: ...
 
 
-    class azure.ai.agentserver.responses.InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):
+    class azure.ai.agentserver.responses.InMemoryResponseProvider(ResponseProviderProtocol):
 
         def __init__(self) -> None: ...
 
@@ -230,13 +341,6 @@ namespace azure.ai.agentserver.responses
         async def delete(self, response_id: str) -> bool: ...
 
         async def delete_response(
-                self, 
-                response_id: str, 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> None: ...
-
-        async def delete_stream_events(
                 self, 
                 response_id: str, 
                 *, 
@@ -281,26 +385,11 @@ namespace azure.ai.agentserver.responses
                 context: PlatformContext | None = ...
             ) -> ResponseObject: ...
 
-        async def get_stream_events(
-                self, 
-                response_id: str, 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> list[ResponseStreamEvent] | None: ...
-
         async def purge_expired(
                 self, 
                 *, 
                 now: datetime | None = ...
             ) -> int: ...
-
-        async def save_stream_events(
-                self, 
-                response_id: str, 
-                events: list[ResponseStreamEvent], 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> None: ...
 
         async def set_cancel_requested(
                 self, 
@@ -344,10 +433,27 @@ namespace azure.ai.agentserver.responses
 
 
     class azure.ai.agentserver.responses.ResponseContext:
+        property conversation_chain_id: str    # Read-only
+        client_cancelled: bool
+        client_headers: dict[str, str]
+        conversation_chain_metadata: ConversationChainMetadataNamespace
+        conversation_id: str | None
+        created_at: datetime
+        is_recovery: bool
+        is_steered_turn: bool
+        mode_flags: ResponseModeFlags
+        pending_input_count: int
+        persisted_response: Optional[ResponseObject]
+        platform_context: PlatformContext
+        query_parameters: dict[str, str]
+        request: CreateResponse | None
+        response_id: str
+        shutdown: Event
 
         def __init__(
                 self, 
                 *, 
+                agent_name: str = "", 
                 client_headers: dict[str, str] | None = ..., 
                 conversation_id: str | None = ..., 
                 created_at: datetime | None = ..., 
@@ -360,8 +466,12 @@ namespace azure.ai.agentserver.responses
                 provider: ResponseProviderProtocol | None = ..., 
                 query_parameters: dict[str, str] | None = ..., 
                 request: CreateResponse | None = ..., 
-                response_id: str
+                response_id: str, 
+                session_id: str = "", 
+                steerable: bool = False
             ) -> None: ...
+
+        async def exit_for_recovery(self) -> NoReturn: ...
 
         async def get_history(self) -> Sequence[OutputItem]: ...
 
@@ -379,6 +489,7 @@ namespace azure.ai.agentserver.responses
 
 
     class azure.ai.agentserver.responses.ResponseEventStream:
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
         property response: dict[str, Any]    # Read-only
 
         def __init__(
@@ -454,6 +565,8 @@ namespace azure.ai.agentserver.responses
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
 
         def emit_completed(
                 self, 
@@ -599,6 +712,9 @@ namespace azure.ai.agentserver.responses
         def output_item_structured_outputs(self, output: Any) -> Iterator[ResponseStreamEvent]: ...
 
 
+    class azure.ai.agentserver.responses.ResponseExitForRecovery(BaseException):
+
+
     class azure.ai.agentserver.responses.ResponseObject(TypedDict, total=False):
         key "agent_reference": Required[Optional[AgentReference]]
         key "background": Optional[bool]
@@ -732,32 +848,6 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
-    @runtime_checkable
-    class azure.ai.agentserver.responses.ResponseStreamProviderProtocol(Protocol):
-
-        async def delete_stream_events(
-                self, 
-                response_id: str, 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> None: ...
-
-        async def get_stream_events(
-                self, 
-                response_id: str, 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> list[ResponseStreamEvent] | None: ...
-
-        async def save_stream_events(
-                self, 
-                response_id: str, 
-                events: list[ResponseStreamEvent], 
-                *, 
-                context: PlatformContext | None = ...
-            ) -> None: ...
-
-
     class azure.ai.agentserver.responses.ResponsesAgentServerHost(AgentServerHost):
         property routes: list[BaseRoute]    # Read-only
 
@@ -769,6 +859,10 @@ namespace azure.ai.agentserver.responses
                 store: ResponseProviderProtocol | None = ..., 
                 **kwargs: Any
             ) -> None: ...
+
+        def request_shutdown(self) -> None: ...
+
+        def response_acceptor(self, fn: Any) -> Any: ...
 
         def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn: ...
 
@@ -783,8 +877,10 @@ namespace azure.ai.agentserver.responses
                 create_span_hook: CreateSpanHook | None = ..., 
                 default_fetch_history_count: int = 100, 
                 default_model: str | None = ..., 
+                resilient_background: bool = False, 
                 shutdown_grace_period_seconds: int = 10, 
-                sse_keep_alive_interval_seconds: int | None = ...
+                sse_keep_alive_interval_seconds: int | None = ..., 
+                steerable_conversations: bool = False
             ) -> None: ...
 
         @classmethod
@@ -808,6 +904,7 @@ namespace azure.ai.agentserver.responses
 namespace azure.ai.agentserver.responses.aio
 
     class azure.ai.agentserver.responses.aio.ResponseEventStream(SyncResponseEventStream):
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
         property response: dict[str, Any]    # Read-only
 
         def __init__(
@@ -883,6 +980,8 @@ namespace azure.ai.agentserver.responses.aio
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
 
         def emit_completed(
                 self, 
@@ -1036,6 +1135,7 @@ namespace azure.ai.agentserver.responses.aio
 namespace azure.ai.agentserver.responses.aio.streaming
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1054,6 +1154,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemCodeInterpreterCallBuilder(SyncOutputItemCodeInterpreterCallBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1083,6 +1184,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemCustomToolCallBuilder(SyncOutputItemCustomToolCallBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -1108,6 +1210,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1131,6 +1234,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallBuilder(SyncOutputItemFunctionCallBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -1157,6 +1261,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1174,6 +1279,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1198,6 +1304,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpCallBuilder(SyncOutputItemMcpCallBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -1235,6 +1342,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
         property server_label: str    # Read-only
@@ -1259,6 +1367,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemMessageBuilder(SyncOutputItemMessageBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1283,6 +1392,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemReasoningItemBuilder(SyncOutputItemReasoningItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1303,6 +1413,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -1367,6 +1478,7 @@ namespace azure.ai.agentserver.responses.aio.streaming
 
 
     class azure.ai.agentserver.responses.aio.streaming.ResponseEventStream(SyncResponseEventStream):
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
         property response: dict[str, Any]    # Read-only
 
         def __init__(
@@ -1442,6 +1554,8 @@ namespace azure.ai.agentserver.responses.aio.streaming
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
 
         def emit_completed(
                 self, 
@@ -1628,6 +1742,10 @@ namespace azure.ai.agentserver.responses.hosting
                 store: ResponseProviderProtocol | None = ..., 
                 **kwargs: Any
             ) -> None: ...
+
+        def request_shutdown(self) -> None: ...
+
+        def response_acceptor(self, fn: Any) -> Any: ...
 
         def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn: ...
 
@@ -5805,6 +5923,38 @@ namespace azure.ai.agentserver.responses.models
 
 namespace azure.ai.agentserver.responses.models.runtime
 
+    def azure.ai.agentserver.responses.models.runtime.apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]: ...
+
+
+    def azure.ai.agentserver.responses.models.runtime.apply_failed_terminal(
+            base: Mapping[str, Any], 
+            *, 
+            error: dict[str, Any]
+        ) -> dict[str, Any]: ...
+
+
+    def azure.ai.agentserver.responses.models.runtime.resolve_cancelled_response(
+            base: Mapping[str, Any] | None, 
+            response_id: str, 
+            agent_reference: AgentReference | dict[str, Any], 
+            model: str | None, 
+            *, 
+            created_at: datetime | None = ...
+        ) -> ResponseObject: ...
+
+
+    def azure.ai.agentserver.responses.models.runtime.resolve_failed_response(
+            base: Mapping[str, Any] | None, 
+            response_id: str, 
+            agent_reference: AgentReference | dict[str, Any], 
+            model: str | None, 
+            *, 
+            created_at: datetime | None = ..., 
+            error_code: str = "server_error", 
+            error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE
+        ) -> ResponseObject: ...
+
+
     class azure.ai.agentserver.responses.models.runtime.AgentReference(TypedDict, total=False):
         key "name": Required[str]
         key "type": Required[Literal["agent_reference"]]
@@ -5837,12 +5987,12 @@ namespace azure.ai.agentserver.responses.models.runtime
                 input_items: list[OutputItem] | None = ..., 
                 mode_flags: ResponseModeFlags, 
                 previous_response_id: str | None = ..., 
-                response: dict[str, Any] | None = ..., 
+                response: ResponseObject | None = ..., 
                 response_context: ResponseContext | None = ..., 
                 response_created_seen: bool = False, 
                 response_id: str, 
                 status: ResponseStatus = "in_progress", 
-                subject: _ResponseEventSubject | None = ..., 
+                subject: EventStream | None = ..., 
                 updated_at: datetime | None = ..., 
                 user_id_key: str | None = ...
             ) -> None: ...
@@ -5853,7 +6003,7 @@ namespace azure.ai.agentserver.responses.models.runtime
                 all_events: list[ResponseStreamEvent]
             ) -> None: ...
 
-        def set_response_snapshot(self, response: dict[str, Any]) -> None: ...
+        def set_response_snapshot(self, response: ResponseObject) -> None: ...
 
         def transition_to(self, next_status: ResponseStatus) -> None: ...
 
@@ -5869,6 +6019,78 @@ namespace azure.ai.agentserver.responses.models.runtime
             ) -> None: ...
 
 
+    class azure.ai.agentserver.responses.models.runtime.ResponseObject(TypedDict, total=False):
+        key "agent_reference": Required[Optional[AgentReference]]
+        key "background": Optional[bool]
+        key "completed_at": Optional[int]
+        key "conversation": Optional[ConversationReference]
+        key "created_at": Required[int]
+        key "error": Required[Optional[ResponseErrorInfo]]
+        key "id": Required[str]
+        key "incomplete_details": Required[Optional[ResponseIncompleteDetails]]
+        key "instructions": Required[Optional[Union[str, list[Item]]]]
+        key "max_output_tokens": Optional[int]
+        key "max_tool_calls": Optional[int]
+        key "metadata": Optional[Metadata]
+        key "model": str
+        key "moderation": Optional[Moderation]
+        key "object": Required[Literal["response"]]
+        key "output": Required[list[OutputItem]]
+        key "output_text": Optional[str]
+        key "parallel_tool_calls": Required[bool]
+        key "previous_response_id": Optional[str]
+        key "prompt": ForwardRef('Prompt', module='types')
+        key "prompt_cache_key": str
+        key "prompt_cache_retention": Optional[Literal["in_memory", "24h"]]
+        key "reasoning": Optional[Reasoning]
+        key "safety_identifier": str
+        key "service_tier": Optional[Literal["auto", "default", "flex", "scale", "priority"]]
+        key "status": Literal["completed", "failed", "in_progress", "cancelled", "queued", "incomplete"]
+        key "temperature": Optional[float]
+        key "text": ForwardRef('ResponseTextParam', module='types')
+        key "tool_choice": Union[Literal["none", "auto", "required"], ToolChoiceParam]
+        key "top_logprobs": Optional[int]
+        key "top_p": Optional[float]
+        key "truncation": Optional[Literal["auto", "disabled"]]
+        key "usage": ForwardRef('ResponseUsage', module='types')
+        key "user": str
+        agent_reference: AgentReference
+        background: bool
+        completed_at: int
+        conversation: ConversationReference
+        created_at: int
+        error: ResponseErrorInfo
+        id: str
+        incomplete_details: ResponseIncompleteDetails
+        instructions: Union[str, list[Item]]
+        max_output_tokens: int
+        max_tool_calls: int
+        metadata: Metadata
+        model: str
+        moderation: Moderation
+        object: Literal[response]
+        output: list[OutputItem]
+        output_text: str
+        parallel_tool_calls: bool
+        previous_response_id: str
+        prompt: Prompt
+        prompt_cache_key: str
+        prompt_cache_retention: Literal[in_memory, 24h]
+        reasoning: Reasoning
+        safety_identifier: str
+        service_tier: Literal[auto, default, flex, scale, priority]
+        status: Literal[completed, failed, in_progress, cancelled, queued, incomplete]
+        temperature: float
+        text: ResponseTextParam
+        tool_choice: Union[ToolChoiceOptions, ToolChoiceParam]
+        tools: list[Tool]
+        top_logprobs: int
+        top_p: float
+        truncation: Literal[auto, disabled]
+        usage: ResponseUsage
+        user: str
+
+
     class azure.ai.agentserver.responses.models.runtime.StreamEventRecord:
         property terminal: bool    # Read-only
 
@@ -5882,7 +6104,7 @@ namespace azure.ai.agentserver.responses.models.runtime
             ) -> None: ...
 
         @classmethod
-        def from_event(
+        def from_generated(
                 cls, 
                 event: ResponseStreamEvent, 
                 payload: Mapping[str, Any]
@@ -5902,9 +6124,17 @@ namespace azure.ai.agentserver.responses.models.runtime
         def append(self, event: StreamEventRecord) -> None: ...
 
 
+namespace azure.ai.agentserver.responses.store
+
+    class azure.ai.agentserver.responses.store.ResponseAlreadyExistsError(Exception):
+
+        def __init__(self, response_id: str) -> None: ...
+
+
 namespace azure.ai.agentserver.responses.streaming
 
     class azure.ai.agentserver.responses.streaming.OutputItemBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -5923,6 +6153,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -5952,6 +6183,7 @@ namespace azure.ai.agentserver.responses.streaming
 
     class azure.ai.agentserver.responses.streaming.OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -5977,6 +6209,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6000,6 +6233,7 @@ namespace azure.ai.agentserver.responses.streaming
 
     class azure.ai.agentserver.responses.streaming.OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -6026,6 +6260,7 @@ namespace azure.ai.agentserver.responses.streaming
 
     class azure.ai.agentserver.responses.streaming.OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         property call_id: str    # Read-only
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6043,6 +6278,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6067,6 +6303,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemMcpCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property name: str    # Read-only
         property output_index: int    # Read-only
@@ -6104,6 +6341,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
         property server_label: str    # Read-only
@@ -6128,6 +6366,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemMessageBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6152,6 +6391,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6172,6 +6412,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
+        property internal_metadata: MutableMapping[str, Any]
         property item_id: str    # Read-only
         property output_index: int    # Read-only
 
@@ -6236,6 +6477,7 @@ namespace azure.ai.agentserver.responses.streaming
 
 
     class azure.ai.agentserver.responses.streaming.ResponseEventStream:
+        property internal_metadata: MutableMapping[str, Any]    # Read-only
         property response: dict[str, Any]    # Read-only
 
         def __init__(
@@ -6311,6 +6553,8 @@ namespace azure.ai.agentserver.responses.streaming
         def add_output_item_structured_outputs(self) -> OutputItemBuilder: ...
 
         def add_output_item_web_search_call(self) -> OutputItemWebSearchCallBuilder: ...
+
+        def checkpoint(self) -> ResponseCheckpointEvent: ...
 
         def emit_completed(
                 self, 

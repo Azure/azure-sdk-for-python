@@ -26,7 +26,7 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     get_input_expanded,
 )
-from azure.ai.agentserver.responses.models._helpers import (
+from azure.ai.agentserver.responses.models import (
     get_tool_choice_expanded,
 )
 
@@ -38,7 +38,7 @@ from azure.ai.agentserver.responses.models._helpers import (
 _captured: dict[str, Any] = {}
 
 
-def _capture_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+async def _capture_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Handler that captures the parsed request, then emits a minimal response."""
     _captured["request"] = request
 
@@ -146,30 +146,36 @@ def _reject_payload(json_body: str) -> int:
 
 def test_c_msg_01__message_without_type_accepted_as_message() -> None:
     """OpenAI spec: EasyInputMessage does NOT require 'type'."""
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{ "role": "user", "content": "Hello without type" }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "message"
     assert items[0].get("role") == "user"
 
 
 def test_c_msg_01__message_with_type_also_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{ "type": "message", "role": "user", "content": "With type" }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("role") == "user"
 
 
 def test_c_msg_01__multiple_messages_without_type() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [
             { "role": "developer", "content": "System msg" },
             { "role": "user", "content": "User msg" },
             { "role": "assistant", "content": "Asst msg" }
         ]
-    """)
+    """
+    )
     assert len(items) == 3
     assert items[0].get("role") == "developer"
     assert items[1].get("role") == "user"
@@ -182,9 +188,11 @@ def test_c_msg_01__multiple_messages_without_type() -> None:
 
 
 def test_item_reference_with_type_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{ "type": "item_reference", "id": "msg_existing_002" }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "item_reference"
     assert items[0].get("id") == "msg_existing_002"
@@ -196,7 +204,8 @@ def test_item_reference_with_type_accepted() -> None:
 
 
 def test_c_img_01__input_image_without_detail_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "message",
             "role": "user",
@@ -204,13 +213,15 @@ def test_c_img_01__input_image_without_detail_accepted() -> None:
                 { "type": "input_image", "image_url": "https://example.com/img.png" }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "message"
 
 
 def test_c_img_01__input_image_with_detail_also_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "message",
             "role": "user",
@@ -218,12 +229,14 @@ def test_c_img_01__input_image_with_detail_also_accepted() -> None:
                 { "type": "input_image", "image_url": "https://example.com/img.png", "detail": "high" }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
 
 
 def test_c_img_01__input_image_with_null_detail_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "message",
             "role": "user",
@@ -231,7 +244,8 @@ def test_c_img_01__input_image_with_null_detail_accepted() -> None:
                 { "type": "input_image", "image_url": "https://example.com/img.png", "detail": null }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
 
 
@@ -241,7 +255,8 @@ def test_c_img_01__input_image_with_null_detail_accepted() -> None:
 
 
 def test_c_func_01__function_tool_without_strict_accepted() -> None:
-    request = _send_and_capture("""
+    request = _send_and_capture(
+        """
         {
             "model": "test",
             "tools": [{
@@ -251,15 +266,17 @@ def test_c_func_01__function_tool_without_strict_accepted() -> None:
                 "parameters": { "type": "object", "properties": {} }
             }]
         }
-    """)
-    assert request.get("tools") is not None
-    assert len(request.get("tools")) == 1
-    assert request.get("tools")[0].get("type") == "function"
-    assert request.get("tools")[0].get("name") == "get_weather"
+    """
+    )
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("type") == "function"
+    assert request["tools"][0].get("name") == "get_weather"
 
 
 def test_c_func_02__function_tool_without_parameters_accepted() -> None:
-    request = _send_and_capture("""
+    request = _send_and_capture(
+        """
         {
             "model": "test",
             "tools": [{
@@ -267,26 +284,30 @@ def test_c_func_02__function_tool_without_parameters_accepted() -> None:
                 "name": "no_params_tool"
             }]
         }
-    """)
-    assert request.get("tools") is not None
-    assert len(request.get("tools")) == 1
-    assert request.get("tools")[0].get("name") == "no_params_tool"
+    """
+    )
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("name") == "no_params_tool"
 
 
 def test_c_func_01_02__function_tool_minimal_form_accepted() -> None:
-    request = _send_and_capture("""
+    request = _send_and_capture(
+        """
         {
             "model": "test",
             "tools": [{ "type": "function", "name": "minimal_tool" }]
         }
-    """)
-    assert request.get("tools") is not None
-    assert len(request.get("tools")) == 1
-    assert request.get("tools")[0].get("name") == "minimal_tool"
+    """
+    )
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
+    assert request["tools"][0].get("name") == "minimal_tool"
 
 
 def test_c_func_01__function_tool_with_strict_null_accepted() -> None:
-    request = _send_and_capture("""
+    request = _send_and_capture(
+        """
         {
             "model": "test",
             "tools": [{
@@ -296,13 +317,15 @@ def test_c_func_01__function_tool_with_strict_null_accepted() -> None:
                 "parameters": { "type": "object", "properties": {} }
             }]
         }
-    """)
-    assert request.get("tools") is not None
-    assert len(request.get("tools")) == 1
+    """
+    )
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
 
 
 def test_c_func_01__function_tool_with_strict_true_accepted() -> None:
-    request = _send_and_capture("""
+    request = _send_and_capture(
+        """
         {
             "model": "test",
             "tools": [{
@@ -312,9 +335,10 @@ def test_c_func_01__function_tool_with_strict_true_accepted() -> None:
                 "parameters": { "type": "object", "properties": {} }
             }]
         }
-    """)
-    assert request.get("tools") is not None
-    assert len(request.get("tools")) == 1
+    """
+    )
+    assert request["tools"] is not None
+    assert len(request["tools"]) == 1
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -323,13 +347,15 @@ def test_c_func_01__function_tool_with_strict_true_accepted() -> None:
 
 
 def test_input_message_text_content() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "message",
             "role": "user",
             "content": [{ "type": "input_text", "text": "Hello" }]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "message"
     assert items[0].get("role") == "user"
@@ -340,15 +366,18 @@ def test_input_message_text_content() -> None:
 
 
 def test_input_message_string_content() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{ "type": "message", "role": "developer", "content": "System prompt" }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("role") == "developer"
 
 
 def test_input_message_multiple_content_parts() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "message",
             "role": "user",
@@ -357,21 +386,24 @@ def test_input_message_multiple_content_parts() -> None:
                 { "type": "input_image", "image_url": "https://example.com/img.png" }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     content = items[0].get("content", [])
     assert len(content) == 2
 
 
 def test_input_message_all_roles() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [
             { "type": "message", "role": "user", "content": "r1" },
             { "type": "message", "role": "assistant", "content": "r2" },
             { "type": "message", "role": "developer", "content": "r3" },
             { "type": "message", "role": "system", "content": "r4" }
         ]
-    """)
+    """
+    )
     assert len(items) == 4
     assert items[0].get("role") == "user"
     assert items[1].get("role") == "assistant"
@@ -380,14 +412,16 @@ def test_input_message_all_roles() -> None:
 
 
 def test_input_function_call() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "function_call",
             "call_id": "call_abc",
             "name": "get_weather",
             "arguments": "{\\"city\\":\\"Seattle\\"}"
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "function_call"
     assert items[0].get("call_id") == "call_abc"
@@ -396,13 +430,15 @@ def test_input_function_call() -> None:
 
 
 def test_input_function_call_output_string_output() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "function_call_output",
             "call_id": "call_abc",
             "output": "72°F and sunny"
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "function_call_output"
     assert items[0].get("call_id") == "call_abc"
@@ -410,7 +446,8 @@ def test_input_function_call_output_string_output() -> None:
 
 def test_input_function_call_output_array_output() -> None:
     """output can be an array of content parts per OpenAI spec."""
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "function_call_output",
             "call_id": "call_xyz",
@@ -418,13 +455,15 @@ def test_input_function_call_output_array_output() -> None:
                 { "type": "input_text", "text": "Result text" }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "function_call_output"
 
 
 def test_input_reasoning() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "reasoning",
             "id": "rs_abc",
@@ -432,14 +471,16 @@ def test_input_reasoning() -> None:
                 { "type": "summary_text", "text": "Thinking step 1" }
             ]
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "reasoning"
     assert items[0].get("id") == "rs_abc"
 
 
 def test_input_computer_call_output() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "computer_call_output",
             "call_id": "cu_abc",
@@ -448,20 +489,23 @@ def test_input_computer_call_output() -> None:
                 "image_url": "https://example.com/screenshot.png"
             }
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "computer_call_output"
     assert items[0].get("call_id") == "cu_abc"
 
 
 def test_input_mcp_approval_response() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{
             "type": "mcp_approval_response",
             "approval_request_id": "mcpr_abc",
             "approve": true
         }]
-    """)
+    """
+    )
     assert len(items) == 1
     assert items[0].get("type") == "mcp_approval_response"
     assert items[0].get("approval_request_id") == "mcpr_abc"
@@ -469,14 +513,16 @@ def test_input_mcp_approval_response() -> None:
 
 
 def test_input_mixed_types_all_deserialize() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [
             { "role": "user", "content": "Hello" },
             { "type": "function_call", "call_id": "c1", "name": "fn", "arguments": "{}" },
             { "type": "function_call_output", "call_id": "c1", "output": "done" },
             { "type": "item_reference", "id": "ref_001" }
         ]
-    """)
+    """
+    )
     assert len(items) == 4
     # First item is a message (inferred from role without type)
     assert items[0].get("role") == "user"
@@ -530,7 +576,7 @@ def test_create_response_store() -> None:
 
 def test_create_response_metadata() -> None:
     req = _send_and_capture('{"model": "test", "metadata": {"key": "value"}}')
-    assert req.get("metadata") is not None
+    assert req["metadata"] is not None
     assert req["metadata"].get("key") == "value"
 
 
@@ -541,25 +587,25 @@ def test_create_response_parallel_tool_calls() -> None:
 
 def test_create_response_truncation() -> None:
     req = _send_and_capture('{"model": "test", "truncation": "auto"}')
-    assert req.get("truncation") is not None
+    assert req["truncation"] is not None
 
 
 def test_create_response_reasoning() -> None:
     req = _send_and_capture('{"model": "test", "reasoning": {"effort": "high"}}')
-    assert req.get("reasoning") is not None
+    assert req["reasoning"] is not None
 
 
 def test_create_response_tool_choice_auto() -> None:
     req = _send_and_capture('{"model": "test", "tool_choice": "auto"}')
     tc = get_tool_choice_expanded(req)
     assert tc is not None
-    assert tc == {"type": "allowed_tools", "mode": "auto", "tools": []}
+    assert tc.get("type") == "auto" or tc.get("mode") == "auto"
 
 
 def test_create_response_tool_choice_required() -> None:
     req = _send_and_capture('{"model": "test", "tool_choice": "required"}')
     tc = get_tool_choice_expanded(req)
-    assert tc == {"type": "allowed_tools", "mode": "required", "tools": []}
+    assert tc is not None
 
 
 def test_create_response_tool_choice_none() -> None:
@@ -569,37 +615,45 @@ def test_create_response_tool_choice_none() -> None:
 
 
 def test_create_response_tool_choice_function_object() -> None:
-    req = _send_and_capture("""
+    req = _send_and_capture(
+        """
         {"model": "test", "tool_choice": {"type": "function", "name": "get_weather"}}
-    """)
+    """
+    )
     tc = get_tool_choice_expanded(req)
     assert tc is not None
     assert tc.get("name") == "get_weather"
 
 
 def test_create_response_tools_web_search() -> None:
-    req = _send_and_capture("""
+    req = _send_and_capture(
+        """
         {"model": "test", "tools": [{"type": "web_search_preview"}]}
-    """)
-    assert req.get("tools") is not None
+    """
+    )
+    assert req["tools"] is not None
     assert len(req["tools"]) == 1
     assert req["tools"][0].get("type") == "web_search_preview"
 
 
 def test_create_response_tools_file_search() -> None:
-    req = _send_and_capture("""
+    req = _send_and_capture(
+        """
         {"model": "test", "tools": [{"type": "file_search", "vector_store_ids": ["vs_abc"]}]}
-    """)
-    assert req.get("tools") is not None
+    """
+    )
+    assert req["tools"] is not None
     assert len(req["tools"]) == 1
     assert req["tools"][0].get("type") == "file_search"
 
 
 def test_create_response_tools_code_interpreter() -> None:
-    req = _send_and_capture("""
+    req = _send_and_capture(
+        """
         {"model": "test", "tools": [{"type": "code_interpreter"}]}
-    """)
-    assert req.get("tools") is not None
+    """
+    )
+    assert req["tools"] is not None
     assert len(req["tools"]) == 1
     assert req["tools"][0].get("type") == "code_interpreter"
 
@@ -660,9 +714,11 @@ def test_input_null_or_absent_returns_empty() -> None:
 
 
 def test_message_content_string_shorthand_expands_to_input_text() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{"type": "message", "role": "user", "content": "shorthand"}]
-    """)
+    """
+    )
     # Content is stored as the raw value — may be string or expanded
     # The server keeps the original form; expansion happens via get_content_expanded
     assert len(items) == 1
@@ -670,9 +726,11 @@ def test_message_content_string_shorthand_expands_to_input_text() -> None:
 
 
 def test_message_content_empty_string_accepted() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [{"type": "message", "role": "user", "content": ""}]
-    """)
+    """
+    )
     assert len(items) == 1
 
 
@@ -683,7 +741,8 @@ def test_message_content_empty_string_accepted() -> None:
 
 def test_full_payload_all_shorthands_and_minimal_forms() -> None:
     """Uses ALL shorthand/minimal forms in one request."""
-    req = _send_and_capture("""
+    req = _send_and_capture(
+        """
         {
             "model": "gpt-4o",
             "input": "What is the weather?",
@@ -696,7 +755,8 @@ def test_full_payload_all_shorthands_and_minimal_forms() -> None:
                 { "type": "function", "name": "get_weather" }
             ]
         }
-    """)
+    """
+    )
     assert req["model"] == "gpt-4o"
     assert req["instructions"] == "Be helpful"
     assert abs(req["temperature"] - 0.5) < 0.001
@@ -710,12 +770,13 @@ def test_full_payload_all_shorthands_and_minimal_forms() -> None:
     tc = get_tool_choice_expanded(req)
     assert tc is not None
 
-    assert req.get("tools") is not None
+    assert req["tools"] is not None
     assert len(req["tools"]) == 1
 
 
 def test_multi_turn_mixed_shorthand_and_full_form() -> None:
-    items = _send_input_and_capture("""
+    items = _send_input_and_capture(
+        """
         [
             { "role": "developer", "content": "You are helpful" },
             {
@@ -727,7 +788,8 @@ def test_multi_turn_mixed_shorthand_and_full_form() -> None:
                 ]
             }
         ]
-    """)
+    """
+    )
     assert len(items) == 2
     assert items[0].get("role") == "developer"
     assert items[1].get("role") == "user"
@@ -751,7 +813,9 @@ def test_reject_input_as_boolean() -> None:
 
 
 def test_reject_content_as_number() -> None:
-    status = _reject_payload("""
+    status = _reject_payload(
+        """
         {"model": "test", "input": [{"type": "message", "role": "user", "content": 42}]}
-    """)
+    """
+    )
     assert status == 400

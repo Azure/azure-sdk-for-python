@@ -9,8 +9,8 @@ import os
 from copy import deepcopy
 from typing import Any, Mapping, cast
 
-from azure.ai.agentserver.responses.models._wire import get_field
-from azure.ai.agentserver.responses.models import AgentReference, CreateResponse
+from ..models._wire import get_field
+from ..models import AgentReference, CreateResponse
 
 from .._id_generator import IdGenerator
 from ..models._errors import RequestValidationError

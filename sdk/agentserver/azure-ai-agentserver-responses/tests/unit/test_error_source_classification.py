@@ -235,6 +235,7 @@ class TestFoundryErrorTagging:
 
         class _FakeResponse:
             status_code = 502
+
             def text(self) -> str:
                 return '{"error": {"message": "bad gateway"}}'
 
@@ -251,6 +252,7 @@ class TestFoundryErrorTagging:
 
         class _FakeResponse:
             status_code = 404
+
             def text(self) -> str:
                 return '{"error": {"message": "not found"}}'
 
@@ -267,6 +269,7 @@ class TestFoundryErrorTagging:
 
         class _FakeResponse:
             status_code = 400
+
             def text(self) -> str:
                 return '{"error": {"message": "bad request"}}'
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Any, cast
 
-from azure.ai.agentserver.responses.models import ApiErrorResponse, Error
+from . import ApiErrorResponse, Error
 
 
 class RequestValidationError(ValueError):
@@ -46,7 +46,7 @@ class RequestValidationError(ValueError):
                         "message": d.get("message", ""),
                         "param": d.get("param"),
                         "type": "invalid_request_error",
-                    }
+                    },
                 )
                 for d in self.details
             ]
@@ -57,7 +57,7 @@ class RequestValidationError(ValueError):
                 "message": self.message,
                 "param": self.param,
                 "type": self.error_type,
-            }
+            },
         )
         if detail_errors is not None:
             error["details"] = detail_errors
