@@ -42,7 +42,7 @@ class Stream(Iterator[ReturnType_co]):
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.HttpResponse
     :keyword decoder: A decoder to use for the stream.
-    :paramtype decoder: ~corehttp.streaming.decoders.StreamDecoder
+    :paramtype decoder: ~corehttp.streaming._decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.HttpResponse, Any], ReturnType]
@@ -63,8 +63,8 @@ class Stream(Iterator[ReturnType_co]):
     def __next__(self) -> ReturnType_co:
         return self._iterator.__next__()
 
-    def __iter__(self) -> Iterator[ReturnType_co]:
-        yield from self._iterator
+    def __iter__(self) -> Self:
+        return self
 
     def _iter_results(self) -> Iterator[ReturnType_co]:
         for event in self._decoder.iter_events(self._response.iter_bytes()):
@@ -93,7 +93,7 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
     :keyword decoder: A decoder to use for the stream.
-    :paramtype decoder: ~corehttp.streaming.decoders.AsyncStreamDecoder
+    :paramtype decoder: ~corehttp.streaming._decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.AsyncHttpResponse, Any], ReturnType]
@@ -114,9 +114,8 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
     async def __anext__(self) -> ReturnType_co:
         return await self._iterator.__anext__()
 
-    async def __aiter__(self) -> AsyncIterator[ReturnType_co]:  # pylint: disable=invalid-overridden-method
-        async for item in self._iterator:
-            yield item
+    def __aiter__(self) -> Self:
+        return self
 
     async def _iter_results(self) -> AsyncIterator[ReturnType_co]:
         async for event in self._decoder.aiter_events(self._response.iter_bytes()):

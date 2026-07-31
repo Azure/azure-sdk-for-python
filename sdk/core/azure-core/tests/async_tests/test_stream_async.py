@@ -29,7 +29,7 @@ import json
 import pytest
 
 from azure.core.rest import HttpRequest
-from azure.core.streaming import AsyncStream, AsyncJSONLDecoder
+from azure.core.streaming import AsyncStream, AsyncJSONLDecoder, AsyncSSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
@@ -46,6 +46,17 @@ def stream(client, deserialization_callback):
         http_response = await client.send_request(request=request, stream=True)
         return AsyncStream(
             deserialization_callback=deserialization_callback, response=http_response, decoder=AsyncJSONLDecoder()
+        )
+
+    return _callback
+
+
+@pytest.fixture
+def sse_stream(client, deserialization_callback):
+    async def _callback(request, **kwargs):
+        http_response = await client.send_request(request=request, stream=True)
+        return AsyncStream(
+            deserialization_callback=deserialization_callback, response=http_response, decoder=AsyncSSEDecoder()
         )
 
     return _callback
@@ -199,4 +210,74 @@ async def test_stream_jsonl_string(stream):
         "is",
         "a",
         "message",
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_jsonl_unicode_line_boundary(stream):
+    # Ensure records are only split on \n and not on other Unicode line boundaries
+    # (\u2028, \u2029, \x85) that str.splitlines() would split on.
+    jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_unicode_line_boundary"))
+    messages = []
+    async for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "first\u2028line\u2029boundary\u0085record"},
+        {"msg": "second\u2028line\u2029boundary\u0085record"},
+    ]
+
+
+async def _collect(sse_stream, path):
+    events = []
+    stream = await sse_stream(HttpRequest("GET", path))
+    async for event in stream:
+        events.append(event)
+    return events
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_basic(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_basic")
+    assert events == [
+        ServerSentEvent(event="message", data="hello"),
+        ServerSentEvent(event="message", data="world"),
+    ]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_multiline_data(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_multiline_data")
+    assert events == [ServerSentEvent(event="greeting", data="line one\nline two")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_comments_and_fields(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_comments_and_fields")
+    assert events == [ServerSentEvent(event="update", data="payload")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_crlf(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_crlf")
+    assert events == [ServerSentEvent(event="message", data="crlf-line")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_lone_cr(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_lone_cr")
+    assert events == [ServerSentEvent(event="message", data="cr-line")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_broken_up(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_broken_up")
+    assert events == [ServerSentEvent(event="message", data="hello")]
+
+
+@pytest.mark.asyncio
+async def test_stream_sse_id_and_retry(sse_stream):
+    events = await _collect(sse_stream, "/streams/sse_id_and_retry")
+    assert events == [
+        ServerSentEvent(event="message", data="first", id="42", retry=3000),
+        ServerSentEvent(event="message", data="second", id="42", retry=3000),
     ]

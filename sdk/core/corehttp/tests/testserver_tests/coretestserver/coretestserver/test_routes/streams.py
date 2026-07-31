@@ -115,6 +115,18 @@ def stream_jsonl_string():
     yield from data
 
 
+def stream_jsonl_unicode_line_boundary():
+    # \u2028 (line separator), \u2029 (paragraph separator) and \x85 (NEL) are Unicode
+    # boundaries that str.splitlines() splits on, but JSONL only delimits records on \n.
+    # Each record embeds those characters inside its JSON string value and records are
+    # delimited by a real \n, so they must not be split mid-record.
+    data = [
+        '{"msg": "first\u2028line\u2029boundary\u0085record"}\n'.encode("utf-8"),
+        '{"msg": "second\u2028line\u2029boundary\u0085record"}\n'.encode("utf-8"),
+    ]
+    yield from data
+
+
 @streams_api.route("/basic", methods=["GET"])
 def basic():
     return Response(streaming_body(), status=200)
@@ -237,3 +249,111 @@ def json_list():
 @streams_api.route("/jsonl_string", methods=["GET"])
 def json_string():
     return Response(stream_jsonl_string(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+@streams_api.route("/jsonl_unicode_line_boundary", methods=["GET"])
+def jsonl_unicode_line_boundary():
+    return Response(stream_jsonl_unicode_line_boundary(), status=200, headers={"Content-Type": "application/jsonl"})
+
+
+def stream_sse_basic():
+    data = [
+        b"data: hello\n\n",
+        b"data: world\n\n",
+    ]
+    yield from data
+
+
+def stream_sse_multiline_data():
+    # Multiple data lines in one event are joined with "\n".
+    data = [
+        b"event: greeting\n",
+        b"data: line one\n",
+        b"data: line two\n",
+        b"\n",
+    ]
+    yield from data
+
+
+def stream_sse_comments_and_fields():
+    # Comment lines (":"-prefixed) are ignored; one leading space after ":" is stripped.
+    data = [
+        b": this is a comment\n",
+        b"event: update\n",
+        b"data: payload\n",
+        b"\n",
+    ]
+    yield from data
+
+
+def stream_sse_crlf():
+    # SSE allows CRLF line separators.
+    data = [
+        b"data: crlf-line\r\n\r\n",
+    ]
+    yield from data
+
+
+def stream_sse_lone_cr():
+    # SSE allows a lone CR as a line separator.
+    data = [
+        b"data: cr-line\r\r",
+    ]
+    yield from data
+
+
+def stream_sse_broken_up():
+    # An event split across multiple chunks, including a CRLF split at the chunk boundary.
+    data = [
+        b"data: hel",
+        b"lo\r",
+        b"\n\r\n",
+    ]
+    yield from data
+
+
+def stream_sse_id_and_retry():
+    data = [
+        b"id: 42\n",
+        b"retry: 3000\n",
+        b"data: first\n",
+        b"\n",
+        b"data: second\n",
+        b"\n",
+    ]
+    yield from data
+
+
+@streams_api.route("/sse_basic", methods=["GET"])
+def sse_basic():
+    return Response(stream_sse_basic(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_multiline_data", methods=["GET"])
+def sse_multiline_data():
+    return Response(stream_sse_multiline_data(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_comments_and_fields", methods=["GET"])
+def sse_comments_and_fields():
+    return Response(stream_sse_comments_and_fields(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_crlf", methods=["GET"])
+def sse_crlf():
+    return Response(stream_sse_crlf(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_lone_cr", methods=["GET"])
+def sse_lone_cr():
+    return Response(stream_sse_lone_cr(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_broken_up", methods=["GET"])
+def sse_broken_up():
+    return Response(stream_sse_broken_up(), status=200, headers={"Content-Type": "text/event-stream"})
+
+
+@streams_api.route("/sse_id_and_retry", methods=["GET"])
+def sse_id_and_retry():
+    return Response(stream_sse_id_and_retry(), status=200, headers={"Content-Type": "text/event-stream"})

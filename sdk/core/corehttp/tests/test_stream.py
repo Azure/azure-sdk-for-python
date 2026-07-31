@@ -29,7 +29,7 @@ import json
 import pytest
 
 from corehttp.rest import HttpRequest
-from corehttp.streaming import Stream, JSONLDecoder
+from corehttp.streaming import Stream, JSONLDecoder, SSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
@@ -45,6 +45,15 @@ def stream(client, deserialization_callback):
     def _callback(request, **kwargs):
         http_response = client.send_request(request=request, stream=True)
         return Stream(deserialization_callback=deserialization_callback, response=http_response, decoder=JSONLDecoder())
+
+    return _callback
+
+
+@pytest.fixture
+def sse_stream(client, deserialization_callback):
+    def _callback(request, **kwargs):
+        http_response = client.send_request(request=request, stream=True)
+        return Stream(deserialization_callback=deserialization_callback, response=http_response, decoder=SSEDecoder())
 
     return _callback
 
@@ -184,4 +193,61 @@ def test_stream_jsonl_string(stream):
         "is",
         "a",
         "message",
+    ]
+
+
+def test_stream_jsonl_unicode_line_boundary(stream):
+    # Ensure records are only split on \n and not on other Unicode line boundaries
+    # (\u2028, \u2029, \x85) that str.splitlines() would split on.
+    jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_unicode_line_boundary"))
+    messages = []
+    for s in jsonl_stream:
+        messages.append(s)
+    assert messages == [
+        {"msg": "first\u2028line\u2029boundary\u0085record"},
+        {"msg": "second\u2028line\u2029boundary\u0085record"},
+    ]
+
+
+def test_stream_sse_basic(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_basic")))
+    assert events == [
+        ServerSentEvent(event="message", data="hello"),
+        ServerSentEvent(event="message", data="world"),
+    ]
+
+
+def test_stream_sse_multiline_data(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_multiline_data")))
+    assert events == [ServerSentEvent(event="greeting", data="line one\nline two")]
+
+
+def test_stream_sse_comments_and_fields(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_comments_and_fields")))
+    assert events == [ServerSentEvent(event="update", data="payload")]
+
+
+def test_stream_sse_crlf(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_crlf")))
+    assert events == [ServerSentEvent(event="message", data="crlf-line")]
+
+
+def test_stream_sse_lone_cr(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_lone_cr")))
+    assert events == [ServerSentEvent(event="message", data="cr-line")]
+
+
+def test_stream_sse_broken_up(sse_stream):
+    # An event split across chunks (with a CRLF split at a chunk boundary) yields a
+    # single event and no spurious empty event.
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_broken_up")))
+    assert events == [ServerSentEvent(event="message", data="hello")]
+
+
+def test_stream_sse_id_and_retry(sse_stream):
+    events = list(sse_stream(HttpRequest("GET", "/streams/sse_id_and_retry")))
+    # id and retry persist across subsequent events until overridden.
+    assert events == [
+        ServerSentEvent(event="message", data="first", id="42", retry=3000),
+        ServerSentEvent(event="message", data="second", id="42", retry=3000),
     ]
