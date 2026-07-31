@@ -31,7 +31,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
-import azure.core.pipeline.policies as policies
+from azure.core.pipeline import policies
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
