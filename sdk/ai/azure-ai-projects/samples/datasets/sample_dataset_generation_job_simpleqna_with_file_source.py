@@ -66,7 +66,6 @@ from azure.ai.projects.models import (
     DatasetDataGenerationJobOutput,
     DatasetVersion,
     FileDataGenerationJobSource,
-    JobStatus,
     PromptDataGenerationJobSource,
     SimpleQnADataGenerationJobOptions,
 )
@@ -77,8 +76,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "simpleqna-file-source-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Unique per-run resource names so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
@@ -156,64 +153,50 @@ with (
     #   - The File source contributes the source material (the reference
     #     document uploaded above).
     #   - The Prompt source contributes a steering instruction (difficulty).
-    print("Creating multi-source data generation job (File + Prompt) and polling until completion...")
-    created_jobs: list[DataGenerationJob] = []
-
-    def raw_response_hook(response):
-        response.http_response.read()
-        created_jobs.append(DataGenerationJob(response.http_response.json()))
-
-    project_client.beta.datasets.begin_create_generation_job(
-        job=DataGenerationJob(
-            inputs=DataGenerationJobInputs(
-                name=f"simpleqna-multisource-{run_id}",
-                scenario=DataGenerationJobScenario.EVALUATION,
-                sources=[
-                    FileDataGenerationJobSource(
-                        description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
-                        id=seed_file.id,
-                    ),
-                    PromptDataGenerationJobSource(
-                        description="Specifies the question difficulty for SimpleQnA generation.",
-                        prompt="Generate expert-level questions of high difficulty.",
-                    ),
-                ],
-                options=SimpleQnADataGenerationJobOptions(
-                    # Service requires max_samples to be between 15 and 1000.
-                    max_samples=15,
-                    # `simple_qna` REQUIRES model_options.
-                    model_options=DataGenerationModelOptions(model=model_name),
+    job = DataGenerationJob(
+        inputs=DataGenerationJobInputs(
+            name=f"simpleqna-multisource-{run_id}",
+            scenario=DataGenerationJobScenario.EVALUATION,
+            sources=[
+                FileDataGenerationJobSource(
+                    description="Widgets & Gizmos product / operations reference (Azure OpenAI file).",
+                    id=seed_file.id,
                 ),
-                output_options=DataGenerationJobOutputOptions(
-                    name=output_dataset_name,
-                    description=EXPECTED_OUTPUT_DESCRIPTION,
-                    tags=EXPECTED_OUTPUT_TAGS,
+                PromptDataGenerationJobSource(
+                    description="Specifies the question difficulty for SimpleQnA generation.",
+                    prompt="Generate expert-level questions of high difficulty.",
                 ),
+            ],
+            options=SimpleQnADataGenerationJobOptions(
+                # Service requires max_samples to be between 15 and 1000.
+                max_samples=15,
+                # `simple_qna` REQUIRES model_options.
+                model_options=DataGenerationModelOptions(model=model_name),
+            ),
+            output_options=DataGenerationJobOutputOptions(
+                name=output_dataset_name,
+                description=EXPECTED_OUTPUT_DESCRIPTION,
+                tags=EXPECTED_OUTPUT_TAGS,
             ),
         ),
-        polling=False,
-        raw_response_hook=raw_response_hook,
     )
-    # Alternatively, have the SDK handle polling by removing `polling=False` and appending `.result()` to the above call.
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return a data generation job.")
-    job = created_jobs[0]
-    print(f"Created job: id={job.id}, status={job.status}")
 
-    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-    while job.status not in TERMINAL_STATUSES:
+    print("Begin creating a dataset generation job.")
+    poller = project_client.beta.datasets.begin_create_generation_job(
+        job=job,
+        polling_interval=poll_interval_seconds,
+    )
+
+    print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+    while not poller.done():
         time.sleep(poll_interval_seconds)
-        job = project_client.beta.datasets.get_generation_job(job_id=job.id)
-        print(".", end="", flush=True)
-    print()
-    print(f"Final job status: `{job.status}`.")
+        print(f"\tstatus=`{poller.status()}`")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error else "<no error message>"
-        raise RuntimeError(f"Data generation job `{job.id}` ended with status `{job.status}`: {message}")
-    if job.result is None:
-        raise RuntimeError(f"Data generation job `{job.id}` completed without a result.")
-    job_result = job.result
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    job_result = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Data generation result: {job_result}")
 
     # Locate the Dataset output produced by the job.
     output_name: str = ""

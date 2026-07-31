@@ -168,6 +168,7 @@ with (
             output_options=DataGenerationJobOutputOptions(name=output_name),
         ),
     )
+
     print("Begin creating a dataset generation job.")
     poller = project_client.beta.datasets.begin_create_generation_job(
         job=job,
