@@ -112,11 +112,12 @@ def test_direct_extension(credential):
     print(f"  Upload result: {result}")
 
     print("Downloading it back...")
-    downloaded = download_blob(
-        url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
-        token_provider=token_provider,
-        max_concurrency=8,
-        expected_size=len(payload),
+    downloaded = b"".join(
+        download_blob(
+            url=f"{ACCOUNT_URL}/{CONTAINER}/{blob_name}",
+            token_provider=token_provider,
+            max_concurrency=8,
+        )
     )
     print(f"  Downloaded {len(downloaded)} bytes")
     assert downloaded == payload, "Round-trip mismatch (direct extension)!"
@@ -133,11 +134,12 @@ def test_direct_extension(credential):
             overwrite=True,
             max_concurrency=8,
         )
-        back = download_blob(
-            url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
-            token_provider=token_provider,
-            max_concurrency=8,
-            expected_size=len(payload),
+        back = b"".join(
+            download_blob(
+                url=f"{ACCOUNT_URL}/{CONTAINER}/{buf_blob}",
+                token_provider=token_provider,
+                max_concurrency=8,
+            )
         )
         assert back == payload, f"Round-trip mismatch ({label} input)!"
         print(f"  OK: {label} round-trip matches")
