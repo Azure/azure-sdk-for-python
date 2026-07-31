@@ -51,13 +51,29 @@ async def test_basic_aiohttp(port, http_request):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
-async def test_aiohttp_auto_headers(port, http_request):
+async def test_aiohttp_auto_headers(port, http_request, monkeypatch):
 
+    monkeypatch.setitem(aiohttp.ClientRequest.DEFAULT_HEADERS, "Accept-Encoding", "gzip, deflate, br")
     request = http_request("POST", "http://localhost:{}/basic/string".format(port))
     async with AioHttpTransport() as sender:
         response = await sender.send(request)
         auto_headers = response.internal_response.request_info.headers
         assert "Content-Type" not in auto_headers
+        assert auto_headers["Accept-Encoding"] == "gzip, deflate"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("http_request", HTTP_REQUESTS)
+async def test_aiohttp_preserves_accept_encoding_header(port, http_request):
+
+    request = http_request(
+        "GET",
+        "http://localhost:{}/basic/string".format(port),
+        headers={"Accept-Encoding": "identity"},
+    )
+    async with AioHttpTransport() as sender:
+        response = await sender.send(request)
+        assert response.internal_response.request_info.headers["Accept-Encoding"] == "identity"
 
 
 @pytest.mark.asyncio
