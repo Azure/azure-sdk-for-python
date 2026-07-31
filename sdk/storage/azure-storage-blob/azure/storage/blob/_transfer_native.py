@@ -15,6 +15,7 @@ backend for improved performance.
 from typing import Any, Callable, Dict, Iterator, Optional, Tuple, TYPE_CHECKING
 
 import logging
+import os
 import threading
 
 if TYPE_CHECKING:
@@ -24,9 +25,21 @@ _STORAGE_SCOPE = "https://storage.azure.com/.default"
 
 _LOGGER = logging.getLogger(__name__)
 
+# Escape hatch to force the pure-Python transfer path even when the native extension is
+# installed. Intended for benchmarking and troubleshooting. Set the environment variable
+# AZURE_STORAGE_DISABLE_NATIVE_TRANSFER to a truthy value ("1", "true", "yes", "on").
+_DISABLE_NATIVE_ENV_VAR = "AZURE_STORAGE_DISABLE_NATIVE_TRANSFER"
+
+
+def _native_disabled() -> bool:
+    """Return True if the native transfer path has been explicitly disabled via env var."""
+    return os.environ.get(_DISABLE_NATIVE_ENV_VAR, "").strip().lower() in ("1", "true", "yes", "on")
+
 
 def _is_native_available() -> bool:
-    """Check if the native transfer extension is installed and importable."""
+    """Check if the native transfer extension is installed, importable, and not disabled."""
+    if _native_disabled():
+        return False
     try:
         from azure.storage.extensions.transfer import is_available  # pylint: disable=import-outside-toplevel
 
