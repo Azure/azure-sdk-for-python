@@ -1,0 +1,42 @@
+# Emits a lightweight 'CheckSchedule' stage that determines whether the run started on a
+# weekend (in the configured timezone) and publishes the result as the output variable
+# CheckSchedule.check.setflag.IsWeekend for downstream stages to gate on, e.g.:
+#   dependsOn: [ CheckSchedule ]
+#   condition: eq(dependencies.CheckSchedule.outputs['check.setflag.IsWeekend'], 'True')
+parameters:
+  - name: TimeZoneId
+    type: string
+    default: 'America/Los_Angeles'
+
+stages:
+  - stage: CheckSchedule
+    displayName: 'Check Schedule'
+    variables:
+      - template: /eng/pipelines/templates/variables/image.yml
+    jobs:
+      - job: check
+        pool:
+          name: $(LINUXPOOL)
+          image: $(LINUXVMIMAGE)
+          os: linux
+        steps:
+          - pwsh: |
+              # Derive the weekend flag from the run's start time (System.PipelineStartTime),
+              # which is fixed at run start and immune to agent queue delay. The value carries a
+              # timezone offset, so parse it as a DateTimeOffset to get the true UTC instant
+              # (do NOT cast to [datetime], which would assume the agent's local zone), then
+              # convert to the timezone the schedule is configured in.
+              $raw = '$(System.PipelineStartTime)'
+              try {
+                $startUtc = [System.DateTimeOffset]::Parse($raw, [System.Globalization.CultureInfo]::InvariantCulture).UtcDateTime
+              } catch {
+                Write-Host "Could not parse System.PipelineStartTime ('$raw'); falling back to UtcNow. $_"
+                $startUtc = [datetime]::UtcNow
+              }
+              $tz  = [System.TimeZoneInfo]::FindSystemTimeZoneById('${{ parameters.TimeZoneId }}')
+              $local = [System.TimeZoneInfo]::ConvertTimeFromUtc($startUtc, $tz)
+              $weekend = $local.DayOfWeek -in 'Saturday','Sunday'
+              Write-Host "PipelineStartTime raw='$raw' -> UTC='$startUtc' -> $($tz.Id)='$local' -> IsWeekend=$weekend"
+              Write-Host "##vso[task.setvariable variable=IsWeekend;isOutput=true]$weekend"
+            name: setflag
+            displayName: 'Determine weekend from run start time'

@@ -13,29 +13,9 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      # Always present so the pipeline has at least one stage; also determines whether the
+      # Always present so the pipeline has at least one stage; determines whether the
       # run started on a weekend (in the schedule's timezone) for the analyze gate below.
-      - stage: CheckSchedule
-        displayName: 'Check Schedule'
-        variables:
-          - template: /eng/pipelines/templates/variables/image.yml
-        jobs:
-          - job: check
-            pool:
-              name: $(LINUXPOOL)
-              image: $(LINUXVMIMAGE)
-              os: linux
-            steps:
-              - pwsh: |
-                  # Use the same timezone the pipeline schedule is configured in so the
-                  # weekend boundary matches when the run was actually scheduled.
-                  $tz  = [System.TimeZoneInfo]::FindSystemTimeZoneById('America/Los_Angeles')
-                  $now = [System.TimeZoneInfo]::ConvertTimeFromUtc([datetime]::UtcNow, $tz)
-                  $weekend = $now.DayOfWeek -in 'Saturday','Sunday'
-                  Write-Host "Local time ($($tz.Id)): $now -> IsWeekend=$weekend"
-                  Write-Host "##vso[task.setvariable variable=IsWeekend;isOutput=true]$weekend"
-                name: setflag
-                displayName: 'Determine weekend from run start time'
+      - template: /eng/pipelines/templates/stages/check-schedule.yml
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
