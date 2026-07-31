@@ -2,7 +2,9 @@
 # Licensed under the MIT License.
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
+import inspect
 import logging
+import weakref
 from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -73,7 +75,16 @@ class _ConfigurationManager(metaclass=Singleton):
         # Register a callback to be invoked when configuration changes. Registration is independent of
         # initialize(): the callback simply sits in the list until the worker fires a config change, so
         # there is no need to guard on initialization state.
-        self._callbacks.append(callback)
+        #
+        # Bound methods are stored via weakref.WeakMethod so a discarded exporter (the callback's
+        # __self__) can be garbage collected instead of being pinned for the process lifetime by this
+        # singleton. This fixes the leak even when the exporter is dropped without calling shutdown().
+        # Plain functions (module-level SDK callbacks) are stored as-is: they live for the process
+        # anyway and are not weakref-friendly.
+        if inspect.ismethod(callback):
+            self._callbacks.append(weakref.WeakMethod(callback))
+        else:
+            self._callbacks.append(callback)
 
     def _notify_callbacks(self, settings: Dict[str, str]):
         # Notify all registered callbacks of configuration changes.
@@ -81,11 +92,28 @@ class _ConfigurationManager(metaclass=Singleton):
         # "list changed size during iteration". list.append and list(...) are individually atomic
         # under the GIL, so no lock is needed here (and _state_lock stays scoped to config state).
         callbacks = list(self._callbacks)
+        dead = []
         for cb in callbacks:
+            if isinstance(cb, weakref.WeakMethod):
+                resolved = cb()
+                if resolved is None:
+                    # The bound method's owner has been garbage collected; drop the stale ref.
+                    dead.append(cb)
+                    continue
+                target = resolved
+            else:
+                target = cb
             try:
-                cb(settings)
+                target(settings)
             except Exception as ex:  # pylint: disable=broad-except
                 logger.debug("Callback failed: %s", ex)
+        # Prune dead weak references so _callbacks does not grow unbounded under exporter churn.
+        # list.remove is atomic under the GIL; swallow ValueError if another thread already removed it.
+        for cb in dead:
+            try:
+                self._callbacks.remove(cb)
+            except ValueError:
+                pass
 
     def _is_transient_error(self, response: OneSettingsResponse) -> bool:
         """Check if the response indicates a transient error.

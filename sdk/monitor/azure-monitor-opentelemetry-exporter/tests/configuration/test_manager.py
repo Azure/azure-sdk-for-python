@@ -180,6 +180,84 @@ class TestConfigurationManager(unittest.TestCase):
 
         self.assertIn(callback, manager._callbacks)
 
+    def test_bound_method_callback_stored_weakly(self):
+        """A bound-method callback is wrapped in weakref.WeakMethod so its owner is not pinned."""
+        import weakref
+
+        class _Holder:
+            def on_settings(self, settings):
+                pass
+
+        holder = _Holder()
+        manager = _ConfigurationManager()
+        manager.register_callback(holder.on_settings)
+
+        self.assertEqual(len(manager._callbacks), 1)
+        self.assertIsInstance(manager._callbacks[0], weakref.WeakMethod)
+
+    def test_function_callback_stored_directly(self):
+        """A plain function callback is stored as-is (not weakly): it lives for the process anyway."""
+        import weakref
+
+        def on_settings(settings):
+            pass
+
+        manager = _ConfigurationManager()
+        manager.register_callback(on_settings)
+
+        self.assertEqual(len(manager._callbacks), 1)
+        self.assertNotIsInstance(manager._callbacks[0], weakref.WeakMethod)
+        self.assertIs(manager._callbacks[0], on_settings)
+
+    def test_dead_bound_method_not_notified_and_pruned(self):
+        """When a bound method's owner is garbage collected, _notify_callbacks skips it and prunes
+        the dead weak reference, so a discarded exporter is not retained or re-invoked."""
+        import gc
+
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        holder = _Holder(sink)
+        manager.register_callback(holder.on_settings)
+        self.assertEqual(len(manager._callbacks), 1)
+
+        # Drop the only strong reference to the owner and force collection.
+        del holder
+        gc.collect()
+
+        manager._notify_callbacks({"FEATURE": "x"})
+
+        # The dead callback was neither invoked nor left behind.
+        self.assertEqual(sink, [])
+        self.assertEqual(manager._callbacks, [])
+
+    def test_live_bound_method_still_notified(self):
+        """A bound method whose owner is still alive is resolved and invoked normally."""
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        holder = _Holder(sink)
+        manager.register_callback(holder.on_settings)
+
+        manager._notify_callbacks({"FEATURE": "x"})
+
+        self.assertEqual(sink, [{"FEATURE": "x"}])
+        self.assertEqual(len(manager._callbacks), 1)
+
     @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
     def test_worker_initialization(self, mock_worker_class):
         """Test that ConfigurationWorker is initialized properly."""
