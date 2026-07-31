@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0b1 (2026-07-31)
+
+### Other Changes
+
+- Cleaned up the public API surface by moving validation-only error helpers and runtime response builder helpers to private implementation modules.
+
 ## 2.0.0b0 (2026-07-29)
 
 ### Features Added
