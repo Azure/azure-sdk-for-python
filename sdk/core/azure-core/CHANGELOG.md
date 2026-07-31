@@ -6,6 +6,10 @@
 
 - Added `azure-deprecating` to the default allowed headers list in `HttpLoggingPolicy`, so deprecation notification headers are logged without redaction.
 
+### Bugs Fixed
+
+- `AioHttpTransport` now explicitly requests only `gzip` and `deflate` via the `Accept-Encoding` header (unless the caller sets it), preventing services from returning `br` (Brotli) or `zstd` responses that `azure-core` cannot decompress. #47186
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added
