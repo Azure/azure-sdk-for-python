@@ -539,7 +539,7 @@ This library uses the standard [logging](https://docs.python.org/3/library/loggi
 
 (This content is for `azure-appconfiguration-provider` package developer only)
 
-See [tests/README.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration-provider/tests/README.md) for instructions on running unit and integration tests, working with recordings, and setting up environment variables for local testing.
+See [tests/tests.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/appconfiguration/azure-appconfiguration-provider/tests/tests.md) for instructions on running unit and integration tests, working with recordings, and setting up environment variables for local testing.
 
 ## Next steps
 

@@ -8,6 +8,8 @@
 
 ### Breaking Changes
 
+- Raised the minimum supported Python version to 3.10, matching the minimum required by `azure-appconfiguration>=1.10.0b1`. Dropped support for Python 3.7, 3.8, and 3.9.
+
 ### Bugs Fixed
 
 ### Other Changes

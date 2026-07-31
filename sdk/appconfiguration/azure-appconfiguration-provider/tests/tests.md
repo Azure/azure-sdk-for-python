@@ -48,3 +48,25 @@ Notes:
 * Authentication for Entra ID-based tests relies on your local Azure CLI login (`az login`); make sure you're signed in to the subscription that contains your App Configuration store.
 * Add `AZURE_SKIP_LIVE_RECORDING=true` if you want to run tests live against the real store without generating/overwriting recording files (useful for a quick sanity check).
 * Omit `AZURE_TEST_RUN_LIVE` (or set it to `false`) to run the same tests in playback mode against existing recordings — this does not require any of the App Configuration environment variables above.
+
+## Pre-PR validation checks (sdist, mypy, pylint, black, snippets)
+
+Make sure all unit tests and live tests passed, test recodings updated, all tests against recordings also passed. 
+
+Before opening or updating a PR, run the same static/build checks that CI enforces, using the `azpysdk` entrypoint from `eng/tools/azure-sdk-tools`. See [doc/tool_usage_guide.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md) for the full list of available checks and options (e.g. `--isolate`).
+
+From this package's directory (`sdk/appconfiguration/azure-appconfiguration-provider`):
+
+```bash
+azpysdk sdist .           # builds the sdist and runs the full test suite against it
+azpysdk mypy .            # static type checking
+azpysdk pylint .          # lint checks
+azpysdk black .           # formatting check (auto-reformats files in place)
+azpysdk update_snippet .  # regenerates README code snippets from sample files
+```
+
+Notes:
+
+* Run `black` again after making any other fixes, since it may reformat files you just edited.
+* Run `update_snippet` after changing any `samples/*.py` file, then diff to confirm the regenerated snippets in `README.md` match what you expect.
+* See [doc/dev/pylint_checking.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md) and [doc/dev/static_type_checking_cheat_sheet.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md) for guidance on fixing pylint/mypy issues.

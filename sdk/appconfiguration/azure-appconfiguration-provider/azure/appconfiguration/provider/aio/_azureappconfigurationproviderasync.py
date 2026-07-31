@@ -168,8 +168,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # own page-level etag state, since they are a separate resource type with a separate
                 # change-detection mechanism.
                 if not self._enhanced_feature_flag_etags or await client.check_enhanced_feature_flag_etags(
-                    self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers,
-                    **kwargs
+                    self._enhanced_feature_flag_selectors, self._enhanced_feature_flag_etags, headers=headers, **kwargs
                 ):
                     enhanced_feature_flags, enhanced_feature_flag_etags = await client.load_enhanced_feature_flags(
                         self._enhanced_feature_flag_selectors, headers=headers, **kwargs

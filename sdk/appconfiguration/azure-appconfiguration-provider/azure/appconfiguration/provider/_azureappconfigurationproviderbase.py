@@ -21,6 +21,7 @@ from typing import (
     ItemsView,
     ValuesView,
     TypeVar,
+    cast,
 )
 from azure.appconfiguration import (  # type:ignore # pylint:disable=no-name-in-module
     ConfigurationSetting,
@@ -95,7 +96,7 @@ def _normalize_feature_flag_selectors(
     - kv_selectors: Used to load key-value based feature flags (``SettingSelector.key_filter`` is used as the key
       filter).
     - enhanced_selectors: Used to load enhanced feature flags from the dedicated feature flag resource endpoint
-      (``FeatureFlagSelector.name_filter`` is used as the name filter). 
+      (``FeatureFlagSelector.name_filter`` is used as the name filter).
 
     :param selectors: The customer-provided feature flag selectors, or None to use the default (all feature flags
      without a label).
@@ -103,8 +104,12 @@ def _normalize_feature_flag_selectors(
     :return: A tuple of (kv_selectors, enhanced_selectors).
     :rtype: Tuple[List[SettingSelector], List[FeatureFlagSelector]]
     """
-    if not selectors:
+    if selectors is None:
         return [SettingSelector(key_filter="*")], [FeatureFlagSelector(name_filter="*")]
+    if not selectors:
+        # An explicitly empty collection of selectors means no feature flags should be loaded, unlike None
+        # which falls back to the default of loading all unlabeled feature flags.
+        return [], []
 
     selectors_iter = iter(selectors)
     first_selector = next(selectors_iter)
@@ -117,18 +122,24 @@ def _normalize_feature_flag_selectors(
             )
 
     if is_feature_flag_selector:
+        feature_flag_selectors = cast(List[FeatureFlagSelector], selectors)
         kv_selectors = [
-            SettingSelector(key_filter=select.name_filter, label_filter=select.label_filter, tag_filters=select.tag_filters)
-            for select in selectors
+            SettingSelector(
+                key_filter=select.name_filter, label_filter=select.label_filter, tag_filters=select.tag_filters
+            )
+            for select in feature_flag_selectors
         ]
         # FeatureFlagSelector has no snapshot_name, so every selector is used for enhanced feature flags.
-        enhanced_selectors = list(selectors)
+        enhanced_selectors = list(feature_flag_selectors)
         return kv_selectors, enhanced_selectors
 
-    kv_selectors = list(selectors)
+    setting_selectors = cast(List[SettingSelector], selectors)
+    kv_selectors = list(setting_selectors)
     enhanced_selectors = [
-        FeatureFlagSelector(name_filter=select.key_filter, label_filter=select.label_filter, tag_filters=select.tag_filters)
-        for select in selectors
+        FeatureFlagSelector(
+            name_filter=select.key_filter, label_filter=select.label_filter, tag_filters=select.tag_filters
+        )
+        for select in setting_selectors
         if select.snapshot_name is None
     ]
     return kv_selectors, enhanced_selectors
@@ -273,7 +284,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 feature_flag_reference += f"?label={label}"
 
             feature_flag_value[TELEMETRY_KEY][METADATA_KEY][FEATURE_FLAG_REFERENCE_KEY] = feature_flag_reference
-            allocation_id = self._generate_allocation_id(feature_flag_value, reference_path_segment)
+            allocation_id = self._generate_allocation_id(feature_flag_value)
             if allocation_id:
                 feature_flag_value[TELEMETRY_KEY][METADATA_KEY][ALLOCATION_ID_KEY] = allocation_id
 
@@ -287,14 +298,12 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             self._tracing_context.update_max_variants(len(variants))
 
     @staticmethod
-    def _generate_allocation_id(feature_flag_value: Dict[str, JSON], reference_path_segment: str) -> Optional[str]:
+    def _generate_allocation_id(feature_flag_value: Dict[str, JSON]) -> Optional[str]:
         """
         Generates an allocation ID for the specified feature.
         seed=123abc\ndefault_when_enabled=Control\npercentiles=0,Control,20;20,Test,100\nvariants=Control,standard;Test,special # pylint:disable=line-too-long
 
         :param  Dict[str, JSON] feature_flag_value: The feature to generate an allocation ID for.
-        :param str reference_path_segment: The path segment identifying which source the feature flag was loaded
-         from, e.g. "kv" for key-value based feature flags or "ff" for enhanced feature flags. 
         :rtype: str
         :return: The allocation ID.
         """
@@ -356,13 +365,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
                 for v in sorted_variants:
                     allocation_id += f"{base64.b64encode(v.get('name', '').encode()).decode()},"
-                    # Key-value based feature flags store the variant value under "configuration_value". Enhanced
-                    # feature flags store it under "value" instead.
-                    if reference_path_segment == FEATURE_FLAG_KV_REFERENCE_SEGMENT:
-                        value_key = "configuration_value"
-                    else:
-                        value_key = "value"
-                    allocation_id += f"{json.dumps(v.get(value_key, ''), separators=(',', ':'), sort_keys=True)}"
+                    allocation_id += (
+                        f"{json.dumps(v.get('configuration_value', ''), separators=(',', ':'), sort_keys=True)}"
+                    )
                     allocation_id += ";"
                 if sorted_variants:
                     allocation_id = allocation_id[:-1]
@@ -490,20 +495,20 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         feature_flags: Optional[List[FeatureFlagConfigurationSetting]],
         enhanced_feature_flags: Optional[List[FeatureFlag]] = None,
     ) -> Dict[str, Any]:
-        if feature_flags or enhanced_feature_flags:
+        if feature_flags or enhanced_feature_flags is not None:
             # Reset feature flag usage
             self._tracing_context.reset_feature_filter_usage()
 
         if feature_flags:
             self._processed_kv_feature_flags = [self._process_kv_feature_flag(ff) for ff in feature_flags]
 
-        if enhanced_feature_flags:
+        if enhanced_feature_flags is not None:
             self._processed_enhanced_feature_flags = [
                 self._process_enhanced_feature_flag(ff) for ff in enhanced_feature_flags
             ]
         self._tracing_context.uses_enhanced_feature_flags = bool(enhanced_feature_flags)
 
-        if feature_flags or enhanced_feature_flags:
+        if feature_flags or enhanced_feature_flags is not None:
             processed_feature_flags = self._merge_feature_flags(
                 self._processed_kv_feature_flags, self._processed_enhanced_feature_flags
             )
@@ -534,9 +539,13 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         merged: Dict[str, Dict[str, Any]] = {}
         for ff in kv_feature_flags:
             identifier = ff.get(FEATURE_FLAG_ID_FIELD)
+            if identifier is None:
+                continue
             merged[identifier] = ff
         for ff in enhanced_feature_flags:
             identifier = ff.get(FEATURE_FLAG_ID_FIELD)
+            if identifier is None:
+                continue
             merged[identifier] = ff
         return list(merged.values())
 
@@ -554,7 +563,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         """
         Convert an enhanced feature flag, loaded from the enhanced feature flag endpoint, into a dictionary that
         matches the feature management library's schema.
-        Ref: https://github.com/microsoft/FeatureManagement/blob/main/Schema/FeatureFlag.v2.0.0.schema.json 
+        Ref: https://github.com/microsoft/FeatureManagement/blob/main/Schema/FeatureFlag.v2.0.0.schema.json
 
         :param feature_flag: The enhanced feature flag.
         :type feature_flag: ~azure.appconfiguration.FeatureFlag
@@ -588,7 +597,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             feature_flag_value["variants"] = [
                 {
                     "name": variant.name,
-                    "value": variant.value,
+                    "configuration_value": variant.value,
                     "content_type": variant.content_type,
                     "status_override": variant.status_override,
                 }
@@ -605,8 +614,8 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
                 allocation_value["percentile"] = [
                     {
                         "variant": percentile.variant,
-                        "percentile_from": percentile.percentile_from,
-                        "percentile_to": percentile.percentile_to,
+                        "from": percentile.percentile_from,
+                        "to": percentile.percentile_to,
                     }
                     for percentile in feature_flag.allocation.percentile
                 ]

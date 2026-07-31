@@ -347,7 +347,7 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         self, feature_flag_selectors: List[FeatureFlagSelector], page_etags: List[List[str]], **kwargs
     ) -> bool:
         """
-        Checks if any enhanced feature flag page has changed using page etags. 
+        Checks if any enhanced feature flag page has changed using page etags.
 
         :param feature_flag_selectors: List of feature flag selectors for feature flags
         :type feature_flag_selectors: List[FeatureFlagSelector]

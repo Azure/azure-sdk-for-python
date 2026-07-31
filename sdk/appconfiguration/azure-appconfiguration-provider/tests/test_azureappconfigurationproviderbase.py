@@ -34,7 +34,6 @@ from azure.appconfiguration.provider._constants import (
     METADATA_KEY,
     ETAG_KEY,
     FEATURE_FLAG_REFERENCE_KEY,
-    FEATURE_FLAG_KV_REFERENCE_SEGMENT,
 )
 from azure.appconfiguration.provider._refresh_timer import _RefreshTimer
 
@@ -229,6 +228,23 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
         self.assertEqual(provider._enhanced_feature_flag_selectors[0].name_filter, key_select.key_filter)
         self.assertEqual(provider._enhanced_feature_flag_selectors[0].label_filter, key_select.label_filter)
 
+    def test_feature_flag_selectors_none_defaults_to_all_unlabeled_flags(self):
+        provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
+
+        self.assertEqual(len(provider._feature_flag_selectors), 1)
+        self.assertEqual(provider._feature_flag_selectors[0].key_filter, "*")
+        self.assertEqual(len(provider._enhanced_feature_flag_selectors), 1)
+        self.assertEqual(provider._enhanced_feature_flag_selectors[0].name_filter, "*")
+
+    def test_feature_flag_selectors_explicit_empty_list_loads_none(self):
+        provider = AzureAppConfigurationProviderBase(
+            endpoint="https://test.azconfig.io",
+            feature_flag_selectors=[],
+        )
+
+        self.assertEqual(provider._feature_flag_selectors, [])
+        self.assertEqual(provider._enhanced_feature_flag_selectors, [])
+
     def test_process_key_name_with_no_prefix(self):
         """Test key name processing with no matching prefix."""
         config = Mock()
@@ -374,9 +390,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
     def test_generate_allocation_id_no_allocation(self):
         """Test allocation ID generation with no allocation."""
         feature_flag_value: Dict[str, Any] = {"no_allocation": "here"}
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(
-            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
-        )
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
         self.assertIsNone(result)
 
     def test_generate_allocation_id_with_allocation(self):
@@ -393,9 +407,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
             ],
         }
 
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(
-            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
-        )
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
         self.assertIsNotNone(result)
         self.assertIsInstance(result, str)
         # Should be a base64 encoded string
@@ -414,9 +426,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 "default_when_enabled": "Control"
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(
-            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
-        )
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
         # Since default_when_enabled is provided, allocated_variants won't be empty
         # so this should return a valid allocation ID
         self.assertIsNotNone(result)
@@ -429,9 +439,7 @@ class TestAzureAppConfigurationProviderBase(unittest.TestCase):
                 # No seed and no default_when_enabled
             }
         }
-        result = AzureAppConfigurationProviderBase._generate_allocation_id(
-            feature_flag_value, FEATURE_FLAG_KV_REFERENCE_SEGMENT
-        )
+        result = AzureAppConfigurationProviderBase._generate_allocation_id(feature_flag_value)
         # This should return None because allocated_variants is empty and no seed
         self.assertIsNone(result)
 
@@ -528,13 +536,13 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
 
         self.assertEqual(len(result["variants"]), 2)
         self.assertEqual(result["variants"][0]["name"], "Control")
-        self.assertEqual(result["variants"][0]["value"], {"key": "control_value"})
+        self.assertEqual(result["variants"][0]["configuration_value"], {"key": "control_value"})
         self.assertEqual(result["variants"][1]["content_type"], "application/json")
 
         allocation = result["allocation"]
         self.assertEqual(allocation["default_when_disabled"], "Control")
         self.assertEqual(allocation["default_when_enabled"], "Test")
-        self.assertEqual(allocation["percentile"], [{"variant": "Control", "percentile_from": 0, "percentile_to": 50}])
+        self.assertEqual(allocation["percentile"], [{"variant": "Control", "from": 0, "to": 50}])
         self.assertEqual(allocation["user"], [{"variant": "Test", "users": ["user1"]}])
         self.assertEqual(allocation["group"], [{"variant": "Test", "groups": ["group1"]}])
         self.assertEqual(allocation["seed"], "1234")
@@ -644,6 +652,32 @@ class TestMergeFeatureFlags(unittest.TestCase):
         merged = AzureAppConfigurationProviderBase._merge_feature_flags([], enhanced_flags)
 
         self.assertEqual(len(merged), 2)
+
+
+class TestProcessAndMergeFeatureFlags(unittest.TestCase):
+    """Test _process_and_merge_feature_flags distinguishes None (not loaded this round) from an explicitly
+    empty list (loaded this round, zero found)."""
+
+    def setUp(self):
+        self.provider = AzureAppConfigurationProviderBase(endpoint="https://test.azconfig.io")
+
+    def test_enhanced_feature_flags_none_preserves_previous_processed_flags(self):
+        feature_flag = FeatureFlag(name="MyFeature", enabled=True)
+        self.provider._process_and_merge_feature_flags({}, [], None, [feature_flag])
+        self.assertEqual(len(self.provider._processed_enhanced_feature_flags), 1)
+
+        # Passing None again should leave the previously processed enhanced feature flags untouched.
+        self.provider._process_and_merge_feature_flags({}, [], None, None)
+        self.assertEqual(len(self.provider._processed_enhanced_feature_flags), 1)
+
+    def test_enhanced_feature_flags_explicit_empty_list_clears_previous_processed_flags(self):
+        feature_flag = FeatureFlag(name="MyFeature", enabled=True)
+        self.provider._process_and_merge_feature_flags({}, [], None, [feature_flag])
+        self.assertEqual(len(self.provider._processed_enhanced_feature_flags), 1)
+
+        # An explicitly empty list means the endpoint was queried and returned zero feature flags.
+        self.provider._process_and_merge_feature_flags({}, [], None, [])
+        self.assertEqual(self.provider._processed_enhanced_feature_flags, [])
 
 
 if __name__ == "__main__":

@@ -601,4 +601,3 @@ class TestEnhancedFeatureFlagTracking(unittest.TestCase):
         correlation_header = updated_headers.get("Correlation-Context", "")
         self.assertIn(SNAPSHOT_REFERENCE_TAG, correlation_header)
         self.assertIn(ENHANCED_FEATURE_FLAG_TAG, correlation_header)
-
