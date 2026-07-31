@@ -290,7 +290,11 @@ async def test_validates_like_m365_storage(monkeypatch: pytest.MonkeyPatch) -> N
 
     with pytest.raises(ValueError, match="Keys are required"):
         await storage.read([], target_cls=_TestStoreItem)
-    with pytest.raises(TypeError, match="target_cls"):
+    # microsoft-agents-hosting-core >= 1.3.0 makes AsyncStorageBase.read require
+    # target_cls (omitting it raises TypeError at the API boundary); older
+    # supported versions (>= 1.1.0 floor) raise ValueError from the validation
+    # path. Accept both so the test covers the full declared dependency range.
+    with pytest.raises((ValueError, TypeError), match="target_cls"):
         await storage.read(["k"])
     with pytest.raises(ValueError, match="Changes are required"):
         await storage.write({})
