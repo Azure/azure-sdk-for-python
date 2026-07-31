@@ -1,0 +1,170 @@
+# coding=utf-8
+# --------------------------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License. See License.txt in the project root for license information.
+# --------------------------------------------------------------------------
+"""Customize generated code here.
+
+Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
+"""
+
+from collections.abc import MutableMapping # pylint:disable=import-error
+from typing import Any, IO, Optional, Union, cast, overload
+
+from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
+from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.utils import case_insensitive_dict
+
+from ... import models as _models
+from ._operations import _AnalyzeDocumentsClientOperationsMixin as GeneratedAnalyzeDocumentsClientOperationsMixin
+from .._lro import AnalyzeDocumentsAsyncLROPollingMethod
+
+JSON = MutableMapping[str, Any]
+
+
+class _AnalyzeDocumentsClientOperationsMixin(GeneratedAnalyzeDocumentsClientOperationsMixin):
+    @overload
+    async def begin_submit_job(
+        self, body: _models.AnalyzeDocumentsJob, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
+    @overload
+    async def begin_submit_job(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
+    @overload
+    async def begin_submit_job(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        ...
+
+    @distributed_trace_async
+    async def begin_submit_job(
+        self,
+        body: Union[_models.AnalyzeDocumentsJob, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> AsyncLROPoller[None]:
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)
+
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+            return None
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                AsyncPollingMethod,
+                AnalyzeDocumentsAsyncLROPollingMethod(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token is not None:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        raw_result = await self._submit_job_initial(
+            body=body,
+            content_type=content_type,
+            cls=lambda x, y, z: x,
+            headers=_headers,
+            params=_params,
+            **kwargs
+        )
+        await raw_result.http_response.read() # type: ignore[attr-defined]
+
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)
+
+    @distributed_trace_async
+    async def begin_cancel_job(self, job_id: str, **kwargs: Any) -> AsyncLROPoller[None]:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)
+
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):
+            if cls:
+                return cls(pipeline_response, None, {})
+            return None
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                AsyncPollingMethod,
+                AnalyzeDocumentsAsyncLROPollingMethod(
+                    lro_delay,
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
+            )
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
+
+        if cont_token is not None:
+            return AsyncLROPoller[None].from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+
+        raw_result = await self._cancel_job_initial(
+            job_id=job_id,
+            cls=lambda x, y, z: x,
+            headers=_headers,
+            params=_params,
+            **kwargs
+        )
+        await raw_result.http_response.read() # type: ignore[attr-defined]
+
+        return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)
+
+
+__all__: list[str] = [
+    "_AnalyzeDocumentsClientOperationsMixin",
+]
+
+
+def patch_sdk():
+    """Do not remove from this file.
+
+    `patch_sdk` is a last resort escape hatch that allows you to do customizations
+    you can't accomplish using the techniques described in
+    https://aka.ms/azsdk/python/dpcodegen/python/customize
+    """
