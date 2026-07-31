@@ -93,7 +93,7 @@ async def main() -> None:
                     max_candidates=3,
                     eval_model=eval_model,
                     optimization_model=optimization_model,
-                )
+                ),
             )
         )
 
