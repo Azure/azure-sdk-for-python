@@ -16,7 +16,7 @@ DESCRIPTION:
 
     If you are targeting a different endpoint (e.g. GitHub Models endpoint,
     Serverless API endpoint, Managed Compute endpoint) the client constructor may
-    needs to be modified. See package documentation:
+    need to be modified. See package documentation:
     https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-inference/README.md#key-concepts
 
 USAGE:
@@ -24,7 +24,7 @@ USAGE:
 
     Set these two environment variables before running the sample:
     1) AZURE_OPENAI_CHAT_ENDPOINT - Your AOAI endpoint URL, with partial path, in the form
-        https://<your-unique-resouce-name>.openai.azure.com/openai/deployments/<your-deployment-name>
+        https://<your-unique-resource-name>.openai.azure.com/openai/deployments/<your-deployment-name>
         where `your-unique-resource-name` is your globally unique AOAI resource name,
         and `your-deployment-name` is your AI Model deployment name.
         For example: https://your-unique-host.openai.azure.com/openai/deployments/gpt-4o
@@ -127,7 +127,7 @@ def sample_chat_completions_with_structured_output():
         response_format=JsonSchemaFormat(
             name="Recipe_JSON_Schema",
             schema=json_schema,
-            description="Descripes a recipe in details, listing the ingredients, the steps and the time needed to prepare it",
+            description="Describes a recipe in detail, listing the ingredients, the steps and the time needed to prepare it",
             strict=True,
         ),
         messages=[
