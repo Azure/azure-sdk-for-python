@@ -84,12 +84,10 @@ def in_public() -> int:
 
 
 def in_analyze_weekly() -> int:
-    # Returns 4 if the build originates from the tests-weekly analyze job
+    # Returns 4 if the build originates from the analyze-weekly job
     # 0 otherwise
-    if (
-        "tests-weekly" in os.getenv("SYSTEM_DEFINITIONNAME", "")
-        and os.getenv("SYSTEM_STAGEDISPLAYNAME", "") == "Analyze_Test"
-    ):
+    # The analyze-weekly stage sets AZURE_SDK_ANALYZE_WEEKLY=1 (see python-analyze-weekly.yml).
+    if os.getenv("AZURE_SDK_ANALYZE_WEEKLY", "") == "1":
         return 4
     return 0
 

@@ -11,13 +11,23 @@ parameters:
   - name: JobName
     type: string
     default: 'Test'
+  - name: DependsOn
+    type: object
+    default: []
+  - name: Condition
+    type: string
+    default: succeeded()
 
 stages:
   - stage:
     displayName: 'Analyze_${{ parameters.JobName }}'
     variables:
       - template: /eng/pipelines/templates/variables/image.yml
-    dependsOn: []
+      # Signals the analyze-weekly context to the Python tooling (see ci_tools.variables.in_analyze_weekly).
+      - name: AZURE_SDK_ANALYZE_WEEKLY
+        value: '1'
+    dependsOn: ${{ parameters.DependsOn }}
+    condition: ${{ parameters.Condition }}
     jobs:
       - job: 'Analyze'
         timeoutInMinutes: 90
