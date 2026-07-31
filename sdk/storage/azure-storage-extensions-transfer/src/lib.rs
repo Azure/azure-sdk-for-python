@@ -14,6 +14,7 @@ use std::num::NonZero;
 use std::sync::Arc;
 
 use azure_core::credentials::{AccessToken, Secret, TokenCredential, TokenRequestOptions};
+use azure_core::http::headers::HeaderName;
 use azure_core::http::{NoFormat, RequestContent, Url};
 use azure_core::Bytes;
 use azure_storage_blob::models::{
@@ -238,11 +239,137 @@ fn upload_blob<'py>(
     Ok(dict)
 }
 
-/// Download a block blob using the Rust SDK's `download_into` API.
+/// Default download window size (256 MiB).
 ///
-/// Uses `download_into` which writes directly into a pre-allocated buffer,
-/// avoiding intermediate allocations. The GIL is released during the entire
-/// Rust I/O operation.
+/// Each iteration of [`NativeDownloadStream`] fills one window via `download_into`, so peak
+/// memory is bounded to a single window while the Rust SDK still performs parallel
+/// partitioned range fetches *within* that window. A large window keeps that intra-window
+/// parallelism high.
+const DEFAULT_WINDOW_SIZE: u64 = 256 * 1024 * 1024;
+
+/// The `Content-Range` response header (`bytes start-end/total`).
+const CONTENT_RANGE: HeaderName = HeaderName::from_static("content-range");
+
+/// Parse the total resource length from a `Content-Range: bytes start-end/total` header value.
+///
+/// Returns `None` if the header is malformed or the total is `*` (unknown length).
+fn parse_content_range_total(value: &str) -> Option<u64> {
+    let total = value.rsplit('/').next()?.trim();
+    if total == "*" {
+        return None;
+    }
+    total.parse::<u64>().ok()
+}
+
+/// A lazy, windowed blob download exposed to Python as an iterator of `bytes` chunks.
+///
+/// Rather than pre-allocating a single arbitrarily large buffer (which fails for blobs larger
+/// than the buffer and holds the whole blob in memory), each iteration downloads one
+/// `window_size`-byte window using the Rust SDK's parallel `download_into`. Throughput within a
+/// window still benefits from concurrent range requests, while peak memory stays bounded to a
+/// single window. The total blob size is learned from the first window's `Content-Range`
+/// response header, so no separate metadata request is required.
+#[pyclass]
+struct NativeDownloadStream {
+    client: BlobClient,
+    max_concurrency: Option<usize>,
+    window_size: u64,
+    /// Absolute blob offset of the next window to fetch.
+    next_offset: u64,
+    /// Absolute end offset (exclusive) of the overall requested region.
+    end_offset: u64,
+    /// Total number of bytes this stream will deliver.
+    size: u64,
+    /// First window, downloaded eagerly during construction so `size` is known immediately
+    /// and the first chunk is ready without another round trip.
+    pending: Option<Py<PyBytes>>,
+    etag: Option<String>,
+    last_modified: Option<String>,
+}
+
+impl NativeDownloadStream {
+    /// Download a single window `[offset, offset + len)` into a fresh buffer and return it as
+    /// Python `bytes` along with the number of bytes actually written. Releases the GIL during
+    /// the network/IO operation.
+    fn fetch_window<'py>(
+        client: &BlobClient,
+        max_concurrency: Option<usize>,
+        py: Python<'py>,
+        offset: u64,
+        len: u64,
+    ) -> PyResult<(Bound<'py, PyBytes>, u64)> {
+        let mut options = BlobClientDownloadOptions::default();
+        options.range = Some(HttpRange::new(offset, len));
+        if let Some(concurrency) = max_concurrency {
+            options.parallel = NonZero::new(concurrency);
+        }
+
+        let (buffer, written) = py.detach(move || {
+            RUNTIME.block_on(async {
+                let mut buffer = vec![0u8; len as usize];
+                let result = client
+                    .download_into(&mut buffer, Some(options))
+                    .await
+                    .map_err(AzureError::from)?;
+                buffer.truncate(result.len);
+                Ok::<(Vec<u8>, u64), PyErr>((buffer, result.len as u64))
+            })
+        })?;
+
+        Ok((PyBytes::new(py, &buffer), written))
+    }
+}
+
+#[pymethods]
+impl NativeDownloadStream {
+    /// Total number of bytes this stream will deliver.
+    #[getter]
+    fn size(&self) -> u64 {
+        self.size
+    }
+
+    /// The blob's ETag, if reported by the service.
+    #[getter]
+    fn etag(&self) -> Option<String> {
+        self.etag.clone()
+    }
+
+    /// The blob's last-modified timestamp, if reported by the service.
+    #[getter]
+    fn last_modified(&self) -> Option<String> {
+        self.last_modified.clone()
+    }
+
+    fn __iter__(slf: PyRef<'_, Self>) -> PyRef<'_, Self> {
+        slf
+    }
+
+    /// Return the next window as `bytes`, or `None` (StopIteration) when the blob is exhausted.
+    fn __next__(&mut self, py: Python<'_>) -> PyResult<Option<Py<PyBytes>>> {
+        if let Some(chunk) = self.pending.take() {
+            return Ok(Some(chunk));
+        }
+        if self.next_offset >= self.end_offset {
+            return Ok(None);
+        }
+        let remaining = self.end_offset - self.next_offset;
+        let len = remaining.min(self.window_size);
+        let (chunk, written) =
+            NativeDownloadStream::fetch_window(&self.client, self.max_concurrency, py, self.next_offset, len)?;
+        // Guard against a zero-length read so a truncated/short response can't loop forever.
+        if written == 0 {
+            return Ok(None);
+        }
+        self.next_offset += written;
+        Ok(Some(chunk.unbind()))
+    }
+}
+
+/// Begin a windowed download of a block blob.
+///
+/// Returns a [`NativeDownloadStream`] that yields the blob content one window at a time. The
+/// first window is fetched eagerly so the total `size` is known immediately (parsed from the
+/// `Content-Range` header) and the first chunk is ready without an extra round trip.
 #[pyfunction]
 #[pyo3(signature = (
     url,
@@ -251,50 +378,88 @@ fn upload_blob<'py>(
     offset = None,
     length = None,
     max_concurrency = None,
-    expected_size = None,
+    max_chunk_size = None,
 ))]
-fn download_blob<'py>(
-    py: Python<'py>,
+fn download_blob(
+    py: Python<'_>,
     url: &str,
     token_provider: Option<Py<PyAny>>,
     offset: Option<u64>,
     length: Option<u64>,
     max_concurrency: Option<usize>,
-    expected_size: Option<usize>,
-) -> PyResult<Bound<'py, PyBytes>> {
+    max_chunk_size: Option<u64>,
+) -> PyResult<NativeDownloadStream> {
     let blob_client = build_blob_client(url, token_provider)?;
 
+    // A window size of 0 would make no progress; clamp to at least 1 byte.
+    let window_size = max_chunk_size.unwrap_or(DEFAULT_WINDOW_SIZE).max(1);
+    let start = offset.unwrap_or(0);
+    // First window is bounded by the window size and, if the caller requested a range, by the
+    // requested length.
+    let first_len = match length {
+        Some(l) => l.min(window_size),
+        None => window_size,
+    };
+
     let mut options = BlobClientDownloadOptions::default();
-
-    if let Some(off) = offset {
-        options.range = Some(HttpRange::new(off, length.unwrap_or(u64::MAX - off)));
-    }
-
+    options.range = Some(HttpRange::new(start, first_len));
     if let Some(concurrency) = max_concurrency {
         options.parallel = NonZero::new(concurrency);
     }
 
-    // Determine buffer size: use expected_size if known, or length if specified,
-    // otherwise fall back to a large default that download_into will fill.
-    let buf_size = expected_size
-        .or(length.map(|l| l as usize))
-        .unwrap_or(256 * 1024 * 1024); // 256 MiB default max
-
-    // Release the interpreter (detach this thread) and perform the download on the shared tokio runtime
-    let (data, len) = py
-        .detach(|| {
+    // Fetch the first window and, from its response, learn the total blob size and properties.
+    // The closure borrows `blob_client` (only `&self` is needed by `download_into`) so we retain
+    // ownership afterwards for the returned stream.
+    let (buffer, written, content_range_total, content_length, etag, last_modified) =
+        py.detach(|| {
             RUNTIME.block_on(async {
-                let mut buffer = vec![0u8; buf_size];
+                let mut buffer = vec![0u8; first_len as usize];
                 let result = blob_client
                     .download_into(&mut buffer, Some(options))
                     .await
                     .map_err(AzureError::from)?;
                 buffer.truncate(result.len);
-                Ok::<(Vec<u8>, usize), PyErr>((buffer, result.len))
+                let content_range_total = result
+                    .headers
+                    .get_optional_str(&CONTENT_RANGE)
+                    .and_then(parse_content_range_total);
+                let content_length = result.properties.content_length;
+                let etag = result.properties.etag.map(|e| e.to_string());
+                let last_modified = result.properties.last_modified.map(|d| d.to_string());
+                Ok::<_, PyErr>((
+                    buffer,
+                    result.len as u64,
+                    content_range_total,
+                    content_length,
+                    etag,
+                    last_modified,
+                ))
             })
         })?;
 
-    Ok(PyBytes::new(py, &data[..len]))
+    // The total addressable size of the blob. Prefer the `Content-Range` total; fall back to
+    // the response `Content-Length`, then to what we actually read.
+    let total_blob_size = content_range_total.or(content_length).unwrap_or(start + written);
+
+    let end_offset = match length {
+        Some(l) => (start + l).min(total_blob_size),
+        None => total_blob_size,
+    };
+    let size = end_offset.saturating_sub(start);
+
+    let pending = Some(PyBytes::new(py, &buffer).unbind());
+
+    Ok(NativeDownloadStream {
+        client: blob_client,
+        max_concurrency,
+        window_size,
+        next_offset: start + written,
+        end_offset,
+        size,
+        pending,
+        etag,
+        last_modified,
+    })
 }
 
 /// Python module definition.
@@ -302,5 +467,6 @@ fn download_blob<'py>(
 fn _native(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(upload_blob, m)?)?;
     m.add_function(wrap_pyfunction!(download_blob, m)?)?;
+    m.add_class::<NativeDownloadStream>()?;
     Ok(())
 }

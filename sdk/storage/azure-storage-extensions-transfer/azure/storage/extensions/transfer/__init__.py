@@ -13,7 +13,7 @@ install it via the `ext-transfer` extra on `azure-storage-blob`:
     pip install azure-storage-blob[ext-transfer]
 """
 
-from typing import Callable
+from typing import Callable, Iterator
 
 from ._version import VERSION
 
@@ -97,9 +97,15 @@ def download_blob(
     offset: "int | None" = None,
     length: "int | None" = None,
     max_concurrency: "int | None" = None,
-    expected_size: "int | None" = None,
-) -> bytes:
-    """Download a block blob using the native Rust extension.
+    max_chunk_size: "int | None" = None,
+) -> "Iterator[bytes]":
+    """Begin a windowed download of a block blob using the native Rust extension.
+
+    The returned object is a lazy iterator: each iteration downloads one window (up to
+    ``max_chunk_size`` bytes, 256 MiB by default) via the Rust SDK's parallel ``download_into``.
+    Peak memory is therefore bounded to a single window rather than the whole blob, while each
+    window still benefits from concurrent range requests. This handles blobs of any size,
+    including those larger than a single buffer.
 
     :param str url: The fully-qualified blob URL
         (e.g. https://account.blob.core.windows.net/container/blob). Must be correctly
@@ -114,9 +120,11 @@ def download_blob(
     :keyword int offset: Start of byte range to download.
     :keyword int length: Number of bytes to download from offset.
     :keyword int max_concurrency: Maximum number of parallel connections for chunked downloads.
-    :keyword int expected_size: Expected blob size in bytes. Used to pre-allocate the download buffer.
-    :returns: The blob content as bytes.
-    :rtype: bytes
+    :keyword int max_chunk_size: Size in bytes of each download window. Defaults to 256 MiB.
+        Larger windows increase intra-window parallelism at the cost of higher peak memory.
+    :returns: A lazy iterator yielding the blob content one window at a time. The object also
+        exposes ``size`` (total bytes to be delivered), ``etag``, and ``last_modified``.
+    :rtype: Iterator[bytes]
     :raises ValueError: If the native module is not available.
     """
     if not _NATIVE_AVAILABLE:
@@ -130,5 +138,5 @@ def download_blob(
         offset=offset,
         length=length,
         max_concurrency=max_concurrency,
-        expected_size=expected_size,
+        max_chunk_size=max_chunk_size,
     )
