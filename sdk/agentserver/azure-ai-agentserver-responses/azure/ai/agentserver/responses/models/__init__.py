@@ -11,10 +11,7 @@ from ._generated import *  # type: ignore # noqa: F401,F403 # pylint: disable=un
 from ._generated import _unions as _generated_unions
 from ._generated import types as _generated_types
 from ._helpers import (  # pylint: disable=unused-import
-    get_conversation_expanded,
-    get_conversation_id,
     get_input_expanded,
-    get_tool_choice_expanded,
 )
 from ._runtime import (  # pylint: disable=unused-import
     ResponseStatus,
@@ -65,9 +62,6 @@ __all__ = [
     "ResponseIncompleteReason",
     "ResponseStatus",
     "TerminalResponseStatus",
-    "get_conversation_expanded",
-    "get_conversation_id",
     "get_input_expanded",
-    "get_tool_choice_expanded",
     *_generated_all,
 ]

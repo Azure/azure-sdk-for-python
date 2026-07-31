@@ -1,13 +1,7 @@
 ```py
 namespace azure.ai.agentserver.responses
 
-    def azure.ai.agentserver.responses.get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[str]: ...
-
-
     def azure.ai.agentserver.responses.get_input_expanded(request: CreateResponse) -> list[Item]: ...
-
-
-    def azure.ai.agentserver.responses.to_output_item(item: Item, response_id: str | None = None) -> OutputItem | None: ...
 
 
     class azure.ai.agentserver.responses.CreateResponse(TypedDict, total=False):
@@ -1640,16 +1634,7 @@ namespace azure.ai.agentserver.responses.hosting
 
 namespace azure.ai.agentserver.responses.models
 
-    def azure.ai.agentserver.responses.models.get_conversation_expanded(request: CreateResponse) -> Optional[ConversationParam_2]: ...
-
-
-    def azure.ai.agentserver.responses.models.get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[str]: ...
-
-
     def azure.ai.agentserver.responses.models.get_input_expanded(request: CreateResponse) -> list[Item]: ...
-
-
-    def azure.ai.agentserver.responses.models.get_tool_choice_expanded(request: CreateResponse) -> dict[str, Any] | None: ...
 
 
     class azure.ai.agentserver.responses.models.A2APreviewTool(TypedDict, total=False):

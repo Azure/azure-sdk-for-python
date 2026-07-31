@@ -26,7 +26,7 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     get_input_expanded,
 )
-from azure.ai.agentserver.responses.models import (
+from azure.ai.agentserver.responses.models._helpers import (
     get_tool_choice_expanded,
 )
 
