@@ -10880,6 +10880,14 @@ namespace azure.ai.ml.operations
             ) -> LROPoller[None]: ...
 
         @distributed_trace
+        @monitor_with_activity(ops_logger, 'Job.Delete', ActivityType.PUBLICAPI)
+        def begin_delete(
+                self, 
+                name: str, 
+                **kwargs: Any
+            ) -> LROPoller[None]: ...
+
+        @distributed_trace
         @monitor_with_telemetry_mixin(ops_logger, 'Job.CreateOrUpdate', ActivityType.PUBLICAPI)
         def create_or_update(
                 self, 

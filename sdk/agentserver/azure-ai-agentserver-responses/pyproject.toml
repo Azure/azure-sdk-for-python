@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b8",
+    "azure-ai-agentserver-core>=2.0.0b9",
     "azure-core>=1.30.0",
     "isodate>=0.6.1",
     "aiohttp>=3.10.0,<4.0.0a0",
@@ -48,7 +48,10 @@ exclude = [
 ]
 
 [tool.setuptools.package-data]
-pytyped = ["py.typed"]
+pytyped = [
+    "py.typed",
+    "models/_generated/py.typed",
+]
 
 [tool.mypy]
 python_version = "3.10"
@@ -69,4 +72,5 @@ azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
 [tool.azure-sdk-build]
 verifytypes = false
 latestdependency = false
+# azure-ai-agentserver-core>=2.0.0b9 is not yet on PyPI
 mindependency = false
