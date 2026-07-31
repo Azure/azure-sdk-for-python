@@ -378,6 +378,103 @@ def _format_data_helper(
     return (filename, cast(str, file_bytes))
 
 
+def _get_decompressor(encoding: str):
+    """Return a zlib decompressor for a supported Content-Encoding, else None.
+
+    Shared kernel for the aiohttp buffered and streaming decompression sites.
+    Takes an already-lowercased encoding value and returns a
+    ``zlib.decompressobj`` configured for ``gzip``/``deflate``. Any other
+    encoding returns ``None``. This helper does not own response objects,
+    chunks, idempotency flags, or headers.
+
+    :param str encoding: The already-lowercased ``Content-Encoding`` value.
+    :rtype: zlib.decompressobj or None
+    :return: A decompressor for supported encodings, otherwise ``None``.
+    """
+    if encoding in ("gzip", "deflate"):
+        import zlib
+
+        zlib_mode = (16 + zlib.MAX_WBITS) if encoding == "gzip" else -zlib.MAX_WBITS
+        return zlib.decompressobj(wbits=zlib_mode)
+    return None
+
+
+def _get_brotli_decompressor():
+    """Return a fresh incremental aiohttp Brotli decompressor, or raise ``DecodeError``.
+
+    Shared by the buffered helper and the streaming generator so both raise an
+    identical, actionable error when no Brotli library is importable. aiohttp only
+    advertises ``br`` in ``Accept-Encoding`` when a Brotli library is importable, so we
+    reuse aiohttp's own Brotli support rather than adding a new azure-core dependency.
+
+    :rtype: aiohttp.compression_utils.BrotliDecompressor
+    :return: A fresh incremental Brotli decompressor.
+    :raises ~azure.core.exceptions.DecodeError: If Brotli support is unavailable.
+    """
+    try:
+        from aiohttp.compression_utils import HAS_BROTLI, BrotliDecompressor
+    except ImportError:
+        HAS_BROTLI = False
+        BrotliDecompressor = None
+
+    if not HAS_BROTLI or BrotliDecompressor is None:
+        from ..exceptions import DecodeError
+
+        raise DecodeError(
+            message=(
+                "Received a response with 'Content-Encoding: br' but Brotli decompression "
+                "is not available. Install Brotli support (for example, 'pip install Brotli') "
+                "to decode this response."
+            )
+        )
+    return BrotliDecompressor()
+
+
+def _drain_brotli_decompress(decompressor, data: bytes) -> bytes:
+    """Feed ``data`` to an aiohttp Brotli decompressor and drain its held output.
+
+    aiohttp's ``BrotliDecompressor.decompress_sync`` caps the bytes returned per call
+    and holds the remainder, so a single call can silently truncate large bodies. Feed
+    the data once, then repeatedly drain with empty input until no more output is
+    produced. Shared by the buffered helper and the streaming generator so the two sites
+    cannot diverge in how they handle the held output.
+
+    :param decompressor: A fresh-or-in-progress aiohttp Brotli decompressor.
+    :type decompressor: aiohttp.compression_utils.BrotliDecompressor
+    :param bytes data: The Brotli-compressed bytes to feed in.
+    :rtype: bytes
+    :return: All decoded bytes available after feeding ``data``.
+    """
+    # Newer aiohttp exposes a synchronous ``decompress_sync``; older versions expose a
+    # synchronous ``decompress``. Prefer the former and fall back to the latter.
+    decompress = getattr(decompressor, "decompress_sync", None) or decompressor.decompress
+    decoded = decompress(data)
+    while True:
+        more = decompress(b"")
+        if not more:
+            break
+        decoded += more
+    return decoded
+
+
+def _decode_brotli_content(content: bytes) -> bytes:
+    """Decode a ``Content-Encoding: br`` body using aiohttp's Brotli support.
+
+    aiohttp only advertises ``br`` in ``Accept-Encoding`` when a Brotli library is
+    importable, so we reuse aiohttp's own Brotli support rather than adding a new
+    azure-core dependency. The aiohttp import and any version differences in the
+    decompressor API are isolated here so the buffered and streaming sites can
+    share one decode path.
+
+    :param bytes content: The Brotli-compressed response body.
+    :rtype: bytes
+    :return: The decoded body bytes.
+    :raises ~azure.core.exceptions.DecodeError: If Brotli support is unavailable.
+    """
+    decompressor = _get_brotli_decompressor()
+    return _drain_brotli_decompress(decompressor, content)
+
+
 def _aiohttp_body_helper(
     response: "PipelineTransportAioHttpTransportResponse",
 ) -> bytes:
@@ -403,12 +500,13 @@ def _aiohttp_body_helper(
     if not enc:
         return response._content
     enc = enc.lower()
-    if enc in ("gzip", "deflate"):
-        import zlib
-
-        zlib_mode = (16 + zlib.MAX_WBITS) if enc == "gzip" else -zlib.MAX_WBITS
-        decompressor = zlib.decompressobj(wbits=zlib_mode)
+    decompressor = _get_decompressor(enc)
+    if decompressor is not None:
         response._content = decompressor.decompress(response._content)
+        response._decompressed_content = True
+        return response._content
+    if enc == "br":
+        response._content = _decode_brotli_content(response._content)
         response._decompressed_content = True
         return response._content
     return response._content

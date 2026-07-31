@@ -8,6 +8,11 @@ import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
+try:
+    from aiohttp.compression_utils import HAS_BROTLI as _HAS_BROTLI
+except ImportError:
+    _HAS_BROTLI = False
+
 
 @pytest.mark.asyncio
 async def test_iter_raw(client):
@@ -248,6 +253,30 @@ async def test_deflate_decompress_compressed_header(client):
     assert content == b"hi there"
     assert response.content == content
     assert response.text() == "hi there"
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not _HAS_BROTLI, reason="Brotli support is not available")
+async def test_brotli_decompress_compressed_header(client):
+    # expect plain text
+    request = HttpRequest("GET", "/encoding/br")
+    response = await client.send_request(request)
+    content = await response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
+
+
+@pytest.mark.asyncio
+@pytest.mark.skipif(not _HAS_BROTLI, reason="Brotli support is not available")
+async def test_brotli_decompress_compressed_header_stream(client):
+    # expect plain text decoded through the async read() cache path
+    request = HttpRequest("GET", "/encoding/br")
+    response = await client.send_request(request, stream=True)
+    content = await response.read()
+    assert content == b"hello world"
+    assert response.content == content
+    assert response.text() == "hello world"
 
 
 @pytest.mark.asyncio
