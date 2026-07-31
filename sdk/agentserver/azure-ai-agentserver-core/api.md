@@ -591,6 +591,12 @@ namespace azure.ai.agentserver.core.tasks
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], MultiTurnTask[Input, Output]]: ...
 
 
+    def azure.ai.agentserver.core.tasks.resilient_tasks_enabled() -> bool: ...
+
+
+    def azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled(value: bool = True) -> None: ...
+
+
     @overload
     def azure.ai.agentserver.core.tasks.task(
             fn: Callable[[TaskContext[Input]], Awaitable[Output]], 
