@@ -88,6 +88,35 @@ def test_url_encoded_data():
     }  # httpx makes this just b'test=123'. set_formdata_body is still keeping it as a dict
 
 
+def test_multipart_data_without_files():
+    # A multipart payload whose file part is optional (and omitted) still must be sent
+    # as multipart, not application/x-www-form-urlencoded. See issue #39163.
+    # The transports build a multipart body from `files`, so the form fields are encoded
+    # as file-less parts and `data` is cleared.
+    request = HttpRequest(
+        "POST",
+        "http://example.org",
+        data={"test": "123"},
+        is_multipart_payload=True,
+    )
+
+    assert "Content-Type" not in request.headers
+    assert request.files == {"test": (None, "123")}
+    assert request.data is None
+
+
+def test_url_encoded_data_when_not_multipart():
+    # Without the multipart flag, data-only requests remain urlencoded (default behavior).
+    request = HttpRequest(
+        "POST",
+        "http://example.org",
+        data={"test": "123"},
+        is_multipart_payload=False,
+    )
+
+    assert request.headers["Content-Type"] == "application/x-www-form-urlencoded"
+
+
 def test_json_encoded_data():
     request = HttpRequest("POST", "http://example.org", json={"test": 123})
 

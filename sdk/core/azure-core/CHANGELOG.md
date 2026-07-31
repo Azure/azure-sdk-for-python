@@ -1,5 +1,11 @@
 # Release History
 
+## 1.42.0 (Unreleased)
+
+### Bugs Fixed
+
+- Fixed `HttpRequest` encoding multipart payloads that carry form data but no file (e.g. when the file part is optional and omitted) as `application/x-www-form-urlencoded`. Such requests can now be flagged with the internal `is_multipart_payload` keyword; the form fields are then encoded as file-less multipart parts so the request is sent as `multipart/form-data`. #39163
+
 ## 1.41.0 (2026-05-07)
 
 ### Features Added

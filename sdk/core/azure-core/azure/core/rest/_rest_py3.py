@@ -116,6 +116,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
             data=data,
             files=files,
             json=json,
+            is_multipart_payload=kwargs.pop("is_multipart_payload", False),
         )
         self.headers: MutableMapping[str, str] = case_insensitive_dict(default_headers)
         self.headers.update(headers or {})
@@ -131,6 +132,7 @@ class HttpRequest(HttpRequestBackcompatMixin):
         data: Optional[Dict[str, Any]] = None,
         files: Optional[FilesType] = None,
         json: Any = None,
+        is_multipart_payload: bool = False,
     ) -> MutableMapping[str, str]:
         """Sets the body of the request, and returns the default headers.
 
@@ -139,6 +141,10 @@ class HttpRequest(HttpRequestBackcompatMixin):
         :param dict data: Form data you want in your request body.
         :param dict files: Files you want to in your request body.
         :param any json: A JSON serializable object.
+        :param bool is_multipart_payload: Whether the payload is meant to be sent as
+         multipart/form-data. When True, the request is treated as multipart even if
+         no file is present (e.g. the file part is optional and omitted), so it is not
+         mislabeled as ``application/x-www-form-urlencoded``.
         :return: The default headers for the request
         :rtype: MutableMapping[str, str]
         """
@@ -155,7 +161,15 @@ class HttpRequest(HttpRequestBackcompatMixin):
         if files:
             default_headers, self._files = set_multipart_body(files)
         if data:
-            default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
+            if is_multipart_payload and not files:
+                # A multipart payload whose only file part is optional (and omitted) must
+                # still be sent as multipart/form-data, not application/x-www-form-urlencoded.
+                # Transports build the multipart body from `files`, so encode the form
+                # fields as file-less parts (name, (None, value)) instead of url-encoding them.
+                default_headers, self._files = set_multipart_body(data)
+                self._data = None
+            else:
+                default_headers, self._data = set_urlencoded_body(data, has_files=bool(files))
         return default_headers
 
     @property
