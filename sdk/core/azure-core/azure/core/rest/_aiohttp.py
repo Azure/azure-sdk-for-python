@@ -35,8 +35,8 @@ from ._http_response_impl_async import (
     AsyncHttpResponseImpl,
     AsyncHttpResponseBackcompatMixin,
 )
-from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from ..utils._pipeline_transport_rest_shared import _pad_attr_name, _aiohttp_body_helper
+from ..pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator, _aiohttp_body_helper
+from ..utils._pipeline_transport_rest_shared import _pad_attr_name
 from ..exceptions import (
     ResponseNotReadError,
     IncompleteReadError,
