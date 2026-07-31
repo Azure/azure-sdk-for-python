@@ -32,11 +32,11 @@ def main():
 
     client.workspace_private_endpoint_connections.begin_delete(
         resource_group_name="rgdiscovery",
-        workspace_name="1e2a3df721db9f3406",
+        workspace_name="2602de8dc5723c9502",
         private_endpoint_connection_name="connection",
     ).result()
 
 
-# x-ms-original-file: 2026-02-01-preview/WorkspacePrivateEndpointConnections_Delete_MaximumSet_Gen.json
+# x-ms-original-file: 2026-06-01/WorkspacePrivateEndpointConnections_Delete_MaximumSet_Gen.json
 if __name__ == "__main__":
     main()

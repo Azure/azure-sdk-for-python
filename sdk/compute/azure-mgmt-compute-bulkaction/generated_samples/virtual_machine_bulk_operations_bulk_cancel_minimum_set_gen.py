@@ -31,13 +31,13 @@ def main():
     )
 
     response = client.virtual_machine_bulk_operations.bulk_cancel_operations(
-        resource_group_name="myResourceGroup",
-        location="eastus2euap",
-        request_body={"operationIds": ["a1b2c3d4-e5f6-7890-abcd-ef0123456789"]},
+        resource_group_name="rgBulkactions",
+        location="useast2euap",
+        request_body={"operationIds": ["af449548-8e1a-4079-874e-2caa4ff783cc"]},
     )
     print(response)
 
 
-# x-ms-original-file: 2026-06-06/VirtualMachineBulkOperations_BulkCancel_MinimumSet_Gen.json
+# x-ms-original-file: 2026-07-06-preview/VirtualMachineBulkOperations_BulkCancel_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

@@ -69,6 +69,8 @@ namespace azure.ai.agentserver.activity
                 name: str | None = None
             ) -> None: ...
 
+        def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
+
         def register_server_version(self, version_segment: str) -> None: ...
 
         def run(
@@ -94,6 +96,34 @@ namespace azure.ai.agentserver.activity
                 /, 
                 **path_params: Any
             ) -> URLPath: ...
+
+
+    class azure.ai.agentserver.activity.FoundryStorage(AsyncStorageBase): implements AsyncContextManager 
+
+        def __init__(
+                self, 
+                *, 
+                credential: AsyncTokenCredential | None = ..., 
+                endpoint: FoundryStorageEndpoint | str | None = ..., 
+                is_user_scoped: Callable[[str], bool] = _default_is_user_scoped, 
+                item_ttl_seconds: int | None = ...
+            ) -> None: ...
+
+        async def aclose(self) -> None: ...
+
+        async def delete(self, keys: list[str]) -> None: ...
+
+        async def initialize(self) -> None: ...
+
+        async def read(
+                self, 
+                keys: list[str], 
+                *, 
+                target_cls: type[StoreItemT], 
+                **kwargs
+            ) -> dict[str, StoreItemT]: ...
+
+        async def write(self, changes: dict[str, StoreItem]) -> None: ...
 
 
 ```

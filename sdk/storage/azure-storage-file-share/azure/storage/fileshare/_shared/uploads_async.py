@@ -6,16 +6,18 @@
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 import inspect
+import os
 import threading
 from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
 from typing import AsyncGenerator, Union
+from uuid import uuid4
 
-from . import encode_base64, url_quote
+from . import encode_base64
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
+from .uploads import IterStreamer, SubStream  # pylint: disable=unused-import
 
 
 async def _async_parallel_uploads(uploader, pending, running):
@@ -140,7 +142,7 @@ async def upload_substream_blocks(
         for block in uploader.get_substream_blocks():
             range_ids.append(await uploader.process_substream_block(block))
     if any(range_ids):
-        return sorted(range_ids)
+        return [block_id for _, block_id in sorted(range_ids, key=lambda r: r[0])]
     return
 
 
@@ -283,9 +285,10 @@ class BlockBlobChunkUploader(_ChunkUploader):
         self.current_length = None
 
     async def _upload_chunk(self, chunk_offset, chunk_data):
-        # TODO: This is incorrect, but works with recording.
+        # Generate a unique block ID for each staged block. The chunk offset is
+        # still returned so the block list can be committed in the correct order.
         index = f"{chunk_offset:032d}"
-        block_id = encode_base64(url_quote(encode_base64(index)))
+        block_id = encode_base64(f"{uuid4().int:048d}")
         await self.service.stage_block(
             block_id,
             len(chunk_data),
@@ -298,7 +301,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
 
     async def _upload_substream_block(self, index, block_stream):
         try:
-            block_id = f"BlockId{(index//self.chunk_size):05}"
+            block_id = encode_base64(os.urandom(9))
             await self.service.stage_block(
                 block_id,
                 len(block_stream),
@@ -309,7 +312,7 @@ class BlockBlobChunkUploader(_ChunkUploader):
             )
         finally:
             block_stream.close()
-        return block_id
+        return index, block_id
 
 
 class PageBlobChunkUploader(_ChunkUploader):
