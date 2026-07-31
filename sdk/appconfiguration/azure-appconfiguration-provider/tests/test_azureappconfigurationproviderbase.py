@@ -462,14 +462,19 @@ class TestProcessEnhancedFeatureFlag(unittest.TestCase):
         self.assertNotIn("enabled", result["telemetry"])
 
     def test_process_enhanced_feature_flag_sets_uses_enhanced_feature_flags_tracing(self):
-        """Processing an enhanced feature flag should mark the tracing context as having used the enhanced
-        feature flag endpoint, for the Correlation-Context telemetry header."""
+        """Processing and merging enhanced feature flags should mark the tracing context as having used the
+        enhanced feature flag endpoint, for the Correlation-Context telemetry header. The flag should reset to
+        False if a subsequent refresh returns no enhanced feature flags."""
         self.assertFalse(self.provider._tracing_context.uses_enhanced_feature_flags)
 
         feature_flag = FeatureFlag(name="MyFeature", enabled=True)
-        self.provider._process_enhanced_feature_flag(feature_flag)
+        self.provider._process_and_merge_feature_flags({}, [], [], [feature_flag])
 
         self.assertTrue(self.provider._tracing_context.uses_enhanced_feature_flags)
+
+        self.provider._process_and_merge_feature_flags({}, [], [], [])
+
+        self.assertFalse(self.provider._tracing_context.uses_enhanced_feature_flags)
 
     def test_process_enhanced_feature_flag_with_label_and_description(self):
         """Test processing an enhanced feature flag with label and description."""

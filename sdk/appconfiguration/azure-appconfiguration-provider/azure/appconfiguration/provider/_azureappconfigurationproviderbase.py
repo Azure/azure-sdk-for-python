@@ -106,14 +106,17 @@ def _normalize_feature_flag_selectors(
     if not selectors:
         return [SettingSelector(key_filter="*")], [FeatureFlagSelector(name_filter="*")]
 
-    is_feature_flag_selector = [isinstance(select, FeatureFlagSelector) for select in selectors]
-    if any(is_feature_flag_selector) and not all(is_feature_flag_selector):
-        raise TypeError(
-            "feature_flag_selectors must be either a list of SettingSelector or a list of FeatureFlagSelector, "
-            "not a mix of both."
-        )
+    selectors_iter = iter(selectors)
+    first_selector = next(selectors_iter)
+    is_feature_flag_selector = isinstance(first_selector, FeatureFlagSelector)
+    for select in selectors_iter:
+        if isinstance(select, FeatureFlagSelector) != is_feature_flag_selector:
+            raise TypeError(
+                "feature_flag_selectors must be either a list of SettingSelector or a list of FeatureFlagSelector, "
+                "not a mix of both."
+            )
 
-    if all(is_feature_flag_selector):
+    if is_feature_flag_selector:
         kv_selectors = [
             SettingSelector(key_filter=select.name_filter, label_filter=select.label_filter, tag_filters=select.tag_filters)
             for select in selectors
@@ -498,6 +501,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
             self._processed_enhanced_feature_flags = [
                 self._process_enhanced_feature_flag(ff) for ff in enhanced_feature_flags
             ]
+        self._tracing_context.uses_enhanced_feature_flags = bool(enhanced_feature_flags)
 
         if feature_flags or enhanced_feature_flags:
             processed_feature_flags = self._merge_feature_flags(
@@ -630,7 +634,6 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
         self._update_enhanced_feature_flag_telemetry_metadata(self._origin_endpoint, feature_flag, feature_flag_value)
         self._tracing_context.update_feature_filter_telemetry_by_names(filter_names)
-        self._tracing_context.uses_enhanced_feature_flags = True
         return feature_flag_value
 
     def _update_watched_settings(
