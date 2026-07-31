@@ -21,7 +21,7 @@ USAGE:
 
 import os
 import asyncio
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
 from azure.storage.blob.aio import BlobServiceClient
 
 connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]

@@ -23,7 +23,7 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-# pylint: disable=reimported
+# pylint: disable=reimported,non-abstract-transport-import
 from typing import Iterable, MutableSequence, Union
 from azure.core.pipeline import Pipeline
 from azure.core import PipelineClient

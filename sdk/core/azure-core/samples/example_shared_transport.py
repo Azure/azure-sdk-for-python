@@ -20,7 +20,7 @@ USAGE:
 """
 
 import os
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=non-abstract-transport-import
 from azure.storage.blob import BlobServiceClient
 
 connection_string = os.environ["AZURE_STORAGE_CONNECTION_STRING"]
