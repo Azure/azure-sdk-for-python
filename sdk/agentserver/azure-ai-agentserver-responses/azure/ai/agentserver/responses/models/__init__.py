@@ -13,7 +13,7 @@ from ._generated import types as _generated_types
 from ._helpers import (  # pylint: disable=unused-import
     get_input_expanded,
 )
-from ._runtime import (  # pylint: disable=unused-import
+from .runtime import (  # pylint: disable=unused-import
     ResponseStatus,
     TerminalResponseStatus,
 )

@@ -46,7 +46,7 @@ from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from .._response_context import PlatformContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
-from ..models._runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
+from ..models.runtime import ResponseExecution, ResponseModeFlags, _build_cancelled_response, _build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._helpers import _encode_sse
@@ -1308,7 +1308,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if terminal_error is not None:
             if record.status == "cancelled":
                 record.set_response_snapshot(
-                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                    _build_cancelled_response(record.response_id, record.agent_reference, record.model)
                 )
                 return JSONResponse(_json_snapshot(_RuntimeState.to_snapshot(record)), status_code=200, headers=_hdrs)
             return terminal_error
@@ -1325,7 +1325,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 pass  # Handler may throw or timeout — already handled by the task itself
 
         # Set cancelled snapshot and transition
-        record.set_response_snapshot(build_cancelled_response(record.response_id, record.agent_reference, record.model))
+        record.set_response_snapshot(_build_cancelled_response(record.response_id, record.agent_reference, record.model))
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         if record.response is not None:
@@ -1518,7 +1518,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             if record.mode_flags.background and record.status in {"queued", "in_progress"}:
                 record.set_response_snapshot(
-                    build_failed_response(record.response_id, record.agent_reference, record.model)
+                    _build_failed_response(record.response_id, record.agent_reference, record.model)
                 )
                 record.transition_to("failed")
 

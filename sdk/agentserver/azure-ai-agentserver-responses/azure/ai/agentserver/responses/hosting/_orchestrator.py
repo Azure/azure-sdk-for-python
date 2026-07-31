@@ -22,16 +22,16 @@ from azure.ai.agentserver.core._platform_headers import PLATFORM_ERROR_TAG  # py
 from azure.ai.agentserver.responses import models as response_models
 
 from .._options import ResponsesServerOptions
-from ..models._runtime import (
+from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
     ResponseStatus,
 )
-from ..models._runtime import (
-    build_cancelled_response as _build_cancelled_response,
+from ..models.runtime import (
+    _build_cancelled_response,
 )
-from ..models._runtime import (
-    build_failed_response as _build_failed_response,
+from ..models.runtime import (
+    _build_failed_response,
 )
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import (

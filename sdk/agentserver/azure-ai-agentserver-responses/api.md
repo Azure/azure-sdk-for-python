@@ -5791,6 +5791,105 @@ namespace azure.ai.agentserver.responses.models
         type: Literal[workflow_action]
 
 
+namespace azure.ai.agentserver.responses.models.runtime
+
+    class azure.ai.agentserver.responses.models.runtime.AgentReference(TypedDict, total=False):
+        key "name": Required[str]
+        key "type": Required[Literal["agent_reference"]]
+        key "version": str
+        name: str
+        type: Literal[agent_reference]
+        version: str
+
+
+    class azure.ai.agentserver.responses.models.runtime.ResponseExecution:
+        property agent_reference: AgentReference | dict[str, Any]    # Read-only
+        property is_terminal: bool    # Read-only
+        property model: str | None    # Read-only
+        property replay_enabled: bool    # Read-only
+        property visible_via_get: bool    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                agent_session_id: str | None = ..., 
+                cancel_requested: bool = False, 
+                cancel_signal: Event | None = ..., 
+                client_disconnected: bool = False, 
+                completed_at: datetime | None = ..., 
+                conversation_id: str | None = ..., 
+                created_at: datetime | None = ..., 
+                execution_task: Task[Any] | None = ..., 
+                initial_agent_reference: AgentReference | dict[str, Any] | None = ..., 
+                initial_model: str | None = ..., 
+                input_items: list[OutputItem] | None = ..., 
+                mode_flags: ResponseModeFlags, 
+                previous_response_id: str | None = ..., 
+                response: dict[str, Any] | None = ..., 
+                response_context: ResponseContext | None = ..., 
+                response_created_seen: bool = False, 
+                response_id: str, 
+                status: ResponseStatus = "in_progress", 
+                subject: _ResponseEventSubject | None = ..., 
+                updated_at: datetime | None = ..., 
+                user_id_key: str | None = ...
+            ) -> None: ...
+
+        def apply_event(
+                self, 
+                normalized: ResponseStreamEvent, 
+                all_events: list[ResponseStreamEvent]
+            ) -> None: ...
+
+        def set_response_snapshot(self, response: dict[str, Any]) -> None: ...
+
+        def transition_to(self, next_status: ResponseStatus) -> None: ...
+
+
+    class azure.ai.agentserver.responses.models.runtime.ResponseModeFlags:
+
+        def __init__(
+                self, 
+                *, 
+                background: bool, 
+                store: bool, 
+                stream: bool
+            ) -> None: ...
+
+
+    class azure.ai.agentserver.responses.models.runtime.StreamEventRecord:
+        property terminal: bool    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                emitted_at: datetime | None = ..., 
+                event_type: str, 
+                payload: Mapping[str, Any], 
+                sequence_number: int
+            ) -> None: ...
+
+        @classmethod
+        def from_event(
+                cls, 
+                event: ResponseStreamEvent, 
+                payload: Mapping[str, Any]
+            ) -> StreamEventRecord: ...
+
+
+    class azure.ai.agentserver.responses.models.runtime.StreamReplayState:
+        property terminal_event_seen: bool    # Read-only
+
+        def __init__(
+                self, 
+                *, 
+                events: list[StreamEventRecord] | None = ..., 
+                response_id: str
+            ) -> None: ...
+
+        def append(self, event: StreamEventRecord) -> None: ...
+
+
 namespace azure.ai.agentserver.responses.streaming
 
     class azure.ai.agentserver.responses.streaming.OutputItemBuilder(BaseOutputItemBuilder):

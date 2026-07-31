@@ -221,7 +221,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             (used to extract the latest response snapshot).
         :type all_events: list[ResponseStreamEvent]
         """
-        # Lazy imports to avoid circular dependency (models._runtime <- streaming._helpers <- models.__init__)
+        # Lazy imports to avoid circular dependency (models.runtime <- streaming._helpers <- models.__init__)
         from ..streaming._helpers import (
             _extract_response_snapshot_from_events,  # pylint: disable=import-outside-toplevel
         )
@@ -322,7 +322,7 @@ class StreamReplayState:
         return bool(self.events and self.events[-1].terminal)
 
 
-def build_cancelled_response(
+def _build_cancelled_response(
     response_id: str,
     agent_reference: AgentReference | dict[str, Any],
     model: str | None,
@@ -355,7 +355,7 @@ def build_cancelled_response(
     return payload
 
 
-def build_failed_response(
+def _build_failed_response(
     response_id: str,
     agent_reference: AgentReference | dict[str, Any],
     model: str | None,

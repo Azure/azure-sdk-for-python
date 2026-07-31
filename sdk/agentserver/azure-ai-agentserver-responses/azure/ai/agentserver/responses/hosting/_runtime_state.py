@@ -9,7 +9,7 @@ from copy import deepcopy
 from typing import Any
 
 from azure.ai.agentserver.responses.models import OutputItem
-from ..models._runtime import ResponseExecution
+from ..models.runtime import ResponseExecution
 from ..streaming._helpers import strip_nulls
 
 

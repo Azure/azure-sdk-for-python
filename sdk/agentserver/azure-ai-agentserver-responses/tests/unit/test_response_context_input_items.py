@@ -19,7 +19,7 @@ from azure.ai.agentserver.responses.models import (
     OutputItemMessage,
 )
 from azure.ai.agentserver.responses.models._helpers import to_item, to_output_item
-from azure.ai.agentserver.responses.models._runtime import ResponseModeFlags
+from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 
 
 def _mode_flags() -> ResponseModeFlags:

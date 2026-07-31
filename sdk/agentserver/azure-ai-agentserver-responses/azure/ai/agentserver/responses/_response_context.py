@@ -12,7 +12,7 @@ from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
 from azure.ai.agentserver.responses.models import CreateResponse, InputParam, Item, OutputItem
 
 from .models._helpers import get_input_expanded, is_item_reference, to_item, to_output_item
-from .models._runtime import ResponseModeFlags
+from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol

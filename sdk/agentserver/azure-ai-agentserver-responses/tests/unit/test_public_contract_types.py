@@ -49,7 +49,7 @@ from azure.ai.agentserver.responses.models import (
     ResponseTextDeltaEvent,
     ResponseTextDoneEvent,
 )
-from azure.ai.agentserver.responses.models._runtime import ResponseModeFlags
+from azure.ai.agentserver.responses.models.runtime import ResponseModeFlags
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 # ---- helpers ----
