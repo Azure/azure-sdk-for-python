@@ -61,7 +61,6 @@ from azure.ai.projects.models import (
     DataGenerationModelOptions,
     FileDataGenerationJobOutput,
     FileDataGenerationJobSource,
-    JobStatus,
     SimpleQnADataGenerationJobOptions,
     SimpleQnAFineTuningQuestionType,
 )
@@ -72,8 +71,6 @@ endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
 dataset_name = os.environ.get("DATASET_NAME", "simpleqna-finetuning-sample")
 poll_interval_seconds = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
-
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 # Unique per-run output name so repeated runs do not collide.
 # Output names are capped at 50 characters by the service.
@@ -173,41 +170,23 @@ async def main() -> None:
                 output_options=DataGenerationJobOutputOptions(name=output_name),
             ),
         )
-        print("Create a fine-tuning data generation job and wait for it to complete.")
-        pipeline_responses = []
 
-        def raw_response_hook(response):
-            # The raw_response_hook is called synchronously before the generated LRO method
-            # awaits read() on the initial response. Capture the pipeline response object here
-            # and parse the body afterwards, when read() has already been awaited.
-            pipeline_responses.append(response)
-
-        await project_client.beta.datasets.begin_create_generation_job(
+        print("Begin creating a dataset generation job.")
+        poller = await project_client.beta.datasets.begin_create_generation_job(
             job=job,
-            polling=False,
-            raw_response_hook=raw_response_hook,
+            polling_interval=poll_interval_seconds,
         )
-        # Alternatively, have the SDK handle polling by removing `polling=False`, assigning the awaited call
-        # to a poller, and then awaiting `poller.result()`.
-        if not pipeline_responses:
-            raise RuntimeError("The create operation did not return a data generation job.")
-        job = DataGenerationJob(pipeline_responses[0].http_response.json())
-        print(f"Created job: id={job.id}, status={job.status}")
 
-        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
-        while job.status not in TERMINAL_STATUSES:
+        print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+        while not poller.done():
             await asyncio.sleep(poll_interval_seconds)
-            job = await project_client.beta.datasets.get_generation_job(job_id=job.id)
-            print(".", end="", flush=True)
-        print()
-        print(f"Final job status: `{job.status}`.")
+            print(f"\tstatus=`{poller.status()}`")
 
-        if job.status != JobStatus.SUCCEEDED:
-            message = job.error.message if job.error else "<no error message>"
-            raise RuntimeError(f"Data generation job `{job.id}` ended with status `{job.status}`: {message}")
-        if job.result is None:
-            raise RuntimeError(f"Data generation job `{job.id}` completed without a result.")
-        job_result = job.result
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        job_result = await poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Data generation result: {job_result}")
 
         # ------------------------------------------------------------------
         # 3. Inspect the generated fine-tuning file outputs.

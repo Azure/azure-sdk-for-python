@@ -79,22 +79,24 @@ with (
         response.http_response.read()
         created_jobs.append(OptimizationJob(response.http_response.json()))
 
-    project_client.beta.agents.begin_create_optimization_job(
-        job=OptimizationJob(
-            inputs=OptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
-                ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
+    job = OptimizationJob(
+        inputs=OptimizationJobInputs(
+            agent=AgentIdentifier(agent_name=agent_name),
+            train_dataset=ReferenceDatasetInput(
+                name=dataset_name,
+                version=dataset_version,
+            ),
+            evaluators=[EvaluatorRef(name=evaluator_name)],
+            options=OptimizationOptions(
+                max_candidates=3,
+                eval_model=eval_model,
+                optimization_model=optimization_model,
             )
-        ),
+        )
+    )
+
+    project_client.beta.agents.begin_create_optimization_job(
+        job=job,
         polling=False,
         raw_response_hook=raw_response_hook,
     )

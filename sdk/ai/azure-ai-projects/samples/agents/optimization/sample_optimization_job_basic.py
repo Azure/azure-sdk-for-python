@@ -7,15 +7,15 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to create an agent
-    optimization job and use the SDK's built-in polling mechanism to wait for
-    its completion to get the result.
+    optimization job, observe the SDK poller until it is done, and then get
+    the result.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_basic.py
+    python sample_optimization_job_app_polling.py
 
     Before running the sample:
 
@@ -24,16 +24,17 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
        in the overview page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_NAME              - Required. The name of the agent to optimize.
-    3) DATASET_NAME            - Required. The name of the registered training dataset.
-    4) EVALUATOR_NAME          - Required. The name of a registered project evaluator.
-    5) DATASET_VERSION         - Optional. Version of the training dataset. Defaults to "1".
-    6) POLL_INTERVAL_SECONDS   - Optional. Seconds between status polls. Defaults to 10.
-    7) EVAL_MODEL              - Optional. The model used for evaluation. Defaults to "gpt-4o".
-    8) OPTIMIZATION_MODEL      - Optional. The model used for optimization. Defaults to "gpt-5.1".
+    2) FOUNDRY_AGENT_NAME       - Required. The name of the agent to optimize.
+    3) DATASET_NAME             - Required. The name of the registered training dataset.
+    4) EVALUATOR_NAME           - Required. The name of a registered project evaluator.
+    5) DATASET_VERSION          - Optional. Version of the training dataset. Defaults to "1".
+    6) POLL_INTERVAL_SECONDS    - Optional. Seconds between status polls. Defaults to 10.
+    7) EVAL_MODEL               - Optional. The model used for evaluation. Defaults to "gpt-4o".
+    8) OPTIMIZATION_MODEL       - Optional. The model used for optimization. Defaults to "gpt-5.1".
 """
 
 import os
+import time
 
 from dotenv import load_dotenv
 
@@ -65,28 +66,39 @@ with (
 ):
 
     # ------------------------------------------------------------------
-    # 1. Create an optimization job.
+    # 1. Create an optimization job and observe the SDK-managed poller.
     # ------------------------------------------------------------------
-    print("Creating optimization job...")
-    result = project_client.beta.agents.begin_create_optimization_job(
-        job=OptimizationJob(
-            inputs=OptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
-                ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
-            )
+    job = OptimizationJob(
+        inputs=OptimizationJobInputs(
+            agent=AgentIdentifier(agent_name=agent_name),
+            train_dataset=ReferenceDatasetInput(
+                name=dataset_name,
+                version=dataset_version,
+            ),
+            evaluators=[EvaluatorRef(name=evaluator_name)],
+            options=OptimizationOptions(
+                max_candidates=3,
+                eval_model=eval_model,
+                optimization_model=optimization_model,
+            ),
         ),
+    )
+
+    print("Begin creating an agent optimization job.")
+    poller = project_client.beta.agents.begin_create_optimization_job(
+        job=job,
         polling_interval=poll_interval,
-    ).result()
-    print("Optimization job completed.")
+    )
+
+    print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+    while not poller.done():
+        time.sleep(poll_interval)
+        print(f"status=`{poller.status()}`")
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    result = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
 
     # ------------------------------------------------------------------
     # 2. Inspect the results.
