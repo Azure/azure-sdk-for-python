@@ -28,7 +28,8 @@ This ensures you get compatible versions of both the SDK and the extensions pack
 
 When installed, this package transparently accelerates:
 - **Block blob uploads** — Large data uploads use the Rust SDK's managed parallel chunking
-- **Block blob downloads** — Downloads use Rust's `download_into` for efficient parallel range fetches
+- **Block blob downloads** — Downloads use Rust's `download_into` over a sliding window, giving
+  parallel range fetches within each window while bounding peak memory to a single window
 
 The Python SDK automatically falls back to its built-in Python implementation when:
 - Client-side encryption is enabled
