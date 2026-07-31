@@ -349,7 +349,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
     def _get_inference_service(self) -> Optional[_InferenceService]:
         """Get inference service instance, lazily initializing on first access."""
-        if self._inference_service is None and self.aad_credentials:
+        if self._inference_service is None and (
+            self.aad_credentials or os.environ.get(Constants.SEMANTIC_RERANKER_INFERENCE_KEY)
+        ):
             with self._inference_service_lock:
                 if self._inference_service is None:
                     try:
