@@ -280,18 +280,24 @@ def try_native_upload(
 
 
 class NativeStorageStreamDownloader:
-    """Lightweight wrapper returned when native download acceleration succeeds eagerly.
+    """Lightweight wrapper returned when native download acceleration succeeds.
 
-    Mimics the key parts of StorageStreamDownloader so callers (e.g. readall(), readinto(),
-    chunks()) work transparently without needing the full Python download infrastructure.
+    Wraps the native windowed download stream (an iterator of ``bytes`` windows) and mimics the
+    key parts of StorageStreamDownloader so callers (e.g. readall(), readinto(), chunks()) work
+    transparently. Data is pulled from the native stream on demand, so only a single window is
+    resident in memory at a time for the streaming paths (readinto/chunks); readall() necessarily
+    materializes the full blob.
     """
 
-    def __init__(self, data: bytes, name: str, container: str) -> None:
-        self._data = data
-        self._offset = 0
+    def __init__(self, stream: Any, name: str, container: str) -> None:
+        self._stream = stream
+        # Single persistent iterator over the native stream (which is single-pass).
+        self._iter = iter(stream)
+        # Buffer holding bytes pulled from the stream but not yet consumed by read().
+        self._buffer = bytearray()
         self.name = name
         self.container = container
-        self.size = len(data)
+        self.size = stream.size
         self.properties = None  # Not available from native path
 
     def __len__(self) -> int:
@@ -301,32 +307,65 @@ class NativeStorageStreamDownloader:
         return self.chunks()
 
     def readall(self) -> bytes:
-        """Return the full blob content."""
-        return self._data
+        """Return the full blob content.
+
+        :returns: The complete blob content.
+        :rtype: bytes
+        """
+        chunks = []
+        if self._buffer:
+            chunks.append(bytes(self._buffer))
+            self._buffer = bytearray()
+        chunks.extend(self._iter)
+        return b"".join(chunks)
 
     def read(self, size: int = -1) -> bytes:
-        """Read up to *size* bytes from the downloaded content."""
-        if size == -1 or size is None:
-            chunk = self._data[self._offset:]
-            self._offset = len(self._data)
-            return chunk
-        chunk = self._data[self._offset:self._offset + size]
-        self._offset += len(chunk)
-        return chunk
+        """Read up to *size* bytes from the downloaded content.
+
+        :param int size: Maximum number of bytes to read. A negative value or ``None`` reads
+            the remainder of the blob.
+        :returns: Up to *size* bytes of content.
+        :rtype: bytes
+        """
+        if size is None or size < 0:
+            return self.readall()
+        # Pull windows only until the buffer holds enough bytes or the stream is exhausted.
+        while len(self._buffer) < size:
+            window = next(self._iter, None)
+            if window is None:
+                break
+            self._buffer += window
+        result = bytes(self._buffer[:size])
+        del self._buffer[:size]
+        return result
 
     def readinto(self, stream: Any) -> int:
-        """Write the full content to a writable stream.
+        """Write the full content to a writable stream, one window at a time.
 
         :param stream: A writable stream (file-like object).
         :returns: Number of bytes written.
         :rtype: int
         """
-        stream.write(self._data)
-        return len(self._data)
+        total = 0
+        if self._buffer:
+            stream.write(self._buffer)
+            total += len(self._buffer)
+            self._buffer = bytearray()
+        for window in self._iter:
+            stream.write(window)
+            total += len(window)
+        return total
 
     def chunks(self) -> Iterator[bytes]:
-        """Iterate over the download in a single chunk."""
-        yield self._data
+        """Iterate over the download one window at a time.
+
+        :returns: An iterator over the blob content windows.
+        :rtype: Iterator[bytes]
+        """
+        if self._buffer:
+            yield bytes(self._buffer)
+            self._buffer = bytearray()
+        yield from self._iter
 
 
 def try_native_download_eager(
@@ -337,10 +376,11 @@ def try_native_download_eager(
     validate_content: Any,
     **kwargs: Any,
 ) -> Optional["NativeStorageStreamDownloader"]:
-    """Attempt to eagerly download the blob via the native Rust extension.
+    """Attempt to download the blob via the native Rust extension.
 
-    If successful, returns a NativeStorageStreamDownloader wrapping the data.
-    This avoids the initial HTTP request that StorageStreamDownloader would make.
+    If successful, returns a NativeStorageStreamDownloader wrapping the native windowed
+    download stream. The stream fetches one window at a time using the Rust SDK's parallel
+    ``download_into``, so peak memory is bounded to a single window for the streaming paths.
 
     Returns None if conditions aren't met or native download fails, allowing
     the caller to fall back to the standard StorageStreamDownloader path.
@@ -362,7 +402,7 @@ def try_native_download_eager(
         token_provider = _build_token_provider(blob_client.credential)
         max_concurrency = kwargs.get("max_concurrency", None)
 
-        data = native_download(
+        stream = native_download(
             url=blob_client.url,
             token_provider=token_provider,
             offset=offset,
@@ -371,7 +411,7 @@ def try_native_download_eager(
         )
         _LOGGER.info("Used native Rust extension for blob download.")
         return NativeStorageStreamDownloader(
-            data=data,
+            stream=stream,
             name=blob_client.blob_name,
             container=blob_client.container_name,
         )
