@@ -107,7 +107,7 @@ class ClassificationPolicySamplesAsync(object):
 
         async with router_admin_client:
             updated_classification_policy: ClassificationPolicy = (
-                await router_admin_client.upsert_classification_policy(
+                await router_admin_client.upsert_classification_policy(  # type: ignore[call-overload]
                     policy_id,
                     prioritization_rule=ExpressionRouterRule(expression='If(job.HighPriority = "true", 50, 10)'),
                 )

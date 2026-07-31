@@ -15,7 +15,9 @@ from azure.communication.callautomation import (
     CommunicationUserIdentifier,
 )
 from unittest_helpers import mock_response
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
+
+from azure.communication.callautomation._content_downloader import ContentDownloader
 
 
 class TestCallRecordingClient(unittest.TestCase):
@@ -100,3 +102,29 @@ class TestCallRecordingClient(unittest.TestCase):
             "https://endpoint", AzureKeyCredential("fakeCredential=="), transport=Mock(send=mock_send)
         )
         callautomation_client.get_recording_properties(recording_id=self.recording_id)
+
+
+def _make_sync_downloader() -> ContentDownloader:
+    mock_config = MagicMock()
+    mock_config.endpoint = "https://endpoint"
+    mock_recording_client = MagicMock()
+    mock_recording_client._config = mock_config  # pylint: disable=protected-access
+    return ContentDownloader(mock_recording_client)
+
+
+class TestSyncContentDownloaderValidation(unittest.TestCase):
+    def test_download_streaming_rejects_invalid_recording_url(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            _make_sync_downloader().download_streaming("http://storage.asm.skype.com/rec", None, None)
+
+    def test_delete_recording_rejects_invalid_recording_url(self):
+        with pytest.raises(ValueError, match="HTTPS"):
+            _make_sync_downloader().delete_recording("http://storage.asm.skype.com/rec")
+
+    def test_download_streaming_accepts_valid_recording_url(self):
+        downloader = _make_sync_downloader()
+        mock_pr = MagicMock()
+        mock_pr.http_response.status_code = 200
+        downloader._call_recording_client._client._pipeline.run.return_value = mock_pr  # pylint: disable=protected-access
+        response = downloader.download_streaming("https://storage.asm.skype.com/rec", None, None)
+        assert response.status_code == 200
