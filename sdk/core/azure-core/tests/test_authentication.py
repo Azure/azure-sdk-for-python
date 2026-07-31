@@ -699,7 +699,7 @@ combinations = [
 ]
 
 
-@pytest.mark.parametrize("combinations,http_request", product(combinations, HTTP_REQUESTS))
+@pytest.mark.parametrize("combinations,http_request", list(product(combinations, HTTP_REQUESTS)))
 def test_azure_sas_credential_policy(combinations, http_request):
     """Tests to see if we can create an AzureSasCredentialPolicy"""
     sas, url, expected_url = combinations
