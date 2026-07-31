@@ -58,7 +58,7 @@ def sse_stream(client, deserialization_callback):
     return _callback
 
 
-
+def test_stream_jsonl_basic(stream):
     jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_basic"))
     messages = []
     for s in jsonl_stream:

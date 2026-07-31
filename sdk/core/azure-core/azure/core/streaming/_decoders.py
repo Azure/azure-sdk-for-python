@@ -318,7 +318,7 @@ class _SSEEventBuilder:
             if "\x00" not in value:
                 self._last_id = value
         elif field == "retry":
-            if value.isdigit():
+            if value.isascii() and value.isdigit():
                 self._retry = int(value)
         # Unknown fields are ignored per spec.
         return None
