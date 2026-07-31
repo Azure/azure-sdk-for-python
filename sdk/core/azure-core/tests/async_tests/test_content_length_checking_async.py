@@ -6,7 +6,6 @@
 # -------------------------------------------------------------------------
 import pytest
 
-from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.transport import (
     HttpRequest,
 )

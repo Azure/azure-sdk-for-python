@@ -23,7 +23,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import os
 import zlib
 
 import pytest

@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-import sys
 from typing import NamedTuple
 from unittest.mock import patch, MagicMock
 

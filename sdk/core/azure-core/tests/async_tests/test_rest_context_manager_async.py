@@ -5,7 +5,6 @@
 # license information.
 # -------------------------------------------------------------------------
 import pytest
-from rest_client_async import AsyncMockRestClient
 
 from azure.core.exceptions import ResponseNotReadError
 from azure.core.rest import HttpRequest

@@ -30,7 +30,6 @@ from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_r
 
 from azure.core.pipeline.transport import (
     AioHttpTransport,
-    AioHttpTransportResponse,
     AsyncioRequestsTransport,
     TrioRequestsTransport,
 )

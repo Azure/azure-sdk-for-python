@@ -9,7 +9,6 @@
 # Thank you httpx for your wonderful tests!
 # pylint: disable=line-too-long,useless-suppression
 import io
-import sys
 import os
 
 try:

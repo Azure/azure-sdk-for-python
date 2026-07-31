@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import Any
 
 import pytest
 from opentelemetry.trace import SpanKind, StatusCode

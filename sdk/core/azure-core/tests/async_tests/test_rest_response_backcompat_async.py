@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
 
 import pytest
 import pytest_asyncio

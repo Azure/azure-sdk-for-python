@@ -18,7 +18,6 @@ from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineConte
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from azure.core.pipeline._tools import is_rest
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))

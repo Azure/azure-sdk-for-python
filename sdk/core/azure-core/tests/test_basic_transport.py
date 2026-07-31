@@ -29,7 +29,6 @@ from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import (
     HttpResponseError,
-    ServiceRequestError,
     ServiceResponseError,
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,

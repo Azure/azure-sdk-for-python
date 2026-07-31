@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
-import time
 
 try:
     from unittest import mock

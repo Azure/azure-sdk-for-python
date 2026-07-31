@@ -19,7 +19,6 @@ from modeltypes._utils.model_base import (
     TYPE_HANDLER_REGISTRY,
     _deserialize,
 )
-from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
 
 from azure.core.serialization import (
@@ -30,7 +29,6 @@ from azure.core.serialization import (
     is_generated_model,
     attribute_list,
 )
-from azure.core.exceptions import DeserializationError
 
 
 def _expand_value(obj):

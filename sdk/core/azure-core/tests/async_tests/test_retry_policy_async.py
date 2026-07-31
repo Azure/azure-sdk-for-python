@@ -7,11 +7,9 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import sys
 from unittest.mock import Mock
 import tempfile
 import os
-import time
 import asyncio
 from itertools import product
 

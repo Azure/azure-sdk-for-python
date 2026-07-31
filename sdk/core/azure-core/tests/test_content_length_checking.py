@@ -7,10 +7,8 @@
 import pytest
 
 from azure.core import PipelineClient
-from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import (
     HttpRequest,
-    RequestsTransport,
 )
 from azure.core.exceptions import IncompleteReadError
 
