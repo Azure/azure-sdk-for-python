@@ -324,7 +324,7 @@ class TestStorageApacheArrowAsync(AsyncStorageRecordedTestCase):
         await self._setup(versioned_storage_account_name, versioned_storage_account_key)
         blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
         create_resp = await blob_client.upload_blob(TEST_DATA, overwrite=True)
-        await blob_client.set_blob_metadata({"key": "value"})
+        await blob_client.upload_blob(TEST_DATA + TEST_DATA, overwrite=True)
 
         container = self.bsc.get_container_client(self.container_name)
         blobs_list = [blob async for blob in container.list_blobs(response_format="arrow", include=["versions"])]
