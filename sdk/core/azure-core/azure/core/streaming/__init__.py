@@ -25,15 +25,9 @@
 # --------------------------------------------------------------------------
 
 from ._stream import Stream, AsyncStream
-from ._decoders import (
-    StreamDecoder,
-    AsyncStreamDecoder,
-    JSONLDecoder,
-    AsyncJSONLDecoder,
-    ServerSentEvent,
-    SSEDecoder,
-    AsyncSSEDecoder,
-)
+from ._decoders import StreamDecoder, AsyncStreamDecoder
+from ._jsonl import JSONLDecoder, AsyncJSONLDecoder
+from ._sse import ServerSentEvent, SSEDecoder, AsyncSSEDecoder
 
 
 __all__ = [
