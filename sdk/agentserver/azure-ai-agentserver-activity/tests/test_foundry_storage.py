@@ -290,7 +290,7 @@ async def test_validates_like_m365_storage(monkeypatch: pytest.MonkeyPatch) -> N
 
     with pytest.raises(ValueError, match="Keys are required"):
         await storage.read([], target_cls=_TestStoreItem)
-    with pytest.raises(ValueError, match="target_cls cannot be None"):
+    with pytest.raises(TypeError, match="target_cls"):
         await storage.read(["k"])
     with pytest.raises(ValueError, match="Changes are required"):
         await storage.write({})
