@@ -723,8 +723,11 @@ class BaseExporter:
             self._disable_local_storage()
 
     def _enable_local_storage(self) -> None:
-        # Idempotent: create the local file storage only if it is not already active.
+        # Construct the local file storage once (on first enable / exporter init), then keep the
+        # instance for the exporter's lifetime. A remote re-enable just flips the toggle back on
+        # rather than recreating storage or its maintenance thread.
         if self.storage is not None:
+            self.storage.enable()
             return
         if self._storage_directory is None:
             self._storage_directory = _get_storage_directory(self._instrumentation_key or "")
@@ -738,15 +741,11 @@ class BaseExporter:
         )
 
     def _disable_local_storage(self) -> None:
-        # Idempotent: close and drop the local file storage if it is currently active. Any telemetry
-        # already persisted to disk is left in place so it can still be retried if storage is later
-        # re-enabled.
+        # Flip the remote toggle off so put()/gets() no-op. The storage instance and its maintenance
+        # thread are left running (torn down only at exporter shutdown), and any telemetry already
+        # persisted to disk is left in place so it can still be retried if storage is re-enabled.
         if self.storage is not None:
-            try:
-                self.storage.close()
-            except Exception:  # pylint: disable=broad-except
-                pass
-            self.storage = None
+            self.storage.disable()
 
     # check to see whether its the case of stats collection
     def _should_collect_stats(self):

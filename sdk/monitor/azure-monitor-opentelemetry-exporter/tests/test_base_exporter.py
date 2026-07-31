@@ -320,7 +320,7 @@ class TestBaseExporter(unittest.TestCase):
         return {"FEATURE_LOCAL_STORAGE": {"default": state}}
 
     def test_configuration_callback_disables_storage(self):
-        """OneSettings FEATURE_LOCAL_STORAGE=disabled closes and drops active local storage."""
+        """OneSettings FEATURE_LOCAL_STORAGE=disabled turns off active local storage (put/gets no-op)."""
         base = BaseExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             disable_offline_storage=False,
@@ -328,22 +328,28 @@ class TestBaseExporter(unittest.TestCase):
         self.assertIsNotNone(base.storage)
         try:
             base._local_storage_configuration_callback(self._make_local_storage_settings(False))
-            self.assertIsNone(base.storage)
+            # Flag model: the instance stays alive but is toggled off.
+            self.assertIsNotNone(base.storage)
+            self.assertFalse(base.storage._active)
         finally:
             if base.storage is not None:
                 clean_folder(base.storage._path)
 
     def test_configuration_callback_reenables_storage(self):
-        """After a disable, FEATURE_LOCAL_STORAGE=enabled recreates local storage."""
+        """After a disable, FEATURE_LOCAL_STORAGE=enabled toggles the same storage instance back on."""
         base = BaseExporter(
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
             disable_offline_storage=False,
         )
         base._local_storage_configuration_callback(self._make_local_storage_settings(False))
-        self.assertIsNone(base.storage)
+        self.assertIsNotNone(base.storage)
+        self.assertFalse(base.storage._active)
+        storage_instance = base.storage
         try:
             base._local_storage_configuration_callback(self._make_local_storage_settings(True))
-            self.assertIsNotNone(base.storage)
+            # Same instance is reused (not reconstructed) and toggled back on.
+            self.assertIs(base.storage, storage_instance)
+            self.assertTrue(base.storage._active)
         finally:
             if base.storage is not None:
                 clean_folder(base.storage._path)
@@ -439,7 +445,7 @@ class TestBaseExporter(unittest.TestCase):
     @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
     def test_late_exporter_applies_cached_disabled_settings(self, mock_get_config_manager):
         """An exporter created after FEATURE_LOCAL_STORAGE=disabled was cached applies that cached
-        state at registration time (no config change needed) and starts with storage disabled."""
+        state at registration time (no config change needed) and starts with storage toggled off."""
         mock_manager = mock.Mock()
         mock_manager.get_settings.return_value = self._make_local_storage_settings(False)
         mock_get_config_manager.return_value = mock_manager
@@ -449,7 +455,9 @@ class TestBaseExporter(unittest.TestCase):
         )
         try:
             mock_manager.get_settings.assert_called_once()
-            self.assertIsNone(base.storage)
+            # Flag model: instance exists but is toggled off per the cached kill-switch.
+            self.assertIsNotNone(base.storage)
+            self.assertFalse(base.storage._active)
         finally:
             if base.storage is not None:
                 clean_folder(base.storage._path)
