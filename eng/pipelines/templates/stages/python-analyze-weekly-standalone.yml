@@ -13,14 +13,10 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-      # Always present so the pipeline has at least one stage; determines whether the
-      # run started on a weekend (in the schedule's timezone) for the analyze gate below.
-      - template: /eng/pipelines/templates/stages/check-schedule.yml
+      # Analyze-weekly runs only on scheduled runs that start on a weekend (Sat/Sun, UTC).
       - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
         parameters:
           ServiceDirectory: ${{ parameters.ServiceDirectory }}
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
           JobName: ${{ parameters.JobName }}
-          DependsOn:
-            - CheckSchedule
-          Condition: and(eq(variables['Build.Reason'], 'Schedule'), eq(dependencies.CheckSchedule.outputs['check.setflag.IsWeekend'], 'True'))
+          Condition: and(succeeded(), eq(variables['Build.Reason'], 'Schedule'), in(format('{0:ddd}', pipeline.startTime), 'Sat', 'Sun'))

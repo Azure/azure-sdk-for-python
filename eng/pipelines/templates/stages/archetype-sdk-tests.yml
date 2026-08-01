@@ -105,10 +105,6 @@ extends:
   template: /eng/pipelines/templates/stages/1es-redirect.yml
   parameters:
     stages:
-    # On scheduled runs, detect whether the run started on a weekend (in the schedule's timezone).
-    # Weekend scheduled runs additionally execute the analyze-weekly stage(s) further below.
-    - ${{ if eq(variables['Build.Reason'], 'Schedule') }}:
-      - template: /eng/pipelines/templates/stages/check-schedule.yml
     - ${{ each package in coalesce(parameters.Packages, split(parameters.BuildTargetingString, '|')) }}:
       - ${{ each cloud in parameters.CloudConfig }}:
         - ${{ if contains(parameters.Clouds, cloud.key) }}:
@@ -172,13 +168,11 @@ extends:
                       ServiceConnection: ${{ coalesce(cloud.value.ServiceConnection, lower(format('azure-sdk-tests-{0}', cloud.key))) }}
                       SubscriptionConfigurationFilePaths: ${{ cloud.value.SubscriptionConfigurationFilePaths }}
 
-      # Analyze-weekly runs only on scheduled runs that started on a weekend (gated by CheckSchedule).
+      # Analyze-weekly runs only on scheduled runs that start on a weekend (Sat/Sun, UTC).
       - ${{ if eq(variables['Build.Reason'], 'Schedule') }}:
         - template: /eng/pipelines/templates/stages/python-analyze-weekly.yml
           parameters:
             BuildTargetingString: ${{ package }}
             ServiceDirectory: ${{ parameters.ServiceDirectory }}
             JobName: ${{ parameters.JobName }}
-            DependsOn:
-              - CheckSchedule
-            Condition: eq(dependencies.CheckSchedule.outputs['check.setflag.IsWeekend'], 'True')
+            Condition: and(succeeded(), in(format('{0:ddd}', pipeline.startTime), 'Sat', 'Sun'))
