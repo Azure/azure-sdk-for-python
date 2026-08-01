@@ -17,18 +17,12 @@ from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
+from ._console import console_print as print
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 logger = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Shared helpers used by both the sync and async AIProjectClient.get_openai_client()
-# implementations. Defined at module level so the async client can import and reuse
-# them without duplicating the logic.
-# ---------------------------------------------------------------------------
 
 
 def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dict) -> str:

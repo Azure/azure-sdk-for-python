@@ -29,6 +29,8 @@ import json
 import unittest.mock as mock
 from typing import cast
 from io import BytesIO
+from azure.ai.projects import _patch as projects_patch
+from azure.ai.projects.aio import _patch as async_projects_patch
 from azure.core.credentials import TokenCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from devtools_testutils.fake_credentials import FakeTokenCredential
@@ -47,6 +49,7 @@ from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
 PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT = (
     "https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name"
 )
+LIVE_LLM_VALIDATION_MODEL = "gpt-5.2"
 PLAYBACK_LLM_VALIDATION_MODEL = "sanitized-model-deployment-name"
 
 
@@ -197,6 +200,11 @@ class BaseSampleExecutor:
         self.test_instance = test_instance
         self.sample_path = sample_path
         self.print_calls: list[str] = []
+        self.console_entries: list[str] = []
+        self.validation_entries: list[str] = []
+        self.output_file_path: Optional[str] = None
+        self._artifact_timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self._sample_filename_stem = os.path.basename(self.sample_path).replace(".py", "")
         self._original_print = print
         self.allowed_llm_validation_failures = allowed_llm_validation_failures or set()
         self._validation_text_preprocessor = validation_text_preprocessor
@@ -235,6 +243,15 @@ class BaseSampleExecutor:
         """Capture print calls while still outputting to console."""
         text = " ".join(str(arg) for arg in args)
         self.print_calls.append(text)
+        self.console_entries.append(text)
+        self.validation_entries.append(text)
+        self._original_print(*args, **kwargs)
+
+    def _capture_sdk_print(self, *args, **kwargs):
+        """Capture SDK _print calls without routing them back through patched builtins.print."""
+        text = " ".join(str(arg) for arg in args)
+        self.console_entries.append(text)
+        self.validation_entries.append(text)
         self._original_print(*args, **kwargs)
 
     @contextmanager
@@ -307,7 +324,7 @@ class BaseSampleExecutor:
             except Exception:  # pylint: disable=broad-exception-caught
                 continue
 
-        capture_handler = _PrintCaptureLogHandler(self.print_calls)
+        capture_handler = _PrintCaptureLogHandler(self.validation_entries)
         capture_handler.setFormatter(logging.Formatter("[%(name)s] %(message)s"))
 
         root_logger.setLevel(logging.DEBUG)
@@ -325,36 +342,51 @@ class BaseSampleExecutor:
             for module_logger, original_is_enabled_for in patched_is_enabled_for:
                 module_logger.isEnabledFor = original_is_enabled_for
 
-    def _get_log_file_path(self, log_env_var: str) -> Optional[str]:
-        """Get and prepare log file path based on environment variable.
-
-        Args:
-            log_env_var: Environment variable name to check for log format
-
-        Returns:
-            Path to the log file (cleaned up and ready to write), or None if logging is disabled
-        """
-        # Only create logs in live mode
+    def _get_log_file_path(self, suffix: str) -> Optional[str]:
+        """Get and prepare a log file path in the temp directory for live runs."""
         if not _is_live_mode():
             return None
 
-        # Only log if environment variable is set
-        log_format = os.environ.get(log_env_var)
-        if not log_format:
-            return None
+        log_file = os.path.join(
+            tempfile.gettempdir(),
+            f"{self._sample_filename_stem}_{suffix}_{self._artifact_timestamp}.log",
+        )
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        sample_filename = os.path.basename(self.sample_path).replace(".py", "")
-
-        # Replace placeholders in the format template
-        log_filename = log_format.replace("<sample_filename>", sample_filename).replace("<timestamp>", timestamp)
-        log_file = os.path.join(tempfile.gettempdir(), log_filename)
-
-        # Remove existing file if present to ensure clean overwrite
         if os.path.exists(log_file):
             os.remove(log_file)
 
         return log_file
+
+    def _get_output_file_path(self) -> Optional[str]:
+        """Get and prepare an output file path in the temp directory for live runs."""
+        if not _is_live_mode():
+            return None
+
+        output_file = os.path.join(
+            tempfile.gettempdir(),
+            f"{self._sample_filename_stem}_output_{self._artifact_timestamp}.txt",
+        )
+
+        if os.path.exists(output_file):
+            os.remove(output_file)
+
+        return output_file
+
+    def _write_output_file(self) -> Optional[str]:
+        """Write captured sample print statements to the temp output file."""
+        output_file = self._get_output_file_path()
+        if not output_file:
+            return None
+
+        with open(output_file, "w", encoding="utf-8") as f:
+            if self.print_calls:
+                f.write("\n".join(self.print_calls))
+                f.write("\n")
+            else:
+                f.write("No captured print statements.\n")
+
+        self.output_file_path = output_file
+        return output_file
 
     def _write_error_log(self, reason: str, exception_info: str) -> Optional[str]:
         """Write captured print statements to a log file for execution errors.
@@ -366,7 +398,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_ERROR_LOG")
+        log_file = self._get_log_file_path("errors")
         if not log_file:
             return None
 
@@ -379,7 +411,7 @@ class BaseSampleExecutor:
             f.write("\n" + "=" * 80 + "\n\n")
             f.write("Print Statements:\n")
             f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
+            for i, print_call in enumerate(self.console_entries, 1):
                 f.write(f"{i}. {print_call}\n")
         return log_file
 
@@ -392,7 +424,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_FAILED_LOG")
+        log_file = self._get_log_file_path("failed")
         if not log_file:
             return None
 
@@ -401,7 +433,7 @@ class BaseSampleExecutor:
             f.write(f"Validation Failed: {reason}\n\n")
             f.write("Print Statements:\n")
             f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
+            for i, print_call in enumerate(self.console_entries, 1):
                 f.write(f"{i}. {print_call}\n")
         return log_file
 
@@ -414,7 +446,7 @@ class BaseSampleExecutor:
         Returns:
             Path to the created log file, or None if logging is disabled
         """
-        log_file = self._get_log_file_path("SAMPLE_TEST_PASSED_LOG")
+        log_file = self._get_log_file_path("success")
         if not log_file:
             return None
 
@@ -423,7 +455,7 @@ class BaseSampleExecutor:
             f.write(f"Validation Passed: {reason}\n\n")
             f.write("Print Statements:\n")
             f.write("=" * 80 + "\n")
-            for i, print_call in enumerate(self.print_calls, 1):
+            for i, print_call in enumerate(self.console_entries, 1):
                 f.write(f"{i}. {print_call}\n")
         return log_file
 
@@ -463,8 +495,16 @@ class BaseSampleExecutor:
         and text transformations.
         """
         if self._validation_text_preprocessor:
-            return self._validation_text_preprocessor(self.print_calls)
-        return "\n".join(self.print_calls)
+            return self._validation_text_preprocessor(self.validation_entries)
+        return "\n".join(self.validation_entries)
+
+    @contextmanager
+    def _capture_sdk_console_prints(self):
+        with (
+            mock.patch.object(projects_patch, "print", side_effect=self._capture_sdk_print),
+            mock.patch.object(async_projects_patch, "print", side_effect=self._capture_sdk_print),
+        ):
+            yield
 
     def _build_validation_txt_bytes(self, validation_log_text: str) -> bytes:
         """Build UTF-8 TXT content containing captured print/log output."""
@@ -679,6 +719,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
 
             with (
                 self._capture_debug_logs(),
+                self._capture_sdk_console_prints(),
                 mock.patch("builtins.print", side_effect=self._capture_print),
                 mock.patch("builtins.open", side_effect=patched_open_fn),
             ):
@@ -694,9 +735,11 @@ class SyncSampleExecutor(BaseSampleExecutor):
                     # Call main() if it exists (samples wrap their code in main())
                     if hasattr(self.module, "main") and callable(self.module.main):
                         self.module.main()
+                    self._write_output_file()
                 except Exception as e:
                     # Log print statements with exception details before re-raising
                     exception_info = traceback.format_exc()
+                    self._write_output_file()
                     log_file = self._write_error_log(
                         reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info
                     )
@@ -709,7 +752,7 @@ class SyncSampleExecutor(BaseSampleExecutor):
         instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
-            model = "gpt-5.2"
+            model = LIVE_LLM_VALIDATION_MODEL
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL
@@ -875,6 +918,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
             MonkeyPatch.context() as mp,
             self._get_mock_credential(),
             self._capture_debug_logs(),
+            self._capture_sdk_console_prints(),
             mock.patch("builtins.print", side_effect=self._capture_print),
             mock.patch("builtins.open", side_effect=patched_open_fn),
         ):
@@ -895,9 +939,11 @@ class AsyncSampleExecutor(BaseSampleExecutor):
                 # Call main() if it exists (samples wrap their code in main())
                 if hasattr(self.module, "main") and callable(self.module.main):
                     await self.module.main()  # type: ignore[misc]
+                self._write_output_file()
             except Exception as e:
                 # Log print statements with exception details before re-raising
                 exception_info = traceback.format_exc()
+                self._write_output_file()
                 log_file = self._write_error_log(reason=f"{type(e).__name__}: {str(e)}", exception_info=exception_info)
                 if log_file:
                     print(f"\nSample execution failed! Print statements logged to: {log_file}")
@@ -912,7 +958,7 @@ class AsyncSampleExecutor(BaseSampleExecutor):
         instructions = self._resolve_validation_instructions(instructions)
         if is_live():
             endpoint = os.environ["LLM_VALIDATION_PROJECT_ENDPOINT"]
-            model = "gpt-5.2"
+            model = LIVE_LLM_VALIDATION_MODEL
         else:
             endpoint = PLAYBACK_LLM_VALIDATION_PROJECT_ENDPOINT
             model = PLAYBACK_LLM_VALIDATION_MODEL

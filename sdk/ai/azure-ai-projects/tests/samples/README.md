@@ -11,22 +11,14 @@ Use recorded tests to validate samples with `SyncSampleExecutor` and `AsyncSampl
 
 ## Sample test logging
 
-Optionally enable logging to capture sample execution results in log files (useful for monitoring and alerting):
+In live runs, sample executors automatically create artifacts in the system temp directory:
 
-```bash
-# In .env - uncomment to enable logging
-SAMPLE_TEST_ERROR_LOG=<sample_filename>_errors_<timestamp>.log
-SAMPLE_TEST_FAILED_LOG=<sample_filename>_failed_<timestamp>.log
-SAMPLE_TEST_PASSED_LOG=<sample_filename>_success_<timestamp>.log
-```
+- **`<sample_filename>_errors_<timestamp>.log`**: Sample crashed with an exception during execution
+- **`<sample_filename>_failed_<timestamp>.log`**: Sample ran successfully but LLM validation failed
+- **`<sample_filename>_success_<timestamp>.log`**: Sample ran successfully and LLM validation passed
+- **`<sample_filename>_output_<timestamp>.txt`**: Captured sample `print()` output
 
-Log types:
-
-- **`SAMPLE_TEST_ERROR_LOG`**: Sample crashed with an exception during execution
-- **`SAMPLE_TEST_FAILED_LOG`**: Sample ran successfully but LLM validation failed (incorrect output)
-- **`SAMPLE_TEST_PASSED_LOG`**: Sample ran successfully and LLM validation passed (correct output)
-
-Logs are written to the system's temp directory with the specified filename format. Each log includes the sample path, status/error details, exception traceback (for errors), and all captured print statements.
+The `.log` files include the sample path, status/error details, exception traceback for error cases, and all captured `print()` and SDK `_print()` statements. The `.txt` file contains only the captured sample `print()` output.
 
 ## Sync example
 
@@ -231,7 +223,7 @@ executor = SyncSampleExecutor(
 
 Behavior:
 
-- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated (if `SAMPLE_TEST_FAILED_LOG` is configured in `.env`).
+- **Samples in the allowlist:** Pass the test even when LLM validation fails. A warning message is printed to the console, and a failed report is still generated.
 - **Samples not in the allowlist:** Fail the test when LLM validation fails (existing behavior).
 - **All samples:** Execution errors (exceptions) always fail the test, regardless of the allowlist.
 
