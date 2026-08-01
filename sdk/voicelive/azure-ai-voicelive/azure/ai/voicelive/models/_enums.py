@@ -19,6 +19,28 @@ class AnimationOutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Viseme ID output type."""
 
 
+class AudioFormatsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AudioFormatsType."""
+
+    AUDIO_PCM = "audio/pcm"
+    """AUDIO_PCM."""
+    AUDIO_PCMU = "audio/pcmu"
+    """AUDIO_PCMU."""
+    AUDIO_PCMA = "audio/pcma"
+    """AUDIO_PCMA."""
+
+
+class AudioFormatType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Audio format MIME types supported by VoiceLive v1."""
+
+    PCM = "audio/pcm"
+    """PCM."""
+    PCMU = "audio/pcmu"
+    """PCMU."""
+    PCMA = "audio/pcma"
+    """PCMA."""
+
+
 class AudioTimestampType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Output timestamp types supported in audio response content."""
 
@@ -88,66 +110,6 @@ class AzureVoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure avatar voice sync."""
 
 
-class ClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Client event types used in VoiceLive protocol."""
-
-    SESSION_UPDATE = "session.update"
-    """SESSION_UPDATE."""
-    INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
-    """INPUT_AUDIO_BUFFER_APPEND."""
-    INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
-    """INPUT_AUDIO_BUFFER_COMMIT."""
-    INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
-    """INPUT_AUDIO_BUFFER_CLEAR."""
-    INPUT_AUDIO_TURN_START = "input_audio.turn.start"
-    """INPUT_AUDIO_TURN_START."""
-    INPUT_AUDIO_TURN_APPEND = "input_audio.turn.append"
-    """INPUT_AUDIO_TURN_APPEND."""
-    INPUT_AUDIO_TURN_END = "input_audio.turn.end"
-    """INPUT_AUDIO_TURN_END."""
-    INPUT_AUDIO_TURN_CANCEL = "input_audio.turn.cancel"
-    """INPUT_AUDIO_TURN_CANCEL."""
-    INPUT_AUDIO_CLEAR = "input_audio.clear"
-    """INPUT_AUDIO_CLEAR."""
-    CONVERSATION_ITEM_CREATE = "conversation.item.create"
-    """CONVERSATION_ITEM_CREATE."""
-    CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
-    """CONVERSATION_ITEM_RETRIEVE."""
-    CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
-    """CONVERSATION_ITEM_TRUNCATE."""
-    CONVERSATION_ITEM_DELETE = "conversation.item.delete"
-    """CONVERSATION_ITEM_DELETE."""
-    RESPONSE_CREATE = "response.create"
-    """RESPONSE_CREATE."""
-    RESPONSE_CANCEL = "response.cancel"
-    """RESPONSE_CANCEL."""
-    SESSION_AVATAR_CONNECT = "session.avatar.connect"
-    """SESSION_AVATAR_CONNECT."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """MCP_APPROVAL_RESPONSE."""
-    OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
-    """Client request to clear the avatar output buffer."""
-    INPUT_TEXT_DELTA = "input_text.delta"
-    """Streamed delta of input text content being appended to an item."""
-    INPUT_TEXT_DONE = "input_text.done"
-    """Signals that the streamed input text content for an item is complete."""
-
-
-class ContentPartType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of ContentPartType."""
-
-    INPUT_TEXT = "input_text"
-    """INPUT_TEXT."""
-    INPUT_AUDIO = "input_audio"
-    """INPUT_AUDIO."""
-    INPUT_IMAGE = "input_image"
-    """INPUT_IMAGE."""
-    TEXT = "text"
-    """TEXT."""
-    AUDIO = "audio"
-    """AUDIO."""
-
-
 class EchoCancellationReferenceSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The source of the echo cancellation reference signal."""
 
@@ -170,17 +132,6 @@ class EouThresholdLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Default sensitivity threshold level."""
 
 
-class InputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Input audio format types supported."""
-
-    PCM16 = "pcm16"
-    """16-bit PCM audio format at default sampling rate (24kHz)."""
-    G711_ULAW = "g711_ulaw"
-    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
-    G711_ALAW = "g711_alaw"
-    """G.711 A-law audio format at 8kHz sampling rate."""
-
-
 class InterimResponseConfigType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Interim response configuration types."""
 
@@ -199,69 +150,37 @@ class InterimResponseTrigger(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Trigger interim response when a tool call is being executed."""
 
 
-class ItemParamStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the processing status of an item or parameter."""
-
-    COMPLETED = "completed"
-    """Item or parameter is still being processed."""
-    INCOMPLETE = "incomplete"
-    """Item or parameter is not yet complete."""
-
-
 class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of ItemType."""
 
-    MESSAGE = "message"
-    """MESSAGE."""
-    FUNCTION_CALL = "function_call"
-    """FUNCTION_CALL."""
-    FUNCTION_CALL_OUTPUT = "function_call_output"
-    """FUNCTION_CALL_OUTPUT."""
-    MCP_LIST_TOOLS = "mcp_list_tools"
-    """MCP_LIST_TOOLS."""
-    MCP_CALL = "mcp_call"
-    """MCP_CALL."""
-    MCP_APPROVAL_REQUEST = "mcp_approval_request"
-    """MCP_APPROVAL_REQUEST."""
-    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
-    """MCP_APPROVAL_RESPONSE."""
     WEB_SEARCH_CALL = "web_search_call"
     """Web search call item."""
     FILE_SEARCH_CALL = "file_search_call"
     """File search call item."""
 
 
-class MCPApprovalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available set of MCP approval types."""
+class McpErrorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of McpErrorType."""
 
-    NEVER = "never"
-    """Approval is never required."""
-    ALWAYS = "always"
-    """Approval is always required."""
-
-
-class MessageRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of MessageRole."""
-
-    SYSTEM = "system"
-    """SYSTEM."""
-    USER = "user"
-    """USER."""
-    ASSISTANT = "assistant"
-    """ASSISTANT."""
+    PROTOCOL_ERROR = "protocol_error"
+    """PROTOCOL_ERROR."""
+    TOOL_EXECUTION_ERROR = "tool_execution_error"
+    """TOOL_EXECUTION_ERROR."""
+    HTTP_ERROR = "http_error"
+    """HTTP_ERROR."""
 
 
-class Modality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Supported modalities for the session."""
+class McpResponseScheduling(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Response scheduling after locally executed MCP calls."""
 
-    TEXT = "text"
-    """Text modality."""
-    AUDIO = "audio"
-    """Audio modality."""
-    ANIMATION = "animation"
-    """Animation modality."""
-    AVATAR = "avatar"
-    """Avatar modality."""
+    SILENT = "silent"
+    """SILENT."""
+    WHEN_IDLE = "when_idle"
+    """WHEN_IDLE."""
+    INTERRUPT = "interrupt"
+    """INTERRUPT."""
+    SKIP_IF_BUSY = "skip_if_busy"
+    """SKIP_IF_BUSY."""
 
 
 class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -289,35 +208,6 @@ class OpenAIVoiceName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cedar voice."""
 
 
-_LEGACY_OUTPUT_AUDIO_FORMAT_VALUES = {
-    "pcm16-8000hz": "pcm16_8000hz",
-    "pcm16-16000hz": "pcm16_16000hz",
-}
-
-
-class OutputAudioFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Output audio format types supported."""
-
-    PCM16 = "pcm16"
-    """16-bit PCM audio format at default sampling rate (24kHz)."""
-    PCM16_8000_HZ = "pcm16_8000hz"
-    """16-bit PCM audio format at 8kHz sampling rate."""
-    PCM16_16000_HZ = "pcm16_16000hz"
-    """16-bit PCM audio format at 16kHz sampling rate."""
-    G711_ULAW = "g711_ulaw"
-    """G.711 μ-law (mu-law) audio format at 8kHz sampling rate."""
-    G711_ALAW = "g711_alaw"
-    """G.711 A-law audio format at 8kHz sampling rate."""
-
-    @classmethod
-    def _missing_(cls, value):
-        if isinstance(value, str):
-            current_value = _LEGACY_OUTPUT_AUDIO_FORMAT_VALUES.get(value.lower())
-            if current_value is not None:
-                return cls(current_value)
-        return None
-
-
 class PersonalVoiceModels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PersonalVoice models."""
 
@@ -340,138 +230,140 @@ class PhotoAvatarBaseModes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """VASA-1 model."""
 
 
-class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Constrains effort on reasoning for reasoning models. Check model documentation for supported
-    values for each model. Reducing reasoning effort can result in faster responses and fewer
-    tokens used on reasoning in a response.
-    """
+class RealtimeClientEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeClientEventType."""
 
-    NONE = "none"
-    """No reasoning effort."""
-    MINIMAL = "minimal"
-    """Minimal reasoning effort."""
-    LOW = "low"
-    """Low reasoning effort - faster responses with less reasoning."""
-    MEDIUM = "medium"
-    """Medium reasoning effort - balanced between speed and reasoning depth."""
-    HIGH = "high"
-    """High reasoning effort - more thorough reasoning, may take longer."""
-    XHIGH = "xhigh"
-    """Extra high reasoning effort - maximum reasoning depth."""
-
-
-class RequestImageContentPartDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies an image's detail level. Can be 'auto', 'low', 'high', or an unknown future value."""
-
-    AUTO = "auto"
-    """Automatically select an appropriate detail level."""
-    LOW = "low"
-    """Use a lower detail level to reduce bandwidth or cost."""
-    HIGH = "high"
-    """Use a higher detail level—potentially more resource-intensive."""
+    CONVERSATION_ITEM_CREATE = "conversation.item.create"
+    """CONVERSATION_ITEM_CREATE."""
+    CONVERSATION_ITEM_DELETE = "conversation.item.delete"
+    """CONVERSATION_ITEM_DELETE."""
+    CONVERSATION_ITEM_RETRIEVE = "conversation.item.retrieve"
+    """CONVERSATION_ITEM_RETRIEVE."""
+    CONVERSATION_ITEM_TRUNCATE = "conversation.item.truncate"
+    """CONVERSATION_ITEM_TRUNCATE."""
+    INPUT_AUDIO_BUFFER_APPEND = "input_audio_buffer.append"
+    """INPUT_AUDIO_BUFFER_APPEND."""
+    INPUT_AUDIO_BUFFER_CLEAR = "input_audio_buffer.clear"
+    """INPUT_AUDIO_BUFFER_CLEAR."""
+    OUTPUT_AUDIO_BUFFER_CLEAR = "output_audio_buffer.clear"
+    """OUTPUT_AUDIO_BUFFER_CLEAR."""
+    INPUT_AUDIO_BUFFER_COMMIT = "input_audio_buffer.commit"
+    """INPUT_AUDIO_BUFFER_COMMIT."""
+    RESPONSE_CANCEL = "response.cancel"
+    """RESPONSE_CANCEL."""
+    RESPONSE_CREATE = "response.create"
+    """RESPONSE_CREATE."""
+    SESSION_UPDATE = "session.update"
+    """SESSION_UPDATE."""
 
 
-class ResponseItemStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the processing status of a response item."""
+class RealtimeConversationItemMessageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemMessageType."""
 
-    IN_PROGRESS = "in_progress"
-    """Item that is in progress."""
-    COMPLETED = "completed"
-    """Item has been fully processed and is complete."""
-    INCOMPLETE = "incomplete"
-    """Item has been processed but is incomplete."""
-
-
-class ResponseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Terminal status of a response."""
-
-    COMPLETED = "completed"
-    """COMPLETED."""
-    CANCELLED = "cancelled"
-    """CANCELLED."""
-    FAILED = "failed"
-    """FAILED."""
-    INCOMPLETE = "incomplete"
-    """INCOMPLETE."""
-    IN_PROGRESS = "in_progress"
-    """IN_PROGRESS."""
+    SYSTEM = "system"
+    """SYSTEM."""
+    USER = "user"
+    """USER."""
+    ASSISTANT = "assistant"
+    """ASSISTANT."""
 
 
-class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Server event types used in VoiceLive protocol."""
+class RealtimeConversationItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeConversationItemType."""
 
-    ERROR = "error"
-    """ERROR."""
-    WARNING = "warning"
-    """WARNING."""
-    SESSION_AVATAR_CONNECTING = "session.avatar.connecting"
-    """SESSION_AVATAR_CONNECTING."""
-    SESSION_CREATED = "session.created"
-    """SESSION_CREATED."""
-    SESSION_UPDATED = "session.updated"
-    """SESSION_UPDATED."""
+    FUNCTION_CALL = "function_call"
+    """FUNCTION_CALL."""
+    FUNCTION_CALL_OUTPUT = "function_call_output"
+    """FUNCTION_CALL_OUTPUT."""
+    MCP_APPROVAL_RESPONSE = "mcp_approval_response"
+    """MCP_APPROVAL_RESPONSE."""
+    MCP_LIST_TOOLS = "mcp_list_tools"
+    """MCP_LIST_TOOLS."""
+    MCP_CALL = "mcp_call"
+    """MCP_CALL."""
+    MCP_APPROVAL_REQUEST = "mcp_approval_request"
+    """MCP_APPROVAL_REQUEST."""
+
+
+class RealtimeServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of RealtimeServerEventType."""
+
+    CONVERSATION_CREATED = "conversation.created"
+    """CONVERSATION_CREATED."""
+    CONVERSATION_ITEM_CREATED = "conversation.item.created"
+    """CONVERSATION_ITEM_CREATED."""
+    CONVERSATION_ITEM_DELETED = "conversation.item.deleted"
+    """CONVERSATION_ITEM_DELETED."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED = "conversation.item.input_audio_transcription.completed"
     """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_COMPLETED."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA = "conversation.item.input_audio_transcription.delta"
     """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_DELTA."""
     CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED = "conversation.item.input_audio_transcription.failed"
     """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_FAILED."""
-    CONVERSATION_ITEM_CREATED = "conversation.item.created"
-    """CONVERSATION_ITEM_CREATED."""
     CONVERSATION_ITEM_RETRIEVED = "conversation.item.retrieved"
     """CONVERSATION_ITEM_RETRIEVED."""
     CONVERSATION_ITEM_TRUNCATED = "conversation.item.truncated"
     """CONVERSATION_ITEM_TRUNCATED."""
-    CONVERSATION_ITEM_DELETED = "conversation.item.deleted"
-    """CONVERSATION_ITEM_DELETED."""
-    INPUT_AUDIO_BUFFER_COMMITTED = "input_audio_buffer.committed"
-    """INPUT_AUDIO_BUFFER_COMMITTED."""
+    ERROR = "error"
+    """ERROR."""
     INPUT_AUDIO_BUFFER_CLEARED = "input_audio_buffer.cleared"
     """INPUT_AUDIO_BUFFER_CLEARED."""
+    INPUT_AUDIO_BUFFER_COMMITTED = "input_audio_buffer.committed"
+    """INPUT_AUDIO_BUFFER_COMMITTED."""
+    INPUT_AUDIO_BUFFER_DTMF_EVENT_RECEIVED = "input_audio_buffer.dtmf_event_received"
+    """INPUT_AUDIO_BUFFER_DTMF_EVENT_RECEIVED."""
     INPUT_AUDIO_BUFFER_SPEECH_STARTED = "input_audio_buffer.speech_started"
     """INPUT_AUDIO_BUFFER_SPEECH_STARTED."""
     INPUT_AUDIO_BUFFER_SPEECH_STOPPED = "input_audio_buffer.speech_stopped"
     """INPUT_AUDIO_BUFFER_SPEECH_STOPPED."""
-    RESPONSE_CREATED = "response.created"
-    """RESPONSE_CREATED."""
-    RESPONSE_DONE = "response.done"
-    """RESPONSE_DONE."""
-    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
-    """RESPONSE_OUTPUT_ITEM_ADDED."""
-    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
-    """RESPONSE_OUTPUT_ITEM_DONE."""
+    RATE_LIMITS_UPDATED = "rate_limits.updated"
+    """RATE_LIMITS_UPDATED."""
+    RESPONSE_OUTPUT_AUDIO_DELTA = "response.output_audio.delta"
+    """RESPONSE_OUTPUT_AUDIO_DELTA."""
+    RESPONSE_OUTPUT_AUDIO_DONE = "response.output_audio.done"
+    """RESPONSE_OUTPUT_AUDIO_DONE."""
+    RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA = "response.output_audio_transcript.delta"
+    """RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DELTA."""
+    RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE = "response.output_audio_transcript.done"
+    """RESPONSE_OUTPUT_AUDIO_TRANSCRIPT_DONE."""
     RESPONSE_CONTENT_PART_ADDED = "response.content_part.added"
     """RESPONSE_CONTENT_PART_ADDED."""
     RESPONSE_CONTENT_PART_DONE = "response.content_part.done"
     """RESPONSE_CONTENT_PART_DONE."""
-    RESPONSE_TEXT_DELTA = "response.text.delta"
-    """RESPONSE_TEXT_DELTA."""
-    RESPONSE_TEXT_DONE = "response.text.done"
-    """RESPONSE_TEXT_DONE."""
-    RESPONSE_AUDIO_TRANSCRIPT_DELTA = "response.audio_transcript.delta"
-    """RESPONSE_AUDIO_TRANSCRIPT_DELTA."""
-    RESPONSE_AUDIO_TRANSCRIPT_DONE = "response.audio_transcript.done"
-    """RESPONSE_AUDIO_TRANSCRIPT_DONE."""
-    RESPONSE_AUDIO_DELTA = "response.audio.delta"
-    """RESPONSE_AUDIO_DELTA."""
-    RESPONSE_AUDIO_DONE = "response.audio.done"
-    """RESPONSE_AUDIO_DONE."""
-    RESPONSE_ANIMATION_BLENDSHAPES_DELTA = "response.animation_blendshapes.delta"
-    """RESPONSE_ANIMATION_BLENDSHAPES_DELTA."""
-    RESPONSE_ANIMATION_BLENDSHAPES_DONE = "response.animation_blendshapes.done"
-    """RESPONSE_ANIMATION_BLENDSHAPES_DONE."""
-    RESPONSE_AUDIO_TIMESTAMP_DELTA = "response.audio_timestamp.delta"
-    """RESPONSE_AUDIO_TIMESTAMP_DELTA."""
-    RESPONSE_AUDIO_TIMESTAMP_DONE = "response.audio_timestamp.done"
-    """RESPONSE_AUDIO_TIMESTAMP_DONE."""
-    RESPONSE_ANIMATION_VISEME_DELTA = "response.animation_viseme.delta"
-    """RESPONSE_ANIMATION_VISEME_DELTA."""
-    RESPONSE_ANIMATION_VISEME_DONE = "response.animation_viseme.done"
-    """RESPONSE_ANIMATION_VISEME_DONE."""
+    RESPONSE_CREATED = "response.created"
+    """RESPONSE_CREATED."""
+    RESPONSE_DONE = "response.done"
+    """RESPONSE_DONE."""
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA = "response.function_call_arguments.delta"
     """RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA."""
     RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE = "response.function_call_arguments.done"
     """RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE."""
+    RESPONSE_OUTPUT_ITEM_ADDED = "response.output_item.added"
+    """RESPONSE_OUTPUT_ITEM_ADDED."""
+    RESPONSE_OUTPUT_ITEM_DONE = "response.output_item.done"
+    """RESPONSE_OUTPUT_ITEM_DONE."""
+    RESPONSE_OUTPUT_TEXT_DELTA = "response.output_text.delta"
+    """RESPONSE_OUTPUT_TEXT_DELTA."""
+    RESPONSE_OUTPUT_TEXT_DONE = "response.output_text.done"
+    """RESPONSE_OUTPUT_TEXT_DONE."""
+    SESSION_CREATED = "session.created"
+    """SESSION_CREATED."""
+    SESSION_UPDATED = "session.updated"
+    """SESSION_UPDATED."""
+    OUTPUT_AUDIO_BUFFER_STARTED = "output_audio_buffer.started"
+    """OUTPUT_AUDIO_BUFFER_STARTED."""
+    OUTPUT_AUDIO_BUFFER_STOPPED = "output_audio_buffer.stopped"
+    """OUTPUT_AUDIO_BUFFER_STOPPED."""
+    OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
+    """OUTPUT_AUDIO_BUFFER_CLEARED."""
+    CONVERSATION_ITEM_ADDED = "conversation.item.added"
+    """CONVERSATION_ITEM_ADDED."""
+    CONVERSATION_ITEM_DONE = "conversation.item.done"
+    """CONVERSATION_ITEM_DONE."""
+    INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED = "input_audio_buffer.timeout_triggered"
+    """INPUT_AUDIO_BUFFER_TIMEOUT_TRIGGERED."""
+    CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT = "conversation.item.input_audio_transcription.segment"
+    """CONVERSATION_ITEM_INPUT_AUDIO_TRANSCRIPTION_SEGMENT."""
     MCP_LIST_TOOLS_IN_PROGRESS = "mcp_list_tools.in_progress"
     """MCP_LIST_TOOLS_IN_PROGRESS."""
     MCP_LIST_TOOLS_COMPLETED = "mcp_list_tools.completed"
@@ -488,63 +380,89 @@ class ServerEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSE_MCP_CALL_COMPLETED."""
     RESPONSE_MCP_CALL_FAILED = "response.mcp_call.failed"
     """RESPONSE_MCP_CALL_FAILED."""
-    SESSION_AVATAR_SWITCH_TO_SPEAKING = "session.avatar.switch_to_speaking"
-    """Avatar switches to speaking state."""
-    SESSION_AVATAR_SWITCH_TO_IDLE = "session.avatar.switch_to_idle"
-    """Avatar switches to idle state."""
-    RESPONSE_VIDEO_DELTA = "response.video.delta"
-    """Delta update for avatar video frames."""
-    RESPONSE_WEB_SEARCH_CALL_SEARCHING = "response.web_search_call.searching"
-    """Web search call is searching."""
-    RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS = "response.web_search_call.in_progress"
-    """Web search call is in progress."""
-    RESPONSE_WEB_SEARCH_CALL_COMPLETED = "response.web_search_call.completed"
-    """Web search call completed."""
-    RESPONSE_FILE_SEARCH_CALL_SEARCHING = "response.file_search_call.searching"
-    """File search call is searching."""
-    RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS = "response.file_search_call.in_progress"
-    """File search call is in progress."""
-    RESPONSE_FILE_SEARCH_CALL_COMPLETED = "response.file_search_call.completed"
-    """File search call completed."""
-    OUTPUT_AUDIO_BUFFER_CLEARED = "output_audio_buffer.cleared"
-    """Output audio buffer has been cleared."""
-    RESPONSE_AUDIO_TRANSCRIPT_ANNOTATION_ADDED = "response.audio_transcript.annotation.added"
-    """Audio transcript annotation added."""
-    RESPONSE_INVOCATION_DELTA = "response.invocation.delta"
-    """Invocation passthrough delta from hosted agent."""
 
 
-class SessionIncludeOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Options for what additional data to include in session responses."""
-
-    ITEM_INPUT_AUDIO_TRANSCRIPTION_LOGPROBS = "item.input_audio_transcription.logprobs"
-    """Include log probabilities for input audio transcription."""
-    ITEM_INPUT_AUDIO_TRANSCRIPTION_PHRASES = "item.input_audio_transcription.phrases"
-    """Include phrase-level details for input audio transcription."""
-    FILE_SEARCH_CALL_RESULTS = "file_search_call.results"
-    """Include file search call results."""
-
-
-class ToolChoiceLiteral(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The available set of mode-level, string literal tool_choice options for the voicelive endpoint."""
-
-    AUTO = "auto"
-    """Specifies that the model should freely determine which tool or tools, if any, to call."""
-    NONE = "none"
-    """Specifies that the model should call no tools whatsoever."""
-    REQUIRED = "required"
-    """Specifies that the model should call at least one tool."""
-
-
-class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The supported tool type discriminators for voicelive tools. Currently, only 'function' tools
-    are supported.
+class ReasoningEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Constrains effort on reasoning for reasoning-capable Realtime models such as
+    ``gpt-realtime-2``.
     """
 
+    MINIMAL = "minimal"
+    """MINIMAL."""
+    LOW = "low"
+    """LOW."""
+    MEDIUM = "medium"
+    """MEDIUM."""
+    HIGH = "high"
+    """HIGH."""
+    XHIGH = "xhigh"
+    """XHIGH."""
+
+
+class ResponseConversation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Conversation association for a generated response."""
+
+    AUTO = "auto"
+    """AUTO."""
+    NONE = "none"
+    """NONE."""
+
+
+class SessionModality(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Output modalities supported by VoiceLive sessions."""
+
+    TEXT = "text"
+    """TEXT."""
+    AUDIO = "audio"
+    """AUDIO."""
+    ANIMATION = "animation"
+    """ANIMATION."""
+    AVATAR = "avatar"
+    """AVATAR."""
+
+
+class ToolChoiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tool choice mode."""
+
+    NONE = "none"
+    """NONE."""
+    AUTO = "auto"
+    """AUTO."""
+    REQUIRED = "required"
+    """REQUIRED."""
+
+
+class ToolChoiceParamType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of ToolChoiceParamType."""
+
+    ALLOWED_TOOLS = "allowed_tools"
+    """ALLOWED_TOOLS."""
     FUNCTION = "function"
     """FUNCTION."""
     MCP = "mcp"
     """MCP."""
+    CUSTOM = "custom"
+    """CUSTOM."""
+    APPLY_PATCH = "apply_patch"
+    """APPLY_PATCH."""
+    SHELL = "shell"
+    """SHELL."""
+    FILE_SEARCH = "file_search"
+    """FILE_SEARCH."""
+    WEB_SEARCH_PREVIEW = "web_search_preview"
+    """WEB_SEARCH_PREVIEW."""
+    COMPUTER_USE_PREVIEW = "computer_use_preview"
+    """COMPUTER_USE_PREVIEW."""
+    WEB_SEARCH_PREVIEW2025_03_11 = "web_search_preview_2025_03_11"
+    """WEB_SEARCH_PREVIEW2025_03_11."""
+    IMAGE_GENERATION = "image_generation"
+    """IMAGE_GENERATION."""
+    CODE_INTERPRETER = "code_interpreter"
+    """CODE_INTERPRETER."""
+    COMPUTER = "computer"
+    """COMPUTER."""
+    COMPUTER_USE = "computer_use"
+    """COMPUTER_USE."""
 
 
 class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -552,9 +470,56 @@ class TurnDetectionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SERVER_VAD = "server_vad"
     """SERVER_VAD."""
-    AZURE_SEMANTIC_VAD = "azure_semantic_vad"
-    """AZURE_SEMANTIC_VAD."""
-    AZURE_SEMANTIC_VAD_EN = "azure_semantic_vad_en"
-    """AZURE_SEMANTIC_VAD_EN."""
-    AZURE_SEMANTIC_VAD_MULTILINGUAL = "azure_semantic_vad_multilingual"
-    """AZURE_SEMANTIC_VAD_MULTILINGUAL."""
+    SEMANTIC_VAD = "semantic_vad"
+    """SEMANTIC_VAD."""
+
+
+class VoiceIdsShared(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VoiceIdsShared."""
+
+    ALLOY = "alloy"
+    """ALLOY."""
+    ASH = "ash"
+    """ASH."""
+    BALLAD = "ballad"
+    """BALLAD."""
+    CORAL = "coral"
+    """CORAL."""
+    ECHO = "echo"
+    """ECHO."""
+    SAGE = "sage"
+    """SAGE."""
+    SHIMMER = "shimmer"
+    """SHIMMER."""
+    VERSE = "verse"
+    """VERSE."""
+    MARIN = "marin"
+    """MARIN."""
+    CEDAR = "cedar"
+    """CEDAR."""
+
+
+class VoiceLiveMcpApprovalMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MCP approval modes accepted by VoiceLive."""
+
+    NEVER_MODE = "never"
+    """NEVER_MODE."""
+    ALWAYS_MODE = "always"
+    """ALWAYS_MODE."""
+
+
+class VoiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Voice implementations available through VoiceLive."""
+
+    OPENAI = "openai"
+    """OPENAI."""
+    AZURE_STANDARD = "azure-standard"
+    """AZURE_STANDARD."""
+    AZURE_CUSTOM = "azure-custom"
+    """AZURE_CUSTOM."""
+    AZURE_PERSONAL = "azure-personal"
+    """AZURE_PERSONAL."""
+    AVATAR_VOICE_SYNC = "avatar-voice-sync"
+    """AVATAR_VOICE_SYNC."""
+    AZURE_REALTIME_NATIVE = "azure-realtime-native"
+    """AZURE_REALTIME_NATIVE."""
