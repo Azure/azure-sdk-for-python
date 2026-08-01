@@ -28,16 +28,16 @@ stages:
           os: linux
 
         steps:
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.10'
-            inputs:
+          - template: /eng/pipelines/templates/steps/use-python-version.yml 
+            parameters:
               versionSpec: '3.10'
 
           # Authenticate pip to the configured Azure DevOps feed before installs.
-          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+          - template: /eng/common/pipelines/templates/steps/python-auth-dev-feed.yml
             parameters:
               DevFeedName: ${{ parameters.DevFeedName }}
               EnableTwineAuth: false
+              DisableAdditionalIndexes : true
 
           - script: |
               python -m pip install -r eng/ci_tools.txt
@@ -102,9 +102,8 @@ stages:
               GH_TOKEN: $(GH_TOKEN)
               SYSTEM_ACCESSTOKEN: $(System.AccessToken)
 
-          - task: UsePythonVersion@0
-            displayName: 'Use Python 3.13 for docs generation'
-            inputs:
+          - template: /eng/pipelines/templates/steps/use-python-version.yml
+            parameters:
               versionSpec: '3.13'
 
           - script: |
