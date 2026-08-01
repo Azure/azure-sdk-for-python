@@ -10,6 +10,7 @@ Azure-specific grader types in addition to the standard OpenAI graders.
 
 import logging
 from typing import Any, Iterable, List, Union, Optional
+import httpx
 from httpx import Timeout
 from openai import NotGiven, Omit, OpenAI as OpenAIClient
 from openai._types import Body, Query, Headers
@@ -101,12 +102,19 @@ class OpenAI(OpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
+    _console_logging_enabled: bool
+    _kwargs: dict[str, Any]
+    _custom_user_agent: Optional[str]
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> OpenAI: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 class _AuthSecretsFilter(logging.Filter): ...
+
+class _OpenAILoggingTransport:
+    def __init__(self, *, logging_enabled: bool) -> None: ...
+    def handle_request(self, request: httpx.Request) -> httpx.Response: ...
 
 def _resolve_openai_base_url(config: Any, agent_name: Optional[str], kwargs: dict) -> str: ...
 def _resolve_openai_query_params(config: Any, agent_name: Optional[str], kwargs: dict) -> dict: ...

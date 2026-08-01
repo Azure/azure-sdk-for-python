@@ -22,6 +22,8 @@ from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 logger = logging.getLogger(__name__)
+_OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
+_OPENAI_TRANSPORT_LOGGER = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
 
 
 # ---------------------------------------------------------------------------
@@ -160,7 +162,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
-            console_handler.addFilter(_AuthSecretsFilter())
+            # console_handler.addFilter(_AuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -169,6 +171,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # (which are implemented as a separate logging policy)
             logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 
+            openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+            openai_transport_logger.setLevel(logging.DEBUG)
+            openai_transport_logger.propagate = False
+            openai_transport_logger.addHandler(console_handler)
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 
         self._kwargs = kwargs.copy()
@@ -203,9 +209,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
-        if self._console_logging_enabled:
-            return httpx.Client(transport=_OpenAILoggingTransport())
-        return None
+        logging_kwargs = getattr(self, "_kwargs", {})
+        return httpx.Client(
+            transport=_OpenAILoggingTransport(logging_enabled=logging_kwargs.get("logging_enable", False))
+        )
 
     @distributed_trace
     def get_openai_client(
@@ -242,7 +249,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
         default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
-        logger.debug(  # pylint: disable=specify-parameter-names-in-call
+        _OPENAI_TRANSPORT_LOGGER.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
@@ -301,10 +308,10 @@ class _AuthSecretsFilter(logging.Filter):
 
 
 class _OpenAILoggingTransport(httpx.HTTPTransport):
-    """Custom HTTP transport that logs OpenAI API requests and responses to the console.
+    """Custom HTTP transport that logs OpenAI API requests and responses.
 
-    This transport wraps httpx.HTTPTransport to intercept all HTTP traffic and print
-    detailed request/response information for debugging purposes. It automatically
+    This transport wraps httpx.HTTPTransport to intercept all HTTP traffic and emit
+    detailed request/response information through a dedicated logger. It automatically
     redacts sensitive authorization headers and handles various content types including
     multipart form data (file uploads).
 
@@ -312,12 +319,18 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
     AZURE_AI_PROJECTS_CONSOLE_LOGGING environment variable.
     """
 
+    def __init__(self, *, logging_enabled: bool) -> None:
+        super().__init__()
+        self._logging_enabled = logging_enabled
+
     def _sanitize_auth_header(self, headers) -> None:
         """Sanitize authorization and api-key headers by redacting sensitive information.
 
         :param headers: Dictionary of HTTP headers to sanitize
         :type headers: dict
         """
+        if self._logging_enabled:
+            return
 
         if "authorization" in headers:
             auth_value = headers["authorization"]
@@ -328,7 +341,7 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
 
     def handle_request(self, request: httpx.Request) -> httpx.Response:
         """
-        Log HTTP request and response details to console, in a nicely formatted way,
+        Log HTTP request and response details using the dedicated transport logger,
         for OpenAI / Azure OpenAI clients.
 
         :param request: The HTTP request to handle and log
@@ -338,31 +351,34 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         :rtype: httpx.Response
         """
 
-        print(f"\n==> Request:\n{request.method} {request.url}")
+        _OPENAI_TRANSPORT_LOGGER.debug("\n==> Request:\n%s %s", request.method, request.url)
         headers = dict(request.headers)
         self._sanitize_auth_header(headers)
-        print("Headers:")
+        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
         for key, value in sorted(headers.items()):
-            print(f"  {key}: {value}")
+            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
         self._log_request_body(request)
 
         response = super().handle_request(request)
 
-        print(f"\n<== Response:\n{response.status_code} {response.reason_phrase}")
-        print("Headers:")
+        _OPENAI_TRANSPORT_LOGGER.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
+        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
         for key, value in sorted(dict(response.headers).items()):
-            print(f"  {key}: {value}")
+            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
         content = response.read()
         if content is None or content == b"":
-            print("Body: [No content]")
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
         else:
-            try:
-                print(f"Body:\n {content.decode('utf-8')}")
-            except Exception:  # pylint: disable=broad-exception-caught
-                print(f"Body (raw):\n  {content!r}")
-        print("\n")
+            if self._logging_enabled:
+                try:
+                    _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
+                except Exception:  # pylint: disable=broad-exception-caught
+                    _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+            else:
+                _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
+        _OPENAI_TRANSPORT_LOGGER.debug("\n")
 
         return response
 
@@ -376,29 +392,32 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         # Check content-type header to identify file uploads
         content_type = request.headers.get("content-type", "").lower()
         if "multipart/form-data" in content_type:
-            print("Body: [Multipart form data - file upload, not logged]")
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Multipart form data - file upload, not logged]")
             return
 
         # Safely check if content exists without accessing it
         if not hasattr(request, "content"):
-            print("Body: [No content attribute]")
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content attribute]")
             return
 
         # Very careful content access - wrap in try-catch immediately
         try:
             content = request.content
         except Exception as access_error:  # pylint: disable=broad-exception-caught
-            print(f"Body: [Cannot access content: {access_error}]")
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Cannot access content: %s]", access_error)
             return
 
         if content is None or content == b"":
-            print("Body: [No content]")
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
             return
 
-        try:
-            print(f"Body:\n  {content.decode('utf-8')}")
-        except Exception:  # pylint: disable=broad-exception-caught
-            print(f"Body (raw):\n  {content!r}")
+        if self._logging_enabled:
+            try:
+                _OPENAI_TRANSPORT_LOGGER.debug("Body:\n  %s", content.decode("utf-8"))
+            except Exception:  # pylint: disable=broad-exception-caught
+                _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+        else:
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
 
 
 __all__: List[str] = [
