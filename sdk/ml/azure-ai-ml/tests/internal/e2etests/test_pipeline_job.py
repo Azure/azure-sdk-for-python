@@ -223,7 +223,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert_job_cancel(dsl_pipeline, client)
 
     # TODO: Enable this when type fixed on master.
-    @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: miss required jobs.node.component")
+    @pytest.mark.skip(reason="marshmallow.exceptions.ValidationError: missing required 'jobs.node.component' field. Pending a fix to the component type resolution in the marshmallow schema.")
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
         PARAMETERS_TO_TEST,

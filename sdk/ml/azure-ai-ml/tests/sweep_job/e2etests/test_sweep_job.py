@@ -140,7 +140,7 @@ class TestSweepJob(AzureRecordedTestCase):
         assert sweep_job_resource.status in [JobStatus.COMPLETED, JobStatus.RUNNING]
 
     @pytest.mark.e2etest
-    @pytest.mark.skip(reason="flaky test")
+    @pytest.mark.skip(reason="Test is flaky due to non-deterministic job completion timing. The sweep job download depends on the job reaching a terminal state within the test timeout window.")
     def test_sweep_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
         job = client.jobs.create_or_update(
             load_job(

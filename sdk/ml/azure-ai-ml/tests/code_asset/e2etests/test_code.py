@@ -41,7 +41,7 @@ class TestCode(AzureRecordedTestCase):
         )
         assert code_asset_1.id == code_asset_2.id == arm_id
 
-    @pytest.mark.skip(reason="not raising exception")
+    @pytest.mark.skip(reason="The service does not raise an exception when re-uploading a code asset with a different content hash for the same name/version. Test is waiting on service-side validation enforcement.")
     def test_asset_path_update(
         self,
         client: MLClient,

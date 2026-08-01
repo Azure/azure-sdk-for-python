@@ -237,7 +237,7 @@ class TestWorkspace(AzureRecordedTestCase):
         assert len(diagnose_result.storage_account_results) >= 0
         assert len(diagnose_result.user_defined_route_results) >= 0
 
-    @pytest.mark.skip("Testing CMK workspace needs complicated setup, created TASK 1063112 to address that later")
+    @pytest.mark.skip(reason="CMK (Customer-Managed Key) workspace creation requires pre-provisioned Key Vault and complex IAM setup (TODO ADO 1063112). Not suitable for automated CI testing.")
     def test_workspace_cmk_create_and_delete(self, client: MLClient, randstr: Callable[[], str]) -> None:
         wps_name = f"e2etest_{randstr('wps_name')}"
         params_override = [{"name": wps_name}]
@@ -459,7 +459,7 @@ class TestWorkspace(AzureRecordedTestCase):
         condition=not is_live(),
         reason="ARM template makes playback complex, so the test is flaky when run against recording",
     )
-    @pytest.mark.skip("I don't have permission for this apaprently")
+    @pytest.mark.skip(reason="Managed network workspace creation requires elevated permissions not available in the standard test service principal. Re-enable once the SP has the required RBAC roles.")
     def test_workspace_create_delete_with_managed_network(
         self, client: MLClient, randstr: Callable[[], str], location: str
     ) -> None:
@@ -518,7 +518,7 @@ class TestWorkspace(AzureRecordedTestCase):
     )
 
     # add pytest skip mark
-    @pytest.mark.skip("Involves hubs, need to look at closely")
+    @pytest.mark.skip(reason="Hub workspace creation flow requires AI Hub resources; test involves complex setup that needs careful review before re-enabling.")
     def test_workspace_create_with_hub(self, client: MLClient, randstr: Callable[[], str], location: str) -> None:
         # Create dependent Hub
         hub_name = f"e2etest_{randstr('hub_name_1')}"

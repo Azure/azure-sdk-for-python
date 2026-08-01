@@ -149,7 +149,7 @@ class TestUpload(AzureRecordedTestCase):
             str(upload_dir), show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
+    @pytest.mark.skip(reason="Azure File datastores are not supported by the AzureML service and these tests have no valid target. Re-enable if/when file datastore support is restored.")
     def test_upload_file_fileshare(
         self,
         storage_account_name: str,
@@ -300,7 +300,7 @@ class TestUpload(AzureRecordedTestCase):
             assert dir_name in os.listdir(td)
             assert nested_dir_name.split("/")[-1] in os.listdir(dir_name)  # ensure nested directory was created
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
+    @pytest.mark.skip(reason="Azure File datastores are not supported by the AzureML service and these tests have no valid target. Re-enable if/when file datastore support is restored.")
     def test_artifact_fileshare_file_upload(
         self,
         storage_account_name: str,
@@ -331,7 +331,7 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
-    @pytest.mark.skip("File datastores aren't supported by service, so disabling these tests until they're relevant")
+    @pytest.mark.skip(reason="Azure File datastores are not supported by the AzureML service and these tests have no valid target. Re-enable if/when file datastore support is restored.")
     def test_arm_id_fileshare_dir_upload(
         self,
         storage_account_name: str,
@@ -477,7 +477,7 @@ class TestUpload(AzureRecordedTestCase):
         assert metadata.get("version") == UPDATED_VERSION
 
     @pytest.mark.skip(
-        "Changes to assets to remove datastore param + inability to set default datastore makes this scenario impossible to be auto-tested currently."
+        reason="The credential-less datastore upload scenario cannot be auto-tested: the 'datastore' parameter was removed from assets, and setting the default datastore programmatically is not currently supported."
     )
     def test_credentialless_datastore_upload_download(
         self,

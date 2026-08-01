@@ -61,7 +61,7 @@ class TestFeatureSet(AzureRecordedTestCase):
     # ---------------------------------------------------------------------------------------------------------------#
     # NOTE Please enable materialization store on test featurestore 'sdk_vnext_cli_fs' to run this test in live mode.
     # ---------------------------------------------------------------------------------------------------------------#
-    @pytest.mark.skip(reason="request header size being too large.")
+    @pytest.mark.skip(reason="The list materialization jobs request exceeds HTTP header size limits in the current test environment. The 'sdk_vnext_cli_fs' feature store needs materialization store enabled; see comment above.")
     def test_list_materialization_jobs(
         self, feature_store_client: MLClient, tmp_path: Path, randstr: Callable[[], str]
     ) -> None:

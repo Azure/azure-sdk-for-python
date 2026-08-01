@@ -290,7 +290,7 @@ sepal_length,sepal_width,petal_length,petal_width,species
         client.data.restore(name=name)
         assert name in get_data_list()
 
-    @pytest.mark.skip(reason="investigate later")
+    @pytest.mark.skip(reason="TODO (ADO 1791832): The list-all operation is slow enough to cause testing pipeline timeouts. Test coverage for archive/restore container needs a more efficient assertion strategy.")
     def test_data_unsupported_datastore(self, client: MLClient, tmp_path: Path, randstr: Callable[[], str]) -> None:
         f = tmp_path / "data_local.yaml"
         data_path = tmp_path / "sample1.csv"
