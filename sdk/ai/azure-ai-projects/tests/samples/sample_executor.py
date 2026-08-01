@@ -259,8 +259,6 @@ class BaseSampleExecutor:
                 self._included_logger_prefixes = (
                     "azure",
                     "msrest",
-                    "openai",
-                    "httpx",
                 )
 
             def emit(self, record: logging.LogRecord) -> None:
@@ -279,10 +277,9 @@ class BaseSampleExecutor:
             "azure",
             "azure.core",
             "azure.core.pipeline.policies.http_logging_policy",
+            "azure.ai.projects.openai_transport",
             "msrest",
             "msrest.http_logger",
-            "httpx",
-            "openai",
         ]
 
         previous_logger_levels: dict[str, int] = {}
@@ -313,9 +310,17 @@ class BaseSampleExecutor:
         root_logger.setLevel(logging.DEBUG)
         root_logger.addHandler(capture_handler)
 
+        directly_attached_loggers = []
+        for logger_name in ("azure.ai.projects.openai_transport",):
+            logger_instance = logging.getLogger(logger_name)
+            logger_instance.addHandler(capture_handler)
+            directly_attached_loggers.append(logger_instance)
+
         try:
             yield
         finally:
+            for logger_instance in directly_attached_loggers:
+                logger_instance.removeHandler(capture_handler)
             root_logger.removeHandler(capture_handler)
             root_logger.setLevel(previous_root_level)
 
