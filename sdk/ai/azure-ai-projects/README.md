@@ -103,6 +103,8 @@ with (
         credential=credential
     ) as project_client,
 ):
+    # Use project_client here; the context manager closes it on exit.
+    ...
 ```
 
 To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
@@ -126,6 +128,8 @@ async with (
         credential=credential
     ) as project_client,
 ):
+    # Use project_client here; the context manager closes it on exit.
+    ...
 ```
 ### Performing Responses operations using OpenAI client
 
@@ -241,7 +245,7 @@ import sys
 import logging
 
 # Acquire the logger for this client library. Use 'azure' to affect both
-# `azure.core` and `azure.ai.projects' libraries.
+# `azure.core` and `azure.ai.projects` libraries.
 logger = logging.getLogger("azure")
 
 # Set the desired logging level. logging.INFO or logging.DEBUG are good options.
