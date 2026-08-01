@@ -137,10 +137,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
+
         logging_kwargs = getattr(self, "_kwargs", {})
-        return httpx.AsyncClient(
-            transport=_OpenAILoggingTransport(logging_enabled=logging_kwargs.get("logging_enable", False))
-        )
+        logging_enabled = bool(logging_kwargs.get("logging_enable", False))
+        return httpx.AsyncClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
@@ -245,6 +245,11 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
             else:
                 headers["authorization"] = "<ERROR>"
 
+    @staticmethod
+    def _is_streaming_response(response: httpx.Response) -> bool:
+        content_type = response.headers.get("content-type", "").lower()
+        return "text/event-stream" in content_type
+
     async def handle_async_request(self, request: httpx.Request) -> httpx.Response:
         """
         Log HTTP request and response details to console, in a nicely formatted way,
@@ -273,17 +278,20 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         for key, value in sorted(dict(response.headers).items()):
             _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
-        content = await response.aread()
-        if content is None or content == b"":
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+        if self._is_streaming_response(response):
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response not logged]")
         else:
-            if self._logging_enabled:
-                try:
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
-                except Exception:  # pylint: disable=broad-exception-caught
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+            content = await response.aread()
+            if content is None or content == b"":
+                _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
             else:
-                _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
+                if self._logging_enabled:
+                    try:
+                        _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                else:
+                    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
         _OPENAI_TRANSPORT_LOGGER.debug("\n")
 
         return response

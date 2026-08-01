@@ -220,3 +220,36 @@ def test_openai_transport_reduced_logging_writes_metadata_only_to_file(tmp_path,
     _assert_json_request_body(log_text, expected=False)
     _assert_json_response_body(log_text, expected=False)
     assert log_text.count("Body: [Content exists]") == 2
+
+
+def test_openai_transport_streaming_response_skips_body_read_and_keeps_metadata(tmp_path, restore_logger_state):
+    """Streaming responses should keep metadata logging without buffering the response body."""
+    request = httpx.Request(
+        "POST",
+        "https://example.com/openai/v1/responses",
+        headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
+        content=b'{"message":"hello"}',
+    )
+    response = httpx.Response(
+        200,
+        request=request,
+        headers={"content-type": "text/event-stream"},
+    )
+    log_file = tmp_path / "transport_streaming.log"
+    handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
+
+    with (
+        patch.object(httpx.HTTPTransport, "handle_request", return_value=response),
+        patch.object(response, "read", side_effect=AssertionError("streaming response should not be read")),
+    ):
+        result = _OpenAILoggingTransport(logging_enabled=False).handle_request(request)
+
+    log_text = _read_log_file(handler, log_file)
+
+    assert result is response
+    assert "==> Request:" in log_text
+    assert "<== Response:" in log_text
+    _assert_bearer_token_logging(log_text, logging_enabled=False)
+    _assert_json_request_body(log_text, expected=False)
+    _assert_json_response_body(log_text, expected=False)
+    assert "Body: [Streaming response not logged]" in log_text

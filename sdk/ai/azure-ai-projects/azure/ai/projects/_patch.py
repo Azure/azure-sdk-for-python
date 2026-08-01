@@ -162,7 +162,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger = logging.getLogger("azure")
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
-            # console_handler.addFilter(_AuthSecretsFilter())
+            console_handler.addFilter(_AuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -209,10 +209,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         """
         if "http_client" in kwargs:
             return kwargs.pop("http_client")
+
         logging_kwargs = getattr(self, "_kwargs", {})
-        return httpx.Client(
-            transport=_OpenAILoggingTransport(logging_enabled=logging_kwargs.get("logging_enable", False))
-        )
+        logging_enabled = bool(logging_kwargs.get("logging_enable", False))
+        return httpx.Client(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
@@ -339,6 +339,11 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
             else:
                 headers["authorization"] = "<ERROR>"
 
+    @staticmethod
+    def _is_streaming_response(response: httpx.Response) -> bool:
+        content_type = response.headers.get("content-type", "").lower()
+        return "text/event-stream" in content_type
+
     def handle_request(self, request: httpx.Request) -> httpx.Response:
         """
         Log HTTP request and response details using the dedicated transport logger,
@@ -367,17 +372,20 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         for key, value in sorted(dict(response.headers).items()):
             _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
-        content = response.read()
-        if content is None or content == b"":
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+        if self._is_streaming_response(response):
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response not logged]")
         else:
-            if self._logging_enabled:
-                try:
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
-                except Exception:  # pylint: disable=broad-exception-caught
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+            content = response.read()
+            if content is None or content == b"":
+                _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
             else:
-                _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
+                if self._logging_enabled:
+                    try:
+                        _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                else:
+                    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
         _OPENAI_TRANSPORT_LOGGER.debug("\n")
 
         return response
