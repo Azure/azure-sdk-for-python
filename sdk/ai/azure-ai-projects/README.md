@@ -270,6 +270,8 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
+For streaming responses, the SDK logs the HTTP request and response metadata only. It does not log the streamed event payloads or the streaming response body, even when `logging_enable=True`, because consuming the stream in the transport would interfere with streaming.
+
 Be sure to protect non-redacted logs to avoid compromising security.
 
 For more information, see [Configure logging in the Azure libraries for Python](https://aka.ms/azsdk/python/logging)
