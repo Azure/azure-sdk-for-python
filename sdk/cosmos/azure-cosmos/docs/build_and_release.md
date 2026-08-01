@@ -207,18 +207,35 @@ at that path. The release fix is to replace this path with the approved crates.i
 If developers still want to test unreleased driver source, they can override that dependency
 locally without putting the override in the published manifest.
 
+**Moving to a new driver version is a binding code change, not a version bump.** This is
+easy to under-budget, because in a pure-Python project "take the new dependency" is an edit
+to one line of metadata. It is not that here. The binding is the *embedder* of the driver:
+it depends on the driver, calls the driver's APIs, and re-exposes them through PyO3. When
+the driver ships a 0.x → 0.(x+1) release, "breaking API change for embedders" means the
+binding crate's source has to be edited — renamed imports, restructured call sites, type
+substitutions — before it will even compile against the new driver.
+
+Two consequences worth planning around:
+
+- **The published Python API is unaffected.** None of the above reaches customer code. What
+  customers feel is *cadence*: a driver release that fixes a known parity gap needs
+  binding edits landed first, then a new `azure-cosmos` release, before the fix is on
+  PyPI.
+- **Budget the binding edits alongside the version change.** This applies directly to §12
+  item 1 — moving from the sibling path dependency to the approved crates.io version is
+  itself a driver-version change, so the first thing that step should confirm is that the
+  binding still compiles against the version selected for release.
+
 **Verify resolution on a clean build, don't assume it.** The branch does not commit
 **`Cargo.lock`**, the generated file recording every crate in the graph at one exact version.
 The branch explicitly ignores `/Cargo.lock`, so its current policy is to resolve from the
 manifest ranges rather than commit the generated lock. That distinction follows from the
-version-range rule described in `RUST_BASICS.md`: `Cargo.toml` says what the build will
-*accept*, while `Cargo.lock` records what one build actually *got*. Release owners should
-confirm whether that unlocked policy meets the reproducibility requirement; otherwise two
-clean builds of the same Python and Rust commits can resolve different compatible registry
-versions.
+Cargo version-range model: `Cargo.toml` says what the build will *accept*, while
+`Cargo.lock` records what one build actually *got*. 
 
 **The compiler floor is also inconsistent.** `rust-version` is package metadata, not a
 dependency requirement that Cargo merges. The binding declares a minimum of 1.75 and the
+driver declares 1.88; the compiler used for the combined build must satisfy both, making 1.88
 driver declares 1.88; the compiler used for the combined build must satisfy both, making 1.88
 the effective minimum for this pairing. Update the binding workspace metadata to match,
 confirming the figure against the driver revision being shipped — otherwise the Python

@@ -158,7 +158,7 @@ def get_user_agent(client_id):
 
 
 def get_existing_random_item():
-    random_int = random.randint(0, NUMBER_OF_LOGICAL_PARTITIONS)
+    random_int = random.randint(0, MAX_ITEM_INDEX)
     item = create_random_item()
     item["id"] = "test-" + str(random_int)
     item["pk"] = "pk-" + str(random_int)

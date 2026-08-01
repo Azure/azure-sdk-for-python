@@ -12,7 +12,7 @@ from workload_configs import (
     COSMOS_DATABASE,
     COSMOS_KEY,
     COSMOS_URI,
-    NUMBER_OF_LOGICAL_PARTITIONS,
+    MAX_ITEM_INDEX,
     PARTITION_KEY,
     PREFERRED_LOCATIONS,
     THROUGHPUT,
@@ -42,10 +42,8 @@ async def run_workload(client_id: str):
         await asyncio.sleep(1)
 
         try:
-            # Ids run test-0 .. test-NUMBER_OF_LOGICAL_PARTITIONS, so seed one more
-            # item than that highest index. The timed runs pick from the same
-            # inclusive range.
-            await write_item_concurrently_initial(cont, NUMBER_OF_LOGICAL_PARTITIONS + 1)
+            # MAX_ITEM_INDEX is inclusive, so test-0 through test-N require N + 1 items.
+            await write_item_concurrently_initial(cont, MAX_ITEM_INDEX + 1)
         except Exception as e:
             logger.error(e)
             raise e

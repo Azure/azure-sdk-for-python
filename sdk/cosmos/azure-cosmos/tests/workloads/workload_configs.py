@@ -52,7 +52,7 @@ __all__ = [
     "CONCURRENT_QUERIES",
     "WORKLOAD_NUM_CLIENTS",
     "PARTITION_KEY",
-    "NUMBER_OF_LOGICAL_PARTITIONS",
+    "MAX_ITEM_INDEX",
     "THROUGHPUT",
     "REQUEST_TIMEOUT",
     "WORKLOAD_OPERATIONS",
@@ -99,15 +99,9 @@ CONCURRENT_REQUESTS = _safe_int(os.environ.get("COSMOS_CONCURRENT_REQUESTS", "10
 CONCURRENT_QUERIES = _safe_int(os.environ.get("COSMOS_CONCURRENT_QUERIES", "2"), 2)
 WORKLOAD_NUM_CLIENTS = _safe_int(os.environ.get("WORKLOAD_NUM_CLIENTS", "1"), 1)
 PARTITION_KEY = os.environ.get("COSMOS_PARTITION_KEY", "id")
-# Highest item index the workload uses, despite the name. Item ids run "test-0"
-# through "test-<this value>", so the seeding step creates one more item than this
-# number and every operation picks an index in the inclusive range 0..this value.
-# The name comes from each seeded item sitting in its own logical partition. Seeding
-# and the timed run must use the same value, or reads ask for ids that were never
-# created and return 404.
-NUMBER_OF_LOGICAL_PARTITIONS = int(
-    os.environ.get("COSMOS_NUMBER_OF_LOGICAL_PARTITIONS", "10000")
-)
+# Inclusive highest suffix used by seeded item ids. For example, 1000 means the
+# workload uses test-0 through test-1000, so setup must create 1001 items.
+MAX_ITEM_INDEX = int(os.environ.get("COSMOS_MAX_ITEM_INDEX", "10000"))
 THROUGHPUT = _safe_int(os.environ.get("COSMOS_THROUGHPUT", "100000"), 100000)  # For DR drills, set COSMOS_THROUGHPUT=1000000
 
 # Per-request end-to-end timeout in seconds, passed as the `timeout` kwarg on
