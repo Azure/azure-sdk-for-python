@@ -11,7 +11,7 @@ resources:
 jobs:
 - job: Job_1
   displayName: Python 3
-  timeoutInMinutes: 240
+  timeoutInMinutes: 300
   pool:
     name: Azure Pipelines
   steps:
