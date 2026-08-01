@@ -121,3 +121,8 @@ def __getattr__(name: str):
         return requested
 
     raise AttributeError(f"module 'azure.ai.ml' has no attribute {name}")
+
+
+# CI infrastructure repro: no-op comment change to trigger the azure-ai-ml pipeline on a clean
+# branch off upstream/main, to demonstrate that the macos311 (azureml-dataprep-rslex arm64 wheel)
+# and apistub (pip install timeout) check failures reproduce with zero product changes.
