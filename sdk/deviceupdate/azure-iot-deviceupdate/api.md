@@ -1,18 +1,15 @@
 ```py
 namespace azure.iot.deviceupdate
 
-    class azure.iot.deviceupdate.DeviceUpdateClient: implements ContextManager 
-        device_management: DeviceManagementOperations
-        device_update: DeviceUpdateOperations
+    class azure.iot.deviceupdate.DeviceUpdateClient(DeviceUpdateClientGenerated): implements ContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
-                credential: TokenCredential, 
                 instance_id: str, 
+                credential: TokenCredential, 
                 *, 
-                api_version: str = ..., 
-                polling_interval: Optional[int] = ..., 
+                api_version: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -29,18 +26,15 @@ namespace azure.iot.deviceupdate
 
 namespace azure.iot.deviceupdate.aio
 
-    class azure.iot.deviceupdate.aio.DeviceUpdateClient: implements AsyncContextManager 
-        device_management: DeviceManagementOperations
-        device_update: DeviceUpdateOperations
+    class azure.iot.deviceupdate.aio.DeviceUpdateClient(DeviceUpdateClientGenerated): implements AsyncContextManager 
 
         def __init__(
                 self, 
                 endpoint: str, 
-                credential: AsyncTokenCredential, 
                 instance_id: str, 
+                credential: AsyncTokenCredential, 
                 *, 
-                api_version: str = ..., 
-                polling_interval: Optional[int] = ..., 
+                api_version: Optional[str] = ..., 
                 **kwargs: Any
             ) -> None: ...
 
@@ -57,7 +51,7 @@ namespace azure.iot.deviceupdate.aio
 
 namespace azure.iot.deviceupdate.aio.operations
 
-    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations:
+    class azure.iot.deviceupdate.aio.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
 
         def __init__(
                 self, 
@@ -234,15 +228,15 @@ namespace azure.iot.deviceupdate.aio.operations
                 **kwargs: Any
             ) -> JSON: ...
 
-        @distributed_trace_async
         async def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
         @distributed_trace_async
         async def get_update_compliance(self, **kwargs: Any) -> JSON: ...
@@ -410,7 +404,7 @@ namespace azure.iot.deviceupdate.aio.operations
             ) -> JSON: ...
 
 
-    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations:
+    class azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
 
         def __init__(
                 self, 
@@ -445,7 +439,6 @@ namespace azure.iot.deviceupdate.aio.operations
                 **kwargs: Any
             ) -> AsyncLROPoller[None]: ...
 
-        @distributed_trace_async
         async def get_file(
                 self, 
                 provider: str, 
@@ -454,21 +447,21 @@ namespace azure.iot.deviceupdate.aio.operations
                 file_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
-        @distributed_trace_async
         async def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
-        @distributed_trace_async
         async def get_update(
                 self, 
                 provider: str, 
@@ -476,9 +469,10 @@ namespace azure.iot.deviceupdate.aio.operations
                 version: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
         @distributed_trace
         def list_files(
@@ -530,7 +524,7 @@ namespace azure.iot.deviceupdate.aio.operations
 
 namespace azure.iot.deviceupdate.operations
 
-    class azure.iot.deviceupdate.operations.DeviceManagementOperations:
+    class azure.iot.deviceupdate.operations.DeviceManagementOperations(DeviceManagementOperationsGenerated):
 
         def __init__(
                 self, 
@@ -707,15 +701,15 @@ namespace azure.iot.deviceupdate.operations
                 **kwargs: Any
             ) -> JSON: ...
 
-        @distributed_trace
         def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
         @distributed_trace
         def get_update_compliance(self, **kwargs: Any) -> JSON: ...
@@ -883,7 +877,7 @@ namespace azure.iot.deviceupdate.operations
             ) -> JSON: ...
 
 
-    class azure.iot.deviceupdate.operations.DeviceUpdateOperations:
+    class azure.iot.deviceupdate.operations.DeviceUpdateOperations(DeviceUpdateOperationsGenerated):
 
         def __init__(
                 self, 
@@ -918,7 +912,6 @@ namespace azure.iot.deviceupdate.operations
                 **kwargs: Any
             ) -> LROPoller[None]: ...
 
-        @distributed_trace
         def get_file(
                 self, 
                 provider: str, 
@@ -927,21 +920,21 @@ namespace azure.iot.deviceupdate.operations
                 file_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
-        @distributed_trace
         def get_operation_status(
                 self, 
                 operation_id: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
-        @distributed_trace
         def get_update(
                 self, 
                 provider: str, 
@@ -949,9 +942,10 @@ namespace azure.iot.deviceupdate.operations
                 version: str, 
                 *, 
                 etag: Optional[str] = ..., 
+                if_none_match: Optional[str] = ..., 
                 match_condition: Optional[MatchConditions] = ..., 
                 **kwargs: Any
-            ) -> JSON: ...
+            ): ...
 
         @distributed_trace
         def list_files(

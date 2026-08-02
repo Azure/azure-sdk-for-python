@@ -62,6 +62,7 @@ pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
 pyright = false
+verifytypes = false
 ci_enabled = false
 
 [tool.azure-sdk-conda]
