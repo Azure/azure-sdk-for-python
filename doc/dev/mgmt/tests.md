@@ -126,12 +126,12 @@ To configure the tests to run in live mode, set the environment variable `AZURE_
 Now you can run tests using the same method described in [Running the tests](#running-the-tests). You would be well-advised to specify a limited number of tests to run. Running every existing test in live mode will take a very long time and produce a great deal of changes to recording files in your Git repository. However, for changes in the client code, the recordings will need to be committed to the Git repository.
 
 ## Running tests in playback mode
-Now that the tests have been run against live resources and generated the HTTP recordings, you can run your tests in playback mode. There are two options for changing from live mode to playback mode:
+Now that the tests have been run against live resources and generated the HTTP recordings, you can run your tests in playback mode.
 To revert to playback mode, set the environment variable `AZURE_TEST_RUN_LIVE` to `"false"` or `"no"`.
 
 # Writing new tests
 
-Code in the [`azure-sdk-tools/devtools_testutils`][devtools_testutils] directory provides concrete implementations of the features oriented around use in SDK testing that you can use directly in your unit tests.
+The [`azure-sdk-tools/devtools_testutils`][devtools_testutils] directory provides concrete testing utilities that you can use directly in SDK unit tests.
 
 ## Test structure
 
