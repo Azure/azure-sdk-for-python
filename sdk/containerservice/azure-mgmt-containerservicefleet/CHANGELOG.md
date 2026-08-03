@@ -8,17 +8,12 @@
   - Client `ContainerServiceFleetMgmtClient` added method `send_request`
   - Client `ContainerServiceFleetMgmtClient` added operation group `fleet_managed_namespaces`
   - Client `ContainerServiceFleetMgmtClient` added operation group `gates`
-  - Model `AutoUpgradeProfile` added property `properties`
-  - Model `Fleet` added property `properties`
-  - Model `FleetMember` added property `properties`
-  - Model `FleetUpdateStrategy` added property `properties`
   - Model `UpdateGroup` added property `after_gates`
   - Model `UpdateGroup` added property `before_gates`
   - Model `UpdateGroup` added property `max_concurrency`
   - Model `UpdateGroupStatus` added property `after_gates`
   - Model `UpdateGroupStatus` added property `before_gates`
   - Model `UpdateGroupStatus` added property `max_concurrency`
-  - Model `UpdateRun` added property `properties`
   - Model `UpdateStage` added property `after_gates`
   - Model `UpdateStage` added property `before_gates`
   - Model `UpdateStage` added property `max_concurrency`
@@ -29,7 +24,6 @@
   - Enum `UpgradeChannel` added member `TARGET_KUBERNETES_VERSION`
   - Added enum `AdoptionPolicy`
   - Added model `Affinity`
-  - Added model `AutoUpgradeProfileProperties`
   - Added model `ClusterAffinity`
   - Added model `ClusterResourcePlacementSpec`
   - Added model `ClusterSelector`
@@ -40,10 +34,6 @@
   - Added model `FleetManagedNamespaceProperties`
   - Added enum `FleetManagedNamespaceProvisioningState`
   - Added model `FleetManagedNamespaceStatus`
-  - Added model `FleetMemberProperties`
-  - Added model `FleetMemberUpdateProperties`
-  - Added model `FleetProperties`
-  - Added model `FleetUpdateStrategyProperties`
   - Added model `Gate`
   - Added model `GateConfiguration`
   - Added model `GatePatch`
@@ -74,106 +64,49 @@
   - Added enum `TolerationOperator`
   - Added model `UpdateRunGateStatus`
   - Added model `UpdateRunGateTargetProperties`
-  - Added model `UpdateRunProperties`
-  - Model `AutoUpgradeProfilesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `AutoUpgradeProfilesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `AutoUpgradeProfilesOperations` added parameter `etag` in method `begin_delete`
-  - Model `AutoUpgradeProfilesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `AutoUpgradeProfilesOperations` added parameter `skip_token` in method `list_by_fleet`
-  - Model `AutoUpgradeProfilesOperations` added parameter `top` in method `list_by_fleet`
-  - Model `FleetMembersOperations` added parameter `etag` in method `begin_create`
-  - Model `FleetMembersOperations` added parameter `match_condition` in method `begin_create`
-  - Model `FleetMembersOperations` added parameter `etag` in method `begin_delete`
-  - Model `FleetMembersOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `FleetMembersOperations` added parameter `etag` in method `begin_update`
-  - Model `FleetMembersOperations` added parameter `match_condition` in method `begin_update`
-  - Model `FleetMembersOperations` added parameter `filter` in method `list_by_fleet`
-  - Model `FleetMembersOperations` added parameter `skip_token` in method `list_by_fleet`
-  - Model `FleetMembersOperations` added parameter `top` in method `list_by_fleet`
-  - Model `FleetUpdateStrategiesOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `FleetUpdateStrategiesOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `FleetUpdateStrategiesOperations` added parameter `etag` in method `begin_delete`
-  - Model `FleetUpdateStrategiesOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `FleetUpdateStrategiesOperations` added parameter `skip_token` in method `list_by_fleet`
-  - Model `FleetUpdateStrategiesOperations` added parameter `top` in method `list_by_fleet`
-  - Model `FleetsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `FleetsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `FleetsOperations` added parameter `etag` in method `begin_delete`
-  - Model `FleetsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `FleetsOperations` added parameter `etag` in method `begin_update`
-  - Model `FleetsOperations` added parameter `match_condition` in method `begin_update`
-  - Model `FleetsOperations` added parameter `skip_token` in method `list_by_subscription`
-  - Model `FleetsOperations` added parameter `top` in method `list_by_subscription`
-  - Model `UpdateRunsOperations` added parameter `etag` in method `begin_create_or_update`
-  - Model `UpdateRunsOperations` added parameter `match_condition` in method `begin_create_or_update`
-  - Model `UpdateRunsOperations` added parameter `etag` in method `begin_delete`
-  - Model `UpdateRunsOperations` added parameter `match_condition` in method `begin_delete`
-  - Model `UpdateRunsOperations` added parameter `etag` in method `begin_skip`
-  - Model `UpdateRunsOperations` added parameter `match_condition` in method `begin_skip`
-  - Model `UpdateRunsOperations` added parameter `etag` in method `begin_start`
-  - Model `UpdateRunsOperations` added parameter `match_condition` in method `begin_start`
-  - Model `UpdateRunsOperations` added parameter `etag` in method `begin_stop`
-  - Model `UpdateRunsOperations` added parameter `match_condition` in method `begin_stop`
-  - Model `UpdateRunsOperations` added parameter `skip_token` in method `list_by_fleet`
-  - Model `UpdateRunsOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `AutoUpgradeProfilesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `AutoUpgradeProfilesOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `filter` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `FleetMembersOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `FleetUpdateStrategiesOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `FleetUpdateStrategiesOperations` added parameter `top` in method `list_by_fleet`
+  - Operation group `FleetsOperations` added parameter `skip_token` in method `list_by_subscription`
+  - Operation group `FleetsOperations` added parameter `top` in method `list_by_subscription`
+  - Operation group `UpdateRunsOperations` added parameter `skip_token` in method `list_by_fleet`
+  - Operation group `UpdateRunsOperations` added parameter `top` in method `list_by_fleet`
   - Added operation group `FleetManagedNamespacesOperations`
   - Added operation group `GatesOperations`
 
 ### Breaking Changes
 
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `auto_upgrade_profile_status`
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `channel`
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `disabled`
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `node_image_selection`
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `provisioning_state`
-  - Model `AutoUpgradeProfile` deleted or renamed its instance variable `update_strategy_id`
-  - Model `Fleet` deleted or renamed its instance variable `hub_profile`
-  - Model `Fleet` deleted or renamed its instance variable `provisioning_state`
-  - Model `Fleet` deleted or renamed its instance variable `status`
-  - Model `FleetMember` deleted or renamed its instance variable `cluster_resource_id`
-  - Model `FleetMember` deleted or renamed its instance variable `group`
-  - Model `FleetMember` deleted or renamed its instance variable `provisioning_state`
-  - Model `FleetMember` deleted or renamed its instance variable `status`
-  - Model `FleetMemberUpdate` deleted or renamed its instance variable `group`
-  - Model `FleetUpdateStrategy` deleted or renamed its instance variable `provisioning_state`
-  - Model `FleetUpdateStrategy` deleted or renamed its instance variable `strategy`
-  - Model `UpdateRun` deleted or renamed its instance variable `auto_upgrade_profile_id`
-  - Model `UpdateRun` deleted or renamed its instance variable `managed_cluster_update`
-  - Model `UpdateRun` deleted or renamed its instance variable `provisioning_state`
-  - Model `UpdateRun` deleted or renamed its instance variable `status`
-  - Model `UpdateRun` deleted or renamed its instance variable `strategy`
-  - Model `UpdateRun` deleted or renamed its instance variable `update_strategy_id`
-  - Deleted or renamed model `AutoUpgradeProfileListResult`
-  - Deleted or renamed model `FleetListResult`
-  - Deleted or renamed model `FleetMemberListResult`
-  - Deleted or renamed model `FleetUpdateStrategyListResult`
-  - Deleted or renamed model `OperationListResult`
-  - Deleted or renamed model `UpdateRunListResult`
-  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `AutoUpgradeProfilesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetMembersOperations.begin_create` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetMembersOperations.begin_create` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `FleetMembersOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetMembersOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetUpdateStrategiesOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetUpdateStrategiesOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `FleetUpdateStrategiesOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `FleetsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `FleetsOperations.begin_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_create_or_update` deleted or renamed its parameter `if_none_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_skip` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_start` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `UpdateRunsOperations.begin_stop` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
-  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'auto_upgrade_profile_name', 'content_type', 'fleet_name', 'if_match', 'if_none_match', 'resource', 'resource_group_name', 'kwargs']` to `['self', 'auto_upgrade_profile_name', 'content_type', 'etag', 'fleet_name', 'match_condition', 'resource', 'resource_group_name', 'kwargs']`
-  - Method `FleetsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'fleet_name', 'if_match', 'if_none_match', 'resource', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'fleet_name', 'match_condition', 'resource', 'resource_group_name', 'kwargs']`
-  - Method `UpdateRunsOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'fleet_name', 'if_match', 'if_none_match', 'resource', 'resource_group_name', 'update_run_name', 'kwargs']` to `['self', 'content_type', 'etag', 'fleet_name', 'match_condition', 'resource', 'resource_group_name', 'update_run_name', 'kwargs']`
-  - Method `FleetUpdateStrategiesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'content_type', 'fleet_name', 'if_match', 'if_none_match', 'resource', 'resource_group_name', 'update_strategy_name', 'kwargs']` to `['self', 'content_type', 'etag', 'fleet_name', 'match_condition', 'resource', 'resource_group_name', 'update_strategy_name', 'kwargs']`
-  - Method `FleetMembersOperations.begin_create` re-ordered its parameters from `['self', 'content_type', 'fleet_member_name', 'fleet_name', 'if_match', 'if_none_match', 'resource', 'resource_group_name', 'kwargs']` to `['self', 'content_type', 'etag', 'fleet_member_name', 'fleet_name', 'match_condition', 'resource', 'resource_group_name', 'kwargs']`
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - Model `AutoUpgradeProfile` moved instance variable `auto_upgrade_profile_status`, `channel`, `disabled`, `node_image_selection`, `provisioning_state` and `update_strategy_id` under property `properties` whose type is `AutoUpgradeProfileProperties`
+  - Model `Fleet` moved instance variable `hub_profile`, `provisioning_state` and `status` under property `properties` whose type is `FleetProperties`
+  - Model `FleetMember` moved instance variable `cluster_resource_id`, `group`, `provisioning_state` and `status` under property `properties` whose type is `FleetMemberProperties`
+  - Model `FleetMemberUpdate` moved instance variable `group` under property `properties` whose type is `FleetMemberUpdateProperties`
+  - Model `FleetUpdateStrategy` moved instance variable `provisioning_state` and `strategy` under property `properties` whose type is `FleetUpdateStrategyProperties`
+  - Model `UpdateRun` moved instance variable `auto_upgrade_profile_id`, `managed_cluster_update`, `provisioning_state`, `status`, `strategy` and `update_strategy_id` under property `properties` whose type is `UpdateRunProperties`
+  - Method `AutoUpgradeProfilesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `AutoUpgradeProfilesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetMembersOperations.begin_create` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetMembersOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetMembersOperations.begin_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetUpdateStrategiesOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetUpdateStrategiesOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `FleetsOperations.begin_update` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `UpdateRunsOperations.begin_create_or_update` replaced positional_or_keyword parameters `if_match`/`if_none_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `UpdateRunsOperations.begin_delete` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `UpdateRunsOperations.begin_skip` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `UpdateRunsOperations.begin_start` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+  - Method `UpdateRunsOperations.begin_stop` replaced positional_or_keyword parameter `if_match` with keyword_only parameters `etag`/`match_condition`
+
+### Other Changes
+
+  - Deleted model `AutoUpgradeProfileListResult`/`FleetListResult`/`FleetMemberListResult`/`FleetUpdateStrategyListResult`/`OperationListResult`/`UpdateRunListResult` which actually were not used by SDK users
 
 ## 4.0.0b4 (2026-05-28)
 
