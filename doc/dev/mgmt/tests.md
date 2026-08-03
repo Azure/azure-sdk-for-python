@@ -77,8 +77,8 @@ from azure.identity import ClientSecretCredential
 
 credentials = ClientSecretCredential(
     client_id = os.environ['AZURE_CLIENT_ID'],
-    secret = os.environ['AZURE_CLIENT_SECRET'],
-    tenant = os.environ['AZURE_TENANT_ID']
+    client_secret = os.environ['AZURE_CLIENT_SECRET'],
+    tenant_id = os.environ['AZURE_TENANT_ID']
 )
 ```
 Or you can use `DefaultAzureCredential`, which we prefer.
@@ -98,9 +98,9 @@ In live mode, you need to use real credentials like those you obtained in the pr
 Then make the following changes:
 
 * Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal][azure_portal].)
-* Change the `get_azure_core_credential()` function to construct and return a `ClientSecretCredential`:
+* Change the `get_azure_core_credentials()` function to construct and return a `ClientSecretCredential`:
 ```python
-def get_azure_core_credential(**kwargs):
+def get_azure_core_credentials(**kwargs):
     from azure.identity import ClientSecretCredential
     import os
     return ClientSecretCredential(
@@ -109,13 +109,13 @@ def get_azure_core_credential(**kwargs):
         tenant_id = os.environ['AZURE_TENANT_ID']
     )
 ```
-* Or you could use the `get_credential()` function to construct and return a `DefaultAzureCredential`:
+* Or you could use the `get_credentials()` function to construct and return a `DefaultAzureCredential`:
 ```
-def get_credential(**kwargs):
+def get_credentials(**kwargs):
     from azure.identity import DefaultAzureCredential
     return DefaultAzureCredential()
 ```
-These two methods are used by the authentication methods within `AzureTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
+These two methods are used by the authentication methods within `AzureMgmtRecordedTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
 
 **Important: `mgmt_settings_real.py` should not be committed since it contains your actual credentials! To prevent this, it is included in `.gitignore`.**
 
