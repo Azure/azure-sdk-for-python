@@ -314,7 +314,13 @@ class _StreamReplayState:
         self.events = events if events is not None else []
 
     def append(self, event: StreamEventRecord) -> None:
-        """Append a stream event and enforce replay sequence integrity."""
+        """Append a stream event and enforce replay sequence integrity.
+
+        :param event: The stream event record to append.
+        :type event: StreamEventRecord
+        :raises ValueError: If the sequence number is not strictly increasing or
+            a terminal event has already been recorded.
+        """
         if self.events and event.sequence_number <= self.events[-1].sequence_number:
             raise ValueError("stream event sequence numbers must be strictly increasing")
 
@@ -325,7 +331,10 @@ class _StreamReplayState:
 
     @property
     def terminal_event_seen(self) -> bool:
-        """Return whether replay state has already recorded a terminal event."""
+        """Return whether replay state has already recorded a terminal event.
+
+        :rtype: bool
+        """
         return bool(self.events and self.events[-1].terminal)
 
 
@@ -335,7 +344,19 @@ def _build_cancelled_response(
     model: str | None,
     created_at: datetime | None = None,
 ) -> ResponseObject:
-    """Build a Response object representing a cancelled terminal state."""
+    """Build a Response object representing a cancelled terminal state.
+
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: The agent reference model or metadata dict.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param created_at: Optional creation timestamp; defaults to now if omitted.
+    :type created_at: datetime | None
+    :returns: A Response object with status ``"cancelled"`` and empty output.
+    :rtype: ResponseObject
+    """
     payload: dict[str, Any] = {
         "id": response_id,
         "response_id": response_id,
@@ -358,7 +379,23 @@ def _build_failed_response(
     error_message: str = "An internal server error occurred.",
     error_code: str = "server_error",
 ) -> ResponseObject:
-    """Build a ResponseObject representing a failed terminal state."""
+    """Build a ResponseObject representing a failed terminal state.
+
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: The agent reference model or metadata dict.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Optional model identifier.
+    :type model: str | None
+    :param created_at: Optional creation timestamp; defaults to now if omitted.
+    :type created_at: datetime | None
+    :param error_message: Human-readable error message.
+    :type error_message: str
+    :param error_code: Error code string.
+    :type error_code: str
+    :returns: A Response object with status ``"failed"`` and empty output.
+    :rtype: ResponseObject
+    """
     payload: dict[str, Any] = {
         "id": response_id,
         "response_id": response_id,
@@ -378,7 +415,15 @@ _DEFAULT_FAILED_ERROR_MESSAGE = "An internal server error occurred."
 
 
 def _apply_failed_terminal(base: Mapping[str, Any], *, error: dict[str, Any]) -> dict[str, Any]:
-    """Overlay a ``failed`` terminal onto an existing response snapshot."""
+    """Overlay a ``failed`` terminal onto an existing response snapshot.
+
+    :param base: The existing response snapshot.
+    :type base: Mapping[str, Any]
+    :keyword error: The error payload to attach.
+    :paramtype error: dict[str, Any]
+    :returns: A new payload dict transitioned to ``failed``.
+    :rtype: dict[str, Any]
+    """
     as_dict = getattr(base, "as_dict", None)
     obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
     obj["status"] = "failed"
@@ -388,7 +433,13 @@ def _apply_failed_terminal(base: Mapping[str, Any], *, error: dict[str, Any]) ->
 
 
 def _apply_cancelled_terminal(base: Mapping[str, Any]) -> dict[str, Any]:
-    """Overlay a ``cancelled`` terminal onto an existing response snapshot."""
+    """Overlay a ``cancelled`` terminal onto an existing response snapshot.
+
+    :param base: The existing response snapshot.
+    :type base: Mapping[str, Any]
+    :returns: A new payload dict transitioned to ``cancelled``.
+    :rtype: dict[str, Any]
+    """
     as_dict = getattr(base, "as_dict", None)
     obj = cast("dict[str, Any]", as_dict()) if callable(as_dict) else deepcopy(dict(base))
     obj["status"] = "cancelled"
@@ -408,7 +459,25 @@ def _resolve_failed_response(
     error_code: str = "server_error",
     error_message: str = _DEFAULT_FAILED_ERROR_MESSAGE,
 ) -> ResponseObject:
-    """Build a ``failed`` terminal, preserving the handler's response object."""
+    """Build a ``failed`` terminal, preserving the handler's response object.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: Mapping[str, Any] | None
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: Agent reference for synthesized responses.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Model identifier for synthesized responses.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for synthesized responses.
+    :paramtype created_at: datetime | None
+    :keyword error_code: Error code for the terminal error payload.
+    :paramtype error_code: str
+    :keyword error_message: Error message for the terminal error payload.
+    :paramtype error_message: str
+    :returns: A failed terminal response payload.
+    :rtype: ResponseObject
+    """
     if base is not None:
         return cast(
             "ResponseObject",
@@ -427,7 +496,21 @@ def _resolve_cancelled_response(
     *,
     created_at: datetime | None = None,
 ) -> ResponseObject:
-    """Build a ``cancelled`` terminal, preserving the handler's response object."""
+    """Build a ``cancelled`` terminal, preserving the handler's response object.
+
+    :param base: The handler's response snapshot, or ``None`` if none exists.
+    :type base: Mapping[str, Any] | None
+    :param response_id: The response identifier.
+    :type response_id: str
+    :param agent_reference: Agent reference for synthesized responses.
+    :type agent_reference: AgentReference | dict[str, Any]
+    :param model: Model identifier for synthesized responses.
+    :type model: str | None
+    :keyword created_at: Optional creation timestamp for synthesized responses.
+    :paramtype created_at: datetime | None
+    :returns: A cancelled terminal response payload.
+    :rtype: ResponseObject
+    """
     if base is not None:
         return cast("ResponseObject", _apply_cancelled_terminal(base))
     return _build_cancelled_response(response_id, agent_reference, model, created_at=created_at)
