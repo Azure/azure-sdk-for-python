@@ -63,5 +63,5 @@
         "azure.ai.contentsafety.BlocklistClient.remove_blocklist_items": "Customizations.BlocklistClient.removeBlocklistItems",
         "azure.ai.contentsafety.aio.BlocklistClient.remove_blocklist_items": "Customizations.BlocklistClient.removeBlocklistItems"
     },
-    "CrossLanguageVersion": "b51bf37f4d86"
+    "CrossLanguageVersion": "ea7c2c2d91e8"
 }

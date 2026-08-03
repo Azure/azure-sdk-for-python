@@ -148,7 +148,7 @@ def build_content_provenance_detect_request(**kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = ":detect"
+    _url = "/provenance:detect"
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
@@ -171,7 +171,7 @@ def build_content_provenance_get_operation_status_request(  # pylint: disable=na
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/operations/{operationId}"
+    _url = "/provenance/operations/{operationId}"
     path_format_arguments = {
         "operationId": _SERIALIZER.url("operation_id", operation_id, "str"),
     }
