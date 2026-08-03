@@ -28,13 +28,24 @@ def experimental_function() -> bool:
     return True
 
 
-ExperimentalDuplicateA = experimental(type("ExperimentalDuplicate", (), {"__module__": "test.module_a"}))
-ExperimentalDuplicateB = experimental(type("ExperimentalDuplicate", (), {"__module__": "test.module_b"}))
+def _duplicate_init(self) -> None:
+    self.value = 1
+
+
+ExperimentalDuplicateA = experimental(
+    type("ExperimentalDuplicate", (), {"__module__": "test.module_a", "__init__": _duplicate_init})
+)
+ExperimentalDuplicateB = experimental(
+    type("ExperimentalDuplicate", (), {"__module__": "test.module_b", "__init__": _duplicate_init})
+)
 
 
 @experimental
 class ExperimentalBase:
     """A test base class."""
+
+    def __init__(self) -> None:
+        self.value = 1
 
 
 @experimental

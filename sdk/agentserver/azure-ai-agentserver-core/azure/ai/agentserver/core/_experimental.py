@@ -24,6 +24,9 @@ EXPERIMENTAL_LINK_MESSAGE = (
     "for more information."
 )
 DISABLE_EXPERIMENTAL_WARNING_ENV_VAR = "AZURE_AI_AGENTSERVER_DISABLE_EXPERIMENTAL_WARNING"
+_EXPERIMENTAL_CACHE_KEY_ATTR = "_azure_agentserver_experimental_cache_key"
+_EXPERIMENTAL_MESSAGE_ATTR = "_azure_agentserver_experimental_message"
+_EXPERIMENTAL_WRAPPED_INIT_ATTR = "_azure_agentserver_experimental_wrapped_init"
 
 _warning_cache: set[str] = set()
 _experimental_init_active: ContextVar[bool] = ContextVar("experimental_init_active", default=False)
@@ -61,6 +64,11 @@ def experimental(wrapped: type[T] | Callable[P, T]) -> type[T] | Callable[P, T]:
 
 
 def _add_class_docstring(cls: type[T]) -> type[T]:
+    cache_key = f"class:{cls.__module__}.{cls.__qualname__}"
+    message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+    setattr(cls, _EXPERIMENTAL_CACHE_KEY_ATTR, cache_key)
+    setattr(cls, _EXPERIMENTAL_MESSAGE_ATTR, message)
+
     doc_string = DOCSTRING_TEMPLATE.format(EXPERIMENTAL_CLASS_MESSAGE, EXPERIMENTAL_LINK_MESSAGE)
     if cls.__doc__:
         cls.__doc__ = _add_note_to_docstring(cls.__doc__, doc_string)
@@ -68,13 +76,16 @@ def _add_class_docstring(cls: type[T]) -> type[T]:
         cls.__doc__ = doc_string + ">"
 
     original_init = cls.__init__
+    if "__init__" not in cls.__dict__ or getattr(original_init, _EXPERIMENTAL_WRAPPED_INIT_ATTR, False):
+        return cls
 
     def wrapped_init(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        cache_key = f"class:{cls.__module__}.{cls.__qualname__}"
-        message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+        runtime_cls = type(self)
+        runtime_cache_key = getattr(runtime_cls, _EXPERIMENTAL_CACHE_KEY_ATTR, cache_key)
+        runtime_message = getattr(runtime_cls, _EXPERIMENTAL_MESSAGE_ATTR, message)
         active = _experimental_init_active.get()
-        if not active and not _should_skip_warning() and not _is_warning_cached(cache_key):
-            module_logger.warning(message)
+        if not active and not _should_skip_warning() and not _is_warning_cached(runtime_cache_key):
+            module_logger.warning(runtime_message)
         if active:
             return original_init(self, *args, **kwargs)
         token = _experimental_init_active.set(True)
@@ -85,6 +96,7 @@ def _add_class_docstring(cls: type[T]) -> type[T]:
 
     if "__init__" in cls.__dict__ and inspect.isfunction(original_init):
         wrapped_init = functools.wraps(original_init)(wrapped_init)
+    setattr(wrapped_init, _EXPERIMENTAL_WRAPPED_INIT_ATTR, True)
 
     cls.__init__ = wrapped_init  # type: ignore[method-assign]
     return cls
