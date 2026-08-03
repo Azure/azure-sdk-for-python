@@ -37,12 +37,12 @@ ReturnType_co = TypeVar("ReturnType_co", covariant=True)
 
 
 class Stream(Iterator[ReturnType_co]):
-    """Stream class for streaming JSONL.
+    """Stream class for consuming a decoded event stream (e.g. JSONL or SSE).
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.HttpResponse
     :keyword decoder: A decoder to use for the stream.
-    :paramtype decoder: ~corehttp.streaming._decoders.StreamDecoder
+    :paramtype decoder: ~corehttp.streaming.StreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.HttpResponse, Any], ReturnType]
@@ -88,12 +88,12 @@ class Stream(Iterator[ReturnType_co]):
 
 
 class AsyncStream(AsyncIterator[ReturnType_co]):
-    """AsyncStream class for asynchronously streaming JSONL.
+    """AsyncStream class for asynchronously consuming a decoded event stream (e.g. JSONL or SSE).
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
     :keyword decoder: A decoder to use for the stream.
-    :paramtype decoder: ~corehttp.streaming._decoders.AsyncStreamDecoder
+    :paramtype decoder: ~corehttp.streaming.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.AsyncHttpResponse, Any], ReturnType]

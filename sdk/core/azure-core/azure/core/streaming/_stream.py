@@ -37,7 +37,7 @@ ReturnType_co = TypeVar("ReturnType_co", covariant=True)
 
 
 class Stream(Iterator[ReturnType_co]):
-    """Stream class for streaming JSONL.
+    """Stream class for consuming a decoded event stream (e.g. JSONL or SSE).
 
     :keyword response: The response object.
     :paramtype response: ~azure.core.rest.HttpResponse
@@ -88,7 +88,7 @@ class Stream(Iterator[ReturnType_co]):
 
 
 class AsyncStream(AsyncIterator[ReturnType_co]):
-    """AsyncStream class for asynchronously streaming JSONL.
+    """AsyncStream class for asynchronously consuming a decoded event stream (e.g. JSONL or SSE).
 
     :keyword response: The response object.
     :paramtype response: ~azure.core.rest.AsyncHttpResponse
