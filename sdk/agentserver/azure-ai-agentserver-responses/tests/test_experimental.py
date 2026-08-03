@@ -3,9 +3,8 @@
 
 import logging
 
-from azure.ai.agentserver.core import experimental
-from azure.ai.agentserver.core._experimental import EXPERIMENTAL_CLASS_MESSAGE, _warning_cache
 from azure.ai.agentserver.responses import FoundryStorageSettings, ResponsesAgentServerHost
+from azure.ai.agentserver.responses._experimental import EXPERIMENTAL_CLASS_MESSAGE, _warning_cache, experimental
 
 
 def test_foundry_storage_settings_is_experimental(caplog) -> None:
