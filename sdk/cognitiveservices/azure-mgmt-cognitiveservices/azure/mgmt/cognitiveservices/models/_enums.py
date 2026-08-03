@@ -173,55 +173,6 @@ class CommitmentPlanProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     """CANCELED."""
 
 
-class ComputeOperationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status type of a compute operation."""
-
-    IN_PROGRESS = "InProgress"
-    """The operation is in progress."""
-    SUCCEEDED = "Succeeded"
-    """The operation has succeeded."""
-    FAILED = "Failed"
-    """The operation has failed."""
-    CANCELED = "Canceled"
-    """The operation has been canceled."""
-
-
-class ComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of a compute resource."""
-
-    ACCEPTED = "Accepted"
-    """The resource provisioning request has been accepted."""
-    SUCCEEDED = "Succeeded"
-    """The resource has been fully provisioned."""
-    FAILED = "Failed"
-    """The resource provisioning has failed."""
-    CANCELED = "Canceled"
-    """The resource provisioning was canceled."""
-    DELETING = "Deleting"
-    """The resource is being deleted."""
-    SCALING = "Scaling"
-    """The resource is scaling."""
-    DISABLED = "Disabled"
-    """The resource is disabled."""
-    STARTING = "Starting"
-    """The compute resource is starting."""
-    STOPPING = "Stopping"
-    """The compute resource is stopping."""
-    RESTARTING = "Restarting"
-    """The compute resource is restarting."""
-    STOPPED = "Stopped"
-    """The compute resource is stopped."""
-
-
-class ComputeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of compute resource."""
-
-    CLUSTER = "Cluster"
-    """Cluster (AKS-backed) compute type."""
-    CONTAINER_INSTANCE = "ContainerInstance"
-    """Container Instance compute type."""
-
-
 class ConnectionAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Authentication type of the connection target."""
 
@@ -665,15 +616,6 @@ class FirewallSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BASIC."""
 
 
-class FoundryAutoUpgradeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Represents the mode for foundry auto-upgrade configuration."""
-
-    ENABLED = "Enabled"
-    """Auto-upgrade is enabled."""
-    DISABLED = "Disabled"
-    """Auto-upgrade is disabled (opted out)."""
-
-
 class HostingModel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Account hosting model."""
 
@@ -871,17 +813,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the operation is initiated by a user or system."""
 
 
-class PolicyEvaluationOutcome(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The outcome of a policy evaluation."""
-
-    COMPLIANT = "Compliant"
-    """The deployment is compliant with all policies."""
-    NON_COMPLIANT = "NonCompliant"
-    """The deployment violates one or more policies."""
-    ERROR = "Error"
-    """An error occurred during evaluation."""
-
-
 class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
     str, Enum, metaclass=CaseInsensitiveEnumMeta
 ):
@@ -977,67 +908,6 @@ class RaiActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HITL."""
     RETRY = "RETRY"
     """RETRY."""
-
-
-class RaiEgressDefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The default action when no user-defined egress rules match."""
-
-    ALLOW = "Allow"
-    """Allow traffic by default when no rules match."""
-    DENY = "Deny"
-    """Deny traffic by default when no rules match."""
-
-
-class RaiEgressHeaderOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation to apply to a header in a Transform or Rewrite action."""
-
-    SET = "Set"
-    """Set or overwrite the header value, creating it if it does not exist."""
-    INSERT = "Insert"
-    """Add the header only if it is not already present."""
-    REMOVE = "Remove"
-    """Remove the header if present."""
-
-
-class RaiEgressMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The enforcement mode for egress rules. If omitted on create, the server defaults to Enforced."""
-
-    ENFORCED = "Enforced"
-    """Rules are enforced. Matching traffic is allowed or denied per rule actions."""
-    AUDIT = "Audit"
-    """Rules are evaluated and logged but not enforced. Traffic is always forwarded regardless of rule
-    action. A would-be Deny is logged but not applied. Transform and Rewrite actions are still
-    applied to matching traffic (only Deny enforcement is suppressed)."""
-
-
-class RaiEgressRuleActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of action an egress rule takes when it matches."""
-
-    ALLOW = "Allow"
-    """Allow the matched traffic."""
-    DENY = "Deny"
-    """Deny the matched traffic."""
-    TRANSFORM = "Transform"
-    """Forward the matched traffic after applying header transforms. Requires at least one header."""
-    REWRITE = "Rewrite"
-    """Redirect the matched traffic to a new destination, optionally applying header transforms.
-    Requires a rewrite target."""
-
-
-class RaiEgressRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of an egress rule, determining what kind of traffic matching it performs."""
-
-    FQDN = "Fqdn"
-    """Fully qualified domain name (FQDN) based rule matching on host and path patterns."""
-
-
-class RaiEgressScheme(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """URL scheme for rewrite targets. Only HTTP and HTTPS are supported."""
-
-    HTTP = "http"
-    """HTTP scheme."""
-    HTTPS = "https"
-    """HTTPS scheme."""
 
 
 class RaiPolicyContentSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1270,12 +1140,3 @@ class UpgradeAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """AVAILABLE."""
     NOT_AVAILABLE = "NotAvailable"
     """NOT_AVAILABLE."""
-
-
-class VmPriority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """VM priority for a compute pool."""
-
-    REGULAR = "Regular"
-    """Regular VM priority."""
-    LOW_PRIORITY = "LowPriority"
-    """Low-priority VM."""
