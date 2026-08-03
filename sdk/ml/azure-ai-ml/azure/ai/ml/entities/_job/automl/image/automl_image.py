@@ -5,7 +5,7 @@
 from abc import ABC
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.arm_ml_service.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
@@ -62,7 +62,7 @@ class AutoMLImage(AutoMLVertical, ABC):
         """Returns the verbosity of the logger.
 
         :return: The log verbosity.
-        :rtype: ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity
+        :rtype: ~azure.ai.ml._restclient.arm_ml_service.models.LogVerbosity
         """
         return self._log_verbosity
 
@@ -72,7 +72,7 @@ class AutoMLImage(AutoMLVertical, ABC):
 
         :param value: The value to set the log verbosity to.
                       Possible values include: "NotSet", "Debug", "Info", "Warning", "Error", "Critical".
-        :type value: Union[str, ~azure.ai.ml._restclient.v2023_04_01_preview.models.LogVerbosity]
+        :type value: Union[str, ~azure.ai.ml._restclient.arm_ml_service.models.LogVerbosity]
         """
         self._log_verbosity = None if value is None else LogVerbosity[camel_to_snake(value).upper()]
 

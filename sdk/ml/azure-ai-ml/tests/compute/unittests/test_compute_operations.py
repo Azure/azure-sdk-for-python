@@ -30,7 +30,7 @@ def mock_compute_operation(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         service_client=mock_aml_services_2023_08_01_preview,
-        service_client_2024=mock_aml_services_2023_04_01_preview,
+        service_client_2024_arm=mock_aml_services_2023_04_01_preview,
     )
 
 

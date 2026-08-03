@@ -14,7 +14,7 @@ from collections.abc import (  # pylint: disable=import-error
     Awaitable,
     Callable,
 )
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Optional
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -27,6 +27,7 @@ from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
+from ._types import MiddlewareFactory, P, StreamContent
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -35,6 +36,72 @@ logger = logging.getLogger("azure.ai.agentserver")
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
 _NOT_SET = "(not set)"
+
+
+def _read_task_manager_shutdown_grace() -> float:
+    """Return TaskManager shutdown grace in seconds (env-driven, default 25.0).
+
+    Reads ``AGENTSERVER_SHUTDOWN_GRACE_SECONDS``. Defaults to 25.0 when
+    unset. Allows tests (and operators) to keep shutdown fast when no
+    long-running resilient handlers need to checkpoint — for example the
+    conformance suite runs with a 1s grace so the in-process shutdown
+    marker fires before the handler completes naturally.
+
+    :return: Grace period in seconds (non-negative).
+    :rtype: float
+    """
+    raw = os.environ.get("AGENTSERVER_SHUTDOWN_GRACE_SECONDS")
+    if raw is None:
+        return 25.0
+    try:
+        return max(0.0, float(raw))
+    except ValueError:
+        return 25.0
+
+
+def _has_registered_tasks() -> bool:
+    """Return True iff the ``_REGISTERED_DESCRIPTORS`` list is non-empty.
+
+    That list is populated at import time by the durable-task decorators:
+    ``@task`` and ``@multi_turn_task`` both construct a
+    :class:`~azure.ai.agentserver.core.tasks.Task` whose ``__init__`` appends
+    to it (``MultiTurnTask`` wraps an inner ``Task``, so it registers too). It
+    is the SAME list ``TaskManager.startup()`` already reads to bind recovery
+    callbacks, so checking it here introduces no new timing assumption.
+
+    Returns False when the resilient tasks module is unavailable or no durable
+    task has been declared.
+
+    :return: Whether at least one durable task is registered.
+    :rtype: bool
+    """
+    try:
+        from .tasks._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+    except ImportError:
+        return False
+    return bool(_REGISTERED_DESCRIPTORS)
+
+
+def _resilient_tasks_enabled() -> bool:
+    """Return True iff the resilient task subsystem was explicitly enabled.
+
+    Reads the process-global switch toggled by
+    :func:`~azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`
+    (defaults to ``False``). Returns False when the resilient tasks module is
+    unavailable.
+
+    :return: Whether resilient tasks were explicitly enabled.
+    :rtype: bool
+    """
+    try:
+        from .tasks._enablement import (  # pylint: disable=import-outside-toplevel
+            resilient_tasks_enabled,
+        )
+    except ImportError:
+        return False
+    return resilient_tasks_enabled()
 
 
 def _mask_uri(uri: str) -> str:
@@ -84,9 +151,7 @@ class _PlatformHeaderMiddleware:
         async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
-                headers.append(
-                    (b"x-platform-server", self._get_server_version().encode())
-                )
+                headers.append((b"x-platform-server", self._get_server_version().encode()))
                 message = {**message, "headers": headers}
             await send(message)
 
@@ -160,7 +225,7 @@ class AgentServerHost(Starlette):
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-statements
         self,
         *,
         applicationinsights_connection_string: Optional[str] = None,
@@ -174,14 +239,20 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+        #  Pre-shutdown callbacks invoked SYNCHRONOUSLY from the
+        # SIGTERM signal handler — before Hypercorn's graceful drain
+        # begins. Used by responses to set ``_shutdown_requested`` early so
+        # foreground handlers' disconnect-poll loop sees the shutdown
+        # signal BEFORE Hypercorn waits for in-flight requests to complete.
+        # Callbacks must be non-blocking and thread-safe (they run in the
+        # signal handler, not on the event loop).
+        self._pre_shutdown_callbacks: list[Callable[[], None]] = []
 
         # Server version segments for the x-platform-server header.
         # Protocol packages call register_server_version() to add their
         # own portion; the middleware joins them at response time.
         self._server_version_segments: list[str] = []
-        self.register_server_version(
-            build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
-        )
+        self.register_server_version(build_server_version("azure-ai-agentserver-core", _CORE_VERSION))
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
@@ -203,15 +274,11 @@ class AgentServerHost(Starlette):
                 logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
-        self._access_log: Optional[logging.Logger] = (
-            logger if access_log is _SENTINEL_ACCESS_LOG else access_log
-        )
+        self._access_log: Optional[logging.Logger] = logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Timeouts ---------------------------------------------------------
-        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
-            graceful_shutdown_timeout
-        )
+        self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(graceful_shutdown_timeout)
 
         # Build lifespan context manager
         @contextlib.asynccontextmanager
@@ -244,6 +311,66 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
+            # --- Resilient task manager initialization ---
+            #
+            # The TaskManager is CONSTRUCTED unconditionally (whenever the
+            # resilient tasks module is importable). Construction is cheap and
+            # makes NO task-store calls — it only builds in-memory state (an
+            # idle provider client, empty routing tables, a lease-owner string).
+            # This keeps ``get_task_manager()`` working so a ``@task``-based app
+            # can run tasks without hitting ``TaskManagerNotInitialized``,
+            # while paying zero network cost until a task is actually used.
+            #
+            # The network-backed startup RECOVERY SCAN (a blocking hosted
+            # task-store ``list()`` plus ``DefaultAzureCredential`` token
+            # acquisition, which would otherwise gate server readiness) — and
+            # the periodic recovery loop it spawns — run when EITHER holds:
+            #   (1) at least one durable task was declared (``@task`` /
+            #       ``@multi_turn_task``, tracked in ``_REGISTERED_DESCRIPTORS``)
+            #       — an app that uses tasks gets recovery automatically, OR
+            #   (2) resilient tasks were explicitly enabled via
+            #       ``set_resilient_tasks_enabled(True)`` — a force-enable that
+            #       starts the recovery loop even before any task is declared,
+            #       so a task declared later is picked up by the loop.
+            # A plain server that neither declares a task nor sets the switch
+            # (e.g. an invocations-only host) makes no task-store call at
+            # startup.
+            #
+            # NOTE (deferred): if the switch is OFF and no task is declared at
+            # startup, the recovery loop is not started, so a task declared
+            # LATER in that lifetime will run but its prior-crash orphans are
+            # not scanned until the next restart. Fully closing that requires a
+            # lazy manager-start on first late registration; tracked as future
+            # work (the manager cannot be made fully async, only lazily
+            # started).
+            task_manager = None
+            try:
+                from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                    TaskManager,
+                    set_task_manager,
+                )
+
+                task_manager = TaskManager(
+                    config=cfg,
+                    shutdown_event=asyncio.Event(),
+                    shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
+                )
+                set_task_manager(task_manager)
+
+                if _resilient_tasks_enabled() or _has_registered_tasks():
+                    await task_manager.startup()
+                    logger.info("TaskManager initialized with startup recovery")
+                else:
+                    logger.info(
+                        "TaskManager initialized (recovery deferred; enabled=%s, tasks_declared=%s)",
+                        _resilient_tasks_enabled(),
+                        _has_registered_tasks(),
+                    )
+            except ImportError:
+                pass  # resilient module not available
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize TaskManager", exc_info=True)
+
             yield
 
             # --- SHUTDOWN: runs once when the server is stopping ---
@@ -251,6 +378,14 @@ class AgentServerHost(Starlette):
                 "AgentServerHost shutting down (graceful timeout=%ss)",
                 self._graceful_shutdown_timeout,
             )
+
+            #  Run on_shutdown FIRST so the responses layer's
+            # ``handle_shutdown`` can set ``_shutdown_requested`` and signal
+            # cancellation BEFORE the TaskManager waits its grace period.
+            # Without this, Row 3 (foreground) handlers can race against
+            # Hypercorn's client-connection close — the disconnect-poll loop
+            # stamps ``CLIENT_CANCELLED`` instead of ``SHUTTING_DOWN`` and
+            # B11 emits a cancelled terminal instead of failed.
             if self._graceful_shutdown_timeout == 0:
                 logger.info("Graceful shutdown drain period disabled (timeout=0)")
             else:
@@ -266,6 +401,21 @@ class AgentServerHost(Starlette):
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Error in on_shutdown", exc_info=True)
+
+            # Shutdown task manager AFTER on_shutdown so resilient handlers
+            # have had time to checkpoint via the responses layer's
+            # ``handle_shutdown``.
+            if task_manager is not None:
+                try:
+                    await task_manager.shutdown()
+                    from .tasks._manager import (  # pylint: disable=import-outside-toplevel
+                        set_task_manager as _clear_manager,
+                    )
+
+                    _clear_manager(None)
+                    logger.info("TaskManager shut down")
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Error shutting down TaskManager", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])
@@ -293,7 +443,26 @@ class AgentServerHost(Starlette):
         # (e.g. by MAF / agent-framework) are children of the caller's trace.
         # We do NOT create a SERVER span ourselves — we only propagate context.
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
+
         self.add_middleware(TraceContextMiddleware)
+
+    def add_middleware(
+        self,
+        middleware_class: MiddlewareFactory[P],
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> None:
+        """Add middleware to the host.
+
+        This exposes Starlette's middleware extension point without leaking
+        Starlette's private type aliases in this package's public API.
+
+        :param middleware_class: Middleware class or factory to add.
+        :type middleware_class: MiddlewareFactory
+        :param args: Positional arguments forwarded to the middleware.
+        :type args: Any
+        """
+        super().add_middleware(middleware_class, *args, **kwargs)
 
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
@@ -352,6 +521,31 @@ class AgentServerHost(Starlette):
         self._shutdown_fn = fn
         return fn
 
+    def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None:
+        """Register a synchronous callback to run on SIGTERM signal receipt.
+
+        Callbacks run from inside the SIGTERM signal handler,
+        BEFORE Hypercorn begins its graceful drain. Use this to
+        set asyncio events that long-running request handlers observe via
+        their cancellation-polling loops, so they can return before
+        Hypercorn waits the full ``graceful_shutdown_timeout`` for the
+        request to complete.
+
+        Callbacks MUST be non-blocking and signal-safe — they execute
+        synchronously on the main thread inside the signal handler. The
+        typical pattern is::
+
+            shutdown_event = asyncio.Event()
+            app.register_pre_shutdown_callback(shutdown_event.set)
+
+        Note: ``asyncio.Event.set()`` is safe to call from a signal
+        handler when the event loop is running on the same thread.
+
+        :param fn: A synchronous, non-blocking callable.
+        :type fn: Callable[[], None]
+        """
+        self._pre_shutdown_callbacks.append(fn)
+
     async def _dispatch_shutdown(self) -> None:
         """Dispatch to the registered shutdown handler, or no-op."""
         if self._shutdown_fn is not None:
@@ -403,23 +597,42 @@ class AgentServerHost(Starlette):
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
 
-        # Register SIGTERM handler to log the signal and initiate
-        # Hypercorn's graceful shutdown.
-        original_sigterm = signal.getsignal(signal.SIGTERM)
+        async def _serve_with_shutdown_trigger() -> None:
+            """Wrap hypercorn.serve with a custom shutdown_trigger.
 
-        def _handle_sigterm(_signum: int, _frame: Any) -> None:
-            logger.info("SIGTERM received, initiating graceful shutdown")
-            # Restore the original handler so the re-raised signal is not
-            # caught by this handler again (avoids infinite recursion).
-            signal.signal(signal.SIGTERM, original_sigterm)
-            os.kill(os.getpid(), signal.SIGTERM)
+             When Hypercorn's default ``shutdown_trigger=None``
+            is used, Hypercorn registers its own SIGTERM/SIGINT handler
+            via ``loop.add_signal_handler`` and our ``signal.signal``
+            handler is overridden. We register our own
+            ``loop.add_signal_handler`` here and pass the resulting wait
+            as ``shutdown_trigger`` so Hypercorn uses our event — and we
+            get to fire pre-shutdown callbacks synchronously on signal
+            receipt, before Hypercorn begins its graceful drain.
+            """
+            loop = asyncio.get_event_loop()
+            signal_event = asyncio.Event()
 
-        signal.signal(signal.SIGTERM, _handle_sigterm)
+            def _on_signal() -> None:
+                # Run pre-shutdown callbacks BEFORE setting the event so
+                # they fire before Hypercorn begins draining connections.
+                for cb in self._pre_shutdown_callbacks:
+                    try:
+                        cb()
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.warning("Pre-shutdown callback raised", exc_info=True)
+                signal_event.set()
 
-        try:
-            asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
-        finally:
-            signal.signal(signal.SIGTERM, original_sigterm)
+            for signal_name in ("SIGINT", "SIGTERM", "SIGBREAK"):
+                if hasattr(signal, signal_name):
+                    try:
+                        loop.add_signal_handler(getattr(signal, signal_name), _on_signal)
+                    except NotImplementedError:
+                        # Windows fallback — install via signal.signal directly.
+                        signal.signal(getattr(signal, signal_name), lambda *_: _on_signal())
+
+            await _hypercorn_serve(self, config, shutdown_trigger=signal_event.wait)  # type: ignore[arg-type]
+
+        asyncio.run(_serve_with_shutdown_trigger())
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).
@@ -454,13 +667,11 @@ class AgentServerHost(Starlette):
     # Streaming utilities
     # ------------------------------------------------------------------
 
-    _Content = Union[str, bytes, memoryview]
-
     @staticmethod
     async def sse_keepalive_stream(
-        iterator: "AsyncIterable[AgentServerHost._Content]",
+        iterator: AsyncIterable[StreamContent],
         interval: int,
-    ) -> "AsyncIterator[AgentServerHost._Content]":
+    ) -> AsyncIterator[StreamContent]:
         """Interleave SSE keep-alive comment frames into a streaming body.
 
         Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
@@ -468,16 +679,16 @@ class AgentServerHost(Starlette):
         proxies/load-balancers from closing idle connections.
 
         :param iterator: The async iterable to wrap.
-        :type iterator: AsyncIterable[str or bytes or memoryview]
+        :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
         :param interval: Seconds between keep-alive frames. Must be > 0.
         :type interval: int
         :return: An async iterator with interleaved keep-alive frames.
-        :rtype: AsyncIterator[str or bytes or memoryview]
+        :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
         """
         ait = iterator.__aiter__()
         # Reuse the same __anext__ task across timeouts to avoid cancelling
         # the upstream iterator when wait_for expires.
-        pending: "Optional[asyncio.Task[AgentServerHost._Content]]" = None
+        pending: Optional[asyncio.Task[StreamContent]] = None
         while True:
             if pending is None:
                 pending = asyncio.ensure_future(ait.__anext__())

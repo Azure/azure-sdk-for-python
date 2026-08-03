@@ -43,7 +43,14 @@ class TestDiscoveryMgmtChatModelDeploymentsOperationsAsync(AzureMgmtRecordedTest
                     "location": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {"modelFormat": "str", "modelName": "str", "provisioningState": "str"},
+                    "properties": {
+                        "modelFormat": "str",
+                        "modelName": "str",
+                        "capacity": 0,
+                        "modelVersion": "str",
+                        "provisioningState": "str",
+                        "skuName": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",
@@ -73,7 +80,14 @@ class TestDiscoveryMgmtChatModelDeploymentsOperationsAsync(AzureMgmtRecordedTest
                     "location": "str",
                     "id": "str",
                     "name": "str",
-                    "properties": {"modelFormat": "str", "modelName": "str", "provisioningState": "str"},
+                    "properties": {
+                        "modelFormat": "str",
+                        "modelName": "str",
+                        "capacity": 0,
+                        "modelVersion": "str",
+                        "provisioningState": "str",
+                        "skuName": "str",
+                    },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
                         "createdBy": "str",

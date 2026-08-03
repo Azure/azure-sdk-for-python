@@ -31,7 +31,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
-import azure.core.pipeline.policies as policies
+from azure.core.pipeline import policies
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -119,7 +119,8 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Azure Core has no policy named {exc.name}. "
+                        f"Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 sync_policies.append(policy(sdk_moniker=self.sdk_moniker))
             sync_pipeline = Pipeline(transport=self.sync_transport(), policies=sync_policies)
@@ -152,7 +153,8 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Azure Core has no policy named {exc.name}. "
+                        f"Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 async_policies.append(policy(sdk_moniker=self.sdk_moniker))
             async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=async_policies)
@@ -182,7 +184,8 @@ class _ServiceTest(PerfStressTest):
             "--transport",
             nargs="?",
             type=str,
-            help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. Other possible values for async:\n"""
+            help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. """
+            """Other possible values for async:\n"""
             """ - `requests`\n""",
             default=None,
         )

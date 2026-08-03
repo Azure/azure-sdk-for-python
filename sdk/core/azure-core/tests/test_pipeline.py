@@ -25,7 +25,6 @@
 # --------------------------------------------------------------------------
 
 import json
-import requests
 
 try:
     from io import BytesIO
@@ -35,6 +34,8 @@ import xml.etree.ElementTree as ET
 import sys
 
 import pytest
+import requests
+from utils import HTTP_REQUESTS, is_rest
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import Pipeline
@@ -48,7 +49,6 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HttpLoggingPolicy,
     HTTPPolicy,
-    SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
@@ -56,8 +56,6 @@ from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
 )
-from utils import HTTP_REQUESTS, is_rest
-
 from azure.core.exceptions import AzureError
 from azure.core.pipeline._base import cleanup_kwargs_for_transport
 
@@ -73,6 +71,7 @@ def test_default_http_logging_policy(http_request):
     assert "WWW-Authenticate" in http_logging_policy.allowed_header_names
     assert "x-vss-e2eid" in http_logging_policy.allowed_header_names
     assert "x-msedge-ref" in http_logging_policy.allowed_header_names
+    assert "azure-deprecating" in http_logging_policy.allowed_header_names
     # Testing I can replace the set entirely
     HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
     HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)

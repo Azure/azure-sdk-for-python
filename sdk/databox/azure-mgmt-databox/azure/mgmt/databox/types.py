@@ -20,9 +20,7 @@ from .models._enums import (
 
 if TYPE_CHECKING:
     from .models import (
-        AccessProtocol,
         AddressType,
-        AddressValidationStatus,
         CopyStatus,
         CreatedByType,
         CustomerResolutionCode,
@@ -37,46 +35,16 @@ if TYPE_CHECKING:
         LogCollectionLevel,
         ModelName,
         NotificationStageName,
-        OverallValidationStatus,
         PortalDelayErrorCode,
         ReverseShippingDetailsEditStatus,
         ReverseTransportPreferenceEditStatus,
-        ShareDestinationFormatType,
-        SkuDisabledReason,
         SkuName,
         StageName,
         StageStatus,
         TransferConfigurationType,
         TransferType,
         TransportShipmentTypes,
-        ValidationStatus,
     )
-
-
-class AccountCredentialDetails(TypedDict, total=False):
-    """Credential details of the account.
-
-    :ivar account_name: Name of the account.
-    :vartype account_name: str
-    :ivar data_account_type: Type of the account. Known values are: "StorageAccount" and
-     "ManagedDisk".
-    :vartype data_account_type: Union[str, "DataAccountType"]
-    :ivar account_connection_string: Connection string of the account endpoint to use the account
-     as a storage endpoint on the device.
-    :vartype account_connection_string: str
-    :ivar share_credential_details: Per share level unencrypted access credentials.
-    :vartype share_credential_details: list["ShareCredentialDetails"]
-    """
-
-    accountName: str
-    """Name of the account."""
-    dataAccountType: Union[str, "DataAccountType"]
-    """Type of the account. Known values are: \"StorageAccount\" and \"ManagedDisk\"."""
-    accountConnectionString: str
-    """Connection string of the account endpoint to use the account as a storage endpoint on the
-     device."""
-    shareCredentialDetails: list["ShareCredentialDetails"]
-    """Per share level unencrypted access credentials."""
 
 
 class AdditionalErrorInfo(TypedDict, total=False):
@@ -92,69 +60,6 @@ class AdditionalErrorInfo(TypedDict, total=False):
     """Additional information of the type of error."""
     type: str
     """Type of error (e.g. CustomerIntervention, PolicyViolation, SecurityViolation)."""
-
-
-class AddressValidationOutput(TypedDict, total=False):
-    """Output of the address validation api.
-
-    :ivar properties: The address validation properties.
-    :vartype properties: "AddressValidationProperties"
-    """
-
-    properties: "AddressValidationProperties"
-    """The address validation properties."""
-
-
-class AddressValidationProperties(TypedDict, total=False):
-    """The address validation output.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar validation_status: The address validation status. Known values are: "Valid", "Invalid",
-     and "Ambiguous".
-    :vartype validation_status: Union[str, "AddressValidationStatus"]
-    :ivar alternate_addresses: List of alternate addresses.
-    :vartype alternate_addresses: list["ShippingAddress"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response of address validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    validationStatus: Union[str, "AddressValidationStatus"]
-    """The address validation status. Known values are: \"Valid\", \"Invalid\", and \"Ambiguous\"."""
-    alternateAddresses: list["ShippingAddress"]
-    """List of alternate addresses."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_ADDRESS]]
-    """Identifies the type of validation response. Required. Identify request and response of address
-     validation."""
-
-
-class ApiError(TypedDict, total=False):
-    """ApiError.
-
-    :ivar error: The error detail. Required.
-    :vartype error: "ErrorDetail"
-    """
-
-    error: Required["ErrorDetail"]
-    """The error detail. Required."""
-
-
-class ApplianceNetworkConfiguration(TypedDict, total=False):
-    """The Network Adapter configuration of a DataBox.
-
-    :ivar name: Name of the network.
-    :vartype name: str
-    :ivar mac_address: Mac Address.
-    :vartype mac_address: str
-    """
-
-    name: str
-    """Name of the network."""
-    macAddress: str
-    """Mac Address."""
 
 
 class AvailableSkuRequest(TypedDict, total=False):
@@ -455,59 +360,6 @@ class CreateOrderLimitForSubscriptionValidationRequest(TypedDict, total=False): 
     validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]]
     """Identifies the type of validation request. Required. Identify request and response of create
      order limit for subscription validation."""
-
-
-class CreateOrderLimitForSubscriptionValidationResponseProperties(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Properties of create order limit for subscription validation response.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar status: Create order limit validation status. Known values are: "Valid", "Invalid", and
-     "Skipped".
-    :vartype status: Union[str, "ValidationStatus"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response of create order limit for subscription validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    status: Union[str, "ValidationStatus"]
-    """Create order limit validation status. Known values are: \"Valid\", \"Invalid\", and
-     \"Skipped\"."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_CREATE_ORDER_LIMIT]]
-    """Identifies the type of validation response. Required. Identify request and response of create
-     order limit for subscription validation."""
-
-
-class CustomerDiskJobSecrets(TypedDict, total=False):
-    """The secrets related to customer disk job.
-
-    :ivar dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :vartype dc_access_security_code: "DcAccessSecurityCode"
-    :ivar error: Error while fetching the secrets.
-    :vartype error: "CloudError"
-    :ivar disk_secrets: Contains the list of secrets object for that device.
-    :vartype disk_secrets: list["DiskSecret"]
-    :ivar carrier_account_number: Carrier Account Number of the customer.
-    :vartype carrier_account_number: str
-    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Data Box
-     Customer Disk orders.
-    :vartype job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]
-    """
-
-    dcAccessSecurityCode: "DcAccessSecurityCode"
-    """Dc Access Security Code for Customer Managed Shipping."""
-    error: "CloudError"
-    """Error while fetching the secrets."""
-    diskSecrets: list["DiskSecret"]
-    """Contains the list of secrets object for that device."""
-    carrierAccountNumber: str
-    """Carrier Account Number of the customer."""
-    jobSecretsType: Required[Literal[ClassDiscriminator.DATA_BOX_CUSTOMER_DISK]]
-    """Used to indicate what type of job secrets object. Required. Data Box Customer Disk orders."""
 
 
 class DataBoxAccountCopyLogDetails(TypedDict, total=False):
@@ -1127,38 +979,6 @@ class DataBoxDiskJobDetails(TypedDict, total=False):
     """Indicates the type of job details. Required. Data Box Disk orders."""
 
 
-class DataBoxDiskJobSecrets(TypedDict, total=False):
-    """The secrets related to disk job.
-
-    :ivar dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :vartype dc_access_security_code: "DcAccessSecurityCode"
-    :ivar error: Error while fetching the secrets.
-    :vartype error: "CloudError"
-    :ivar disk_secrets: Contains the list of secrets object for that device.
-    :vartype disk_secrets: list["DiskSecret"]
-    :ivar pass_key: PassKey for the disk Job.
-    :vartype pass_key: str
-    :ivar is_passkey_user_defined: Whether passkey was provided by user.
-    :vartype is_passkey_user_defined: bool
-    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Data Box
-     Disk orders.
-    :vartype job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_DISK]
-    """
-
-    dcAccessSecurityCode: "DcAccessSecurityCode"
-    """Dc Access Security Code for Customer Managed Shipping."""
-    error: "CloudError"
-    """Error while fetching the secrets."""
-    diskSecrets: list["DiskSecret"]
-    """Contains the list of secrets object for that device."""
-    passKey: str
-    """PassKey for the disk Job."""
-    isPasskeyUserDefined: bool
-    """Whether passkey was provided by user."""
-    jobSecretsType: Required[Literal[ClassDiscriminator.DATA_BOX_DISK]]
-    """Used to indicate what type of job secrets object. Required. Data Box Disk orders."""
-
-
 class DataBoxHeavyAccountCopyLogDetails(TypedDict, total=False):
     """Copy log details for a storage account for Databox heavy.
 
@@ -1306,58 +1126,6 @@ class DataBoxHeavyJobDetails(TypedDict, total=False):
     """Indicates the type of job details. Required. Data Box Heavy orders."""
 
 
-class DataBoxHeavyJobSecrets(TypedDict, total=False):
-    """The secrets related to a databox heavy job.
-
-    :ivar dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :vartype dc_access_security_code: "DcAccessSecurityCode"
-    :ivar error: Error while fetching the secrets.
-    :vartype error: "CloudError"
-    :ivar cabinet_pod_secrets: Contains the list of secret objects for a databox heavy job.
-    :vartype cabinet_pod_secrets: list["DataBoxHeavySecret"]
-    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Data Box
-     Heavy orders.
-    :vartype job_secrets_type: Literal[ClassDiscriminator.DATA_BOX_HEAVY]
-    """
-
-    dcAccessSecurityCode: "DcAccessSecurityCode"
-    """Dc Access Security Code for Customer Managed Shipping."""
-    error: "CloudError"
-    """Error while fetching the secrets."""
-    cabinetPodSecrets: list["DataBoxHeavySecret"]
-    """Contains the list of secret objects for a databox heavy job."""
-    jobSecretsType: Required[Literal[ClassDiscriminator.DATA_BOX_HEAVY]]
-    """Used to indicate what type of job secrets object. Required. Data Box Heavy orders."""
-
-
-class DataBoxHeavySecret(TypedDict, total=False):
-    """The secrets related to a databox heavy.
-
-    :ivar device_serial_number: Serial number of the assigned device.
-    :vartype device_serial_number: str
-    :ivar device_password: Password for out of the box experience on device.
-    :vartype device_password: str
-    :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list["ApplianceNetworkConfiguration"]
-    :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
-     device.
-    :vartype encoded_validation_cert_pub_key: str
-    :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list["AccountCredentialDetails"]
-    """
-
-    deviceSerialNumber: str
-    """Serial number of the assigned device."""
-    devicePassword: str
-    """Password for out of the box experience on device."""
-    networkConfigurations: list["ApplianceNetworkConfiguration"]
-    """Network configuration of the appliance."""
-    encodedValidationCertPubKey: str
-    """The base 64 encoded public key to authenticate with the device."""
-    accountCredentialDetails: list["AccountCredentialDetails"]
-    """Per account level access credentials."""
-
-
 class DataBoxJobDetails(TypedDict, total=False):
     """Databox Job Details.
 
@@ -1479,30 +1247,6 @@ class DataBoxJobDetails(TypedDict, total=False):
     """Indicates the type of job details. Required. Data Box orders."""
 
 
-class DataboxJobSecrets(TypedDict, total=False):
-    """The secrets related to a databox job.
-
-    :ivar dc_access_security_code: Dc Access Security Code for Customer Managed Shipping.
-    :vartype dc_access_security_code: "DcAccessSecurityCode"
-    :ivar error: Error while fetching the secrets.
-    :vartype error: "CloudError"
-    :ivar pod_secrets: Contains the list of secret objects for a job.
-    :vartype pod_secrets: list["DataBoxSecret"]
-    :ivar job_secrets_type: Used to indicate what type of job secrets object. Required. Data Box
-     orders.
-    :vartype job_secrets_type: Literal[ClassDiscriminator.DATA_BOX]
-    """
-
-    dcAccessSecurityCode: "DcAccessSecurityCode"
-    """Dc Access Security Code for Customer Managed Shipping."""
-    error: "CloudError"
-    """Error while fetching the secrets."""
-    podSecrets: list["DataBoxSecret"]
-    """Contains the list of secret objects for a job."""
-    jobSecretsType: Required[Literal[ClassDiscriminator.DATA_BOX]]
-    """Used to indicate what type of job secrets object. Required. Data Box orders."""
-
-
 class DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
     """Request body to get the availability for scheduling data box orders orders.
 
@@ -1536,34 +1280,6 @@ class DataBoxScheduleAvailabilityRequest(TypedDict, total=False):
      \"DataBoxHeavy\", \"DataBoxCustomerDisk\", \"AzureDataBox120\", and \"AzureDataBox525\"."""
     skuName: Required[Literal[SkuName.DATA_BOX]]
     """Sku Name for which the order is to be scheduled. Required. Data Box."""
-
-
-class DataBoxSecret(TypedDict, total=False):
-    """The secrets related to a DataBox.
-
-    :ivar device_serial_number: Serial number of the assigned device.
-    :vartype device_serial_number: str
-    :ivar device_password: Password for out of the box experience on device.
-    :vartype device_password: str
-    :ivar network_configurations: Network configuration of the appliance.
-    :vartype network_configurations: list["ApplianceNetworkConfiguration"]
-    :ivar encoded_validation_cert_pub_key: The base 64 encoded public key to authenticate with the
-     device.
-    :vartype encoded_validation_cert_pub_key: str
-    :ivar account_credential_details: Per account level access credentials.
-    :vartype account_credential_details: list["AccountCredentialDetails"]
-    """
-
-    deviceSerialNumber: str
-    """Serial number of the assigned device."""
-    devicePassword: str
-    """Password for out of the box experience on device."""
-    networkConfigurations: list["ApplianceNetworkConfiguration"]
-    """Network configuration of the appliance."""
-    encodedValidationCertPubKey: str
-    """The base 64 encoded public key to authenticate with the device."""
-    accountCredentialDetails: list["AccountCredentialDetails"]
-    """Per account level access credentials."""
 
 
 class DatacenterAddressInstructionResponse(TypedDict, total=False):
@@ -1731,21 +1447,6 @@ class DataImportDetails(TypedDict, total=False):
     """Level of the logs to be collected. Known values are: \"Error\" and \"Verbose\"."""
 
 
-class DataLocationToServiceLocationMap(TypedDict, total=False):
-    """Map of data location to service location.
-
-    :ivar data_location: Location of the data.
-    :vartype data_location: str
-    :ivar service_location: Location of the service.
-    :vartype service_location: str
-    """
-
-    dataLocation: str
-    """Location of the data."""
-    serviceLocation: str
-    """Location of the service."""
-
-
 class DataTransferDetailsValidationRequest(TypedDict, total=False):
     """Request to validate export and import data details.
 
@@ -1788,72 +1489,6 @@ class DataTransferDetailsValidationRequest(TypedDict, total=False):
      transfer details validation."""
 
 
-class DataTransferDetailsValidationResponseProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties of data transfer details validation response.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar status: Data transfer details validation status. Known values are: "Valid", "Invalid",
-     and "Skipped".
-    :vartype status: Union[str, "ValidationStatus"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response of data transfer details validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    status: Union[str, "ValidationStatus"]
-    """Data transfer details validation status. Known values are: \"Valid\", \"Invalid\", and
-     \"Skipped\"."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_DATA_TRANSFER_DETAILS]]
-    """Identifies the type of validation response. Required. Identify request and response of data
-     transfer details validation."""
-
-
-class DcAccessSecurityCode(TypedDict, total=False):
-    """Dc access security code.
-
-    :ivar reverse_dc_access_code: Reverse Dc access security code.
-    :vartype reverse_dc_access_code: str
-    :ivar forward_dc_access_code: Forward Dc access security code.
-    :vartype forward_dc_access_code: str
-    """
-
-    reverseDCAccessCode: str
-    """Reverse Dc access security code."""
-    forwardDCAccessCode: str
-    """Forward Dc access security code."""
-
-
-class Details(TypedDict, total=False):
-    """Details.
-
-    :ivar code: Error code. Required.
-    :vartype code: str
-    :ivar message: Error message. Required.
-    :vartype message: str
-    """
-
-    code: Required[str]
-    """Error code. Required."""
-    message: Required[str]
-    """Error message. Required."""
-
-
-class DeviceCapabilityDetails(TypedDict, total=False):
-    """Device capability details for a given sku for a given region.
-
-    :ivar hardware_encryption: Hardware encryption support for a given sku for a given region.
-     Known values are: "Enabled" and "Disabled".
-    :vartype hardware_encryption: Union[str, "HardwareEncryption"]
-    """
-
-    hardwareEncryption: Union[str, "HardwareEncryption"]
-    """Hardware encryption support for a given sku for a given region. Known values are: \"Enabled\"
-     and \"Disabled\"."""
-
-
 class DeviceCapabilityRequest(TypedDict, total=False):
     """Request body to get the device capabilities for given sku.
 
@@ -1875,18 +1510,6 @@ class DeviceCapabilityRequest(TypedDict, total=False):
      is necessary only at the time of ordering the newer generation device i.e. AzureDataBox120 and
      AzureDataBox525 as of Feb/2025. Known values are: \"DataBox\", \"DataBoxDisk\",
      \"DataBoxHeavy\", \"DataBoxCustomerDisk\", \"AzureDataBox120\", and \"AzureDataBox525\"."""
-
-
-class DeviceCapabilityResponse(TypedDict, total=False):
-    """Device capabilities for given sku in a region.
-
-    :ivar device_capability_details: List of device capabilities available for a given region and a
-     given sku.
-    :vartype device_capability_details: list["DeviceCapabilityDetails"]
-    """
-
-    deviceCapabilityDetails: list["DeviceCapabilityDetails"]
-    """List of device capabilities available for a given region and a given sku."""
 
 
 class DeviceErasureDetails(TypedDict, total=False):
@@ -1960,22 +1583,6 @@ class DiskScheduleAvailabilityRequest(TypedDict, total=False):
     """Sku Name for which the order is to be scheduled. Required. Data Box Disk."""
 
 
-class DiskSecret(TypedDict, total=False):
-    """Contains all the secrets of a Disk.
-
-    :ivar disk_serial_number: Serial number of the assigned disk.
-    :vartype disk_serial_number: str
-    :ivar bit_locker_key: Bit Locker key of the disk which can be used to unlock the disk to copy
-     data.
-    :vartype bit_locker_key: str
-    """
-
-    diskSerialNumber: str
-    """Serial number of the assigned disk."""
-    bitLockerKey: str
-    """Bit Locker key of the disk which can be used to unlock the disk to copy data."""
-
-
 class EncryptionPreferences(TypedDict, total=False):
     """Preferences related to the Encryption.
 
@@ -1993,29 +1600,6 @@ class EncryptionPreferences(TypedDict, total=False):
     hardwareEncryption: Union[str, "HardwareEncryption"]
     """Defines Hardware level encryption (Only for disk). Known values are: \"Enabled\" and
      \"Disabled\"."""
-
-
-class ErrorDetail(TypedDict, total=False):
-    """ErrorDetail.
-
-    :ivar code: Error code. Required.
-    :vartype code: str
-    :ivar message: Error message. Required.
-    :vartype message: str
-    :ivar details: Error target.
-    :vartype details: list["Details"]
-    :ivar target: Additional error info.
-    :vartype target: str
-    """
-
-    code: Required[str]
-    """Error code. Required."""
-    message: Required[str]
-    """Error message. Required."""
-    details: list["Details"]
-    """Error target."""
-    target: str
-    """Additional error info."""
 
 
 class ExportDiskDetails(TypedDict, total=False):
@@ -2561,62 +2145,6 @@ class NotificationPreference(TypedDict, total=False):
     """Notification is required or not. Required."""
 
 
-class Operation(TypedDict, total=False):
-    """Operation entity.
-
-    :ivar name: Name of the operation. Format:
-     {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}.
-    :vartype name: str
-    :ivar display: Operation display values.
-    :vartype display: "OperationDisplay"
-    :ivar properties: Operation properties.
-    :vartype properties: "OperationProperties"
-    :ivar origin: Origin of the operation. Can be : user|system|user,system.
-    :vartype origin: str
-    :ivar is_data_action: Indicates whether the operation is a data action.
-    :vartype is_data_action: bool
-    """
-
-    name: str
-    """Name of the operation. Format:
-     {resourceProviderNamespace}/{resourceType}/{read|write|delete|action}."""
-    display: "OperationDisplay"
-    """Operation display values."""
-    properties: "OperationProperties"
-    """Operation properties."""
-    origin: str
-    """Origin of the operation. Can be : user|system|user,system."""
-    isDataAction: bool
-    """Indicates whether the operation is a data action."""
-
-
-class OperationDisplay(TypedDict, total=False):
-    """Operation display.
-
-    :ivar provider: Provider name.
-    :vartype provider: str
-    :ivar resource: Resource name.
-    :vartype resource: str
-    :ivar operation: Localized name of the operation for display purpose.
-    :vartype operation: str
-    :ivar description: Localized description of the operation for display purpose.
-    :vartype description: str
-    """
-
-    provider: str
-    """Provider name."""
-    resource: str
-    """Resource name."""
-    operation: str
-    """Localized name of the operation for display purpose."""
-    description: str
-    """Localized description of the operation for display purpose."""
-
-
-class OperationProperties(TypedDict, total=False):
-    """Operation properties."""
-
-
 class PackageCarrierDetails(TypedDict, total=False):
     """Package carrier details.
 
@@ -2732,29 +2260,6 @@ class PreferencesValidationRequest(TypedDict, total=False):
      preference validation."""
 
 
-class PreferencesValidationResponseProperties(TypedDict, total=False):
-    """Properties of data center and transport preference validation response.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar status: Validation status of requested data center and transport. Known values are:
-     "Valid", "Invalid", and "Skipped".
-    :vartype status: Union[str, "ValidationStatus"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response of preference validation.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    status: Union[str, "ValidationStatus"]
-    """Validation status of requested data center and transport. Known values are: \"Valid\",
-     \"Invalid\", and \"Skipped\"."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_PREFERENCES]]
-    """Identifies the type of validation response. Required. Identify request and response of
-     preference validation."""
-
-
 class RegionConfigurationRequest(TypedDict, total=False):
     """Request body to get the configuration for the region.
 
@@ -2778,29 +2283,6 @@ class RegionConfigurationRequest(TypedDict, total=False):
     """Request body to get the datacenter address for given sku."""
     deviceCapabilityRequest: "DeviceCapabilityRequest"
     """Request body to get the device capabilities for a given sku."""
-
-
-class RegionConfigurationResponse(TypedDict, total=False):
-    """Configuration response specific to a region.
-
-    :ivar schedule_availability_response: Schedule availability for given sku in a region.
-    :vartype schedule_availability_response: "ScheduleAvailabilityResponse"
-    :ivar transport_availability_response: Transport options available for given sku in a region.
-    :vartype transport_availability_response: "TransportAvailabilityResponse"
-    :ivar datacenter_address_response: Datacenter address for given sku in a region.
-    :vartype datacenter_address_response: "DatacenterAddressResponse"
-    :ivar device_capability_response: Device capabilities available for a given sku in a region.
-    :vartype device_capability_response: "DeviceCapabilityResponse"
-    """
-
-    scheduleAvailabilityResponse: "ScheduleAvailabilityResponse"
-    """Schedule availability for given sku in a region."""
-    transportAvailabilityResponse: "TransportAvailabilityResponse"
-    """Transport options available for given sku in a region."""
-    datacenterAddressResponse: "DatacenterAddressResponse"
-    """Datacenter address for given sku in a region."""
-    deviceCapabilityResponse: "DeviceCapabilityResponse"
-    """Device capabilities available for a given sku in a region."""
 
 
 class ResourceIdentity(TypedDict, total=False):
@@ -2847,46 +2329,6 @@ class ReverseShippingDetails(TypedDict, total=False):
      prepared. Read only field."""
 
 
-class ScheduleAvailabilityResponse(TypedDict, total=False):
-    """Schedule availability for given sku in a region.
-
-    :ivar available_dates: List of dates available to schedule.
-    :vartype available_dates: list[str]
-    """
-
-    availableDates: list[str]
-    """List of dates available to schedule."""
-
-
-class ShareCredentialDetails(TypedDict, total=False):
-    """Credential details of the shares in account.
-
-    :ivar share_name: Name of the share.
-    :vartype share_name: str
-    :ivar share_type: Type of the share. Known values are: "UnknownType", "HCS", "BlockBlob",
-     "PageBlob", "AzureFile", and "ManagedDisk".
-    :vartype share_type: Union[str, "ShareDestinationFormatType"]
-    :ivar user_name: User name for the share.
-    :vartype user_name: str
-    :ivar password: Password for the share.
-    :vartype password: str
-    :ivar supported_access_protocols: Access protocols supported on the device.
-    :vartype supported_access_protocols: list[Union[str, "AccessProtocol"]]
-    """
-
-    shareName: str
-    """Name of the share."""
-    shareType: Union[str, "ShareDestinationFormatType"]
-    """Type of the share. Known values are: \"UnknownType\", \"HCS\", \"BlockBlob\", \"PageBlob\",
-     \"AzureFile\", and \"ManagedDisk\"."""
-    userName: str
-    """User name for the share."""
-    password: str
-    """Password for the share."""
-    supportedAccessProtocols: list[Union[str, "AccessProtocol"]]
-    """Access protocols supported on the device."""
-
-
 class ShipmentPickUpRequest(TypedDict, total=False):
     """Shipment pick up request details.
 
@@ -2908,22 +2350,6 @@ class ShipmentPickUpRequest(TypedDict, total=False):
      area. Required."""
     shipmentLocation: Required[str]
     """Shipment Location in the pickup place. Eg.front desk. Required."""
-
-
-class ShipmentPickUpResponse(TypedDict, total=False):
-    """Shipment pick up response.
-
-    :ivar confirmation_number: Confirmation number for the pick up request.
-    :vartype confirmation_number: str
-    :ivar ready_by_time: Time by which shipment should be ready for pick up, this is in local time
-     of pick up area.
-    :vartype ready_by_time: str
-    """
-
-    confirmationNumber: str
-    """Confirmation number for the pick up request."""
-    readyByTime: str
-    """Time by which shipment should be ready for pick up, this is in local time of pick up area."""
 
 
 class ShippingAddress(TypedDict, total=False):
@@ -3067,130 +2493,6 @@ class SkuAvailabilityValidationRequest(TypedDict, total=False):
      job limit for sku availability."""
 
 
-class SkuAvailabilityValidationResponseProperties(TypedDict, total=False):  # pylint: disable=name-too-long
-    """Properties of sku availability validation response.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar status: Sku availability validation status. Known values are: "Valid", "Invalid", and
-     "Skipped".
-    :vartype status: Union[str, "ValidationStatus"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response of active job limit for sku availability.
-    :vartype validation_type: Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    status: Union[str, "ValidationStatus"]
-    """Sku availability validation status. Known values are: \"Valid\", \"Invalid\", and \"Skipped\"."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_SKU_AVAILABILITY]]
-    """Identifies the type of validation response. Required. Identify request and response of active
-     job limit for sku availability."""
-
-
-class SkuCapacity(TypedDict, total=False):
-    """Capacity of the sku.
-
-    :ivar usable: Usable capacity in TB.
-    :vartype usable: str
-    :ivar maximum: Maximum capacity in TB.
-    :vartype maximum: str
-    :ivar individual_sku_usable: Maximum capacity per device in TB.
-    :vartype individual_sku_usable: str
-    """
-
-    usable: str
-    """Usable capacity in TB."""
-    maximum: str
-    """Maximum capacity in TB."""
-    individualSkuUsable: str
-    """Maximum capacity per device in TB."""
-
-
-class SkuCost(TypedDict, total=False):
-    """Describes metadata for retrieving price info.
-
-    :ivar meter_id: Meter id of the Sku.
-    :vartype meter_id: str
-    :ivar meter_type: The type of the meter.
-    :vartype meter_type: str
-    :ivar multiplier: Multiplier specifies the region specific value to be multiplied with 1$ guid.
-     Eg: Our new regions will be using 1$ shipping guid with appropriate multiplier specific to
-     region.
-    :vartype multiplier: float
-    """
-
-    meterId: str
-    """Meter id of the Sku."""
-    meterType: str
-    """The type of the meter."""
-    multiplier: float
-    """Multiplier specifies the region specific value to be multiplied with 1$ guid. Eg: Our new
-     regions will be using 1$ shipping guid with appropriate multiplier specific to region."""
-
-
-class SkuInformation(TypedDict, total=False):
-    """Information of the sku.
-
-    :ivar sku: The Sku.
-    :vartype sku: "Sku"
-    :ivar enabled: The sku is enabled or not.
-    :vartype enabled: bool
-    :ivar properties: Properties of the sku.
-    :vartype properties: "SkuProperties"
-    """
-
-    sku: "Sku"
-    """The Sku."""
-    enabled: bool
-    """The sku is enabled or not."""
-    properties: "SkuProperties"
-    """Properties of the sku."""
-
-
-class SkuProperties(TypedDict, total=False):
-    """Properties of the sku.
-
-    :ivar data_location_to_service_location_map: The map of data location to service location.
-    :vartype data_location_to_service_location_map: list["DataLocationToServiceLocationMap"]
-    :ivar capacity: Capacity of the Sku.
-    :vartype capacity: "SkuCapacity"
-    :ivar costs: Cost of the Sku.
-    :vartype costs: list["SkuCost"]
-    :ivar api_versions: Api versions that support this Sku.
-    :vartype api_versions: list[str]
-    :ivar disabled_reason: Reason why the Sku is disabled. Known values are: "None", "Country",
-     "Region", "Feature", "OfferType", and "NoSubscriptionInfo".
-    :vartype disabled_reason: Union[str, "SkuDisabledReason"]
-    :ivar disabled_reason_message: Message for why the Sku is disabled.
-    :vartype disabled_reason_message: str
-    :ivar required_feature: Required feature to access the sku.
-    :vartype required_feature: str
-    :ivar countries_within_commerce_boundary: List of all the Countries in the SKU specific
-     commerce boundary.
-    :vartype countries_within_commerce_boundary: list[str]
-    """
-
-    dataLocationToServiceLocationMap: list["DataLocationToServiceLocationMap"]
-    """The map of data location to service location."""
-    capacity: "SkuCapacity"
-    """Capacity of the Sku."""
-    costs: list["SkuCost"]
-    """Cost of the Sku."""
-    apiVersions: list[str]
-    """Api versions that support this Sku."""
-    disabledReason: Union[str, "SkuDisabledReason"]
-    """Reason why the Sku is disabled. Known values are: \"None\", \"Country\", \"Region\",
-     \"Feature\", \"OfferType\", and \"NoSubscriptionInfo\"."""
-    disabledReasonMessage: str
-    """Message for why the Sku is disabled."""
-    requiredFeature: str
-    """Required feature to access the sku."""
-    countriesWithinCommerceBoundary: list[str]
-    """List of all the Countries in the SKU specific commerce boundary."""
-
-
 class StorageAccountDetails(TypedDict, total=False):
     """Details for the storage account.
 
@@ -3232,32 +2534,6 @@ class SubscriptionIsAllowedToCreateJobValidationRequest(TypedDict, total=False):
 
     validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]]
     """Identifies the type of validation request. Required. Identify request and response for
-     validation of subscription permission to create job."""
-
-
-class SubscriptionIsAllowedToCreateJobValidationResponseProperties(
-    TypedDict, total=False
-):  # pylint: disable=name-too-long
-    """Properties of subscription permission to create job validation response.
-
-    :ivar error: Error code and message of validation response.
-    :vartype error: "CloudError"
-    :ivar status: Validation status of subscription permission to create job. Known values are:
-     "Valid", "Invalid", and "Skipped".
-    :vartype status: Union[str, "ValidationStatus"]
-    :ivar validation_type: Identifies the type of validation response. Required. Identify request
-     and response for validation of subscription permission to create job.
-    :vartype validation_type:
-     Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]
-    """
-
-    error: "CloudError"
-    """Error code and message of validation response."""
-    status: Union[str, "ValidationStatus"]
-    """Validation status of subscription permission to create job. Known values are: \"Valid\",
-     \"Invalid\", and \"Skipped\"."""
-    validationType: Required[Literal[ValidationInputDiscriminator.VALIDATE_SUBSCRIPTION_IS_ALLOWED_TO_CREATE_JOB]]
-    """Identifies the type of validation response. Required. Identify request and response for
      validation of subscription permission to create job."""
 
 
@@ -3391,19 +2667,6 @@ class TransferFilterDetails(TypedDict, total=False):
     """Details of the filter files to be used for data transfer."""
 
 
-class TransportAvailabilityDetails(TypedDict, total=False):
-    """Transport options availability details for given region.
-
-    :ivar shipment_type: Transport Shipment Type supported for given region. Known values are:
-     "CustomerManaged" and "MicrosoftManaged".
-    :vartype shipment_type: Union[str, "TransportShipmentTypes"]
-    """
-
-    shipmentType: Union[str, "TransportShipmentTypes"]
-    """Transport Shipment Type supported for given region. Known values are: \"CustomerManaged\" and
-     \"MicrosoftManaged\"."""
-
-
 class TransportAvailabilityRequest(TypedDict, total=False):
     """Request body to get the transport availability for given sku.
 
@@ -3427,17 +2690,6 @@ class TransportAvailabilityRequest(TypedDict, total=False):
      \"DataBoxHeavy\", \"DataBoxCustomerDisk\", \"AzureDataBox120\", and \"AzureDataBox525\"."""
 
 
-class TransportAvailabilityResponse(TypedDict, total=False):
-    """Transport options available for given sku in a region.
-
-    :ivar transport_availability_details: List of transport availability details for given region.
-    :vartype transport_availability_details: list["TransportAvailabilityDetails"]
-    """
-
-    transportAvailabilityDetails: list["TransportAvailabilityDetails"]
-    """List of transport availability details for given region."""
-
-
 class TransportPreferences(TypedDict, total=False):
     """Preferences related to the shipment logistics of the sku.
 
@@ -3455,21 +2707,6 @@ class TransportPreferences(TypedDict, total=False):
     isUpdated: bool
     """Read only property which indicates whether transport preferences has been updated or not after
      device is prepared."""
-
-
-class UnencryptedCredentials(TypedDict, total=False):
-    """Unencrypted credentials for accessing device.
-
-    :ivar job_name: Name of the job.
-    :vartype job_name: str
-    :ivar job_secrets: Secrets related to this job.
-    :vartype job_secrets: "JobSecrets"
-    """
-
-    jobName: str
-    """Name of the job."""
-    jobSecrets: "JobSecrets"
-    """Secrets related to this job."""
 
 
 class UpdateJobDetails(TypedDict, total=False):
@@ -3577,43 +2814,6 @@ class ValidateAddress(TypedDict, total=False):
      validation."""
 
 
-class ValidationResponse(TypedDict, total=False):
-    """Response of pre job creation validations.
-
-    :ivar properties: Properties of pre job creation validation response.
-    :vartype properties: "ValidationResponseProperties"
-    """
-
-    properties: "ValidationResponseProperties"
-    """Properties of pre job creation validation response."""
-
-
-class ValidationResponseProperties(TypedDict, total=False):
-    """Properties of pre job creation validation response.
-
-    :ivar status: Overall validation status. Known values are: "AllValidToProceed",
-     "InputsRevisitRequired", and "CertainInputValidationsSkipped".
-    :vartype status: Union[str, "OverallValidationStatus"]
-    :ivar individual_response_details: List of response details contain validationType and its
-     response as key and value respectively.
-    :vartype individual_response_details: list["ValidationInputResponse"]
-    """
-
-    status: Union[str, "OverallValidationStatus"]
-    """Overall validation status. Known values are: \"AllValidToProceed\", \"InputsRevisitRequired\",
-     and \"CertainInputValidationsSkipped\"."""
-    individualResponseDetails: list["ValidationInputResponse"]
-    """List of response details contain validationType and its response as key and value respectively."""
-
-
-ValidationInputResponse = Union[
-    AddressValidationProperties,
-    CreateOrderLimitForSubscriptionValidationResponseProperties,
-    DataTransferDetailsValidationResponseProperties,
-    PreferencesValidationResponseProperties,
-    SkuAvailabilityValidationResponseProperties,
-    SubscriptionIsAllowedToCreateJobValidationResponseProperties,
-]
 CopyLogDetails = Union[
     DataBoxAccountCopyLogDetails,
     DataBoxCustomerDiskCopyLogDetails,
@@ -3629,7 +2829,6 @@ ValidationInputRequest = Union[
     SkuAvailabilityValidationRequest,
     SubscriptionIsAllowedToCreateJobValidationRequest,
 ]
-JobSecrets = Union[DataboxJobSecrets, CustomerDiskJobSecrets, DataBoxDiskJobSecrets, DataBoxHeavyJobSecrets]
 DataAccountDetails = Union[ManagedDiskDetails, StorageAccountDetails]
 JobDetails = Union[DataBoxJobDetails, DataBoxCustomerDiskJobDetails, DataBoxDiskJobDetails, DataBoxHeavyJobDetails]
 GranularCopyLogDetails = Union[DataBoxDiskGranularCopyLogDetails]
