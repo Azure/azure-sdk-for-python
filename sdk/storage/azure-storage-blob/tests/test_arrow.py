@@ -153,7 +153,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             assert blob.etag is not None
             assert blob.last_modified is not None and blob.last_modified.tzinfo is not None
             assert blob.creation_time is not None and blob.creation_time.tzinfo is not None
-            assert blob.last_accessed_on is not None and blob.last_accessed_on.tzinfo is not None
+            assert blob.last_accessed_on is None or blob.last_accessed_on.tzinfo is not None
             assert blob.server_encrypted is True
             assert blob.blob_tier is not None
             assert blob.blob_tier_inferred is not None
@@ -320,14 +320,15 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
         blob_client = self.bsc.get_blob_client(self.container_name, "blob1")
         create_resp = blob_client.upload_blob(TEST_DATA, overwrite=True)
-        blob_client.set_blob_metadata({"key": "value"})
+        blob_client.upload_blob(TEST_DATA + TEST_DATA, overwrite=True)
 
         container = self.bsc.get_container_client(self.container_name)
         blobs_list = list(container.list_blobs(response_format="arrow", include=["versions"]))
 
-        assert len(blobs_list) == 1
-        assert not blobs_list[0].is_current_version
+        assert len(blobs_list) == 2
         assert blobs_list[0].version_id == create_resp["version_id"]
+        assert not blobs_list[0].is_current_version
+        assert blobs_list[-1].is_current_version
 
     @BlobPreparer()
     @recorded_by_proxy

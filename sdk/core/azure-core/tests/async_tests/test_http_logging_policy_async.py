@@ -6,14 +6,16 @@
 
 import logging
 import types
-import pytest
 import sys
 from unittest.mock import Mock
+
+import pytest
+from utils import HTTP_RESPONSES, request_and_responses_product, create_http_response
+
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from utils import HTTP_RESPONSES, request_and_responses_product, create_http_response
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
