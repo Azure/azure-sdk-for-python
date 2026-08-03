@@ -12,7 +12,7 @@ import os
 import logging
 from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
-from openai import AsyncOpenAI
+from openai import AsyncOpenAI, DefaultAsyncHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
@@ -142,7 +142,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         logging_kwargs = getattr(self, "_kwargs", {})
         logging_enabled = bool(logging_kwargs.get("logging_enable", False))
-        return httpx.AsyncClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
+        return DefaultAsyncHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
@@ -269,6 +269,8 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         self._sanitize_auth_header(headers)
         _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
         for key, value in sorted(headers.items()):
+            if not self._logging_enabled and key.lower() == "api-key":
+                value = "<REDACTED>"
             _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
         self._log_request_body(request)

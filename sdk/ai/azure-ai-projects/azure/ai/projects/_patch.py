@@ -13,7 +13,7 @@ import re
 import logging
 from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
-from openai import OpenAI
+from openai import OpenAI, DefaultHttpxClient
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
@@ -267,7 +267,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         logging_kwargs = getattr(self, "_kwargs", {})
         logging_enabled = bool(logging_kwargs.get("logging_enable", False))
-        return httpx.Client(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
+        return DefaultHttpxClient(transport=_OpenAILoggingTransport(logging_enabled=logging_enabled))
 
     @distributed_trace
     def get_openai_client(
