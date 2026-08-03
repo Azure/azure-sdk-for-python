@@ -188,6 +188,7 @@ class AioHttpTransport(AsyncHttpTransport):
                     "trust_env": self._use_env_settings,
                     "cookie_jar": jar,
                     "auto_decompress": False,
+                    "headers": {"Accept-Encoding": _SUPPORTED_ACCEPT_ENCODING},
                 }
                 if self._loop is not None:
                     clientsession_kwargs["loop"] = self._loop
@@ -342,7 +343,6 @@ class AioHttpTransport(AsyncHttpTransport):
         # and that break services like storage signature
         if not request.data and not request.files:
             config["skip_auto_headers"] = ["Content-Type"]
-        request.headers.setdefault("Accept-Encoding", _SUPPORTED_ACCEPT_ENCODING)
         try:
             stream_response = stream
             timeout = config.pop("connection_timeout", self.connection_config.timeout)
