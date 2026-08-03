@@ -39,12 +39,11 @@ def _expand_value(obj):
         except AttributeError:
             if isinstance(obj, Enum):
                 return obj.value
-            elif isinstance(obj, list):
+            if isinstance(obj, list):
                 return [_expand_value(item) for item in obj]
-            elif isinstance(obj, dict):
+            if isinstance(obj, dict):
                 return _expand_dict(obj)
-            else:
-                return _expand_dict(vars(obj))
+            return _expand_dict(vars(obj))
 
     except TypeError:
         return obj
@@ -2096,10 +2095,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            elif "biz" in data:
+            if "biz" in data:
                 return ExternalModelB(biz=data["biz"], baz=data.get("baz"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
@@ -2138,10 +2136,9 @@ class TestTypeHandlerRegistry:
         def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
             if "baz" in data:
                 return ExternalModelB(foo=data["foo"], bar=data.get("bar"), baz=data.get("baz"))
-            elif "foo" in data:
+            if "foo" in data:
                 return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
-            else:
-                raise ValueError("Invalid data for deserialization")
+            raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 

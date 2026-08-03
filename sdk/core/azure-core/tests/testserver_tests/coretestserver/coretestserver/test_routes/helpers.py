@@ -104,8 +104,7 @@ def semiflatten(multi):
             if len(v) == 1:
                 result[k] = v[0]
         return result
-    else:
-        return multi
+    return multi
 
 
 def json_safe(string, content_type="application/octet-stream"):
