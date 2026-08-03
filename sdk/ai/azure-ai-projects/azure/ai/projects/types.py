@@ -5906,16 +5906,52 @@ class StructuredOutputDefinition(TypedDict, total=False):
 
 
 class SupersededDimension(TypedDict, total=False):
-    """A dimension from the preceding evaluator version that is not present in the current rubric.
+    """A complete snapshot of a dimension from the preceding evaluator version that is not present in
+    the current rubric. Metadata, when present, reflects the dimension's last known lineage state.
 
-    :ivar id: The stable identifier of the superseded dimension. Required.
+    :ivar id: Stable identifier for this dimension (snake_case, e.g., ``correct_resolution``).
+     Required. Provided by the user when manually creating a rubric evaluator or during
+     human-in-the-loop review of a generated set; the generation pipeline produces an initial value
+     the user can edit. Editable when saving new versions. Required.
     :vartype id: str
+    :ivar description: What this dimension measures (e.g., 'Correctly identifies the user's
+     reservation intent and pursues the appropriate workflow'). Required.
+    :vartype description: str
+    :ivar weight: Relative weight of this dimension (1-10). The generation pipeline assigns exactly
+     one dimension weight 8-10; all others use 1-6. User edits are not constrained by this
+     heuristic. Required.
+    :vartype weight: int
+    :ivar always_applicable: When true, the LLM judge always scores this dimension regardless of
+     relevance (skips applicability assessment). The service-generated general quality/policy
+     dimension has this set to true and is non-editable. Users may set this on their own custom
+     dimensions. The service defaults to ``false`` if a value is not specified by the caller.
+    :vartype always_applicable: bool
+    :ivar metadata: Service-generated version lineage for this dimension. Present only when lineage
+     tracking is available.
+    :vartype metadata: "DimensionMetadata"
     :ivar reason: A bounded service-generated reason why the dimension was superseded. Required.
     :vartype reason: str
     """
 
     id: Required[str]
-    """The stable identifier of the superseded dimension. Required."""
+    """Stable identifier for this dimension (snake_case, e.g., ``correct_resolution``). Required.
+     Provided by the user when manually creating a rubric evaluator or during human-in-the-loop
+     review of a generated set; the generation pipeline produces an initial value the user can edit.
+     Editable when saving new versions. Required."""
+    description: Required[str]
+    """What this dimension measures (e.g., 'Correctly identifies the user's reservation intent and
+     pursues the appropriate workflow'). Required."""
+    weight: Required[int]
+    """Relative weight of this dimension (1-10). The generation pipeline assigns exactly one dimension
+     weight 8-10; all others use 1-6. User edits are not constrained by this heuristic. Required."""
+    always_applicable: bool
+    """When true, the LLM judge always scores this dimension regardless of relevance (skips
+     applicability assessment). The service-generated general quality/policy dimension has this set
+     to true and is non-editable. Users may set this on their own custom dimensions. The service
+     defaults to ``false`` if a value is not specified by the caller."""
+    metadata: "DimensionMetadata"
+    """Service-generated version lineage for this dimension. Present only when lineage tracking is
+     available."""
     reason: Required[str]
     """A bounded service-generated reason why the dimension was superseded. Required."""
 

@@ -13529,12 +13529,10 @@ class SessionLogEvent(_Model):
     .. code-block::
 
        event: log
-       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
-    on port 18080"}
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server on port 18080"}
 
        event: log
-       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
-    connected to container"}
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully connected to container"}
 
     :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
      the future. Clients should ignore unrecognized event types. Required. "log"
@@ -14083,16 +14081,52 @@ class StructuredOutputDefinition(_Model):
 
 
 class SupersededDimension(_Model):
-    """A dimension from the preceding evaluator version that is not present in the current rubric.
+    """A complete snapshot of a dimension from the preceding evaluator version that is not present in
+    the current rubric. Metadata, when present, reflects the dimension's last known lineage state.
 
-    :ivar id: The stable identifier of the superseded dimension. Required.
+    :ivar id: Stable identifier for this dimension (snake_case, e.g., ``correct_resolution``).
+     Required. Provided by the user when manually creating a rubric evaluator or during
+     human-in-the-loop review of a generated set; the generation pipeline produces an initial value
+     the user can edit. Editable when saving new versions. Required.
     :vartype id: str
+    :ivar description: What this dimension measures (e.g., 'Correctly identifies the user's
+     reservation intent and pursues the appropriate workflow'). Required.
+    :vartype description: str
+    :ivar weight: Relative weight of this dimension (1-10). The generation pipeline assigns exactly
+     one dimension weight 8-10; all others use 1-6. User edits are not constrained by this
+     heuristic. Required.
+    :vartype weight: int
+    :ivar always_applicable: When true, the LLM judge always scores this dimension regardless of
+     relevance (skips applicability assessment). The service-generated general quality/policy
+     dimension has this set to true and is non-editable. Users may set this on their own custom
+     dimensions. The service defaults to ``false`` if a value is not specified by the caller.
+    :vartype always_applicable: bool
+    :ivar metadata: Service-generated version lineage for this dimension. Present only when lineage
+     tracking is available.
+    :vartype metadata: ~azure.ai.projects.models.DimensionMetadata
     :ivar reason: A bounded service-generated reason why the dimension was superseded. Required.
     :vartype reason: str
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The stable identifier of the superseded dimension. Required."""
+    """Stable identifier for this dimension (snake_case, e.g., ``correct_resolution``). Required.
+     Provided by the user when manually creating a rubric evaluator or during human-in-the-loop
+     review of a generated set; the generation pipeline produces an initial value the user can edit.
+     Editable when saving new versions. Required."""
+    description: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """What this dimension measures (e.g., 'Correctly identifies the user's reservation intent and
+     pursues the appropriate workflow'). Required."""
+    weight: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Relative weight of this dimension (1-10). The generation pipeline assigns exactly one dimension
+     weight 8-10; all others use 1-6. User edits are not constrained by this heuristic. Required."""
+    always_applicable: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """When true, the LLM judge always scores this dimension regardless of relevance (skips
+     applicability assessment). The service-generated general quality/policy dimension has this set
+     to true and is non-editable. Users may set this on their own custom dimensions. The service
+     defaults to ``false`` if a value is not specified by the caller."""
+    metadata: Optional["_models.DimensionMetadata"] = rest_field(visibility=["read"])
+    """Service-generated version lineage for this dimension. Present only when lineage tracking is
+     available."""
     reason: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A bounded service-generated reason why the dimension was superseded. Required."""
 
@@ -14101,7 +14135,10 @@ class SupersededDimension(_Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
+        description: str,
+        weight: int,
         reason: str,
+        always_applicable: Optional[bool] = None,
     ) -> None: ...
 
     @overload

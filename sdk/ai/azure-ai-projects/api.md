@@ -8458,15 +8458,22 @@ namespace azure.ai.projects.models
 
 
     class azure.ai.projects.models.SupersededDimension(_Model):
+        always_applicable: Optional[bool]
+        description: str
         id: str
+        metadata: Optional[DimensionMetadata]
         reason: str
+        weight: int
 
         @overload
         def __init__(
                 self,
                 *,
+                always_applicable: Optional[bool] = ...,
+                description: str,
                 id: str,
-                reason: str
+                reason: str,
+                weight: int
             ) -> None: ...
 
         @overload
@@ -14520,10 +14527,18 @@ namespace azure.ai.projects.types
 
 
     class azure.ai.projects.types.SupersededDimension(TypedDict, total=False):
+        key "always_applicable": bool
+        key "description": Required[str]
         key "id": Required[str]
+        key "metadata": ForwardRef('DimensionMetadata', module='types')
         key "reason": Required[str]
+        key "weight": Required[int]
+        always_applicable: bool
+        description: str
         id: str
+        metadata: DimensionMetadata
         reason: str
+        weight: int
 
 
     class azure.ai.projects.types.TaxonomyCategory(TypedDict, total=False):
