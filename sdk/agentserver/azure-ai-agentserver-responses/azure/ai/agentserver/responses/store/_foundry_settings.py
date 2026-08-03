@@ -6,7 +6,9 @@ from __future__ import annotations
 
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core import AgentConfig, experimental
+from azure.ai.agentserver.core import AgentConfig
+
+from .._experimental import experimental
 
 _API_VERSION = "v1"
 

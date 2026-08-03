@@ -7,7 +7,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core import experimental
 from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
@@ -31,6 +30,7 @@ from ._foundry_serializer import (
     serialize_response,
 )
 from ._foundry_settings import FoundryStorageSettings
+from .._experimental import experimental
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext
