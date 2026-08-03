@@ -15,7 +15,7 @@ DESCRIPTION:
          type=simple_qna) that synthesizes short-answer and long-answer
          question / answer pairs from the file content and emits them as
          training and validation JSONL files.
-      3. Polls the job to completion and prints every generated file output.
+      3. Waits for job completion and prints every generated file output.
       4. Cleans up the generated fine-tuning files and the Azure OpenAI input file.
 
     `simple_qna` REQUIRES `model_options` — the service uses the configured LLM
@@ -27,7 +27,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity openai python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.4.0" azure-identity openai python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
