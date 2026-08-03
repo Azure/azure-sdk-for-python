@@ -11,7 +11,7 @@ from azure.ai.agentserver.core._experimental import (
     EXPERIMENTAL_METHOD_MESSAGE,
     _warning_cache,
 )
-from azure.ai.agentserver.core.tasks import resilient_tasks_enabled
+from azure.ai.agentserver.core.tasks import multi_turn_task, resilient_tasks_enabled, task
 
 
 @experimental
@@ -26,6 +26,20 @@ class ExperimentalClass:
 def experimental_function() -> bool:
     """A test function."""
     return True
+
+
+ExperimentalDuplicateA = experimental(type("ExperimentalDuplicate", (), {"__module__": "test.module_a"}))
+ExperimentalDuplicateB = experimental(type("ExperimentalDuplicate", (), {"__module__": "test.module_b"}))
+
+
+@experimental
+class ExperimentalBase:
+    """A test base class."""
+
+
+@experimental
+class ExperimentalChild(ExperimentalBase):
+    """A test child class."""
 
 
 def test_experimental_decorator_on_class(caplog) -> None:
@@ -64,6 +78,29 @@ def test_experimental_decorator_no_duplicate_warnings(caplog) -> None:
     assert len(caplog.records) == 1
 
 
+def test_experimental_decorator_uses_qualified_cache_keys(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        ExperimentalDuplicateA()
+        ExperimentalDuplicateB()
+
+    assert len(caplog.records) == 2
+    assert "test.module_a.ExperimentalDuplicate" in caplog.records[0].message
+    assert "test.module_b.ExperimentalDuplicate" in caplog.records[1].message
+
+
+def test_experimental_decorator_only_warns_for_outermost_class(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        ExperimentalChild()
+
+    assert len(caplog.records) == 1
+    assert "ExperimentalChild" in caplog.records[0].message
+    assert "ExperimentalBase" not in caplog.records[0].message
+
+
 def test_experimental_decorator_env_var_suppresses_warning(monkeypatch, caplog) -> None:
     _warning_cache.clear()
     monkeypatch.setenv(DISABLE_EXPERIMENTAL_WARNING_ENV_VAR, "true")
@@ -83,3 +120,15 @@ def test_resilient_task_public_api_is_experimental(caplog) -> None:
     assert resilient_tasks_enabled.__doc__.startswith(".. note::")
     assert EXPERIMENTAL_METHOD_MESSAGE in resilient_tasks_enabled.__doc__
     assert len(caplog.records) == 1
+
+
+def test_resilient_task_decorator_factories_are_experimental(caplog) -> None:
+    _warning_cache.clear()
+
+    with caplog.at_level(logging.WARNING, logger=experimental.__module__):
+        task(name="test-task")
+        multi_turn_task(name="test-multi-turn-task")
+
+    assert task.__doc__.startswith(".. note::")
+    assert multi_turn_task.__doc__.startswith(".. note::")
+    assert len(caplog.records) == 2

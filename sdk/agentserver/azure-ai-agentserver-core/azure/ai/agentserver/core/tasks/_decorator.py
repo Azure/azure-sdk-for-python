@@ -1327,7 +1327,6 @@ class Task(Generic[Input, Output]):
 
 
 @overload
-@experimental
 def task(
     fn: Callable[[TaskContext[Input]], Awaitable[Output]],
     *,
@@ -1351,6 +1350,7 @@ def task(
 ]: ...
 
 
+@experimental
 def task(
     fn: Callable[..., Any] | None = None,
     *,
@@ -1755,7 +1755,6 @@ class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
 
 
 @overload
-@experimental
 def multi_turn_task(
     fn: Callable[[TaskContext[Input]], Awaitable[Output]],
     *,
@@ -1781,6 +1780,7 @@ def multi_turn_task(
 ]: ...
 
 
+@experimental
 def multi_turn_task(
     fn: Callable[..., Any] | None = None,
     *,

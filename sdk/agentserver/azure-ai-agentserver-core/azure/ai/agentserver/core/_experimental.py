@@ -10,6 +10,7 @@ import logging
 import os
 import sys
 from collections.abc import Callable
+from contextvars import ContextVar
 from typing import TypeVar, overload
 
 from typing_extensions import ParamSpec, TypeGuard
@@ -25,6 +26,7 @@ EXPERIMENTAL_LINK_MESSAGE = (
 DISABLE_EXPERIMENTAL_WARNING_ENV_VAR = "AZURE_AI_AGENTSERVER_DISABLE_EXPERIMENTAL_WARNING"
 
 _warning_cache: set[str] = set()
+_experimental_init_active: ContextVar[bool] = ContextVar("experimental_init_active", default=False)
 module_logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
@@ -69,10 +71,18 @@ def _add_class_docstring(cls: type[T]) -> type[T]:
 
     @functools.wraps(original_init)
     def wrapped_init(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        message = f"Class {cls.__name__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
-        if not _should_skip_warning() and not _is_warning_cached(message):
+        cache_key = f"class:{cls.__module__}.{cls.__qualname__}"
+        message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+        active = _experimental_init_active.get()
+        if not active and not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
-        original_init(self, *args, **kwargs)
+        if active:
+            return original_init(self, *args, **kwargs)
+        token = _experimental_init_active.set(True)
+        try:
+            return original_init(self, *args, **kwargs)
+        finally:
+            _experimental_init_active.reset(token)
 
     cls.__init__ = wrapped_init  # type: ignore[method-assign]
     return cls
@@ -87,8 +97,9 @@ def _add_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-        message = f"Method {func.__name__}: {EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
-        if not _should_skip_warning() and not _is_warning_cached(message):
+        cache_key = f"function:{func.__module__}.{func.__qualname__}"
+        message = f"Method {func.__module__}.{func.__qualname__}: {EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+        if not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
         return func(*args, **kwargs)
 
@@ -115,8 +126,8 @@ def _should_skip_warning() -> bool:
     return os.getenv(DISABLE_EXPERIMENTAL_WARNING_ENV_VAR, "false").lower() == "true"
 
 
-def _is_warning_cached(warning_msg: str) -> bool:
-    if warning_msg in _warning_cache:
+def _is_warning_cached(cache_key: str) -> bool:
+    if cache_key in _warning_cache:
         return True
-    _warning_cache.add(warning_msg)
+    _warning_cache.add(cache_key)
     return False
