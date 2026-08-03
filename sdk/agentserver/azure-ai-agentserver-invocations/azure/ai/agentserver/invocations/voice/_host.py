@@ -1198,6 +1198,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         try:
             done, _ = await asyncio.wait((customer_task, release_task), return_when=asyncio.FIRST_COMPLETED)
             if release_task in done and not customer_task.done():
+                # The response's output methods perform their wire writes off the
+                # per-response state lock, so this coordinator (not the receive
+                # pump) is now responsible for letting an in-flight winning
+                # terminal write reach the wire before we cancel the customer
+                # task. Draining runs on the callback worker, so the pump stays
+                # free to set the cancellation token and process control frames.
+                await self._drain_active_send(response)
                 await self._schedule_customer_cleanup(customer_task)
             elif customer_task.cancelled():
                 if not response.is_terminal and not self.ending:
@@ -1308,6 +1315,15 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if customer_task.cancelled() and cancelling() == 0:
                 raise RuntimeError("Voice signal callback was cancelled") from exc
             raise
+
+    async def _drain_active_send(self, response: VoiceResponse) -> None:
+        # Give any in-flight winning write on the response a bounded window to
+        # reach the wire before the customer task is cancelled. Bounded so genuine
+        # indefinite outbound backpressure cannot wedge the callback worker.
+        try:
+            await asyncio.wait_for(response._drain_pending_send(), timeout=_CLEANUP_TIMEOUT_SECONDS)
+        except asyncio.TimeoutError:
+            logger.warning("Voice in-flight send did not drain before cleanup deadline")
 
     def _schedule_customer_cleanup(self, task: asyncio.Task[None]) -> asyncio.Task[None]:
         task.cancel()
@@ -1566,20 +1582,23 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 raise VoiceBridgeProtocolError("Voice bridge requires JSON text frames")
             payload = decode_frame(frame)
             message_id = require_string(payload, "id", non_empty=True)
-            # Store a fixed-size digest, not the full canonical JSON: with a 1 MB
-            # frame limit and up to _MAX_SEEN_MESSAGES entries, retaining the
-            # complete canonical text per id would let a peer pin gigabytes of
-            # memory (even via unique ignored message types) before the entry
-            # count cap is reached. A sha256 digest bounds each entry to 64 chars.
+            # Bound BOTH the key and the value to fixed-size digests. The untrusted
+            # message id has no length limit, so keying by the raw id would let a
+            # peer pin gigabytes (up to _MAX_SEEN_MESSAGES ids of ~1 MB each) before
+            # the entry-count cap is reached, even though the value is already a
+            # digest. A sha256 hexdigest bounds each id key to 64 chars; the value
+            # digest bounds each stored payload the same way. Reusing an id with
+            # different content still collides on the key and differs on the value.
+            message_key = hashlib.sha256(message_id.encode("utf-8")).hexdigest()
             digest = hashlib.sha256(canonical_payload(payload).encode("utf-8")).hexdigest()
-            previous = self._seen_messages.get(message_id)
+            previous = self._seen_messages.get(message_key)
             if previous is not None:
                 if previous != digest:
                     raise VoiceBridgeProtocolError("Message id was reused with different content", close_code=1008)
                 continue
             if len(self._seen_messages) >= _MAX_SEEN_MESSAGES:
                 raise VoiceBridgeProtocolError("Message dedupe limit exceeded", close_code=1008)
-            self._seen_messages[message_id] = digest
+            self._seen_messages[message_key] = digest
             return payload
 
     async def _shutdown_runtime(self, *, drain_callbacks: bool) -> None:
@@ -1655,6 +1674,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         return self._recent_responses.get(response_id)
 
     def _remember_response_locked(self, response: VoiceResponse) -> None:
+        # Retained only for late timeout/barge-in reconciliation, which needs
+        # identity and terminal state, not the emitted text. Free the accumulated
+        # per-item buffers so _MAX_RECENT_RESPONSES entries stay lightweight rather
+        # than pinning up to _MAX_RESPONSE_BYTES of text each.
+        response._release_output_buffers()
         self._recent_responses[response.response_id] = response
         self._recent_responses.move_to_end(response.response_id)
         while len(self._recent_responses) > _MAX_RECENT_RESPONSES:

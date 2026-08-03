@@ -24,6 +24,13 @@ from ._protocol import (
 _MAX_OUTPUT_ITEM_BYTES = 900 * 1024
 _MAX_OUTPUT_ITEM_CHUNKS = 4096
 _MAX_RESPONSE_ITEMS = 1024
+# Cumulative encoded-text budget across every item in one response. Each item is
+# already capped at _MAX_OUTPUT_ITEM_BYTES and a response may hold up to
+# _MAX_RESPONSE_ITEMS items, so without this ceiling a single active response
+# could accumulate ~900 MiB of retained text before completing. Voice turns are
+# spoken text, so a few MiB is far above any legitimate response while bounding
+# the worst-case live memory of the one active response.
+_MAX_RESPONSE_BYTES = 8 * 1024 * 1024
 
 
 class _ConnectionSender(Protocol):
@@ -177,10 +184,12 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     _sealed: bool
     _cancel_pending: bool
     _items: list[VoiceTextItem]
+    _response_bytes: int
     _simple_item: VoiceTextItem | None
     _advanced_items: bool
     _cancellation: VoiceCancellationToken
     _lock: asyncio.Lock
+    _send_lock: asyncio.Lock
 
     def __init__(self) -> None:
         raise TypeError("VoiceResponse instances are created by VoiceAgentServerHost")
@@ -205,10 +214,20 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         instance._sealed = False
         instance._cancel_pending = False
         instance._items = []
+        instance._response_bytes = 0
         instance._simple_item = None
         instance._advanced_items = False
         instance._cancellation = VoiceCancellationToken._create()
         instance._lock = asyncio.Lock()
+        # Serializes one output operation's full validate->send->commit lifecycle
+        # per response (preserving wire order and byte accounting). Network I/O is
+        # performed while holding _send_lock but NEVER while holding _lock, so the
+        # sole receive pump's _mark_terminal()/cancellation path (which needs only
+        # _lock) can never block behind a send stalled on outbound backpressure.
+        # The turn coordinator drains _send_lock (see _drain_pending_send) before
+        # cancelling the customer task, so a winning terminal write still reaches
+        # the wire even though the pump is no longer serialized behind it.
+        instance._send_lock = asyncio.Lock()
         return instance
 
     @property
@@ -323,15 +342,17 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         """
         if reason is not None:
             reason = _require_string(reason, "reason")
-        async with self._lock:
-            self._ensure_writable_locked()
-            if self._in_reply_to is None:
-                raise RuntimeError("A proactive response cannot be declined")
-            if self._wire_opened or any(item._started for item in self._items):  # pylint: disable=protected-access
-                raise RuntimeError("Cannot decline after opening a response")
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+                if self._in_reply_to is None:
+                    raise RuntimeError("A proactive response cannot be declined")
+                if self._wire_opened or any(item._started for item in self._items):  # pylint: disable=protected-access
+                    raise RuntimeError("Cannot decline after opening a response")
             await self._sender.decline_response(self._in_reply_to, reason)
-            self._terminal = True
-            self._sealed = True
+            async with self._lock:
+                self._terminal = True
+                self._sealed = True
 
     async def fail(self, *, code: str, message: str) -> None:
         """Terminate this response with a sanitized response-scoped error.
@@ -343,21 +364,20 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         """
         code = safe_code(code, "agent_error")
         message = safe_message(message, "Agent response failed")
-        notify = False
-        async with self._lock:
-            self._ensure_writable_locked()
-            await self._ensure_open_locked()
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+            await self._ensure_open()
             await self._sender.send(
                 "error",
                 code=code,
                 message=message,
                 response_id=self._response_id,
             )
-            self._terminal = True
-            self._sealed = True
-            notify = True
-        if notify:
-            await self._sender.response_completed(self._response_id, "error")
+            async with self._lock:
+                self._terminal = True
+                self._sealed = True
+        await self._sender.response_completed(self._response_id, "error")
 
     async def cancel(self, *, reason: str | None = None) -> ResponseCancellationOutcome:
         """Request self-cancel and await the winning playback outcome.
@@ -369,13 +389,14 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         """
         if reason is not None:
             reason = _require_string(reason, "reason")
-        async with self._lock:
-            self._ensure_writable_locked()
-            if not self._wire_opened:
-                raise RuntimeError("Cannot cancel a response before response.created")
-            if self._cancel_pending:
-                raise RuntimeError("Response cancellation is already pending")
-            self._cancel_pending = True
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+                if not self._wire_opened:
+                    raise RuntimeError("Cannot cancel a response before response.created")
+                if self._cancel_pending:
+                    raise RuntimeError("Response cancellation is already pending")
+                self._cancel_pending = True
             future = await self._sender.begin_cancel(self._response_id, reason)
         try:
             # Shield the arbitration future: if only the caller's await is
@@ -386,7 +407,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             return await asyncio.shield(future)
         finally:
             if future.done():
-                self._cancel_pending = False
+                async with self._lock:
+                    self._cancel_pending = False
 
     async def collect_dtmf(
         self,
@@ -417,9 +439,10 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             if len(terminator) != 1 or terminator not in "0123456789*#":
                 raise ValueError("terminator must be one DTMF key")
         collection_id = new_id("dc")
-        async with self._lock:
-            self._ensure_writable_locked()
-            await self._ensure_open_locked()
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+            await self._ensure_open()
             await self._sender.register_dtmf_collection(
                 response_id=self._response_id,
                 collection_id=collection_id,
@@ -443,9 +466,10 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             raise ValueError("target must be non-empty")
         if message is not None:
             message = _require_string(message, "message")
-        async with self._lock:
-            self._ensure_writable_locked()
-            await self._ensure_open_locked()
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+            await self._ensure_open()
             fields: dict[str, Any] = {
                 "response_id": self._response_id,
                 "target": target,
@@ -453,9 +477,10 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             if message is not None:
                 fields["message"] = message
             await self._sender.send("handoff", **fields)
-            self._terminal = True
-            self._sealed = True
-            self._cancellation._cancel()
+            async with self._lock:
+                self._terminal = True
+                self._sealed = True
+                self._cancellation._cancel()
         await self._sender.response_completed(self._response_id, "handoff")
 
     async def done(self) -> None:
@@ -465,16 +490,18 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         proactive responses use this method explicitly.
         """
         notify = False
-        async with self._lock:
-            self._ensure_writable_locked()
-            if not self._wire_opened or not self._items:
-                raise RuntimeError("response.done requires at least one completed output item")
-            if any(not item._done for item in self._items):  # pylint: disable=protected-access
-                raise RuntimeError("Complete every response item before response.done")
+        async with self._send_lock:
+            async with self._lock:
+                self._ensure_writable_locked()
+                if not self._wire_opened or not self._items:
+                    raise RuntimeError("response.done requires at least one completed output item")
+                if any(not item._done for item in self._items):  # pylint: disable=protected-access
+                    raise RuntimeError("Complete every response item before response.done")
             await self._sender.send("response.done", response_id=self._response_id)
-            self._terminal = True
-            self._sealed = True
-            notify = True
+            async with self._lock:
+                self._terminal = True
+                self._sealed = True
+                notify = True
         if notify:
             await self._sender.response_completed(self._response_id, "done")
 
@@ -488,11 +515,14 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         text = _require_string(text, "text")
         text_bytes = _text_size(text)
         voice_payload = normalize_voice(voice)
-        async with self._lock:
-            self._prepare_item_locked(item)
-            if item._started or item._done:  # pylint: disable=protected-access
-                raise RuntimeError("The response item has already started")
-            await self._ensure_open_locked()
+        async with self._send_lock:
+            async with self._lock:
+                self._prepare_item_locked(item)
+                if item._started or item._done:  # pylint: disable=protected-access
+                    raise RuntimeError("The response item has already started")
+                if self._response_bytes + text_bytes > _MAX_RESPONSE_BYTES:
+                    raise ValueError("A response exceeds the maximum cumulative encoded text size")
+            await self._ensure_open()
             fields: dict[str, Any] = {
                 "response_id": self._response_id,
                 "item_id": item.item_id,
@@ -501,10 +531,12 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             if voice_payload is not None:
                 fields["voice"] = voice_payload
             await self._sender.send("response.output_text.done", **fields)
-            item._chunks.append(text)  # pylint: disable=protected-access
-            item._text_bytes = text_bytes  # pylint: disable=protected-access
-            item._started = True  # pylint: disable=protected-access
-            item._done = True  # pylint: disable=protected-access
+            async with self._lock:
+                item._chunks.append(text)  # pylint: disable=protected-access
+                item._text_bytes = text_bytes  # pylint: disable=protected-access
+                item._started = True  # pylint: disable=protected-access
+                item._done = True  # pylint: disable=protected-access
+                self._response_bytes += text_bytes
 
     async def _send_item_delta(
         self,
@@ -516,15 +548,18 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         delta = _require_string(delta, "delta")
         delta_bytes = _text_size(delta)
         voice_payload = normalize_voice(voice)
-        async with self._lock:
-            self._prepare_item_locked(item)
-            if item._done:  # pylint: disable=protected-access
-                raise RuntimeError("The response item is already complete")
-            if len(item._chunks) >= _MAX_OUTPUT_ITEM_CHUNKS:  # pylint: disable=protected-access
-                raise ValueError("An output item cannot exceed 4096 text deltas")
-            if item._text_bytes + delta_bytes > _MAX_OUTPUT_ITEM_BYTES:  # pylint: disable=protected-access
-                raise ValueError("An output item exceeds the maximum encoded text size")
-            await self._ensure_open_locked()
+        async with self._send_lock:
+            async with self._lock:
+                self._prepare_item_locked(item)
+                if item._done:  # pylint: disable=protected-access
+                    raise RuntimeError("The response item is already complete")
+                if len(item._chunks) >= _MAX_OUTPUT_ITEM_CHUNKS:  # pylint: disable=protected-access
+                    raise ValueError("An output item cannot exceed 4096 text deltas")
+                if item._text_bytes + delta_bytes > _MAX_OUTPUT_ITEM_BYTES:  # pylint: disable=protected-access
+                    raise ValueError("An output item exceeds the maximum encoded text size")
+                if self._response_bytes + delta_bytes > _MAX_RESPONSE_BYTES:
+                    raise ValueError("A response exceeds the maximum cumulative encoded text size")
+            await self._ensure_open()
             fields: dict[str, Any] = {
                 "response_id": self._response_id,
                 "item_id": item.item_id,
@@ -533,9 +568,11 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             if voice_payload is not None:
                 fields["voice"] = voice_payload
             await self._sender.send("response.output_text.delta", **fields)
-            item._chunks.append(delta)  # pylint: disable=protected-access
-            item._text_bytes += delta_bytes  # pylint: disable=protected-access
-            item._started = True  # pylint: disable=protected-access
+            async with self._lock:
+                item._chunks.append(delta)  # pylint: disable=protected-access
+                item._text_bytes += delta_bytes  # pylint: disable=protected-access
+                item._started = True  # pylint: disable=protected-access
+                self._response_bytes += delta_bytes
 
     async def _send_item_done(
         self,
@@ -544,57 +581,70 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         voice: Mapping[str, Any] | None,
     ) -> None:
         voice_payload = normalize_voice(voice)
-        async with self._lock:
-            self._prepare_item_locked(item)
-            if not item._started or not item._chunks:  # pylint: disable=protected-access
-                raise RuntimeError("send_text_done requires at least one preceding delta")
-            if item._done:  # pylint: disable=protected-access
-                raise RuntimeError("The response item is already complete")
-            fields: dict[str, Any] = {
-                "response_id": self._response_id,
-                "item_id": item.item_id,
-                "text": "".join(item._chunks),  # pylint: disable=protected-access
-            }
-            if voice_payload is not None:
-                fields["voice"] = voice_payload
+        async with self._send_lock:
+            async with self._lock:
+                self._prepare_item_locked(item)
+                if not item._started or not item._chunks:  # pylint: disable=protected-access
+                    raise RuntimeError("send_text_done requires at least one preceding delta")
+                if item._done:  # pylint: disable=protected-access
+                    raise RuntimeError("The response item is already complete")
+                fields: dict[str, Any] = {
+                    "response_id": self._response_id,
+                    "item_id": item.item_id,
+                    "text": "".join(item._chunks),  # pylint: disable=protected-access
+                }
+                if voice_payload is not None:
+                    fields["voice"] = voice_payload
             await self._sender.send("response.output_text.done", **fields)
-            item._done = True  # pylint: disable=protected-access
+            async with self._lock:
+                item._done = True  # pylint: disable=protected-access
 
     async def _complete_callback(self) -> None:
-        notify = False
         terminal_kind = "done"
-        async with self._lock:
-            if self._terminal or self._sender.ending:
-                self._sealed = True
-                return
-            if not self._wire_opened or not self._items or any(not item._done for item in self._items):
-                await self._emit_sdk_error_locked("Voice turn callback returned without complete output or decline")
+        async with self._send_lock:
+            async with self._lock:
+                if self._terminal or self._sender.ending:
+                    self._sealed = True
+                    return
+                incomplete = (
+                    not self._wire_opened
+                    or not self._items
+                    or any(not item._done for item in self._items)  # pylint: disable=protected-access
+                )
+            if incomplete:
+                await self._emit_sdk_error("Voice turn callback returned without complete output or decline")
                 terminal_kind = "error"
-                notify = True
             else:
                 await self._sender.send("response.done", response_id=self._response_id)
-                self._terminal = True
-                self._sealed = True
-                notify = True
-        if notify:
-            await self._sender.response_completed(self._response_id, terminal_kind)
+                async with self._lock:
+                    self._terminal = True
+                    self._sealed = True
+        await self._sender.response_completed(self._response_id, terminal_kind)
 
     async def _fail_callback(self) -> None:
-        notify = False
-        async with self._lock:
-            if self._terminal or self._sender.ending:
-                self._sealed = True
-                return
-            await self._emit_sdk_error_locked("Voice turn callback failed")
-            notify = True
-        if notify:
-            await self._sender.response_completed(self._response_id, "error")
+        async with self._send_lock:
+            async with self._lock:
+                if self._terminal or self._sender.ending:
+                    self._sealed = True
+                    return
+            await self._emit_sdk_error("Voice turn callback failed")
+        await self._sender.response_completed(self._response_id, "error")
 
     async def _mark_terminal(self) -> None:
         async with self._lock:
             self._terminal = True
             self._sealed = True
             self._cancellation._cancel()
+
+    def _release_output_buffers(self) -> None:
+        # Free the accumulated per-item text once the response is retained for late
+        # reconciliation. Timeout/barge-in correlation only needs response/item
+        # identity and terminal state (see _owns_item_id / _find_response_locked),
+        # never the emitted text, so keeping the chunks (up to _MAX_RESPONSE_BYTES
+        # per response across _MAX_RECENT_RESPONSES cached entries) would let a long
+        # connection pin large amounts of memory. Item ids and _started are kept.
+        for item in self._items:
+            item._chunks = []  # pylint: disable=protected-access
 
     async def _mark_accepted(self) -> None:
         async with self._lock:
@@ -616,16 +666,32 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             self._items.append(self._simple_item)
         return self._simple_item
 
-    async def _ensure_open_locked(self) -> None:
-        if self._wire_opened:
+    async def _drain_pending_send(self) -> None:
+        # Block until any in-flight output operation on this response has fully
+        # completed its wire write and committed. The turn coordinator awaits this
+        # (bounded) before cancelling the customer task so a winning terminal write
+        # still reaches the wire. Must be called from a task other than the one
+        # holding _send_lock (the coordinator, not the customer callback).
+        async with self._send_lock:
             return
+
+    async def _ensure_open(self) -> None:
+        # Callers must hold _send_lock (never _lock) so the response.created write
+        # happens off the state lock and the receive pump's _mark_terminal() path
+        # is never blocked by a stalled open.
+        async with self._lock:
+            if self._wire_opened:
+                return
         opened = await self._sender.open_response(self._response_id, self._in_reply_to)
+        async with self._lock:
+            if opened:
+                self._wire_opened = True
+            else:
+                self._terminal = True
+                self._sealed = True
+                self._cancellation._cancel()
         if not opened:
-            self._terminal = True
-            self._sealed = True
-            self._cancellation._cancel()
             raise VoiceBridgeConnectionClosedError("The voice response lost terminal arbitration")
-        self._wire_opened = True
 
     def _prepare_item_locked(self, item: VoiceTextItem) -> None:
         self._ensure_writable_locked()
@@ -635,16 +701,19 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         if any(not previous._done for previous in self._items[:index]):  # pylint: disable=protected-access
             raise RuntimeError("Complete the previous response item first")
 
-    async def _emit_sdk_error_locked(self, message: str) -> None:
-        await self._ensure_open_locked()
+    async def _emit_sdk_error(self, message: str) -> None:
+        # Callers must hold _send_lock (never _lock); the wire writes happen off
+        # the state lock.
+        await self._ensure_open()
         await self._sender.send(
             "error",
             code="handler_error",
             message=message,
             response_id=self._response_id,
         )
-        self._terminal = True
-        self._sealed = True
+        async with self._lock:
+            self._terminal = True
+            self._sealed = True
 
     def _ensure_writable_locked(self) -> None:
         self._ensure_locally_writable()

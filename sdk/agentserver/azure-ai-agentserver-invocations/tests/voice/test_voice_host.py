@@ -5,6 +5,7 @@
 
 import asyncio
 import threading
+import time
 from unittest import mock
 
 import pytest
@@ -22,6 +23,7 @@ from azure.ai.agentserver.invocations.voice import (
     VoiceSession,
 )
 from azure.ai.agentserver.invocations.voice import _host as voice_host
+from azure.ai.agentserver.invocations.voice import _runtime as voice_runtime
 
 _TS = "2026-07-23T12:00:00.000Z"
 
@@ -685,6 +687,243 @@ def test_timeout_processed_while_decline_write_blocked_keeps_single_terminal() -
             assert websocket.receive_json()["type"] == "response.created"
             assert websocket.receive_json()["type"] == "response.output_text.done"
             assert websocket.receive_json()["type"] == "response.done"
+
+
+def test_timeout_processed_while_delta_write_blocked_does_not_block_pump() -> None:
+    """Barrier race: a stalled ``response.output_text.delta`` write must not block
+    the sole receive pump.
+
+    Output writes are performed off the per-response state lock, so the pump can
+    run ``_handle_response_timeout`` to completion — marking the response terminal
+    and setting the cancellation token — while the delta write is suspended on
+    outbound backpressure. The in-flight delta still drains to the wire (the turn
+    coordinator, not the pump, awaits it) before the customer task is cancelled.
+
+    At baseline (write held across the state lock) ``_mark_terminal`` would block on
+    that lock until the write drained, so ``mark_terminal_done`` would not fire while
+    the write is stalled and this assertion would fail.
+    """
+    app = _app()
+    write_blocked = threading.Event()
+    release_write = threading.Event()
+    mark_terminal_done = threading.Event()
+    original_send_text = WebSocket.send_text
+    original_mark_terminal = VoiceResponse._mark_terminal
+
+    async def blocking_send_text(self: WebSocket, data: str) -> None:
+        if '"delta":"second"' in data and not release_write.is_set():
+            write_blocked.set()
+            await asyncio.to_thread(release_write.wait)
+        await original_send_text(self, data)
+
+    async def mark_terminal(self: VoiceResponse) -> None:
+        await original_mark_terminal(self)
+        mark_terminal_done.set()
+
+    @app.on_user_message
+    async def on_message(_session, event: UserMessageEvent, response: VoiceResponse) -> None:
+        if event.item_id == "in_1":
+            await response.send_text_delta("first")
+            await response.send_text_delta("second")
+        else:
+            await response.send_text("next")
+
+    with mock.patch.object(WebSocket, "send_text", blocking_send_text), mock.patch.object(
+        VoiceResponse, "_mark_terminal", mark_terminal
+    ):
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            _activate(websocket)
+            websocket.send_json(_user_message())
+            created = websocket.receive_json()
+            assert created["type"] == "response.created"
+            assert websocket.receive_json()["type"] == "response.output_text.delta"
+            # The second delta write is now suspended mid-flight.
+            assert write_blocked.wait(2.0)
+            websocket.send_json(
+                {
+                    "type": "response.timeout",
+                    "id": "m_delta_race_timeout",
+                    "ts": _TS,
+                    "response_id": created["response_id"],
+                    "stage": "max_duration",
+                }
+            )
+            # The pump finishes terminal processing while the write is still stalled.
+            assert mark_terminal_done.wait(2.0)
+            assert not release_write.is_set()
+            # Release: the in-flight delta still reaches the wire, then the turn is
+            # cancelled and the connection stays healthy for the next turn.
+            release_write.set()
+            assert websocket.receive_json()["type"] == "response.output_text.delta"
+            websocket.send_json(_user_message(message_id="m_user_2", item_id="in_2"))
+            assert websocket.receive_json()["type"] == "response.created"
+            assert websocket.receive_json()["type"] == "response.output_text.done"
+            assert websocket.receive_json()["type"] == "response.done"
+
+
+def test_barge_in_while_delta_write_blocked_does_not_block_pump() -> None:
+    """Barrier race: barge_in must be processed by the receive pump while an
+    in-flight write is stalled.
+
+    Barge_in fires ``_active_release``, which routes through the same coordinator
+    branch that drains the in-flight write before cancelling the customer task.
+    Because writes happen off the per-response state lock, ``_mark_terminal`` (and
+    the cancellation token) run to completion while the write is suspended, and the
+    in-flight delta still drains to the wire. At baseline ``mark_terminal_done``
+    would not fire until the write drained.
+    """
+    app = _app()
+    write_blocked = threading.Event()
+    release_write = threading.Event()
+    mark_terminal_done = threading.Event()
+    barge_notified = threading.Event()
+    original_send_text = WebSocket.send_text
+    original_mark_terminal = VoiceResponse._mark_terminal
+
+    async def blocking_send_text(self: WebSocket, data: str) -> None:
+        if '"delta":"second"' in data and not release_write.is_set():
+            write_blocked.set()
+            await asyncio.to_thread(release_write.wait)
+        await original_send_text(self, data)
+
+    async def mark_terminal(self: VoiceResponse) -> None:
+        await original_mark_terminal(self)
+        mark_terminal_done.set()
+
+    @app.on_user_message
+    async def on_message(_session, event: UserMessageEvent, response: VoiceResponse) -> None:
+        if event.item_id == "in_1":
+            await response.send_text_delta("first")
+            await response.send_text_delta("second")
+        else:
+            await response.send_text("next")
+
+    @app.on_barge_in
+    async def on_barge(_session, _event) -> None:
+        barge_notified.set()
+
+    with mock.patch.object(WebSocket, "send_text", blocking_send_text), mock.patch.object(
+        VoiceResponse, "_mark_terminal", mark_terminal
+    ):
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            _activate(websocket)
+            websocket.send_json(_user_message())
+            created = websocket.receive_json()
+            assert created["type"] == "response.created"
+            delta = websocket.receive_json()
+            assert delta["type"] == "response.output_text.delta"
+            # The second delta write is now suspended mid-flight.
+            assert write_blocked.wait(2.0)
+            websocket.send_json(
+                {
+                    "type": "barge_in",
+                    "id": "m_barge_race",
+                    "ts": _TS,
+                    "response_id": created["response_id"],
+                    "item_id": delta["item_id"],
+                    "heard_text": "stop",
+                }
+            )
+            # The pump finishes terminal processing while the write is still stalled.
+            assert mark_terminal_done.wait(2.0)
+            assert not release_write.is_set()
+            # Release: the in-flight delta still reaches the wire, barge_in is
+            # dispatched, and the connection stays healthy for the next turn.
+            release_write.set()
+            assert websocket.receive_json()["type"] == "response.output_text.delta"
+            assert barge_notified.wait(2.0)
+            websocket.send_json(_user_message(message_id="m_user_2", item_id="in_2"))
+            assert websocket.receive_json()["type"] == "response.created"
+            assert websocket.receive_json()["type"] == "response.output_text.done"
+            assert websocket.receive_json()["type"] == "response.done"
+
+
+def test_duplicate_frame_with_long_id_is_bounded_and_deduplicated() -> None:
+    """The dedupe cache keys on a fixed-size digest of the (untrusted, unbounded)
+    message id, so a long id cannot pin unbounded memory. Dedupe semantics are
+    unchanged: an exact duplicate is ignored, and reusing an id with different
+    content is a protocol violation.
+    """
+    app = _app()
+    handled: list[str] = []
+
+    @app.on_user_message
+    async def on_message(_session, event: UserMessageEvent, response: VoiceResponse) -> None:
+        handled.append(event.item_id)
+        await response.send_text("ok")
+
+    long_id = "m_" + "x" * 200_000
+    duplicate = _user_message(message_id=long_id)
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(duplicate)
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "response.output_text.done"
+        assert websocket.receive_json()["type"] == "response.done"
+        # Exact duplicate (same id + content) is silently ignored.
+        websocket.send_json(duplicate)
+        # Same id, different content is rejected as a protocol violation.
+        websocket.send_json(_user_message(message_id=long_id, text="different"))
+        with pytest.raises(WebSocketDisconnect) as exc:
+            websocket.receive_json()
+        assert exc.value.code == 1008
+    assert handled == ["in_1"]
+
+
+def test_response_exceeding_cumulative_byte_budget_is_rejected() -> None:
+    """A response is capped by a cumulative encoded-text budget across all items,
+    not just per item, so one active response cannot accumulate unbounded text.
+    """
+    app = _app()
+    errors: list[str] = []
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        await response.send_text_delta("12345")  # 5 bytes, within budget
+        try:
+            await response.send_text_delta("6789")  # 5 + 4 > 8, over budget
+        except ValueError as exc:
+            errors.append(str(exc))
+            raise
+
+    with mock.patch.object(voice_runtime, "_MAX_RESPONSE_BYTES", 8):
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            _activate(websocket)
+            websocket.send_json(_user_message())
+            assert websocket.receive_json()["type"] == "response.created"
+            assert websocket.receive_json()["type"] == "response.output_text.delta"
+            assert websocket.receive_json()["type"] == "error"
+    assert errors and "cumulative" in errors[0]
+
+
+def test_completed_response_output_buffers_are_released() -> None:
+    """A response retained for late reconciliation keeps its item identity but
+    frees the accumulated text buffers, so cached responses stay lightweight.
+    """
+    app = _app()
+    captured: list[VoiceResponse] = []
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        captured.append(response)
+        await response.send_text_delta("hello")
+        await response.send_text_done()
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "response.output_text.delta"
+        assert websocket.receive_json()["type"] == "response.output_text.done"
+        assert websocket.receive_json()["type"] == "response.done"
+
+    response = captured[0]
+    deadline = time.time() + 2.0
+    while any(item._chunks for item in response._items) and time.time() < deadline:  # pylint: disable=protected-access
+        time.sleep(0.02)
+    # Item identity is retained for reconciliation, but the text buffers are freed.
+    assert response._items  # pylint: disable=protected-access
+    assert all(not item._chunks for item in response._items)  # pylint: disable=protected-access
 
 
 def test_response_timeout_after_local_done_is_reconciled() -> None:
