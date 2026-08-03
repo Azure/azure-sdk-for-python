@@ -191,14 +191,14 @@ def _overlay_failed_terminal(
     :returns: A copy of the snapshot transitioned to ``failed``.
     :rtype: ResponseObject
     """
-    from ..models._runtime import apply_failed_terminal  # pylint: disable=import-outside-toplevel
+    from ..models.runtime import _apply_failed_terminal  # pylint: disable=import-outside-toplevel
     from ..models._generated import ResponseObject  # pylint: disable=import-outside-toplevel
 
     error = {
         "code": "server_error",
         "message": message if message is not None else _server_error_message(shutdown_reason),
     }
-    return cast(ResponseObject, apply_failed_terminal(snapshot, error=error))
+    return cast(ResponseObject, _apply_failed_terminal(snapshot, error=error))
 
 
 # (Spec 033 §3.1) Process-local cache of typed :class:`RuntimeRefs` (record,

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for the terminal-overlay helpers in ``models._runtime``.
+"""Tests for the terminal-overlay helpers in ``models.runtime``.
 
 These lock in the fidelity contract: the handler owns the response object, so a
 framework-built terminal (failed / cancelled) must PRESERVE every handler-owned
@@ -13,11 +13,11 @@ behaviour contract: ``failed`` output "may be partial"; ``cancelled`` output is
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses.models._runtime import (
-    apply_cancelled_terminal,
-    apply_failed_terminal,
-    resolve_cancelled_response,
-    resolve_failed_response,
+from azure.ai.agentserver.responses.models.runtime import (
+    _apply_cancelled_terminal,
+    _apply_failed_terminal,
+    _resolve_cancelled_response,
+    _resolve_failed_response,
 )
 
 
@@ -42,7 +42,7 @@ def _rich_snapshot() -> dict:
 
 def test_apply_failed_terminal_preserves_handler_fields_and_partial_output() -> None:
     base = _rich_snapshot()
-    out = apply_failed_terminal(base, error={"code": "server_error", "message": "boom"})
+    out = _apply_failed_terminal(base, error={"code": "server_error", "message": "boom"})
 
     assert out["status"] == "failed"
     assert out["error"] == {"code": "server_error", "message": "boom"}
@@ -60,7 +60,7 @@ def test_apply_failed_terminal_preserves_handler_fields_and_partial_output() -> 
 def test_apply_cancelled_terminal_clears_output_and_error_preserves_rest() -> None:
     base = _rich_snapshot()
     base["error"] = {"code": "server_error", "message": "stale"}
-    out = apply_cancelled_terminal(base)
+    out = _apply_cancelled_terminal(base)
 
     assert out["status"] == "cancelled"
     # Cancellation always wins: 0 output items regardless of prior progress.
@@ -75,7 +75,7 @@ def test_apply_cancelled_terminal_clears_output_and_error_preserves_rest() -> No
 
 def test_resolve_failed_response_overlays_when_base_present() -> None:
     base = _rich_snapshot()
-    resp = resolve_failed_response(base, "caresp_x", {"name": "a", "version": "1"}, "m", error_code="storage_error")
+    resp = _resolve_failed_response(base, "caresp_x", {"name": "a", "version": "1"}, "m", error_code="storage_error")
     payload = resp
     assert payload["status"] == "failed"
     assert payload["error"]["code"] == "storage_error"
@@ -84,7 +84,7 @@ def test_resolve_failed_response_overlays_when_base_present() -> None:
 
 
 def test_resolve_failed_response_synthesizes_when_no_base() -> None:
-    resp = resolve_failed_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
+    resp = _resolve_failed_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
     payload = resp
     assert payload["status"] == "failed"
     assert payload["agent_reference"]["name"] == "a"
@@ -94,7 +94,7 @@ def test_resolve_failed_response_synthesizes_when_no_base() -> None:
 
 def test_resolve_cancelled_response_overlays_when_base_present() -> None:
     base = _rich_snapshot()
-    resp = resolve_cancelled_response(base, "caresp_x", {"name": "a", "version": "1"}, "m")
+    resp = _resolve_cancelled_response(base, "caresp_x", {"name": "a", "version": "1"}, "m")
     payload = resp
     assert payload["status"] == "cancelled"
     assert payload["output"] == []
@@ -103,7 +103,7 @@ def test_resolve_cancelled_response_overlays_when_base_present() -> None:
 
 
 def test_resolve_cancelled_response_synthesizes_when_no_base() -> None:
-    resp = resolve_cancelled_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
+    resp = _resolve_cancelled_response(None, "caresp_x", {"name": "a", "version": "1"}, "m")
     payload = resp
     assert payload["status"] == "cancelled"
     assert payload["output"] == []

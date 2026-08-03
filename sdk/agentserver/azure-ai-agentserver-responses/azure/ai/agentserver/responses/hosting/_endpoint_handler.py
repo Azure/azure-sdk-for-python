@@ -56,10 +56,8 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
-)
-from ..models._runtime import (
-    resolve_cancelled_response,
-    resolve_failed_response,
+    _resolve_cancelled_response,
+    _resolve_failed_response,
 )
 from ..store._base import ResponseProviderProtocol, ResponseStoreCorruptionError
 from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
@@ -1554,7 +1552,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if terminal_error is not None:
             if record.status == "cancelled":
                 record.set_response_snapshot(
-                    resolve_cancelled_response(
+                    _resolve_cancelled_response(
                         record.response, record.response_id, record.agent_reference, record.model
                     )
                 )
@@ -1583,7 +1581,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Set cancelled snapshot and transition
         record.set_response_snapshot(
-            resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
+            _resolve_cancelled_response(record.response, record.response_id, record.agent_reference, record.model)
         )
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
@@ -1838,7 +1836,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # Leave in current state — will be re-entered on restart.
                 continue
             # Non-resilient or foreground: best-effort mark failed.
-            failed_payload = resolve_failed_response(
+            failed_payload = _resolve_failed_response(
                 record.response, record.response_id, record.agent_reference, record.model
             )
             record.set_response_snapshot(failed_payload)

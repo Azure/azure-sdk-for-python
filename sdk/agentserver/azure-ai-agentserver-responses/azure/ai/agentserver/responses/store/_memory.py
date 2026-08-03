@@ -14,8 +14,7 @@ from typing import Any, AsyncIterator, Dict, Iterable
 from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
-from ..models._runtime import StreamReplayState
-from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord
+from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, _StreamReplayState
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
@@ -29,7 +28,7 @@ class _StoreEntry:
         self,
         *,
         execution: ResponseExecution,
-        replay: StreamReplayState,
+        replay: _StreamReplayState,
         response: ResponseObject | None = None,
         input_item_ids: list[str] | None = None,
         output_item_ids: list[str] | None = None,
@@ -123,7 +122,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
                     response_id=response_id,
                     mode_flags=self._resolve_mode_flags_from_response(response),
                 ),
-                replay=StreamReplayState(response_id=response_id),
+                replay=_StreamReplayState(response_id=response_id),
                 response=deepcopy(response),
                 input_item_ids=input_ids,
                 output_item_ids=output_ids,
@@ -343,7 +342,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol):
 
             self._entries[execution.response_id] = _StoreEntry(
                 execution=deepcopy(execution),
-                replay=StreamReplayState(response_id=execution.response_id),
+                replay=_StreamReplayState(response_id=execution.response_id),
                 expires_at=self._compute_expiry(ttl_seconds),
             )
 
