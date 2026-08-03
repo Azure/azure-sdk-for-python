@@ -347,6 +347,27 @@ class TestLocalFileStorage(unittest.TestCase):
                     self.assertIsNone(stor.get())
             self.assertIsNone(stor.get())
 
+    def test_toggle_disable_makes_put_and_gets_noop(self):
+        """disable() turns put()/gets() into no-ops without tearing down the instance."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle")) as stor:
+            self.assertTrue(stor._active)
+            stor.disable()
+            self.assertFalse(stor._active)
+            result = stor.put((1, 2, 3))
+            self.assertEqual(result, StorageExportResult.CLIENT_STORAGE_DISABLED)
+            self.assertIsNone(stor.get())
+            self.assertEqual(list(stor.gets()), [])
+
+    def test_toggle_reenable_resumes_put_and_gets(self):
+        """enable() after disable() resumes persistence on the same instance and drains prior blobs."""
+        with LocalFileStorage(os.path.join(TEST_FOLDER, "toggle2")) as stor:
+            stor.disable()
+            self.assertEqual(stor.put((1, 2, 3)), StorageExportResult.CLIENT_STORAGE_DISABLED)
+            stor.enable()
+            self.assertTrue(stor._active)
+            self.assertEqual(stor.put((1, 2, 3), 0), StorageExportResult.LOCAL_FILE_BLOB_SUCCESS)
+            self.assertEqual(stor.get().get(), (1, 2, 3))
+
     def test_put(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
