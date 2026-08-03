@@ -2,7 +2,9 @@
 # Licensed under the MIT License.
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
+import inspect
 import logging
+import weakref
 from threading import Lock
 
 from azure.monitor.opentelemetry.exporter._constants import (
@@ -73,7 +75,47 @@ class _ConfigurationManager(metaclass=Singleton):
         # Register a callback to be invoked when configuration changes. Registration is independent of
         # initialize(): the callback simply sits in the list until the worker fires a config change, so
         # there is no need to guard on initialization state.
-        self._callbacks.append(callback)
+        #
+        # Bound methods are stored via weakref.WeakMethod so a discarded exporter (the callback's
+        # __self__) can be garbage collected instead of being pinned for the process lifetime by this
+        # singleton. This fixes the leak even when the exporter is dropped without calling shutdown().
+        # Plain functions (module-level SDK callbacks) are stored as-is: they live for the process
+        # anyway and are not weakref-friendly.
+        if inspect.ismethod(callback):
+            stored = weakref.WeakMethod(callback)
+        else:
+            stored = callback
+        self._callbacks.append(stored)
+
+        # Replay the currently cached configuration to the just-registered callback. Notifications
+        # fire only on a config *change*, so a callback registered after a non-default value was
+        # already cached would otherwise stay stale until the next change (which may never come).
+        # Centralizing the replay here keeps callbacks free of any feature-specific "apply cached
+        # state" logic and makes registration order-independent. An empty cache is a no-op.
+        cached_settings = self.get_settings()
+        if cached_settings:
+            self._invoke_callback(stored, cached_settings)
+
+    def _invoke_callback(self, callback, settings: Dict[str, str]) -> bool:
+        # Resolve a stored callback (a plain function or a weakref.WeakMethod) and invoke it with the
+        # given settings, isolating any exception so one bad callback cannot break the others (or the
+        # exporter constructing during a registration replay). Returns True when the callback is a
+        # dead WeakMethod whose owner has been garbage collected, so the caller can prune it.
+        if isinstance(callback, weakref.WeakMethod):
+            # Only bound-method callbacks (e.g. the per-exporter local-storage callback) are stored as
+            # WeakMethod, so they must be resolved back to a live bound method here. Module-level
+            # function callbacks (live metrics, sdkstats) are stored directly and hit the else branch.
+            resolved = callback()
+            if resolved is None:
+                return True
+            target = resolved
+        else:
+            target = callback
+        try:
+            target(settings)
+        except Exception as ex:  # pylint: disable=broad-except
+            logger.debug("Callback failed: %s", ex)
+        return False
 
     def _notify_callbacks(self, settings: Dict[str, str]):
         # Notify all registered callbacks of configuration changes.
@@ -81,11 +123,15 @@ class _ConfigurationManager(metaclass=Singleton):
         # "list changed size during iteration". list.append and list(...) are individually atomic
         # under the GIL, so no lock is needed here (and _state_lock stays scoped to config state).
         callbacks = list(self._callbacks)
-        for cb in callbacks:
+        # Invoke each callback; _invoke_callback reports back any dead weak references to prune.
+        dead = [cb for cb in callbacks if self._invoke_callback(cb, settings)]
+        # Prune dead weak references so _callbacks does not grow unbounded under exporter churn.
+        # list.remove is atomic under the GIL; swallow ValueError if another thread already removed it.
+        for cb in dead:
             try:
-                cb(settings)
-            except Exception as ex:  # pylint: disable=broad-except
-                logger.debug("Callback failed: %s", ex)
+                self._callbacks.remove(cb)
+            except ValueError:
+                pass
 
     def _is_transient_error(self, response: OneSettingsResponse) -> bool:
         """Check if the response indicates a transient error.
