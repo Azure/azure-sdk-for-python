@@ -90,7 +90,8 @@ with (
         polling_interval=poll_interval,
     )
 
-    print("Optional: While SDK is polling, periodically print the job status until the job is complete")
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
     while not poller.done():
         time.sleep(poll_interval)
         print(f"status=`{poller.status()}`")
