@@ -102,6 +102,9 @@ class _ConfigurationManager(metaclass=Singleton):
         # exporter constructing during a registration replay). Returns True when the callback is a
         # dead WeakMethod whose owner has been garbage collected, so the caller can prune it.
         if isinstance(callback, weakref.WeakMethod):
+            # Only bound-method callbacks (e.g. the per-exporter local-storage callback) are stored as
+            # WeakMethod, so they must be resolved back to a live bound method here. Module-level
+            # function callbacks (live metrics, sdkstats) are stored directly and hit the else branch.
             resolved = callback()
             if resolved is None:
                 return True
