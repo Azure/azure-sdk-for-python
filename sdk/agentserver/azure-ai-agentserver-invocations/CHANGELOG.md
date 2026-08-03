@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b8 (2026-08-03)
 
 ### Samples
 
@@ -12,7 +12,7 @@
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b9`.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery so invocations-only agents no longer make a blocking task-store call during startup.
 
 ## 1.0.0b7 (2026-07-22)
 
