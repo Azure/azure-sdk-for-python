@@ -520,6 +520,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                 self._prepare_item_locked(item)
                 if item._started or item._done:  # pylint: disable=protected-access
                     raise RuntimeError("The response item has already started")
+                if text_bytes > _MAX_OUTPUT_ITEM_BYTES:
+                    raise ValueError("An output item exceeds the maximum encoded text size")
                 if self._response_bytes + text_bytes > _MAX_RESPONSE_BYTES:
                     raise ValueError("A response exceeds the maximum cumulative encoded text size")
             await self._ensure_open()
@@ -643,6 +645,13 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         # never the emitted text, so keeping the chunks (up to _MAX_RESPONSE_BYTES
         # per response across _MAX_RECENT_RESPONSES cached entries) would let a long
         # connection pin large amounts of memory. Item ids and _started are kept.
+        #
+        # Safety: this is synchronous (no await) so it runs atomically on the event
+        # loop, and every caller invokes it only after the response is terminal
+        # (_remember_response_locked is reached post-terminal). Once terminal, the
+        # send paths reject further output at _ensure_writable_locked, so no commit
+        # can re-grow _chunks after release. It therefore does not need _lock, which
+        # cannot be awaited from the synchronous _state_lock context of the caller.
         for item in self._items:
             item._chunks = []  # pylint: disable=protected-access
 

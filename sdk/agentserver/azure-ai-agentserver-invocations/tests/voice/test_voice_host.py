@@ -896,6 +896,32 @@ def test_response_exceeding_cumulative_byte_budget_is_rejected() -> None:
     assert errors and "cumulative" in errors[0]
 
 
+def test_full_text_item_exceeding_per_item_budget_is_rejected() -> None:
+    """A non-streamed ``send_text`` item is bounded by the same per-item encoded
+    size cap as the streaming delta path, not only by the transport frame limit.
+    """
+    app = _app()
+    errors: list[str] = []
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        try:
+            await response.send_text("123456")  # 6 bytes, over the patched 4-byte cap
+        except ValueError as exc:
+            errors.append(str(exc))
+            raise
+
+    with mock.patch.object(voice_runtime, "_MAX_OUTPUT_ITEM_BYTES", 4):
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            _activate(websocket)
+            websocket.send_json(_user_message())
+            # send_text is rejected before opening; the failed callback then opens
+            # the response and emits the response-scoped error.
+            assert websocket.receive_json()["type"] == "response.created"
+            assert websocket.receive_json()["type"] == "error"
+    assert errors and "maximum encoded text size" in errors[0]
+
+
 def test_completed_response_output_buffers_are_released() -> None:
     """A response retained for late reconciliation keeps its item identity but
     frees the accumulated text buffers, so cached responses stay lightweight.
