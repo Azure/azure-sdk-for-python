@@ -177,18 +177,25 @@ async def main() -> None:
             polling_interval=poll_interval_seconds,
         )
 
-        # Optional: While SDK is polling, periodically print the job status until the job is complete
-        print("Periodically check job status:")
-        while not poller.done():
-            await asyncio.sleep(poll_interval_seconds)
-            print(f"\tstatus=`{poller.status()}`")
+        # Optionally, print the job status periodically while the SDK polls in the background.
+        print_poller_status = False
 
-        # Since done() is true, result() returns the final deserialized job result without
-        # waiting further. It also propagates any LRO polling exception.
-        job_result = await poller.result()
-        print(f"Final LRO status: `{poller.status()}`.")
-        print(f"Data generation result: {job_result}")
+        if print_poller_status:
+            # Start SDK polling in the background and periodically print the job status until it is complete.
+            result_task = asyncio.create_task(poller.result())
+            print("Periodically check job status:")
+            while not result_task.done():
+                await asyncio.sleep(poll_interval_seconds)
+                print(f"\tstatus=`{poller.status()}`")
 
+            # Awaiting the task returns the final deserialized result and propagates any LRO polling exception.
+            job_result = await result_task
+            print(f"Final LRO status: `{poller.status()}`.")
+            print(f"Data generation result: {job_result}")
+        else:
+            job_result = await poller.result()
+            print(f"Data generation result: {job_result}")
+            
         # ------------------------------------------------------------------
         # 3. Inspect the generated fine-tuning file outputs.
         # ------------------------------------------------------------------
