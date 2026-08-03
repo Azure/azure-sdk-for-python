@@ -2,6 +2,8 @@
 # Licensed under the MIT license.
 """Durable state-store client for AgentServer."""
 
+from azure.ai.agentserver.core._experimental import experimental
+
 from ._client import FOUNDRY_TOKEN_SCOPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
 from ._errors import (
@@ -25,6 +27,16 @@ from ._state_serializer import (
     StateStoreItemRef,
     StateStoreItemKey,
 )
+
+FoundryStateStore = experimental(FoundryStateStore)
+FoundryStorageClient = experimental(FoundryStorageClient)
+FoundryStorageEndpoint = experimental(FoundryStorageEndpoint)
+FoundryStorageError = experimental(FoundryStorageError)
+FoundryStorageApiError = experimental(FoundryStorageApiError)
+FoundryStorageBadRequestError = experimental(FoundryStorageBadRequestError)
+FoundryStorageConflictError = experimental(FoundryStorageConflictError)
+FoundryStorageNotFoundError = experimental(FoundryStorageNotFoundError)
+FoundryStoragePreconditionError = experimental(FoundryStoragePreconditionError)
 
 __all__ = [
     "DEFAULT_ITEM_TTL_SECONDS",
