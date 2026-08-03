@@ -15,7 +15,7 @@ from azure.mgmt.computerecommender import RecommenderMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computerecommender
 # USAGE
-    python operations_list_maximum_set_gen.py
+    python get_sku_mix_placement_scores.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,11 +30,12 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.operations.list()
-    for item in response:
-        print(item)
+    response = client.sku_mix_placement_scores.get(
+        location="eastus",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-05-05-preview/Operations_List_MaximumSet_Gen.json
+# x-ms-original-file: 2026-05-05-preview/GetSkuMixPlacementScores.json
 if __name__ == "__main__":
     main()
