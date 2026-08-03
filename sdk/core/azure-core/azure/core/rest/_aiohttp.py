@@ -167,7 +167,7 @@ class _RestAioHttpTransportResponseBackcompatMixin(AsyncHttpResponseBackcompatMi
         :return: The response's bytes
         :rtype: bytes
         """
-        return _aiohttp_body_helper(self)
+        return _aiohttp_body_helper(cast("RestAioHttpTransportResponse", self))
 
     async def _load_body(self) -> None:
         """Load in memory the body, so it could be accessible from sync methods."""
