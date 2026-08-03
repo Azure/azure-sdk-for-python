@@ -61,7 +61,9 @@ upstream = openai.AsyncOpenAI(
 )
 
 
-def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+def _build_response_snapshot(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+) -> dict[str, Any]:
     """Construct a response snapshot dict from request + context."""
     snapshot: dict[str, Any] = {
         "id": context.response_id,
@@ -108,7 +110,7 @@ async def handler(
     # This handler owns the response lifecycle — construct the
     # response snapshot directly instead of forwarding the upstream's.
     # Seeding from the request preserves metadata, conversation, model.
-    snapshot = _build_response_snapshot(request, context)
+    snapshot = _build_response_snapshot(request, context, cancellation_signal)
 
     # Lifecycle events nest the response snapshot under "response"
     # — matching the SSE wire format.
@@ -127,7 +129,8 @@ async def handler(
         stream=True,
     ) as upstream_stream:
         upstream_stream = cast(
-            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent], upstream_stream
+            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent],
+            upstream_stream,
         )
         async for event in upstream_stream:
             # Skip lifecycle events — we own the response envelope.
@@ -164,7 +167,10 @@ async def handler(
     # Emit terminal event — the handler decides the outcome.
     if upstream_failed:
         snapshot["status"] = "failed"
-        snapshot["error"] = {"code": "server_error", "message": "Upstream request failed"}
+        snapshot["error"] = {
+            "code": "server_error",
+            "message": "Upstream request failed",
+        }
         yield {"type": "response.failed", "response": snapshot}
     else:
         snapshot["status"] = "completed"

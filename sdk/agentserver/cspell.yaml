@@ -8,6 +8,7 @@ words:
   - addl
   - agentserver
   - aiso
+  - alnum
   - annot
   - aoutput
   - appinsights
@@ -26,21 +27,27 @@ words:
   - cand
   - caplog
   - caresp
+  - cchain
   - configurators
   - coreai
   - coro
+  - CRASHME
   - crashy
   - CREAT
   - ctco
   - dataagent
   - dataclass
   - dedup
+  - dedups
+  - dones
   - Dunders
   - elts
   - ename
+  - etype
   - fdao
   - finalizer
   - frontmatter
+  - fspath
   - fstring
   - funcs
   - genai
@@ -49,8 +56,13 @@ words:
   - globalns
   - hdrs
   - hypercorn
+  - idless
   - impls
+  - injectively
+  - inmemory
   - INPROCESS
+  - inprog
+  - interruptibly
   - invocations
   - isnotempty
   - JVBE
@@ -66,14 +78,18 @@ words:
   - myproj
   - NCUS
   - ncusacr
+  - nonbg
   - nostream
   - openapi
   - paramtype
   - pathlib
+  - pctx
+  - pointerized
   - precond
   - pytestmark
   - PYTHONIOENCODING
   - RAPI
+  - rchain
   - RDWR
   - rtype
   - sess
@@ -86,8 +102,10 @@ words:
   - traceparent
   - tracestate
   - transactionality
+  - unacked
   - unimportable
   - unparseable
+  - unstarted
   - valeriepham
   - Vnext
   - xhigh
