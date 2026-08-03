@@ -69,7 +69,6 @@ def _add_class_docstring(cls: type[T]) -> type[T]:
 
     original_init = cls.__init__
 
-    @functools.wraps(original_init)
     def wrapped_init(self, *args, **kwargs):  # type: ignore[no-untyped-def]
         cache_key = f"class:{cls.__module__}.{cls.__qualname__}"
         message = f"Class {cls.__module__}.{cls.__qualname__}: {EXPERIMENTAL_CLASS_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
@@ -83,6 +82,9 @@ def _add_class_docstring(cls: type[T]) -> type[T]:
             return original_init(self, *args, **kwargs)
         finally:
             _experimental_init_active.reset(token)
+
+    if "__init__" in cls.__dict__ and inspect.isfunction(original_init):
+        wrapped_init = functools.wraps(original_init)(wrapped_init)
 
     cls.__init__ = wrapped_init  # type: ignore[method-assign]
     return cls
