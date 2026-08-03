@@ -15,7 +15,7 @@ DESCRIPTION:
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_app_polling_async.py
+    python sample_optimization_job_basic_async.py
 
     Before running the sample:
 
