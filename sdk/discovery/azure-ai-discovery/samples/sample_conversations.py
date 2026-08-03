@@ -46,11 +46,16 @@ def sample_conversations():
 
     conversation_name = conversation.name
 
-    # List conversations in the project
-    conversations = list(client.conversations.list(project_name=project_name))
-    print(f"\nFound {len(conversations)} conversation(s):")
-    for conv in conversations:
+    # List conversations in the project. The list operation returns a
+    # ``PagedConversation`` envelope with a ``value`` list of items and an
+    # optional ``next_link`` for the next page. Iterating the model directly
+    # would iterate its field names, so always access ``.value``.
+    page = client.conversations.list(project_name=project_name)
+    print(f"\nFound {len(page.value)} conversation(s) on the first page:")
+    for conv in page.value:
         print(f"  - {conv.name}: {conv.display_name}")
+    if page.next_link:
+        print(f"  (additional pages available via next_link={page.next_link})")
 
     # Get a specific conversation
     fetched = client.conversations.get(conversation_name=conversation_name)

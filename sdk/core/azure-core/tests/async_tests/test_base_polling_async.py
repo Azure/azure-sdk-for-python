@@ -26,27 +26,25 @@
 import base64
 import json
 import re
-from utils import HTTP_REQUESTS
-from azure.core.pipeline._tools import is_rest
 import types
 from unittest import mock
 
 import pytest
-
 from requests import Request, Response
+from utils import HTTP_REQUESTS
+from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
+from rest_client_async import AsyncMockRestClient
 
+from azure.core.pipeline._tools import is_rest
 from azure.core.polling import async_poller, AsyncLROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
-
 from azure.core.polling.base_polling import LROBasePolling
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
-from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
-from rest_client_async import AsyncMockRestClient
 
 
 class SimpleResource:
