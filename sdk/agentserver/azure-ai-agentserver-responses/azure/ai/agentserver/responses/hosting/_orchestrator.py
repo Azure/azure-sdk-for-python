@@ -42,16 +42,16 @@ from ..models.runtime import (
     ResponseModeFlags,
     ResponseStatus,
 )
-from ..models.runtime import (
+from ..models._runtime import (
     apply_cancelled_terminal as _apply_cancelled_terminal,
 )
-from ..models.runtime import (
+from ..models._runtime import (
     apply_failed_terminal as _apply_failed_terminal,
 )
-from ..models.runtime import (
+from ..models._runtime import (
     resolve_cancelled_response as _resolve_cancelled_response,
 )
-from ..models.runtime import (
+from ..models._runtime import (
     resolve_failed_response as _resolve_failed_response,
 )
 from ..store._base import ResponseAlreadyExistsError, ResponseProviderProtocol

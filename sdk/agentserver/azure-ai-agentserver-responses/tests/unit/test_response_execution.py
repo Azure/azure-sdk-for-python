@@ -11,6 +11,8 @@ import pytest
 from azure.ai.agentserver.responses.models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
+)
+from azure.ai.agentserver.responses.models._runtime import (
     _build_cancelled_response,
 )
 

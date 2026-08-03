@@ -191,7 +191,7 @@ def _overlay_failed_terminal(
     :returns: A copy of the snapshot transitioned to ``failed``.
     :rtype: ResponseObject
     """
-    from ..models.runtime import apply_failed_terminal  # pylint: disable=import-outside-toplevel
+    from ..models._runtime import apply_failed_terminal  # pylint: disable=import-outside-toplevel
     from ..models._generated import ResponseObject  # pylint: disable=import-outside-toplevel
 
     error = {

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Tests for the terminal-overlay helpers in ``models.runtime``.
+"""Tests for the terminal-overlay helpers in ``models._runtime``.
 
 These lock in the fidelity contract: the handler owns the response object, so a
 framework-built terminal (failed / cancelled) must PRESERVE every handler-owned
@@ -13,7 +13,7 @@ behaviour contract: ``failed`` output "may be partial"; ``cancelled`` output is
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses.models.runtime import (
+from azure.ai.agentserver.responses.models._runtime import (
     apply_cancelled_terminal,
     apply_failed_terminal,
     resolve_cancelled_response,

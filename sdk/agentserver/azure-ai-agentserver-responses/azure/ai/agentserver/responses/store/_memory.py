@@ -14,7 +14,8 @@ from typing import Any, AsyncIterator, Dict, Iterable
 from .._response_context import PlatformContext
 from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
-from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
+from ..models._runtime import StreamReplayState
+from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord
 from ._base import ResponseAlreadyExistsError, ResponseProviderProtocol
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
