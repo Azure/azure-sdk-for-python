@@ -268,3 +268,11 @@ def test_stream_sse_invalid_utf8(sse_stream):
     # Invalid UTF-8 becomes U+FFFD instead of crashing the stream.
     events = list(sse_stream(HttpRequest("GET", "/streams/sse_invalid_utf8")))
     assert events == [ServerSentEvent(event="message", data="caf\ufffd")]
+
+
+def test_stream_sse_oversized_retry_ignored():
+    # A retry value of all ASCII digits but longer than CPython's int-string
+    # conversion limit must be ignored per spec, not crash the stream.
+    payload = b"retry:" + b"1" * 5000 + b"\ndata:hello\n\n"
+    events = list(SSEDecoder().iter_events(iter([payload])))
+    assert events == [ServerSentEvent(event="message", data="hello", retry=None)]

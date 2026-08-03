@@ -201,7 +201,12 @@ class _SSEEventBuilder:
                 self._last_id = value
         elif field == "retry":
             if value.isascii() and value.isdigit():
-                self._retry = int(value)
+                try:
+                    self._retry = int(value)
+                except ValueError:
+                    # All ASCII digits but too long for int() (CPython's int-string
+                    # conversion limit). Ignore rather than crashing the stream.
+                    pass
         # Unknown fields are ignored per spec.
         return None
 
