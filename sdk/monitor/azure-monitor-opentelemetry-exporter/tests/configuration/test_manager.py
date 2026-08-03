@@ -180,6 +180,62 @@ class TestConfigurationManager(unittest.TestCase):
 
         self.assertIn(callback, manager._callbacks)
 
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replays_cached_settings(self, mock_worker_class):
+        """Registering a callback immediately replays the currently cached settings to it, so a
+        callback registered after a value was already cached is not left stale until the next change."""
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        callback.assert_called_once_with({"FEATURE": "enabled"})
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_empty_cache_no_replay(self, mock_worker_class):
+        """When the cache is empty (worker has not fetched yet), registration does not invoke the
+        callback (the replay is a no-op)."""
+        manager = _ConfigurationManager()
+        callback = Mock()
+
+        manager.register_callback(callback)
+
+        callback.assert_not_called()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replay_isolates_exception(self, mock_worker_class):
+        """A callback that raises during the registration replay is isolated: registration still
+        succeeds and the callback is stored (matching notification-time exception isolation)."""
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        callback = Mock(side_effect=ValueError("boom"))
+
+        manager.register_callback(callback)
+
+        callback.assert_called_once_with({"FEATURE": "enabled"})
+        self.assertIn(callback, manager._callbacks)
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_register_callback_replays_to_bound_method(self, mock_worker_class):
+        """The replay resolves a WeakMethod-stored bound method and invokes it with cached settings."""
+        sink = []
+
+        class _Holder:
+            def __init__(self, sink):
+                self._sink = sink
+
+            def on_settings(self, settings):
+                self._sink.append(settings)
+
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(settings_cache={"FEATURE": "enabled"})
+        holder = _Holder(sink)
+
+        manager.register_callback(holder.on_settings)
+
+        self.assertEqual(sink, [{"FEATURE": "enabled"}])
+
     def test_bound_method_callback_stored_weakly(self):
         """A bound-method callback is wrapped in weakref.WeakMethod so its owner is not pinned."""
         import weakref

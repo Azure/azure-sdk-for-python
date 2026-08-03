@@ -442,42 +442,62 @@ class TestBaseExporter(unittest.TestCase):
             if base.storage is not None:
                 clean_folder(base.storage._path)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
-    def test_late_exporter_applies_cached_disabled_settings(self, mock_get_config_manager):
+    def test_late_exporter_applies_cached_disabled_settings(self):
         """An exporter created after FEATURE_LOCAL_STORAGE=disabled was cached applies that cached
-        state at registration time (no config change needed) and starts with storage toggled off."""
-        mock_manager = mock.Mock()
-        mock_manager.get_settings.return_value = self._make_local_storage_settings(False)
-        mock_get_config_manager.return_value = mock_manager
-        base = BaseExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-            disable_offline_storage=False,
+        state at registration time (via the manager's centralized replay, no config change needed)
+        and starts with storage toggled off."""
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
+        manager._current_state = manager._current_state.with_updates(
+            settings_cache=self._make_local_storage_settings(False)
         )
         try:
-            mock_manager.get_settings.assert_called_once()
-            # Flag model: instance exists but is toggled off per the cached kill-switch.
-            self.assertIsNotNone(base.storage)
-            self.assertFalse(base.storage._active)
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                # Flag model: instance exists but is toggled off per the cached kill-switch.
+                self.assertIsNotNone(base.storage)
+                self.assertFalse(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
         finally:
-            if base.storage is not None:
-                clean_folder(base.storage._path)
+            Singleton._instances.pop(_ConfigurationManager, None)
 
-    @mock.patch("azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager")
-    def test_late_exporter_empty_cache_leaves_storage_active(self, mock_get_config_manager):
+    def test_late_exporter_empty_cache_leaves_storage_active(self):
         """When the cached settings are empty (worker has not fetched yet), the replay is a no-op and
         storage remains active per the user's disable_offline_storage setting."""
-        mock_manager = mock.Mock()
-        mock_manager.get_settings.return_value = {}
-        mock_get_config_manager.return_value = mock_manager
-        base = BaseExporter(
-            connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-            disable_offline_storage=False,
-        )
+        from azure.monitor.opentelemetry.exporter._configuration import _ConfigurationManager
+        from azure.monitor.opentelemetry.exporter._utils import Singleton
+
+        Singleton._instances.pop(_ConfigurationManager, None)
+        manager = _ConfigurationManager()
         try:
-            self.assertIsNotNone(base.storage)
+            with mock.patch(
+                "azure.monitor.opentelemetry.exporter.export._base.get_configuration_manager",
+                return_value=manager,
+            ):
+                base = BaseExporter(
+                    connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
+                    disable_offline_storage=False,
+                )
+            try:
+                self.assertIsNotNone(base.storage)
+                self.assertTrue(base.storage._active)
+            finally:
+                if base.storage is not None:
+                    clean_folder(base.storage._path)
         finally:
-            if base.storage is not None:
-                clean_folder(base.storage._path)
+            Singleton._instances.pop(_ConfigurationManager, None)
 
     def test_normal_exporter_includes_http_logging_policy(self):
         from azure.core.pipeline.policies import HttpLoggingPolicy

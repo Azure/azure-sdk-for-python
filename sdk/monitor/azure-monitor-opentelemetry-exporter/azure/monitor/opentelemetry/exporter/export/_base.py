@@ -236,16 +236,10 @@ class BaseExporter:
         if not self._is_stats_exporter():
             config_manager = get_configuration_manager()
             if config_manager:
+                # register_callback also replays any already-cached configuration to this callback,
+                # so a late-created exporter immediately honors an existing kill-switch. The replay is
+                # centralized in the configuration manager; no feature-specific handling is needed here.
                 config_manager.register_callback(self._local_storage_configuration_callback)
-                # Registration only appends the callback; it does not replay the currently cached
-                # configuration. Notifications fire only on a config change, so an exporter created
-                # after FEATURE_LOCAL_STORAGE was already cached as disabled would otherwise keep
-                # active storage until the next change (which may never come). Apply the cached state
-                # once here so late-created exporters honor an existing kill-switch immediately. An
-                # empty cache evaluates to a no-op, leaving storage per the user's setting.
-                cached_settings = config_manager.get_settings()
-                if cached_settings:
-                    self._local_storage_configuration_callback(cached_settings)
 
         # statsbeat initialization
         if self._should_collect_stats():
