@@ -4,13 +4,15 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import pytest
+# pylint: disable=line-too-long,useless-suppression
 import sys
 import asyncio
-from packaging.version import Version
 from unittest import mock
 
+import pytest
+from packaging.version import Version
 import aiohttp
+from utils import HTTP_REQUESTS, request_and_responses_product
 
 from azure.core.pipeline.transport import (
     AsyncHttpResponse as PipelineTransportAsyncHttpResponse,
@@ -30,8 +32,6 @@ from azure.core.exceptions import (
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,
 )
-
-from utils import HTTP_REQUESTS, request_and_responses_product
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
@@ -970,9 +970,6 @@ async def test_recursive_multipart_receive(http_request, mock_response):
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason="Loop parameter is deprecated since Python 3.10")
 def test_aiohttp_loop():
-    import asyncio
-    from azure.core.pipeline.transport import AioHttpTransport
-
     loop = asyncio.new_event_loop()
     try:
         with pytest.raises(ValueError):

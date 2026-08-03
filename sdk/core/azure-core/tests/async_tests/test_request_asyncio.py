@@ -5,10 +5,11 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import AsyncioRequestsTransport
-from utils import HTTP_REQUESTS
-from azure.core.pipeline._tools import is_rest
 import pytest
+from utils import HTTP_REQUESTS
+
+from azure.core.pipeline.transport import AsyncioRequestsTransport
+from azure.core.pipeline._tools import is_rest
 
 
 @pytest.mark.asyncio
