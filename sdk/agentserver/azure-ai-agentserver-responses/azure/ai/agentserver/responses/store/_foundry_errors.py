@@ -7,6 +7,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any
 
+from azure.ai.agentserver.core import experimental
 from azure.ai.agentserver.core.platform_headers import (
     PLATFORM_ERROR_TAG,
 )
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from azure.core.rest import HttpResponse
 
 
+@experimental
 class FoundryStorageError(Exception):
     """Base class for errors returned by the Foundry storage API."""
 
@@ -29,14 +31,17 @@ class FoundryStorageError(Exception):
         self.response_body = response_body
 
 
+@experimental
 class FoundryResourceNotFoundError(FoundryStorageError):
     """Raised when the requested resource does not exist (HTTP 404)."""
 
 
+@experimental
 class FoundryBadRequestError(FoundryStorageError):
     """Raised for invalid-request or conflict errors (HTTP 400, 409)."""
 
 
+@experimental
 class FoundryApiError(FoundryStorageError):
     """Raised for all other non-success HTTP responses."""
 

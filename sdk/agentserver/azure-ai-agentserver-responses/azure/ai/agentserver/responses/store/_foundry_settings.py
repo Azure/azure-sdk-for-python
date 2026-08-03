@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core import AgentConfig
+from azure.ai.agentserver.core import AgentConfig, experimental
 
 _API_VERSION = "v1"
 
@@ -15,6 +15,7 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
+@experimental
 class FoundryStorageSettings:
     """Immutable runtime configuration for :class:`FoundryStorageProvider`."""
 

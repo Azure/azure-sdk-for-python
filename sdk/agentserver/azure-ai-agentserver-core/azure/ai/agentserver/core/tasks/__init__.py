@@ -47,8 +47,6 @@ Public API::
     )
 """
 
-from azure.ai.agentserver.core._experimental import experimental
-
 from ._context import EntryMode, TaskContext
 from ._decorator import MultiTurnTask, Task, multi_turn_task, task
 from ._enablement import resilient_tasks_enabled, set_resilient_tasks_enabled
@@ -67,25 +65,6 @@ from ._exceptions import (
 from ._metadata import JSONValue, TaskMetadata
 from ._retry import RetryPolicy
 from ._run import TaskRun
-
-task = experimental(task)
-multi_turn_task = experimental(multi_turn_task)
-Task = experimental(Task)
-MultiTurnTask = experimental(MultiTurnTask)
-set_resilient_tasks_enabled = experimental(set_resilient_tasks_enabled)
-resilient_tasks_enabled = experimental(resilient_tasks_enabled)
-TaskContext = experimental(TaskContext)
-TaskMetadata = experimental(TaskMetadata)
-TaskRun = experimental(TaskRun)
-RetryPolicy = experimental(RetryPolicy)
-TaskFailed = experimental(TaskFailed)
-TaskCancelled = experimental(TaskCancelled)
-TaskDeferred = experimental(TaskDeferred)
-TaskConflictError = experimental(TaskConflictError)
-LastInputIdPreconditionFailed = experimental(LastInputIdPreconditionFailed)
-SteeringQueueFull = experimental(SteeringQueueFull)
-InputTooLarge = experimental(InputTooLarge)
-TaskManagerNotInitialized = experimental(TaskManagerNotInitialized)
 
 # Streaming lives in `azure.ai.agentserver.core.streaming` as a peer
 # subpackage with a registry-based lifecycle model. The resilient task

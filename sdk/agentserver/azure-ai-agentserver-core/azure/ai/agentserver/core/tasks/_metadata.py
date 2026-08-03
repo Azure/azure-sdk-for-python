@@ -35,6 +35,8 @@ import logging
 from collections.abc import Iterator
 from typing import Any, Awaitable, Callable, Optional
 
+from azure.ai.agentserver.core._experimental import experimental
+
 logger = logging.getLogger("azure.ai.agentserver.tasks")
 
 # Sentinel to distinguish "not set" from None
@@ -46,6 +48,7 @@ _NOT_SET = object()
 NamespaceFlushCallback = Callable[[Optional[str], dict[str, Any]], Awaitable[None]]
 
 
+@experimental
 class TaskMetadata(collections.abc.MutableMapping):
     """Mutable progress dict persisted to the task record's payload.
 

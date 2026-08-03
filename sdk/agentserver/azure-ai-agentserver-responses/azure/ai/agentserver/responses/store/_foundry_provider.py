@@ -7,6 +7,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
+from azure.ai.agentserver.core import experimental
 from azure.ai.agentserver.core.platform_headers import FOUNDRY_CALL_ID, PLATFORM_ERROR_TAG
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
@@ -134,6 +135,7 @@ def _apply_platform_headers(request: HttpRequest, context: PlatformContext | Non
         request.headers[FOUNDRY_CALL_ID] = context.call_id
 
 
+@experimental
 class FoundryStorageProvider:
     """An HTTP-backed response storage provider that persists data via the Foundry storage API.
 
