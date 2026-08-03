@@ -18,6 +18,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from .._patch import (
     _AuthSecretsFilter,
+    _OpenAIAuthSecretsFilter,
     _LoggingAsyncByteStream,
     _build_openai_user_agent,
     _log_streaming_response_notice,
@@ -97,6 +98,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
             console_handler.addFilter(_AuthSecretsFilter())
+            console_handler.addFilter(_OpenAIAuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -104,6 +106,11 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             # turn on non-redacted logs by passing 'logging_enable=True' to the client constructor
             # (which are implemented as a separate logging policy)
             logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
+
+            openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+            openai_transport_logger.setLevel(logging.DEBUG)
+            openai_transport_logger.propagate = False
+            openai_transport_logger.addHandler(console_handler)
 
             kwargs.setdefault("logging_enable", self._console_logging_enabled)
 

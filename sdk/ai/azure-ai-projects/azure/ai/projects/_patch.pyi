@@ -102,15 +102,13 @@ class OpenAI(OpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
-    _console_logging_enabled: bool
-    _kwargs: dict[str, Any]
-    _custom_user_agent: Optional[str]
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> OpenAI: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 class _AuthSecretsFilter(logging.Filter): ...
+class _OpenAIAuthSecretsFilter(logging.Filter): ...
 
 class _OpenAILoggingTransport:
     def __init__(self, *, logging_enabled: bool) -> None: ...

@@ -41,7 +41,6 @@ LOG_FILE = create_timestamped_temp_log_file(__file__)
 
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
-logger.handlers.clear()
 
 # Keep stdout available for sample prints while also writing SDK logs to a file.
 file_handler = logging.FileHandler(filename=LOG_FILE, encoding="utf-8")

@@ -218,6 +218,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             azure_logger.setLevel(logging.DEBUG)
             console_handler = logging.StreamHandler(stream=sys.stdout)
             console_handler.addFilter(_AuthSecretsFilter())
+            console_handler.addFilter(_OpenAIAuthSecretsFilter())
             azure_logger.addHandler(console_handler)
             # Exclude detailed logs for network calls associated with getting Entra ID token.
             logging.getLogger("azure.identity").setLevel(logging.ERROR)
@@ -357,6 +358,20 @@ class _AuthSecretsFilter(logging.Filter):
         redacted = self._API_KEY_HEADER_DICT_PATTERN.sub(r"\1<REDACTED>\2", redacted)
         if redacted != rendered:
             # Replace the pre-formatted content so handlers emit sanitized output.
+            record.msg = redacted
+            record.args = ()
+        return True
+
+
+class _OpenAIAuthSecretsFilter(logging.Filter):
+    """Redact bearer tokens in OpenAI transport log messages before console emission."""
+
+    _AUTH_HEADER_LINE_PATTERN = re.compile(r"(?im)^(\s*authorization:\s*bearer\s+).+$")
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        rendered = record.getMessage()
+        redacted = self._AUTH_HEADER_LINE_PATTERN.sub(r"\1<REDACTED>", rendered)
+        if redacted != rendered:
             record.msg = redacted
             record.args = ()
         return True

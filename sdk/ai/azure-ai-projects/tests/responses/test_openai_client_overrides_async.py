@@ -190,34 +190,34 @@ class TestApiKeyBranchesAsync:
 class TestHttpClientBranchesAsync:
     @pytest.mark.asyncio
     async def test_logging_disabled_still_creates_async_logging_transport(self):
-        """Branch: no override + logging disabled -> httpx.AsyncClient with reduced logging transport."""
+        """Branch: no override + logging disabled -> OpenAI default async client with reduced logging transport."""
         client = make_async_client(console_logging=False, logging_enable=False)
         mock_cls, _ = mock_openai()
         with (
             patch(ASYNC_OPENAI_PATCH, mock_cls),
             patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
-            patch("azure.ai.projects.aio._patch.httpx") as mock_httpx,
+            patch("azure.ai.projects.aio._patch.DefaultAsyncHttpxClient") as mock_default_http_client,
             patch("azure.ai.projects.aio._patch._OpenAILoggingTransport") as mock_transport,
         ):
             mock_transport.return_value = object()
-            mock_httpx.AsyncClient.return_value = object()
+            mock_default_http_client.return_value = object()
             client.get_openai_client()
-        mock_httpx.AsyncClient.assert_called_once()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
         mock_transport.assert_called_once_with(logging_enabled=False)
 
     @pytest.mark.asyncio
     async def test_logging_enable_creates_async_logging_transport_without_console_logging(self):
-        """Branch: constructor logging_enable=True -> httpx.AsyncClient with logging transport."""
+        """Branch: constructor logging_enable=True -> OpenAI default async client with logging transport."""
         client = make_async_client(console_logging=False, logging_enable=True)
         mock_cls, _ = mock_openai()
         with (
             patch(ASYNC_OPENAI_PATCH, mock_cls),
             patch(ASYNC_TOKEN_PROVIDER_PATCH, return_value="tok"),
-            patch("azure.ai.projects.aio._patch.httpx") as mock_httpx,
+            patch("azure.ai.projects.aio._patch.DefaultAsyncHttpxClient") as mock_default_http_client,
             patch("azure.ai.projects.aio._patch._OpenAILoggingTransport") as mock_transport,
         ):
             mock_transport.return_value = object()
-            mock_httpx.AsyncClient.return_value = object()
+            mock_default_http_client.return_value = object()
             client.get_openai_client()
-        mock_httpx.AsyncClient.assert_called_once()
+        mock_default_http_client.assert_called_once_with(transport=mock_transport.return_value)
         mock_transport.assert_called_once_with(logging_enabled=True)

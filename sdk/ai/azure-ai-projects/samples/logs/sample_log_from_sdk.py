@@ -42,7 +42,6 @@ logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 
 transport_logger = logging.getLogger("azure.ai.projects.openai_transport")
-transport_logger.handlers.clear()
 transport_logger.propagate = False
 
 # Keep stdout available for sample prints while also writing SDK logs to a file.

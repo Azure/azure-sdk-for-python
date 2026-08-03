@@ -37,13 +37,12 @@ from util import create_version_with_endpoint
 load_dotenv()
 
 os.environ["AZURE_AI_PROJECTS_CONSOLE_LOGGING"] = "true"
-
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model = os.environ["FOUNDRY_MODEL_NAME"]
 agent_name = os.environ.get("FOUNDRY_AGENT_NAME") or "MyAgent"
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, logging_enable=False) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     with (
         create_version_with_endpoint(

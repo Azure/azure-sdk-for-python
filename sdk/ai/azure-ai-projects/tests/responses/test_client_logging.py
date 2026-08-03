@@ -14,7 +14,7 @@ import httpx
 import pytest
 from azure.core.credentials import TokenCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects._patch import _OpenAILoggingTransport
+from azure.ai.projects._patch import _OpenAIAuthSecretsFilter, _OpenAILoggingTransport
 
 from openai_test_helpers import SYNC_OPENAI_PATCH, SYNC_TOKEN_PROVIDER_PATCH, make_sync_client, mock_openai
 
@@ -124,6 +124,22 @@ def test_project_client_console_logging_configures_loggers(monkeypatch, restore_
     assert len(transport_logger.handlers) == 1
     assert isinstance(azure_logger.handlers[0], logging.StreamHandler)
     assert azure_logger.handlers[0] is transport_logger.handlers[0]
+
+
+def test_openai_auth_secrets_filter_redacts_transport_headers() -> None:
+    filter_instance = _OpenAIAuthSecretsFilter()
+    record = logging.LogRecord(
+        name="azure.ai.projects.openai_transport",
+        level=logging.DEBUG,
+        pathname=__file__,
+        lineno=1,
+        msg="authorization: Bearer secret-token",
+        args=(),
+        exc_info=None,
+    )
+
+    assert filter_instance.filter(record) is True
+    assert record.getMessage() == "authorization: Bearer <REDACTED>"
 
 
 def test_project_client_without_console_logging_leaves_loggers_unwired(monkeypatch, restore_logger_state):

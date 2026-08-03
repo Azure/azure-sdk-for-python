@@ -124,9 +124,12 @@ def test_project_client_console_logging_configures_loggers_async(monkeypatch, re
     assert azure_logger.level == logging.DEBUG
     assert identity_logger.level == logging.ERROR
     assert http_logging_logger.level == logging.ERROR
+    assert transport_logger.level == logging.DEBUG
+    assert transport_logger.propagate is False
     assert len(azure_logger.handlers) == 1
-    assert len(transport_logger.handlers) == 0
+    assert len(transport_logger.handlers) == 1
     assert isinstance(azure_logger.handlers[0], logging.StreamHandler)
+    assert azure_logger.handlers[0] is transport_logger.handlers[0]
 
 
 def test_project_client_without_console_logging_leaves_loggers_unwired_async(monkeypatch, restore_logger_state):

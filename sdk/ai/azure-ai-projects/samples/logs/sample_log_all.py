@@ -38,18 +38,18 @@ load_dotenv()
 
 LOG_FILE = create_timestamped_temp_log_file(__file__)
 
+file_handler = logging.FileHandler(filename=LOG_FILE, encoding="utf-8")
+
+# Logger for logs from azure-ai-projects SDK through Azure-core.
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
-logger.handlers.clear()
-
-# Keep stdout available for sample prints while also writing SDK logs to a file.
-file_handler = logging.FileHandler(filename=LOG_FILE, encoding="utf-8")
 logger.addHandler(file_handler)
 
-transport_logger = logging.getLogger("azure.ai.projects.openai_transport")
-transport_logger.setLevel(logging.DEBUG)
-transport_logger.propagate = False
-transport_logger.addHandler(file_handler)
+# Logger for logs from the OpenAI client.
+openai_logger = logging.getLogger("azure.ai.projects.openai_transport")
+openai_logger.setLevel(logging.DEBUG)
+openai_logger.propagate = False
+openai_logger.addHandler(file_handler)
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model = os.environ["FOUNDRY_MODEL_NAME"]

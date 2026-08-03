@@ -101,9 +101,6 @@ class AsyncOpenAI(AsyncOpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
-    _console_logging_enabled: bool
-    _kwargs: dict[str, Any]
-    _custom_user_agent: Optional[str]
     def get_openai_client(
         self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
     ) -> AsyncOpenAI: ...
