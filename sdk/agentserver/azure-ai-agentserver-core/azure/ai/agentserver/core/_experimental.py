@@ -112,7 +112,10 @@ def _add_function_docstring(func: Callable[P, T]) -> Callable[P, T]:
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
         cache_key = f"function:{func.__module__}.{func.__qualname__}"
-        message = f"Method {func.__module__}.{func.__qualname__}: {EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+        message = (
+            f"Method {func.__module__}.{func.__qualname__}: "
+            f"{EXPERIMENTAL_METHOD_MESSAGE} {EXPERIMENTAL_LINK_MESSAGE}"
+        )
         if not _should_skip_warning() and not _is_warning_cached(cache_key):
             module_logger.warning(message)
         return func(*args, **kwargs)

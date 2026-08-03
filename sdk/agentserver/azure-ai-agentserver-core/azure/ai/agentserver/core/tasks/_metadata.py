@@ -33,7 +33,7 @@ from __future__ import annotations
 import collections.abc
 import logging
 from collections.abc import Iterator
-from typing import Any, Awaitable, Callable, Optional
+from typing import Any, Awaitable, Callable, Dict, List, Optional, TypeAlias, Union
 
 from azure.ai.agentserver.core._experimental import experimental
 
@@ -333,13 +333,6 @@ class TaskMetadata(collections.abc.MutableMapping):
 #
 # Public type alias exported via tasks.__init__. TaskMetadata values
 # SHOULD be JSON-serializable; this alias documents the value space.
-
-from typing import Union, List, Dict  # pylint: disable=wrong-import-position
-
-try:
-    from typing import TypeAlias  # Python 3.10+
-except ImportError:  # pragma: no cover
-    from typing_extensions import TypeAlias  # type: ignore[assignment]
 
 # Recursive JSON type alias. Forward refs allow self-recursion.
 # Use ForwardRef-via-string for the recursive arms so this type-checks
