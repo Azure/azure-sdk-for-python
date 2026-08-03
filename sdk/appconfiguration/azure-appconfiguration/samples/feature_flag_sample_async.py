@@ -116,7 +116,7 @@ async def main():
 
     print("List revisions of a feature flag")
     # [START list_feature_flag_revisions_async]
-    async for revision in client.list_feature_flag_revisions(feature_id_filter="RichFeature"):
+    async for revision in client.list_feature_flag_revisions(name_filter="RichFeature"):
         print(f"  {revision.name}: last_modified={revision.last_modified}")
     # [END list_feature_flag_revisions_async]
     print("")

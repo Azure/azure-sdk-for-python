@@ -194,7 +194,7 @@ class TestFeatureFlagEndpointAsync(AsyncAppConfigTestCase):
         updated = await client.set_feature_flag(created)
 
         # List revisions
-        revisions = [r async for r in client.list_feature_flag_revisions(feature_id_filter="test_feature_revisions")]
+        revisions = [r async for r in client.list_feature_flag_revisions(name_filter="test_feature_revisions")]
         assert len(revisions) >= 1  # At least one revision
         assert all("test_feature_revisions" in r.name for r in revisions)
 

@@ -846,7 +846,7 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         self,
         name: str,
         *,
-        enabled: Optional[bool] = None,
+        enabled: bool = False,
         label: Optional[str] = None,
         description: Optional[str] = None,
         conditions: Optional[FeatureFlagConditions] = None,
@@ -860,7 +860,7 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         :param name: The name of the feature flag.
         :type name: str
         :keyword enabled: The enabled state of the feature flag. Default is False.
-        :paramtype enabled: bool or None
+        :paramtype enabled: bool
         :keyword label: The label the feature flag belongs to.
         :paramtype label: str or None
         :keyword description: The description of the feature flag.
@@ -878,7 +878,7 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
         """
         super().__init__(**kwargs)
         self.name = name
-        self.enabled = enabled if enabled is not None else False
+        self.enabled = enabled
         self.label = label
         self.description = description
         self.conditions = conditions

@@ -35,6 +35,7 @@ from ._models import (
 )
 from ._generated.models import (
     SnapshotStatus,
+    FeatureFlagFields,
     LabelFields,
     SnapshotFields,
     ConfigurationSettingFields,
@@ -55,6 +56,7 @@ __all__ = [
     "SnapshotStatus",
     "SnapshotFields",
     "SnapshotComposition",
+    "FeatureFlagFields",
     "LabelFields",
     "ConfigurationSettingFields",
     "ConfigurationSettingsFilter",

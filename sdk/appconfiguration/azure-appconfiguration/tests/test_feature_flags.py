@@ -37,6 +37,11 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
     def create_client(self, *args, **kwargs):
         return self.create_feature_flag_client(*args, **kwargs)
 
+    def test_feature_flag_enabled_defaults_to_false(self):
+        feature_flag = FeatureFlag(name="default_disabled")
+
+        assert feature_flag.enabled is False
+
     @AppConfigPreparer()
     @recorded_by_proxy
     def test_list_feature_flags(self, appconfiguration_endpoint_string):
@@ -186,7 +191,7 @@ class TestFeatureFlagEndpoint(AppConfigTestCase):
         updated = client.set_feature_flag(created)
 
         # List revisions
-        revisions = list(client.list_feature_flag_revisions(feature_id_filter="test_feature_revisions"))
+        revisions = list(client.list_feature_flag_revisions(name_filter="test_feature_revisions"))
         assert len(revisions) >= 1  # At least one revision
         assert all("test_feature_revisions" in r.name for r in revisions)
 

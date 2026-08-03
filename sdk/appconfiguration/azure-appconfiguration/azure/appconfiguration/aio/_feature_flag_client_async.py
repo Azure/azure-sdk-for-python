@@ -21,7 +21,7 @@ from .._azure_appconfiguration_error import ResourceReadOnlyError
 from .._azure_appconfiguration_requests import AppConfigRequestsCredentialsPolicy
 from .._query_param_policy import QueryParamPolicy
 from .._generated.aio import AzureAppConfigurationClient as AzureAppConfigurationClientGenerated
-from .._generated.models import LabelFields
+from .._generated.models import FeatureFlagFields, LabelFields
 from .._models import (
     FeatureFlag,
     ConfigurationSettingLabel,
@@ -150,25 +150,28 @@ class FeatureFlagClient:
     @distributed_trace
     def list_feature_flags(
         self,
+        *,
         name_filter: Optional[str] = None,
         label_filter: Optional[str] = None,
-        *,
         tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[Union[str, FeatureFlagFields]]] = None,
         **kwargs: Any,
     ) -> AsyncFeatureFlagPaged:
         """
         Find the FeatureFlag objects, optionally filtered by name, label, tags and accept_datetime.
 
-        :param name_filter: Filter results based on their feature flag names. '*' can be used as wildcard at the end
+        :keyword name_filter: Filter results based on their feature flag names. '*' can be used as wildcard at the end
             of the filter. Default is `None`.
-        :type name_filter: str or None
-        :param label_filter: Filter results based on their labels. Default is `None`.
-        :type label_filter: str or None
+        :paramtype name_filter: str or None
+        :keyword label_filter: Filter results based on their labels. Default is `None`.
+        :paramtype label_filter: str or None
         :keyword tags_filter: Filter results based on their tags. Default is `None`.
         :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve FeatureFlag that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
+        :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.FeatureFlagFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.FeatureFlag`
         :rtype: ~azure.appconfiguration.AsyncFeatureFlagPaged
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -202,13 +205,14 @@ class FeatureFlagClient:
             label=label_filter,
             accept_datetime=accept_datetime,
             tags=tags_filter,
+            select=fields,
             page_iterator_class=FeatureFlagPropertiesPagedAsync,
         )
 
     @distributed_trace_async
     async def get_feature_flag(
         self,
-        feature_id: str,
+        name: str,
         label: Optional[str] = None,
         *,
         etag: Optional[str] = None,
@@ -217,10 +221,10 @@ class FeatureFlagClient:
         **kwargs: Any,
     ) -> Optional["FeatureFlag"]:
         """
-        Get a feature flag from the service, identified by `feature_id` and optionally `label`.
+        Get a feature flag from the service, identified by `name` and optionally `label`.
 
-        :param feature_id: The feature flag identifier.
-        :type feature_id: str
+        :param name: The feature flag name.
+        :type name: str
         :param label: The label of the feature flag. Defaults to None.
         :type label: str or None
         :keyword etag: Check if the feature flag is changed. Set None to skip checking etag.
@@ -237,14 +241,14 @@ class FeatureFlagClient:
 
         .. code-block:: python
 
-            feature_flag = await async_client.get_feature_flag(feature_id="MyFeatureFlag")
+            feature_flag = await async_client.get_feature_flag(name="MyFeatureFlag")
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
 
         try:
             generated_feature_flag = await self._impl.feature_flag_client.get_feature_flag(
-                name=feature_id,
+                name=name,
                 label=label,
                 etag=etag,
                 match_condition=match_condition,
@@ -330,7 +334,7 @@ class FeatureFlagClient:
     @distributed_trace_async
     async def delete_feature_flag(
         self,
-        feature_id: str,
+        name: str,
         label: Optional[str] = None,
         *,
         etag: Optional[str] = None,
@@ -339,8 +343,8 @@ class FeatureFlagClient:
     ) -> Union[None, "FeatureFlag"]:
         """Delete a FeatureFlag if it exists
 
-        :param feature_id: The feature flag name/id to delete
-        :type feature_id: str
+        :param name: The feature flag name to delete
+        :type name: str
         :param label: Label used to identify the FeatureFlag. Default is `None`.
         :type label: str or None
         :keyword etag: Check if the FeatureFlag is changed. Set None to skip checking etag
@@ -362,11 +366,11 @@ class FeatureFlagClient:
         .. code-block:: python
 
             # in async function
-            deleted_feature_flag = await async_client.delete_feature_flag(feature_id="MyFeatureFlag")
+            deleted_feature_flag = await async_client.delete_feature_flag(name="MyFeatureFlag")
         """
         error_map: Dict[int, Any] = {409: ResourceReadOnlyError}
         generated_feature_flag = await self._impl.feature_flag_client.delete_feature_flag(
-            name=feature_id,
+            name=name,
             label=label,
             etag=etag,
             match_condition=match_condition,
@@ -380,22 +384,28 @@ class FeatureFlagClient:
     @distributed_trace
     def list_feature_flag_revisions(
         self,
-        feature_id_filter: Optional[str] = None,
-        label_filter: Optional[str] = None,
         *,
+        name_filter: Optional[str] = None,
+        label_filter: Optional[str] = None,
+        tags_filter: Optional[List[str]] = None,
         accept_datetime: Optional[Union[datetime, str]] = None,
+        fields: Optional[List[Union[str, FeatureFlagFields]]] = None,
         **kwargs: Any,
     ) -> AsyncItemPaged["FeatureFlag"]:
         """
-        Find the FeatureFlag revision history, optionally filtered by feature_id and label.
+        Find the FeatureFlag revision history, optionally filtered by name, label, and tags.
 
-        :param feature_id_filter: Filter results based on their feature flag names. '*' can be used as wildcard at the end
+        :keyword name_filter: Filter results based on their feature flag names. '*' can be used as wildcard at the end
             of the filter. Default is `None`.
-        :type feature_id_filter: str or None
-        :param label_filter: Filter results based on their labels. Default is `None`.
-        :type label_filter: str or None
+        :paramtype name_filter: str or None
+        :keyword label_filter: Filter results based on their labels. Default is `None`.
+        :paramtype label_filter: str or None
+        :keyword tags_filter: Filter results based on their tags. Default is `None`.
+        :paramtype tags_filter: list[str] or None
         :keyword accept_datetime: Retrieve FeatureFlag revisions that existed at this datetime
         :paramtype accept_datetime: ~datetime.datetime or str or None
+        :keyword fields: Specify which fields to include in the results. If not specified, will include all fields.
+        :paramtype fields: list[str] or list[~azure.appconfiguration.FeatureFlagFields] or None
         :return: An async iterator of :class:`~azure.appconfiguration.FeatureFlag`
         :rtype: ~azure.core.paging.AsyncItemPaged[~azure.appconfiguration.FeatureFlag]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
@@ -413,7 +423,12 @@ class FeatureFlagClient:
             return [FeatureFlag._from_generated(obj) for obj in objs]  # pylint:disable=protected-access
 
         return self._impl.feature_flag_client.get_feature_flag_revisions(  # type: ignore[return-value]
-            name=feature_id_filter, label=label_filter, cls=convert_to_sdk, **impl_kwargs
+            name=name_filter,
+            label=label_filter,
+            tags=tags_filter,
+            select=fields,
+            cls=convert_to_sdk,
+            **impl_kwargs,
         )
 
     @distributed_trace
