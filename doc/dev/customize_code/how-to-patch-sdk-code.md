@@ -2,9 +2,6 @@
 
 This quickstart will introduce how to grow up your generated code with customizations.
 
-**Note: This quickstart does not focus on renaming or removing generated objects**. If you'd like to rename or remove generated objects, the changes should really be made in the
-OpenAPI definition of your service. If you absolutely can not modify the OpenAPI definition, you can use directives, specifically [these pre-defined directives](https://github.com/Azure/autorest/blob/main/docs/generate/built-in-directives.md) in your README configuration.
-
 ## Before You Customize
 
 Before customizing generated code, consider whether your change should be made in TypeSpec (`client.tsp`) instead. TypeSpec customizations are cleaner and survive regeneration. See the [TypeSpec Client Customizations Reference](https://github.com/Azure/azure-sdk-tools/blob/main/eng/common/knowledge/customizing-client-tsp.md) for available decorators like `@@clientName`, `@@access`, etc.
