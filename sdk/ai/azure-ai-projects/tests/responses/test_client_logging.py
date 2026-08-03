@@ -26,6 +26,14 @@ class DummyTokenCredential(TokenCredential):
         return None
 
 
+class _TestSyncByteStream(httpx.SyncByteStream):
+    def __init__(self, chunks):
+        self._chunks = chunks
+
+    def __iter__(self):
+        yield from self._chunks
+
+
 def _attach_file_handler(logger_name: str, log_file: Path) -> logging.FileHandler:
     handler = logging.FileHandler(log_file, encoding="utf-8")
     handler.setLevel(logging.DEBUG)
@@ -252,4 +260,36 @@ def test_openai_transport_streaming_response_skips_body_read_and_keeps_metadata(
     _assert_bearer_token_logging(log_text, logging_enabled=False)
     _assert_json_request_body(log_text, expected=False)
     _assert_json_response_body(log_text, expected=False)
-    assert "Body: [Streaming response not logged]" in log_text
+    assert "Body: [Streaming content exists]" in log_text
+
+
+def test_openai_transport_streaming_response_logs_chunks_lazily(tmp_path, restore_logger_state):
+    request = httpx.Request(
+        "POST",
+        "https://example.com/openai/v1/responses",
+        headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
+        content=b'{"message":"hello"}',
+    )
+    response = httpx.Response(
+        200,
+        request=request,
+        headers={"content-type": "text/event-stream"},
+        stream=_TestSyncByteStream([b"data: first\n\n", b"data: second\n\n"]),
+    )
+    log_file = tmp_path / "transport_streaming_lazy.log"
+    handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
+
+    with patch.object(httpx.HTTPTransport, "handle_request", return_value=response):
+        result = _OpenAILoggingTransport(logging_enabled=True).handle_request(request)
+
+    log_text = _read_log_file(handler, log_file)
+    assert "Body: [Streaming response will be logged as consumed]" in log_text
+    assert "data: first" not in log_text
+
+    consumed = b"".join(result.iter_bytes())
+    log_text = _read_log_file(handler, log_file)
+
+    assert consumed == b"data: first\n\ndata: second\n\n"
+    assert "Body chunk:\n data: first\n\n" in log_text
+    assert "Body chunk:\n data: second\n\n" in log_text
+    assert "Body: [Streaming response completed]" in log_text

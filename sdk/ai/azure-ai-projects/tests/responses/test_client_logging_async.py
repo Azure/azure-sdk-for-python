@@ -29,6 +29,15 @@ class DummyAsyncTokenCredential(AsyncTokenCredential):
         pass
 
 
+class _TestAsyncByteStream(httpx.AsyncByteStream):
+    def __init__(self, chunks):
+        self._chunks = chunks
+
+    async def __aiter__(self):
+        for chunk in self._chunks:
+            yield chunk
+
+
 def _attach_file_handler(logger_name: str, log_file: Path) -> logging.FileHandler:
     handler = logging.FileHandler(log_file, encoding="utf-8")
     handler.setLevel(logging.DEBUG)
@@ -263,4 +272,37 @@ async def test_openai_transport_streaming_response_skips_body_read_and_keeps_met
     _assert_bearer_token_logging(log_text, logging_enabled=False)
     _assert_json_request_body(log_text, expected=False)
     _assert_json_response_body(log_text, expected=False)
-    assert "Body: [Streaming response not logged]" in log_text
+    assert "Body: [Streaming content exists]" in log_text
+
+
+@pytest.mark.asyncio
+async def test_openai_transport_streaming_response_logs_chunks_lazily_async(tmp_path, restore_logger_state):
+    request = httpx.Request(
+        "POST",
+        "https://example.com/openai/v1/responses",
+        headers={"authorization": "Bearer secret-token", "content-type": "application/json"},
+        content=b'{"message":"hello"}',
+    )
+    response = httpx.Response(
+        200,
+        request=request,
+        headers={"content-type": "text/event-stream"},
+        stream=_TestAsyncByteStream([b"data: first\n\n", b"data: second\n\n"]),
+    )
+    log_file = tmp_path / "transport_streaming_lazy_async.log"
+    handler = _attach_file_handler("azure.ai.projects.openai_transport", log_file)
+
+    with patch.object(httpx.AsyncHTTPTransport, "handle_async_request", new=AsyncMock(return_value=response)):
+        result = await _OpenAILoggingTransport(logging_enabled=True).handle_async_request(request)
+
+    log_text = _read_log_file(handler, log_file)
+    assert "Body: [Streaming response will be logged as consumed]" in log_text
+    assert "data: first" not in log_text
+
+    consumed_parts = [chunk async for chunk in result.aiter_bytes()]
+    log_text = _read_log_file(handler, log_file)
+
+    assert b"".join(consumed_parts) == b"data: first\n\ndata: second\n\n"
+    assert "Body chunk:\n data: first\n\n" in log_text
+    assert "Body chunk:\n data: second\n\n" in log_text
+    assert "Body: [Streaming response completed]" in log_text

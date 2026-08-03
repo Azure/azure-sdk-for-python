@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any, Optional
+from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -18,7 +18,9 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from .._patch import (
     _AuthSecretsFilter,
+    _LoggingAsyncByteStream,
     _build_openai_user_agent,
+    _log_streaming_response_notice,
     _resolve_openai_base_url,
     _resolve_openai_default_headers,
     _resolve_openai_query_params,
@@ -279,7 +281,8 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
             _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
         if self._is_streaming_response(response):
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response not logged]")
+            if _log_streaming_response_notice(self._logging_enabled):
+                response.stream = _LoggingAsyncByteStream(cast(httpx.AsyncByteStream, response.stream))
         else:
             content = await response.aread()
             if content is None or content == b"":

@@ -127,6 +127,7 @@ async with (
     ) as project_client,
 ):
 ```
+
 ### Performing Responses operations using OpenAI client
 
 Use the `.get_openai_client()` method to obtain an authenticated [OpenAI](https://github.com/openai/openai-python) client and run Responses, Conversations, Evaluations, Files, and Fine-Tuning operations. See the **responses**, **agents**, **evaluations**, **files**, and **finetuning** folders in the [samples][samples] for complete working examples.
@@ -153,11 +154,12 @@ with project_client.get_openai_client() as openai_client:
 
 <!-- END SNIPPET -->
 
-See the **responses** folder in the [samples][samples] for additional samples including streaming responses.
+See the **responses** folder in the [samples][samples] for additional samples.
 
 ### Agents
 
 See Foundry documentation:
+
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quick-starts.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
 * **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
@@ -270,7 +272,16 @@ project_client = AIProjectClient(
 
 Note that the log level must be set to `logging.DEBUG` (see above code). Logs will be redacted with any other log level.
 
-For streaming responses, the SDK logs the HTTP request and response metadata only. It does not log the streamed event payloads or the streaming response body, even when `logging_enable=True`, because consuming the stream in the transport would interfere with streaming.
+For advanced logging scenarios with `.get_openai_client()`, the SDK also emits OpenAI transport logs through a dedicated logger named `azure.ai.projects.openai_transport`. To capture those records directly, attach your handler to that logger as well:
+
+```python
+transport_logger = logging.getLogger("azure.ai.projects.openai_transport")
+transport_logger.setLevel(logging.DEBUG)
+transport_logger.propagate = False
+transport_logger.addHandler(file_handler)
+```
+
+See the logging samples in the `samples/logs/` folder for complete end-to-end examples, including console logging, file logging, and OpenAI transport logging.
 
 Be sure to protect non-redacted logs to avoid compromising security.
 

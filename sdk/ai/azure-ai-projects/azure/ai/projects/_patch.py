@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any, Optional
+from typing import List, Any, Optional, cast
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -97,6 +97,61 @@ def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_us
     :rtype: str
     """
     return "-".join(ua for ua in [custom_user_agent, "AIProjectClient"] if ua) + " " + openai_default_user_agent
+
+
+def _log_streaming_response_notice(logging_enabled: bool) -> bool:
+    if logging_enabled:
+        _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response will be logged as consumed]")
+        return True
+
+    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming content exists]")
+    return False
+
+
+def _log_streaming_response_chunk(chunk: bytes) -> None:
+    if not chunk:
+        return
+
+    try:
+        _OPENAI_TRANSPORT_LOGGER.debug("Body chunk:\n %s", chunk.decode("utf-8"))
+    except Exception:  # pylint: disable=broad-exception-caught
+        _OPENAI_TRANSPORT_LOGGER.debug("Body chunk (raw):\n  %r", chunk)
+
+
+class _LoggingSyncByteStream(httpx.SyncByteStream):
+    def __init__(self, stream: httpx.SyncByteStream) -> None:
+        self._stream = stream
+
+    def __iter__(self):
+        try:
+            for chunk in self._stream:
+                _log_streaming_response_chunk(chunk)
+                yield chunk
+        finally:
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response completed]")
+
+    def close(self) -> None:
+        close = getattr(self._stream, "close", None)
+        if close:
+            close()
+
+
+class _LoggingAsyncByteStream(httpx.AsyncByteStream):
+    def __init__(self, stream: httpx.AsyncByteStream) -> None:
+        self._stream = stream
+
+    async def __aiter__(self):
+        try:
+            async for chunk in self._stream:
+                _log_streaming_response_chunk(chunk)
+                yield chunk
+        finally:
+            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response completed]")
+
+    async def aclose(self) -> None:
+        aclose = getattr(self._stream, "aclose", None)
+        if aclose:
+            await aclose()
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -373,7 +428,8 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
             _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
 
         if self._is_streaming_response(response):
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response not logged]")
+            if _log_streaming_response_notice(self._logging_enabled):
+                response.stream = _LoggingSyncByteStream(cast(httpx.SyncByteStream, response.stream))
         else:
             content = response.read()
             if content is None or content == b"":
