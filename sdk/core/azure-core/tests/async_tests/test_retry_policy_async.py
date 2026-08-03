@@ -7,9 +7,15 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import sys
 from unittest.mock import Mock
+import tempfile
+import os
+import asyncio
+from itertools import product
+
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -27,12 +33,6 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-import tempfile
-import os
-import time
-import asyncio
-from itertools import product
-from utils import HTTP_REQUESTS
 
 
 def test_retry_code_class_variables():

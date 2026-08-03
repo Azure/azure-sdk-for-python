@@ -5,11 +5,11 @@
 # -------------------------------------------------------------------------
 import json
 
-from azure.core.pipeline.transport import TrioRequestsTransport
-from utils import HTTP_REQUESTS
-from azure.core.pipeline._tools import is_rest
-
 import pytest
+from utils import HTTP_REQUESTS
+
+from azure.core.pipeline.transport import TrioRequestsTransport
+from azure.core.pipeline._tools import is_rest
 
 
 @pytest.mark.trio
