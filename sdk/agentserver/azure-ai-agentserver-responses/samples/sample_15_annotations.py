@@ -16,6 +16,7 @@ Usage::
         -d '{"model": "annotated", "input": "Show me the sources"}'
 """
 
+import asyncio
 from typing import cast
 
 from azure.ai.agentserver.responses import (
@@ -34,8 +35,8 @@ from azure.ai.agentserver.responses.models import (
 app = ResponsesAgentServerHost()
 
 
-@app.create("annotations")
-async def annotations_handler(request: CreateResponse, context: ResponseContext):
+@app.response_handler
+async def annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Return a message with file_path, file_citation, and url_citation annotations."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()

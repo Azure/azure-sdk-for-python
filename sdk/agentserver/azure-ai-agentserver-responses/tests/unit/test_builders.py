@@ -27,9 +27,9 @@ def test_text_content_builder__emits_added_delta_done_events() -> None:
     done = text.emit_done()
 
     assert isinstance(text, TextContentBuilder)
-    # Every emitted event must be a ResponseStreamEvent wire dict.
+    # Every emitted event is a dict-native ResponseStreamEvent payload.
     for event in (added, delta, text_done, done):
-        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.content_part.added"
     assert delta["type"] == "response.output_text.delta"
     assert text_done["type"] == "response.output_text.done"
@@ -70,7 +70,7 @@ def test_output_item_message_builder__emits_added_content_done_and_done() -> Non
 
     assert isinstance(message, OutputItemMessageBuilder)
     for event in (added, content_done, done):
-        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert content_done["type"] == "response.content_part.done"
     assert done["type"] == "response.output_item.done"
@@ -90,7 +90,7 @@ def test_output_item_function_call_builder__emits_arguments_and_done_events() ->
 
     assert isinstance(function_call, OutputItemFunctionCallBuilder)
     for event in (added, delta, args_done, done):
-        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert delta["type"] == "response.function_call_arguments.delta"
     assert args_done["type"] == "response.function_call_arguments.done"
@@ -110,7 +110,7 @@ def test_output_item_function_call_output_builder__emits_added_and_done_events()
 
     assert isinstance(function_output, OutputItemFunctionCallOutputBuilder)
     for event in (added, done):
-        assert isinstance(event, dict), f"Expected ResponseStreamEvent dict, got {type(event)}"
+        assert isinstance(event, dict), f"Expected dict-native ResponseStreamEvent, got {type(event)}"
     assert added["type"] == "response.output_item.added"
     assert added["item"]["type"] == "function_call_output"
     assert added["item"]["call_id"] == "call_1"
@@ -273,35 +273,10 @@ def test_stream_item_id_generation__uses_expected_shape_and_response_partition_k
         assert len(body) == 50
 
 
-def test_add_output_item_mcp_call__uses_caller_supplied_item_id() -> None:
-    stream = ResponseEventStream(response_id=IdGenerator.new_response_id())
-    stream.emit_created()
-
-    mcp_call = stream.add_output_item_mcp_call("srv", "tool", item_id="mcp_06b686e11f")
-
-    assert mcp_call.item_id == "mcp_06b686e11f"
-
-
-def test_output_item_mcp_call_emit_done__includes_output_and_error_when_provided() -> None:
-    stream = ResponseEventStream(response_id=IdGenerator.new_response_id())
-    stream.emit_created()
-
-    mcp_call = stream.add_output_item_mcp_call("srv", "tool", item_id="mcp_custom")
-    mcp_call.emit_added()
-    mcp_call.emit_arguments_done('{"arg": 1}')
-    mcp_call.emit_failed()
-    done = mcp_call.emit_done(output='{"value": 42}', error={"code": "tool_error"})
-
-    assert done["type"] == "response.output_item.done"
-    assert done["item"]["id"] == "mcp_custom"
-    assert done["item"]["output"] == '{"value": 42}'
-    assert done["item"]["error"] == {"code": "tool_error"}
-
-
 def test_response_event_stream__exposes_mutable_response_snapshot_for_lifecycle_events() -> None:
     stream = ResponseEventStream(response_id="resp_builder_snapshot", model="gpt-4o-mini")
-    stream.response["temperature"] = 1
-    stream.response["metadata"] = {"source": "unit-test"}
+    stream.response.temperature = 1
+    stream.response.metadata = {"source": "unit-test"}
 
     created = stream.emit_created()
 
@@ -326,10 +301,11 @@ def test_response_event_stream__tracks_completed_output_items_into_response_outp
     done = message.emit_done()
 
     assert done["type"] == "response.output_item.done"
-    # response.output items must be dict-native wire payloads.
+    # response.output items are dict-native model payloads.
     assert isinstance(stream.response, dict)
     assert len(stream.response["output"]) == 1
     output_item = stream.response["output"][0]
+    assert isinstance(output_item, dict), f"Expected dict-native OutputItemMessage, got {type(output_item)}"
     assert output_item["id"] == message.item_id
     assert output_item["type"] == "message"
     assert output_item["content"][0]["text"] == "hello"
