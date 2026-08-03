@@ -44,12 +44,19 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 
 options = ResponsesServerOptions(
     resilient_background=True,
     steerable_conversations=False,
 )
 app = ResponsesAgentServerHost(options=options)
+
+# Explicitly opt into resilient-task startup recovery, for parity with the
+# invocations resilient samples. The Responses framework already registers its
+# internal durable tasks at host construction (so recovery runs regardless);
+# this call just makes the opt-in intent explicit.
+set_resilient_tasks_enabled(True)
 
 
 @app.response_handler
