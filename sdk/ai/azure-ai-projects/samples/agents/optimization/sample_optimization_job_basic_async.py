@@ -92,14 +92,7 @@ async def main() -> None:
             polling_interval=poll_interval,
         )
 
-        # Optional: While SDK is polling, periodically print the job status until the job is complete
-        print("Periodically check job status:")
-        while not poller.done():
-            await asyncio.sleep(poll_interval)
-            print(f"status=`{poller.status()}`")
-
-        # Since done() is true, result() returns the final deserialized job result without
-        # waiting further. It also propagates any LRO polling exception.
+        print("Waiting for the agent optimization job to complete.")
         result = await poller.result()
         print(f"Final LRO status: `{poller.status()}`.")
 

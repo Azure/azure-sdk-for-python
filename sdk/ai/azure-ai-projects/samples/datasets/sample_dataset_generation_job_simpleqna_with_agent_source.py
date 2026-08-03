@@ -168,8 +168,8 @@ with (
         # Optional: While SDK is polling, periodically print the job status until the job is complete
         print("Periodically check job status:")
         while not poller.done():
-            time.sleep(poll_interval_seconds)
             print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
 
         # Since done() is true, result() returns the final deserialized job result without
         # waiting further. It also propagates any LRO polling exception.

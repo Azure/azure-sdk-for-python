@@ -107,6 +107,7 @@ with (
 
     print("Wait for the SDK poller to observe the cancellation.")
     while not poller.done():
-        time.sleep(poll_interval)
         print(f"status=`{poller.status()}`")
+        time.sleep(poll_interval)
+
     print(f"Final LRO status: `{poller.status()}`.")
