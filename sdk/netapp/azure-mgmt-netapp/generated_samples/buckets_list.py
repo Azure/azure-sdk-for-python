@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-04-15-preview/Buckets_List.json
+# x-ms-original-file: 2026-05-01/Buckets_List.json
 if __name__ == "__main__":
     main()

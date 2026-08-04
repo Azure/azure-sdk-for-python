@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,6 +18,9 @@ from azure.core.credentials_async import AsyncTokenCredential
 from ._operations._patch import AsyncDocumentTranslationLROPoller, AsyncDocumentTranslationLROPollingMethod
 from .._operations._patch import TranslationPolling
 from ._client import DocumentTranslationClient as GeneratedDocumentTranslationClient
+from ._client import SingleDocumentTranslationClient as GeneratedSingleDocumentTranslationClient
+from ._operations._patch import DocumentTranslationClientOperationsMixin
+from ._operations._patch import SingleDocumentTranslationClientOperationsMixin
 from ..models import (
     DocumentStatus,
     TranslationStatus,
@@ -25,6 +29,7 @@ from ..models import (
     TranslationGlossary,
     DocumentTranslationInput,
     DocumentTranslationFileFormat,
+    FileFormatType,
 )
 from ...document._patch import (
     get_http_logging_policy,
@@ -38,7 +43,7 @@ JSON = MutableMapping[str, Any]
 POLLING_INTERVAL = 1
 
 
-class DocumentTranslationClient(GeneratedDocumentTranslationClient):
+class DocumentTranslationClient(DocumentTranslationClientOperationsMixin, GeneratedDocumentTranslationClient):
     """DocumentTranslationClient.
 
     :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
@@ -48,7 +53,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
      AzureKeyCredential type or a TokenCredential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2024-05-01".
+    :keyword api_version: The API version to use for this operation. Default value is "2026-03-01".
      Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -56,10 +61,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, AsyncTokenCredential],
-        **kwargs: Any
+        self, endpoint: str, credential: Union[AzureKeyCredential, AsyncTokenCredential], **kwargs: Any
     ) -> None:
         """DocumentTranslationClient is your interface to the Document Translation service.
         Use the client to translate whole documents while preserving source document
@@ -119,7 +121,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """Close the :class:`~azure.ai.translation.document.aio.DocumentTranslationClient` session."""
         await self._client.__aexit__()
 
-    @overload
+    @overload  # type: ignore[override]
     async def begin_translation(
         self,
         source_url: str,
@@ -132,6 +134,8 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         storage_type: Optional[Union[str, StorageInputType]] = None,
         category_id: Optional[str] = None,
         glossaries: Optional[List[TranslationGlossary]] = None,
+        deployment_name: Optional[str] = None,
+        translate_text_within_image: Optional[bool] = None,
         **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -158,10 +162,14 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             translation. This is most often use for file extensions.
         :keyword storage_type: Storage type of the input documents source string. Possible values
             include: "Folder", "File".
-        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :paramtype storage_type: str or ~azure.ai.translation.document.models.StorageInputType
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
-        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :paramtype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
+        :keyword str deployment_name: Deployment name of the custom translation model for the
+            translation request.
+        :keyword bool translate_text_within_image: Whether to translate text embedded within images
+            in the documents.
         :return: An instance of an AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -170,7 +178,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: StartTranslationDetails, **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -191,7 +199,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: JSON, **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -249,7 +257,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: IO[bytes], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -270,7 +278,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         """
 
     @overload
-    async def begin_translation(
+    async def begin_translation(  # pylint: disable=arguments-renamed
         self, inputs: List[DocumentTranslationInput], **kwargs: Any
     ) -> AsyncDocumentTranslationLROPoller[AsyncItemPaged[DocumentStatus]]:
         """Begin translating the document(s) in your source container to your target container
@@ -282,7 +290,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :param inputs: A list of translation inputs. Each individual input has a single
             source URL to documents and can contain multiple TranslationTargets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput]
+        :type inputs: List[~azure.ai.translation.document.models.DocumentTranslationInput]
         :return: An instance of a AsyncDocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -303,7 +311,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :param inputs: The translation inputs. Each individual input has a single
             source URL to documents and can contain multiple targets (one for each language)
             for the destination to write translated documents.
-        :type inputs: List[~azure.ai.translation.document.DocumentTranslationInput] or
+        :type inputs: List[~azure.ai.translation.document.models.DocumentTranslationInput] or
             IO[bytes] or JSON or ~azure.ai.translation.document.models.StartTranslationDetails
         :param str source_url: The source SAS URL to the Azure Blob container containing the documents
             to be translated. See the service documentation for the supported SAS permissions for accessing
@@ -323,10 +331,10 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
             translation. This is most often use for file extensions.
         :keyword storage_type: Storage type of the input documents source string. Possible values
             include: "Folder", "File".
-        :paramtype storage_type: str or ~azure.ai.translation.document.StorageInputType
+        :paramtype storage_type: str or ~azure.ai.translation.document.models.StorageInputType
         :keyword str category_id: Category / custom model ID for using custom translation.
         :keyword glossaries: Glossaries to apply to translation.
-        :paramtype glossaries: list[~azure.ai.translation.document.TranslationGlossary]
+        :paramtype glossaries: list[~azure.ai.translation.document.models.TranslationGlossary]
         :return: An instance of a DocumentTranslationLROPoller. Call `result()` on the poller
             object to return a pageable of DocumentStatus. A DocumentStatus will be
             returned for each translation on a document.
@@ -520,7 +528,7 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super()._get_supported_formats(type="glossary", **kwargs)).value
+        return (await super()._get_supported_formats(type=FileFormatType.GLOSSARY, **kwargs)).value
 
     @distributed_trace_async
     async def get_supported_document_formats(self, **kwargs: Any) -> List[DocumentTranslationFileFormat]:
@@ -531,11 +539,32 @@ class DocumentTranslationClient(GeneratedDocumentTranslationClient):
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-        return (await super()._get_supported_formats(type="document", **kwargs)).value
+        return (await super()._get_supported_formats(type=FileFormatType.DOCUMENT, **kwargs)).value
+
+
+class SingleDocumentTranslationClient(
+    SingleDocumentTranslationClientOperationsMixin, GeneratedSingleDocumentTranslationClient
+):
+    """SingleDocumentTranslationClient is your interface to the Document Translation service to
+    translate a single document.
+
+    :param endpoint: Supported document Translation endpoint, protocol and hostname, for example:
+     https://{TranslatorResourceName}.cognitiveservices.azure.com/translator. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a key
+     credential type or a token credential type. Required.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword api_version:
+        The API version of the service to use for requests. It defaults to the latest service version.
+        Setting to an older version may result in reduced feature compatibility.
+    :paramtype api_version: str or ~azure.ai.translation.document.DocumentTranslationApiVersion
+    """
 
 
 __all__: List[str] = [
     "DocumentTranslationClient",
+    "SingleDocumentTranslationClient",
     "AsyncDocumentTranslationLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 

@@ -2,6 +2,9 @@ parameters:
   - name: ServiceDirectory
     type: string
     default: ''
+  - name: DevFeedName
+    type: string
+    default: 'public/azure-sdk-for-python'
   - name: BuildTargetingString
     type: string
     default: 'azure-*'
@@ -29,6 +32,13 @@ stages:
             displayName: 'Use Python 3.10'
             inputs:
               versionSpec: '3.10'
+
+          # Authenticate pip to the configured Azure DevOps feed before installs.
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+
           - script: |
               python -m pip install -r eng/ci_tools.txt
             displayName: 'Prep Environment'

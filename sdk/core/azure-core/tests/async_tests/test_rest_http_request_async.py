@@ -6,10 +6,12 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
-import pytest
-from azure.core.rest import HttpRequest
 import collections.abc
+
+import pytest
 from utils import NamedIo
+
+from azure.core.rest import HttpRequest
 
 
 @pytest.fixture

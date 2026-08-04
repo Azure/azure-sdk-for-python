@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
 import pickle
 
 try:
@@ -34,6 +33,15 @@ except ImportError:
 
 import requests
 import pytest
+from utils import (
+    HTTP_REQUESTS,
+    create_http_request,
+    HTTP_RESPONSES,
+    REQUESTS_TRANSPORT_RESPONSES,
+    create_http_response,
+    create_transport_response,
+    request_and_responses_product,
+)
 
 from azure.core.exceptions import DecodeError, AzureError
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
@@ -44,15 +52,6 @@ from azure.core.pipeline.policies import (
     RequestHistory,
     RetryPolicy,
     HTTPPolicy,
-)
-from utils import (
-    HTTP_REQUESTS,
-    create_http_request,
-    HTTP_RESPONSES,
-    REQUESTS_TRANSPORT_RESPONSES,
-    create_http_response,
-    create_transport_response,
-    request_and_responses_product,
 )
 from azure.core.pipeline._tools import is_rest
 

@@ -14,7 +14,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.3.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -63,7 +63,12 @@ with (
     # 1. Create a job.
     # ------------------------------------------------------------------
     print("Creating optimization job...")
-    job = project_client.beta.agents.create_optimization_job(
+    created_jobs: list[OptimizationJob] = []
+
+    def capture_created_job(response):
+        created_jobs.append(OptimizationJob(response.http_response.json()))
+
+    project_client.beta.agents.begin_create_optimization_job(
         job=OptimizationJob(
             inputs=OptimizationJobInputs(
                 agent=AgentIdentifier(agent_name=agent_name),
@@ -78,8 +83,13 @@ with (
                     optimization_model=optimization_model,
                 ),
             )
-        )
+        ),
+        polling=False,
+        raw_response_hook=capture_created_job,
     )
+    if not created_jobs:
+        raise RuntimeError("The create operation did not return an optimization job.")
+    job = created_jobs[0]
     print(f"Created job: id={job.id}, status={job.status}")
 
     # ------------------------------------------------------------------

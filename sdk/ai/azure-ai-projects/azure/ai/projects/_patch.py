@@ -114,6 +114,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :vartype deployments: azure.ai.projects.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -134,6 +136,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :keyword api_version: The API version to use for this operation. Known values are "v1". Default
      value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(

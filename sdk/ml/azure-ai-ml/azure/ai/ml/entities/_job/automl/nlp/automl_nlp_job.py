@@ -4,12 +4,12 @@
 from abc import ABC
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     LogVerbosity,
-    NlpLearningRateScheduler,
     SamplingAlgorithmType,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
+from azure.ai.ml.constants._job.automl import NlpLearningRateScheduler
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.nlp.nlp_featurization_settings import NlpFeaturizationSettings
@@ -432,7 +432,7 @@ class AutoMLNLPJob(AutoMLVertical, ABC):
             )
 
     @classmethod
-    def _get_search_space_from_str(cls, search_space_str: Optional[str]) -> Optional[List]:
+    def _get_search_space_from_str(cls, search_space_str: Optional[List]) -> Optional[List]:
         if search_space_str is not None:
             return [NlpSearchSpace._from_rest_object(entry) for entry in search_space_str if entry is not None]
         return None

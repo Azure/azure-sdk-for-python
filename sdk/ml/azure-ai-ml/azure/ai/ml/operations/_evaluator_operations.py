@@ -7,11 +7,9 @@
 from os import PathLike
 from typing import Any, Dict, Iterable, Optional, Union, cast
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
-    AzureMachineLearningWorkspaces as ServiceClient102021Dataplane,
-)
-from azure.ai.ml._restclient.v2023_08_01_preview import AzureMachineLearningWorkspaces as ServiceClient082023Preview
-from azure.ai.ml._restclient.v2023_08_01_preview.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient082023Preview
+from azure.ai.ml._restclient.arm_ml_service.models import ListViewType
+from azure.ai.ml._restclient.arm_ml_service.models import ModelVersion as ArmModelVersion
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -20,6 +18,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
+from azure.ai.ml._utils._registry_utils import list_registry_assets
 from azure.ai.ml._utils.utils import _get_evaluator_properties, _is_evaluator
 from azure.ai.ml.entities._assets import Model
 from azure.ai.ml.entities._assets.workspace_asset_reference import WorkspaceAssetReference
@@ -43,11 +42,9 @@ class EvaluatorOperations(_ScopeDependentOperations):
     :param operation_config: Common configuration for operations classes of an MLClient object.
     :type operation_config: ~azure.ai.ml._scope_dependent_operations.OperationConfig
     :param service_client: Service client to allow end users to operate on Azure Machine Learning Workspace
-        resources (ServiceClient082023Preview or ServiceClient102021Dataplane).
-    :type service_client: typing.Union[
-        azure.ai.ml._restclient.v2023_04_01_preview._azure_machine_learning_workspaces.AzureMachineLearningWorkspaces,
-        azure.ai.ml._restclient.v2021_10_01_dataplanepreview._azure_machine_learning_workspaces.
-        AzureMachineLearningWorkspaces]
+        resources (ServiceClient082023Preview).
+    :type service_client:
+        ~azure.ai.ml._restclient.arm_ml_service.MachineLearningServicesMgmtClient
     :param datastore_operations: Represents a client for performing operations on Datastores.
     :type datastore_operations: ~azure.ai.ml.operations._datastore_operations.DatastoreOperations
     :param all_operations: All operations classes of an MLClient object.
@@ -61,7 +58,7 @@ class EvaluatorOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: Union[ServiceClient082023Preview, ServiceClient102021Dataplane],
+        service_client: ServiceClient082023Preview,
         datastore_operations: DatastoreOperations,
         all_operations: Optional[OperationsContainer] = None,
         **kwargs,
@@ -181,12 +178,15 @@ class EvaluatorOperations(_ScopeDependentOperations):
             return cast(
                 Iterable[Model],
                 (
-                    self._model_op._model_versions_operation.list(
-                        name=name,
-                        registry_name=self._model_op._registry_name,
-                        cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
+                    list_registry_assets(
+                        self._model_op._registry_service_client,
+                        "models",
+                        name,
+                        self._model_op._resource_group_name,
+                        self._model_op._registry_name,
+                        ArmModelVersion,
+                        Model._from_rest_object,
                         properties=properties_str,
-                        **self._model_op._scope_kwargs,
                     )
                     if self._registry_name
                     else self._model_op._model_versions_operation.list(
@@ -195,7 +195,9 @@ class EvaluatorOperations(_ScopeDependentOperations):
                         cls=lambda objs: [Model._from_rest_object(obj) for obj in objs],
                         list_view_type=list_view_type,
                         properties=properties_str,
-                        stage=stage,
+                        # The arm_ml_service ModelVersions.list has no typed ``stage`` param; send it as a
+                        # query param (byte-identical to the legacy client) instead of leaking it to the transport.
+                        **({"params": {"stage": stage}} if stage else {}),
                         **self._model_op._scope_kwargs,
                     )
                 ),

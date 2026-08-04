@@ -21,12 +21,14 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_NAME - Optional. The name of the AI agent. If not set, defaults to "MyAgent".
 """
 
 import os
 import asyncio
 from dotenv import load_dotenv
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from util import create_version_with_endpoint_async
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
@@ -34,33 +36,35 @@ from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "MyAgent")
 
 
 async def main():
+    mcp_tool = MCPTool(
+        server_label="api-specs",
+        server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+        require_approval="always",
+    )
+
+    # Create tools list with proper typing for the agent definition
+    tools: list[Tool] = [mcp_tool]
+
     async with (
         DefaultAzureCredential() as credential,
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
-        project_client.get_openai_client() as openai_client,
-    ):
-        mcp_tool = MCPTool(
-            server_label="api-specs",
-            server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
-            require_approval="always",
-        )
-
-        # Create tools list with proper typing for the agent definition
-        tools: list[Tool] = [mcp_tool]
-
-        # Create a prompt agent with MCP tool capabilities
-        agent = await project_client.agents.create_version(
-            agent_name="MyAgent",
+        create_version_with_endpoint_async(
+            project_client=project_client,
+            agent_name=agent_name,
             definition=PromptAgentDefinition(
                 model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="You are a helpful agent that can use MCP tools to assist users. Use the available MCP tools to answer questions and perform tasks.",
                 tools=tools,
             ),
-        )
-        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
+        ),
+        project_client.get_openai_client(agent_name=agent_name) as openai_client,
+    ):
+        agent = await project_client.agents.get(agent_name=agent_name)
+        print(f"Agent created (id: {agent.id}, name: {agent.name}, version: {agent.versions.latest.version})")
 
         # Create a conversation thread to maintain context across multiple interactions
         conversation = await openai_client.conversations.create()
@@ -70,7 +74,6 @@ async def main():
         response = await openai_client.responses.create(
             conversation=conversation.id,
             input="Please summarize the Azure REST API specifications Readme",
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         # Process any MCP approval requests that were generated
@@ -96,15 +99,9 @@ async def main():
         response = await openai_client.responses.create(
             input=input_list,
             previous_response_id=response.id,
-            extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
         )
 
         print(f"Agent response: {response.output_text}")
-
-        # Clean up resources by deleting the agent version
-        # This prevents accumulation of unused agent versions in your project
-        await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-        print("Agent deleted")
 
 
 if __name__ == "__main__":

@@ -45,6 +45,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :ivar deployments: DeploymentsOperations operations
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
@@ -66,6 +68,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :keyword api_version: The API version to use for this operation. Known values are "v1". Default
      value is "v1". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(

@@ -102,8 +102,14 @@ def test_replay_enabled_false_for_non_bg() -> None:
 
 
 def test_visible_via_get_store_true() -> None:
+    # (Spec 024 Phase 2) Non-bg non-stream stored responses are visible
+    # via GET only after reaching a terminal status (B16 enforcement).
+    # In-flight (in_progress) returns False; terminal returns True.
     execution = _make_execution(mode_flags=ResponseModeFlags(stream=False, store=True, background=False))
-    assert execution.visible_via_get is True
+    assert execution.visible_via_get is False, "B16: non-bg non-stream in-flight is not visible"
+    execution.transition_to("in_progress")
+    execution.transition_to("completed")
+    assert execution.visible_via_get is True, "B16: terminal non-bg non-stream is visible"
 
 
 # ---------------------------------------------------------------------------
@@ -188,10 +194,13 @@ def test_apply_event_cancelled_is_noop() -> None:
 
 
 def test_apply_event_output_item_added() -> None:
-    from azure.ai.agentserver.responses.models._generated import ResponseObject
+    from typing import cast
+
+    from azure.ai.agentserver.responses.models import ResponseObject
 
     execution = _make_execution(status="in_progress")
-    execution.response = ResponseObject(
+    execution.response = cast(
+        ResponseObject,
         {
             "id": execution.response_id,
             "response_id": execution.response_id,
@@ -199,7 +208,7 @@ def test_apply_event_output_item_added() -> None:
             "object": "response",
             "status": "in_progress",
             "output": [],
-        }
+        },
     )
 
     item = {"id": "item_1", "type": "text"}
