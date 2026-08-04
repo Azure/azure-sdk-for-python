@@ -1,5 +1,9 @@
 # Release History
 
+## 1.1.0b1 (2026-08-04)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 1.0.0 (2025-07-02)
 
 ### Features Added
