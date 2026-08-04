@@ -26,12 +26,30 @@
 
 import codecs
 import json
-from typing import Iterator, AsyncIterator, Any, MutableMapping, Generic
-
-from typing_extensions import TypeVar
+from typing import Iterator, AsyncIterator, Any, Optional, cast
 
 
-T = TypeVar("T", default=MutableMapping[str, Any])
+class JSONLEvent:
+    """A single JSON Lines (JSONL) event.
+
+    :ivar data: The raw JSONL record.
+    :vartype data: str or None
+    """
+
+    def __init__(
+        self,
+        *,
+        data: Optional[str] = None,
+    ) -> None:
+        self.data = data
+
+    def json(self) -> Any:
+        """Parse the event data as JSON.
+
+        :return: The parsed JSON value.
+        :rtype: Any
+        """
+        return json.loads(cast(str, self.data))
 
 
 def iter_lines(iter_bytes: Iterator[bytes]) -> Iterator[str]:
@@ -87,33 +105,33 @@ async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
         yield decoded[:-1] if decoded.endswith("\r") else decoded
 
 
-class JSONLDecoder(Generic[T]):
+class JSONLDecoder:
     """Decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
-    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[T]:
+    def iter_events(self, iter_bytes: Iterator[bytes]) -> Iterator[JSONLEvent]:
         """Iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An iterator of byte chunks.
         :type iter_bytes: Iterator[bytes]
-        :rtype: Iterator[T]
-        :return: An iterator of objects.
+        :rtype: Iterator[~corehttp.streaming._jsonl.JSONLEvent]
+        :return: An iterator of JSONL events.
         """
 
-        yield from (json.loads(line) for line in iter_lines(iter_bytes))
+        yield from (JSONLEvent(data=line) for line in iter_lines(iter_bytes))
 
 
-class AsyncJSONLDecoder(Generic[T]):
+class AsyncJSONLDecoder:
     """Asynchronous decoder for JSON Lines (JSONL) format. https://jsonlines.org/"""
 
     # pylint: disable=invalid-overridden-method
-    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[T]:
+    async def aiter_events(self, iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[JSONLEvent]:
         """Asynchronously iterate over JSONL events from a byte iterator.
 
         :param iter_bytes: An asynchronous iterator of byte chunks.
         :type iter_bytes: AsyncIterator[bytes]
-        :rtype: AsyncIterator[T]
-        :return: An asynchronous iterator of objects.
+        :rtype: AsyncIterator[~corehttp.streaming._jsonl.JSONLEvent]
+        :return: An asynchronous iterator of JSONL events.
         """
 
         async for line in aiter_lines(iter_bytes):
-            yield json.loads(line)
+            yield JSONLEvent(data=line)

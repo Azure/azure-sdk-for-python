@@ -30,14 +30,14 @@ import pytest
 
 from corehttp.rest import HttpRequest
 from corehttp.streaming import Stream
-from corehttp.streaming._jsonl import JSONLDecoder
+from corehttp.streaming._jsonl import JSONLDecoder, JSONLEvent
 from corehttp.streaming._sse import SSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
 def deserialization_callback():
-    def _callback(response, model_json):
-        return model_json
+    def _callback(response, event):
+        return event.json() if isinstance(event, JSONLEvent) else event
 
     return _callback
 
@@ -81,7 +81,10 @@ def test_stream_infers_decoder_from_content_type(content_type, payload, expected
         def close(self):
             pass
 
-    stream = Stream(response=Response(), deserialization_callback=lambda _response, event: event)
+    stream = Stream(
+        response=Response(),
+        deserialization_callback=lambda _response, event: event.json() if isinstance(event, JSONLEvent) else event,
+    )
     assert list(stream) == expected
 
 
@@ -98,9 +101,17 @@ def test_stream_explicit_decoder_overrides_content_type():
     stream = Stream(
         response=Response(),
         decoder=JSONLDecoder(),
-        deserialization_callback=lambda _response, event: event,
+        deserialization_callback=lambda _response, event: event.json(),
     )
     assert list(stream) == [{"message": "hello"}]
+
+
+def test_jsonl_decoder_returns_event():
+    event = next(JSONLDecoder().iter_events(iter([b'{"message": "hello"}\n'])))
+
+    assert isinstance(event, JSONLEvent)
+    assert event.data == '{"message": "hello"}'
+    assert event.json() == {"message": "hello"}
 
 
 def test_stream_jsonl_basic(stream):
