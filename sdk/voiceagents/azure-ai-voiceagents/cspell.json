@@ -1,0 +1,21 @@
+{
+  "ignoreWords": [
+    "BYOM",
+    "byom",
+    "BYOS",
+    "byos",
+    "deser",
+    "MCPHTTP",
+    "mcphttp",
+    "PCMA",
+    "pcma",
+    "Pcma",
+    "PCMU",
+    "pcmu",
+    "Pcmu",
+    "WEBRTC",
+    "webrtc"
+  ],
+  "ignorePaths": [],
+  "words": []
+}
