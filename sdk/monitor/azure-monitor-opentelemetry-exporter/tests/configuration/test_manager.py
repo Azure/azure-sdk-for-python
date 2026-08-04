@@ -158,6 +158,9 @@ class TestConfigurationManager(unittest.TestCase):
         self.assertEqual(_ConfigurationProfile.region, "eastus")
         # Worker started exactly once despite two initialize() calls.
         mock_worker_class.assert_called_once()
+
+    @patch("azure.monitor.opentelemetry.exporter._configuration._worker._ConfigurationWorker")
+    def test_shutdown_is_soft_reset_and_reusable(self, mock_worker_class):
         """Test that shutdown() is a soft reset: the singleton instance stays reusable.
 
         Matching the QuickpulseManager convention, shutdown() stops the worker and clears transient
