@@ -30,13 +30,14 @@ import pytest
 
 from azure.core.rest import HttpRequest
 from azure.core.streaming import AsyncStream
+from azure.core.streaming._jsonl import AsyncJSONLDecoder, JSONLEvent
 from azure.core.streaming._sse import AsyncSSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
 def deserialization_callback():
-    def _callback(response, model_json):
-        return model_json
+    def _callback(response, event):
+        return event.json() if isinstance(event, JSONLEvent) else event
 
     return _callback
 
@@ -81,8 +82,24 @@ async def test_stream_infers_decoder_from_content_type(content_type, payload, ex
         async def close(self):
             pass
 
-    stream = AsyncStream(response=Response(), deserialization_callback=lambda _response, event: event)
+    stream = AsyncStream(
+        response=Response(),
+        deserialization_callback=lambda _response, event: event.json() if isinstance(event, JSONLEvent) else event,
+    )
     assert [event async for event in stream] == expected
+
+
+@pytest.mark.asyncio
+async def test_jsonl_decoder_returns_event():
+    async def _bytes():
+        yield b'{"message": "hello"}\n'
+
+    events = [event async for event in AsyncJSONLDecoder().aiter_events(_bytes())]
+
+    assert len(events) == 1
+    assert isinstance(events[0], JSONLEvent)
+    assert events[0].data == '{"message": "hello"}'
+    assert events[0].json() == {"message": "hello"}
 
 
 @pytest.mark.asyncio
