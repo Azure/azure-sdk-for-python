@@ -17,7 +17,7 @@ from azure.ai.agentserver.core.platform_headers import (
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
 from ..models import ApiErrorResponse, CreateResponse
-from ..models.errors import RequestValidationError
+from ..models._errors import RequestValidationError
 from ..models._validators import (
     validate_create_response_payload,
 )
