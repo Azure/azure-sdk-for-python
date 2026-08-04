@@ -35,13 +35,17 @@ def create_asyncpg_engine(
     SQLAlchemy creates a physical connection for its pool.
 
     :param url: SQLAlchemy URL using the ``postgresql+asyncpg`` dialect.
+    :type url: str or ~sqlalchemy.engine.URL
     :param credential: Credential used to acquire Microsoft Entra access tokens.
-    :param kwargs: Keyword arguments forwarded to ``create_async_engine``. Values
-        supplied through ``connect_args`` are forwarded to ``asyncpg.connect``.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :return: An asynchronous SQLAlchemy engine.
+    :rtype: ~sqlalchemy.ext.asyncio.AsyncEngine
     :raises ~azure_postgresql_auth.CredentialValueError: If ``credential`` is not an
         ``AsyncTokenCredential``.
     :raises ImportError: If ``asyncpg`` is not installed.
+
+    Additional keyword arguments are forwarded to ``create_async_engine``. Values
+    supplied through ``connect_args`` are forwarded to ``asyncpg.connect``.
     """
     if not isinstance(credential, AsyncTokenCredential):
         raise CredentialValueError("credential is required and must be an AsyncTokenCredential for asyncpg")
