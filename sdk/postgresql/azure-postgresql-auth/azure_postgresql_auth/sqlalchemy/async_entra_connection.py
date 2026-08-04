@@ -52,6 +52,8 @@ def enable_entra_authentication_async(engine: AsyncEngine) -> None:
         :type cargs: Any
         :param cparams: The keyword connection parameters.
         :type cparams: dict[str, Any]
+        :return: A DBAPI connection authenticated with Entra credentials.
+        :rtype: Any
         """
         connection_params = cparams.copy()
         credential = connection_params.pop("credential", None)
