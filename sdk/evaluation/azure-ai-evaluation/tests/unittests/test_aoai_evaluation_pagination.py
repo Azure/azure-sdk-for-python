@@ -250,3 +250,107 @@ class TestAOAIPagination:
         scores = df["outputs.test_grader.score"].tolist()
         expected_scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         assert scores == expected_scores
+
+
+class TestAOAIOutputItemsRetry:
+    """Test retry behaviour for transient 408 timeouts on output_items.list()."""
+
+    def _make_run_info(self, mock_client):
+        return OAIEvalRunCreationInfo(
+            client=mock_client,
+            eval_group_id="test-group",
+            eval_run_id="test-run",
+            grader_name_map={"grader-1": "test_grader"},
+            expected_rows=2,
+        )
+
+    def _make_run_results(self):
+        mock_run_results = Mock()
+        mock_run_results.status = "completed"
+        mock_run_results.per_testing_criteria_results = [Mock(testing_criteria="grader-1", passed=2, failed=0)]
+        return mock_run_results
+
+    def _make_output_items(self, n=2):
+        return MockOutputItemsList(
+            data=[
+                MockOutputItem(
+                    id=f"item-{i}",
+                    datasource_item_id=i,
+                    results=[{"name": "grader-1", "passed": True, "score": 1.0, "sample": f"s{i}"}],
+                )
+                for i in range(n)
+            ],
+            has_more=False,
+        )
+
+    def test_408_retried_then_succeeds(self):
+        """A single 408 on output_items.list() is retried and succeeds on the next attempt."""
+        from openai import APIStatusError
+        import httpx
+
+        mock_client = Mock()
+        run_info = self._make_run_info(mock_client)
+        mock_run_results = self._make_run_results()
+        ok_response = self._make_output_items(2)
+
+        # First call raises 408, second call succeeds.
+        err_408 = APIStatusError(
+            message="408 timeout",
+            response=httpx.Response(408, request=httpx.Request("GET", "https://example.com")),
+            body={"error": {"code": "Timeout", "message": "The operation was timeout."}},
+        )
+        mock_client.evals.runs.output_items.list.side_effect = [err_408, ok_response]
+
+        with patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results), \
+             patch("azure.ai.evaluation._evaluate._evaluate_aoai.sleep"):
+            df, metrics = _get_single_run_results(run_info)
+
+        assert mock_client.evals.runs.output_items.list.call_count == 2
+        assert "test_grader.pass_rate" in metrics
+
+    def test_408_exhausts_retries_then_raises(self):
+        """If all 3 retry attempts return 408, the exception is re-raised."""
+        from openai import APIStatusError
+        import httpx
+
+        mock_client = Mock()
+        run_info = self._make_run_info(mock_client)
+        mock_run_results = self._make_run_results()
+
+        err_408 = APIStatusError(
+            message="408 timeout",
+            response=httpx.Response(408, request=httpx.Request("GET", "https://example.com")),
+            body={"error": {"code": "Timeout", "message": "The operation was timeout."}},
+        )
+        mock_client.evals.runs.output_items.list.side_effect = err_408
+
+        with patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results), \
+             patch("azure.ai.evaluation._evaluate._evaluate_aoai.sleep"):
+            with pytest.raises(APIStatusError):
+                _get_single_run_results(run_info)
+
+        assert mock_client.evals.runs.output_items.list.call_count == 3  # _LIST_MAX_RETRIES
+
+    def test_non_408_error_not_retried(self):
+        """A non-408 error (e.g. 403 auth) propagates immediately without retry."""
+        from openai import APIStatusError
+        import httpx
+
+        mock_client = Mock()
+        run_info = self._make_run_info(mock_client)
+        mock_run_results = self._make_run_results()
+
+        err_403 = APIStatusError(
+            message="403 Forbidden",
+            response=httpx.Response(403, request=httpx.Request("GET", "https://example.com")),
+            body={"error": {"code": "Forbidden"}},
+        )
+        mock_client.evals.runs.output_items.list.side_effect = err_403
+
+        with patch("azure.ai.evaluation._evaluate._evaluate_aoai._wait_for_run_conclusion", return_value=mock_run_results), \
+             patch("azure.ai.evaluation._evaluate._evaluate_aoai.sleep"):
+            with pytest.raises(APIStatusError):
+                _get_single_run_results(run_info)
+
+        # Should not retry on 403 — only one call made
+        assert mock_client.evals.runs.output_items.list.call_count == 1
