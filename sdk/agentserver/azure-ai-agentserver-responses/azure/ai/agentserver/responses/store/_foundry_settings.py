@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from urllib.parse import quote as _url_quote
 
-from azure.ai.agentserver.core._config import AgentConfig  # pylint: disable=import-error,no-name-in-module
+from azure.ai.agentserver.core import AgentConfig
 
 _API_VERSION = "v1"
 
@@ -55,7 +55,9 @@ class FoundryStorageSettings:
         base = endpoint.rstrip("/") + "/storage/"
         return cls(storage_base_url=base)
 
-    def build_url(self, path: str, **extra_params: str) -> str:  # pylint: disable=docstring-keyword-should-match-keyword-only
+    def build_url(
+        self, path: str, **extra_params: str
+    ) -> str:  # pylint: disable=docstring-keyword-should-match-keyword-only
         """Build a full storage API URL for *path* with ``api-version`` appended.
 
         :param path: The resource path segment, e.g. ``responses/abc123``.

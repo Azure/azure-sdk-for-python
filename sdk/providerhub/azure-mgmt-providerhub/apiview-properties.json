@@ -421,5 +421,5 @@
         "azure.mgmt.providerhub.ProviderHubMgmtClient.checkin_manifest": "Microsoft.ProviderHub.ProviderRegistrations.checkinManifest",
         "azure.mgmt.providerhub.aio.ProviderHubMgmtClient.checkin_manifest": "Microsoft.ProviderHub.ProviderRegistrations.checkinManifest"
     },
-    "CrossLanguageVersion": "ccdf900e4c3a"
+    "CrossLanguageVersion": "e502f46f19c3"
 }

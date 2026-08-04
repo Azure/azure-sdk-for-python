@@ -2,7 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from unittest import mock
+
 import requests
+import pytest
+from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
+
 from azure.core.pipeline.transport import (
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,
@@ -10,9 +15,6 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from unittest import mock
-import pytest
-from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
 
 
 @pytest.mark.asyncio

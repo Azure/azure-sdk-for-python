@@ -1,6 +1,20 @@
 # Release History
 
-## 1.0.0b7 (Unreleased)
+## 1.0.0b8 (2026-08-03)
+
+### Samples
+
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
+
+### Bugs Fixed
+
+- The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery so invocations-only agents no longer make a blocking task-store call during startup.
+
+## 1.0.0b7 (2026-07-22)
 
 ### Features Added
 
@@ -9,6 +23,10 @@
   constructor args, served at `GET /invocations/docs/asyncapi.json` and
   `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
   returns `404` if not registered. See README for details.
+
+### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
 
 ## 1.0.0b6 (2026-06-28)
 

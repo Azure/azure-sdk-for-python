@@ -11,15 +11,6 @@ import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
-from azure.core.serialization import (
-    AzureJSONEncoder,
-    NULL,
-    as_attribute_dict,
-    get_backcompat_attr_name,
-    is_generated_model,
-    attribute_list,
-)
-from azure.core.exceptions import DeserializationError
 import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
@@ -28,8 +19,16 @@ from modeltypes._utils.model_base import (
     TYPE_HANDLER_REGISTRY,
     _deserialize,
 )
-from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
+
+from azure.core.serialization import (
+    AzureJSONEncoder,
+    NULL,
+    as_attribute_dict,
+    get_backcompat_attr_name,
+    is_generated_model,
+    attribute_list,
+)
 
 
 def _expand_value(obj):
@@ -696,7 +695,7 @@ def test_cache_model_equality():
 
 def test_dictionary_set_datetime():
     """Test that dictionary with datetime values properly serializes/deserializes."""
-    from datetime import datetime, timezone
+    from datetime import timezone
 
     class MyModel(HybridModel):
         my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])

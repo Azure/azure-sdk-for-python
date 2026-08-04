@@ -42,9 +42,15 @@ from ._constants import InvocationsWSConstants
 # ``InvocationAgentServerHost`` MRO actually inherits ``AgentServerHost``,
 # which keeps the diamond out of the runtime class graph.
 if TYPE_CHECKING:
-    _MixinBase = AgentServerHost
+
+    class _MixinBase(AgentServerHost):
+        pass
+
 else:
-    _MixinBase = object
+
+    class _MixinBase:
+        pass
+
 
 logger = logging.getLogger("azure.ai.agentserver")
 
