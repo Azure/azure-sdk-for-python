@@ -186,6 +186,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryApiError(FoundryStorageError):
 
         def __init__(
@@ -196,6 +197,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryBadRequestError(FoundryStorageError):
 
         def __init__(
@@ -206,6 +208,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryResourceNotFoundError(FoundryStorageError):
 
         def __init__(
@@ -216,6 +219,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageError(Exception):
 
         def __init__(
@@ -226,6 +230,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageProvider: implements AsyncContextManager 
 
         def __init__(
@@ -295,6 +300,7 @@ namespace azure.ai.agentserver.responses
             ) -> None: ...
 
 
+    @experimental
     class azure.ai.agentserver.responses.FoundryStorageSettings:
 
         def __init__(

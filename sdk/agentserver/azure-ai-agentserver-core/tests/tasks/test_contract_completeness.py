@@ -79,6 +79,9 @@ EXPECTED_PUBLIC_SYMBOLS: frozenset[str] = frozenset(
         "multi_turn_task",
         "Task",
         "MultiTurnTask",
+        # Enablement switch
+        "set_resilient_tasks_enabled",
+        "resilient_tasks_enabled",
         # Context + metadata
         "TaskContext",
         "TaskMetadata",
