@@ -117,8 +117,7 @@ with (
     )
 
     # Retrieve the persisted generation job using the id returned in the LRO result.
-    if evaluator.generation_job_id is None:
-        raise RuntimeError("The generated evaluator did not include a generation job id.")
+    assert evaluator.generation_job_id is not None, "Expected the generated evaluator to include a generation job id."
     replay_job = project_client.beta.evaluators.get_generation_job(evaluator.generation_job_id)
     assert replay_job.id == evaluator.generation_job_id
 
@@ -139,7 +138,6 @@ with (
     print("Cleaning up.")
     project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
-        if evaluator.generation_job_id is not None:
-            project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
+        project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:
         pass  # already removed by the delete_version cascade
