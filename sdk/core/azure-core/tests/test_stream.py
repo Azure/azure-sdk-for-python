@@ -276,3 +276,34 @@ def test_stream_sse_oversized_retry_ignored():
     payload = b"retry:" + b"1" * 5000 + b"\ndata:hello\n\n"
     events = list(SSEDecoder().iter_events(iter([payload])))
     assert events == [ServerSentEvent(event="message", data="hello", retry=None)]
+
+
+# A payload exercising the trickiest parser boundaries: CRLF and LF line
+# endings, a comment, multiple data lines, id/retry fields, and multibyte
+# UTF-8 characters (é, 世界) whose bytes may be split across chunk boundaries.
+_SSE_SWEEP_PAYLOAD = (
+    b"data: first\r\n"
+    b"\r\n"
+    b": a comment\n"
+    b"event: greeting\n"
+    b"data: caf\xc3\xa9\n"
+    b"data: \xe4\xb8\x96\xe7\x95\x8c\n"
+    b"id: 7\n"
+    b"retry: 1500\n"
+    b"\n"
+)
+
+_SSE_SWEEP_EXPECTED = [
+    ServerSentEvent(event="message", data="first"),
+    ServerSentEvent(event="greeting", data="caf\u00e9\n\u4e16\u754c", id="7", retry=1500),
+]
+
+
+@pytest.mark.parametrize("chunk_size", [1, 2, 3, 5, 7, 13, 512])
+def test_stream_sse_chunk_boundary_sweep(chunk_size):
+    # Replaying the same payload at many chunk sizes (down to a single byte)
+    # ensures the incremental parser handles line separators and multibyte
+    # UTF-8 sequences split across arbitrary chunk boundaries.
+    chunks = [_SSE_SWEEP_PAYLOAD[i : i + chunk_size] for i in range(0, len(_SSE_SWEEP_PAYLOAD), chunk_size)]
+    events = list(SSEDecoder().iter_events(iter(chunks)))
+    assert events == _SSE_SWEEP_EXPECTED
