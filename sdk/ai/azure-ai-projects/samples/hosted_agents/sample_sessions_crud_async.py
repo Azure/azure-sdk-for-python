@@ -11,15 +11,12 @@ DESCRIPTION:
 
     Sessions only work with Hosted Agents.
 
-    Sessions are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.agents`.
-
 USAGE:
     python sample_sessions_crud_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv aiohttp
+    pip install "azure-ai-projects>=2.3.0" python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -31,10 +28,10 @@ USAGE:
 
 SDK FUNCTIONS:
     - project_client.agents.list_versions: resolves the active version for the existing hosted agent.
-    - project_client.beta.agents.create_session: creates a session for the agent.
-    - project_client.beta.agents.get_session: retrieves a session by ID.
-    - project_client.beta.agents.list_sessions: lists sessions for an agent.
-    - project_client.beta.agents.delete_session: deletes a session by ID.
+    - project_client.agents.create_session: creates a session for the agent.
+    - project_client.agents.get_session: retrieves a session by ID.
+    - project_client.agents.list_sessions: lists sessions for an agent.
+    - project_client.agents.delete_session: deletes a session by ID.
 """
 
 import asyncio
@@ -60,18 +57,17 @@ async def main():
         AIProjectClient(
             endpoint=endpoint,
             credential=credential,
-            allow_preview=True,
         ) as project_client,
     ):
         agent = await get_latest_active_agent_version_async(project_client, agent_name)
-        session = await project_client.beta.agents.create_session(
+        session = await project_client.agents.create_session(
             agent_name=agent_name,
             version_indicator=VersionRefIndicator(agent_version=agent.version),
         )
         print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
 
         # Retrieve the session by its ID
-        fetched = await project_client.beta.agents.get_session(
+        fetched = await project_client.agents.get_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
         )
@@ -79,12 +75,12 @@ async def main():
 
         # List sessions for the agent
         print("Listing sessions for the agent...")
-        sessions = project_client.beta.agents.list_sessions(agent_name=agent_name)
+        sessions = project_client.agents.list_sessions(agent_name=agent_name)
         print("Sessions:")
         async for item in sessions:
             print(f"  - {item.agent_session_id} (status: {item.status})")
 
-        await project_client.beta.agents.delete_session(
+        await project_client.agents.delete_session(
             agent_name=agent_name,
             session_id=session.agent_session_id,
         )
