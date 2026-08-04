@@ -20,6 +20,7 @@ from opentelemetry import metrics
 from .._invocation import InvocationAgentServerHost
 from .._version import VERSION
 
+from ._experimental import experimental
 from ._models import (
     BargeInEvent,
     ConversationItemCreateEvent,
@@ -136,6 +137,7 @@ class _CallbackWork:
     success_type: str | None = None
 
 
+@experimental
 class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-many-instance-attributes
     """AgentServer host implementing Voice Live Bridge Protocol 1.0."""
 

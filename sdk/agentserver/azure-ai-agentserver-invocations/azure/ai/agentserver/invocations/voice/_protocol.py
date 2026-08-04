@@ -16,6 +16,7 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any, cast
 
+from ._experimental import experimental
 from ._models import (
     ConversationHistoryItem,
     ConversationItemCreateEvent,
@@ -92,6 +93,7 @@ _RFC3339 = re.compile(
 )
 
 
+@experimental
 class VoiceBridgeProtocolError(ValueError):
     """Raised when a frame violates the typed protocol.
 
@@ -104,10 +106,12 @@ class VoiceBridgeProtocolError(ValueError):
         self.close_code = close_code
 
 
+@experimental
 class VoiceBridgeConnectionClosedError(RuntimeError):
     """Raised when customer code uses a terminal response or connection."""
 
 
+@experimental
 class VoiceProactiveResponseDroppedError(RuntimeError):
     """Raised when the bridge does not admit a proactive response.
 

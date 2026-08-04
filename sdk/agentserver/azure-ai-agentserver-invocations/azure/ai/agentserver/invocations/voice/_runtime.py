@@ -9,6 +9,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import Mapping
 from typing import Any, Literal, Protocol
 
+from ._experimental import experimental
 from ._models import ResponseCancellationOutcome, ResponseTimeouts, SessionStartEvent
 from ._protocol import (
     VoiceBridgeConnectionClosedError,
@@ -74,6 +75,7 @@ class _ConnectionSender(Protocol):
     async def report_session_error(self, code: str, message: str) -> None: ...
 
 
+@experimental
 class VoiceCancellationToken:
     """Read-only cooperative cancellation signal for response callbacks."""
 
@@ -105,6 +107,7 @@ class VoiceCancellationToken:
         self._event.set()
 
 
+@experimental
 class VoiceTextItem:
     """One ordered text item in a :class:`VoiceResponse`.
 
@@ -172,6 +175,7 @@ class VoiceTextItem:
         await self._response._send_item_done(self, voice=voice)
 
 
+@experimental
 class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     """SDK-owned response helper bound to an immutable input prefix."""
 
@@ -736,6 +740,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
             raise VoiceBridgeConnectionClosedError("The voice response is awaiting cancellation")
 
 
+@experimental
 class VoiceSession:
     """Connection-scoped context and controls exposed to callbacks."""
 

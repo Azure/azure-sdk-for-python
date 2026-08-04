@@ -9,7 +9,10 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any, Literal, Union
 
+from ._experimental import experimental
 
+
+@experimental
 @dataclass(frozen=True)
 class ResponseTimeouts:
     """Effective response deadlines advertised by the bridge.
@@ -24,6 +27,7 @@ class ResponseTimeouts:
     max_duration_ms: int
 
 
+@experimental
 @dataclass(frozen=True)
 class InputTextPart:
     """One text part from an ordered ``user.message`` payload.
@@ -35,6 +39,7 @@ class InputTextPart:
     type: Literal["input_text"] = field(default="input_text", init=False)
 
 
+@experimental
 @dataclass(frozen=True)
 class InputImagePart:
     """One reference-only image part from ``user.message``.
@@ -53,6 +58,7 @@ class InputImagePart:
 UserContentPart = Union[InputTextPart, InputImagePart]
 
 
+@experimental
 @dataclass(frozen=True)
 class ConversationHistoryItem:
     """One caller-app supplied user-role history item.
@@ -66,6 +72,7 @@ class ConversationHistoryItem:
     role: Literal["user"] = field(default="user", init=False)
 
 
+@experimental
 @dataclass(frozen=True)
 class ConversationItemCreateEvent:
     """Non-response-producing history create request.
@@ -80,6 +87,7 @@ class ConversationItemCreateEvent:
     previous_item_id: str | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class ConversationItemDeleteEvent:
     """Non-response-producing history delete request.
@@ -92,6 +100,7 @@ class ConversationItemDeleteEvent:
     item_id: str
 
 
+@experimental
 @dataclass(frozen=True)
 class SessionStartEvent:
     """Validated application-start event delivered before ``session.ready``.
@@ -112,6 +121,7 @@ class SessionStartEvent:
     caller: Mapping[str, Any] | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class UserMessageEvent:
     """Completed user turn with ordered content parts.
@@ -133,6 +143,7 @@ class UserMessageEvent:
         return " ".join(part.text for part in self.content if isinstance(part, InputTextPart))
 
 
+@experimental
 @dataclass(frozen=True)
 class UserNoInputEvent:
     """Bridge-generated silence turn.
@@ -145,11 +156,13 @@ class UserNoInputEvent:
     count: int
 
 
+@experimental
 @dataclass(frozen=True)
 class UserSpeechStartedEvent:
     """Advisory signal that caller speech began while no response was open."""
 
 
+@experimental
 @dataclass(frozen=True)
 class DtmfKeyEvent:
     """One raw session-scoped DTMF key.
@@ -160,6 +173,7 @@ class DtmfKeyEvent:
     digit: str
 
 
+@experimental
 @dataclass(frozen=True)
 class DtmfCollectedEvent:
     """Completed DTMF collection delivered as a new response turn.
@@ -176,6 +190,7 @@ class DtmfCollectedEvent:
     completion_reason: str
 
 
+@experimental
 @dataclass(frozen=True)
 class DtmfCollectionRejectedEvent:
     """DTMF collection request that the bridge did not start.
@@ -188,6 +203,7 @@ class DtmfCollectionRejectedEvent:
     reason: str
 
 
+@experimental
 @dataclass(frozen=True)
 class DtmfCollectionCancelledEvent:
     """Pending or active DTMF collection that ended without a result turn.
@@ -200,6 +216,7 @@ class DtmfCollectionCancelledEvent:
     reason: str
 
 
+@experimental
 @dataclass(frozen=True)
 class HandoffFailedEvent:
     """Bridge-generated recovery turn after target activation failed.
@@ -216,6 +233,7 @@ class HandoffFailedEvent:
     message: str | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class BargeInEvent:
     """Caller interruption and playback outcome.
@@ -230,6 +248,7 @@ class BargeInEvent:
     item_id: str | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class ResponseTimeoutEvent:
     """Terminal response-deadline notification.
@@ -246,6 +265,7 @@ class ResponseTimeoutEvent:
     item_ids: tuple[str, ...] | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class ResponseCancellationOutcome:
     """Winning playback outcome returned by ``VoiceResponse.cancel``.
@@ -262,6 +282,7 @@ class ResponseCancellationOutcome:
     item_id: str | None = None
 
 
+@experimental
 @dataclass(frozen=True)
 class SessionEndEvent:
     """Bridge-initiated session termination.
