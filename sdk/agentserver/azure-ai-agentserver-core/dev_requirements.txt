@@ -4,5 +4,11 @@
 pytest
 httpx
 pytest-asyncio
-opentelemetry-api>=1.40.0
-opentelemetry-sdk>=1.40.0
+starlette>=0.45.0
+hypercorn>=0.17.0
+opentelemetry-api>=1.43.0
+opentelemetry-sdk>=1.43.0
+microsoft-opentelemetry>=1.3.5
+opentelemetry-exporter-otlp-proto-grpc>=1.43.0
+grpcio
+opentelemetry-proto>=1.43.0

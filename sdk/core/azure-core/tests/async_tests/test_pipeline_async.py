@@ -26,6 +26,11 @@
 import sys
 from unittest.mock import Mock
 
+import aiohttp
+import trio
+import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
@@ -36,7 +41,6 @@ from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
-    AsyncRetryPolicy,
     HttpLoggingPolicy,
     SensitiveHeaderCleanupPolicy,
 )
@@ -54,12 +58,6 @@ from azure.core.polling.base_polling import LocationPolling
 from azure.core.configuration import Configuration
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import AzureError
-
-import aiohttp
-import trio
-
-import pytest
-from utils import HTTP_REQUESTS
 
 
 try:

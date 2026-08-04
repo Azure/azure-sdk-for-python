@@ -1,16 +1,12 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+from collections.abc import Mapping
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
-    ModelVersionData,
-    ModelVersionDefaultDeploymentTemplate,
-    ModelVersionDetails,
-)
-from azure.ai.ml._restclient.v2023_04_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     FlavorData,
     ModelContainer,
     ModelVersion,
@@ -151,8 +147,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         return dict(ModelSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self))
 
     @classmethod
-    def _from_rest_object(cls, model_rest_object: Union[ModelVersion, ModelVersionData]) -> "Model":
-        rest_model_version: Union[ModelVersionProperties, ModelVersionDetails] = model_rest_object.properties
+    def _from_rest_object(cls, model_rest_object: ModelVersion) -> "Model":
+        rest_model_version: ModelVersionProperties = model_rest_object.properties
         arm_id = AMLVersionedArmId(arm_id=model_rest_object.id)
         model_stage = rest_model_version.stage if hasattr(rest_model_version, "stage") else None
         model_system_metadata = (
@@ -161,41 +157,43 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         if hasattr(rest_model_version, "flavors"):
             flavors = {key: flavor.data for key, flavor in rest_model_version.flavors.items()}
 
-        # Handle default_deployment_template from REST object
+        # Handle default_deployment_template from REST object (attribute for msrest models, camelCase mapping key for
+        # arm hybrid models returned by the registry data-plane).
         default_deployment_template = None
-        if (
-            hasattr(rest_model_version, "default_deployment_template")
-            and rest_model_version.default_deployment_template
-        ):
-            # REST object has default_deployment_template as a dict with 'asset_id' key
-            if isinstance(rest_model_version.default_deployment_template, dict):
+        _ddt = getattr(rest_model_version, "default_deployment_template", None)
+        if _ddt is None and isinstance(rest_model_version, Mapping):
+            _ddt = rest_model_version.get("defaultDeploymentTemplate")
+        if _ddt:
+            if isinstance(_ddt, dict):
                 default_deployment_template = DeploymentTemplateReference(
-                    asset_id=rest_model_version.default_deployment_template.get("asset_id")
+                    asset_id=_ddt.get("asset_id") or _ddt.get("assetId")
                 )
             else:
                 # Handle case where it's already an object with asset_id attribute
-                default_deployment_template = DeploymentTemplateReference(
-                    asset_id=getattr(rest_model_version.default_deployment_template, "asset_id", None)
-                )
+                default_deployment_template = DeploymentTemplateReference(asset_id=getattr(_ddt, "asset_id", None))
 
         # Handle allowed_deployment_templates from REST object
         allowed_deployment_templates = None
-        if (
-            hasattr(rest_model_version, "allowed_deployment_templates")
-            and rest_model_version.allowed_deployment_templates
-        ):
-            raw_list = rest_model_version.allowed_deployment_templates
-            if isinstance(raw_list, list):
-                allowed_deployment_templates = []
-                for item in raw_list:
-                    if isinstance(item, dict):
-                        allowed_deployment_templates.append(
-                            DeploymentTemplateReference(asset_id=item.get("asset_id") or item.get("assetId"))
-                        )
-                    else:
-                        allowed_deployment_templates.append(
-                            DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
-                        )
+        _adt = getattr(rest_model_version, "allowed_deployment_templates", None)
+        if _adt is None and isinstance(rest_model_version, Mapping):
+            _adt = rest_model_version.get("allowedDeploymentTemplates")
+        if _adt and isinstance(_adt, list):
+            allowed_deployment_templates = []
+            for item in _adt:
+                if isinstance(item, dict):
+                    allowed_deployment_templates.append(
+                        DeploymentTemplateReference(asset_id=item.get("asset_id") or item.get("assetId"))
+                    )
+                else:
+                    allowed_deployment_templates.append(
+                        DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
+                    )
+
+        # Handle intellectual_property (attribute for msrest models, camelCase mapping key for arm hybrid
+        # models returned by the shared arm_ml_service client).
+        _ip_rest = getattr(rest_model_version, "intellectual_property", None)
+        if _ip_rest is None and isinstance(rest_model_version, Mapping):
+            _ip_rest = rest_model_version.get("intellectualProperty")
 
         model = Model(
             id=model_rest_object.id,
@@ -211,11 +209,7 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
             creation_context=SystemData._from_rest_object(model_rest_object.system_data),
             type=rest_model_version.model_type,
             job_name=rest_model_version.job_name,
-            intellectual_property=(
-                IntellectualProperty._from_rest_object(rest_model_version.intellectual_property)
-                if rest_model_version.intellectual_property
-                else None
-            ),
+            intellectual_property=(IntellectualProperty._from_rest_object(_ip_rest) if _ip_rest else None),
             system_metadata=model_system_metadata,
             default_deployment_template=default_deployment_template,
             allowed_deployment_templates=allowed_deployment_templates,
@@ -238,48 +232,40 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         model.version = None
         return model
 
-    def _to_rest_object(self) -> Union[ModelVersionData, ModelVersion]:
-        if self.default_deployment_template or self.allowed_deployment_templates:
-            model_version = ModelVersionDetails(
-                description=self.description,
-                tags=self.tags,
-                properties=self.properties,
-                flavors=(
-                    {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
-                ),
-                model_type=self.type,
-                model_uri=self.path,
-                stage=self.stage,
-                is_anonymous=self._is_anonymous,
-            )
-            model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
-
-            if self.default_deployment_template:
-                model_version.default_deployment_template = ModelVersionDefaultDeploymentTemplate(
-                    asset_id=self.default_deployment_template.asset_id
-                )
-            if self.allowed_deployment_templates:
-                model_version.allowed_deployment_templates = [
-                    ModelVersionDefaultDeploymentTemplate(asset_id=adt.asset_id)
-                    for adt in self.allowed_deployment_templates
-                ]
-            model_version_resource = ModelVersionData(properties=model_version)
-
-            return model_version_resource
-
+    def _to_rest_object(self) -> ModelVersion:
+        # arm ModelVersion for all cases. arm lacks the registry deployment-template fields, so carry them as camelCase
+        # wire keys (byte-identical to the legacy v2021_10 ``ModelVersionData``). NOTE: the legacy v2021_10
+        # ``ModelVersionDetails`` had NO ``stage`` field, so models WITH deployment templates dropped ``stage`` on the
+        # wire; that quirk is preserved by omitting ``stage`` when a deployment template is present.
+        has_deployment_template = bool(self.default_deployment_template or self.allowed_deployment_templates)
+        # The legacy v2021_10 ``ModelVersionDetails`` typed tags/properties as ``{str}``; msrest coerced every value to
+        # a string on the wire (e.g. YAML ``abc: 123`` -> ``"123"``). The arm hybrid model keeps the native type, so
+        # coerce here to stay byte-identical.
+        tags = {k: str(v) for k, v in self.tags.items() if v is not None} if self.tags else self.tags
+        properties = (
+            {k: str(v) for k, v in self.properties.items() if v is not None} if self.properties else self.properties
+        )
         model_version = ModelVersionProperties(
             description=self.description,
-            tags=self.tags,
-            properties=self.properties,
+            tags=tags,
+            properties=properties,
             flavors=(
                 {key: FlavorData(data=dict(value)) for key, value in self.flavors.items()} if self.flavors else None
             ),  # flatten OrderedDict to dict
             model_type=self.type,
             model_uri=self.path,
-            stage=self.stage,
-            is_anonymous=self._is_anonymous,
+            stage=None if has_deployment_template else self.stage,
+            is_anonymous=self._is_anonymous or False,
+            is_archived=False,
         )
         model_version.system_metadata = self._system_metadata if hasattr(self, "_system_metadata") else None
+
+        if self.default_deployment_template:
+            model_version["defaultDeploymentTemplate"] = {"assetId": self.default_deployment_template.asset_id}
+        if self.allowed_deployment_templates:
+            model_version["allowedDeploymentTemplates"] = [
+                {"assetId": adt.asset_id} for adt in self.allowed_deployment_templates
+            ]
 
         model_version_resource = ModelVersion(properties=model_version)
 

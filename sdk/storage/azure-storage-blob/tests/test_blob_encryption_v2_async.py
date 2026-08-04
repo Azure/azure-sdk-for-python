@@ -19,6 +19,7 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
+from test_helpers import _deterministic_urandom
 from test_helpers_async import AsyncStream
 
 from azure.core import MatchConditions
@@ -150,7 +151,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             content = b"a" * 5 * 1024
 
             # Act
-            with mock.patch("os.urandom", mock_urandom):
+            with mock.patch("os.urandom", _deterministic_urandom()):
                 await blob.upload_blob(content, overwrite=True)
 
             blob.require_encryption = False
@@ -498,7 +499,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content = b"abcde" * 1024
 
         # Act
-        with mock.patch("os.urandom", mock_urandom):
+        with mock.patch("os.urandom", _deterministic_urandom()):
             await blob.upload_blob(content, overwrite=True)
         data = await (await blob.download_blob()).readall()
 

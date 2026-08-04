@@ -15,6 +15,7 @@ import queue
 
 from .._pyamqp import (
     utils,
+    AMQPClient,
     SendClient,
     constants,
     ReceiveClient,
@@ -29,7 +30,14 @@ from .._pyamqp.error import (
     AuthenticationException,
     MessageException,
 )
-from .._pyamqp.utils import amqp_long_value, amqp_array_value, amqp_string_value, amqp_uint_value
+from .._pyamqp.utils import (
+    amqp_long_value,
+    amqp_array_value,
+    amqp_string_value,
+    amqp_uint_value,
+    amqp_int_value,
+    amqp_timestamp_value,
+)
 from .._pyamqp._encode import encode_payload
 from .._pyamqp._decode import decode_payload
 from .._pyamqp.message import Message, BatchMessage, Header, Properties
@@ -102,7 +110,6 @@ if TYPE_CHECKING:
     from .._common.message import ServiceBusReceivedMessage, ServiceBusMessage, ServiceBusMessageBatch
     from .._common._configuration import Configuration
     from .._pyamqp.performatives import AttachFrame, TransferFrame
-    from .._pyamqp.client import AMQPClient
     from .._pyamqp.message import MessageDict
 
 _LOGGER = logging.getLogger(__name__)
@@ -195,6 +202,8 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
     AMQP_LONG_VALUE: Callable = amqp_long_value
     AMQP_ARRAY_VALUE: Callable = amqp_array_value
     AMQP_UINT_VALUE: Callable = amqp_uint_value
+    AMQP_INT_VALUE: Callable = amqp_int_value
+    AMQP_TIMESTAMP_VALUE: Callable = amqp_timestamp_value
 
     # errors
     TIMEOUT_ERROR = TimeoutError
@@ -469,6 +478,36 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :param ~pyamqp.Connection Connection connection: uamqp or pyamqp Connection.
         """
         connection.close()
+
+    @staticmethod
+    def create_mgmt_client(config: "Configuration", **kwargs: Any) -> "AMQPClient": # pylint: disable=docstring-keyword-should-match-keyword-only
+        """Creates and returns a pyamqp AMQPClient for management-only operations.
+
+        Unlike SendClient/ReceiveClient, this client does not create a sender or
+        receiver link. It only opens a connection and authenticates, suitable for
+        management requests that don't need an associated link.
+
+        :param ~azure.servicebus._common._configuration.Configuration config: The configuration. Required.
+        :keyword ~pyamqp.authentication.JWTTokenAuth auth: Required.
+        :keyword retry_policy: Required.
+        :keyword str client_name: Required.
+        :keyword dict properties: Required.
+        :return: AMQPClient
+        :rtype: ~pyamqp.AMQPClient
+        """
+        return AMQPClient(
+            config.hostname,
+            network_trace=config.logging_enable,
+            keep_alive_interval=config.keep_alive,
+            custom_endpoint_address=config.custom_endpoint_address,
+            connection_verify=config.connection_verify,
+            ssl_context=config.ssl_context,
+            transport_type=config.transport_type,
+            http_proxy=config.http_proxy,
+            socket_timeout=config.socket_timeout,
+            use_tls=config.use_tls,
+            **kwargs,
+        )
 
     @staticmethod
     def create_send_client(config: "Configuration", **kwargs: Any) -> "SendClient": # pylint: disable=docstring-keyword-should-match-keyword-only

@@ -10,7 +10,7 @@ DESCRIPTION:
     using the Code Interpreter Tool and an asynchronous client followed by downloading the generated file.
 
 USAGE:
-    python sample_agent_code_interpreter_async.py
+    python sample_agent_code_interpreter_with_files_async.py
 
     Before running the sample:
 
