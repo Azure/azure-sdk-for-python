@@ -75,13 +75,13 @@ def sample_stream_sse():
     # [START build_sse_stream]
     from azure.core import PipelineClient
     from azure.core.rest import HttpRequest, HttpResponse
-    from azure.core.streaming import Stream, ServerSentEvent
+    from azure.core.streaming import Stream
 
     client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/audio/transcriptions")
     response = client.send_request(request, stream=True)
 
-    def deserialize(response: HttpResponse, event: ServerSentEvent) -> Any:
+    def deserialize(response: HttpResponse, event: Any) -> Any:
         # OpenAI-style streams end with a literal ``data: [DONE]`` sentinel that
         # is not JSON, so guard against it before deserializing the payload.
         if event.data == "[DONE]":
@@ -107,13 +107,13 @@ async def sample_stream_sse_async():
     # [START build_sse_stream_async]
     from azure.core import AsyncPipelineClient
     from azure.core.rest import HttpRequest, AsyncHttpResponse
-    from azure.core.streaming import AsyncStream, ServerSentEvent
+    from azure.core.streaming import AsyncStream
 
     client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/audio/transcriptions")
     response = await client.send_request(request, stream=True)
 
-    def deserialize(response: AsyncHttpResponse, event: ServerSentEvent) -> Any:
+    def deserialize(response: AsyncHttpResponse, event: Any) -> Any:
         # OpenAI-style streams end with a literal ``data: [DONE]`` sentinel that
         # is not JSON, so guard against it before deserializing the payload.
         if event.data == "[DONE]":

@@ -29,7 +29,9 @@ import json
 import pytest
 
 from azure.core.rest import HttpRequest
-from azure.core.streaming import Stream, JSONLDecoder, SSEDecoder, ServerSentEvent
+from azure.core.streaming import Stream
+from azure.core.streaming._jsonl import JSONLDecoder
+from azure.core.streaming._sse import SSEDecoder, ServerSentEvent
 
 
 @pytest.fixture

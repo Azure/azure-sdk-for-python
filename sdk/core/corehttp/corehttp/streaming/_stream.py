@@ -45,7 +45,7 @@ class Stream(Iterator[ReturnType_co]):
     :paramtype response: ~corehttp.rest.HttpResponse
     :keyword decoder: A decoder to use for the stream. If omitted, the decoder is
         inferred from the response ``Content-Type`` header.
-    :paramtype decoder: ~corehttp.streaming.StreamDecoder
+    :paramtype decoder: ~corehttp.streaming._decoders.StreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.HttpResponse, Any], ReturnType]
@@ -102,7 +102,7 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
     :keyword decoder: A decoder to use for the stream. If omitted, the decoder is
         inferred from the response ``Content-Type`` header.
-    :paramtype decoder: ~corehttp.streaming.AsyncStreamDecoder
+    :paramtype decoder: ~corehttp.streaming._decoders.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
     :paramtype deserialization_callback: Callable[[~corehttp.rest.AsyncHttpResponse, Any], ReturnType]

@@ -29,7 +29,8 @@ import json
 import pytest
 
 from corehttp.rest import HttpRequest
-from corehttp.streaming import AsyncStream, AsyncSSEDecoder, ServerSentEvent
+from corehttp.streaming import AsyncStream
+from corehttp.streaming._sse import AsyncSSEDecoder, ServerSentEvent
 
 
 @pytest.fixture

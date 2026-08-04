@@ -29,7 +29,8 @@ import json
 import pytest
 
 from azure.core.rest import HttpRequest
-from azure.core.streaming import AsyncStream, AsyncSSEDecoder, ServerSentEvent
+from azure.core.streaming import AsyncStream
+from azure.core.streaming._sse import AsyncSSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
