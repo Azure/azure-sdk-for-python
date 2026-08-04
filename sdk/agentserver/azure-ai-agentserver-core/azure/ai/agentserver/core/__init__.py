@@ -15,6 +15,7 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from ._base import AgentServerHost
 from ._config import AgentConfig, resolve_state_subdir
 from ._errors import create_error_response
+from ._experimental import experimental
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_context import (
     FoundryAgentRequestContext,
@@ -49,6 +50,7 @@ __all__ = [
     "create_error_response",
     "detach_context",
     "end_span",
+    "experimental",
     "flush_spans",
     "get_request_context",
     "record_error",
