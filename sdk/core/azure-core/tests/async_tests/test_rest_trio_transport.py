@@ -3,12 +3,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import pytest
+from rest_client_async import AsyncMockRestClient
+from utils import readonly_checks
+
 from azure.core.pipeline.transport import TrioRequestsTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._requests_trio import RestTrioRequestsTransportResponse
-from rest_client_async import AsyncMockRestClient
-from utils import readonly_checks
-import pytest
 
 
 @pytest.fixture

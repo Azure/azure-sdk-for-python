@@ -278,7 +278,7 @@ class _AsyncAsgiClient:
 # ── Handlers ─────────────────────────────────────────────────────────────────
 
 
-def _simple_completed_handler(request: Any, context: Any, cancellation_signal: Any):
+async def _simple_completed_handler(request: Any, context: Any, cancellation_signal: asyncio.Event):
     """Handler that emits created + output + completed."""
 
     async def _events():
@@ -480,8 +480,12 @@ class TestBgStreamPhase2UpdateFails:
         error = resp_data.get("error", {})
         assert error.get("code") == "storage_error"
 
-        # Output should be cleared
-        assert resp_data.get("output") == [] or resp_data.get("output") is None
+        # Output is PRESERVED: the handler owns the response object, and per the
+        # SOT behaviour contract a ``failed`` response's output "may be partial".
+        # The storage-error terminal overlays status+error onto the handler's
+        # snapshot rather than discarding the "Hello, world!" it produced.
+        output_items = resp_data.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -531,7 +535,11 @@ class TestBgNonStreamPhase2UpdateFails:
         assert terminal_reached, f"Response did not reach terminal state, last: {terminal_body}"
         assert terminal_body["status"] == "failed"
         assert terminal_body.get("error", {}).get("code") == "storage_error"
-        assert terminal_body.get("output") == [] or terminal_body.get("output") is None
+        # Output is PRESERVED (SOT: a ``failed`` response's output "may be
+        # partial"); the storage-error terminal overlays onto the handler's
+        # snapshot rather than discarding its produced output.
+        output_items = terminal_body.get("output") or []
+        assert any("Hello, world!" in str(item) for item in output_items), f"Output not preserved: {output_items}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

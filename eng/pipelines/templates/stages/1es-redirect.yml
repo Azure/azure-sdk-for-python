@@ -40,7 +40,7 @@ extends:
         - 1ES.PT.Tag-refs/tags/canary
     settings:
       skipBuildTagsForGitHubPullRequests: true
-      networkIsolationPolicy: Permissive, CFSClean
+      networkIsolationPolicy: Permissive
     ${{ if ne(variables['Build.DefinitionName'], 'python - core') }}:
       featureFlags:
         autoBaseline: false
@@ -62,7 +62,7 @@ extends:
         ${{ if eq(parameters.EnableCompiledCodeql, true) }}:
           # "cpp" covers both C and C++ code. Language is specified because 
           # checkout happens after the injected "CodeQL Initialize" step
-          language: cpp
+          language: cpp,python
           compiled:
             enabled: true
         ${{ else }}:

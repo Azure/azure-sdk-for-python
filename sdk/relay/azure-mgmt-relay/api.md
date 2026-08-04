@@ -2308,19 +2308,6 @@ namespace azure.mgmt.relay.operations
 
 namespace azure.mgmt.relay.types
 
-    class azure.mgmt.relay.types.AccessKeys(TypedDict, total=False):
-        key "keyName": str
-        key "primaryConnectionString": str
-        key "primaryKey": str
-        key "secondaryConnectionString": str
-        key "secondaryKey": str
-        key_name: str
-        primary_connection_string: str
-        primary_key: str
-        secondary_connection_string: str
-        secondary_key: str
-
-
     class azure.mgmt.relay.types.AuthorizationRule(ProxyResource):
         key "id": str
         key "location": str
@@ -2346,44 +2333,11 @@ namespace azure.mgmt.relay.types
         name: str
 
 
-    class azure.mgmt.relay.types.CheckNameAvailabilityResult(TypedDict, total=False):
-        key "message": str
-        key "nameAvailable": bool
-        key "reason": Union[str, UnavailableReason]
-        message: str
-        name_available: bool
-        reason: Union[str, UnavailableReason]
-
-
     class azure.mgmt.relay.types.ConnectionState(TypedDict, total=False):
         key "description": str
         key "status": Union[str, PrivateLinkConnectionStatus]
         description: str
         status: Union[str, PrivateLinkConnectionStatus]
-
-
-    class azure.mgmt.relay.types.ErrorAdditionalInfo(TypedDict, total=False):
-        key "info": Any
-        key "type": str
-        info: Any
-        type: str
-
-
-    class azure.mgmt.relay.types.ErrorDetail(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
-        code: str
-        details: list[ErrorDetail]
-        message: str
-        target: str
-
-
-    class azure.mgmt.relay.types.ErrorResponse(TypedDict, total=False):
-        key "error": ForwardRef('ErrorDetail', module='types')
-        error: ErrorDetail
 
 
     class azure.mgmt.relay.types.HybridConnection(ProxyResource):
@@ -2445,30 +2399,6 @@ namespace azure.mgmt.relay.types
         trusted_service_access_enabled: bool
 
 
-    class azure.mgmt.relay.types.Operation(TypedDict, total=False):
-        key "actionType": Union[str, ActionType]
-        key "display": ForwardRef('OperationDisplay', module='types')
-        key "isDataAction": bool
-        key "name": str
-        key "origin": Union[str, Origin]
-        action_type: Union[str, ActionType]
-        display: OperationDisplay
-        is_data_action: bool
-        name: str
-        origin: Union[str, Origin]
-
-
-    class azure.mgmt.relay.types.OperationDisplay(TypedDict, total=False):
-        key "description": str
-        key "operation": str
-        key "provider": str
-        key "resource": str
-        description: str
-        operation: str
-        provider: str
-        resource: str
-
-
     class azure.mgmt.relay.types.PrivateEndpoint(TypedDict, total=False):
         key "id": str
         id: str
@@ -2496,35 +2426,6 @@ namespace azure.mgmt.relay.types
         private_endpoint: PrivateEndpoint
         private_link_service_connection_state: ConnectionState
         provisioning_state: Union[str, EndPointProvisioningState]
-
-
-    class azure.mgmt.relay.types.PrivateLinkResource(ProxyResource):
-        key "id": str
-        key "name": str
-        key "properties": ForwardRef('PrivateLinkResourceProperties', module='types')
-        key "systemData": ForwardRef('SystemData', module='types')
-        key "type": str
-        id: str
-        name: str
-        properties: PrivateLinkResourceProperties
-        system_data: SystemData
-        type: str
-
-
-    class azure.mgmt.relay.types.PrivateLinkResourceProperties(TypedDict, total=False):
-        key "groupId": str
-        group_id: str
-        requiredMembers: list[str]
-        requiredZoneNames: list[str]
-        required_members: list[str]
-        required_zone_names: list[str]
-
-
-    class azure.mgmt.relay.types.PrivateLinkResourcesListResult(TypedDict, total=False):
-        key "nextLink": str
-        key "value": Required[list[PrivateLinkResource]]
-        next_link: str
-        value: list[PrivateLinkResource]
 
 
     class azure.mgmt.relay.types.ProxyResource(Resource):

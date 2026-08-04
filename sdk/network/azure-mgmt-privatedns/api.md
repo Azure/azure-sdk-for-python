@@ -1273,21 +1273,6 @@ namespace azure.mgmt.privatedns.types
         ipv6_address: str
 
 
-    class azure.mgmt.privatedns.types.CloudError(TypedDict, total=False):
-        key "error": ForwardRef('CloudErrorBody', module='types')
-        error: CloudErrorBody
-
-
-    class azure.mgmt.privatedns.types.CloudErrorBody(TypedDict, total=False):
-        key "code": str
-        key "message": str
-        key "target": str
-        code: str
-        details: list[CloudErrorBody]
-        message: str
-        target: str
-
-
     class azure.mgmt.privatedns.types.CnameRecord(TypedDict, total=False):
         key "cname": str
         cname: str

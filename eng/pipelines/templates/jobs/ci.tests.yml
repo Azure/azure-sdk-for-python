@@ -74,6 +74,14 @@ jobs:
       os: ${{ parameters.OSName }}
 
     templateContext:
+      # Compiled CodeQL is auto-injected by 1ES but is unsupported on macOS ARM64
+      # (and the test jobs do not compile the extension). Mirror the Build_MacOS carve-out.
+      ${{ if eq(parameters.OSName, 'macOS') }}:
+        sdl:
+          codeql:
+            compiled:
+              enabled: false
+              justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
       # See eng/common/pipelines/templates/steps/upload-llm-artifacts.yml for corresponding file copy step
       outputs:
         - output: pipelineArtifact
