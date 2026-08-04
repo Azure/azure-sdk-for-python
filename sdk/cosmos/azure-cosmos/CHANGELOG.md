@@ -7,7 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
-* Fixed `TypeError: Unexpected type for PK component: <class 'dict'>` when passing `partition_key={}` (the legacy way to target items that have no value for the partition key path) to `query_items()` and other partition-key scoped APIs on containers with a Hash V1 partition key definition. On Hash V2 containers, `{}` also resolved to the `Null` effective partition key instead of `Undefined`, which could return the wrong rows or an empty result set. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [Issue 48420](https://github.com/Azure/azure-sdk-for-python/issues/48420)
+* Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
 * Fixed `IndexError: index out of range` when computing the effective partition key for an empty string partition key value on containers with a Hash V1 partition key definition.
 
 #### Other Changes
