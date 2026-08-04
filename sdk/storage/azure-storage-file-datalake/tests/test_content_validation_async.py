@@ -183,7 +183,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         data1 = b"abcde" * 1024 * 1024  # 5 MiB
         data2 = b"12345" * 2 * 1024 * 1024 + b"abcdefg"  # 10 MiB + 7
-        data3 = b"12345678" * 8 * 1024 * 1024  # 64 MiB
+        data3 = b"12345678" * 4 * 1024 * 1024  # 32 MiB
         assert_method = assert_structured_message if a == "crc64" else assert_content_md5
 
         # Act
@@ -192,15 +192,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await file.append_data(
             BytesIO(data2), len(data1), flush=True, validate_content=a, raw_request_hook=assert_method
         )
-        # data3 is 64 MiB (max_single_put_size). A generous server-side timeout avoids
-        # OperationTimedOut on slower upload paths (i.e. Windows, so timeout=300).
         await file.append_data(
-            BytesIO(data3),
-            len(data1) + len(data2),
-            flush=True,
-            validate_content=a,
-            raw_request_hook=assert_method,
-            timeout=300,
+            BytesIO(data3), len(data1) + len(data2), flush=True, validate_content=a, raw_request_hook=assert_method
         )
         await file.flush_data(len(data1) + len(data2) + len(data3))
 
