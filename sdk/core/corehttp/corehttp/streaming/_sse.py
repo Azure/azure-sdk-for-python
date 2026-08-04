@@ -39,8 +39,9 @@ class ServerSentEvent:
     :ivar data: The event payload. Multiple ``data`` lines are joined with ``"\\n"``.
         Left as a raw string; the caller is responsible for any further parsing.
     :vartype data: str
-    :ivar id: The last event ID, if the stream provided one.
-    :vartype id: str or None
+    :ivar id: The last event ID. Defaults to an empty string until the stream
+        provides one.
+    :vartype id: str
     :ivar retry: The reconnection time in milliseconds, if the stream provided one.
     :vartype retry: int or None
     """
@@ -50,7 +51,7 @@ class ServerSentEvent:
         *,
         event: str = "message",
         data: str = "",
-        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        id: str = "",  # pylint: disable=redefined-builtin
         retry: Optional[int] = None,
     ) -> None:
         self.event = event
@@ -170,7 +171,7 @@ class _SSEEventBuilder:
     def __init__(self) -> None:
         self._data: List[str] = []
         self._event_type = ""
-        self._last_id: Optional[str] = None
+        self._last_id = ""
         self._retry: Optional[int] = None
 
     def add_line(self, line: str) -> Optional[ServerSentEvent]:

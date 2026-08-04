@@ -239,8 +239,8 @@ async def _collect(sse_stream, path):
 async def test_stream_sse_basic(sse_stream):
     events = await _collect(sse_stream, "/streams/sse_basic")
     assert events == [
-        ServerSentEvent(event="message", data="hello"),
-        ServerSentEvent(event="message", data="world"),
+        ServerSentEvent(event="message", data="hello", id=""),
+        ServerSentEvent(event="message", data="world", id=""),
     ]
 
 

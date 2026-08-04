@@ -212,8 +212,8 @@ def test_stream_jsonl_unicode_line_boundary(stream):
 def test_stream_sse_basic(sse_stream):
     events = list(sse_stream(HttpRequest("GET", "/streams/sse_basic")))
     assert events == [
-        ServerSentEvent(event="message", data="hello"),
-        ServerSentEvent(event="message", data="world"),
+        ServerSentEvent(event="message", data="hello", id=""),
+        ServerSentEvent(event="message", data="world", id=""),
     ]
 
 
