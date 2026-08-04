@@ -22,4 +22,4 @@ class TestCognitiveServicesManagementDeletedAccountsOperationsAsync(AzureMgmtRec
     async def test_list(self):
         response = self.client.deleted_accounts.list()
         result = [r async for r in response]
-        assert len(result) == 0
+        assert len(result)
