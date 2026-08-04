@@ -2,7 +2,34 @@
 
 ## 1.1.0b1 (2026-08-04)
 
-tool can't generate changelog for this release, please update manually.
+### Features Added
+
+  - Client `HardwareSecurityModulesMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `HardwareSecurityModulesMgmtClient` added operation group `payment_hsm_cluster_private_endpoint_connections`
+  - Client `HardwareSecurityModulesMgmtClient` added operation group `payment_hsm_cluster_private_link_resources`
+  - Client `HardwareSecurityModulesMgmtClient` added operation group `payment_hsm_clusters`
+  - Enum `CloudHsmClusterSkuName` added member `STANDARD_B10_V2`
+  - Enum `CloudHsmClusterSkuName` added member `STANDARD_B15_V2`
+  - Enum `CloudHsmClusterSkuName` added member `STANDARD_B1_V2`
+  - Enum `CloudHsmClusterSkuName` added member `STANDARD_B20_V2`
+  - Enum `CloudHsmClusterSkuName` added member `STANDARD_B5_V2`
+  - Added enum `HsmState`
+  - Added model `PaymentHsmCluster`
+  - Added model `PaymentHsmClusterPatchParameters`
+  - Added model `PaymentHsmClusterPrivateEndpointConnection`
+  - Added model `PaymentHsmClusterProperties`
+  - Added model `PaymentHsmClusterSku`
+  - Added enum `PaymentHsmClusterSkuFamily`
+  - Added enum `PaymentHsmClusterSkuName`
+  - Added model `PaymentHsmProperties`
+  - Added operation group `PaymentHsmClusterPrivateEndpointConnectionsOperations`
+  - Added operation group `PaymentHsmClusterPrivateLinkResourcesOperations`
+  - Added operation group `PaymentHsmClustersOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed method `CloudHsmClusterBackupStatusOperations.begin_get`
+  - Deleted or renamed method `CloudHsmClusterRestoreStatusOperations.begin_get`
 
 ## 1.0.0 (2025-07-02)
 
