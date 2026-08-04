@@ -29,9 +29,9 @@ from .._patch import (
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
-logger = logging.getLogger(__name__)
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
-_OPENAI_TRANSPORT_LOGGER = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+logger = logging.getLogger(__name__)
+_openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
 
 
 class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-instance-attributes
@@ -271,23 +271,23 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         :rtype: httpx.Response
         """
 
-        _OPENAI_TRANSPORT_LOGGER.debug("\n==> Request:\n%s %s", request.method, request.url)
+        _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
         headers = dict(request.headers)
         self._sanitize_auth_header(headers)
-        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(headers.items()):
             if not self._logging_enabled and key.lower() == "api-key":
                 value = "<REDACTED>"
-            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         self._log_request_body(request)
 
         response = await super().handle_async_request(request)
 
-        _OPENAI_TRANSPORT_LOGGER.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
-        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
+        _openai_transport_logger.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(dict(response.headers).items()):
-            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         if self._is_streaming_response(response):
             if _log_streaming_response_notice(self._logging_enabled):
@@ -295,16 +295,16 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         else:
             content = await response.aread()
             if content is None or content == b"":
-                _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+                _openai_transport_logger.debug("Body: [No content]")
             else:
                 if self._logging_enabled:
                     try:
-                        _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
+                        _openai_transport_logger.debug("Body:\n %s", content.decode("utf-8"))
                     except Exception:  # pylint: disable=broad-exception-caught
-                        _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                        _openai_transport_logger.debug("Body (raw):\n  %r", content)
                 else:
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
-        _OPENAI_TRANSPORT_LOGGER.debug("\n")
+                    _openai_transport_logger.debug("Body: [Content exists]")
+        _openai_transport_logger.debug("\n")
 
         return response
 
@@ -318,32 +318,32 @@ class _OpenAILoggingTransport(httpx.AsyncHTTPTransport):
         # Check content-type header to identify file uploads
         content_type = request.headers.get("content-type", "").lower()
         if "multipart/form-data" in content_type:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Multipart form data - file upload, not logged]")
+            _openai_transport_logger.debug("Body: [Multipart form data - file upload, not logged]")
             return
 
         # Safely check if content exists without accessing it
         if not hasattr(request, "content"):
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content attribute]")
+            _openai_transport_logger.debug("Body: [No content attribute]")
             return
 
         # Very careful content access - wrap in try-catch immediately
         try:
             content = request.content
         except Exception as access_error:  # pylint: disable=broad-exception-caught
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Cannot access content: %s]", access_error)
+            _openai_transport_logger.debug("Body: [Cannot access content: %s]", access_error)
             return
 
         if content is None or content == b"":
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+            _openai_transport_logger.debug("Body: [No content]")
             return
 
         if self._logging_enabled:
             try:
-                _OPENAI_TRANSPORT_LOGGER.debug("Body:\n  %s", content.decode("utf-8"))
+                _openai_transport_logger.debug("Body:\n  %s", content.decode("utf-8"))
             except Exception:  # pylint: disable=broad-exception-caught
-                _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                _openai_transport_logger.debug("Body (raw):\n  %r", content)
         else:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
+            _openai_transport_logger.debug("Body: [Content exists]")
 
 
 __all__: List[str] = ["AIProjectClient"]  # Add all objects you want publicly available to users at this package level

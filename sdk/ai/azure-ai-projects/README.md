@@ -236,7 +236,7 @@ To turn on client console logging define the environment variable `AZURE_AI_PROJ
 
 #### Customizing your log
 
-Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format, and destination. For `.get_openai_client()` scenarios, attach the same handler to both the Azure SDK logger and the dedicated OpenAI transport logger:
+Instead of using the above-mentioned environment variable, you can configure logging yourself and control the log level, format, and destination. You can optionally attach the same handler to the Azure SDK logger and, for `.get_openai_client()` scenarios, optionally attach it to the dedicated OpenAI transport logger as well:
 
 ```python
 import sys
@@ -247,12 +247,12 @@ handler = logging.StreamHandler(stream=sys.stdout)
 # Or direct logging output to a file:
 # handler = logging.FileHandler(filename="sample.log")
 
-# Logger for logs from azure-ai-projects SDK through Azure-core.
+# Optional: logger for azure-ai-projects and azure-core.
 logger = logging.getLogger("azure")
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-# Logger for OpenAI transport logs emitted by `.get_openai_client()`.
+# Optional: additional logger for an openai client generated from `.get_openai_client()`.
 openai_logger = logging.getLogger("azure.ai.projects.openai_transport")
 openai_logger.setLevel(logging.DEBUG)
 openai_logger.propagate = False

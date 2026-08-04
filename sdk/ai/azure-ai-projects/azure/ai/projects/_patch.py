@@ -21,9 +21,9 @@ from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 from .models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
-logger = logging.getLogger(__name__)
 _OPENAI_TRANSPORT_LOGGER_NAME = "azure.ai.projects.openai_transport"
-_OPENAI_TRANSPORT_LOGGER = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
+logger = logging.getLogger(__name__)
+_openai_transport_logger = logging.getLogger(_OPENAI_TRANSPORT_LOGGER_NAME)
 
 
 # ---------------------------------------------------------------------------
@@ -101,10 +101,10 @@ def _build_openai_user_agent(custom_user_agent: Optional[str], openai_default_us
 
 def _log_streaming_response_notice(logging_enabled: bool) -> bool:
     if logging_enabled:
-        _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response will be logged as consumed]")
+        _openai_transport_logger.debug("Body: [Streaming response will be logged as consumed]")
         return True
 
-    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming content exists]")
+    _openai_transport_logger.debug("Body: [Streaming content exists]")
     return False
 
 
@@ -113,9 +113,9 @@ def _log_streaming_response_chunk(chunk: bytes) -> None:
         return
 
     try:
-        _OPENAI_TRANSPORT_LOGGER.debug("Body chunk:\n %s", chunk.decode("utf-8"))
+        _openai_transport_logger.debug("Body chunk:\n %s", chunk.decode("utf-8"))
     except Exception:  # pylint: disable=broad-exception-caught
-        _OPENAI_TRANSPORT_LOGGER.debug("Body chunk (raw):\n  %r", chunk)
+        _openai_transport_logger.debug("Body chunk (raw):\n  %r", chunk)
 
 
 class _LoggingSyncByteStream(httpx.SyncByteStream):
@@ -128,7 +128,7 @@ class _LoggingSyncByteStream(httpx.SyncByteStream):
                 _log_streaming_response_chunk(chunk)
                 yield chunk
         finally:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response completed]")
+            _openai_transport_logger.debug("Body: [Streaming response completed]")
 
     def close(self) -> None:
         close = getattr(self._stream, "close", None)
@@ -146,7 +146,7 @@ class _LoggingAsyncByteStream(httpx.AsyncByteStream):
                 _log_streaming_response_chunk(chunk)
                 yield chunk
         finally:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Streaming response completed]")
+            _openai_transport_logger.debug("Body: [Streaming response completed]")
 
     async def aclose(self) -> None:
         aclose = getattr(self._stream, "aclose", None)
@@ -305,7 +305,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         base_url = _resolve_openai_base_url(self._config, agent_name, kwargs)
         default_query = _resolve_openai_query_params(self._config, agent_name, kwargs)
 
-        _OPENAI_TRANSPORT_LOGGER.debug(  # pylint: disable=specify-parameter-names-in-call
+        _openai_transport_logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
             base_url,
         )
@@ -426,21 +426,21 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         :rtype: httpx.Response
         """
 
-        _OPENAI_TRANSPORT_LOGGER.debug("\n==> Request:\n%s %s", request.method, request.url)
+        _openai_transport_logger.debug("\n==> Request:\n%s %s", request.method, request.url)
         headers = dict(request.headers)
         self._sanitize_auth_header(headers)
-        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(headers.items()):
-            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         self._log_request_body(request)
 
         response = super().handle_request(request)
 
-        _OPENAI_TRANSPORT_LOGGER.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
-        _OPENAI_TRANSPORT_LOGGER.debug("Headers:")
+        _openai_transport_logger.debug("\n<== Response:\n%s %s", response.status_code, response.reason_phrase)
+        _openai_transport_logger.debug("Headers:")
         for key, value in sorted(dict(response.headers).items()):
-            _OPENAI_TRANSPORT_LOGGER.debug("  %s: %s", key, value)
+            _openai_transport_logger.debug("  %s: %s", key, value)
 
         if self._is_streaming_response(response):
             if _log_streaming_response_notice(self._logging_enabled):
@@ -448,16 +448,16 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         else:
             content = response.read()
             if content is None or content == b"":
-                _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+                _openai_transport_logger.debug("Body: [No content]")
             else:
                 if self._logging_enabled:
                     try:
-                        _OPENAI_TRANSPORT_LOGGER.debug("Body:\n %s", content.decode("utf-8"))
+                        _openai_transport_logger.debug("Body:\n %s", content.decode("utf-8"))
                     except Exception:  # pylint: disable=broad-exception-caught
-                        _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                        _openai_transport_logger.debug("Body (raw):\n  %r", content)
                 else:
-                    _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
-        _OPENAI_TRANSPORT_LOGGER.debug("\n")
+                    _openai_transport_logger.debug("Body: [Content exists]")
+        _openai_transport_logger.debug("\n")
 
         return response
 
@@ -471,32 +471,32 @@ class _OpenAILoggingTransport(httpx.HTTPTransport):
         # Check content-type header to identify file uploads
         content_type = request.headers.get("content-type", "").lower()
         if "multipart/form-data" in content_type:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Multipart form data - file upload, not logged]")
+            _openai_transport_logger.debug("Body: [Multipart form data - file upload, not logged]")
             return
 
         # Safely check if content exists without accessing it
         if not hasattr(request, "content"):
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content attribute]")
+            _openai_transport_logger.debug("Body: [No content attribute]")
             return
 
         # Very careful content access - wrap in try-catch immediately
         try:
             content = request.content
         except Exception as access_error:  # pylint: disable=broad-exception-caught
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Cannot access content: %s]", access_error)
+            _openai_transport_logger.debug("Body: [Cannot access content: %s]", access_error)
             return
 
         if content is None or content == b"":
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [No content]")
+            _openai_transport_logger.debug("Body: [No content]")
             return
 
         if self._logging_enabled:
             try:
-                _OPENAI_TRANSPORT_LOGGER.debug("Body:\n  %s", content.decode("utf-8"))
+                _openai_transport_logger.debug("Body:\n  %s", content.decode("utf-8"))
             except Exception:  # pylint: disable=broad-exception-caught
-                _OPENAI_TRANSPORT_LOGGER.debug("Body (raw):\n  %r", content)
+                _openai_transport_logger.debug("Body (raw):\n  %r", content)
         else:
-            _OPENAI_TRANSPORT_LOGGER.debug("Body: [Content exists]")
+            _openai_transport_logger.debug("Body: [Content exists]")
 
 
 __all__: List[str] = [
