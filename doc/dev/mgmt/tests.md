@@ -92,32 +92,17 @@ credentials = DefaultAzureCredential()
 
 ## Providing credentials to the tests
 
-When you run tests in playback mode, they use a fake credentials file, located at [`eng/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake], to simulate authenticating with Azure. In most scenarios you will not have to adjust this file, you will have to make edits to this file if your service uses values that are not already included in the `mgmt_settings_fake.py` file.
+When you run tests in playback mode, they use a fake credentials file, located at [`eng/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py`][mgmt_settings_fake], to simulate authenticating with Azure. In most scenarios you will not have to adjust this file. You only need to edit it if your service uses values that are not already included.
 
-In live mode, you need to use real credentials like those you obtained in the previous section. To enable the tests to use them, make a copy of the `mgmt_settings_fake.py` file in the same location, and rename it `mgmt_settings_real.py`.
-Then make the following changes:
+In live mode, the test framework reads credentials and settings directly from environment variables. In addition to the `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, and `AZURE_CLIENT_SECRET` variables described above, set `AZURE_SUBSCRIPTION_ID` to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal][azure_portal].)
 
-* Change the value of the `SUBSCRIPTION_ID` constant to your subscription ID. (If you don't have it, you can find it in the "Overview" section of the "Subscriptions" blade in the [Azure portal][azure_portal].)
-* Change the `get_azure_core_credentials()` function to construct and return a `ClientSecretCredential`:
-```python
-def get_azure_core_credentials(**kwargs):
-    from azure.identity import ClientSecretCredential
-    import os
-    return ClientSecretCredential(
-        client_id = os.environ['AZURE_CLIENT_ID'],
-        client_secret = os.environ['AZURE_CLIENT_SECRET'],
-        tenant_id = os.environ['AZURE_TENANT_ID']
-    )
+```Shell
+$env:AZURE_SUBSCRIPTION_ID='<value>'        # PowerShell only
+set AZURE_SUBSCRIPTION_ID=<value>           # Windows CMD
+export AZURE_SUBSCRIPTION_ID=<value>        # Linux shell only
 ```
-* Or you could use the `get_credentials()` function to construct and return a `DefaultAzureCredential`:
-```
-def get_credentials(**kwargs):
-    from azure.identity import DefaultAzureCredential
-    return DefaultAzureCredential()
-```
-These two methods are used by the authentication methods within `AzureMgmtRecordedTestCase` to provide the correct credential for your client class, you do not need to call these methods directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
 
-**Important: `mgmt_settings_real.py` should not be committed since it contains your actual credentials! To prevent this, it is included in `.gitignore`.**
+`AzureMgmtRecordedTestCase` creates the appropriate credential for your client from these environment variables. You do not need to create a `mgmt_settings_real.py` file or call the credential helper functions directly. Authenticating clients will be discussed further in the [examples](#writing-management-plane-test) section.
 
 ## Running tests in live mode
 
@@ -184,7 +169,7 @@ This simple test creates a resource group and checks that its name is assigned c
 Notes:
 1. This test inherits all necessary behavior for HTTP recording and playback described previously in this document from its `AzureMgmtRecordedTestCase` superclass. You don't need to do anything special to implement it.
 2. The `get_resource_name()` helper method of `AzureMgmtRecordedTestCase` creates a pseudorandom name based on the parameter and the names of the test file and method. This ensures that the name generated is the same for each run of the same test, ensuring reproducibility and preventing name collisions if the tests are run live and the same parameter is used from several different tests.
-3. The `create_mgmt_client()` helper method of `AzureMgmtRecordedTestCase` creates a client object using the credentials from `mgmt_settings_fake.py` or `mgmt_settings_real.py` as appropriate, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
+3. The `create_mgmt_client()` helper method of `AzureMgmtRecordedTestCase` creates a client object using fake credentials during playback or credentials from environment variables in live mode, with some checks to make sure it's created successfully and cause the unit test to fail if not. You should use it for any clients you create.
 4. While the test cleans up the resource group it creates, you will need to manually delete any resources you've created independent of the test framework. But if you need something like a resource group as a prerequisite for what you're actually trying to test, you should use a "preparer" as demonstrated in the following two examples. Preparers will create and clean up helper resources for you.
 
 
