@@ -11,8 +11,11 @@
 
 ### Breaking Changes
 
-  - Deleted or renamed model `OfferingsListResult`
   - Deleted or renamed method `OfferingsOperations.list`
+
+### Other Changes
+
+  - Deleted model `OfferingsListResult` which actually was not used by SDK users
 
 ## 10.0.0b1 (2026-03-27)
 
