@@ -1189,6 +1189,50 @@ def test_proactive_response_waits_for_acceptance() -> None:
     assert done["type"] == "response.done"
 
 
+def test_turn_started_while_proactive_active_closes_1008() -> None:
+    app = _app()
+    colliding_callback_called = threading.Event()
+
+    @app.on_user_message
+    async def on_message(session: VoiceSession, event, response: VoiceResponse) -> None:
+        if event.item_id != "in_1":
+            # A colliding turn must be rejected before its callback runs; if the
+            # guard regressed this would emit a second concurrent response.
+            colliding_callback_called.set()
+            await response.send_text("should not run")
+            return
+        await response.decline()
+        proactive = await session.start_proactive_response(supersede_key="job-1")
+        await proactive.send_text("Your job completed")
+        # Intentionally do not call proactive.done(): keep it active after this
+        # callback returns so the next turn collides with the live proactive
+        # response and exercises the single-active-response guard.
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        assert websocket.receive_json()["type"] == "response.none"
+        proactive_created = websocket.receive_json()
+        assert proactive_created["type"] == "response.created"
+        websocket.send_json(
+            {
+                "type": "response.accepted",
+                "id": "m_accepted",
+                "ts": _TS,
+                "response_id": proactive_created["response_id"],
+            }
+        )
+        assert websocket.receive_json()["type"] == "response.output_text.done"
+
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            websocket.send_json(_user_message(message_id="m_user2", item_id="in_2"))
+            while True:
+                websocket.receive_json()
+
+    assert exc_info.value.code == 1008
+    assert not colliding_callback_called.is_set()
+
+
 def test_proactive_drop_raises_typed_error() -> None:
     app = _app()
     dropped = threading.Event()
@@ -1947,6 +1991,62 @@ def test_cancellation_resistant_task_is_tracked_until_done(monkeypatch) -> None:
         task = captured["task"]
         assert task in conn._resistant_tasks  # pylint: disable=protected-access
         assert not task.done()
+
+
+def test_resistant_task_limit_closes_without_additional_work(monkeypatch) -> None:
+    """Reaching the cancellation-resistant task cap must wake connection
+    supervision and close immediately, without relying on another callback work
+    item to make the worker notice the limit.
+    """
+    monkeypatch.setattr(voice_host, "_MAX_RESISTANT_TASKS", 1)
+    monkeypatch.setattr(voice_host, "_CLEANUP_TIMEOUT_SECONDS", 0.02)
+    app = _app()
+    cancelled = threading.Event()
+    closed = threading.Event()
+    close_codes: list[int] = []
+
+    original_close = voice_host._VoiceConnection._close
+
+    async def capture_close(self, *, code, reason):
+        close_codes.append(code)
+        closed.set()
+        await original_close(self, code=code, reason=reason)
+
+    monkeypatch.setattr(voice_host._VoiceConnection, "_close", capture_close)
+
+    @app.on_user_message
+    async def on_message(_session, _event: UserMessageEvent, response: VoiceResponse) -> None:
+        await response.send_text_delta("hi")
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            cancelled.set()
+            await asyncio.Event().wait()  # resistant: swallow cancellation
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        created = websocket.receive_json()
+        delta = websocket.receive_json()
+        websocket.send_json(
+            {
+                "type": "barge_in",
+                "id": "m_barge",
+                "ts": _TS,
+                "response_id": created["response_id"],
+                "item_id": delta["item_id"],
+                "heard_text": "hi",
+            }
+        )
+        assert cancelled.wait(timeout=2.0)
+        # No second frame or callback work is sent. The one-shot resource-limit
+        # signal itself must interrupt the pending receive and close the socket.
+        assert closed.wait(timeout=1.0)
+        with pytest.raises(WebSocketDisconnect) as exc_info:
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1011
+    assert close_codes == [1011]
 
 
 def test_no_second_terminal_when_callback_returns_with_cancel_pending() -> None:

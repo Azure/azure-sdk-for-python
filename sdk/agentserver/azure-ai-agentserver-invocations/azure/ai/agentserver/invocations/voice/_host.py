@@ -421,6 +421,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         # bounded cleanup wrapper (they swallowed CancelledError). Tracked here
         # until they actually finish so they are never left running untracked.
         self._resistant_tasks: set[asyncio.Task[None]] = set()
+        # One-shot fatal signal observed alongside the receive pump and callback
+        # worker. This is a successful Future[None], rather than a future carrying
+        # an exception, so activation ending before supervision cannot produce an
+        # un-retrieved-future warning.
+        self._resource_limit_reached: asyncio.Future[None] = asyncio.get_running_loop().create_future()
         # Dedicated task for the on_session_end callback so session teardown does
         # not sit behind possibly-stalled ordinary callback work in the queue.
         self._session_end_task: asyncio.Task[None] | None = None
@@ -487,11 +492,18 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             name="voice_receive",
         )
         try:
-            done, _ = await asyncio.wait((receive_task, worker), return_when=asyncio.FIRST_COMPLETED)
+            done, _ = await asyncio.wait(
+                (receive_task, worker, self._resource_limit_reached),
+                return_when=asyncio.FIRST_COMPLETED,
+            )
         except BaseException:
             receive_task.cancel()
             await asyncio.gather(receive_task, return_exceptions=True)
             raise
+        if self._resource_limit_reached in done:
+            receive_task.cancel()
+            await asyncio.gather(receive_task, return_exceptions=True)
+            raise RuntimeError("Voice cancellation-resistant task limit reached")
         if worker in done:
             receive_task.cancel()
             await asyncio.gather(receive_task, return_exceptions=True)
@@ -1156,6 +1168,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             try:
                 if work is None:
                     return
+                if self._resource_limit_reached.done():
+                    # Defensive backstop for work already queued when the fatal
+                    # signal won: never dispatch another customer callback.
+                    raise RuntimeError("Voice cancellation-resistant task limit reached")
                 if work.response is not None:
                     await self._process_turn_work(work)
                 else:
@@ -1175,6 +1191,19 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         async with self._state_lock:
             if response.is_terminal or self._ending:
                 return
+            active = self._active_response
+            if active is not None and active is not response and not active.is_terminal:
+                # A previously accepted proactive response is still active. Overwriting
+                # ``_active_response`` here would make that response undiscoverable to
+                # ``_find_response_locked`` before it is remembered, so its later
+                # barge-in/timeout could be dropped and two responses could emit
+                # concurrently. This violates the single-active-response invariant and
+                # is treated as an illegal protocol state, mirroring the symmetric guard
+                # in ``_handle_response_accepted``.
+                raise VoiceBridgeProtocolError(
+                    "A new turn started while another response is still active",
+                    close_code=1008,
+                )
             self._active_response = response
             self._active_release = release
 
@@ -1343,16 +1372,20 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         # even if it swallows CancelledError and runs past the cleanup deadline.
         # The bounded wrapper below only waits _CLEANUP_TIMEOUT_SECONDS and is then
         # discarded; without this the underlying task would keep running with no
-        # owner (untracked resource leak). Bound the count so a hostile or broken
-        # callback cannot accumulate cancellation-resistant tasks without limit.
+        # owner (untracked resource leak). Once the cap is reached, signal the
+        # connection supervisor immediately so no more callbacks are dispatched.
+        self._resistant_tasks.difference_update(
+            existing for existing in tuple(self._resistant_tasks) if existing.done()
+        )
         if not task.done():
             self._resistant_tasks.add(task)
             task.add_done_callback(self._resistant_tasks.discard)
-            if len(self._resistant_tasks) > _MAX_RESISTANT_TASKS:
+            if len(self._resistant_tasks) >= _MAX_RESISTANT_TASKS and not self._resource_limit_reached.done():
                 logger.error(
-                    "Voice cancellation-resistant task count exceeded %d; a callback is ignoring cancellation",
+                    "Voice cancellation-resistant task limit reached (%d); closing connection",
                     _MAX_RESISTANT_TASKS,
                 )
+                self._resource_limit_reached.set_result(None)
 
         async def _bounded_cleanup() -> None:
             try:
