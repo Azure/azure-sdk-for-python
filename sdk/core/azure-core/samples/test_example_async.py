@@ -23,14 +23,16 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+# pylint: disable=non-abstract-transport-import,networking-import-outside-azure-core-transport
 from typing import Iterable, MutableSequence, Union
+
 import pytest
+import trio
+
 from azure.core.pipeline import AsyncPipeline
 from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
 from azure.core.rest import HttpRequest, AsyncHttpResponse
-
-import trio
 
 
 @pytest.mark.asyncio

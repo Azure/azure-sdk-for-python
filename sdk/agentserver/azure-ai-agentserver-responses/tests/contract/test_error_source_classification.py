@@ -21,7 +21,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
-def _noop_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterator[Any]:
+async def _noop_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
     async def _events() -> AsyncIterator[Any]:
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None) or "")
         yield stream.emit_created()
@@ -37,7 +37,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any) -> Async
     return _events()
 
 
-def _throwing_handler(request: Any, context: Any, cancellation_signal: Any) -> AsyncIterator[Any]:
+async def _throwing_handler(request: Any, context: Any, cancellation_signal: asyncio.Event) -> AsyncIterator[Any]:
     async def _events() -> AsyncIterator[Any]:
         raise RuntimeError("Simulated handler failure")
         yield  # pragma: no cover

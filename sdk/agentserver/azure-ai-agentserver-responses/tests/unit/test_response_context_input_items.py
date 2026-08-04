@@ -63,7 +63,7 @@ def _assert_output_message(item: Any) -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__no_references_passes_through() -> None:
     """Inline items are returned as Item subtypes (ItemMessage)."""
-    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hello"}]})
     request = _make_request([msg])
     ctx = ResponseContext(
         response_id="resp_001",
@@ -87,7 +87,10 @@ async def test_get_input_items__no_references_passes_through() -> None:
 async def test_get_input_items__resolves_single_reference() -> None:
     """A single ItemReferenceParam is resolved and converted to an Item subtype."""
     ref = _item_ref("item_abc")
-    resolved_item = OutputItemMessage(id="item_abc", role="assistant", content=[], status="completed")
+    resolved_item = cast(
+        OutputItemMessage,
+        {"id": "item_abc", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved_item])
 
     request = _make_request([ref])
@@ -115,11 +118,18 @@ async def test_get_input_items__resolves_single_reference() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__mixed_inline_and_references() -> None:
     """Inline items and references are interleaved; references are resolved in-place."""
-    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = cast(
+        ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
+    )
     ref1 = _item_ref("item_111")
     ref2 = _item_ref("item_222")
-    resolved1 = OutputItemMessage(id="item_111", role="assistant", content=[], status="completed")
-    resolved2 = OutputItemMessage(id="item_222", role="user", content=[], status="completed")
+    resolved1 = cast(
+        OutputItemMessage,
+        {"id": "item_111", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
+    resolved2 = cast(
+        OutputItemMessage, {"id": "item_222", "type": "message", "role": "user", "content": [], "status": "completed"}
+    )
     provider = _mock_provider(get_items_return=[resolved1, resolved2])
 
     request = _make_request([inline_msg, ref1, ref2])
@@ -150,7 +160,10 @@ async def test_get_input_items__unresolvable_references_dropped() -> None:
     """References that resolve to None are silently dropped."""
     ref1 = _item_ref("item_exists")
     ref2 = _item_ref("item_missing")
-    resolved1 = OutputItemMessage(id="item_exists", role="assistant", content=[], status="completed")
+    resolved1 = cast(
+        OutputItemMessage,
+        {"id": "item_exists", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved1, None])
 
     request = _make_request([ref1, ref2])
@@ -176,7 +189,9 @@ async def test_get_input_items__unresolvable_references_dropped() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__no_provider_no_resolution() -> None:
     """Without a provider, ItemReferenceParam entries are silently dropped (unresolvable)."""
-    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = cast(
+        ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
+    )
     ref = _item_ref("item_xyz")
 
     request = _make_request([inline_msg, ref])
@@ -204,7 +219,10 @@ async def test_get_input_items__no_provider_no_resolution() -> None:
 async def test_get_input_items__caches_result() -> None:
     """Calling get_input_items() twice returns the cached result."""
     ref = _item_ref("item_cache")
-    resolved = OutputItemMessage(id="item_cache", role="assistant", content=[], status="completed")
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_cache", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
 
     request = _make_request([ref])
@@ -276,7 +294,10 @@ async def test_get_input_items__empty_input() -> None:
 async def test_get_input_items__forwards_platform_context() -> None:
     """Platform context is passed through to provider.get_items()."""
     ref = _item_ref("item_iso")
-    resolved = OutputItemMessage(id="item_iso", role="assistant", content=[], status="completed")
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_iso", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
     isolation = PlatformContext(user_id_key="user_123", call_id="call_456")
 
@@ -331,10 +352,13 @@ async def test_get_input_items__all_references_unresolvable() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items__preserves_order() -> None:
     """Order of inline items and resolved references matches input order."""
-    msg1 = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="first")])
+    msg1 = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "first"}]})
     ref = _item_ref("item_mid")
-    msg2 = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="last")])
-    resolved = OutputItemMessage(id="item_mid", role="assistant", content=[], status="completed")
+    msg2 = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "last"}]})
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_mid", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
 
     request = _make_request([msg1, ref, msg2])
@@ -361,7 +385,7 @@ async def test_get_input_items__preserves_order() -> None:
 
 def test_to_output_item__converts_item_message() -> None:
     """ItemMessage is converted to OutputItemMessage with generated ID."""
-    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hello"}]})
     result = to_output_item(msg, "resp_123")
     assert result is not None
     _assert_output_message(result)
@@ -415,9 +439,14 @@ def test_to_item__returns_none_for_output_only_types(output_item: dict[str, str]
 @pytest.mark.asyncio
 async def test_get_input_items_for_persistence__resolves_references() -> None:
     """_get_input_items_for_persistence resolves item_reference entries to OutputItem."""
-    inline_msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hi")])
+    inline_msg = cast(
+        ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hi"}]}
+    )
     ref = _item_ref("item_ref1")
-    resolved = OutputItemMessage(id="item_ref1", role="assistant", content=[], status="completed")
+    resolved = cast(
+        OutputItemMessage,
+        {"id": "item_ref1", "type": "message", "role": "assistant", "content": [], "status": "completed"},
+    )
     provider = _mock_provider(get_items_return=[resolved])
 
     request = _make_request([inline_msg, ref])
@@ -439,7 +468,7 @@ async def test_get_input_items_for_persistence__resolves_references() -> None:
 @pytest.mark.asyncio
 async def test_get_input_items_for_persistence__no_references_passes_through() -> None:
     """When no references exist, all inline items are returned as OutputItem."""
-    msg = ItemMessage(role="user", content=[MessageContentInputTextContent(type="input_text", text="hello")])
+    msg = cast(ItemMessage, {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "hello"}]})
     request = _make_request([msg])
     ctx = ResponseContext(
         response_id="resp_persist_002",

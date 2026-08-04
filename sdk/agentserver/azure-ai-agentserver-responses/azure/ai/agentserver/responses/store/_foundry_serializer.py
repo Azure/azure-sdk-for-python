@@ -7,8 +7,8 @@ from __future__ import annotations
 import json
 from typing import Any, Iterable
 
-from azure.ai.agentserver.responses.models._wire import to_wire_dict
-from azure.ai.agentserver.responses.models import OutputItem, ResponseObject
+from ..models._wire import to_wire_dict
+from ..models import OutputItem, ResponseObject
 
 
 def serialize_create_request(

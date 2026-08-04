@@ -53,7 +53,7 @@ namespace azure.ai.agentserver.core
     def azure.ai.agentserver.core.set_request_context(context: FoundryAgentRequestContext) -> Token[FoundryAgentRequestContext]: ...
 
 
-    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[_Content], span: Any) -> AsyncIterator[_Content]: ...
+    async def azure.ai.agentserver.core.trace_stream:async(iterator: AsyncIterable[StreamContent], span: Any) -> AsyncIterator[StreamContent]: ...
 
 
     class azure.ai.agentserver.core.AgentConfig:
@@ -96,6 +96,13 @@ namespace azure.ai.agentserver.core
                 **kwargs: Any
             ) -> None: ...
 
+        def add_middleware(
+                self, 
+                middleware_class: MiddlewareFactory[P], 
+                *args: args, 
+                **kwargs: kwargs
+            ) -> None: ...
+
         def register_pre_shutdown_callback(self, fn: Callable[[], None]) -> None: ...
 
         def register_server_version(self, version_segment: str) -> None: ...
@@ -115,7 +122,7 @@ namespace azure.ai.agentserver.core
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
         @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
+        async def sse_keepalive_stream(iterator: AsyncIterable[StreamContent], interval: int) -> AsyncIterator[StreamContent]: ...
 
 
     class azure.ai.agentserver.core.FoundryAgentRequestContext:
@@ -582,6 +589,12 @@ namespace azure.ai.agentserver.core.tasks
             timeout: timedelta | None = Ellipsis, 
             title: str | None = Ellipsis
         ) -> Callable[[Callable[[TaskContext[Input]], Awaitable[Output]]], MultiTurnTask[Input, Output]]: ...
+
+
+    def azure.ai.agentserver.core.tasks.resilient_tasks_enabled() -> bool: ...
+
+
+    def azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled(value: bool = True) -> None: ...
 
 
     @overload

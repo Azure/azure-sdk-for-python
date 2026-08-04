@@ -14,7 +14,7 @@ from collections.abc import (  # pylint: disable=import-error
     Awaitable,
     Callable,
 )
-from typing import Any, MutableMapping, Optional, Union
+from typing import Any, MutableMapping, Optional
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -27,6 +27,7 @@ from . import _config, _tracing
 from ._middleware import InboundRequestLoggingMiddleware
 from ._request_id import RequestIdMiddleware as _RequestIdMiddleware
 from ._server_version import build_server_version
+from ._types import MiddlewareFactory, P, StreamContent
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -56,6 +57,51 @@ def _read_task_manager_shutdown_grace() -> float:
         return max(0.0, float(raw))
     except ValueError:
         return 25.0
+
+
+def _has_registered_tasks() -> bool:
+    """Return True iff the ``_REGISTERED_DESCRIPTORS`` list is non-empty.
+
+    That list is populated at import time by the durable-task decorators:
+    ``@task`` and ``@multi_turn_task`` both construct a
+    :class:`~azure.ai.agentserver.core.tasks.Task` whose ``__init__`` appends
+    to it (``MultiTurnTask`` wraps an inner ``Task``, so it registers too). It
+    is the SAME list ``TaskManager.startup()`` already reads to bind recovery
+    callbacks, so checking it here introduces no new timing assumption.
+
+    Returns False when the resilient tasks module is unavailable or no durable
+    task has been declared.
+
+    :return: Whether at least one durable task is registered.
+    :rtype: bool
+    """
+    try:
+        from .tasks._decorator import (  # pylint: disable=import-outside-toplevel
+            _REGISTERED_DESCRIPTORS,
+        )
+    except ImportError:
+        return False
+    return bool(_REGISTERED_DESCRIPTORS)
+
+
+def _resilient_tasks_enabled() -> bool:
+    """Return True iff the resilient task subsystem was explicitly enabled.
+
+    Reads the process-global switch toggled by
+    :func:`~azure.ai.agentserver.core.tasks.set_resilient_tasks_enabled`
+    (defaults to ``False``). Returns False when the resilient tasks module is
+    unavailable.
+
+    :return: Whether resilient tasks were explicitly enabled.
+    :rtype: bool
+    """
+    try:
+        from .tasks._enablement import (  # pylint: disable=import-outside-toplevel
+            resilient_tasks_enabled,
+        )
+    except ImportError:
+        return False
+    return resilient_tasks_enabled()
 
 
 def _mask_uri(uri: str) -> str:
@@ -265,7 +311,38 @@ class AgentServerHost(Starlette):
                 protocols,
             )
 
-            # --- Resilient task manager auto-initialization ---
+            # --- Resilient task manager initialization ---
+            #
+            # The TaskManager is CONSTRUCTED unconditionally (whenever the
+            # resilient tasks module is importable). Construction is cheap and
+            # makes NO task-store calls — it only builds in-memory state (an
+            # idle provider client, empty routing tables, a lease-owner string).
+            # This keeps ``get_task_manager()`` working so a ``@task``-based app
+            # can run tasks without hitting ``TaskManagerNotInitialized``,
+            # while paying zero network cost until a task is actually used.
+            #
+            # The network-backed startup RECOVERY SCAN (a blocking hosted
+            # task-store ``list()`` plus ``DefaultAzureCredential`` token
+            # acquisition, which would otherwise gate server readiness) — and
+            # the periodic recovery loop it spawns — run when EITHER holds:
+            #   (1) at least one durable task was declared (``@task`` /
+            #       ``@multi_turn_task``, tracked in ``_REGISTERED_DESCRIPTORS``)
+            #       — an app that uses tasks gets recovery automatically, OR
+            #   (2) resilient tasks were explicitly enabled via
+            #       ``set_resilient_tasks_enabled(True)`` — a force-enable that
+            #       starts the recovery loop even before any task is declared,
+            #       so a task declared later is picked up by the loop.
+            # A plain server that neither declares a task nor sets the switch
+            # (e.g. an invocations-only host) makes no task-store call at
+            # startup.
+            #
+            # NOTE (deferred): if the switch is OFF and no task is declared at
+            # startup, the recovery loop is not started, so a task declared
+            # LATER in that lifetime will run but its prior-crash orphans are
+            # not scanned until the next restart. Fully closing that requires a
+            # lazy manager-start on first late registration; tracked as future
+            # work (the manager cannot be made fully async, only lazily
+            # started).
             task_manager = None
             try:
                 from .tasks._manager import (  # pylint: disable=import-outside-toplevel
@@ -279,8 +356,16 @@ class AgentServerHost(Starlette):
                     shutdown_grace_seconds=_read_task_manager_shutdown_grace(),
                 )
                 set_task_manager(task_manager)
-                await task_manager.startup()
-                logger.info("TaskManager initialized automatically")
+
+                if _resilient_tasks_enabled() or _has_registered_tasks():
+                    await task_manager.startup()
+                    logger.info("TaskManager initialized with startup recovery")
+                else:
+                    logger.info(
+                        "TaskManager initialized (recovery deferred; enabled=%s, tasks_declared=%s)",
+                        _resilient_tasks_enabled(),
+                        _has_registered_tasks(),
+                    )
             except ImportError:
                 pass  # resilient module not available
             except Exception:  # pylint: disable=broad-exception-caught
@@ -360,6 +445,24 @@ class AgentServerHost(Starlette):
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
 
         self.add_middleware(TraceContextMiddleware)
+
+    def add_middleware(
+        self,
+        middleware_class: MiddlewareFactory[P],
+        *args: P.args,
+        **kwargs: P.kwargs,
+    ) -> None:
+        """Add middleware to the host.
+
+        This exposes Starlette's middleware extension point without leaking
+        Starlette's private type aliases in this package's public API.
+
+        :param middleware_class: Middleware class or factory to add.
+        :type middleware_class: MiddlewareFactory
+        :param args: Positional arguments forwarded to the middleware.
+        :type args: Any
+        """
+        super().add_middleware(middleware_class, *args, **kwargs)
 
     # ------------------------------------------------------------------
     # Server version (x-platform-server header)
@@ -564,13 +667,11 @@ class AgentServerHost(Starlette):
     # Streaming utilities
     # ------------------------------------------------------------------
 
-    _Content = Union[str, bytes, memoryview]
-
     @staticmethod
     async def sse_keepalive_stream(
-        iterator: "AsyncIterable[AgentServerHost._Content]",
+        iterator: AsyncIterable[StreamContent],
         interval: int,
-    ) -> "AsyncIterator[AgentServerHost._Content]":
+    ) -> AsyncIterator[StreamContent]:
         """Interleave SSE keep-alive comment frames into a streaming body.
 
         Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
@@ -578,16 +679,16 @@ class AgentServerHost(Starlette):
         proxies/load-balancers from closing idle connections.
 
         :param iterator: The async iterable to wrap.
-        :type iterator: AsyncIterable[str or bytes or memoryview]
+        :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
         :param interval: Seconds between keep-alive frames. Must be > 0.
         :type interval: int
         :return: An async iterator with interleaved keep-alive frames.
-        :rtype: AsyncIterator[str or bytes or memoryview]
+        :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
         """
         ait = iterator.__aiter__()
         # Reuse the same __anext__ task across timeouts to avoid cancelling
         # the upstream iterator when wait_for expires.
-        pending: "Optional[asyncio.Task[AgentServerHost._Content]]" = None
+        pending: Optional[asyncio.Task[StreamContent]] = None
         while True:
             if pending is None:
                 pending = asyncio.ensure_future(ait.__anext__())
