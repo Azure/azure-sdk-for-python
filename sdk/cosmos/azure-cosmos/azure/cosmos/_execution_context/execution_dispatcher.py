@@ -34,6 +34,7 @@ from azure.cosmos._execution_context.query_execution_info import _PartitionedQue
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.http_constants import StatusCodes, SubStatusCodes
 from .._constants import _Constants as Constants
+from .. import _base
 
 # pylint: disable=protected-access
 
@@ -97,11 +98,16 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
     def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
         query_to_use = self._query if self._query is not None else "Select * from root r"
+        # Forward the per-call timeouts and OperationStartTime only when the caller
+        # set them, so an unset value falls back to the client/policy default
+        # instead of overriding it with None.
+        query_plan_kwargs = {}
+        _base._copy_per_call_timeouts_to_kwargs(self._options, query_plan_kwargs)
         query_plan = self._client._GetQueryPlanThroughGateway(
             query_to_use,
             self._resource_link,
             self._options.get('excludedLocations'),
-            read_timeout=self._options.get('read_timeout')
+            **query_plan_kwargs
         )
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)

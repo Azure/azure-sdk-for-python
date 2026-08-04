@@ -35,7 +35,7 @@ from azure.cosmos._change_feed.change_feed_utils import add_args_to_kwargs, vali
 from . import _utils as utils
 from ._availability_strategy_config import _validate_request_hedging_strategy
 from ._base import (_build_properties_cache, _deserialize_throughput, _replace_throughput, build_options,
-                    GenerateGuidId, validate_cache_staleness_value)
+                    _copy_per_call_timeouts_to_kwargs, GenerateGuidId, validate_cache_staleness_value)
 from ._change_feed.feed_range_internal import FeedRangeInternalEpk
 from ._constants import _Constants as Constants, TimeoutScope
 from ._cosmos_client_connection import CosmosClientConnection
@@ -104,12 +104,9 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if options:
             if "excludedLocations" in options:
                 kwargs['excluded_locations'] = options['excludedLocations']
-            if Constants.OperationStartTime in options:
-                kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-            if Constants.Kwargs.TIMEOUT in options:
-                kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
-            if Constants.Kwargs.READ_TIMEOUT in options:
-                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
+            # Forward the per-call timeouts and the operation start time so the
+            # container read honors them instead of the client/policy default.
+            _copy_per_call_timeouts_to_kwargs(options, kwargs)
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:

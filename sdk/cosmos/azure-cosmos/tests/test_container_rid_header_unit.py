@@ -35,6 +35,22 @@ PARTITION_KEY_RANGES = [
 ]
 
 
+def _wire_mock_change_feed_sidecars(kwargs, etag):
+    """Populate optional internal sidecars used by the /pkranges drain loop.
+
+    The production path wires `_internal_response_status_capture` in
+    `_synchronized_request` / `_asynchronous_request`. These unit-test mocks call
+    `_ReadPartitionKeyRanges` directly, so they must seed the same sidecar to
+    keep `evaluate_drain_page` on its normal path.
+    """
+    status_capture = kwargs.get("_internal_response_status_capture")
+    if status_capture is not None:
+        status_capture[0] = http_constants.StatusCodes.NOT_MODIFIED
+    response_hook = kwargs.get("response_hook")
+    if response_hook:
+        response_hook({"etag": etag}, None)
+
+
 class CapturingMockClient:
     """A mock CosmosClientConnection that records the feed_options passed
     to _ReadPartitionKeyRanges so tests can assert on them."""
@@ -52,10 +68,7 @@ class CapturingMockClient:
     ):
         self.captured_feed_options = dict(feed_options) if feed_options else {}
         self.call_count += 1
-        # Invoke the response_hook if provided (the cache uses it to capture etag)
-        response_hook = kwargs.get("response_hook")
-        if response_hook:
-            response_hook({"etag": "test-etag-1"}, None)
+        _wire_mock_change_feed_sidecars(kwargs, "test-etag-1")
         return iter(self.partition_key_ranges)
 
 
@@ -91,6 +104,39 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         })
         assert result["containerRID"] == CONTAINER_RID
         assert result["excludedLocations"] == ["West US"]
+
+    def test_format_pk_range_options_timeouts_pass_through(self):
+        """The per-call timeouts (read_timeout, connection_timeout, timeout)
+        must survive sanitization so the partition-key ranges fetch uses the
+        caller's values instead of the client default."""
+        result = _base.format_pk_range_options({
+            "containerRID": CONTAINER_RID,
+            "excludedLocations": ["West US"],
+            "read_timeout": 30,
+            "connection_timeout": 0.5,
+            "timeout": 2,
+            "somethingElse": 123,
+        })
+        assert result["containerRID"] == CONTAINER_RID
+        assert result["excludedLocations"] == ["West US"]
+        assert result["read_timeout"] == 30
+        assert result["connection_timeout"] == 0.5
+        assert result["timeout"] == 2
+        # Unknown keys are still stripped.
+        assert "somethingElse" not in result
+
+    def test_format_pk_range_options_timeouts_absent_not_added(self):
+        """A timeout the caller did not set must stay absent, so the request
+        uses the client default instead of being given None. Only the
+        timeout(s) actually present survive."""
+        result = _base.format_pk_range_options({
+            "containerRID": CONTAINER_RID,
+            "read_timeout": 30,
+        })
+        assert result["read_timeout"] == 30
+        assert "connection_timeout" not in result
+        assert "timeout" not in result
+
 
     # ----- PartitionKeyRangeCache -----
 
@@ -192,6 +238,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 self.captured_feed_options = dict(feed_options) if feed_options else {}
                 self.call_count += 1
+                _wire_mock_change_feed_sidecars(kwargs, "test-etag-1")
                 # First call: initial load returns original ranges
                 # Second call: incremental returns split ranges with unknown parents,
                 #              raising _IncrementalMergeFailed (caught → retry incremental, count 0→1)
@@ -235,6 +282,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 self.captured_feed_options = dict(feed_options) if feed_options else {}
                 self.call_count += 1
+                _wire_mock_change_feed_sidecars(kwargs, "test-etag-1")
                 # Call 1: initial load → good ranges
                 # Call 2: incremental → split ranges (unresolvable) → retry (count 0→1)
                 # Call 3: incremental retry → split ranges again (still unresolvable)
@@ -314,9 +362,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         class HeaderCapturingClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 captured_headers.append(dict(kwargs.get('headers', {})))
-                response_hook = kwargs.get("response_hook")
-                if response_hook:
-                    response_hook({"etag": "etag-full"}, None)
+                _wire_mock_change_feed_sidecars(kwargs, "etag-full")
                 return iter(PARTITION_KEY_RANGES)
 
         client = HeaderCapturingClient()
@@ -343,9 +389,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         class IncompleteRangesClient:
             """Returns ranges with a gap — CompleteRoutingMap will return None."""
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
-                response_hook = kwargs.get("response_hook")
-                if response_hook:
-                    response_hook({"etag": "etag-incomplete"}, None)
+                _wire_mock_change_feed_sidecars(kwargs, "etag-incomplete")
                 # Gap: missing the range covering 3F-7F
                 return iter([
                     {"id": "0", "minInclusive": "", "maxExclusive": "3F"},
@@ -375,9 +419,7 @@ class TestContainerRIDHeaderUnit(unittest.TestCase):
         class FallbackClient:
             def _ReadPartitionKeyRanges(self, _collection_link, feed_options=None, **kwargs):
                 call_count[0] += 1
-                response_hook = kwargs.get("response_hook")
-                if response_hook:
-                    response_hook({"etag": f"etag-{call_count[0]}"}, None)
+                _wire_mock_change_feed_sidecars(kwargs, f"etag-{call_count[0]}")
 
                 if call_count[0] == 1:
                     # First call: incremental — return a child whose parent doesn't exist

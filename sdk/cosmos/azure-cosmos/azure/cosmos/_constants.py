@@ -125,6 +125,8 @@ class _Constants:
         """Socket read timeout in seconds. Used either at client level or request level."""
         TIMEOUT: Literal["timeout"] = "timeout"
         """Absolute timeout in seconds for the combined HTTP request and response processing."""
+        CONNECTION_TIMEOUT: Literal["connection_timeout"] = "connection_timeout"
+        """Socket connect (handshake) timeout in seconds. Used either at client level or request level."""
 
     class UserAgentFeatureFlags(IntEnum):
         """

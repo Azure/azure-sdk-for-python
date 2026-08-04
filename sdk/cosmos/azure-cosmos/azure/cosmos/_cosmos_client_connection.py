@@ -3243,18 +3243,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         """
         if options is None:
             options = {}
-        read_timeout = options.get("read_timeout")
-        if read_timeout is not None:
-            # we currently have a gap where kwargs are not getting passed correctly down the pipeline. In order to make
-            # absolute time out work, we are passing read_timeout via kwargs as a temporary fix
-            kwargs.setdefault("read_timeout", read_timeout)
-
-        operation_start_time = options.get(Constants.OperationStartTime)
-        if operation_start_time is not None:
-            kwargs.setdefault(Constants.OperationStartTime, operation_start_time)
-        timeout = options.get("timeout")
-        if timeout is not None:
-            kwargs.setdefault("timeout", timeout)
+        # Copy the per-call timeouts and operation start time from options into
+        # kwargs, where _Request reads them. Only set values are copied, so an unset
+        # timeout falls back to the client default.
+        base._copy_per_call_timeouts_to_kwargs(options, kwargs)
 
         # Execution context injects this via request options; keep kwargs fallback
         # for compatibility with call paths that still thread internal values there.
@@ -3316,9 +3308,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             change_feed_state: Optional[ChangeFeedState] = options.get("changeFeedState")
             if change_feed_state is not None:
-                feed_options = {}
-                if 'excludedLocations' in options:
-                    feed_options['excludedLocations'] = options['excludedLocations']
+                # Build the pkranges feed_options with the per-call timeouts so the
+                # change-feed routing fetch uses them, not the client default.
+                feed_options = base._build_routing_feed_options(options, ("excludedLocations",))
                 change_feed_state.populate_request_headers(self._routing_map_provider, headers, feed_options)
                 request_params.headers = headers
 

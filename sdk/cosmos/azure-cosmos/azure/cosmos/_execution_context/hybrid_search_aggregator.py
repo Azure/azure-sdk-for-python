@@ -8,6 +8,7 @@ from azure.cosmos._execution_context.base_execution_context import _QueryExecuti
 from azure.cosmos._execution_context import document_producer
 from azure.cosmos._routing import routing_range
 from azure.cosmos import exceptions
+from azure.cosmos import _base
 from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
@@ -451,9 +452,10 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
 
     def _get_target_partition_key_range(self, target_all_ranges):
         if target_all_ranges:
-            feed_options = {}
-            if Constants.ContainerRID in self._options:
-                feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+            # This path reads all ranges directly and skips format_pk_range_options,
+            # so build the feed_options here. Copy containerRID only (not
+            # excludedLocations) so this query's region routing is unchanged.
+            feed_options = _base._build_routing_feed_options(self._options, (Constants.ContainerRID,))
             return list(self._client._ReadPartitionKeyRanges(
                 collection_link=self._resource_link, feed_options=feed_options))
         query_ranges = self._partitioned_query_ex_info.get_query_ranges()

@@ -27,7 +27,7 @@ import json
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Tuple, Awaitable, cast
 
-from azure.cosmos import http_constants, exceptions
+from azure.cosmos import http_constants, exceptions, _base
 from azure.cosmos._change_feed.change_feed_start_from import ChangeFeedStartFromType
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedStateV2, ChangeFeedStateVersion
 from azure.cosmos.aio import _retry_utility_async
@@ -145,9 +145,10 @@ class ChangeFeedFetcherV2(object):
                 callback)
         except CosmosHttpResponseError as e:
             if exceptions._partition_range_is_gone(e) or exceptions._is_partition_split_or_merge(e):
-                # refresh change feed state, preserving relevant options for PK range resolution
-                options = {k: self._feed_options[k] for k in ("excludedLocations", Constants.ContainerRID)
-                           if k in self._feed_options}
+                # Rebuild the routing options with the per-call timeouts so the
+                # post-split pkranges refresh uses them, not the client default.
+                options = _base._build_routing_feed_options(
+                    self._feed_options, ("excludedLocations", Constants.ContainerRID))
                 await self._change_feed_state.handle_feed_range_gone_async(
                     self._client._routing_map_provider,
                     self._resource_link,
