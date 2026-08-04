@@ -60,14 +60,21 @@ def _prepend_note(doc: Union[str, None], message: str) -> str:
 
 def _decorate_class(cls: Type[T]) -> Type[T]:
     cls.__doc__ = _prepend_note(cls.__doc__, _CLASS_MESSAGE)
-    original_init = cls.__init__
+    # Only wrap an ``__init__`` the class defines itself as a real Python function.
+    # Classes without their own ``__init__`` (e.g. exception subclasses) inherit a
+    # C-level slot wrapper; wrapping that with ``functools.wraps`` would set
+    # ``__wrapped__`` to a ``wrapper_descriptor``, which breaks source-inspecting
+    # tools such as the APIView stub generator (``inspect.getfile`` raises
+    # ``TypeError`` on it). The docstring note above still marks the class.
+    original_init = cls.__dict__.get("__init__")
+    if inspect.isfunction(original_init):
 
-    @functools.wraps(original_init)
-    def _init(self, *args, **kwargs):  # type: ignore[no-untyped-def]
-        _warn_once(cls.__name__, _CLASS_MESSAGE)
-        original_init(self, *args, **kwargs)
+        @functools.wraps(original_init)
+        def _init(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+            _warn_once(cls.__name__, _CLASS_MESSAGE)
+            original_init(self, *args, **kwargs)
 
-    cls.__init__ = _init  # type: ignore[method-assign]
+        cls.__init__ = _init  # type: ignore[method-assign]
     return cls
 
 
