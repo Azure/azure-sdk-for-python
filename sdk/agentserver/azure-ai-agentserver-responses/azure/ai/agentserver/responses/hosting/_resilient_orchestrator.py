@@ -878,7 +878,8 @@ class ResilientResponseOrchestrator:
             # ``in_progress`` for next-lifetime recovery (a CancelledError would
             # delete a one-shot ephemeral record and the recovery scanner would
             # find nothing).
-            if ctx.shutdown.is_set() and record is not None and record.status in {"queued", "in_progress"}:
+            shutdown_requested = ctx.shutdown.is_set() or (context is not None and context.shutdown.is_set())
+            if shutdown_requested and record is not None and record.status in {"queued", "in_progress"}:
                 logger.info(
                     "Response %s handler returned during shutdown without terminal; "
                     "calling ctx.exit_for_recovery() so task stays in_progress for recovery.",
