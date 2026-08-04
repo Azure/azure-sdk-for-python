@@ -4,6 +4,7 @@
 
 ### Other Changes
 
+- Cleaned up the public API surface by moving validation-only error helpers to a private implementation module and renaming runtime terminal/replay helpers as private.
 - Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery. The resilient Responses samples now call `set_resilient_tasks_enabled(True)` to explicitly opt in, mirroring the invocations resilient samples.
 
 ## 2.0.0b0 (2026-07-29)
