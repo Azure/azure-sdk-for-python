@@ -1091,9 +1091,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         async with self._state_lock:
             if self._ending:
                 raise VoiceBridgeProtocolError(f"{kind} arrived after session terminal", close_code=1008)
-            if item_id in self._seen_input_ids:
+            item_key = hashlib.sha256(item_id.encode("utf-8")).hexdigest()
+            if item_key in self._seen_input_ids:
                 raise VoiceBridgeProtocolError("Input item_id was reused", close_code=1008)
-            self._seen_input_ids.add(item_id)
+            self._seen_input_ids.add(item_key)
             if response.response_id in self._seen_response_ids:
                 raise RuntimeError("Generated response_id was already used")
             self._seen_response_ids.add(response.response_id)
