@@ -2828,13 +2828,20 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
         copy_resp = await file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        await file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = await file_client.download_file()
-        content = await target_file.readall()
-        assert content == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            await file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = await file_client.download_file()
+            content = await target_file.readall()
+            assert content == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2877,13 +2884,20 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         )
         copy_resp = await file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        await file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = await file_client.download_file()
-        content = await target_file.readall()
-        assert content == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            await file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = await file_client.download_file()
+            content = await target_file.readall()
+            assert content == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @FileSharePreparer()
     @recorded_by_proxy_async

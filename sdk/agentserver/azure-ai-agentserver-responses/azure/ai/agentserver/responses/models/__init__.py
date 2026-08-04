@@ -43,7 +43,7 @@ def _is_public_generated_export(value: object) -> bool:
     return isinstance(value, type) or get_origin(value) in (Literal, Union)
 
 
-_generated_all = [
+_generated_all: list[str] = [
     name
     for module in (_generated_types, _generated_unions)
     for name in dir(module)
@@ -62,7 +62,7 @@ class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The response was cut short because of a content filter."""
 
 
-__all__ = [
+__all__ = [  # pyright: ignore[reportUnsupportedDunderAll]
     "ResponseIncompleteReason",
     "ResponseStatus",
     "TerminalResponseStatus",
@@ -71,5 +71,4 @@ __all__ = [
     "get_conversation_id",
     "get_input_expanded",
     "get_tool_choice_expanded",
-    *_generated_all,
-]
+] + _generated_all

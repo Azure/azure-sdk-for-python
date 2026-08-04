@@ -34,6 +34,8 @@ from typing import (
 
 import re
 
+from azure.ai.agentserver.core._experimental import experimental
+
 from ._client import TransportClassifiedError as _TransportClassifiedError
 from ._context import TaskContext
 from ._exceptions_internal import _HostedConflict, _translate_hosted_conflict
@@ -444,6 +446,7 @@ class TaskOptions:  # pylint: disable=too-many-instance-attributes
         )
 
 
+@experimental
 class Task(Generic[Input, Output]):
     """A decorated resilient task function. Not callable directly.
 
@@ -1347,6 +1350,7 @@ def task(
 ]: ...
 
 
+@experimental
 def task(
     fn: Callable[..., Any] | None = None,
     *,
@@ -1551,6 +1555,7 @@ def _validate_multi_turn_task_kwargs(**kwargs: Any) -> None:
         )
 
 
+@experimental
 class MultiTurnTask(Generic[Input, Output]):  # pylint: disable=protected-access
     """A decorated multi-turn resilient task chain.
 
@@ -1775,6 +1780,7 @@ def multi_turn_task(
 ]: ...
 
 
+@experimental
 def multi_turn_task(
     fn: Callable[..., Any] | None = None,
     *,

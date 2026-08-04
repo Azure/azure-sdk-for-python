@@ -17,6 +17,8 @@ Usage::
         -d '{"model": "analysis", "input": "Analyze the product reviews"}'
 """
 
+import asyncio
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -29,9 +31,15 @@ from azure.ai.agentserver.responses.models import StructuredOutputsOutputItem
 app = ResponsesAgentServerHost()
 
 
-# ── Variant 1: Convenience ──────────────────────────────────────────────
-@app.create("structured.convenience")
-async def convenience_handler(request: CreateResponse, context: ResponseContext):
+# ── Variant 1: Convenience (the registered handler) ─────────────────────
+# One host has exactly one ``@app.response_handler``. Variant 2 below is an
+# undecorated reference implementation — swap the decorator to run it.
+@app.response_handler
+async def convenience_handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Return structured analysis results using the convenience method."""
     stream = AsyncResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -57,8 +65,11 @@ async def convenience_handler(request: CreateResponse, context: ResponseContext)
 
 
 # ── Variant 2: Full control ─────────────────────────────────────────────
-@app.create("structured.full_control")
-async def full_control_handler(request: CreateResponse, context: ResponseContext):
+async def full_control_handler(
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
+):
     """Return structured data using the builder for manual lifecycle control."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()

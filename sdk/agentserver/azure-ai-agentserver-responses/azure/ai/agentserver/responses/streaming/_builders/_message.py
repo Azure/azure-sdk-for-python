@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Iterator, cast
 
-from azure.ai.agentserver.responses import models as response_models
+from ... import models as response_models
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState, _require_wire_dict
 
 if TYPE_CHECKING:
@@ -488,6 +488,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_delta(text)
         yield tc.emit_text_done(text)
         yield tc.emit_done()
+
     def refusal_content(self, text: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a refusal content part.
 

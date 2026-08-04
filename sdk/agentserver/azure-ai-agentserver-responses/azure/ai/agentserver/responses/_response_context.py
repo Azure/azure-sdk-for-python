@@ -1,21 +1,111 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""ResponseContext for user-defined response execution."""
+"""ResponseContext for user-defined response execution.
+
+(Spec 024 Phase 5) Flat handler-facing surface — the pre-Phase-5
+``ResilienceContext`` indirection is collapsed; recovery + steering
+fields live directly on :class:`ResponseContext`. The cancellation
+surface mirrors the task primitive's composing-cause shape (separate
+``cancel`` + ``shutdown`` events, independent cause booleans).
+"""
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any, NoReturn, Optional, Protocol, Sequence, cast
 
-from azure.ai.agentserver.responses.models._wire import get_field as _get_field
-from azure.ai.agentserver.responses.models._wire import is_type as _is_wire_type
-from azure.ai.agentserver.responses.models import CreateResponse, InputParam, Item, OutputItem
-
-from .models._helpers import get_input_expanded, is_item_reference, to_item, to_output_item
+from ._resilience_context import _DeveloperMetadataFacade
+from .models._generated import (
+    CreateResponse,
+    Item,
+    OutputItem,
+    ResponseObject,
+)
+from .models._generated._unions import InputParam
+from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
+    from azure.ai.agentserver.core.tasks import TaskContext as _CoreTaskContext
+
     from .store._base import ResponseProviderProtocol
+
+
+# (Spec 024 Phase 5 — Proposal #11) ``_ExitForRecoverySentinel`` is the
+# framework's internal sentinel that leaves a response ``in_progress`` for
+# next-lifetime recovery. The public handler idiom is
+# ``await context.exit_for_recovery()`` which raises
+# :class:`ResponseExitForRecovery`; the orchestrator translates that to this
+# core sentinel at the resilient task boundary.
+# Falls back to ``Any`` when the core module is unavailable at import
+# time (e.g. for type-stub generation).
+try:
+    from azure.ai.agentserver.core.tasks._context import _ExitForRecovery as _ExitForRecoverySentinel
+except ImportError:  # pragma: no cover - defensive
+    _ExitForRecoverySentinel = Any  # type: ignore[assignment,misc]
+
+ExitForRecoverySignal = _ExitForRecoverySentinel
+"""Sentinel type the framework uses internally to leave a response
+``in_progress`` for next-lifetime recovery. Handlers do not use this directly —
+they call ``await context.exit_for_recovery()`` (see
+:class:`ResponseExitForRecovery`)."""
+
+
+class ResponseExitForRecovery(BaseException):
+    """Control-flow signal raised by :meth:`ResponseContext.exit_for_recovery`.
+
+    Subclasses :class:`BaseException` (NOT :class:`Exception`) — like
+    :class:`asyncio.CancelledError` / :class:`GeneratorExit` — so a handler's
+    broad ``except Exception`` cannot accidentally swallow the recovery signal.
+    ``try/finally`` cleanup still runs. The framework catches it at the resilient
+    task boundary and leaves the response ``in_progress`` for the next-lifetime
+    recovery scanner.
+
+    Handlers never construct or catch this directly; they simply
+    ``await context.exit_for_recovery()`` (which raises it), in any handler
+    shape — coroutine, async generator, or sync.
+    """
+
+
+class ConversationChainMetadataNamespace(Protocol):
+    """Public Protocol describing the shape of ``context.conversation_chain_metadata``.
+
+    Handlers type-annotate their interactions with the metadata namespace
+    using this Protocol. The concrete implementation
+    (``_DeveloperMetadataFacade``) is internal — handlers never need to
+    know about it directly.
+
+    Use ``context.conversation_chain_metadata["key"] = value`` for the default
+    namespace, or ``context.conversation_chain_metadata("my_namespace")["key"] = value``
+    for a named namespace. Keys (and namespace names) starting with ``_``
+    are rejected — those are reserved for framework-internal layers.
+
+    The Protocol mirrors the standard :class:`MutableMapping` shape (so
+    handlers can ``iter()``, ``len()``, ``clear()``, ``pop()``, etc.) and
+    adds two namespace-specific operations:
+
+    - ``__call__(name)`` returns a sibling namespace facade.
+    - ``await flush()`` forces the underlying resilient write to land
+      before the handler proceeds with a side effect.
+    """
+
+    def __getitem__(self, key: str) -> Any: ...
+    def __setitem__(self, key: str, value: Any) -> None: ...
+    def __delitem__(self, key: str) -> None: ...
+    def __contains__(self, key: object) -> bool: ...
+    def __iter__(self) -> Any: ...
+    def __len__(self) -> int: ...
+    def get(self, key: str, default: Any = None) -> Any: ...
+    def keys(self) -> Any: ...
+    def values(self) -> Any: ...
+    def items(self) -> Any: ...
+    def clear(self) -> None: ...
+    def pop(self, key: str, *default: Any) -> Any: ...
+    def setdefault(self, key: str, default: Any = None) -> Any: ...
+    def update(self, *args: Any, **kwargs: Any) -> None: ...
+    def __call__(self, name: Optional[str] = None) -> "ConversationChainMetadataNamespace": ...
+    async def flush(self) -> None: ...
 
 
 class PlatformContext:
@@ -51,12 +141,58 @@ class PlatformContext:
 class ResponseContext:  # pylint: disable=too-many-instance-attributes
     """Runtime context exposed to response handlers and used by hosting orchestration.
 
-    - response identifier
-    - shutdown signal flag
-    - async input/history resolution
+    Public surface (post-spec-024 Phase 5):
+
+    Identity / request shape:
+        - :attr:`response_id` — stable id for this response.
+        - :attr:`mode_flags` — bg/stream/store flags.
+        - :attr:`request` — parsed CreateResponse.
+        - :attr:`created_at` — UTC timestamp.
+        - :attr:`client_headers` / :attr:`query_parameters` — request metadata.
+        - :attr:`platform_context` — tenant partition identity (user id / call id).
+        - :attr:`conversation_id` / :attr:`previous_response_id`.
+        - :attr:`conversation_chain_id` — derived chain identifier.
+
+    Recovery + steering classifiers (Proposal #6/#10/#13):
+        - :attr:`is_recovery` — True on a crash-recovered re-entry.
+        - :attr:`is_steered_turn` — True on a steering-drain re-entry.
+        - :attr:`pending_input_count` — queued steering inputs (live count).
+        - :attr:`conversation_chain_metadata` — :class:`ConversationChainMetadataNamespace`-typed
+          checkpoint store.
+
+    Cancellation surface (Proposal #11):
+        - :attr:`cancel` — asyncio.Event set when any cancel cause fires.
+        - :attr:`shutdown` — asyncio.Event set when the server is shutting down.
+        - :attr:`client_cancelled` — bool, True for explicit /cancel
+          endpoint OR non-background POST disconnect.
+        - :meth:`exit_for_recovery` — opt-in graceful-shutdown primitive
+          (call as a bare ``await context.exit_for_recovery()`` — it raises
+          internally; works in any handler shape).
+
+    Async helpers:
+        - :meth:`get_input_items` / :meth:`get_input_text` / :meth:`get_history`.
     """
 
-    def __init__(
+    # Class-level type annotations for the public surface (Spec 024
+    # Phase 5 — Proposal #10/#11/#13). Listed here so `get_type_hints`
+    # and IDEs surface the precise types without scanning ``__init__``.
+    response_id: str
+    mode_flags: ResponseModeFlags
+    request: "CreateResponse | None"
+    created_at: datetime
+    client_headers: dict[str, str]
+    query_parameters: dict[str, str]
+    platform_context: PlatformContext
+    conversation_id: "str | None"
+    is_recovery: bool
+    is_steered_turn: bool
+    pending_input_count: int
+    conversation_chain_metadata: ConversationChainMetadataNamespace
+    shutdown: asyncio.Event
+    client_cancelled: bool
+    persisted_response: ResponseObject | None
+
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         *,
         response_id: str,
@@ -72,17 +208,17 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         query_parameters: dict[str, str] | None = None,
         platform_context: PlatformContext | None = None,
         prefetched_history_ids: list[str] | None = None,
+        steerable: bool = False,
+        agent_name: str = "",
+        session_id: str = "",
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
         self.request = request
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
-        self.is_shutdown_requested: bool = False
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
-        self.platform_context: PlatformContext = (
-            platform_context if platform_context is not None else PlatformContext()
-        )
+        self.platform_context: PlatformContext = platform_context if platform_context is not None else PlatformContext()
         self._provider: "ResponseProviderProtocol | None" = provider
         _items: list[Any]
         if input_items is not None:
@@ -97,6 +233,131 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
         self._prefetched_history_ids: list[str] | None = prefetched_history_ids
+        # Stash the deployment's ``steerable_conversations`` option so
+        # ``conversation_chain_id`` resolves the correct chain partition: for
+        # non-steerable chains each fork is its own identity (full response_id),
+        # while steerable chains share the partition key of the sequential chain.
+        self._steerable: bool = steerable
+        # Agent + session identity used to scope ``conversation_chain_id`` (and
+        # the resilient task id, which is the same hash with a fixed prefix).
+        self._agent_name: str = agent_name
+        self._session_id: str = session_id
+
+        # (Spec 024 Phase 5 — Proposal #6/#10/#13) Flattened recovery +
+        # steering classifiers. Defaults represent a fresh non-recovered
+        # handler invocation; the orchestrator overrides them when
+        # constructing the context for a recovery / steering-drain entry.
+        self.is_recovery: bool = False
+        self.is_steered_turn: bool = False
+        self.pending_input_count: int = 0
+        # (Spec 025 §A.3) Entry-only cached snapshot of the persisted response,
+        # populated by the orchestrator on the recovery path so a recovered
+        # handler can seed its stream from already-persisted items. ``None`` on
+        # fresh entries; never refreshed mid-execution.
+        self.persisted_response: ResponseObject | None = None
+        # Default-namespace metadata facade; framework code (in the
+        # orchestrator) swaps the backing to the TaskContext.metadata
+        # when the response runs inside a resilient task body.
+        self.conversation_chain_metadata: ConversationChainMetadataNamespace = cast(
+            ConversationChainMetadataNamespace, _DeveloperMetadataFacade({})
+        )
+
+        # Composing cancellation surface. ``_cancellation_signal`` is
+        # the per-request cancel Event delivered to the handler as the
+        # 3rd positional argument; it fires on /cancel API calls, client
+        # disconnect on non-bg create, or steering pressure. It is
+        # framework-internal — handlers should observe their 3rd
+        # positional ``cancellation_signal`` parameter, not the private
+        # attribute. ``shutdown`` is a DISTINCT Event — server shutdown
+        # does NOT fire the cancel signal; handlers that care about
+        # both must observe each independently.
+        # ``client_cancelled`` is a cause flag stamped by the /cancel
+        # endpoint and the disconnect monitor.
+        self._cancellation_signal: asyncio.Event = asyncio.Event()
+        self.shutdown: asyncio.Event = asyncio.Event()
+        self.client_cancelled: bool = False
+
+        # Private link to the underlying TaskContext (set by the
+        # orchestrator on resilient paths) — enables exit_for_recovery to
+        # delegate to the framework's recovery sentinel.
+        self._task_context: "_CoreTaskContext[Any] | None" = None
+
+    @property
+    def conversation_chain_id(self) -> str:
+        """Stable identifier for the multi-turn conversation chain.
+
+        Returns an opaque, agent/session-scoped hex id that is the **same for
+        every turn** of a conversation chain. It is derived from the partition
+        key embedded in the chain's response IDs (chained response IDs all carry
+        the same embedded key), so it stays stable across turns and across crash
+        recovery without any history walk. The resilient task backing the
+        conversation uses this same hash (with a fixed prefix), so the two never
+        drift apart.
+
+        Priority for the underlying chain partition:
+
+        1. ``conversation_id`` if supplied on the request.
+        2. ``previous_response_id`` (steerable chains) — the shared partition key
+           of the sequential chain.
+        3. ``response_id`` — for the first turn, or as the per-fork identity when
+           ``steerable_conversations`` is disabled.
+
+        Handlers use this id as a key into application-side conversation state
+        (e.g., an upstream SDK session id, per-conversation rate limits, or a
+        conversation index): store it in a resilient side store and look it up on
+        recovery to re-attach to the prior session.
+
+        Known limitation: the identity is derived from framework-generated IDs. A
+        client that supplies its own ``response_id`` (via ``x-agent-response-id``
+        or an explicit request field) carrying a mismatched embedded partition can
+        shift the chain identity for later turns.
+
+        :rtype: str
+        """
+        # Local import to avoid a top-level cycle with hosting.
+        from .hosting._chain_id import derive_conversation_chain_id  # pylint: disable=import-outside-toplevel
+
+        return derive_conversation_chain_id(
+            conversation_id=self.conversation_id,
+            previous_response_id=self._previous_response_id,
+            response_id=self.response_id,
+            agent_name=self._agent_name,
+            session_id=self._session_id,
+            steerable=self._steerable,
+        )
+
+    async def exit_for_recovery(self) -> "NoReturn":
+        """Defer this response to next-lifetime recovery — one idiom, any shape.
+
+        Call it as a bare statement, in coroutine, async-generator, or sync
+        handlers alike::
+
+            if context.shutdown.is_set():
+                await context.exit_for_recovery()
+
+        It **raises** :class:`ResponseExitForRecovery` internally — it NEVER
+        returns. The framework catches the signal at the resilient task boundary
+        and leaves the response ``in_progress`` so the handler is re-invoked on
+        the next process start (for ``resilient_background=True`` responses).
+
+        (Streaming handlers that simply ``return`` without emitting a terminal
+        while ``context.shutdown`` is set also recover via the implicit
+        fallback; ``await context.exit_for_recovery()`` is the explicit,
+        recommended form.)
+
+        :raises RuntimeError: When called outside a resilient task body (e.g. on a
+            ``store=false`` request where there is no task to defer).
+        :raises ResponseExitForRecovery: Always, on success — the control-flow
+            signal the framework catches.
+        :rtype: NoReturn
+        """
+        if self._task_context is None:
+            raise RuntimeError(
+                "context.exit_for_recovery() can only be called inside a resilient "
+                "response handler (store=true). For store=false responses there is "
+                "no task to defer for recovery."
+            )
+        raise ResponseExitForRecovery()
 
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.
@@ -138,16 +399,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         items = await self.get_input_items(resolve_references=resolve_references)
         texts: list[str] = []
         for item in items:
-            if _is_wire_type(item, "message"):
-                content = _get_field(item, "content")
-                if isinstance(content, str):
-                    if content:
-                        texts.append(content)
-                    continue
-                for part in content or []:
-                    if _is_wire_type(part, "input_text"):
-                        text = _get_field(part, "text")
-                        if isinstance(text, str):
+            if isinstance(item, dict) and item.get("type") == "message":
+                for part in cast("list[Any]", item.get("content") or []):
+                    if isinstance(part, dict) and part.get("type") == "input_text":
+                        text = part.get("text")
+                        if text is not None:
                             texts.append(text)
         return "\n".join(texts)
 
@@ -189,11 +445,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         results: list[Item | None] = []
 
         for item in expanded:
-            if is_item_reference(item):
-                reference_id = _get_field(item, "id")
-                if reference_id is None:
+            if isinstance(item, dict) and item.get("type") == "item_reference":
+                item_id = item.get("id")
+                if not isinstance(item_id, str):
                     continue
-                reference_ids.append(str(reference_id))
+                reference_ids.append(item_id)
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:

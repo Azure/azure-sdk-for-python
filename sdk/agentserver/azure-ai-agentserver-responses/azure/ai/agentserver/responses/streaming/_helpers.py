@@ -8,8 +8,8 @@ from collections.abc import MutableMapping
 from copy import deepcopy
 from typing import Any, AsyncIterator, cast
 
-from azure.ai.agentserver.responses import models as response_models
-from azure.ai.agentserver.responses.models import AgentReference
+from .. import models as response_models
+from ..models import AgentReference
 from . import _internals
 from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
