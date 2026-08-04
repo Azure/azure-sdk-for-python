@@ -8,7 +8,6 @@
 
 #### Bugs Fixed
 * Fixed regression with handling of v1 legacy containers when passing `{}` as a partition key. `{}` and `NonePartitionKeyValue` now both resolve to the `Undefined` effective partition key. See [PR 48422](https://github.com/Azure/azure-sdk-for-python/pull/48422)
-* Fixed `IndexError: index out of range` when computing the effective partition key for an empty string partition key value on containers with a Hash V1 partition key definition.
 
 #### Other Changes
 
