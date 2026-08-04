@@ -4,7 +4,6 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
 from rest_client import MockRestClient
 import pytest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest

@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import pytest
+
+from azure.core.exceptions import HttpResponseError, ServiceRequestError
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
