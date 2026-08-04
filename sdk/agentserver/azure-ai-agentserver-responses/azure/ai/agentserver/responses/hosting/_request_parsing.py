@@ -13,7 +13,7 @@ from ..models._wire import get_field
 from ..models import AgentReference, CreateResponse
 
 from .._id_generator import IdGenerator
-from ..models.errors import RequestValidationError
+from ..models._errors import RequestValidationError
 
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 
