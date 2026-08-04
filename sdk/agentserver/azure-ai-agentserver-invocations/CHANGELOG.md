@@ -15,6 +15,11 @@
   cooperative cancellation, content-free protocol metrics, strict protocol
   validation, and per-connection replay-free state.
 
+### Bugs Fixed
+
+- Preserved an application-selected WebSocket close code in structured close
+  diagnostics instead of recording a normal `1000` after the handler returned.
+
 ### Other Changes
 
 - Voice now ships in the Invocations distribution and shares its package version
@@ -32,8 +37,6 @@
 ### Bugs Fixed
 
 - The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
-- Preserved an application-selected WebSocket close code in structured close
-  diagnostics instead of recording a normal `1000` after the handler returned.
 
 ### Other Changes
 

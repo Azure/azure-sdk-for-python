@@ -356,7 +356,7 @@ Open decisions:
 
 | Alternative | Reason |
 |---|---|
-| Put Voice APIs in Invocations | Couples typed API/release lifecycle to raw transport users. |
+| Ship Voice as a separate `azure-ai-agentserver-voice` package | Adds a second distribution and release version to maintain for a submodule that already shares the Invocations transport, lifecycle, and artifact. |
 | Put Voice state in Core | Core should remain protocol-neutral. |
 | Expose outbound wire models | Allows invalid IDs, order, and terminal transitions. |
 | Auto-consume queued inputs | Acknowledges inputs customer code did not process. |

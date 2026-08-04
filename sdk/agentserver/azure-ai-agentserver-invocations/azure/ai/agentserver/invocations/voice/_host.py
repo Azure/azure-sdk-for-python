@@ -17,10 +17,11 @@ from typing import Any, Optional
 
 from opentelemetry import metrics
 
+from azure.ai.agentserver.core import experimental
+
 from .._invocation import InvocationAgentServerHost
 from .._version import VERSION
 
-from ._experimental import experimental
 from ._models import (
     BargeInEvent,
     ConversationItemCreateEvent,
@@ -105,6 +106,11 @@ _MAX_SEEN_MESSAGES = 4096
 _MAX_RECENT_RESPONSES = 64
 _MAX_RESOLVED_PREFIXES = 64
 _MAX_PENDING_PROACTIVE = 16
+# Upper bound on customer tasks that were cancelled but keep running because the
+# callback swallowed CancelledError. They are retained (tracked) until they
+# actually complete; this cap makes a hostile or broken callback unable to
+# accumulate such tasks without limit.
+_MAX_RESISTANT_TASKS = 64
 _CLEANUP_TIMEOUT_SECONDS = 5.0
 _AGENT_TO_BRIDGE_TYPES = {
     "session.ready",
@@ -411,6 +417,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._active_customer_task: asyncio.Task[None] | None = None
         self._active_release: asyncio.Event | None = None
         self._cleanup_tasks: set[asyncio.Task[None]] = set()
+        # Underlying customer tasks that were cancelled but may outlive their
+        # bounded cleanup wrapper (they swallowed CancelledError). Tracked here
+        # until they actually finish so they are never left running untracked.
+        self._resistant_tasks: set[asyncio.Task[None]] = set()
+        # Dedicated task for the on_session_end callback so session teardown does
+        # not sit behind possibly-stalled ordinary callback work in the queue.
+        self._session_end_task: asyncio.Task[None] | None = None
         self._session: VoiceSession | None = None
         self._active_response: VoiceResponse | None = None
         self._pending_turns: OrderedDict[str, VoiceResponse] = OrderedDict()
@@ -516,9 +529,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await self._websocket.send_text(encode_frame(message_type, **fields))
             self._record_first_output(message_type, fields)
 
-    def _remember_resolved_prefix_locked(
-        self, prefix: tuple[str, ...], value: tuple[VoiceResponse, bool]
-    ) -> None:
+    def _remember_resolved_prefix_locked(self, prefix: tuple[str, ...], value: tuple[VoiceResponse, bool]) -> None:
         # Bounded LRU: these entries only reconcile a late response.timeout that
         # references a prefix the SDK already resolved before the bridge saw the
         # response.created — a single-round-trip window. Retaining every resolved
@@ -585,9 +596,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 raise RuntimeError("in_reply_to must be an ordered prefix of pending inputs")
             if in_reply_to:
                 response_id = self._pending_turns[in_reply_to[0]].response_id
-                self._remember_resolved_prefix_locked(
-                    in_reply_to, (self._pending_turns[in_reply_to[0]], False)
-                )
+                self._remember_resolved_prefix_locked(in_reply_to, (self._pending_turns[in_reply_to[0]], False))
             for item_id in in_reply_to:
                 self._pending_turns.pop(item_id, None)
         # Claim the terminal for this input prefix BEFORE emitting response.none.
@@ -1056,7 +1065,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     f"{message_type} is not valid from the bridge after readiness",
                     close_code=1008,
                 )
-            logger.debug("Ignoring unknown post-readiness voice message type: %s", message_type)
+            logger.debug("Ignoring unknown post-readiness voice message")
         return True
 
     async def _enqueue_turn(
@@ -1330,6 +1339,21 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     def _schedule_customer_cleanup(self, task: asyncio.Task[None]) -> asyncio.Task[None]:
         task.cancel()
 
+        # Retain a reference to the underlying task until it actually completes,
+        # even if it swallows CancelledError and runs past the cleanup deadline.
+        # The bounded wrapper below only waits _CLEANUP_TIMEOUT_SECONDS and is then
+        # discarded; without this the underlying task would keep running with no
+        # owner (untracked resource leak). Bound the count so a hostile or broken
+        # callback cannot accumulate cancellation-resistant tasks without limit.
+        if not task.done():
+            self._resistant_tasks.add(task)
+            task.add_done_callback(self._resistant_tasks.discard)
+            if len(self._resistant_tasks) > _MAX_RESISTANT_TASKS:
+                logger.error(
+                    "Voice cancellation-resistant task count exceeded %d; a callback is ignoring cancellation",
+                    _MAX_RESISTANT_TASKS,
+                )
+
         async def _bounded_cleanup() -> None:
             try:
                 await asyncio.wait_for(asyncio.shield(task), timeout=_CLEANUP_TIMEOUT_SECONDS)
@@ -1563,7 +1587,29 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if release is not None:
             release.set()
         if self._on_session_end is not None:
-            self._put_work(_CallbackWork(kind="session.end", event=event, callback=self._on_session_end))
+            # Run the teardown callback on a dedicated task instead of enqueuing it
+            # behind ordinary callback work. If a prior callback is stalled and the
+            # worker is cancelled at shutdown before draining the queue, a queued
+            # session.end item would never run; the dedicated task is awaited on its
+            # own bounded path in _shutdown_runtime.
+            work = _CallbackWork(kind="session.end", event=event, callback=self._on_session_end)
+            self._session_end_task = asyncio.create_task(
+                self._run_session_end_callback(work),
+                name="voice_session_end",
+            )
+
+    async def _run_session_end_callback(self, work: _CallbackWork) -> None:
+        callback_started_ns = time.monotonic_ns()
+        try:
+            await self._await_signal_callback(work)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error("Voice session.end callback failed: %s", type(exc).__name__)
+            _CALLBACK_ERROR_COUNTER.add(1, {"kind": work.kind})
+        finally:
+            _CALLBACK_DURATION.record(
+                (time.monotonic_ns() - callback_started_ns) / 1_000_000,
+                {"kind": work.kind},
+            )
 
     async def _receive_payload(self) -> dict[str, Any] | None:
         while True:
@@ -1643,6 +1689,21 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     await asyncio.gather(worker, return_exceptions=True)
                 except asyncio.CancelledError:
                     pass
+
+        session_end_task = self._session_end_task
+        if session_end_task is not None:
+            # Dedicated bounded path for session teardown, independent of the
+            # ordinary callback queue drained above.
+            try:
+                await asyncio.wait_for(asyncio.shield(session_end_task), timeout=_CLEANUP_TIMEOUT_SECONDS)
+            except asyncio.TimeoutError:
+                logger.warning("Voice session.end callback exceeded shutdown deadline")
+                if not session_end_task.done():
+                    self._schedule_customer_cleanup(session_end_task)
+            except asyncio.CancelledError:
+                pass
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass
 
         self._closed = True
         self._record_close(1000)

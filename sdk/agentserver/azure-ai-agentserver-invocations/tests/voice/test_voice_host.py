@@ -1854,6 +1854,137 @@ def test_cancellation_resistant_signal_does_not_block_teardown(monkeypatch) -> N
         assert cancellation_seen.wait(timeout=1.0)
 
 
+def test_session_end_runs_despite_a_blocked_prior_callback(monkeypatch) -> None:
+    """session.end teardown runs on its own dedicated path, not behind ordinary
+    callback work. A signal callback that blocks the worker must not prevent
+    ``on_session_end`` from firing (previously it was queued behind such work and
+    was dropped when the worker was cancelled at shutdown).
+    """
+    monkeypatch.setattr(voice_host, "_CLEANUP_TIMEOUT_SECONDS", 0.05)
+    app = _app()
+    dtmf_started = threading.Event()
+    session_ended = threading.Event()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    @app.on_dtmf_key
+    async def on_dtmf(_session, _event) -> None:
+        dtmf_started.set()
+        await asyncio.Event().wait()  # blocks the sole callback worker
+
+    @app.on_session_end
+    async def on_session_end(_session, event) -> None:
+        assert event.reason == "caller_hangup"
+        session_ended.set()
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
+        assert dtmf_started.wait(1.0)  # worker is now blocked in the dtmf callback
+        websocket.send_json(
+            {
+                "type": "session.end",
+                "id": "m_session_end",
+                "ts": _TS,
+                "reason": "caller_hangup",
+            }
+        )
+        # Dedicated path: on_session_end fires even though the worker is stuck.
+        assert session_ended.wait(2.0)
+
+
+def test_cancellation_resistant_task_is_tracked_until_done(monkeypatch) -> None:
+    """A callback that swallows CancelledError keeps running past the cleanup
+    deadline; the underlying task must stay tracked (not dropped) so it is never
+    left running untracked.
+    """
+    monkeypatch.setattr(voice_host, "_CLEANUP_TIMEOUT_SECONDS", 0.05)
+    app = _app()
+    started = threading.Event()
+    cancelled = threading.Event()
+    captured: dict = {}
+
+    original = voice_host._VoiceConnection._schedule_customer_cleanup
+
+    def capture(self, task):
+        captured["conn"] = self
+        captured["task"] = task
+        return original(self, task)
+
+    monkeypatch.setattr(voice_host._VoiceConnection, "_schedule_customer_cleanup", capture)
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    @app.on_dtmf_key
+    async def on_dtmf(_session, _event) -> None:
+        started.set()
+        try:
+            await asyncio.Event().wait()
+        except asyncio.CancelledError:
+            cancelled.set()
+            await asyncio.Event().wait()  # resistant: keep running after cancellation
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json({"type": "dtmf", "id": "m_dtmf", "ts": _TS, "digits": "1"})
+        assert started.wait(1.0)
+        websocket.send_json(
+            {
+                "type": "session.end",
+                "id": "m_session_end",
+                "ts": _TS,
+                "reason": "caller_hangup",
+            }
+        )
+        assert cancelled.wait(1.0)
+        # Assert while the connection is still live: the resistant underlying task
+        # is retained in the tracking set (not dropped with its cleanup wrapper).
+        conn = captured["conn"]
+        task = captured["task"]
+        assert task in conn._resistant_tasks  # pylint: disable=protected-access
+        assert not task.done()
+
+
+def test_no_second_terminal_when_callback_returns_with_cancel_pending() -> None:
+    """If a callback starts a self-cancel, its await is cancelled (e.g. the callback
+    times out waiting for arbitration) and the callback then returns, auto-completion
+    must not emit a second terminal (response.done / SDK error) while response.cancel
+    is still being arbitrated by the bridge.
+    """
+    app = _app()
+
+    @app.on_user_message
+    async def on_message(_session, event: UserMessageEvent, response: VoiceResponse) -> None:
+        if event.item_id == "in_1":
+            await response.send_text_delta("hi")
+            try:
+                # The bridge never resolves the cancellation here, so the customer's
+                # bounded wait is cancelled while _cancel_pending stays set.
+                await asyncio.wait_for(response.cancel(), timeout=0.05)
+            except (asyncio.TimeoutError, asyncio.CancelledError):
+                pass
+        else:
+            await response.send_text("second")
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "response.output_text.delta"
+        assert websocket.receive_json()["type"] == "response.cancel"
+        # No response.done / error must follow for the first response. The second
+        # turn proves the connection is healthy and that the next frame is its own
+        # response.created, not a stray terminal for the cancel-pending response.
+        websocket.send_json(_user_message(message_id="m_user_2", item_id="in_2"))
+        assert websocket.receive_json()["type"] == "response.created"
+        assert websocket.receive_json()["type"] == "response.output_text.done"
+        assert websocket.receive_json()["type"] == "response.done"
+
+
 def test_end_call_supports_immediate_mode() -> None:
     app = _app()
 

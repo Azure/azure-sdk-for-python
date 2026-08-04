@@ -16,7 +16,8 @@ from collections.abc import Mapping, Sequence
 from types import MappingProxyType
 from typing import Any, cast
 
-from ._experimental import experimental
+from azure.ai.agentserver.core import experimental
+
 from ._models import (
     ConversationHistoryItem,
     ConversationItemCreateEvent,

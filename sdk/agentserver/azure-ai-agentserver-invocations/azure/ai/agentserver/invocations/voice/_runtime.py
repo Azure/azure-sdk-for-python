@@ -9,7 +9,8 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from collections.abc import Mapping
 from typing import Any, Literal, Protocol
 
-from ._experimental import experimental
+from azure.ai.agentserver.core import experimental
+
 from ._models import ResponseCancellationOutcome, ResponseTimeouts, SessionStartEvent
 from ._protocol import (
     VoiceBridgeConnectionClosedError,
@@ -609,7 +610,11 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         terminal_kind = "done"
         async with self._send_lock:
             async with self._lock:
-                if self._terminal or self._sender.ending:
+                # A pending self-cancel is a terminal boundary: response.cancel is
+                # already on the wire and the bridge is arbitrating the outcome, so
+                # auto-completion must not emit response.done (or an SDK error for an
+                # incomplete item) as a second terminal.
+                if self._terminal or self._cancel_pending or self._sender.ending:
                     self._sealed = True
                     return
                 incomplete = (
@@ -630,7 +635,10 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     async def _fail_callback(self) -> None:
         async with self._send_lock:
             async with self._lock:
-                if self._terminal or self._sender.ending:
+                # As in _complete_callback, a pending self-cancel is a terminal
+                # boundary; do not emit a response-scoped error while response.cancel
+                # is still being arbitrated by the bridge.
+                if self._terminal or self._cancel_pending or self._sender.ending:
                     self._sealed = True
                     return
             await self._emit_sdk_error("Voice turn callback failed")

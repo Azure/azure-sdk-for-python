@@ -9,7 +9,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from typing import Any, Literal, Union
 
-from ._experimental import experimental
+from azure.ai.agentserver.core import experimental
 
 
 @experimental
