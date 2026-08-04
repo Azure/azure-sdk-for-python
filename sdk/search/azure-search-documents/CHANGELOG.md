@@ -13,14 +13,14 @@
 
 ### Other Changes
 
-- Updated `tsp-location.yaml` and `_metadata.json` to target spec commit
-  `c19e358860e3cb89a8c7021e8c5a181ab6ef7f62` (`2026-08-01-preview`). The new `2026-08-01-preview`
-  models and operations are not yet included in this release: the documented generator emits the
+- Updated `tsp-location.yaml` to target spec commit
+  `f05186bb638cd3e72b8b63a51b04c909ad26ae54` (`2026-08-01-preview`). The new `2026-08-01-preview`
+  models and operations are still not included in this release: the documented generator emits the
   synthesized root-namespace request/response models (e.g. `EntraAppAuthentication`,
   `FileUploadMetadata`, `KnowledgeBaseRetrieveDefaults`) into a top-level `search` package and
   references them with an invalid cross-package relative import (`from ......search import models`),
-  which is non-importable. This is a spec-side defect (the root `Search` namespace lacks a blanket
-  `@@clientNamespace("Azure.Search.Documents")` in `client.tsp`) and must be fixed in
+  which is non-importable. This is a spec-side defect (the root `Search` namespace in `main.tsp`
+  still lacks a blanket `@clientNamespace("Azure.Search.Documents")`) and must be fixed in
   `Azure/azure-rest-api-specs` before the full surface can be regenerated.
 ## 12.1.0b1 (2026-05-28)
 
