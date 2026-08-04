@@ -22,6 +22,7 @@
 
 ### Other Changes
 
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b11`, which provides the shared `experimental` decorator used by the Voice API surface.
 - Voice now ships in the Invocations distribution and shares its package version
   and release artifact; no separate Voice package or server identity is required.
 - Voice follows the existing `invocations_ws` tracing behavior: the transport

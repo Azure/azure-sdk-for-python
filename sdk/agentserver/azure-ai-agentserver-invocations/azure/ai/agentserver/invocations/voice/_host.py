@@ -463,10 +463,9 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     async def run(self) -> None:
         """Activate the protocol and run the sole receive pump."""
         graceful_end = False
-        if not await self._activate():
-            await self._shutdown_runtime(drain_callbacks=False)
-            return
         try:
+            if not await self._activate():
+                return
             while not self._closed:
                 payload = await self._receive_with_worker_supervision()
                 if payload is None:

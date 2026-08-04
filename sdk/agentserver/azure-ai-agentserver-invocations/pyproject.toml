@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations", "voice"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b10",
+    "azure-ai-agentserver-core>=2.0.0b11",
     "opentelemetry-api>=1.43.0",
     # Constraint on the transitive aiohttp: the `--pre` CI install otherwise
     # resolves the unbuildable aiohttp 4.0.0a1 alpha. Cap must be <4.0.0a0
@@ -74,7 +74,7 @@ mypy = true
 pyright = true
 verifytypes = false
 latestdependency = false
-# azure-ai-agentserver-core>=2.0.0b10 is not yet on PyPI
+# azure-ai-agentserver-core>=2.0.0b11 is not yet on PyPI
 mindependency = false
 pylint = true
 type_check_samples = false

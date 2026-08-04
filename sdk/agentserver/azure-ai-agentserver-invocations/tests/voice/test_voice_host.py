@@ -307,6 +307,60 @@ def test_self_cancelled_signal_callback_does_not_stop_dispatch() -> None:
         assert websocket.receive_json()["type"] == "response.done"
 
 
+def test_readiness_send_failure_still_shuts_down(monkeypatch) -> None:
+    app = _app()
+    shutdown_calls: list[bool] = []
+
+    original_send = voice_host._VoiceConnection.send
+    original_shutdown = voice_host._VoiceConnection._shutdown_runtime
+
+    async def fail_readiness(self, message_type, **fields) -> None:
+        if message_type == "session.ready":
+            raise RuntimeError("readiness send failed")
+        await original_send(self, message_type, **fields)
+
+    async def capture_shutdown(self, *, drain_callbacks) -> None:
+        shutdown_calls.append(drain_callbacks)
+        await original_shutdown(self, drain_callbacks=drain_callbacks)
+
+    monkeypatch.setattr(voice_host._VoiceConnection, "send", fail_readiness)
+    monkeypatch.setattr(voice_host._VoiceConnection, "_shutdown_runtime", capture_shutdown)
+
+    @app.on_user_message
+    async def on_message(_session, _event, response) -> None:
+        await response.decline()
+
+    with pytest.raises(WebSocketDisconnect) as exc_info:
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            websocket.send_json(_start())
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1011
+    assert shutdown_calls == [False]
+
+
+def test_activation_cancellation_still_runs_shutdown(monkeypatch) -> None:
+    shutdown_calls: list[bool] = []
+
+    async def cancel_activation(_self) -> bool:
+        raise asyncio.CancelledError()
+
+    async def capture_shutdown(_self, *, drain_callbacks) -> None:
+        shutdown_calls.append(drain_callbacks)
+
+    monkeypatch.setattr(voice_host._VoiceConnection, "_activate", cancel_activation)
+    monkeypatch.setattr(voice_host._VoiceConnection, "_shutdown_runtime", capture_shutdown)
+
+    async def run_connection() -> None:
+        connection = object.__new__(voice_host._VoiceConnection)  # pylint: disable=protected-access
+        await connection.run()
+
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(run_connection())
+
+    assert shutdown_calls == [False]
+
+
 def test_missing_required_callback_rejects_activation() -> None:
     app = _app()
 
