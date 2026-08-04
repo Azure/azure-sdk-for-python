@@ -3,7 +3,7 @@
   "apiVersions": {
     "Microsoft.Search": "2026-09-01-preview"
   },
-  "commit": "e75a07cd7ea1b2207190a362305db02b639715ec",
+  "commit": "c829e481d57bad5976db9969171d56f4e303229a",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/search/resource-manager/Microsoft.Search/Search",
   "emitterVersion": "0.63.3",

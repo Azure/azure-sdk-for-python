@@ -145,5 +145,5 @@
         "azure.mgmt.search.SearchManagementClient.usage_by_subscription_sku": "Microsoft.Search.usageBySubscriptionSku",
         "azure.mgmt.search.aio.SearchManagementClient.usage_by_subscription_sku": "Microsoft.Search.usageBySubscriptionSku"
     },
-    "CrossLanguageVersion": "33c123d2de29"
+    "CrossLanguageVersion": "f8d0d156098a"
 }
