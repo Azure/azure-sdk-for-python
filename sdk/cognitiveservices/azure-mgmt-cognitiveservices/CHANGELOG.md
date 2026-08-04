@@ -148,20 +148,11 @@
 
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Method `CognitiveServicesManagementClient.calculate_model_capacity` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `model` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `sku_name` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.calculate_model_capacity` deleted or renamed its parameter `workloads` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_domain_availability` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `subdomain_name` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_domain_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_sku_availability` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `kind` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `skus` of kind `positional_or_keyword`
-  - Method `CognitiveServicesManagementClient.check_sku_availability` deleted or renamed its parameter `type` of kind `positional_or_keyword`
+  - Method `CognitiveServicesManagementClient.calculate_model_capacity` replaced parameters `model`/`sku_name`/`workloads` with `parameters`
+  - Method `CognitiveServicesManagementClient.check_domain_availability` replaced parameters `kind`/`subdomain_name`/`type` with `parameters`
+  - Method `CognitiveServicesManagementClient.check_sku_availability` replaced parameters `kind`/`skus`/`type` with `parameters`
   - Model `CommitmentPlanAccountAssociation` moved instance variable `account_id` under property `properties` whose type is `CommitmentPlanAccountAssociationProperties`
-  - Model `CustomKeys` deleted or renamed its instance variable `keys`
+  - Model `CustomKeys` renamed its instance variable `keys` to `keys_property`
   - Model `DefenderForAISetting` moved instance variable `state` under property `properties` whose type is `DefenderForAISettingProperties`
   - Model `RaiPolicyProperties` deleted or renamed its instance variable `custom_topics`
   - Model `ResourceSkuRestrictions` renamed its instance variable `values` to `values_property`
@@ -169,8 +160,7 @@
   - Deleted or renamed model `CustomTopicConfig`
   - Deleted or renamed model `RaiTopicConfig`
   - Method `AccountConnectionsOperations.list` changed its parameter `category`/`include_all`/`target` from `positional_or_keyword` to `keyword_only`
-  - Method `AccountsOperations.regenerate_key` inserted a `positional_or_keyword` parameter `parameters`
-  - Method `AccountsOperations.regenerate_key` deleted or renamed its parameter `key_name` of kind `positional_or_keyword`
+  - Method `AccountsOperations.regenerate_key` replaced parameter `key_name` with `parameters`
   - Method `LocationBasedModelCapacitiesOperations.list` changed its parameter `model_format`/`model_name`/`model_version` from `positional_or_keyword` to `keyword_only`
   - Method `ModelCapacitiesOperations.list` changed its parameter `model_format`/`model_name`/`model_version` from `positional_or_keyword` to `keyword_only`
   - Method `ProjectCapabilityHostsOperations.begin_create_or_update` changed type of its parameter `capability_host` from `CapabilityHost` to `ProjectCapabilityHost`
