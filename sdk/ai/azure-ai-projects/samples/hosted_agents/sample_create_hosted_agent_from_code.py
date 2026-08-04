@@ -7,17 +7,15 @@
 """
 DESCRIPTION:
     Upload a code zip as a new version of a code-based Hosted Agent,
-    poll for provisioning, and download it back to verify the round-trip.
+    poll for provisioning, and verify functionality by sending user input.
 
     The dependency resolution mode is selected via the
     `FOUNDRY_HOSTED_AGENT_REMOTE_BUILD` environment variable (default: `false`):
 
     * `false` (BUNDLED) — uploads `assets/echo-agent-prebuilt.zip`, which
-      bundles the agent source plus a `packages/` folder with Linux-built
-      dependencies, so the service skips pip entirely.
-    * `true` (REMOTE_BUILD) — uploads `assets/echo-agent.zip`, which contains
-      only the agent source plus `requirements.txt`; the service resolves
-      dependencies remotely from the public package index.
+      includes the agent source plus prebuilt dependencies.
+    * `true` (REMOTE_BUILD) — zips and uploads `assets/echo-agent/`, which
+      contains only the agent source plus `requirements.txt`.
 
     The agent must already exist; create it with
     `samples/hosted_agents/sample_create_hosted_agent.py`.
@@ -25,34 +23,25 @@ DESCRIPTION:
 USAGE:
     python sample_create_hosted_agent_from_code.py
 
-    Before running the sample:
+PREREQUISITES:
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
-    pip install "azure-ai-projects>=2.2.0" python-dotenv
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the
-       Overview page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The Hosted Agent name. Must already exist.
-    3) AZURE_SUBSCRIPTION_ID - Azure subscription ID where the Azure AI account
-       and project are deployed.
-    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD - Optional. Set to `true` to use
-       REMOTE_BUILD; defaults to `false` (BUNDLED).
+    Set the following environment variables:
+    1) FOUNDRY_PROJECT_ENDPOINT: The Azure AI Project endpoint found in the 
+       Foundry portal Overview page.
+    2) FOUNDRY_HOSTED_AGENT_NAME: The Hosted Agent name (must already exist).
+    3) AZURE_SUBSCRIPTION_ID: The Azure subscription ID deployed to Azure AI.
+    4) FOUNDRY_HOSTED_AGENT_REMOTE_BUILD: Optional, defaults to `false`.
 """
 
-import hashlib
 import os
 import tempfile
 from pathlib import Path
-
 from dotenv import load_dotenv
-
 from azure.identity import DefaultAzureCredential
-
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeConfiguration,
-    CreateAgentVersionFromCodeContent,
-    CreateAgentVersionFromCodeMetadata,
     HostedAgentDefinition,
     ProtocolVersionRecord,
 )
@@ -67,33 +56,26 @@ agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
 use_remote_build = os.environ.get("FOUNDRY_HOSTED_AGENT_REMOTE_BUILD", "false").strip().lower() == "true"
 
-dependency_resolution, zip_filename, code_zip_bytes, code_zip_sha256 = select_echo_agent_code_zip(use_remote_build)
+dependency_resolution, code_zip_stream = select_echo_agent_code_zip(use_remote_build)
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    content = CreateAgentVersionFromCodeContent(
-        metadata=CreateAgentVersionFromCodeMetadata(
-            description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
-            definition=HostedAgentDefinition(
-                cpu="0.5",
-                memory="1Gi",
-                code_configuration=CodeConfiguration(
-                    runtime="python_3_12",
-                    entry_point=["python", "main.py"],
-                    dependency_resolution=dependency_resolution,
-                ),
-                protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
-            ),
-        ),
-        code=(zip_filename, code_zip_bytes, "application/zip"),
-    )
-
-    created = project_client.beta.agents.create_version_from_code(
+    created = project_client.agents.create_version_from_code(
         agent_name=agent_name,
-        content=content,
-        code_zip_sha256=code_zip_sha256,
+        description=f"Code-based hosted agent uploaded with dependency_resolution={dependency_resolution.value}.",
+        definition=HostedAgentDefinition(
+            cpu="0.5",
+            memory="1Gi",
+            code_configuration=CodeConfiguration(
+                runtime="python_3_14",
+                entry_point=["python", "main.py"],
+                dependency_resolution=dependency_resolution,
+            ),
+            protocol_versions=[ProtocolVersionRecord(protocol="responses", version="1.0.0")],
+        ),
+        code=code_zip_stream,
     )
     print(f"Created code-based hosted agent version: {created.version}")
 
@@ -110,18 +92,23 @@ with (
         foundry_project_endpoint=endpoint,
     )
 
-    # Download the zip for the version we just created, streaming to a temp file.
-    version_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
-    sha = hashlib.sha256()
-    with open(version_zip_path, "wb") as f:
-        for chunk in project_client.beta.agents.download_code(
-            agent_name=agent_name,
-            agent_version=created.version,
-        ):
-            f.write(chunk)
-            sha.update(chunk)
-    downloaded_version_sha256 = sha.hexdigest()
+    user_input = "Good morning!"
+    with project_client.get_openai_client(agent_name=agent_name) as openai_client:
+        response = openai_client.responses.create(
+            input=user_input,
+        )
+    print(f"Sent: {user_input}")
+    print(f"Response output: {response.output_text}")
+
+    downloaded_zip_path = Path(tempfile.gettempdir()) / f"{agent_name}-{created.version}.zip"
+    downloaded_zip_path.write_bytes(
+        b"".join(
+            project_client.agents.download_code(
+                agent_name=agent_name,
+                agent_version=created.version,
+            )
+        )
+    )
     print(
-        f"Downloaded version code zip to {version_zip_path}: {version_zip_path.stat().st_size} bytes, "
-        f"sha256={downloaded_version_sha256} (matches uploaded: {downloaded_version_sha256 == code_zip_sha256})"
+        f"Downloaded version code zip to {downloaded_zip_path}: {downloaded_zip_path.stat().st_size} bytes."
     )
