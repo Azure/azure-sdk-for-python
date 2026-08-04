@@ -13,6 +13,8 @@ from __future__ import annotations
 import random
 from datetime import timedelta
 
+from azure.ai.agentserver.core._experimental import experimental
+
 #: Spec 037 #11 — hard caps on the retry knobs. A misconfiguration must not
 # let a task turn retry unboundedly, so values outside these ranges are
 # rejected at construction (fail-fast, not clamped). A developer may still
@@ -23,6 +25,7 @@ _MAX_RETRY_ATTEMPTS = 10
 _MAX_RETRY_DELAY = timedelta(hours=1)
 
 
+@experimental
 class RetryPolicy:
     """Retry configuration for resilient tasks.
 
