@@ -10,6 +10,8 @@
 
 ### Features Added
 
+- Marked Foundry storage public APIs as experimental.
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10` so the shared experimental decorator is always available.
 - Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
 - Added local `TypedDict` model contract generation for the Responses protocol, including generated type aliases, union aliases, and `py.typed` packaging support.
 - Added dict-native wire payload helpers and request validators for validating protocol payloads without depending on generated model internals.
