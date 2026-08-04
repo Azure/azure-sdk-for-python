@@ -13,8 +13,8 @@ DESCRIPTION:
       1. Creates an `EvaluatorGenerationJob` whose only source is an inline
          natural-language description of the application's purpose, capabilities,
          and tools. The service synthesizes a rubric tailored to that application.
-      2. Polls the generation job to completion and resolves the generated
-         `EvaluatorVersion`.
+      2. Calls `begin_create_generation_job` and reports the standard LRO
+         poller's status until it returns the generated `EvaluatorVersion`.
       3. Creates an OpenAI evaluation referencing the generated evaluator as a
          testing criterion.
       4. Runs the evaluation against inline JSONL sample data.
@@ -30,7 +30,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -47,8 +47,7 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import cast
-
+from typing import Union
 from dotenv import load_dotenv
 from openai.types.eval_create_params import DataSourceConfigCustom
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -56,11 +55,15 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     SourceFileContent,
     SourceFileContentContent,
 )
+from openai.types.evals.run_create_response import RunCreateResponse
+from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    JobStatus,
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
     TestingCriterionAzureAIEvaluator,
 )
@@ -76,7 +79,6 @@ ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 evaluator_name = f"reservation-quality-generated-{ts}-{short}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 TERMINAL_RUN_STATUSES = {"completed", "failed", "canceled"}
 
 with (
@@ -85,51 +87,52 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     # 1. Generate an evaluator from a single `Prompt` source.
-    job = project_client.beta.evaluators.create_generation_job(
-        job={
-            "model": model_name,
-            "name": "Reservation Quality (Generated)",
-            "evaluator_name": evaluator_name,
-            "evaluator_display_name": "Reservation Quality (Generated)",
-            "evaluator_description": "Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
-            "sources": [
-                {
-                    "type": "Prompt",
-                    "description": "Application overview - purpose, capabilities, and tools.",
-                    "prompt": (
-                        "You are evaluating a restaurant reservation assistant. The assistant helps "
-                        "users create, modify, and cancel reservations at participating restaurants. "
-                        "It can:\n"
-                        "  - Search for restaurants by name, cuisine, or neighborhood.\n"
-                        "  - Check table availability for a requested date, time, and party size.\n"
-                        "  - Create, update, and cancel reservations on behalf of the user.\n"
-                        "  - Send SMS or email confirmations through a notifications tool.\n"
-                        "It must always confirm the user's intent before committing changes, "
-                        "ask follow-up questions when details are missing, and maintain a polite "
-                        "restaurant-host tone."
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
+        job=EvaluatorGenerationJob(
+            inputs=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=evaluator_name,
+                evaluator_display_name="Reservation Quality (Generated)",
+                evaluator_description="Quality evaluator generated from a prompt describing a restaurant reservation assistant.",
+                sources=[
+                    PromptEvaluatorGenerationJobSource(
+                        description="Application overview - purpose, capabilities, and tools.",
+                        prompt=(
+                            "You are evaluating a restaurant reservation assistant. The assistant helps "
+                            "users create, modify, and cancel reservations at participating restaurants. "
+                            "It can:\n"
+                            "  - Search for restaurants by name, cuisine, or neighborhood.\n"
+                            "  - Check table availability for a requested date, time, and party size.\n"
+                            "  - Create, update, and cancel reservations on behalf of the user.\n"
+                            "  - Send SMS or email confirmations through a notifications tool.\n"
+                            "It must always confirm the user's intent before committing changes, "
+                            "ask follow-up questions when details are missing, and maintain a polite "
+                            "restaurant-host tone."
+                        ),
                     ),
-                }
-            ],
-        },
-        # `operation_id` makes the call idempotent - re-submitting the same id returns the existing job.
+                ],
+            ),
+        ),
+        # `operation_id` makes the call idempotent - re-submitting the same id attaches to the existing job.
         operation_id=f"rubric-eval-basic-{short}",
+        polling_interval=poll_interval_seconds,
     )
-    print(f"Created generation job `{job.id}`.")
 
-    print(f"Waiting for job `{job.id}` to complete...")
-    while job.status not in TERMINAL_STATUSES:
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
         time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
-    print(f"Job finished with status `{cast(JobStatus, job.status).value}`.")
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    evaluator = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {evaluator}")
 
     # On success, the evaluator is automatically saved as version 1.
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
-    evaluator = job.result
-    assert evaluator is not None
     definition = evaluator.definition
     assert isinstance(definition, RubricBasedEvaluatorDefinition)
     print(
@@ -168,7 +171,7 @@ with (
     )
 
     # 3. Run the evaluation against inline JSONL sample data.
-    eval_run = openai_client.evals.runs.create(
+    eval_run: Union[RunCreateResponse, RunRetrieveResponse] = openai_client.evals.runs.create(
         eval_id=eval_object.id,
         name=f"{evaluator.name}-run",
         metadata={"sample": "rubric_evaluator_generation_basic"},

@@ -33,7 +33,7 @@ from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 from azure.mgmt.core.polling.arm_polling import ARMPolling
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import CloudHealthMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
@@ -41,7 +41,6 @@ from .._validation import api_version_validation
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
 List = list
 
 _SERIALIZER = Serializer()
@@ -52,7 +51,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -73,7 +72,7 @@ def build_health_models_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -102,7 +101,7 @@ def build_health_models_create_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +132,7 @@ def build_health_models_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -162,7 +161,7 @@ def build_health_models_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}"
     path_format_arguments = {
@@ -185,7 +184,7 @@ def build_health_models_list_by_resource_group_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -212,7 +211,7 @@ def build_health_models_list_by_subscription_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +237,7 @@ def build_signal_definitions_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -268,7 +267,7 @@ def build_signal_definitions_create_or_update_request(  # pylint: disable=name-t
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -298,7 +297,7 @@ def build_signal_definitions_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/signaldefinitions/{signalDefinitionName}"
     path_format_arguments = {
@@ -327,7 +326,7 @@ def build_signal_definitions_list_by_health_model_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -361,7 +360,7 @@ def build_authentication_settings_get_request(  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -395,7 +394,7 @@ def build_authentication_settings_create_or_update_request(  # pylint: disable=n
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -429,7 +428,7 @@ def build_authentication_settings_delete_request(  # pylint: disable=name-too-lo
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/authenticationsettings/{authenticationSettingName}"
     path_format_arguments = {
@@ -453,7 +452,7 @@ def build_authentication_settings_list_by_health_model_request(  # pylint: disab
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -481,7 +480,7 @@ def build_entities_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -511,7 +510,7 @@ def build_entities_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -541,7 +540,7 @@ def build_entities_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}"
     path_format_arguments = {
@@ -570,7 +569,7 @@ def build_entities_list_by_health_model_request(  # pylint: disable=name-too-lon
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -601,7 +600,7 @@ def build_entities_get_history_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -633,7 +632,7 @@ def build_entities_get_signal_history_request(  # pylint: disable=name-too-long
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -665,7 +664,7 @@ def build_entities_ingest_health_report_request(  # pylint: disable=name-too-lon
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}/ingestHealthReport"
     path_format_arguments = {
@@ -687,13 +686,106 @@ def build_entities_ingest_health_report_request(  # pylint: disable=name-too-lon
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_entities_add_data_annotation_request(  # pylint: disable=name-too-long
+    resource_group_name: str, health_model_name: str, entity_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}/addDataAnnotation"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "healthModelName": _SERIALIZER.url("health_model_name", health_model_name, "str"),
+        "entityName": _SERIALIZER.url("entity_name", entity_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entities_get_data_annotations_request(  # pylint: disable=name-too-long
+    resource_group_name: str, health_model_name: str, entity_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}/getDataAnnotations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "healthModelName": _SERIALIZER.url("health_model_name", health_model_name, "str"),
+        "entityName": _SERIALIZER.url("entity_name", entity_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_entities_get_signal_recommendations_request(  # pylint: disable=name-too-long
+    resource_group_name: str, health_model_name: str, entity_name: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/entities/{entityName}/getSignalRecommendations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "healthModelName": _SERIALIZER.url("health_model_name", health_model_name, "str"),
+        "entityName": _SERIALIZER.url("entity_name", entity_name, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_relationships_get_request(
     resource_group_name: str, health_model_name: str, relationship_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -723,7 +815,7 @@ def build_relationships_create_or_update_request(  # pylint: disable=name-too-lo
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -753,7 +845,7 @@ def build_relationships_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/relationships/{relationshipName}"
     path_format_arguments = {
@@ -782,7 +874,7 @@ def build_relationships_list_by_health_model_request(  # pylint: disable=name-to
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -812,7 +904,7 @@ def build_discovery_rules_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -842,7 +934,7 @@ def build_discovery_rules_create_or_update_request(  # pylint: disable=name-too-
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -872,7 +964,7 @@ def build_discovery_rules_delete_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CloudHealth/healthmodels/{healthModelName}/discoveryrules/{discoveryRuleName}"
     path_format_arguments = {
@@ -901,7 +993,7 @@ def build_discovery_rules_list_by_health_model_request(  # pylint: disable=name-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-01-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -989,7 +1081,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1123,7 +1218,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        resource: Union[_models.HealthModel, JSON, IO[bytes]],
+        resource: Union[_models.HealthModel, _types.HealthModel, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1229,7 +1324,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        resource: JSON,
+        resource: _types.HealthModel,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1242,7 +1337,7 @@ class HealthModelsOperations:
         :param health_model_name: Name of health model resource. Required.
         :type health_model_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.HealthModel
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1285,7 +1380,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        resource: Union[_models.HealthModel, JSON, IO[bytes]],
+        resource: Union[_models.HealthModel, _types.HealthModel, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HealthModel]:
         """Create a HealthModel.
@@ -1295,9 +1390,10 @@ class HealthModelsOperations:
         :type resource_group_name: str
         :param health_model_name: Name of health model resource. Required.
         :type health_model_name: str
-        :param resource: Resource create parameters. Is one of the following types: HealthModel, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.HealthModel or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a HealthModel type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.HealthModel or
+         ~azure.mgmt.cloudhealth.types.HealthModel or IO[bytes]
         :return: An instance of LROPoller that returns HealthModel. The HealthModel is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.HealthModel]
@@ -1359,7 +1455,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        properties: Union[_models.HealthModelUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HealthModelUpdate, _types.HealthModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -1463,7 +1559,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        properties: JSON,
+        properties: _types.HealthModelUpdate,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -1476,7 +1572,7 @@ class HealthModelsOperations:
         :param health_model_name: Name of health model resource. Required.
         :type health_model_name: str
         :param properties: The resource properties to be updated. Required.
-        :type properties: JSON
+        :type properties: ~azure.mgmt.cloudhealth.types.HealthModelUpdate
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -1519,7 +1615,7 @@ class HealthModelsOperations:
         self,
         resource_group_name: str,
         health_model_name: str,
-        properties: Union[_models.HealthModelUpdate, JSON, IO[bytes]],
+        properties: Union[_models.HealthModelUpdate, _types.HealthModelUpdate, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.HealthModel]:
         """Update a HealthModel.
@@ -1529,9 +1625,10 @@ class HealthModelsOperations:
         :type resource_group_name: str
         :param health_model_name: Name of health model resource. Required.
         :type health_model_name: str
-        :param properties: The resource properties to be updated. Is one of the following types:
-         HealthModelUpdate, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.cloudhealth.models.HealthModelUpdate or JSON or IO[bytes]
+        :param properties: The resource properties to be updated. Is either a HealthModelUpdate type or
+         a IO[bytes] type. Required.
+        :type properties: ~azure.mgmt.cloudhealth.models.HealthModelUpdate or
+         ~azure.mgmt.cloudhealth.types.HealthModelUpdate or IO[bytes]
         :return: An instance of LROPoller that returns HealthModel. The HealthModel is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.HealthModel]
@@ -1757,7 +1854,10 @@ class HealthModelsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1847,7 +1947,10 @@ class HealthModelsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -1996,14 +2099,14 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         health_model_name: str,
         signal_definition_name: str,
-        resource: Union[_models.SignalDefinition, JSON, IO[bytes]],
+        resource: Union[_models.SignalDefinition, _types.SignalDefinition, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2115,7 +2218,7 @@ class SignalDefinitionsOperations:
         resource_group_name: str,
         health_model_name: str,
         signal_definition_name: str,
-        resource: JSON,
+        resource: _types.SignalDefinition,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2131,7 +2234,7 @@ class SignalDefinitionsOperations:
          model. Required.
         :type signal_definition_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.SignalDefinition
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2187,14 +2290,14 @@ class SignalDefinitionsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         health_model_name: str,
         signal_definition_name: str,
-        resource: Union[_models.SignalDefinition, JSON, IO[bytes]],
+        resource: Union[_models.SignalDefinition, _types.SignalDefinition, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.SignalDefinition]:
         """Create a SignalDefinition.
@@ -2207,9 +2310,10 @@ class SignalDefinitionsOperations:
         :param signal_definition_name: Name of the signal definition. Must be unique within a health
          model. Required.
         :type signal_definition_name: str
-        :param resource: Resource create parameters. Is one of the following types: SignalDefinition,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.SignalDefinition or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a SignalDefinition type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.SignalDefinition or
+         ~azure.mgmt.cloudhealth.types.SignalDefinition or IO[bytes]
         :return: An instance of LROPoller that returns SignalDefinition. The SignalDefinition is
          compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.SignalDefinition]
@@ -2279,7 +2383,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -2355,7 +2459,7 @@ class SignalDefinitionsOperations:
                 "signal_definition_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, signal_definition_name: str, **kwargs: Any
@@ -2486,7 +2590,10 @@ class SignalDefinitionsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -2635,14 +2742,14 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         health_model_name: str,
         authentication_setting_name: str,
-        resource: Union[_models.AuthenticationSetting, JSON, IO[bytes]],
+        resource: Union[_models.AuthenticationSetting, _types.AuthenticationSetting, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -2754,7 +2861,7 @@ class AuthenticationSettingsOperations:
         resource_group_name: str,
         health_model_name: str,
         authentication_setting_name: str,
-        resource: JSON,
+        resource: _types.AuthenticationSetting,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -2770,7 +2877,7 @@ class AuthenticationSettingsOperations:
          health model. Required.
         :type authentication_setting_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.AuthenticationSetting
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -2826,14 +2933,14 @@ class AuthenticationSettingsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         health_model_name: str,
         authentication_setting_name: str,
-        resource: Union[_models.AuthenticationSetting, JSON, IO[bytes]],
+        resource: Union[_models.AuthenticationSetting, _types.AuthenticationSetting, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.AuthenticationSetting]:
         """Create a AuthenticationSetting.
@@ -2846,9 +2953,10 @@ class AuthenticationSettingsOperations:
         :param authentication_setting_name: Name of the authentication setting. Must be unique within a
          health model. Required.
         :type authentication_setting_name: str
-        :param resource: Resource create parameters. Is one of the following types:
-         AuthenticationSetting, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.AuthenticationSetting or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a AuthenticationSetting type or a
+         IO[bytes] type. Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.AuthenticationSetting or
+         ~azure.mgmt.cloudhealth.types.AuthenticationSetting or IO[bytes]
         :return: An instance of LROPoller that returns AuthenticationSetting. The AuthenticationSetting
          is compatible with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.AuthenticationSetting]
@@ -2918,7 +3026,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -2994,7 +3102,7 @@ class AuthenticationSettingsOperations:
                 "authentication_setting_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, authentication_setting_name: str, **kwargs: Any
@@ -3115,7 +3223,10 @@ class AuthenticationSettingsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3261,14 +3372,14 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        resource: Union[_models.Entity, JSON, IO[bytes]],
+        resource: Union[_models.Entity, _types.Entity, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -3379,7 +3490,7 @@ class EntitiesOperations:
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        resource: JSON,
+        resource: _types.Entity,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3394,7 +3505,7 @@ class EntitiesOperations:
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.Entity
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3449,14 +3560,14 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        resource: Union[_models.Entity, JSON, IO[bytes]],
+        resource: Union[_models.Entity, _types.Entity, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Entity]:
         """Create a Entity.
@@ -3468,9 +3579,10 @@ class EntitiesOperations:
         :type health_model_name: str
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
-        :param resource: Resource create parameters. Is one of the following types: Entity, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.Entity or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Entity type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.Entity or ~azure.mgmt.cloudhealth.types.Entity
+         or IO[bytes]
         :return: An instance of LROPoller that returns Entity. The Entity is compatible with
          MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.Entity]
@@ -3540,7 +3652,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -3616,7 +3728,7 @@ class EntitiesOperations:
                 "entity_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
@@ -3746,7 +3858,10 @@ class EntitiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3824,7 +3939,7 @@ class EntitiesOperations:
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: JSON,
+        body: _types.EntityHistoryRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -3839,7 +3954,7 @@ class EntitiesOperations:
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cloudhealth.types.EntityHistoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -3892,14 +4007,14 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def get_history(
         self,
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: Union[_models.EntityHistoryRequest, JSON, IO[bytes]],
+        body: Union[_models.EntityHistoryRequest, _types.EntityHistoryRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.EntityHistoryResponse:
         """Retrieve the health state transition history for an entity.
@@ -3911,9 +4026,10 @@ class EntitiesOperations:
         :type health_model_name: str
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
-        :param body: The content of the action request. Is one of the following types:
-         EntityHistoryRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cloudhealth.models.EntityHistoryRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a EntityHistoryRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.EntityHistoryRequest or
+         ~azure.mgmt.cloudhealth.types.EntityHistoryRequest or IO[bytes]
         :return: EntityHistoryResponse. The EntityHistoryResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.cloudhealth.models.EntityHistoryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4022,7 +4138,7 @@ class EntitiesOperations:
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: JSON,
+        body: _types.SignalHistoryRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4037,7 +4153,7 @@ class EntitiesOperations:
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cloudhealth.types.SignalHistoryRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4090,14 +4206,14 @@ class EntitiesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def get_signal_history(
         self,
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: Union[_models.SignalHistoryRequest, JSON, IO[bytes]],
+        body: Union[_models.SignalHistoryRequest, _types.SignalHistoryRequest, IO[bytes]],
         **kwargs: Any
     ) -> _models.SignalHistoryResponse:
         """Retrieve the time series history for a signal on an entity.
@@ -4109,9 +4225,10 @@ class EntitiesOperations:
         :type health_model_name: str
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
-        :param body: The content of the action request. Is one of the following types:
-         SignalHistoryRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cloudhealth.models.SignalHistoryRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a SignalHistoryRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.SignalHistoryRequest or
+         ~azure.mgmt.cloudhealth.types.SignalHistoryRequest or IO[bytes]
         :return: SignalHistoryResponse. The SignalHistoryResponse is compatible with MutableMapping
         :rtype: ~azure.mgmt.cloudhealth.models.SignalHistoryResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4220,7 +4337,7 @@ class EntitiesOperations:
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: JSON,
+        body: _types.HealthReportRequest,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4235,7 +4352,7 @@ class EntitiesOperations:
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
         :param body: The content of the action request. Required.
-        :type body: JSON
+        :type body: ~azure.mgmt.cloudhealth.types.HealthReportRequest
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4287,14 +4404,14 @@ class EntitiesOperations:
                 "content_type",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def ingest_health_report(  # pylint: disable=inconsistent-return-statements
         self,
         resource_group_name: str,
         health_model_name: str,
         entity_name: str,
-        body: Union[_models.HealthReportRequest, JSON, IO[bytes]],
+        body: Union[_models.HealthReportRequest, _types.HealthReportRequest, IO[bytes]],
         **kwargs: Any
     ) -> None:
         """Ingest a health report for a specific signal on an entity (the entity must already exist).
@@ -4306,9 +4423,10 @@ class EntitiesOperations:
         :type health_model_name: str
         :param entity_name: Name of the entity. Must be unique within a health model. Required.
         :type entity_name: str
-        :param body: The content of the action request. Is one of the following types:
-         HealthReportRequest, JSON, IO[bytes] Required.
-        :type body: ~azure.mgmt.cloudhealth.models.HealthReportRequest or JSON or IO[bytes]
+        :param body: The content of the action request. Is either a HealthReportRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.HealthReportRequest or
+         ~azure.mgmt.cloudhealth.types.HealthReportRequest or IO[bytes]
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4367,6 +4485,499 @@ class EntitiesOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    def add_data_annotation(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: _models.AddDataAnnotationRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DataAnnotation:
+        """Add a data annotation to an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.AddDataAnnotationRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DataAnnotation. The DataAnnotation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.DataAnnotation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_data_annotation(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: _types.AddDataAnnotationRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DataAnnotation:
+        """Add a data annotation to an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.cloudhealth.types.AddDataAnnotationRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DataAnnotation. The DataAnnotation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.DataAnnotation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def add_data_annotation(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DataAnnotation:
+        """Add a data annotation to an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DataAnnotation. The DataAnnotation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.DataAnnotation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "health_model_name",
+                "entity_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def add_data_annotation(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: Union[_models.AddDataAnnotationRequest, _types.AddDataAnnotationRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.DataAnnotation:
+        """Add a data annotation to an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Is either a AddDataAnnotationRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.AddDataAnnotationRequest or
+         ~azure.mgmt.cloudhealth.types.AddDataAnnotationRequest or IO[bytes]
+        :return: DataAnnotation. The DataAnnotation is compatible with MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.DataAnnotation
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DataAnnotation] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_entities_add_data_annotation_request(
+            resource_group_name=resource_group_name,
+            health_model_name=health_model_name,
+            entity_name=entity_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DataAnnotation, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def get_data_annotations(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: _models.GetDataAnnotationsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GetDataAnnotationsResponse:
+        """Retrieve data annotations for an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GetDataAnnotationsResponse. The GetDataAnnotationsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_data_annotations(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: _types.GetDataAnnotationsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GetDataAnnotationsResponse:
+        """Retrieve data annotations for an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: ~azure.mgmt.cloudhealth.types.GetDataAnnotationsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GetDataAnnotationsResponse. The GetDataAnnotationsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def get_data_annotations(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.GetDataAnnotationsResponse:
+        """Retrieve data annotations for an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: GetDataAnnotationsResponse. The GetDataAnnotationsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "health_model_name",
+                "entity_name",
+                "content_type",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get_data_annotations(
+        self,
+        resource_group_name: str,
+        health_model_name: str,
+        entity_name: str,
+        body: Union[_models.GetDataAnnotationsRequest, _types.GetDataAnnotationsRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.GetDataAnnotationsResponse:
+        """Retrieve data annotations for an entity.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :param body: The content of the action request. Is either a GetDataAnnotationsRequest type or a
+         IO[bytes] type. Required.
+        :type body: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsRequest or
+         ~azure.mgmt.cloudhealth.types.GetDataAnnotationsRequest or IO[bytes]
+        :return: GetDataAnnotationsResponse. The GetDataAnnotationsResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.GetDataAnnotationsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.GetDataAnnotationsResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_entities_get_data_annotations_request(
+            resource_group_name=resource_group_name,
+            health_model_name=health_model_name,
+            entity_name=entity_name,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.GetDataAnnotationsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-01-preview",
+        params_added_on={
+            "2026-05-01-preview": [
+                "api_version",
+                "subscription_id",
+                "resource_group_name",
+                "health_model_name",
+                "entity_name",
+                "accept",
+            ]
+        },
+        api_versions_list=["2026-05-01-preview"],
+    )
+    def get_signal_recommendations(
+        self, resource_group_name: str, health_model_name: str, entity_name: str, **kwargs: Any
+    ) -> _models.GetSignalRecommendationsResponse:
+        """Get recommended signal configurations for a given Entity (only applicable for Entities
+        representing Azure resources).
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param health_model_name: Name of health model resource. Required.
+        :type health_model_name: str
+        :param entity_name: Name of the entity. Must be unique within a health model. Required.
+        :type entity_name: str
+        :return: GetSignalRecommendationsResponse. The GetSignalRecommendationsResponse is compatible
+         with MutableMapping
+        :rtype: ~azure.mgmt.cloudhealth.models.GetSignalRecommendationsResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.GetSignalRecommendationsResponse] = kwargs.pop("cls", None)
+
+        _request = build_entities_get_signal_recommendations_request(
+            resource_group_name=resource_group_name,
+            health_model_name=health_model_name,
+            entity_name=entity_name,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.GetSignalRecommendationsResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class RelationshipsOperations:
@@ -4476,14 +5087,14 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         health_model_name: str,
         relationship_name: str,
-        resource: Union[_models.Relationship, JSON, IO[bytes]],
+        resource: Union[_models.Relationship, _types.Relationship, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -4596,7 +5207,7 @@ class RelationshipsOperations:
         resource_group_name: str,
         health_model_name: str,
         relationship_name: str,
-        resource: JSON,
+        resource: _types.Relationship,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -4613,7 +5224,7 @@ class RelationshipsOperations:
          Required.
         :type relationship_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.Relationship
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -4670,14 +5281,14 @@ class RelationshipsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         health_model_name: str,
         relationship_name: str,
-        resource: Union[_models.Relationship, JSON, IO[bytes]],
+        resource: Union[_models.Relationship, _types.Relationship, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.Relationship]:
         """Create a Relationship.
@@ -4691,9 +5302,10 @@ class RelationshipsOperations:
          example, a concatenation of parentEntityName and childEntityName can be used as the name.
          Required.
         :type relationship_name: str
-        :param resource: Resource create parameters. Is one of the following types: Relationship, JSON,
-         IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.Relationship or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a Relationship type or a IO[bytes] type.
+         Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.Relationship or
+         ~azure.mgmt.cloudhealth.types.Relationship or IO[bytes]
         :return: An instance of LROPoller that returns Relationship. The Relationship is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.Relationship]
@@ -4763,7 +5375,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -4839,7 +5451,7 @@ class RelationshipsOperations:
                 "relationship_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, relationship_name: str, **kwargs: Any
@@ -4971,7 +5583,10 @@ class RelationshipsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -5120,14 +5735,14 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _create_or_update_initial(
         self,
         resource_group_name: str,
         health_model_name: str,
         discovery_rule_name: str,
-        resource: Union[_models.DiscoveryRule, JSON, IO[bytes]],
+        resource: Union[_models.DiscoveryRule, _types.DiscoveryRule, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -5239,7 +5854,7 @@ class DiscoveryRulesOperations:
         resource_group_name: str,
         health_model_name: str,
         discovery_rule_name: str,
-        resource: JSON,
+        resource: _types.DiscoveryRule,
         *,
         content_type: str = "application/json",
         **kwargs: Any
@@ -5255,7 +5870,7 @@ class DiscoveryRulesOperations:
          Required.
         :type discovery_rule_name: str
         :param resource: Resource create parameters. Required.
-        :type resource: JSON
+        :type resource: ~azure.mgmt.cloudhealth.types.DiscoveryRule
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -5311,14 +5926,14 @@ class DiscoveryRulesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_create_or_update(
         self,
         resource_group_name: str,
         health_model_name: str,
         discovery_rule_name: str,
-        resource: Union[_models.DiscoveryRule, JSON, IO[bytes]],
+        resource: Union[_models.DiscoveryRule, _types.DiscoveryRule, IO[bytes]],
         **kwargs: Any
     ) -> LROPoller[_models.DiscoveryRule]:
         """Create a DiscoveryRule.
@@ -5331,9 +5946,10 @@ class DiscoveryRulesOperations:
         :param discovery_rule_name: Name of the discovery rule. Must be unique within a health model.
          Required.
         :type discovery_rule_name: str
-        :param resource: Resource create parameters. Is one of the following types: DiscoveryRule,
-         JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.cloudhealth.models.DiscoveryRule or JSON or IO[bytes]
+        :param resource: Resource create parameters. Is either a DiscoveryRule type or a IO[bytes]
+         type. Required.
+        :type resource: ~azure.mgmt.cloudhealth.models.DiscoveryRule or
+         ~azure.mgmt.cloudhealth.types.DiscoveryRule or IO[bytes]
         :return: An instance of LROPoller that returns DiscoveryRule. The DiscoveryRule is compatible
          with MutableMapping
         :rtype: ~azure.core.polling.LROPoller[~azure.mgmt.cloudhealth.models.DiscoveryRule]
@@ -5403,7 +6019,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def _delete_initial(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any
@@ -5479,7 +6095,7 @@ class DiscoveryRulesOperations:
                 "discovery_rule_name",
             ]
         },
-        api_versions_list=["2026-01-01-preview"],
+        api_versions_list=["2026-01-01-preview", "2026-05-01-preview"],
     )
     def begin_delete(
         self, resource_group_name: str, health_model_name: str, discovery_rule_name: str, **kwargs: Any
@@ -5610,7 +6226,10 @@ class DiscoveryRulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(

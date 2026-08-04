@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import datetime
 from unittest.mock import Mock, patch
 
 import pytest
@@ -295,3 +296,152 @@ class TestDeploymentTemplate:
 
         # Should handle None gracefully
         assert result is not None or result is None  # Allow either behavior
+
+    def test_deployment_template_from_rest_object_populates_creation_context_flattened(self):
+        """Regression test for bug #5402673.
+
+        The deployment-template API returns flattened ``createdTime`` / ``modifiedTime`` /
+        ``createdBy`` fields (not a nested ``systemData`` block), so ``creation_context``
+        must surface them to stay consistent with Model and Environment.
+        """
+        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401 import models as rest_models
+
+        rest = rest_models.DeploymentTemplate(
+            {
+                "name": "test",
+                "version": "5",
+                "createdTime": "2026-06-27T20:00:15.2050594+00:00",
+                "modifiedTime": "2026-06-27T21:31:55.5333635+00:00",
+                "createdBy": {"userName": "azure-huggingface"},
+            }
+        )
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at is not None
+        assert template.creation_context.last_modified_at is not None
+        assert template.creation_context.created_by == "azure-huggingface"
+
+    def test_deployment_template_from_rest_object_creation_context_nested_in_properties(self):
+        """Regression test for the list() shape of bug #5402673.
+
+        In the list() response, createdTime / modifiedTime / createdBy are nested under
+        ``properties`` (not at the top level like get()). creation_context must still be
+        populated from there.
+        """
+        rest = Mock(spec=[])
+        rest.name = "test"
+        rest.id = None
+        rest.system_data = None
+        rest.properties = {
+            "name": "test",
+            "version": "5",
+            "createdTime": "2026-06-27T20:00:15.2050594+00:00",
+            "modifiedTime": "2026-06-27T21:31:55.5333635+00:00",
+            # list() returns createdBy as a stringified dict (str), not a real dict.
+            "createdBy": "{'userObjectId': '00000000-0000-0000-0000-000000000000', 'userName': 'azure-huggingface'}",
+        }
+
+        template = DeploymentTemplate._from_rest_object(rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at is not None
+        assert template.creation_context.last_modified_at is not None
+        assert template.creation_context.created_by == "azure-huggingface"
+
+    def test_deployment_template_from_rest_object_populates_creation_context_system_data(self):
+        """creation_context is also populated from a nested systemData block when present."""
+        system_data = Mock(spec=[])
+        system_data.created_at = datetime.datetime(2026, 1, 1, 12, 0, 0)
+        system_data.created_by = "creator@microsoft.com"
+        system_data.created_by_type = "User"
+        system_data.last_modified_at = datetime.datetime(2026, 1, 2, 8, 30, 0)
+        system_data.last_modified_by = "modifier@microsoft.com"
+        system_data.last_modified_by_type = "User"
+
+        mock_rest = Mock(spec=[])
+        mock_rest.properties = {"name": "test", "version": "1"}
+        mock_rest.name = "test"
+        mock_rest.id = None
+        mock_rest.system_data = system_data
+
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.creation_context is not None
+        assert template.creation_context.created_at == datetime.datetime(2026, 1, 1, 12, 0, 0)
+        assert template.creation_context.created_by == "creator@microsoft.com"
+        assert template.creation_context.last_modified_at == datetime.datetime(2026, 1, 2, 8, 30, 0)
+
+    def test_deployment_template_from_rest_object_creation_context_none_when_absent(self):
+        """creation_context should be None when the response carries no creation metadata."""
+        mock_rest = Mock(spec=[])
+        mock_rest.properties = {"name": "test", "version": "1"}
+        mock_rest.name = "test"
+        mock_rest.id = None
+        # Intentionally no systemData / createdTime / modifiedTime / createdBy set.
+
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.creation_context is None
+
+    def test_deployment_template_from_rest_object_list_shape_stringified_settings(self):
+        """Regression test for bug #5402672.
+
+        In the list() response, settings such as requestSettings / livenessProbe /
+        readinessProbe arrive as stringified dicts nested under ``properties`` (rather
+        than as typed objects at the top level like get() returns). _from_rest_object
+        must parse them instead of raising
+        ``AttributeError: 'str' object has no attribute 'request_timeout'``.
+        """
+        mock_rest = Mock(spec=[])
+        mock_rest.name = "list-shape-template"
+        mock_rest.id = None
+        # Top-level typed fields are None in the list() shape.
+        mock_rest.request_settings = None
+        mock_rest.liveness_probe = None
+        mock_rest.readiness_probe = None
+        # The real data is nested (and stringified) under properties.
+        mock_rest.properties = {
+            "name": "list-shape-template",
+            "version": "5",
+            "requestSettings": "{'requestTimeout': 'PT1M30S', 'maxConcurrentRequestsPerInstance': 32}",
+            "livenessProbe": "{'initialDelay': 'PT5M', 'period': 'PT10S', 'timeout': 'PT10S', "
+            "'failureThreshold': 30, 'successThreshold': 1}",
+            "readinessProbe": "{'initialDelay': 'PT5M', 'period': 'PT10S', 'timeout': 'PT10S', "
+            "'failureThreshold': 30, 'successThreshold': 1}",
+        }
+
+        # Must not raise, and must parse the stringified settings into real objects.
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.request_settings is not None
+        assert template.request_settings.request_timeout_ms == 90000
+        assert template.request_settings.max_concurrent_requests_per_instance == 32
+        assert template.liveness_probe is not None
+        assert template.liveness_probe.failure_threshold == 30
+        assert template.readiness_probe is not None
+        assert template.readiness_probe.failure_threshold == 30
+
+    def test_deployment_template_from_rest_object_get_shape_typed_settings(self):
+        """Parity check: the get() shape (typed request_settings at top level) still works."""
+        from azure.ai.ml._restclient.azure_ai_assets_v2024_04_01.azureaiassetsv20240401.models import (
+            OnlineRequestSettings as RestOnlineRequestSettings,
+        )
+
+        mock_rest = Mock(spec=[])
+        mock_rest.name = "get-shape-template"
+        mock_rest.id = None
+        mock_rest.properties = None
+        # get() returns the typed REST settings object (wire keys, snake attrs) at the top level.
+        mock_rest.request_settings = RestOnlineRequestSettings(
+            {"requestTimeout": "PT1M30S", "maxConcurrentRequestsPerInstance": 16}
+        )
+        mock_rest.liveness_probe = None
+        mock_rest.readiness_probe = None
+
+        template = DeploymentTemplate._from_rest_object(mock_rest)
+
+        assert template.request_settings is not None
+        assert template.request_settings.request_timeout_ms == 90000
+        assert template.request_settings.max_concurrent_requests_per_instance == 16

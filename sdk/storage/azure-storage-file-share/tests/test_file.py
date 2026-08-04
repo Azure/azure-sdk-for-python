@@ -34,6 +34,7 @@ from azure.storage.fileshare import (
     ShareServiceClient,
     StorageErrorCode,
 )
+from azure.storage.fileshare import FileRange
 
 # ------------------------------------------------------------------------------
 TEST_SHARE_PREFIX = "share"
@@ -1192,7 +1193,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1222,7 +1223,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1274,7 +1275,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert md["hello"] == "world"
         assert md["number"] == "42"
         assert md["UP"] == "UPval"
-        assert not "up" in md
+        assert "up" not in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1918,6 +1919,173 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert ranges is not None
         assert len(ranges) == 0
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_ranges(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        file_client.create_file(2560)
+        data = b"abcdefghijklmnop" * 32
+        file_client.upload_range(data, offset=0, length=512)
+        file_client.upload_range(data * 2, offset=1024, length=1024)
+
+        # Act
+        ranges = list(file_client.list_ranges())
+
+        # Assert
+        assert ranges is not None
+        assert len(ranges) == 2
+        assert isinstance(ranges[0], FileRange)
+        assert ranges[0].start == 0
+        assert ranges[0].end == 511
+        assert not ranges[0].cleared
+        assert ranges[1].start == 1024
+        assert ranges[1].end == 2047
+        assert not ranges[1].cleared
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_ranges_empty(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        file_client.create_file(1024)
+
+        # Act
+        ranges = list(file_client.list_ranges())
+
+        # Assert
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 0
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_ranges_offset(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        file_client.create_file(2560)
+        data = b"abcdefghijklmnop" * 32
+        file_client.upload_range(data * 3, offset=0, length=1536)
+        file_client.upload_range(data, offset=2048, length=512)
+
+        # Act
+        ranges = list(file_client.list_ranges(offset=1024, length=1024))
+
+        # Assert
+        assert ranges is not None
+        assert isinstance(ranges, list)
+        assert len(ranges) == 1
+        assert ranges[0].start == 1024
+        assert ranges[0].end == 1535
+        assert not ranges[0].cleared
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_ranges_pagination(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+        file_client.create_file(3072)
+        data = b"abcdefghijklmnop" * 32
+        file_client.upload_range(data, offset=0, length=512)
+        file_client.upload_range(data, offset=1024, length=512)
+        file_client.upload_range(data * 2, offset=2048, length=1024)
+
+        # Act
+        page_list = file_client.list_ranges(results_per_page=2).by_page()
+        first_page = next(page_list)
+        items_on_page1 = list(first_page)
+        second_page = next(page_list)
+        items_on_page2 = list(second_page)
+
+        # Assert
+        assert len(items_on_page1) == 2
+        assert len(items_on_page2) == 1
+
+    @FileSharePreparer()
+    @recorded_by_proxy
+    def test_list_ranges_diff_paged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key.secret,
+        )
+
+        file_client.create_file(2048)
+        share_client = self.fsc.get_share_client(self.share_name)
+        snapshot1 = share_client.create_snapshot()
+
+        data = self.get_random_bytes(1536)
+        file_client.upload_range(data, offset=0, length=1536)
+        snapshot2 = share_client.create_snapshot()
+        file_client.clear_range(offset=512, length=512)
+
+        # Act
+        ranges1 = list(file_client.list_ranges_diff(previous_sharesnapshot=snapshot1))
+        ranges2 = list(file_client.list_ranges_diff(previous_sharesnapshot=snapshot2["snapshot"]))
+
+        # Assert
+        assert ranges1 is not None
+        assert isinstance(ranges1, list)
+        assert len(ranges1) == 3
+        assert ranges1[0].start == 0
+        assert ranges1[0].end == 511
+        assert not ranges1[0].cleared
+        assert ranges1[1].start == 512
+        assert ranges1[1].end == 1023
+        assert ranges1[1].cleared
+        assert ranges1[2].start == 1024
+        assert ranges1[2].end == 1535
+        assert not ranges1[2].cleared
+
+        assert ranges2 is not None
+        assert isinstance(ranges2, list)
+        assert len(ranges2) == 1
+        assert ranges2[0].start == 512
+        assert ranges2[0].end == 1023
+        assert ranges2[0].cleared
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2602,12 +2770,19 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         copy_resp = file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = file_client.download_file()
-        assert target_file.readall() == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = file_client.download_file()
+            assert target_file.readall() == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2649,12 +2824,19 @@ class TestStorageFile(StorageRecordedTestCase):
         )
         copy_resp = file_client.start_copy_from_url(source_url)
         assert copy_resp["copy_status"] == "pending"
-        file_client.abort_copy(copy_resp)
 
-        # Assert
-        target_file = file_client.download_file()
-        assert target_file.readall() == b""
-        assert target_file.properties.copy.status == "aborted"
+        try:
+            file_client.abort_copy(copy_resp)
+
+            # Assert
+            target_file = file_client.download_file()
+            assert target_file.readall() == b""
+            assert target_file.properties.copy.status == "aborted"
+
+        # In the live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -3980,6 +4162,7 @@ class TestStorageFile(StorageRecordedTestCase):
         new_file.delete_file()
         file_client.delete_file()
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @FileSharePreparer()
     def test_legacy_transport(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -4010,6 +4193,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_data = file_client.download_file().readall()
         assert file_data == b"Hello World!"  # data is fixed by mock transport
 
+    @pytest.mark.skip("Legacy transports will not be supported moving forward")
     @FileSharePreparer()
     def test_legacy_transport_with_content_validation(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")

@@ -1,6 +1,6 @@
 ## Release History
 
-### 4.16.2 (Unreleased)
+### 4.16.4 (Unreleased)
 
 #### Features Added
 
@@ -10,6 +10,19 @@
 * Fixed bug where the SDK could not connect to the local Cosmos DB emulator running in Docker with a remapped host port. The emulator advertises its internal host/port (e.g. `127.0.0.1:8081`) in its account topology, which is unreachable when the host port differs from `8081`. When the user-supplied endpoint targets `localhost` or `127.0.0.1`, the SDK now reuses that host/port for all regional endpoints returned by the gateway. See [PR 46896](https://github.com/Azure/azure-sdk-for-python/pull/46896)
 
 #### Other Changes
+
+### 4.16.3 (2026-07-29)
+
+#### Bugs Fixed
+* Fixed regression introduced in 4.16.0 on [47105](https://github.com/Azure/azure-sdk-for-python/pull/47105) for complete-partition-key queries scanning documents instead of using partition-key routing, which caused excessive RU consumption and latency for aggregates such as `COUNT`. See [PR 48237](https://github.com/Azure/azure-sdk-for-python/pull/48237)
+
+### 4.16.2 (2026-07-15)
+
+#### Features Added
+* Added `GlobalSecondaryIndexDefinition` class and `global_secondary_index` keyword to `create_container`, `create_container_if_not_exists`, and `replace_container` methods for creating Global Secondary Index (GSI) containers. See [PR 47468](https://github.com/Azure/azure-sdk-for-python/pull/47468).
+
+#### Bugs Fixed
+* Fixed `KeyError: 'version'` in `SessionContainer.get_session_token` (sync and async) when the container's `partitionKey` definition returned by the service does not include the optional `version` field. The error was silently swallowed by a broad `except`, causing the client to send no `x-ms-session-token` header on subsequent reads. Against the Dedicated Gateway, this turned every Session-consistency read into an Integrated Cache miss. `partitionKey.version` is now treated as optional and defaults to `1`, matching how `PartitionKey` handles a missing version. See [PR 47143](https://github.com/Azure/azure-sdk-for-python/pull/47143)
 
 ### 4.16.1 (2026-06-01)
 

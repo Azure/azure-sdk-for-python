@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
+from unittest import mock
 
 import pytest
 from devtools_testutils import is_live
@@ -24,6 +25,7 @@ from test_content_validation import (
     assert_structured_message_get,
     TestIter,
 )
+from test_helpers import _deterministic_urandom
 
 from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import BlobBlock, BlobType, ContainerClient as SyncContainerClient
@@ -152,32 +154,38 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         str_iter = TestIter(str_data)
 
         # Act / Assert
-        await blob.upload_blob(
-            byte_data, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
-        )
-        assert await (await blob.download_blob()).read() == byte_data
-        await blob.upload_blob(
-            str_data, blob_type=a, encoding="utf-8", validate_content=b, overwrite=True, raw_request_hook=assert_method
-        )
-        assert await (await blob.download_blob()).read() == str_data_encoded
-        await blob.upload_blob(
-            byte_stream, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
-        )
-        assert await (await blob.download_blob()).read() == byte_data
-        await blob.upload_blob(
-            byte_iter, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
-        )
-        assert await (await blob.download_blob()).read() == byte_data
-        await blob.upload_blob(
-            str_iter,
-            blob_type=a,
-            length=len(str_data_encoded),
-            encoding="utf-8",
-            validate_content=b,
-            overwrite=True,
-            raw_request_hook=assert_method,
-        )
-        assert await (await blob.download_blob()).read() == str_data_encoded
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(
+                byte_data, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
+            )
+            assert await (await blob.download_blob()).read() == byte_data
+            await blob.upload_blob(
+                str_data,
+                blob_type=a,
+                encoding="utf-8",
+                validate_content=b,
+                overwrite=True,
+                raw_request_hook=assert_method,
+            )
+            assert await (await blob.download_blob()).read() == str_data_encoded
+            await blob.upload_blob(
+                byte_stream, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
+            )
+            assert await (await blob.download_blob()).read() == byte_data
+            await blob.upload_blob(
+                byte_iter, blob_type=a, validate_content=b, overwrite=True, raw_request_hook=assert_method
+            )
+            assert await (await blob.download_blob()).read() == byte_data
+            await blob.upload_blob(
+                str_iter,
+                blob_type=a,
+                length=len(str_data_encoded),
+                encoding="utf-8",
+                validate_content=b,
+                overwrite=True,
+                raw_request_hook=assert_method,
+            )
+            assert await (await blob.download_blob()).read() == str_data_encoded
 
     @BlobPreparer()
     @pytest.mark.parametrize("a", [True, "md5", "crc64"])  # a: validate_content
@@ -198,7 +206,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         io = BytesIO(data)
 
         # Act
-        await blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
+        with mock.patch("os.urandom", _deterministic_urandom()):
+            await blob.upload_blob(io, validate_content=a, raw_request_hook=assert_method)
 
         # Assert
         content = await blob.download_blob()
@@ -628,3 +637,23 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await blob.commit_block_list([BlobBlock("1")])
         result = await blob.download_blob()
         assert await result.read() == content
+
+    @BlobPreparer()
+    @pytest.mark.parametrize("a", ["auto", "crc64"])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_download_decompress_with_crc64(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b"abc" * 512
+        await blob.upload_blob(data, overwrite=True)
+
+        # decompress=True should raise ValueError
+        with pytest.raises(ValueError, match="Decompression is not supported when using CRC64 content validation."):
+            await blob.download_blob(validate_content=a, decompress=True)
+
+        # decompress=False should work fine
+        downloader = await blob.download_blob(validate_content=a, decompress=False)
+        assert await downloader.read() == data

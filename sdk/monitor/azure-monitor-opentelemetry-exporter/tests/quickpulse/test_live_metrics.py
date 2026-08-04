@@ -8,7 +8,10 @@ from unittest import mock
 
 from opentelemetry.sdk.resources import Resource
 
-from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import enable_live_metrics
+from azure.monitor.opentelemetry.exporter._quickpulse._live_metrics import (
+    enable_live_metrics,
+    get_quickpulse_configuration_callback,
+)
 
 
 class TestLiveMetrics(unittest.TestCase):
@@ -35,8 +38,8 @@ class TestLiveMetrics(unittest.TestCase):
             credential="test-credential",
         )
 
-        # Verify statsbeat feature was set
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -54,8 +57,8 @@ class TestLiveMetrics(unittest.TestCase):
         # Verify manager was initialized with connection string
         mock_manager_instance.initialize.assert_called_once_with(connection_string="InstrumentationKey=test-key")
 
-        # Verify statsbeat feature was still set (regardless of initialization success)
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -73,8 +76,8 @@ class TestLiveMetrics(unittest.TestCase):
         # Verify initialization was attempted with no kwargs
         mock_manager_instance.initialize.assert_called_once_with()
 
-        # Verify statsbeat feature was set
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -142,8 +145,8 @@ class TestLiveMetrics(unittest.TestCase):
         # Verify initialization was called with empty string
         mock_manager_instance.initialize.assert_called_once_with(connection_string="")
 
-        # Verify statsbeat feature was set
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -178,8 +181,8 @@ class TestLiveMetrics(unittest.TestCase):
             connection_string="InstrumentationKey=test-key", resource=mock_resource
         )
 
-        # Verify statsbeat feature was set
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -205,8 +208,8 @@ class TestLiveMetrics(unittest.TestCase):
         ]
         mock_manager_instance.initialize.assert_has_calls(expected_calls)
 
-        # Verify statsbeat feature was set twice
-        self.assertEqual(statsbeat_mock.call_count, 2)
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
 
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
     @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
@@ -233,8 +236,55 @@ class TestLiveMetrics(unittest.TestCase):
         # Verify all kwargs were passed through to initialize
         mock_manager_instance.initialize.assert_called_once_with(**custom_kwargs)
 
-        # Verify statsbeat feature was set
-        statsbeat_mock.assert_called_once()
+        # Enable path should not explicitly track statsbeat feature.
+        statsbeat_mock.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
+    def test_get_quickpulse_configuration_callback_disable_tracks_feature(
+        self, manager_mock, evaluate_mock, statsbeat_mock
+    ):
+        mock_manager_instance = mock.Mock()
+        mock_manager_instance.is_initialized.return_value = True
+        manager_mock.return_value = mock_manager_instance
+        evaluate_mock.return_value = False
+
+        get_quickpulse_configuration_callback({})
+
+        statsbeat_mock.assert_called_once_with()
+        mock_manager_instance.shutdown.assert_called_once()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
+    def test_get_quickpulse_configuration_callback_enable_does_not_track_feature(
+        self, manager_mock, evaluate_mock, statsbeat_mock
+    ):
+        mock_manager_instance = mock.Mock()
+        mock_manager_instance.is_initialized.return_value = True
+        manager_mock.return_value = mock_manager_instance
+        evaluate_mock.return_value = True
+
+        get_quickpulse_configuration_callback({})
+
+        statsbeat_mock.assert_not_called()
+
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.set_statsbeat_live_metrics_feature_set")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.evaluate_feature")
+    @mock.patch("azure.monitor.opentelemetry.exporter._quickpulse._live_metrics.get_quickpulse_manager")
+    def test_get_quickpulse_configuration_callback_disable_tracks_feature_when_manager_off(
+        self, manager_mock, evaluate_mock, statsbeat_mock
+    ):
+        mock_manager_instance = mock.Mock()
+        mock_manager_instance.is_initialized.return_value = False
+        manager_mock.return_value = mock_manager_instance
+        evaluate_mock.return_value = False
+
+        get_quickpulse_configuration_callback({})
+
+        statsbeat_mock.assert_called_once_with()
+        mock_manager_instance.shutdown.assert_not_called()
 
 
 # cSpell:enable

@@ -1,5 +1,210 @@
 # Release History
 
+## 2.0.0b1 (2026-08-04)
+
+### Other Changes
+
+- Cleaned up the public API surface by moving validation-only error helpers to a private implementation module and renaming runtime terminal/replay helpers as private.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery. The resilient Responses samples now call `set_resilient_tasks_enabled(True)` to explicitly opt in, mirroring the invocations resilient samples.
+
+## 2.0.0b0 (2026-07-29)
+
+### Features Added
+
+- Marked Foundry storage public APIs as experimental.
+- Raised the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10` so the shared experimental decorator is always available.
+- Added the `azure.ai.agentserver.responses.aio` namespace with async `ResponseEventStream` convenience generators that use the same method names as the sync stream, such as `output_item_message()` and `output_item_compaction()`.
+- Added local `TypedDict` model contract generation for the Responses protocol, including generated type aliases, union aliases, and `py.typed` packaging support.
+- Added dict-native wire payload helpers and request validators for validating protocol payloads without depending on generated model internals.
+
+- `ResponseContext.conversation_chain_id` (and the resilient task id it backs) now follows the native id convention: `cchain_<partition><scope>` for conversation-scoped chains, `rchain_<partition><scope>` for steerable response-linkage chains, or the `response_id` verbatim for a non-steerable one-shot. The id embeds the chain's partition key for co-location and carries a deterministic `(agent, session)` scope; `task_id == conversation_chain_id` exactly. Replaces the previous opaque `resilient-resp-<32-hex>` form.
+
+- **Resilient background responses.** `ResponsesServerOptions(resilient_background=True)`
+  makes `store=true`, `background=true` responses survive process crashes:
+  the framework persists handler progress and re-invokes the registered
+  handler on the next process start when a prior attempt did not reach a
+  terminal event. Defaults to `False`.
+
+- **Steerable conversations.** `ResponsesServerOptions(steerable_conversations=True)`
+  lets clients post a new turn on an in-flight conversation; the running
+  handler is woken (via the cancellation signal, distinguished by
+  `context.pending_input_count > 0`), drains the queued input on a fresh
+  invocation, and the turns are linked in a stable conversation chain.
+  Defaults to `False`.
+
+- **`ResponseContext` resilience + steering surface.** Flat fields stamped on
+  each invocation: `context.is_recovery`, `context.is_steered_turn`,
+  `context.pending_input_count`, and `context.conversation_chain_id` (a stable
+  identifier shared by every turn of a conversation chain, usable as a key into
+  application-side session state).
+
+- **Developer checkpoints.** `yield stream.checkpoint()` persists the
+  current response snapshot at a developer-chosen boundary (gated to resilient
+  background responses; a no-op otherwise; backpressured and idempotent). On a
+  recovered entry, `context.persisted_response` exposes the last persisted
+  snapshot so the handler can seed its stream and resume — the basis of the
+  one-`OutputItem`-per-phase recovery pattern.
+
+- **`internal_metadata`.** A single-turn, platform-internal `MutableMapping[str, Any]`
+  on output items (`item.internal_metadata`) and on the response
+  (`stream.internal_metadata`). It is persisted with the response (so it is
+  available on recovery) and is always stripped before any client-facing
+  HTTP/SSE payload, and on ingress. Distinct from the public
+  `ResponseObject.metadata`.
+
+- **`context.conversation_chain_metadata`.** Cross-turn, named-scope,
+  explicit-`flush()` resilient metadata over a conversation chain, typed by the
+  public `ConversationChainMetadataNamespace` Protocol.
+
+- **`await context.exit_for_recovery()`.** A single uniform graceful-shutdown
+  recovery primitive that works in every handler shape (coroutine, async
+  generator, sync) — it raises `ResponseExitForRecovery` internally to leave
+  the response `in_progress` for next-lifetime recovery.
+
+- **Stream recovery.** SSE events are persisted incrementally; clients reconnect
+  with `GET /responses/{id}?stream=true&starting_after=<event_id>` and resume
+  from their last received event.
+
+- **Response acceptor hook.** Register `@app.response_acceptor` to customize the
+  response shape returned when a turn is queued behind an active steerable
+  conversation.
+
+- **Storage.** `FileResponseStore` is exported from
+  `azure.ai.agentserver.responses` and is the default local-development store
+  (under `${AGENTSERVER_STATE_ROOT:-~/.agentserver}/responses/`) when no `store=`
+  is supplied in a non-hosted environment; pass
+  `store=InMemoryResponseProvider()` to opt out. The `AGENTSERVER_STATE_ROOT`
+  environment variable sets the local state storage root. A typed
+  `ResponseAlreadyExistsError` is raised by the response-store providers on a
+  duplicate `create_response` (the idempotent-create signal on recovery).
+
+- **Handlers are `async def`.** `@app.response_handler` requires an async
+  handler with the `(request, context, cancellation_signal)` signature so it can
+  observe the `asyncio.Event` cancellation signal.
+
+### Breaking Changes
+
+- Removed a-prefixed async convenience generator methods from the sync `ResponseEventStream` and sync builder classes. Use `azure.ai.agentserver.responses.aio.ResponseEventStream` for async streaming convenience methods.
+- Replaced generated model classes in `azure.ai.agentserver.responses.models` with dict-native `TypedDict` contracts. Model constructors such as `ItemMessage(...)` and `CreateResponse(...)` now produce plain dictionaries instead of generated model instances.
+- Removed runtime model-class behavior from response protocol models. Code should no longer rely on attribute access, `isinstance(..., ModelType)`, `.as_dict()`, or generated model base-class behavior.
+- Replaced most generated enum classes with string literal type aliases. Use string values directly for protocol fields, for example `"completed"`, `"message"`, or `"function_call_output"`.
+
+- The resilient-task input persisted for a `store=true` background response now
+  carries a single `user_id_key` (the durable per-user partition key) instead of
+  the previous `user_isolation_key` / `chat_isolation_key` pair; conversation
+  scoping continues to use `conversation_id`.
+
+### Migration Guide
+
+Async response event stream helpers now live under the `aio` namespace and no longer use the `a` prefix.
+
+Before:
+
+```python
+from azure.ai.agentserver.responses import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.aoutput_item_message(token_stream()):
+    yield event
+```
+
+After:
+
+```python
+from azure.ai.agentserver.responses.aio import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+async for event in stream.output_item_message(token_stream()):
+    yield event
+```
+Builder async helpers follow the same pattern: use builders from `azure.ai.agentserver.responses.aio.streaming` and drop the `a` prefix. For example, `atext_content(...)` becomes `text_content(...)`, `aarguments(...)` becomes `arguments(...)`, and `asummary_part(...)` becomes `summary_part(...)`.
+
+Protocol models are now dict-native. Construction still works, but the result is a dictionary:
+
+```python
+from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputTextContent
+
+message = ItemMessage(
+    role="user",
+    content=[MessageContentInputTextContent(type="input_text", text="hello")],
+)
+```
+
+Before:
+
+```python
+if isinstance(item, ItemMessage):
+    text = item.content[0].text
+```
+
+After:
+
+```python
+if item.get("type") == "message":
+    text = item.get("content", [{}])[0].get("text")
+```
+
+Before:
+
+```python
+status = ResponseStatus.COMPLETED
+```
+
+After:
+
+```python
+status = "completed"
+```
+
+### Bugs Fixed
+
+- **Steering now works on the first turn of a conversation.** In a
+  `steerable_conversations=true` deployment, the first turn (a request with no
+  `conversation_id` and no `previous_response_id`) is now hosted on the
+  multi-turn chain primitive instead of a one-shot task. Because all turns of a
+  chain share a stable `conversation_chain_id` — and therefore the same backing
+  task — a steered turn posted onto an in-flight first turn previously queued
+  onto a one-shot task that completed and auto-deleted before draining the
+  queued input, leaving the steered turn stuck `in_progress`. The first turn now
+  suspends between turns and drains queued steering inputs correctly.
+
+- **`context.conversation_chain_id` is now stable across every turn of a
+  conversation.** Previously it returned the raw `previous_response_id` (the
+  immediate predecessor), so it shifted on every turn after the second — breaking
+  its use as a stable per-conversation key (e.g. an upstream SDK session id). It
+  is now derived from the partition key embedded in the chain's response IDs
+  (which every turn shares), so all turns of a chain — and the resilient task
+  that backs them — resolve to the same identity. The value is now an opaque,
+  agent/session-scoped hash rather than a raw id. (Known limitation: a client
+  that supplies its own `response_id` with a mismatched embedded partition can
+  shift the chain identity for later turns.)
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b9`.
+- Reworked the resilient responses samples: `sample_21_resilient_langgraph` is now a real-time streaming LangGraph agent that composes LangGraph's checkpointer with the framework's response checkpoints (see the "Composing an External Durable Engine" section of the handler guide), added real crash-harness e2e coverage for samples 19–22, and removed the copilot sample.
+- Updated response hosting, persistence, streaming, validation, samples, and tests to operate on JSON-compatible wire dictionaries.
+- Updated model generation tooling to use TypeSpec Python `models-mode=typeddict` and removed generated model shim files.
+
+## 1.0.0b9 (2026-07-22)
+
+### Other Changes
+
+- Raised the `azure-ai-agentserver-core` dependency floor to `>=2.0.0b8`.
+
+## 1.0.0b8 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: the per-request call ID (`x-agent-foundry-call-id`) and global user ID (`x-agent-user-id`) are read from inbound requests and exposed on `ResponseContext.platform_context`. The per-request call ID is forwarded on all outbound Foundry Storage calls and bound to the request-scoped platform context so handler/tool code making raw outbound calls can forward it; `x-agent-user-id` is used only for container-side partitioning and is not forwarded to 1P services.
+
+### Breaking Changes
+
+- Renamed the public `IsolationContext` type to `PlatformContext`. Its fields are now `user_id_key` (from `x-agent-user-id`) and `call_id` (from `x-agent-foundry-call-id`), replacing `user_key` / `chat_key`.
+- `ResponseContext.isolation` is now `ResponseContext.platform_context`.
+- Response provider protocol methods now accept a `context` keyword argument (previously `isolation`).
+- In-process partition enforcement is now keyed on the user ID (`x-agent-user-id`) instead of the chat isolation key.
+
 ## 1.0.0b7 (2026-05-25)
 
 ### Features Added
@@ -49,7 +254,7 @@
 
 ### Bugs Fixed
 
-- `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the durable provider when the in-memory delete fails due to a concurrent eviction.
+- `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the resilient provider when the in-memory delete fails due to a concurrent eviction.
 - `POST /responses` with `background=true, stream=false` now correctly returns `status: "in_progress"` instead of `"completed"`. Handlers that yield events synchronously (no `await` between yields — the normal pattern with `ResponseEventStream`) would cause the background task to run to completion before `run_background` captured the initial snapshot. A cooperative yield after `response_created_signal.set()` now ensures the POST handler resumes promptly.
 - Conversation history IDs (`previous_response_id`, `conversation_id`) are now validated eagerly before the handler is invoked. A nonexistent reference now returns a 404 error to the client immediately, instead of being silently ignored or surfacing as an opaque error deep inside the handler. The prefetched IDs are reused by `ResponseContext.get_history()`, eliminating a redundant provider call.
 

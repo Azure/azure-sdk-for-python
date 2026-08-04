@@ -8,7 +8,15 @@
 
 ### Bugs Fixed
 
+- Fixed a resource leak where replica clients that were no longer part of the auto-failover set were not closed during client refresh.
+- Fixed auto-failover replica discovery so that a DNS SRV lookup timeout (for either the origin or replica records) is distinguished from an empty replica list. A timeout now correctly triggers the longer fallback refresh interval, while an empty result refreshes at the normal interval.
+- Fixed a thread-safety issue by publishing refreshed secret values through a new configuration mapping instead of mutating the existing mapping while readers may be iterating.
+- Fixed `refresh_on` handling so that a single-string watched setting is treated as a key with the default (no) label instead of being incorrectly unpacked character-by-character.
+- Fixed a `KeyError` when loading with an endpoint and credential (no connection string).
+
 ### Other Changes
+
+- Bumped minimum dependency on `azure-core` to `>=1.31.0`.
 
 ## 2.5.0 (2026-05-22)
 

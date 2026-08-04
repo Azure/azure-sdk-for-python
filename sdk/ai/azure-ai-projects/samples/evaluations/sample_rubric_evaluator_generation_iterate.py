@@ -25,7 +25,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -40,7 +40,6 @@ import os
 import time
 import uuid
 from datetime import datetime, timezone
-from typing import cast
 
 from dotenv import load_dotenv
 
@@ -49,7 +48,9 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     EvaluatorCategory,
     EvaluatorDefinitionType,
-    JobStatus,
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    PromptEvaluatorGenerationJobSource,
     RubricBasedEvaluatorDefinition,
 )
 
@@ -64,48 +65,49 @@ ts = datetime.now(tz=timezone.utc).strftime("%Y%m%d%H%M%S")
 short = uuid.uuid4().hex[:6]
 evaluator_name = f"reservation-quality-iterate-{ts}-{short}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Generate v1 of the evaluator from a single `Prompt` source.
-    job = project_client.beta.evaluators.create_generation_job(
-        job={
-            "model": model_name,
-            "name": "Reservation Quality (iterate)",
-            "evaluator_name": evaluator_name,
-            "evaluator_display_name": "Reservation Quality (iterate)",
-            "evaluator_description": "Starting point for human-in-the-loop iteration.",
-            "sources": [
-                {
-                    "type": "Prompt",
-                    "description": "Inline application overview.",
-                    "prompt": (
-                        "You are evaluating a restaurant reservation assistant that creates, "
-                        "modifies, and cancels reservations. It uses tools for restaurant "
-                        "lookup, availability checking, and notifications. It must confirm "
-                        "user intent before committing changes."
+    print("Begin creating an evaluator generation job.")
+    poller = project_client.beta.evaluators.begin_create_generation_job(
+        job=EvaluatorGenerationJob(
+            inputs=EvaluatorGenerationInputs(
+                model=model_name,
+                evaluator_name=evaluator_name,
+                evaluator_display_name="Reservation Quality (iterate)",
+                evaluator_description="Starting point for human-in-the-loop iteration.",
+                sources=[
+                    PromptEvaluatorGenerationJobSource(
+                        description="Inline application overview.",
+                        prompt=(
+                            "You are evaluating a restaurant reservation assistant that creates, "
+                            "modifies, and cancels reservations. It uses tools for restaurant "
+                            "lookup, availability checking, and notifications. It must confirm "
+                            "user intent before committing changes."
+                        ),
                     ),
-                }
-            ],
-        },
+                ],
+            ),
+        ),
         operation_id=f"rubric-iterate-{short}",
+        polling_interval=poll_interval_seconds,
     )
 
-    print(f"Waiting for job `{job.id}` to complete...")
-    while job.status not in TERMINAL_STATUSES:
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
         time.sleep(poll_interval_seconds)
-        job = project_client.beta.evaluators.get_generation_job(job.id)
 
-    if job.status != JobStatus.SUCCEEDED:
-        message = job.error.message if job.error is not None else "<no error message>"
-        raise RuntimeError(f"Generation job ended with status `{cast(JobStatus, job.status).value}`: {message}")
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
+    v1 = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {v1}")
 
     # `isinstance` narrows the discriminated `definition` to the rubric subtype.
-    v1 = job.result
-    assert v1 is not None
     v1_definition = v1.definition
     assert isinstance(v1_definition, RubricBasedEvaluatorDefinition)
     print(
@@ -160,9 +162,10 @@ with (
         )
 
     # 3. Save the edited definition as v2.
-    v2 = project_client.beta.evaluators.create_version(
+    # TODO: Remove this suppression once TypeSpec typing for EvaluatorVersion is fixed.
+    v2 = project_client.beta.evaluators.create_version(  # type: ignore[call-overload]  # pyright: ignore[reportCallIssue]
         name=evaluator_name,
-        evaluator_version={
+        evaluator_version={  # pyright: ignore[reportArgumentType]
             "name": evaluator_name,
             # Narrow each category to its enum value (the categories list is Union[str, EvaluatorCategory]).
             "categories": [c.value if isinstance(c, EvaluatorCategory) else c for c in v1.categories],

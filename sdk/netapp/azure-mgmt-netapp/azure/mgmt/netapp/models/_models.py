@@ -1921,6 +1921,10 @@ class CacheProperties(_Model):
     :ivar write_back: Flag indicating whether writeback is enabled for the cache. Known values are:
      "Disabled" and "Enabled".
     :vartype write_back: str or ~azure.mgmt.netapp.models.EnableWriteBackState
+    :ivar file_access_logs: Flag indicating whether file access logs are enabled for the Cache,
+     based on active diagnostic settings present on the Cache. Known values are: "Enabled" and
+     "Disabled".
+    :vartype file_access_logs: str or ~azure.mgmt.netapp.models.CacheFileAccessLogs
     """
 
     file_path: str = rest_field(name="filePath", visibility=["read", "create"])
@@ -2024,6 +2028,11 @@ class CacheProperties(_Model):
     )
     """Flag indicating whether writeback is enabled for the cache. Known values are: \"Disabled\" and
      \"Enabled\"."""
+    file_access_logs: Optional[Union[str, "_models.CacheFileAccessLogs"]] = rest_field(
+        name="fileAccessLogs", visibility=["read"]
+    )
+    """Flag indicating whether file access logs are enabled for the Cache, based on active diagnostic
+     settings present on the Cache. Known values are: \"Enabled\" and \"Disabled\"."""
 
     @overload
     def __init__(
@@ -6287,7 +6296,8 @@ class SnapshotRestoreFiles(_Model):
 
 
 class SubvolumeInfo(ProxyResource):
-    """Subvolume Information properties.
+    """Subvolume Information properties Deprecated. This resource type will be removed in a future API
+    version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
      /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
@@ -7063,6 +7073,7 @@ class Volume(TrackedResource):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -7551,6 +7562,7 @@ class VolumeGroupVolumeProperties(_Model):
         "is_large_volume",
         "originating_resource_id",
         "inherited_size_in_bytes",
+        "breakthrough_mode",
     ]
 
     @overload
@@ -8129,8 +8141,9 @@ class VolumeProperties(_Model):
     :vartype encrypted: bool
     :ivar placement_rules: Application specific placement rules for the particular volume.
     :vartype placement_rules: list[~azure.mgmt.netapp.models.PlacementKeyValuePairs]
-    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the
-     volume. Known values are: "Enabled" and "Disabled".
+    :ivar enable_subvolumes: Flag indicating whether subvolume operations are enabled on the volume
+     Deprecated. Subvolume operations and this flag will be removed in a future API version. Known
+     values are: "Enabled" and "Disabled".
     :vartype enable_subvolumes: str or ~azure.mgmt.netapp.models.EnableSubvolumes
     :ivar provisioned_availability_zone: The availability zone where the volume is provisioned.
      This refers to the logical availability zone where the volume resides.
@@ -8142,6 +8155,9 @@ class VolumeProperties(_Model):
     :ivar inherited_size_in_bytes: Space shared by short term clone volume with parent volume in
      bytes.
     :vartype inherited_size_in_bytes: int
+    :ivar breakthrough_mode: Specifies whether the volume operates in Breakthrough Mode. Known
+     values are: "Enabled" and "Disabled".
+    :vartype breakthrough_mode: str or ~azure.mgmt.netapp.models.BreakthroughMode
     """
 
     file_system_id: Optional[str] = rest_field(name="fileSystemId", visibility=["read"])
@@ -8365,8 +8381,9 @@ class VolumeProperties(_Model):
     enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = rest_field(
         name="enableSubvolumes", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Flag indicating whether subvolume operations are enabled on the volume. Known values are:
-     \"Enabled\" and \"Disabled\"."""
+    """Flag indicating whether subvolume operations are enabled on the volume Deprecated. Subvolume
+     operations and this flag will be removed in a future API version. Known values are: \"Enabled\"
+     and \"Disabled\"."""
     provisioned_availability_zone: Optional[str] = rest_field(name="provisionedAvailabilityZone", visibility=["read"])
     """The availability zone where the volume is provisioned. This refers to the logical availability
      zone where the volume resides."""
@@ -8376,6 +8393,11 @@ class VolumeProperties(_Model):
     """Id of the snapshot or backup that the volume is restored from."""
     inherited_size_in_bytes: Optional[int] = rest_field(name="inheritedSizeInBytes", visibility=["read"])
     """Space shared by short term clone volume with parent volume in bytes."""
+    breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = rest_field(
+        name="breakthroughMode", visibility=["read", "create"]
+    )
+    """Specifies whether the volume operates in Breakthrough Mode. Known values are: \"Enabled\" and
+     \"Disabled\"."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -8422,6 +8444,7 @@ class VolumeProperties(_Model):
         placement_rules: Optional[list["_models.PlacementKeyValuePairs"]] = None,
         enable_subvolumes: Optional[Union[str, "_models.EnableSubvolumes"]] = None,
         is_large_volume: Optional[bool] = None,
+        breakthrough_mode: Optional[Union[str, "_models.BreakthroughMode"]] = None,
     ) -> None: ...
 
     @overload

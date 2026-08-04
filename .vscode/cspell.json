@@ -139,6 +139,7 @@
     "conda/conda-recipes/uamqp/meta.yaml",
     "conda/conda-releaselogs/azure-mgmt.md",
     ".github/workflows/azure-sdk-tools.yml",
+    ".github/workflows/actionlint.yml",
     "sdk/ai/azure-ai-voicelive/azure/ai/voicelive/models/_*.py",
     "sdk/ai/azure-ai-voicelive/samples/**"
   ],
@@ -299,6 +300,8 @@
     "ivar",
     "ivars",
     "jwks",
+    "kashifkhan",
+    "liftr",
     "keybak",
     "kube",
     "kubeconfig",
@@ -361,6 +364,7 @@
     "oauthlib",
     "objs",
     "odata",
+    "octocat",
     "oidc",
     "onboarded",
     "onmicrosoft",
@@ -399,6 +403,7 @@
     "parameterizing",
     "pypirc",
     "pyrit",
+    "pystac",
     "pytyped",
     "pytz",
     "pywin",
@@ -1660,18 +1665,6 @@
       ]
     },
     {
-      "filename": "sdk/deviceupdate/azure-iot-deviceupdate/**",
-      "words": [
-        "wday",
-        "mday",
-        "unflattened",
-        "deseralize",
-        "astimezone",
-        "ctxt",
-        "Nify"
-      ]
-    },
-    {
       "filename": "sdk/cosmos/azure-cosmos/**",
       "words": [
         "colls",
@@ -1856,9 +1849,16 @@
     {
       "filename": "sdk/confidentialledger/azure-confidentialledger/**",
       "words": [
+        "deser",
         "mrenclave",
         "MRENCLAVE",
         "oeverify"
+      ]
+    },
+    {
+      "filename": "sdk/discovery/azure-ai-discovery/**",
+      "words": [
+        "deser"
       ]
     },
     {
@@ -2156,6 +2156,10 @@
     {
       "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
       "words": ["topo", "haline", "Aproperty", "pygen"]
+    },
+    {
+      "filename": ".github/**",
+      "words": ["llms", "DIFC", "XPIA", "svcowner", "toddysm", "chenkennt", "sffamily"]
     },
     {
       "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",

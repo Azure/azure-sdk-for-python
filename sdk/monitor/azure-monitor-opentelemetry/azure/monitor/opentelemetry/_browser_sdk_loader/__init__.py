@@ -87,7 +87,9 @@ def _register_django_middleware(config: BrowserSDKConfig) -> None:
         # Store configuration globally for the middleware to access
         _store_django_config(config)
     except Exception as ex:  # pylint: disable=broad-exception-caught
-        _logger.warning("Failed to register Django middleware: %s", ex, exc_info=True)
+        _logger.warning(  # pylint: disable=do-not-log-exceptions-if-not-debug
+            "Failed to register Django middleware: %s", ex, exc_info=True
+        )
 
 
 def _store_django_config(config: BrowserSDKConfig) -> None:

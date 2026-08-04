@@ -353,5 +353,6 @@
         "azure.mgmt.dataprotection.aio.operations.FetchCrossRegionRestoreJobsOperations.list": "Microsoft.DataProtection.FetchCrossRegionRestoreJobsOperationGroup.list",
         "azure.mgmt.dataprotection.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list",
         "azure.mgmt.dataprotection.aio.operations.BackupInstancesExtensionRoutingOperations.list": "Microsoft.DataProtection.BackupInstancesExtensionRoutingOperationGroup.list"
-    }
+    },
+    "CrossLanguageVersion": "6dd052749fec"
 }

@@ -1,0 +1,43 @@
+{
+  "properties": {
+    "action": {
+      "actionType": "ImportData",
+      "dataImportDefinition": {
+        "assetName": "smoke-s3-asset",
+        "dataType": "uri_folder",
+        "dataUri": "azureml://datastores/workspaceblobstore/paths/{name}",
+        "isAnonymous": false,
+        "isArchived": false,
+        "properties": {},
+        "source": {
+          "connection": "azureml:smoke_s3_connection",
+          "path": "test1/*",
+          "sourceType": "file_system"
+        },
+        "tags": {}
+      }
+    },
+    "displayName": "smoke-import-schedule-fs-display",
+    "properties": {},
+    "tags": {},
+    "trigger": {
+      "frequency": "week",
+      "interval": 1,
+      "schedule": {
+        "hours": [
+          10
+        ],
+        "minutes": [
+          15
+        ],
+        "weekDays": [
+          "monday",
+          "wednesday"
+        ]
+      },
+      "startTime": "2026-01-01T00:00:00",
+      "timeZone": "UTC",
+      "triggerType": "Recurrence"
+    }
+  }
+}

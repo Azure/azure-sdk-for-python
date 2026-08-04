@@ -33,16 +33,18 @@ tracing exporters, and span operations:
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (auto-configured by the distro).
 """
+from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
+from contextlib import contextmanager, nullcontext
 import logging
 import os
-from collections.abc import AsyncIterable, AsyncIterator  # pylint: disable=import-error
-from typing import Any, Optional, Union
+import threading
+from typing import Any, Optional
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
 
 from . import _config
-
-_Content = Union[str, bytes, memoryview]
+from ._constants import Constants
+from ._types import StreamContent
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
@@ -76,6 +78,30 @@ _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
 
+_OTLP_HTTP_PROTOBUF = "http/protobuf"
+_OTLP_GRPC = "grpc"
+_OTLP_GRPC_EXTRA = "azure-ai-agentserver-core[otlp-grpc]"
+_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
+_OTLP_PROTOCOL = "OTEL_EXPORTER_OTLP_PROTOCOL"
+_OTLP_TRACES_ENDPOINT = "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"
+_OTLP_TRACES_PROTOCOL = "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL"
+_OTLP_METRICS_ENDPOINT = "OTEL_EXPORTER_OTLP_METRICS_ENDPOINT"
+_OTLP_METRICS_PROTOCOL = "OTEL_EXPORTER_OTLP_METRICS_PROTOCOL"
+_OTLP_LOGS_ENDPOINT = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"
+_OTLP_LOGS_PROTOCOL = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL"
+_OTLP_ENV_VARS = (
+    _OTLP_ENDPOINT,
+    _OTLP_PROTOCOL,
+    _OTLP_TRACES_ENDPOINT,
+    _OTLP_TRACES_PROTOCOL,
+    _OTLP_METRICS_ENDPOINT,
+    _OTLP_METRICS_PROTOCOL,
+    _OTLP_LOGS_ENDPOINT,
+    _OTLP_LOGS_PROTOCOL,
+)
+_DISTRO_OTLP_SUPPRESSION_LOCK = threading.RLock()
+_DISTRO_OTLP_SUPPRESSION_STATE = threading.local()
+
 
 # ======================================================================
 # Public API: observability setup
@@ -84,6 +110,12 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Sentinel attribute name set on the console handler to prevent adding
 # duplicates across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
+
+# Logger names whose INFO messages are too noisy by default (set to WARNING unless the user requests DEBUG).
+_SUPPRESSED_LOGGERS = (
+    "azure.monitor.opentelemetry.exporter",
+    "azure.core.pipeline.policies.http_logging_policy",
+)
 
 
 def configure_observability(
@@ -131,14 +163,25 @@ def configure_observability(
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)
         root.addHandler(_console)
 
-    # Suppress the noisy Azure Core HTTP logging policy logger.
-    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    # Suppress noisy loggers by setting their level to WARNING.
+    # Must be done BEFORE _configure_tracing() — the distro respects
+    # pre-set levels, preventing repetitive "Transmission succeeded" INFO messages.
+    # Preserve visibility when user explicitly requests DEBUG.
+    if logging.getLevelName(resolved_level) > logging.DEBUG:
+        for _noisy in _SUPPRESSED_LOGGERS:
+            logging.getLogger(_noisy).setLevel(logging.WARNING)
 
     # Tracing and OTel export
-    _configure_tracing(connection_string=connection_string, enable_sensitive_data=enable_sensitive_data)
+    _configure_tracing(
+        connection_string=connection_string,
+        enable_sensitive_data=enable_sensitive_data,
+    )
 
 
-def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive_data: bool = False) -> None:
+def _configure_tracing(
+    connection_string: Optional[str] = None,
+    enable_sensitive_data: bool = False,
+) -> None:
     """Configure OpenTelemetry exporters via the microsoft-opentelemetry distro.
 
     Internal helper called by :func:`configure_observability`.
@@ -163,7 +206,7 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
     agent_blueprint_id = _config.resolve_agent_blueprint_id() or None
     agent_tenant_id = _config.resolve_agent_tenant_id() or None
 
-    span_processors = [
+    resolved_span_processors = [
         _FoundryEnrichmentSpanProcessor(
             agent_name=agent_name, agent_version=agent_version,
             agent_id=agent_id, project_id=project_id,
@@ -171,27 +214,43 @@ def _configure_tracing(connection_string: Optional[str] = None, enable_sensitive
             agent_tenant_id=agent_tenant_id,
         ),
     ]
-    log_record_processors = [_BaggageLogRecordProcessor()]  # type: ignore[list-item]
+    log_record_processors = [  # type: ignore[list-item]
+        _BaggageLogRecordProcessor(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=_config.resolve_session_id() or None,
+        ),
+    ]
+    metric_readers: list[Any] = []
+    suppress_distro_otlp = _append_managed_otlp_components(
+        resolved_span_processors,
+        metric_readers,
+        log_record_processors,
+    )
 
     try:
-        _setup_distro_export(
-            resource=resource,
-            span_processors=span_processors,
-            log_record_processors=log_record_processors,
-            connection_string=connection_string,
-            enable_sensitive_data=enable_sensitive_data,
-        )
+        context = _suppress_distro_otlp_components() if suppress_distro_otlp else nullcontext()
+        with context:
+            _setup_distro_export(
+                resource=resource,
+                span_processors=resolved_span_processors,
+                metric_readers=metric_readers,
+                log_record_processors=log_record_processors,
+                connection_string=connection_string,
+                enable_sensitive_data=enable_sensitive_data,
+            )
         logger.info("Tracing configured successfully via microsoft-opentelemetry distro.")
     except ImportError:
         logger.warning("microsoft-opentelemetry is not installed — tracing export disabled.")
         # Still set up TracerProvider with enrichment processor so spans are created
-        _ensure_trace_provider(resource, span_processors)
+        _ensure_trace_provider(resource, resolved_span_processors)
 
 
 def _setup_distro_export(
     *,
     resource: Any,
     span_processors: list[Any],
+    metric_readers: list[Any],
     log_record_processors: list[Any],
     connection_string: Optional[str] = None,
     enable_sensitive_data: bool = False,
@@ -203,6 +262,7 @@ def _setup_distro_export(
 
     :keyword resource: OTel resource describing this service.
     :keyword span_processors: Span processors to register.
+    :keyword metric_readers: Metric readers to register.
     :keyword log_record_processors: Log record processors to register.
     :keyword connection_string: Application Insights connection string.
     :keyword enable_sensitive_data: Enable sensitive data recording for
@@ -213,6 +273,7 @@ def _setup_distro_export(
     kwargs: dict[str, Any] = {
         "resource": resource,
         "span_processors": span_processors,
+        "metric_readers": metric_readers,
         "log_record_processors": log_record_processors,
         "enable_sensitive_data": enable_sensitive_data,
     }
@@ -222,6 +283,15 @@ def _setup_distro_export(
     if connection_string:
         kwargs["enable_azure_monitor"] = True
         kwargs["azure_monitor_connection_string"] = connection_string
+
+        # When Entra-based auth is requested, export to Azure Monitor using a
+        # system-assigned managed identity (no client id) rather than the
+        # connection string's instrumentation key alone.
+        auth_mode = os.environ.get(Constants.APPLICATIONINSIGHTS_AUTH_MODE, "")
+        if auth_mode.strip().lower() == "entra":
+            from azure.identity import ManagedIdentityCredential
+
+            kwargs["azure_monitor_exporter_credential"] = ManagedIdentityCredential()
 
     # A365 tracing export — enabled only in hosted environments.
     if (
@@ -234,6 +304,156 @@ def _setup_distro_export(
         kwargs["a365_observability_scope_override"] = "api://9b975845-388f-4429-889e-eab1ef63949c/.default"
 
     use_microsoft_opentelemetry(**kwargs)
+
+
+def _append_managed_otlp_components(
+    span_processors: list[Any],
+    metric_readers: list[Any],
+    log_record_processors: list[Any],
+) -> bool:
+    """Append SDK-managed OTLP exporters when any signal requests gRPC.
+
+    The Microsoft OpenTelemetry distro currently owns the normal OTLP path but
+    only bundles the HTTP/protobuf exporter. Agent Server handles the gRPC
+    protocol here so customers only need to set OTLP environment variables. If
+    any signal uses gRPC, Agent Server also creates HTTP/protobuf exporters for
+    non-gRPC OTLP signals so mixed signal-specific protocol settings work.
+    Returns True when the distro OTLP appender should be suppressed so it does
+    not also create HTTP/protobuf exporters.
+
+    :param span_processors: Span processors to append trace export to.
+    :type span_processors: list[~typing.Any]
+    :param metric_readers: Metric readers to append metric export to.
+    :type metric_readers: list[~typing.Any]
+    :param log_record_processors: Log record processors to append log export to.
+    :type log_record_processors: list[~typing.Any]
+    :return: Whether distro OTLP exporters should be suppressed.
+    :rtype: bool
+    """
+    if not _is_otlp_enabled():
+        return False
+
+    trace_protocol = _resolve_otlp_protocol(_OTLP_TRACES_PROTOCOL)
+    metric_protocol = _resolve_otlp_protocol(_OTLP_METRICS_PROTOCOL)
+    log_protocol = _resolve_otlp_protocol(_OTLP_LOGS_PROTOCOL)
+    protocols = (trace_protocol, metric_protocol, log_protocol)
+    if _OTLP_GRPC not in protocols:
+        return False
+
+    grpc_exporters: Optional[tuple[Any, Any, Any]] = None
+    try:
+        from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
+            OTLPLogExporter as GrpcLogExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import (
+            OTLPMetricExporter as GrpcMetricExporter,
+        )
+        from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import (
+            OTLPSpanExporter as GrpcSpanExporter,
+        )
+        from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+        from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+        from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+        grpc_exporters = (GrpcSpanExporter, GrpcMetricExporter, GrpcLogExporter)
+    except ImportError:
+        logger.warning(
+            "OTLP/gRPC export was requested, but the optional gRPC exporter "
+            "dependencies are not installed. Install %s to enable OTLP/gRPC export.",
+            _OTLP_GRPC_EXTRA,
+        )
+
+    from opentelemetry.exporter.otlp.proto.http._log_exporter import (
+        OTLPLogExporter as HttpLogExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.http.metric_exporter import (
+        OTLPMetricExporter as HttpMetricExporter,
+    )
+    from opentelemetry.exporter.otlp.proto.http.trace_exporter import (
+        OTLPSpanExporter as HttpSpanExporter,
+    )
+    from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+    from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+    from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+    if trace_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            span_processors.append(BatchSpanProcessor(grpc_exporters[0]()))
+    else:
+        span_processors.append(BatchSpanProcessor(HttpSpanExporter()))
+
+    if metric_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            metric_readers.append(PeriodicExportingMetricReader(grpc_exporters[1]()))
+    else:
+        metric_readers.append(PeriodicExportingMetricReader(HttpMetricExporter()))
+
+    if log_protocol == _OTLP_GRPC:
+        if grpc_exporters:
+            log_record_processors.append(BatchLogRecordProcessor(grpc_exporters[2]()))
+    else:
+        log_record_processors.append(BatchLogRecordProcessor(HttpLogExporter()))
+
+    return True
+
+
+def _append_grpc_otlp_components(
+    span_processors: list[Any],
+    metric_readers: list[Any],
+    log_record_processors: list[Any],
+) -> bool:
+    return _append_managed_otlp_components(
+        span_processors,
+        metric_readers,
+        log_record_processors,
+    )
+
+
+def _is_otlp_enabled() -> bool:
+    return any(
+        os.environ.get(env_var)
+        for env_var in (
+            _OTLP_ENDPOINT,
+            _OTLP_TRACES_ENDPOINT,
+            _OTLP_METRICS_ENDPOINT,
+            _OTLP_LOGS_ENDPOINT,
+        )
+    )
+
+
+def _resolve_otlp_protocol(signal_protocol_env: Optional[str] = None) -> str:
+    protocol = os.environ.get(signal_protocol_env) if signal_protocol_env else None
+    protocol = protocol or os.environ.get(_OTLP_PROTOCOL) or _OTLP_HTTP_PROTOBUF
+    normalized = protocol.strip().lower()
+    if normalized not in (_OTLP_HTTP_PROTOBUF, _OTLP_GRPC):
+        raise ValueError(
+            f"Unsupported OTLP protocol {protocol!r}. Use "
+            f"{_OTLP_HTTP_PROTOBUF!r} or {_OTLP_GRPC!r}."
+        )
+    return normalized
+
+
+@contextmanager
+def _suppress_distro_otlp_components() -> Any:
+    import microsoft.opentelemetry as microsoft_opentelemetry
+
+    with _DISTRO_OTLP_SUPPRESSION_LOCK:
+        distro_globals = microsoft_opentelemetry.use_microsoft_opentelemetry.__globals__
+        original_append_otlp_components = distro_globals["_append_otlp_components"]
+
+        def _skip_otlp_components(_otel_kwargs: dict[str, Any]) -> None:
+            if getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False):
+                return None
+            return original_append_otlp_components(_otel_kwargs)
+
+        previous_suppression_state = getattr(_DISTRO_OTLP_SUPPRESSION_STATE, "enabled", False)
+        _DISTRO_OTLP_SUPPRESSION_STATE.enabled = True
+        distro_globals["_append_otlp_components"] = _skip_otlp_components
+        try:
+            yield
+        finally:
+            _DISTRO_OTLP_SUPPRESSION_STATE.enabled = previous_suppression_state
+            distro_globals["_append_otlp_components"] = original_append_otlp_components
 
 
 # ======================================================================
@@ -397,19 +617,19 @@ def detach_context(token: Any) -> None:
 
 
 async def trace_stream(
-    iterator: AsyncIterable[_Content], span: Any
-) -> AsyncIterator[_Content]:
+    iterator: AsyncIterable[StreamContent], span: Any
+) -> AsyncIterator[StreamContent]:
     """Wrap a streaming body so the span covers the full transmission.
 
     Yields chunks unchanged.  Ends the span when the iterator is
     exhausted or raises an exception.
 
     :param iterator: The async iterable to wrap.
-    :type iterator: AsyncIterable[str or bytes or memoryview]
+    :type iterator: AsyncIterable[~azure.ai.agentserver.core.StreamContent]
     :param span: The OTel span to end on completion, or ``None``.
     :type span: any
     :return: An async iterator yielding chunks unchanged.
-    :rtype: AsyncIterator[str or bytes or memoryview]
+    :rtype: AsyncIterator[~azure.ai.agentserver.core.StreamContent]
     """
     error: Optional[BaseException] = None
     try:
@@ -469,31 +689,36 @@ class _FoundryEnrichmentSpanProcessor:
         # Set agent identity attributes at span end so they cannot be
         # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
         #
-        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # Workaround: opentelemetry-sdk sets _end_time before calling
         # _on_ending, which causes set_attribute() to silently no-op despite the
-        # spec requiring mutability during OnEnding.  We write to _attributes
-        # directly until the SDK is fixed.  The try/except guards against future
-        # SDK changes that may rename or remove the internal field.
+        # spec requiring mutability during OnEnding.  We write to the span's
+        # attribute store directly until the SDK is fixed.  opentelemetry-sdk
+        # >=1.43.0 changed ``span._attributes`` from a plain dict to a
+        # ``BoundedAttributes`` whose backing store is ``._dict`` and which no
+        # longer supports item assignment; older versions exposed a mutable
+        # mapping directly.  Resolve ``._dict`` when present so both work.
+        # The try/except guards against future SDK changes to these internals.
         # TODO: switch to span.set_attribute() once the SDK honours the spec.
         attrs = getattr(span, "_attributes", None)
         if attrs is None:
             return
         try:
+            target = getattr(attrs, "_dict", attrs)
             if self.agent_name:
-                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+                target[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
             if self.agent_version:
-                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+                target[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
             if self.agent_id:
-                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+                target[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
             if self.agent_blueprint_id:
-                attrs[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
+                target[_ATTR_GEN_AI_AGENT_BLUEPRINT_ID] = self.agent_blueprint_id
             if self.agent_tenant_id:
-                attrs[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
+                target[_ATTR_GEN_AI_AGENT_TENANT_ID] = self.agent_tenant_id
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
-    def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
-        pass
+    def on_end(self, span: Any) -> None:
+        self._on_ending(span)
 
     def shutdown(self) -> None:
         pass
@@ -510,6 +735,17 @@ class _BaggageLogRecordProcessor:
     for end-to-end correlation.
     """
 
+    def __init__(
+        self,
+        *,
+        agent_name: Optional[str] = None,
+        agent_version: Optional[str] = None,
+        session_id: Optional[str] = None,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.session_id = session_id
+
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
         """Copy baggage entries into the log record's attributes.
 
@@ -517,11 +753,26 @@ class _BaggageLogRecordProcessor:
         :type log_data: any
         """
         try:
+            if not hasattr(log_data, "log_record") or not log_data.log_record:
+                return
+
+            attrs = log_data.log_record.attributes  # type: ignore[assignment]
+
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
-            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+            if entries:
                 for key, value in entries.items():
-                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+                    attrs[key] = value  # type: ignore[index]
+
+            if self.agent_name and _ATTR_GEN_AI_AGENT_NAME not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version and _ATTR_GEN_AI_AGENT_VERSION not in attrs:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+
+            bag_session = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+            resolved_session = bag_session or self.session_id
+            if resolved_session and _ATTR_SESSION_ID not in attrs:
+                attrs[_ATTR_SESSION_ID] = resolved_session
         except Exception:  # pylint: disable=broad-except
             pass
 

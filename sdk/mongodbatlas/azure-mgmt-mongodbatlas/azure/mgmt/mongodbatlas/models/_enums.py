@@ -19,6 +19,19 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class ClusterTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Cluster tier options for MongoDB Atlas."""
+
+    FREE = "FREE"
+    """Free tier cluster."""
+    FLEX = "FLEX"
+    """Flex tier cluster."""
+    M10 = "M10"
+    """M10 tier cluster."""
+    M30 = "M30"
+    """M30 tier cluster."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -51,13 +64,13 @@ class MarketplaceSubscriptionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta
     """Marketplace subscription status of a resource."""
 
     PENDING_FULFILLMENT_START = "PendingFulfillmentStart"
-    """Purchased but not yet activated"""
+    """Purchased but not yet activated."""
     SUBSCRIBED = "Subscribed"
-    """Marketplace subscription is activated"""
+    """Marketplace subscription is activated."""
     SUSPENDED = "Suspended"
-    """This state indicates that a customer's payment for the Marketplace service was not received"""
+    """This state indicates that a customer's payment for the Marketplace service was not received."""
     UNSUBSCRIBED = "Unsubscribed"
-    """Customer has cancelled the subscription"""
+    """Customer has cancelled the subscription."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):

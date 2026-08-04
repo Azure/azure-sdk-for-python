@@ -28,7 +28,7 @@ USAGE:
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.2.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -50,14 +50,23 @@ USAGE:
 import os
 import time
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict, List, cast
+from datetime import datetime, timedelta, timezone
+from typing import List
 
 from dotenv import load_dotenv
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import JobStatus, RubricBasedEvaluatorDefinition
+from azure.ai.projects.models import (
+    AgentEvaluatorGenerationJobSource,
+    DatasetEvaluatorGenerationJobSource,
+    EvaluatorGenerationInputs,
+    EvaluatorGenerationJob,
+    EvaluatorGenerationJobSource,
+    PromptEvaluatorGenerationJobSource,
+    RubricBasedEvaluatorDefinition,
+    TracesEvaluatorGenerationJobSource,
+)
 
 load_dotenv()
 
@@ -75,8 +84,6 @@ short = uuid.uuid4().hex[:6]
 multi_name = f"multi-source-{ts}-{short}"
 traces_name = f"traces-source-{ts}-{short}"
 
-TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
-
 multi_evaluator_version = ""
 traces_evaluator_version = ""
 
@@ -85,66 +92,67 @@ with (
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
     # 1. Combined Prompt + Agent + Dataset generation job.
-    multi_sources: List[Dict[str, Any]] = [
-        {
-            "type": "Prompt",
-            "description": "Inline application overview.",
-            "prompt": (
+    multi_sources: List[EvaluatorGenerationJobSource] = [
+        PromptEvaluatorGenerationJobSource(
+            description="Inline application overview.",
+            prompt=(
                 "You are evaluating a customer-support assistant that helps users "
                 "manage their accounts, troubleshoot issues, and place orders. The "
                 "assistant uses tools for account lookup, password reset, and order "
                 "creation. It must confirm intent before performing destructive "
                 "actions and maintain a patient, professional tone."
             ),
-        }
+        ),
     ]
     if agent_name:
         multi_sources.append(
-            {
-                "type": "Agent",
-                "description": "Agent metadata enriches the rubric with tool and instruction signals.",
-                "agent_name": agent_name,
-            }
+            AgentEvaluatorGenerationJobSource(
+                description="Agent metadata enriches the rubric with tool and instruction signals.",
+                agent_name=agent_name,
+            )
         )
     else:
         print("Skipping Agent source (FOUNDRY_AGENT_NAME not set).")
 
     if dataset_name and dataset_version:
         multi_sources.append(
-            {
-                "type": "Dataset",
-                "description": "Reference examples ground dimensions in real data.",
-                "name": dataset_name,
-                "version": dataset_version,
-            }
+            DatasetEvaluatorGenerationJobSource(
+                description="Reference examples ground dimensions in real data.",
+                name=dataset_name,
+                version=dataset_version,
+            )
         )
     else:
         print("Skipping Dataset source (FOUNDRY_REFERENCE_DATASET_NAME / _VERSION not set).")
 
-    multi_job = project_client.beta.evaluators.create_generation_job(
-        job={
-            "model": model_name,
-            "name": "Multi-source generation",
-            "evaluator_name": multi_name,
-            "evaluator_display_name": "Customer Support Quality (multi-source)",
-            "evaluator_description": "Generated from prompt, agent, and dataset signals.",
-            "sources": multi_sources,
-        },
-        operation_id=f"rubric-multi-{short}",
-    )
+    print("Begin creating an evaluator generation job.")
+    try:
+        poller = project_client.beta.evaluators.begin_create_generation_job(
+            job=EvaluatorGenerationJob(
+                inputs=EvaluatorGenerationInputs(
+                    model=model_name,
+                    evaluator_name=multi_name,
+                    evaluator_display_name="Customer Support Quality (multi-source)",
+                    evaluator_description="Generated from prompt, agent, and dataset signals.",
+                    sources=multi_sources,
+                ),
+            ),
+            operation_id=f"rubric-multi-{short}",
+            polling_interval=poll_interval_seconds,
+        )
 
-    print(f"Waiting for multi-source job `{multi_job.id}` to complete...")
-    while multi_job.status not in TERMINAL_STATUSES:
-        time.sleep(poll_interval_seconds)
-        multi_job = project_client.beta.evaluators.get_generation_job(multi_job.id)
+        # Optional: While SDK is polling, periodically print the job status until the job is complete
+        print("Periodically check job status:")
+        while not poller.done():
+            print(f"\tstatus=`{poller.status()}`")
+            time.sleep(poll_interval_seconds)
 
-    if multi_job.status != JobStatus.SUCCEEDED:
-        message = multi_job.error.message if multi_job.error is not None else "<no error message>"
-        print(f"Multi-source job ended with status `{cast(JobStatus, multi_job.status).value}`: {message}")
-    else:
+        # Since done() is true, result() returns the final deserialized job result without
+        # waiting further. It also propagates any LRO polling exception.
+        evaluator = poller.result()
+        print(f"Final LRO status: `{poller.status()}`.")
+        print(f"Evaluator generation result: {evaluator}")
         # `isinstance` narrows the discriminated `definition` to the rubric subtype.
-        evaluator = multi_job.result
-        assert evaluator is not None
         definition = evaluator.definition
         assert isinstance(definition, RubricBasedEvaluatorDefinition)
         multi_evaluator_version = evaluator.version or ""
@@ -152,6 +160,8 @@ with (
             f"Multi-source evaluator `{evaluator.name}` v{evaluator.version}: "
             f"{len(definition.dimensions)} dimensions."
         )
+    except Exception as e:  # pylint: disable=broad-except
+        print(f"Multi-source job failed: {e}")
 
     # 2. Separate `traces` + Agent companion generation job.
     # The traces source requires a companion source because the service rejects
@@ -159,46 +169,49 @@ with (
     if not agent_name:
         print("Skipping traces job (requires FOUNDRY_AGENT_NAME for both the traces source and companion).")
     else:
-        now = int(time.time())
-        start_time = now - traces_window_days * 24 * 3600
-        end_time = now + 600  # small padding for clock skew
+        now = datetime.now(tz=timezone.utc)
+        start_time = now - timedelta(days=traces_window_days)
+        end_time = now + timedelta(seconds=600)  # small padding for clock skew
 
-        traces_job = project_client.beta.evaluators.create_generation_job(
-            job={
-                "model": model_name,
-                "name": "Traces-source generation",
-                "evaluator_name": traces_name,
-                "evaluator_display_name": "Customer Support Quality (from traces)",
-                "evaluator_description": "Generated from real Application Insights conversation traces.",
-                "sources": [
-                    {
-                        "type": "traces",
-                        "description": "Application Insights conversation traces for the agent.",
-                        "agent_name": agent_name,
-                        "start_time": start_time,
-                        "end_time": end_time,
-                    },
-                    {
-                        "type": "Agent",
-                        "description": "Companion source (service rejects traces-only).",
-                        "agent_name": agent_name,
-                    },
-                ],
-            },
-            operation_id=f"rubric-traces-{short}",
-        )
+        print("Begin creating an evaluator generation job.")
+        try:
+            poller = project_client.beta.evaluators.begin_create_generation_job(
+                job=EvaluatorGenerationJob(
+                    inputs=EvaluatorGenerationInputs(
+                        model=model_name,
+                        evaluator_name=traces_name,
+                        evaluator_display_name="Customer Support Quality (from traces)",
+                        evaluator_description="Generated from real Application Insights conversation traces.",
+                        sources=[
+                            TracesEvaluatorGenerationJobSource(
+                                description="Application Insights conversation traces for the agent.",
+                                agent_name=agent_name,
+                                start_time=start_time,
+                                end_time=end_time,
+                            ),
+                            AgentEvaluatorGenerationJobSource(
+                                description="Companion source (service rejects traces-only).",
+                                agent_name=agent_name,
+                            ),
+                        ],
+                    ),
+                ),
+                operation_id=f"rubric-traces-{short}",
+                polling_interval=poll_interval_seconds,
+            )
 
-        print(f"Waiting for traces job `{traces_job.id}` to complete...")
-        while traces_job.status not in TERMINAL_STATUSES:
-            time.sleep(poll_interval_seconds)
-            traces_job = project_client.beta.evaluators.get_generation_job(traces_job.id)
+            # Optional: While SDK is polling, periodically print the job status until the job is complete
+            print("Periodically check job status:")
+            while not poller.done():
+                print(f"\tstatus=`{poller.status()}`")
+                time.sleep(poll_interval_seconds)
 
-        if traces_job.status != JobStatus.SUCCEEDED:
-            message = traces_job.error.message if traces_job.error is not None else "<no error message>"
-            print(f"Traces job ended with status `{cast(JobStatus, traces_job.status).value}`: {message}")
-        else:
-            evaluator = traces_job.result
-            assert evaluator is not None
+            # Since done() is true, result() returns the final deserialized job result without
+            # waiting further. It also propagates any LRO polling exception.
+            evaluator = poller.result()
+            print(f"Final LRO status: `{poller.status()}`.")
+            print(f"Evaluator generation result: {evaluator}")
+            # `isinstance` narrows the discriminated `definition` to the rubric subtype.
             definition = evaluator.definition
             assert isinstance(definition, RubricBasedEvaluatorDefinition)
             traces_evaluator_version = evaluator.version or ""
@@ -206,6 +219,8 @@ with (
                 f"Traces evaluator `{evaluator.name}` v{evaluator.version}: "
                 f"{len(definition.dimensions)} dimensions."
             )
+        except Exception as e:  # pylint: disable=broad-except
+            print(f"Traces job failed: {e}")
 
     # 3. Clean up. `delete_version` cascades to delete the generation job record.
     print("Cleaning up.")

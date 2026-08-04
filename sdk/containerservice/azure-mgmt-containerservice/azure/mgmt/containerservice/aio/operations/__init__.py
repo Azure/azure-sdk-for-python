@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 from ._operations import AgentPoolsOperations  # type: ignore
 from ._operations import ManagedClustersOperations  # type: ignore
 from ._operations import MaintenanceConfigurationsOperations  # type: ignore
+from ._operations import MaintenanceWindowsOperations  # type: ignore
 from ._operations import ManagedNamespacesOperations  # type: ignore
 from ._operations import MachinesOperations  # type: ignore
 from ._operations import PrivateEndpointConnectionsOperations  # type: ignore
@@ -26,6 +27,7 @@ from ._operations import IdentityBindingsOperations  # type: ignore
 from ._operations import JWTAuthenticatorsOperations  # type: ignore
 from ._operations import MeshMembershipsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._operations import AlertConfigurationsOperations  # type: ignore
 from ._operations import OperationStatusResultOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import ResolvePrivateLinkServiceIdOperations  # type: ignore
@@ -41,6 +43,7 @@ __all__ = [
     "AgentPoolsOperations",
     "ManagedClustersOperations",
     "MaintenanceConfigurationsOperations",
+    "MaintenanceWindowsOperations",
     "ManagedNamespacesOperations",
     "MachinesOperations",
     "PrivateEndpointConnectionsOperations",
@@ -52,6 +55,7 @@ __all__ = [
     "JWTAuthenticatorsOperations",
     "MeshMembershipsOperations",
     "Operations",
+    "AlertConfigurationsOperations",
     "OperationStatusResultOperations",
     "PrivateLinkResourcesOperations",
     "ResolvePrivateLinkServiceIdOperations",

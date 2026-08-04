@@ -4,11 +4,12 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, cast
 
-from ...models import _generated as generated_models
+from ... import models as response_models
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -27,6 +28,21 @@ def _require_non_empty(value: str, field_name: str) -> str:
     """
     if not isinstance(value, str) or not value.strip():
         raise ValueError(f"{field_name} must be a non-empty string")
+    return value
+
+
+def _require_wire_dict(value: Any, field_name: str) -> dict[str, Any]:
+    """Validate that a builder payload is already a dict-native wire payload.
+
+    :param value: The value to validate.
+    :type value: Any
+    :param field_name: The field name to include in error messages.
+    :type field_name: str
+    :returns: The validated wire payload.
+    :rtype: dict[str, Any]
+    """
+    if not isinstance(value, dict):
+        raise TypeError(f"{field_name} must be a dict-native wire payload")
     return value
 
 
@@ -53,6 +69,37 @@ class BaseOutputItemBuilder:
         self._output_index = output_index
         self._item_id = item_id
         self._lifecycle_state = BuilderLifecycleState.NOT_STARTED
+        self._internal_metadata: dict[str, Any] = {}
+
+    @property
+    def internal_metadata(self) -> MutableMapping[str, Any]:
+        """Live, mutable framework-internal metadata for this output item.
+
+        Read / write / delete in place (``message.internal_metadata["step"] = "n3"``).
+        Whatever is set here is merged into the emitted ``output_item.added`` /
+        ``output_item.done`` payloads under the item's ``internal_metadata`` key
+        (and thus onto ``stream.response.output[i]``), and is stripped from every
+        client-facing payload. Values may be any JSON-serialisable type.
+
+        :rtype: ~collections.abc.MutableMapping[str, ~typing.Any]
+        """
+        return self._internal_metadata
+
+    @internal_metadata.setter
+    def internal_metadata(self, value: "MutableMapping[str, Any] | None") -> None:
+        self._internal_metadata = dict(value) if value else {}
+
+    def _stamp_internal_metadata(self, item: dict[str, Any]) -> dict[str, Any]:
+        """Merge the builder's internal metadata into an item payload (if any).
+
+        :param item: The output item dict being emitted.
+        :type item: dict[str, Any]
+        :returns: The item dict with ``internal_metadata`` merged in when non-empty.
+        :rtype: dict[str, Any]
+        """
+        if self._internal_metadata:
+            item = {**item, "internal_metadata": dict(self._internal_metadata)}
+        return item
 
     @property
     def item_id(self) -> str:
@@ -90,7 +137,7 @@ class BaseOutputItemBuilder:
             )
         self._lifecycle_state = new_state
 
-    def _emit_added(self, item: dict[str, Any]) -> generated_models.ResponseOutputItemAddedEvent:
+    def _emit_added(self, item: dict[str, Any]) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event with lifecycle guard.
 
         :param item: The output item dict to include in the event.
@@ -100,19 +147,20 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
+        item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
-            generated_models.ResponseOutputItemAddedEvent,
+            response_models.ResponseOutputItemAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
+                    "type": "response.output_item.added",
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }
             ),
         )
 
-    def _emit_done(self, item: dict[str, Any]) -> generated_models.ResponseOutputItemDoneEvent:
+    def _emit_done(self, item: dict[str, Any]) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event with lifecycle guard.
 
         :param item: The completed output item dict to include in the event.
@@ -122,12 +170,13 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
+        item = self._stamp_internal_metadata(item)
         stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
-            generated_models.ResponseOutputItemDoneEvent,
+            response_models.ResponseOutputItemDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
+                    "type": "response.output_item.done",
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }
@@ -136,7 +185,7 @@ class BaseOutputItemBuilder:
 
     def _emit_item_state_event(
         self, event_type: str, *, extra_payload: dict[str, Any] | None = None
-    ) -> generated_models.ResponseStreamEvent:
+    ) -> response_models.ResponseStreamEvent:
         """Emit an item-level state event (e.g., in-progress, searching, completed).
 
         :param event_type: The event type string.
@@ -159,7 +208,34 @@ class BaseOutputItemBuilder:
 class OutputItemBuilder(BaseOutputItemBuilder):
     """Generic output-item builder for item types without dedicated scoped builders."""
 
-    def emit_added(self, item: generated_models.OutputItem) -> generated_models.ResponseOutputItemAddedEvent:
+    def __init__(
+        self,
+        stream: "ResponseEventStream",
+        output_index: int,
+        item_id: str,
+        *,
+        default_type: str | None = None,
+    ) -> None:
+        """Initialize a generic output-item builder.
+
+        :param stream: The parent event stream to emit events into.
+        :type stream: ResponseEventStream
+        :param output_index: The zero-based index of this output item.
+        :type output_index: int
+        :param item_id: Unique identifier for this output item.
+        :type item_id: str
+        :keyword default_type: Optional discriminator to apply when an item omits ``type``.
+        :paramtype default_type: str | None
+        """
+        super().__init__(stream, output_index, item_id)
+        self._default_type = default_type
+
+    def _with_default_type(self, item: dict[str, Any]) -> dict[str, Any]:
+        if self._default_type is not None and "type" not in item:
+            return {**item, "type": self._default_type}
+        return item
+
+    def emit_added(self, item: response_models.OutputItem) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
         :param item: The output item model instance.
@@ -167,9 +243,9 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemAddedEvent
         """
-        return self._emit_added(item.as_dict())
+        return self._emit_added(self._with_default_type(_require_wire_dict(item, "item")))
 
-    def emit_done(self, item: generated_models.OutputItem) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(self, item: response_models.OutputItem) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
 
         :param item: The completed output item model instance.
@@ -177,4 +253,4 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseOutputItemDoneEvent
         """
-        return self._emit_done(item.as_dict())
+        return self._emit_done(self._with_default_type(_require_wire_dict(item, "item")))

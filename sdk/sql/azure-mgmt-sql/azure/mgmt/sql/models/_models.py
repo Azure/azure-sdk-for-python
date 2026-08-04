@@ -1043,7 +1043,7 @@ class Database(TrackedResource):
 
      .. code-block:: powershell
 
-        Get-AzSqlServerServiceObjective -Location <location>.
+        Get-AzSqlServerServiceObjective -Location <location>
     :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of database. This is metadata used for the Azure portal experience.
     :vartype kind: str
@@ -1074,7 +1074,7 @@ class Database(TrackedResource):
      
      .. code-block:: powershell
      
-        Get-AzSqlServerServiceObjective -Location <location>."""
+        Get-AzSqlServerServiceObjective -Location <location>"""
     kind: Optional[str] = rest_field(visibility=["read"])
     """Kind of database. This is metadata used for the Azure portal experience."""
     managed_by: Optional[str] = rest_field(name="managedBy", visibility=["read"])
@@ -5299,7 +5299,7 @@ class ElasticPool(TrackedResource):
 
      .. code-block:: azurecli
 
-        az sql elastic-pool list-editions -l <location> -o table.
+        az sql elastic-pool list-editions -l <location> -o table
     :vartype sku: ~azure.mgmt.sql.models.Sku
     :ivar kind: Kind of elastic pool. This is metadata used for the Azure portal experience.
     :vartype kind: str
@@ -5320,7 +5320,7 @@ class ElasticPool(TrackedResource):
      
      .. code-block:: azurecli
      
-        az sql elastic-pool list-editions -l <location> -o table."""
+        az sql elastic-pool list-editions -l <location> -o table"""
     kind: Optional[str] = rest_field(visibility=["read"])
     """Kind of elastic pool. This is metadata used for the Azure portal experience."""
 

@@ -30,15 +30,15 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
-from .. import models as _models
+from .. import models as _models, types as _types
 from .._configuration import RecommenderMgmtClientConfiguration
 from .._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from .._utils.serialization import Deserializer, Serializer
+from .._validation import api_version_validation
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
-JSON = MutableMapping[str, Any]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -48,7 +48,7 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-05"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,11 +63,68 @@ def build_operations_list_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_sku_mix_placement_scores_get_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/skuMixPlacementScores/recommendations"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_sku_mix_placement_scores_post_request(  # pylint: disable=name-too-long
+    location: str, subscription_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/subscriptions/{subscriptionId}/providers/Microsoft.Compute/locations/{location}/skuMixPlacementScores/recommendations/generate"
+    path_format_arguments = {
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
+        "location": _SERIALIZER.url("location", location, "str"),
+    }
+
+    _url: str = _url.format(**path_format_arguments)  # type: ignore
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_spot_placement_scores_get_request(location: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-05"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +150,7 @@ def build_spot_placement_scores_post_request(location: str, subscription_id: str
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-06-05"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-05-05-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -118,7 +175,7 @@ def build_spot_placement_scores_post_request(location: str, subscription_id: str
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -182,7 +239,10 @@ class Operations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                    "GET",
+                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
+                    headers=_headers,
+                    params=_next_request_params,
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -195,7 +255,10 @@ class Operations:
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(List[_models.Operation], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                List[_models.Operation],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("nextLink") or None, iter(list_of_elem)
@@ -211,7 +274,10 @@ class Operations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(_models.ErrorResponse, response)
+                error = _failsafe_deserialize(
+                    _models.ErrorResponse,
+                    response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -219,7 +285,260 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class SpotPlacementScoresOperations:
+class SkuMixPlacementScoresOperations:  # pylint: disable=docstring-missing-param
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.mgmt.computerecommender.RecommenderMgmtClient`'s
+        :attr:`sku_mix_placement_scores` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: PipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: RecommenderMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-05-preview",
+        params_added_on={"2026-05-05-preview": ["api_version", "subscription_id", "location", "accept"]},
+        api_versions_list=["2026-05-05-preview"],
+    )
+    def get(self, location: str, **kwargs: Any) -> _models.SkuMixPlacementBase:
+        """Gets SkuMixPlacement scoring metadata.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :return: SkuMixPlacementBase. The SkuMixPlacementBase is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computerecommender.models.SkuMixPlacementBase
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SkuMixPlacementBase] = kwargs.pop("cls", None)
+
+        _request = build_sku_mix_placement_scores_get_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkuMixPlacementBase, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    def post(
+        self,
+        location: str,
+        sku_mix_placement_request: _models.SkuMixPlacementRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SkuMixPlacementResponse:
+        """Generates placement scores for VM SKU mix placement.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param sku_mix_placement_request: SkuMixPlacement request object supplied in the body of the
+         generate operation. Required.
+        :type sku_mix_placement_request: ~azure.mgmt.computerecommender.models.SkuMixPlacementRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkuMixPlacementResponse. The SkuMixPlacementResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computerecommender.models.SkuMixPlacementResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def post(
+        self,
+        location: str,
+        sku_mix_placement_request: _types.SkuMixPlacementRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SkuMixPlacementResponse:
+        """Generates placement scores for VM SKU mix placement.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param sku_mix_placement_request: SkuMixPlacement request object supplied in the body of the
+         generate operation. Required.
+        :type sku_mix_placement_request: ~azure.mgmt.computerecommender.types.SkuMixPlacementRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkuMixPlacementResponse. The SkuMixPlacementResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computerecommender.models.SkuMixPlacementResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def post(
+        self,
+        location: str,
+        sku_mix_placement_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.SkuMixPlacementResponse:
+        """Generates placement scores for VM SKU mix placement.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param sku_mix_placement_request: SkuMixPlacement request object supplied in the body of the
+         generate operation. Required.
+        :type sku_mix_placement_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkuMixPlacementResponse. The SkuMixPlacementResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computerecommender.models.SkuMixPlacementResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2026-05-05-preview",
+        params_added_on={
+            "2026-05-05-preview": ["api_version", "subscription_id", "location", "content_type", "accept"]
+        },
+        api_versions_list=["2026-05-05-preview"],
+    )
+    def post(
+        self,
+        location: str,
+        sku_mix_placement_request: Union[_models.SkuMixPlacementRequest, _types.SkuMixPlacementRequest, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.SkuMixPlacementResponse:
+        """Generates placement scores for VM SKU mix placement.
+
+        :param location: The name of the Azure region. Required.
+        :type location: str
+        :param sku_mix_placement_request: SkuMixPlacement request object supplied in the body of the
+         generate operation. Is either a SkuMixPlacementRequest type or a IO[bytes] type. Required.
+        :type sku_mix_placement_request: ~azure.mgmt.computerecommender.models.SkuMixPlacementRequest
+         or ~azure.mgmt.computerecommender.types.SkuMixPlacementRequest or IO[bytes]
+        :return: SkuMixPlacementResponse. The SkuMixPlacementResponse is compatible with MutableMapping
+        :rtype: ~azure.mgmt.computerecommender.models.SkuMixPlacementResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SkuMixPlacementResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(sku_mix_placement_request, (IOBase, bytes)):
+            _content = sku_mix_placement_request
+        else:
+            _content = json.dumps(sku_mix_placement_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_sku_mix_placement_scores_post_request(
+            location=location,
+            subscription_id=self._config.subscription_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkuMixPlacementResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class SpotPlacementScoresOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -271,6 +590,7 @@ class SpotPlacementScoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -285,11 +605,14 @@ class SpotPlacementScoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.ComputeDiagnosticBase, response.json())
 
@@ -326,7 +649,12 @@ class SpotPlacementScoresOperations:
 
     @overload
     def post(
-        self, location: str, spot_placement_scores_input: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self,
+        location: str,
+        spot_placement_scores_input: _types.SpotPlacementScoresInput,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
     ) -> _models.SpotPlacementScoresResponse:
         """Generates placement scores for Spot VM skus.
 
@@ -334,7 +662,8 @@ class SpotPlacementScoresOperations:
         :type location: str
         :param spot_placement_scores_input: SpotPlacementScores object supplied in the body of the Post
          spot placement scores operation. Required.
-        :type spot_placement_scores_input: JSON
+        :type spot_placement_scores_input:
+         ~azure.mgmt.computerecommender.types.SpotPlacementScoresInput
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -373,7 +702,9 @@ class SpotPlacementScoresOperations:
     def post(
         self,
         location: str,
-        spot_placement_scores_input: Union[_models.SpotPlacementScoresInput, JSON, IO[bytes]],
+        spot_placement_scores_input: Union[
+            _models.SpotPlacementScoresInput, _types.SpotPlacementScoresInput, IO[bytes]
+        ],
         **kwargs: Any
     ) -> _models.SpotPlacementScoresResponse:
         """Generates placement scores for Spot VM skus.
@@ -381,10 +712,11 @@ class SpotPlacementScoresOperations:
         :param location: The name of the Azure region. Required.
         :type location: str
         :param spot_placement_scores_input: SpotPlacementScores object supplied in the body of the Post
-         spot placement scores operation. Is one of the following types: SpotPlacementScoresInput, JSON,
-         IO[bytes] Required.
+         spot placement scores operation. Is either a SpotPlacementScoresInput type or a IO[bytes] type.
+         Required.
         :type spot_placement_scores_input:
-         ~azure.mgmt.computerecommender.models.SpotPlacementScoresInput or JSON or IO[bytes]
+         ~azure.mgmt.computerecommender.models.SpotPlacementScoresInput or
+         ~azure.mgmt.computerecommender.types.SpotPlacementScoresInput or IO[bytes]
         :return: SpotPlacementScoresResponse. The SpotPlacementScoresResponse is compatible with
          MutableMapping
         :rtype: ~azure.mgmt.computerecommender.models.SpotPlacementScoresResponse
@@ -425,6 +757,7 @@ class SpotPlacementScoresOperations:
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -439,11 +772,14 @@ class SpotPlacementScoresOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(_models.ErrorResponse, response)
+            error = _failsafe_deserialize(
+                _models.ErrorResponse,
+                response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.SpotPlacementScoresResponse, response.json())
 

@@ -6,9 +6,6 @@ from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
-from azure.ai.ml._restclient.v2023_06_01_preview.models import DatabaseSource as RestDatabaseSource
-from azure.ai.ml._restclient.v2023_06_01_preview.models import DataImport as RestDataImport
-from azure.ai.ml._restclient.v2023_06_01_preview.models import FileSystemSource as RestFileSystemSource
 from azure.ai.ml._schema import DataImportSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes
@@ -79,52 +76,67 @@ class DataImport(Data):
         res: DataImport = load_from_dict(DataImportSchema, data, context, **kwargs)
         return res
 
-    def _to_rest_object(self) -> RestDataImport:
+    def _to_rest_object(self) -> Dict[str, Any]:
+        # ``DataImport`` / ``DatabaseSource`` / ``FileSystemSource`` are not modeled on the shared
+        # arm_ml_service client, so emit the wire body as a plain dict (JSON-direct). This is byte-identical
+        # to the legacy ``RestDataImport(...).serialize()`` output, including the server-pinned
+        # ``dataType='uri_folder'`` constant and the ``isAnonymous``/``isArchived`` defaults.
+        source: Dict[str, Any]
         if isinstance(self.source, Database):
-            source = RestDatabaseSource(
-                connection=self.source.connection,
-                query=self.source.query,
-            )
+            source = {"sourceType": "database"}
+            if self.source.connection is not None:
+                source["connection"] = self.source.connection
+            if self.source.query is not None:
+                source["query"] = self.source.query
         else:
-            source = RestFileSystemSource(
-                connection=self.source.connection,
-                path=self.source.path,
-            )
+            source = {"sourceType": "file_system"}
+            if self.source.connection is not None:
+                source["connection"] = self.source.connection
+            if self.source.path is not None:
+                source["path"] = self.source.path
 
-        return RestDataImport(
-            description=self.description,
-            properties=self.properties,
-            tags=self.tags,
-            data_type=self.type,
-            data_uri=self.path,
-            asset_name=self.name,
-            source=source,
-        )
+        rest_object: Dict[str, Any] = {
+            "isAnonymous": False,
+            "isArchived": False,
+            "dataType": "uri_folder",
+            "dataUri": self.path,
+            "source": source,
+        }
+        if self.description is not None:
+            rest_object["description"] = self.description
+        if self.properties is not None:
+            rest_object["properties"] = self.properties
+        if self.tags is not None:
+            rest_object["tags"] = self.tags
+        if self.name is not None:
+            rest_object["assetName"] = self.name
+        return rest_object
 
     @classmethod
-    def _from_rest_object(cls, data_rest_object: RestDataImport) -> "DataImport":
+    def _from_rest_object(cls, data_rest_object: Dict[str, Any]) -> "DataImport":
         source: Any = None
-        if isinstance(data_rest_object.source, RestDatabaseSource):
+        source_dict = data_rest_object["source"]
+        if source_dict.get("sourceType") == "database":
             source = Database(
-                connection=data_rest_object.source.connection,
-                query=data_rest_object.source.query,
+                connection=source_dict.get("connection"),
+                query=source_dict.get("query"),
             )
             data_type = AssetTypes.MLTABLE
         else:
             source = FileSystem(
-                connection=data_rest_object.source.connection,
-                path=data_rest_object.source.path,
+                connection=source_dict.get("connection"),
+                path=source_dict.get("path"),
             )
             data_type = AssetTypes.URI_FOLDER
 
         data_import = cls(
-            name=data_rest_object.asset_name,
-            path=data_rest_object.data_uri,
+            name=data_rest_object.get("assetName"),  # type: ignore[arg-type]
+            path=data_rest_object.get("dataUri"),  # type: ignore[arg-type]
             source=source,
-            description=data_rest_object.description,
-            tags=data_rest_object.tags,
-            properties=data_rest_object.properties,
+            description=data_rest_object.get("description"),
+            tags=data_rest_object.get("tags"),
+            properties=data_rest_object.get("properties"),
             type=data_type,
-            is_anonymous=data_rest_object.is_anonymous,
+            is_anonymous=data_rest_object.get("isAnonymous"),
         )
         return data_import

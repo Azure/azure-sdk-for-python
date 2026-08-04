@@ -861,7 +861,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type_properties_type: The type of Agent Pool. Known values are:
-     "VirtualMachineScaleSets", "AvailabilitySet", and "VirtualMachines".
+     "VirtualMachineScaleSets", "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type_properties_type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -885,7 +885,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".
@@ -1115,8 +1116,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     type_properties_type: Optional[Union[str, "_models.AgentPoolType"]] = rest_field(
         name="type", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
-     \"VirtualMachines\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
+     \"VirtualMachines\", and \"FlexNodes\"."""
     mode: Optional[Union[str, "_models.AgentPoolMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1146,7 +1147,8 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     node_image_version: Optional[str] = rest_field(
         name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The version of node image."""
+    """The version of the node image. Setting this value triggers an agentPool rollback. Only values
+     from ``recentlyUsedVersions`` are allowed."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1994,6 +1996,173 @@ class AgentPoolWindowsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
+class AlertConfiguration(ProxyResource):
+    """Alert configuration for a managed cluster. Allows configuring AKS-managed alerts that notify
+    users of important cluster events and conditions.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar properties: The resource-specific properties for this resource.
+    :vartype properties: ~azure.mgmt.containerservice.models.AlertConfigurationProperties
+    """
+
+    properties: Optional["_models.AlertConfigurationProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource-specific properties for this resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AlertConfigurationProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AlertConfigurationProperties(_Model):
+    """Properties of the alert configuration.
+
+    :ivar mode: The mode of the alert configuration. Specifies how AKS manages the alerts.
+     Required. Known values are: "Disabled" and "Managed".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.AlertConfigurationMode
+    :ivar notification: Notification settings for the alert configuration. Required.
+    :vartype notification: ~azure.mgmt.containerservice.models.AlertNotification
+    :ivar provisioning_state: The current provisioning state of the alert configuration. Known
+     values are: "Succeeded", "Failed", "Canceled", "Creating", "Updating", and "Deleting".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.AlertConfigurationProvisioningState
+    """
+
+    mode: Union[str, "_models.AlertConfigurationMode"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The mode of the alert configuration. Specifies how AKS manages the alerts. Required. Known
+     values are: \"Disabled\" and \"Managed\"."""
+    notification: "_models.AlertNotification" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Notification settings for the alert configuration. Required."""
+    provisioning_state: Optional[Union[str, "_models.AlertConfigurationProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The current provisioning state of the alert configuration. Known values are: \"Succeeded\",
+     \"Failed\", \"Canceled\", \"Creating\", \"Updating\", and \"Deleting\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Union[str, "_models.AlertConfigurationMode"],
+        notification: "_models.AlertNotification",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AlertNotification(_Model):
+    """Notification settings for the alert configuration.
+
+    :ivar action_group_id: The resource ID of the Azure Monitor action group to send notifications
+     to. Required.
+    :vartype action_group_id: str
+    """
+
+    action_group_id: str = rest_field(name="actionGroupId", visibility=["read", "create", "update", "delete", "query"])
+    """The resource ID of the Azure Monitor action group to send notifications to. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        action_group_id: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AllowedSubject(_Model):
+    """A subject authorized to use the identity binding for token exchange. The namespace selector is
+    required and must be non-empty. The service account selector is optional; when omitted, all
+    service accounts in matching namespaces are authorized. Selectors within a single
+    AllowedSubject are AND'd; multiple AllowedSubjects on an IdentityBinding are OR'd.
+
+    :ivar namespace_selector: Label selector matching the namespaces in which this identity may be
+     used. Must be non-empty: an empty selector would match every namespace and is rejected to
+     prevent overly permissive bindings. Use the built-in ``kubernetes.io/metadata.name`` label to
+     target specific namespaces by name. Required.
+    :vartype namespace_selector: ~azure.mgmt.containerservice.models.LabelSelector
+    :ivar service_account_selector: Optional label selector matching the service accounts (within
+     the namespaces matched by ``namespaceSelector``) that may use this identity. When omitted, all
+     service accounts in matching namespaces are authorized. When provided, it must be non-empty.
+    :vartype service_account_selector: ~azure.mgmt.containerservice.models.LabelSelector
+    """
+
+    namespace_selector: "_models.LabelSelector" = rest_field(
+        name="namespaceSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Label selector matching the namespaces in which this identity may be used. Must be non-empty:
+     an empty selector would match every namespace and is rejected to prevent overly permissive
+     bindings. Use the built-in ``kubernetes.io/metadata.name`` label to target specific namespaces
+     by name. Required."""
+    service_account_selector: Optional["_models.LabelSelector"] = rest_field(
+        name="serviceAccountSelector", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional label selector matching the service accounts (within the namespaces matched by
+     ``namespaceSelector``) that may use this identity. When omitted, all service accounts in
+     matching namespaces are authorized. When provided, it must be non-empty."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        namespace_selector: "_models.LabelSelector",
+        service_account_selector: Optional["_models.LabelSelector"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AutoScaleProfile(_Model):
     """Specifications on auto-scaling.
 
@@ -2098,6 +2267,211 @@ class AzureKeyVaultKms(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class BastionProfile(_Model):
+    """Profile to enable managed Azure Bastion or reference to an existing Bastion for the managed
+    cluster. See `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more
+    details.
+
+    :ivar enabled: Indicates whether managed bastion is enabled.
+    :vartype enabled: bool
+    :ivar bastion_id: The resource ID of the managed bastion associated with the managed cluster.
+    :vartype bastion_id: str
+    :ivar sku: The SKU of the managed bastion.
+
+     Only Standard and Premium SKUs are supported.
+     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
+     bastion with new SKU.
+
+     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
+     values are: "Standard" and "Premium".
+    :vartype sku: str or ~azure.mgmt.containerservice.models.BastionSku
+    :ivar scale_units: The scale units of the managed bastion. Default value is 2.
+    :vartype scale_units: int
+    :ivar public_ip_address_id: The resource ID of the public IP address associated with the
+     managed bastion.
+
+     When provided during creation, the managed bastion will reference this existing public IP
+     address instead of creating a new one.
+     The referenced public IP address must be in the same subscription and region as the managed
+     cluster.
+
+     When not provided during creation, AKS will automatically create a new public IP address.
+
+     This field cannot be updated. To change IP address after creation, please disable and re-enable
+     the managed bastion with the new public IP address.
+    :vartype public_ip_address_id: str
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates whether managed bastion is enabled."""
+    bastion_id: Optional[str] = rest_field(name="bastionId", visibility=["read"])
+    """The resource ID of the managed bastion associated with the managed cluster."""
+    sku: Optional[Union[str, "_models.BastionSku"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SKU of the managed bastion.
+     
+     Only Standard and Premium SKUs are supported.
+     SKU downgrading is not allowed. To downgrade SKU, please disable then re-enable the managed
+     bastion with new SKU.
+     
+     See `https://aka.ms/aks/BastionSKUs <https://aka.ms/aks/BastionSKUs>`_ for more details. Known
+     values are: \"Standard\" and \"Premium\"."""
+    scale_units: Optional[int] = rest_field(
+        name="scaleUnits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The scale units of the managed bastion. Default value is 2."""
+    public_ip_address_id: Optional[str] = rest_field(name="publicIpAddressId", visibility=["read", "create"])
+    """The resource ID of the public IP address associated with the managed bastion.
+     
+     When provided during creation, the managed bastion will reference this existing public IP
+     address instead of creating a new one.
+     The referenced public IP address must be in the same subscription and region as the managed
+     cluster.
+     
+     When not provided during creation, AKS will automatically create a new public IP address.
+     
+     This field cannot be updated. To change IP address after creation, please disable and re-enable
+     the managed bastion with the new public IP address."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        sku: Optional[Union[str, "_models.BastionSku"]] = None,
+        scale_units: Optional[int] = None,
+        public_ip_address_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class BootstrapAzureConfig(_Model):
+    """Azure configuration returned as part of FlexNode bootstrap data.
+
+    :ivar resource_manager_endpoint: Azure Resource Manager endpoint for the cloud environment.
+    :vartype resource_manager_endpoint: str
+    :ivar target_cluster: Target cluster identity.
+    :vartype target_cluster: ~azure.mgmt.containerservice.models.BootstrapTargetCluster
+    :ivar target_agent_pool_name: Target agent pool name.
+    :vartype target_agent_pool_name: str
+    :ivar bootstrap_token: Bootstrap token for node enrollment. Do not cache or log.
+    :vartype bootstrap_token: ~azure.mgmt.containerservice.models.BootstrapTokenInfo
+    """
+
+    resource_manager_endpoint: Optional[str] = rest_field(name="resourceManagerEndpoint", visibility=["read"])
+    """Azure Resource Manager endpoint for the cloud environment."""
+    target_cluster: Optional["_models.BootstrapTargetCluster"] = rest_field(name="targetCluster", visibility=["read"])
+    """Target cluster identity."""
+    target_agent_pool_name: Optional[str] = rest_field(name="targetAgentPoolName", visibility=["read"])
+    """Target agent pool name."""
+    bootstrap_token: Optional["_models.BootstrapTokenInfo"] = rest_field(name="bootstrapToken", visibility=["read"])
+    """Bootstrap token for node enrollment. Do not cache or log."""
+
+
+class BootstrapComponentVersions(_Model):
+    """Component versions returned as part of FlexNode bootstrap data.
+
+    :ivar kubernetes: Kubernetes version.
+    :vartype kubernetes: str
+    :ivar containerd: Containerd version.
+    :vartype containerd: str
+    :ivar runc: Runc version.
+    :vartype runc: str
+    """
+
+    kubernetes: Optional[str] = rest_field(visibility=["read"])
+    """Kubernetes version."""
+    containerd: Optional[str] = rest_field(visibility=["read"])
+    """Containerd version."""
+    runc: Optional[str] = rest_field(visibility=["read"])
+    """Runc version."""
+
+
+class BootstrapKubeletConfig(_Model):
+    """Kubelet configuration returned as part of FlexNode bootstrap data.
+
+    :ivar cluster_fqdn: FQDN of the Kubernetes API server.
+    :vartype cluster_fqdn: str
+    :ivar ca_cert_data: Base64-encoded PEM certificate of the cluster CA. Do not cache or log.
+    :vartype ca_cert_data: str
+    """
+
+    cluster_fqdn: Optional[str] = rest_field(name="clusterFQDN", visibility=["read"])
+    """FQDN of the Kubernetes API server."""
+    ca_cert_data: Optional[str] = rest_field(name="caCertData", visibility=["read"])
+    """Base64-encoded PEM certificate of the cluster CA. Do not cache or log."""
+
+
+class BootstrapNetworkingConfig(_Model):
+    """Network configuration returned as part of FlexNode bootstrap data.
+
+    :ivar dns_service_ip: IP address of the cluster DNS service.
+    :vartype dns_service_ip: str
+    :ivar cni_version: CNI plugin version.
+    :vartype cni_version: str
+    """
+
+    dns_service_ip: Optional[str] = rest_field(name="dnsServiceIP", visibility=["read"])
+    """IP address of the cluster DNS service."""
+    cni_version: Optional[str] = rest_field(name="cniVersion", visibility=["read"])
+    """CNI plugin version."""
+
+
+class BootstrapNodeConfig(_Model):
+    """Node configuration returned as part of FlexNode bootstrap data.
+
+    :ivar max_pods: Maximum pods per node.
+    :vartype max_pods: int
+    :ivar labels: Node labels to apply during registration.
+    :vartype labels: dict[str, str]
+    :ivar taints: Node taints in the format 'key=value:effect'.
+    :vartype taints: list[str]
+    :ivar kubelet: Kubelet configuration.
+    :vartype kubelet: ~azure.mgmt.containerservice.models.BootstrapKubeletConfig
+    """
+
+    max_pods: Optional[int] = rest_field(name="maxPods", visibility=["read"])
+    """Maximum pods per node."""
+    labels: Optional[dict[str, str]] = rest_field(visibility=["read"])
+    """Node labels to apply during registration."""
+    taints: Optional[list[str]] = rest_field(visibility=["read"])
+    """Node taints in the format 'key=value:effect'."""
+    kubelet: Optional["_models.BootstrapKubeletConfig"] = rest_field(visibility=["read"])
+    """Kubelet configuration."""
+
+
+class BootstrapTargetCluster(_Model):
+    """Target AKS cluster for FlexNode bootstrap.
+
+    :ivar resource_id: Azure resource ID of the target AKS cluster.
+    :vartype resource_id: str
+    """
+
+    resource_id: Optional[str] = rest_field(name="resourceId", visibility=["read"])
+    """Azure resource ID of the target AKS cluster."""
+
+
+class BootstrapTokenInfo(_Model):
+    """Bootstrap token information.
+
+    :ivar token: Short-lived bootstrap token for kubelet. Do not cache or log.
+    :vartype token: str
+    """
+
+    token: Optional[str] = rest_field(visibility=["read"])
+    """Short-lived bootstrap token for kubelet. Do not cache or log."""
 
 
 class ClusterUpgradeSettings(_Model):
@@ -2349,14 +2723,24 @@ class ContainerServiceNetworkProfile(_Model):
     :ivar load_balancer_sku: The load balancer sku for the managed cluster. The default is
      'standard'. See `Azure Load Balancer SKUs
      <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information about the
-     differences between load balancer SKUs. Known values are: "standard" and "basic".
+     differences between load balancer SKUs. Known values are: "service", "standard", and "basic".
     :vartype load_balancer_sku: str or ~azure.mgmt.containerservice.models.LoadBalancerSku
     :ivar load_balancer_profile: Profile of the cluster load balancer.
     :vartype load_balancer_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterLoadBalancerProfile
+    :ivar bastion_profile: Profile of the Bastion Host associated with the managed cluster. See
+     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details.
+    :vartype bastion_profile: ~azure.mgmt.containerservice.models.BastionProfile
     :ivar nat_gateway_profile: Profile of the cluster NAT gateway.
     :vartype nat_gateway_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterNATGatewayProfile
+    :ivar nat_gateway_id: The Azure resource ID of the NAT gateway to use for egress at cluster
+     startup when outboundType is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool
+     type is podIP, and load balancer type is service SKU. This is of the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
+     When using managed NATGateway this field is auto populated. For more information, see
+     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_.
+    :vartype nat_gateway_id: str
     :ivar static_egress_gateway_profile: The profile for Static Egress Gateway addon. For more
      details about Static Egress Gateway, see `https://aka.ms/aks/static-egress-gateway
      <https://aka.ms/aks/static-egress-gateway>`_.
@@ -2441,15 +2825,28 @@ class ContainerServiceNetworkProfile(_Model):
     )
     """The load balancer sku for the managed cluster. The default is 'standard'. See `Azure Load
      Balancer SKUs <https://docs.microsoft.com/azure/load-balancer/skus>`_ for more information
-     about the differences between load balancer SKUs. Known values are: \"standard\" and \"basic\"."""
+     about the differences between load balancer SKUs. Known values are: \"service\", \"standard\",
+     and \"basic\"."""
     load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = rest_field(
         name="loadBalancerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster load balancer."""
+    bastion_profile: Optional["_models.BastionProfile"] = rest_field(
+        name="bastionProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Profile of the Bastion Host associated with the managed cluster. See
+     `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more details."""
     nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = rest_field(
         name="natGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """Profile of the cluster NAT gateway."""
+    nat_gateway_id: Optional[str] = rest_field(name="natGatewayId", visibility=["read", "create"])
+    """The Azure resource ID of the NAT gateway to use for egress at cluster startup when outboundType
+     is 'userAssignedNATGateway' using StandardV2 Public IP, backend pool type is podIP, and load
+     balancer type is service SKU. This is of the form:
+     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Network/natGateways/{natGatewayName}'.
+     When using managed NATGateway this field is auto populated. For more information, see
+     `https://aka.ms/aks/container-native-slb <https://aka.ms/aks/container-native-slb>`_."""
     static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = rest_field(
         name="staticEgressGatewayProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2504,7 +2901,9 @@ class ContainerServiceNetworkProfile(_Model):
         outbound_type: Optional[Union[str, "_models.OutboundType"]] = None,
         load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = None,
         load_balancer_profile: Optional["_models.ManagedClusterLoadBalancerProfile"] = None,
+        bastion_profile: Optional["_models.BastionProfile"] = None,
         nat_gateway_profile: Optional["_models.ManagedClusterNATGatewayProfile"] = None,
+        nat_gateway_id: Optional[str] = None,
         static_egress_gateway_profile: Optional["_models.ManagedClusterStaticEgressGatewayProfile"] = None,
         pod_cidrs: Optional[list[str]] = None,
         service_cidrs: Optional[list[str]] = None,
@@ -3334,6 +3733,12 @@ class IdentityBindingProperties(_Model):
      "Failed", "Canceled", "Creating", "Updating", and "Deleting".
     :vartype provisioning_state: str or
      ~azure.mgmt.containerservice.models.IdentityBindingProvisioningState
+    :ivar allowed_subjects: Optional list of subjects authorized to use this identity binding for
+     token exchange. Each entry pairs a required namespace label selector with an optional service
+     account label selector; selectors within an entry are AND'd, and multiple entries are OR'd.
+     When omitted or empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding
+     evaluation. Maximum 100 entries.
+    :vartype allowed_subjects: list[~azure.mgmt.containerservice.models.AllowedSubject]
     """
 
     managed_identity: "_models.IdentityBindingManagedIdentityProfile" = rest_field(
@@ -3349,12 +3754,21 @@ class IdentityBindingProperties(_Model):
     )
     """The status of the last operation. Known values are: \"Succeeded\", \"Failed\", \"Canceled\",
      \"Creating\", \"Updating\", and \"Deleting\"."""
+    allowed_subjects: Optional[list["_models.AllowedSubject"]] = rest_field(
+        name="allowedSubjects", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional list of subjects authorized to use this identity binding for token exchange. Each
+     entry pairs a required namespace label selector with an optional service account label
+     selector; selectors within an entry are AND'd, and multiple entries are OR'd. When omitted or
+     empty, authorization falls back exclusively to ClusterRole/ClusterRoleBinding evaluation.
+     Maximum 100 entries."""
 
     @overload
     def __init__(
         self,
         *,
         managed_identity: "_models.IdentityBindingManagedIdentityProfile",
+        allowed_subjects: Optional[list["_models.AllowedSubject"]] = None,
     ) -> None: ...
 
     @overload
@@ -4535,6 +4949,10 @@ class LinuxOSConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ListBootstrapDataRequest(_Model):
+    """Empty request body for listing FlexNode bootstrap data."""
+
+
 class LoadBalancer(ProxyResource):
     """The configurations regarding multiple standard load balancers. If not supplied, single load
     balancer mode will be used. Multiple standard load balancers mode will be used if at lease one
@@ -5596,7 +6014,7 @@ class MaintenanceConfiguration(ProxyResource):
     )
     """Properties of a default maintenance configuration."""
 
-    __flattened_items = ["time_in_week", "not_allowed_time", "maintenance_window"]
+    __flattened_items = ["time_in_week", "not_allowed_time", "maintenance_window_id", "maintenance_window"]
 
     @overload
     def __init__(
@@ -5643,6 +6061,12 @@ class MaintenanceConfigurationProperties(_Model):
     :vartype time_in_week: list[~azure.mgmt.containerservice.models.TimeInWeek]
     :ivar not_allowed_time: Time slots on which upgrade is not allowed.
     :vartype not_allowed_time: list[~azure.mgmt.containerservice.models.TimeSpan]
+    :ivar maintenance_window_id: The fully qualified resource ID of the maintenance window that
+     this maintenance configuration is linked to. When set, the schedule is derived read-only from
+     the linked maintenance window — maintenanceWindow becomes a computed field. When absent (the
+     default), the schedule is defined inline via the maintenanceWindow property. The caller must
+     have read access to the target maintenance window.
+    :vartype maintenance_window_id: str
     :ivar maintenance_window: Maintenance window for the maintenance configuration.
     :vartype maintenance_window: ~azure.mgmt.containerservice.models.MaintenanceWindow
     """
@@ -5657,6 +6081,14 @@ class MaintenanceConfigurationProperties(_Model):
         name="notAllowedTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """Time slots on which upgrade is not allowed."""
+    maintenance_window_id: Optional[str] = rest_field(
+        name="maintenanceWindowId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The fully qualified resource ID of the maintenance window that this maintenance configuration
+     is linked to. When set, the schedule is derived read-only from the linked maintenance window —
+     maintenanceWindow becomes a computed field. When absent (the default), the schedule is defined
+     inline via the maintenanceWindow property. The caller must have read access to the target
+     maintenance window."""
     maintenance_window: Optional["_models.MaintenanceWindow"] = rest_field(
         name="maintenanceWindow", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5668,6 +6100,7 @@ class MaintenanceConfigurationProperties(_Model):
         *,
         time_in_week: Optional[list["_models.TimeInWeek"]] = None,
         not_allowed_time: Optional[list["_models.TimeSpan"]] = None,
+        maintenance_window_id: Optional[str] = None,
         maintenance_window: Optional["_models.MaintenanceWindow"] = None,
     ) -> None: ...
 
@@ -5785,6 +6218,147 @@ class TrackedResource(Resource):
         *,
         location: str,
         tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceWindowResource(TrackedResource):
+    """A maintenance window is a resource-group-scoped resource that defines a reusable maintenance
+    schedule which can be linked to maintenance configurations on one or more managed clusters. For
+    more information, see `https://aka.ms/aks/maintenance-windows
+    <https://aka.ms/aks/maintenance-windows>`_.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerservice.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: Properties of a maintenance window.
+    :vartype properties: ~azure.mgmt.containerservice.models.MaintenanceWindowResourceProperties
+    """
+
+    properties: Optional["_models.MaintenanceWindowResourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of a maintenance window."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        properties: Optional["_models.MaintenanceWindowResourceProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class MaintenanceWindowResourceProperties(_Model):
+    """Properties of a maintenance window. For more information, see
+    `https://aka.ms/aks/maintenance-windows <https://aka.ms/aks/maintenance-windows>`_.
+
+    :ivar provisioning_state: The provisioning state of the maintenance window. Known values are:
+     "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or
+     ~azure.mgmt.containerservice.models.ResourceProvisioningState
+    :ivar schedule: Recurrence schedule for the maintenance window. One and only one of the
+     schedule types should be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'.
+     Required.
+    :vartype schedule: ~azure.mgmt.containerservice.models.Schedule
+    :ivar start_date: The date the maintenance window activates. If the current date is before this
+     date, the maintenance window is inactive and will not be used. If not specified, the
+     maintenance window will be active right away.
+    :vartype start_date: ~datetime.date
+    :ivar start_time: The start time of the maintenance window. Accepted values are from '00:00' to
+     '23:59'. 'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means
+     UTC time '00:00'. Required.
+    :vartype start_time: str
+    :ivar duration_hours: Length of the maintenance window in hours. Required.
+    :vartype duration_hours: int
+    :ivar utc_offset: The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00'
+     for PST. If not specified, the default is '+00:00'. Note: this is a static offset and does not
+     adjust for Daylight Saving Time. Customers in DST-observing regions should pick the offset that
+     matches their preferred wall-clock time year-round; the maintenance window will shift by one
+     hour relative to local time when DST starts or ends.
+    :vartype utc_offset: str
+    :ivar not_allowed_dates: Date ranges during which maintenance is not allowed. 'utcOffset'
+     applies to these dates. For example, with 'utcOffset: +02:00' and a date span of '2026-12-23'
+     to '2027-01-03', maintenance will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in
+     UTC time.
+    :vartype not_allowed_dates: list[~azure.mgmt.containerservice.models.DateSpan]
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ResourceProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the maintenance window. Known values are: \"Succeeded\", \"Failed\",
+     and \"Canceled\"."""
+    schedule: "_models.Schedule" = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Recurrence schedule for the maintenance window. One and only one of the schedule types should
+     be specified: 'daily', 'weekly', 'absoluteMonthly', or 'relativeMonthly'. Required."""
+    start_date: Optional[datetime.date] = rest_field(
+        name="startDate", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The date the maintenance window activates. If the current date is before this date, the
+     maintenance window is inactive and will not be used. If not specified, the maintenance window
+     will be active right away."""
+    start_time: str = rest_field(name="startTime", visibility=["read", "create", "update", "delete", "query"])
+    """The start time of the maintenance window. Accepted values are from '00:00' to '23:59'.
+     'utcOffset' applies to this field. For example: '02:00' with 'utcOffset: +02:00' means UTC time
+     '00:00'. Required."""
+    duration_hours: int = rest_field(name="durationHours", visibility=["read", "create", "update", "delete", "query"])
+    """Length of the maintenance window in hours. Required."""
+    utc_offset: Optional[str] = rest_field(name="utcOffset", visibility=["read", "create", "update", "delete", "query"])
+    """The UTC offset in format +/-HH:mm. For example, '+05:30' for IST and '-07:00' for PST. If not
+     specified, the default is '+00:00'. Note: this is a static offset and does not adjust for
+     Daylight Saving Time. Customers in DST-observing regions should pick the offset that matches
+     their preferred wall-clock time year-round; the maintenance window will shift by one hour
+     relative to local time when DST starts or ends."""
+    not_allowed_dates: Optional[list["_models.DateSpan"]] = rest_field(
+        name="notAllowedDates", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Date ranges during which maintenance is not allowed. 'utcOffset' applies to these dates. For
+     example, with 'utcOffset: +02:00' and a date span of '2026-12-23' to '2027-01-03', maintenance
+     will be blocked from '2026-12-22 22:00' to '2027-01-03 22:00' in UTC time."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        schedule: "_models.Schedule",
+        start_time: str,
+        duration_hours: int,
+        start_date: Optional[datetime.date] = None,
+        utc_offset: Optional[str] = None,
+        not_allowed_dates: Optional[list["_models.DateSpan"]] = None,
     ) -> None: ...
 
     @overload
@@ -6283,7 +6857,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", and "VirtualMachines".
+     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -6307,7 +6881,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".
@@ -6537,8 +7112,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     type: Optional[Union[str, "_models.AgentPoolType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\", and
-     \"VirtualMachines\"."""
+    """The type of Agent Pool. Known values are: \"VirtualMachineScaleSets\", \"AvailabilitySet\",
+     \"VirtualMachines\", and \"FlexNodes\"."""
     mode: Optional[Union[str, "_models.AgentPoolMode"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6568,7 +7143,8 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     node_image_version: Optional[str] = rest_field(
         name="nodeImageVersion", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The version of node image."""
+    """The version of the node image. Setting this value triggers an agentPool rollback. Only values
+     from ``recentlyUsedVersions`` are allowed."""
     upgrade_strategy: Optional[Union[str, "_models.UpgradeStrategy"]] = rest_field(
         name="upgradeStrategy", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6909,7 +7485,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      are: "Delete" and "Deallocate".
     :vartype scale_down_mode: str or ~azure.mgmt.containerservice.models.ScaleDownMode
     :ivar type: The type of Agent Pool. Known values are: "VirtualMachineScaleSets",
-     "AvailabilitySet", and "VirtualMachines".
+     "AvailabilitySet", "VirtualMachines", and "FlexNodes".
     :vartype type: str or ~azure.mgmt.containerservice.models.AgentPoolType
     :ivar mode: The mode of an agent pool. A cluster must have at least one 'System' Agent Pool at
      all times. For additional information on agent pool restrictions and best practices, see:
@@ -6933,7 +7509,8 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
      exactly equal to it. If orchestratorVersion is <major.minor>, this field will contain the full
      <major.minor.patch> version being used.
     :vartype current_orchestrator_version: str
-    :ivar node_image_version: The version of node image.
+    :ivar node_image_version: The version of the node image. Setting this value triggers an
+     agentPool rollback. Only values from ``recentlyUsedVersions`` are allowed.
     :vartype node_image_version: str
     :ivar upgrade_strategy: Defines the upgrade strategy for the agent pool. The default is
      Rolling. Known values are: "Rolling" and "BlueGreen".
@@ -8493,7 +9070,7 @@ class ManagedClusterLoadBalancerProfile(_Model):
      cluster or not.
     :vartype enable_multiple_standard_load_balancers: bool
     :ivar backend_pool_type: The type of the managed inbound Load Balancer BackendPool. Known
-     values are: "NodeIPConfiguration" and "NodeIP".
+     values are: "NodeIPConfiguration", "NodeIP", and "PodIP".
     :vartype backend_pool_type: str or ~azure.mgmt.containerservice.models.BackendPoolType
     :ivar cluster_service_load_balancer_health_probe_mode: The health probing behavior for External
      Traffic Policy Cluster services. Known values are: "ServiceNodePort" and "Shared".
@@ -8535,7 +9112,7 @@ class ManagedClusterLoadBalancerProfile(_Model):
         name="backendPoolType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the managed inbound Load Balancer BackendPool. Known values are:
-     \"NodeIPConfiguration\" and \"NodeIP\"."""
+     \"NodeIPConfiguration\", \"NodeIP\", and \"PodIP\"."""
     cluster_service_load_balancer_health_probe_mode: Optional[
         Union[str, "_models.ClusterServiceLoadBalancerHealthProbeMode"]
     ] = rest_field(
@@ -9512,7 +10089,9 @@ class ManagedClusterProperties(_Model):
      cluster.
     :vartype ai_toolchain_operator_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterAIToolchainOperatorProfile
-    :ivar scheduler_profile: Profile of the pod scheduler configuration.
+    :ivar scheduler_profile: Profile with scheduler-related settings, like the configuration mode
+     for each scheduler managed by AKS. See `https://aka.ms/aks/scheduler-profile
+     <https://aka.ms/aks/scheduler-profile>`_.
     :vartype scheduler_profile: ~azure.mgmt.containerservice.models.SchedulerProfile
     :ivar hosted_system_profile: Settings for hosted system addons. For more information, see
      `https://aka.ms/aks/automatic/systemcomponents
@@ -9744,7 +10323,8 @@ class ManagedClusterProperties(_Model):
     scheduler_profile: Optional["_models.SchedulerProfile"] = rest_field(
         name="schedulerProfile", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Profile of the pod scheduler configuration."""
+    """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
+     by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_."""
     hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = rest_field(
         name="hostedSystemProfile", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10230,10 +10810,11 @@ class ManagedClusterSecurityProfileDefender(_Model):
      security profile.
     :vartype security_monitoring:
      ~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityMonitoring
-    :ivar security_gating: Microsoft Defender settings for security gating, validates container
-     images eligibility for deployment based on Defender for Containers security findings. Using
-     Admission Controller, it either audits or prevents the deployment of images that do not meet
-     security standards.
+    :ivar security_gating: Microsoft Defender settings for security gating. This validates
+     container images eligibility for deployment based on Defender for Containers security findings.
+     Using Admission Controller, it either audits or prevents deployment of images that do not meet
+     security standards. For more information, see `https://aka.ms/KubernetesDefenderAuditRule
+     <https://aka.ms/KubernetesDefenderAuditRule>`_.
     :vartype security_gating:
      ~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGating
     """
@@ -10251,9 +10832,11 @@ class ManagedClusterSecurityProfileDefender(_Model):
     security_gating: Optional["_models.ManagedClusterSecurityProfileDefenderSecurityGating"] = rest_field(
         name="securityGating", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Microsoft Defender settings for security gating, validates container images eligibility for
-     deployment based on Defender for Containers security findings. Using Admission Controller, it
-     either audits or prevents the deployment of images that do not meet security standards."""
+    """Microsoft Defender settings for security gating. This validates container images eligibility
+     for deployment based on Defender for Containers security findings. Using Admission Controller,
+     it either audits or prevents deployment of images that do not meet security standards. For more
+     information, see `https://aka.ms/KubernetesDefenderAuditRule
+     <https://aka.ms/KubernetesDefenderAuditRule>`_."""
 
     @overload
     def __init__(
@@ -10276,53 +10859,56 @@ class ManagedClusterSecurityProfileDefender(_Model):
 
 
 class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: disable=name-too-long
-    """Microsoft Defender settings for security gating, validates container images eligibility for
+    """Microsoft Defender settings for security gating. This validates container image eligibility for
     deployment based on Defender for Containers security findings. Using Admission Controller, it
-    either audits or prevents the deployment of images that do not meet security standards.
+    either audits or prevents deployment of images that do not meet security standards.
 
     :ivar enabled: Whether to enable Defender security gating. When enabled, the gating feature
-     will scan container images and audit or block the deployment of images that do not meet
-     security standards according to the configured security rules.
+     scans container images and audits or blocks deployment of images that do not meet security
+     standards according to configured security rules. For more information, see
+     `https://aka.ms/KubernetesDefenderAuditRule <https://aka.ms/KubernetesDefenderAuditRule>`_.
     :vartype enabled: bool
-    :ivar identities: List of identities that the admission controller will make use of in order to
-     pull security artifacts from the registry. These are the same identities used by the cluster to
-     pull container images. Each identity provided should have federated identity credential
-     attached to it.
+    :ivar identities: List of identities that the admission controller uses to pull security
+     artifacts from registries. These are the same identities used by the cluster to pull container
+     images. For more information on configuring this identity, see
+     `https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code
+     <https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code>`_.
     :vartype identities:
-     list[~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem]
-    :ivar allow_secret_access: In use only while registry access granted by secret rather than
-     managed identity. Set whether to grant the Defender gating agent access to the cluster's
-     secrets for pulling images from registries. If secret access is denied and the registry
-     requires pull secrets, the add-on will not perform any image validation. Default value is
-     false.
+     list[~azure.mgmt.containerservice.models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity]
+    :ivar allow_secret_access: In use only while registry access is granted by secret rather than
+     managed identity. Sets whether to grant the Defender gating agent access to cluster secrets for
+     pulling images from registries. If secret access is denied and the registry requires pull
+     secrets, the add-on will not perform image validation. Default value is false.
     :vartype allow_secret_access: bool
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether to enable Defender security gating. When enabled, the gating feature will scan
-     container images and audit or block the deployment of images that do not meet security
-     standards according to the configured security rules."""
-    identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem"]] = (
-        rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable Defender security gating. When enabled, the gating feature scans container
+     images and audits or blocks deployment of images that do not meet security standards according
+     to configured security rules. For more information, see
+     `https://aka.ms/KubernetesDefenderAuditRule <https://aka.ms/KubernetesDefenderAuditRule>`_."""
+    identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of identities that the admission controller will make use of in order to pull security
-     artifacts from the registry. These are the same identities used by the cluster to pull
-     container images. Each identity provided should have federated identity credential attached to
-     it."""
+    """List of identities that the admission controller uses to pull security artifacts from
+     registries. These are the same identities used by the cluster to pull container images. For
+     more information on configuring this identity, see
+     `https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code
+     <https://learn.microsoft.com/en-us/azure/defender-for-cloud/gated-deployment-infrastructure-as-code>`_."""
     allow_secret_access: Optional[bool] = rest_field(
         name="allowSecretAccess", visibility=["read", "create", "update", "delete", "query"]
     )
-    """In use only while registry access granted by secret rather than managed identity. Set whether
-     to grant the Defender gating agent access to the cluster's secrets for pulling images from
+    """In use only while registry access is granted by secret rather than managed identity. Sets
+     whether to grant the Defender gating agent access to cluster secrets for pulling images from
      registries. If secret access is denied and the registry requires pull secrets, the add-on will
-     not perform any image validation. Default value is false."""
+     not perform image validation. Default value is false."""
 
     @overload
     def __init__(
         self,
         *,
         enabled: Optional[bool] = None,
-        identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem"]] = None,
+        identities: Optional[list["_models.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity"]] = None,
         allow_secret_access: Optional[bool] = None,
     ) -> None: ...
 
@@ -10337,8 +10923,8 @@ class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityGatingIdentitiesItem(_Model):  # pylint: disable=name-too-long
-    """Identity information used by Defender security gating to access container registries.
+class ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(_Model):  # pylint: disable=name-too-long
+    """Identity mapping used by Defender security gating for registry access.
 
     :ivar azure_container_registry: The container registry for which the identity will be used; the
      identity specified here should have a federated identity credential attached to it.
@@ -11850,7 +12436,7 @@ class NetworkProfileForSnapshot(_Model):
      and "bridge".
     :vartype network_mode: str or ~azure.mgmt.containerservice.models.NetworkMode
     :ivar load_balancer_sku: loadBalancerSku for managed cluster snapshot. Known values are:
-     "standard" and "basic".
+     "service", "standard", and "basic".
     :vartype load_balancer_sku: str or ~azure.mgmt.containerservice.models.LoadBalancerSku
     """
 
@@ -11875,7 +12461,8 @@ class NetworkProfileForSnapshot(_Model):
     load_balancer_sku: Optional[Union[str, "_models.LoadBalancerSku"]] = rest_field(
         name="loadBalancerSku", visibility=["read", "create", "update", "delete", "query"]
     )
-    """loadBalancerSku for managed cluster snapshot. Known values are: \"standard\" and \"basic\"."""
+    """loadBalancerSku for managed cluster snapshot. Known values are: \"service\", \"standard\", and
+     \"basic\"."""
 
     @overload
     def __init__(
@@ -12225,6 +12812,29 @@ class OutboundEnvironmentEndpoint(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class PoolBootstrapData(_Model):
+    """Bootstrap configuration for a FlexNode pool.
+
+    :ivar azure: Azure environment and cluster identity information.
+    :vartype azure: ~azure.mgmt.containerservice.models.BootstrapAzureConfig
+    :ivar components: Component versions for the node runtime.
+    :vartype components: ~azure.mgmt.containerservice.models.BootstrapComponentVersions
+    :ivar networking: Network configuration for the node.
+    :vartype networking: ~azure.mgmt.containerservice.models.BootstrapNetworkingConfig
+    :ivar node: Node-level configuration for kubelet, labels, and taints.
+    :vartype node: ~azure.mgmt.containerservice.models.BootstrapNodeConfig
+    """
+
+    azure: Optional["_models.BootstrapAzureConfig"] = rest_field(visibility=["read"])
+    """Azure environment and cluster identity information."""
+    components: Optional["_models.BootstrapComponentVersions"] = rest_field(visibility=["read"])
+    """Component versions for the node runtime."""
+    networking: Optional["_models.BootstrapNetworkingConfig"] = rest_field(visibility=["read"])
+    """Network configuration for the node."""
+    node: Optional["_models.BootstrapNodeConfig"] = rest_field(visibility=["read"])
+    """Node-level configuration for kubelet, labels, and taints."""
 
 
 class PortRange(_Model):
@@ -13264,18 +13874,18 @@ class Schedule(_Model):
 
 
 class SchedulerInstanceProfile(_Model):
-    """The scheduler profile for a single scheduler instance.
+    """Profile with settings related to a specific instance of an AKS-managed scheduler.
 
-    :ivar scheduler_config_mode: The config customization mode for this scheduler instance. Known
-     values are: "Default" and "ManagedByCRD".
+    :ivar scheduler_config_mode: The configuration mode to be used by the AKS-managed scheduler.
+     Known values are: "Default" and "ManagedByCRD".
     :vartype scheduler_config_mode: str or ~azure.mgmt.containerservice.models.SchedulerConfigMode
     """
 
     scheduler_config_mode: Optional[Union[str, "_models.SchedulerConfigMode"]] = rest_field(
         name="schedulerConfigMode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The config customization mode for this scheduler instance. Known values are: \"Default\" and
-     \"ManagedByCRD\"."""
+    """The configuration mode to be used by the AKS-managed scheduler. Known values are: \"Default\"
+     and \"ManagedByCRD\"."""
 
     @overload
     def __init__(
@@ -13296,47 +13906,21 @@ class SchedulerInstanceProfile(_Model):
 
 
 class SchedulerProfile(_Model):
-    """The pod scheduler profile for the cluster.
+    """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
+    by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_.
 
-    :ivar scheduler_instance_profiles: Mapping of each scheduler instance to its profile.
-    :vartype scheduler_instance_profiles:
-     ~azure.mgmt.containerservice.models.SchedulerProfileSchedulerInstanceProfiles
-    """
-
-    scheduler_instance_profiles: Optional["_models.SchedulerProfileSchedulerInstanceProfiles"] = rest_field(
-        name="schedulerInstanceProfiles", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Mapping of each scheduler instance to its profile."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        scheduler_instance_profiles: Optional["_models.SchedulerProfileSchedulerInstanceProfiles"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class SchedulerProfileSchedulerInstanceProfiles(_Model):  # pylint: disable=name-too-long
-    """Mapping of each scheduler instance to its profile.
-
-    :ivar upstream: The scheduler profile for the upstream scheduler instance.
+    :ivar upstream: Profile with settings related to upstream variant of kube-scheduler
+     (`https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler
+     <https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler>`_).
     :vartype upstream: ~azure.mgmt.containerservice.models.SchedulerInstanceProfile
     """
 
     upstream: Optional["_models.SchedulerInstanceProfile"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
-    """The scheduler profile for the upstream scheduler instance."""
+    """Profile with settings related to upstream variant of kube-scheduler
+     (`https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler
+     <https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler>`_)."""
 
     @overload
     def __init__(

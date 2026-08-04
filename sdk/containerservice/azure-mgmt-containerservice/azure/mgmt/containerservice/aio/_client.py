@@ -21,12 +21,14 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 from .operations import (
     AgentPoolsOperations,
+    AlertConfigurationsOperations,
     ContainerServiceOperations,
     IdentityBindingsOperations,
     JWTAuthenticatorsOperations,
     LoadBalancersOperations,
     MachinesOperations,
     MaintenanceConfigurationsOperations,
+    MaintenanceWindowsOperations,
     ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
     ManagedNamespacesOperations,
@@ -62,6 +64,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :ivar maintenance_configurations: MaintenanceConfigurationsOperations operations
     :vartype maintenance_configurations:
      azure.mgmt.containerservice.aio.operations.MaintenanceConfigurationsOperations
+    :ivar maintenance_windows: MaintenanceWindowsOperations operations
+    :vartype maintenance_windows:
+     azure.mgmt.containerservice.aio.operations.MaintenanceWindowsOperations
     :ivar managed_namespaces: ManagedNamespacesOperations operations
     :vartype managed_namespaces:
      azure.mgmt.containerservice.aio.operations.ManagedNamespacesOperations
@@ -90,6 +95,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :vartype mesh_memberships: azure.mgmt.containerservice.aio.operations.MeshMembershipsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservice.aio.operations.Operations
+    :ivar alert_configurations: AlertConfigurationsOperations operations
+    :vartype alert_configurations:
+     azure.mgmt.containerservice.aio.operations.AlertConfigurationsOperations
     :ivar operation_status_result: OperationStatusResultOperations operations
     :vartype operation_status_result:
      azure.mgmt.containerservice.aio.operations.OperationStatusResultOperations
@@ -117,7 +125,7 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-03-02-preview" and None. Default value is None. If not set, the operation's default API
+     "2026-05-02-preview" and None. Default value is None. If not set, the operation's default API
      version will be used. Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
@@ -181,6 +189,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
         self.maintenance_configurations = MaintenanceConfigurationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.maintenance_windows = MaintenanceWindowsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.managed_namespaces = ManagedNamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -206,6 +217,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.alert_configurations = AlertConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operation_status_result = OperationStatusResultOperations(
             self._client, self._config, self._serialize, self._deserialize
         )

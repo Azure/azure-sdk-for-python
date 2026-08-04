@@ -122,9 +122,11 @@ class TestMachineLearningClient:
             resource_group_name=Test_Resource_Group,
         )
 
-        assert ml_client.workspaces._operation._client._base_url == mock_url
-        assert ml_client.compute._operation._client._base_url == mock_url
-        assert ml_client.jobs._operation_2023_02_preview._client._base_url == mock_url
+        # TSP-generated workspaces client keeps `_client._base_url` as the literal "{endpoint}"
+        # template and stores the resolved endpoint on `_config.base_url`.
+        assert ml_client.workspaces._operation._config.base_url == mock_url
+        assert ml_client.compute._operation._config.base_url == mock_url
+        assert ml_client.jobs._operation_2023_02_preview._config.base_url == mock_url
         assert ml_client.jobs._kwargs["enforce_https"] is False
 
     # @patch("azure.ai.ml._ml_client.RegistryOperations", Mock())

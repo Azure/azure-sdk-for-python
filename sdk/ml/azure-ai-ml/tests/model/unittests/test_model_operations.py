@@ -24,13 +24,13 @@ def mock_datastore_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -62,6 +62,39 @@ def mock_model_operation_reg(
         service_client=mock_aml_services_2021_10_01_dataplanepreview,
         datastore_operations=mock_datastore_operation,
     )
+
+
+def _make_registry_model_rest_dict(
+    version: str,
+    default_dt_asset_id: Optional[str] = None,
+    allowed_dt_asset_ids: Optional[list] = None,
+) -> dict:
+    """Build a registry model version wire dict (camelCase) as returned by ``get_registry_versioned_asset``.
+
+    The GET response carries defaultDeploymentTemplate / allowedDeploymentTemplates; the LIST (top=1)
+    response used for label resolution omits them, which is what drops the references on the label path
+    (bug 5423568). The shared arm_ml_service registry path deserializes this dict via ``ArmModelVersion``.
+    """
+    properties: dict = {
+        "description": "Test model",
+        "tags": {},
+        "properties": {},
+        "flavors": {},
+        "modelUri": "azureml://locations/test/artifacts/model",
+        "modelType": "custom_model",
+    }
+    if default_dt_asset_id:
+        properties["defaultDeploymentTemplate"] = {"assetId": default_dt_asset_id}
+    if allowed_dt_asset_ids:
+        properties["allowedDeploymentTemplates"] = [{"assetId": asset_id} for asset_id in allowed_dt_asset_ids]
+    return {
+        "id": (
+            "/subscriptions/sub/resourceGroups/rg/providers/Microsoft.MachineLearningServices"
+            f"/workspaces/ws/models/test-model/versions/{version}"
+        ),
+        "properties": properties,
+        "systemData": {"createdBy": "test_user"},
+    }
 
 
 @pytest.mark.unittest
@@ -171,6 +204,58 @@ path: ./model.pkl"""
         name = "random_string"
         with pytest.raises(Exception):
             mock_model_operation.get(name=name)
+
+    def test_get_with_label_rehydrates_deployment_template_references(
+        self, mock_model_operation_reg: ModelOperations
+    ) -> None:
+        """Bug 5423568: models.get(name, label='latest') must hydrate deployment-template
+        references identically to the explicit version= path.
+
+        Label resolution goes through the version LIST endpoint (top=1), whose items omit
+        default_deployment_template / allowed_deployment_templates. The fix re-fetches the
+        resolved version through the GET endpoint, which carries those references.
+        """
+        default_dt = "azureml://registries/azure-huggingface/deploymenttemplates/dt/versions/5"
+        allowed_dt = "azureml://registries/azure-huggingface/deploymenttemplates/dt/labels/latest"
+
+        # Label resolution yields the version; the list shape drops deployment-template references.
+        resolved = Model(name="test-model", version="5")
+        # The registry re-fetch (GET, via the shared arm_ml_service data-plane helper) carries the references.
+        get_dict = _make_registry_model_rest_dict(
+            version="5", default_dt_asset_id=default_dt, allowed_dt_asset_ids=[allowed_dt]
+        )
+
+        with patch("azure.ai.ml.operations._model_operations._resolve_label_to_asset", return_value=resolved), patch(
+            "azure.ai.ml.operations._model_operations.get_registry_versioned_asset", return_value=get_dict
+        ) as mock_get_asset:
+            result = mock_model_operation_reg.get(name="test-model", label="latest")
+
+        # The resolved version was re-fetched through the registry GET helper (not the list shape).
+        assert mock_get_asset.call_count == 1
+        assert mock_get_asset.call_args.args[3] == "5"  # version positional arg
+        # Deployment-template references are hydrated, matching the explicit version= path.
+        assert result.version == "5"
+        assert result.default_deployment_template is not None
+        assert result.default_deployment_template.asset_id == default_dt
+        assert result.allowed_deployment_templates is not None
+        assert len(result.allowed_deployment_templates) == 1
+        assert result.allowed_deployment_templates[0].asset_id == allowed_dt
+
+    def test_get_with_label_workspace_does_not_refetch(self, mock_model_operation: ModelOperations) -> None:
+        """Bug 5423568: the deployment-template re-fetch is scoped to the registry.
+
+        Workspace models carry no deployment-template references, so the label path must not issue
+        the extra GET; this keeps workspace behaviour (and its recorded e2e sessions) unchanged.
+        """
+        resolved = Model(name="test-model", version="4")
+        with patch(
+            "azure.ai.ml.operations._model_operations._resolve_label_to_asset",
+            return_value=resolved,
+        ):
+            result = mock_model_operation.get(name="test-model", label="latest")
+
+        assert result is resolved
+        assert mock_model_operation._model_versions_operation.get.call_count == 0
 
     @patch.object(Model, "_from_rest_object", new=Mock())
     @patch.object(Model, "_from_container_rest_object", new=Mock())
@@ -595,35 +680,41 @@ path: ./model.pkl"""
         """Test _get_with_registry retrieves model with specific version from registry."""
         name = "test_model"
         version = "1"
-        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_versioned_asset",
+            return_value={"properties": {}},
+        ) as mock_get_asset, patch.object(ModelVersionData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get_with_registry(name=name, version=version)
 
-        result = mock_model_operation_reg._get_with_registry(name=name, version=version)
-
-        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
-            name=name,
-            version=version,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_asset.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            version,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_version
-        assert mock_model_operation_reg._model_container_operation.get.call_count == 0
+        assert result == sentinel
 
     def test_get_with_registry_without_version(self, mock_model_operation_reg: ModelOperations) -> None:
         """Test _get_with_registry retrieves model container when no version specified."""
         name = "test_model"
-        mock_model_container = Mock(ModelContainerData(properties=Mock(ModelContainerDetails())))
-        mock_model_operation_reg._model_container_operation.get.return_value = mock_model_container
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_container_asset",
+            return_value={"properties": {}},
+        ) as mock_get_container, patch.object(ModelContainerData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get_with_registry(name=name, version=None)
 
-        result = mock_model_operation_reg._get_with_registry(name=name, version=None)
-
-        mock_model_operation_reg._model_container_operation.get.assert_called_once_with(
-            name=name,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_container.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_container
-        assert mock_model_operation_reg._model_versions_operation.get.call_count == 0
+        assert result == sentinel
 
     def test_get_delegates_to_workspace(self, mock_model_operation: ModelOperations) -> None:
         """Test _get method delegates to _get_with_workspace when workspace is set."""
@@ -646,15 +737,19 @@ path: ./model.pkl"""
         """Test _get method delegates to _get_with_registry when registry is set."""
         name = "test_model"
         version = "1"
-        mock_model_version = Mock(ModelVersionData(properties=Mock(ModelVersionDetails())))
-        mock_model_operation_reg._model_versions_operation.get.return_value = mock_model_version
+        sentinel = Mock()
+        with patch(
+            "azure.ai.ml.operations._model_operations.get_registry_versioned_asset",
+            return_value={"properties": {}},
+        ) as mock_get_asset, patch.object(ModelVersionData, "_deserialize", return_value=sentinel):
+            result = mock_model_operation_reg._get(name=name, version=version)
 
-        result = mock_model_operation_reg._get(name=name, version=version)
-
-        mock_model_operation_reg._model_versions_operation.get.assert_called_once_with(
-            name=name,
-            version=version,
-            registry_name=mock_model_operation_reg._registry_name,
-            **mock_model_operation_reg._scope_kwargs,
+        mock_get_asset.assert_called_once_with(
+            mock_model_operation_reg._registry_service_client,
+            "models",
+            name,
+            version,
+            mock_model_operation_reg._resource_group_name,
+            mock_model_operation_reg._registry_name,
         )
-        assert result == mock_model_version
+        assert result == sentinel

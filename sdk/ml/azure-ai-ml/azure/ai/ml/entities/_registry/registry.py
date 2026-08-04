@@ -8,12 +8,12 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, Any, AnyStr, Dict, List, Optional, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestManagedServiceIdentity
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import ManagedServiceIdentity as RestManagedServiceIdentity
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ManagedServiceIdentityType as RestManagedServiceIdentityType,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Registry as RestRegistry
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryProperties
+from azure.ai.ml._restclient.arm_ml_service.models import Registry as RestRegistry
+from azure.ai.ml._restclient.arm_ml_service.models import RegistryProperties
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
@@ -212,20 +212,24 @@ class Registry(Resource):
         # managed resource group to manage their internal sub-resources.
         # We always want the tags on this MRG to match those of the registry itself
         # to keep janitor policies aligned.
+        registry_properties = RegistryProperties(
+            public_network_access=self.public_network_access,
+            discovery_url=self.discovery_url,
+            intellectual_property_publisher=(
+                (self.intellectual_property.publisher) if self.intellectual_property else None
+            ),
+            managed_resource_group=self.managed_resource_group,
+            ml_flow_registry_uri=self.mlflow_registry_uri,
+            region_details=replication_locations,
+        )
+        # ``managed_resource_group_tags`` is not a typed field on the shared arm_ml_service
+        # RegistryProperties model (api-version 2025-12-01) but is part of the 2022-10-01-preview
+        # contract; set it via its wire key to preserve the old request body.
+        registry_properties["managedResourceGroupTags"] = self.tags
         return RestRegistry(
             name=self.name,
             location=self.location,
             identity=identity,
             tags=self.tags,
-            properties=RegistryProperties(
-                public_network_access=self.public_network_access,
-                discovery_url=self.discovery_url,
-                intellectual_property_publisher=(
-                    (self.intellectual_property.publisher) if self.intellectual_property else None
-                ),
-                managed_resource_group=self.managed_resource_group,
-                ml_flow_registry_uri=self.mlflow_registry_uri,
-                region_details=replication_locations,
-                managed_resource_group_tags=self.tags,
-            ),
+            properties=registry_properties,
         )

@@ -237,7 +237,7 @@ class AzureAppConfigurationClient:
         snapshot_name = kwargs.pop("snapshot_name", None)
 
         if snapshot_name is not None:
-            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+            command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
             return ConfigurationSettingPaged(
                 command,
                 snapshot=snapshot_name,
@@ -248,7 +248,7 @@ class AzureAppConfigurationClient:
         tags = kwargs.pop("tags_filter", None)
         key_filter, kwargs = get_key_filter(*args, **kwargs)
         label_filter, kwargs = get_label_filter(*args, **kwargs)
-        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        command = functools.partial(self._impl.get_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return ConfigurationSettingPaged(
             command,
             key=key_filter,
@@ -300,7 +300,7 @@ class AzureAppConfigurationClient:
         """
         if isinstance(accept_datetime, datetime):
             accept_datetime = str(accept_datetime)
-        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]
+        command = functools.partial(self._impl.check_key_values_in_one_page, **kwargs)  # type: ignore[attr-defined]  # pylint: disable=no-member
         return ConfigurationSettingPaged(
             command,
             key=key_filter,
@@ -677,6 +677,7 @@ class AzureAppConfigurationClient:
         composition_type: Optional[Union[str, SnapshotComposition]] = None,
         retention_period: Optional[int] = None,
         tags: Optional[Dict[str, str]] = None,
+        description: Optional[str] = None,
         **kwargs: Any,
     ) -> LROPoller[ConfigurationSnapshot]:
         """Create a snapshot of the configuration settings.
@@ -698,13 +699,19 @@ class AzureAppConfigurationClient:
         :paramtype retention_period: int or None
         :keyword tags: The tags of the configuration snapshot.
         :paramtype tags: dict[str, str] or None
+        :keyword description: The description of the configuration snapshot.
+        :paramtype description: str or None
         :return: A poller for create configuration snapshot operation. Call `result()` on this object to wait for the
             operation to complete and get the created snapshot.
         :rtype: ~azure.core.polling.LROPoller[~azure.appconfiguration.ConfigurationSnapshot]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         snapshot = ConfigurationSnapshot(
-            filters=filters, composition_type=composition_type, retention_period=retention_period, tags=tags
+            filters=filters,
+            composition_type=composition_type,
+            retention_period=retention_period,
+            tags=tags,
+            description=description,
         )
         return cast(
             LROPoller[ConfigurationSnapshot],

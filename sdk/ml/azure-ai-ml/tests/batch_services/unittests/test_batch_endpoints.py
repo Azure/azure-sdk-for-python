@@ -53,13 +53,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> CodeOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -285,12 +285,14 @@ class TestBatchEndpointOperations:
             return_value="https://some-url.com",
         )
         mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
+        mockresponse.text = Mock(return_value='{"value": [], "nextLink": null}')
         mockresponse.status_code = 200
-        mocker.patch("requests.request", return_value=mockresponse)
+        # list_jobs pages the MFE endpoint via the raw requests pipeline (no arm equivalent for the
+        # v2020_09 dataplane op), so mock that pipeline rather than the old client method.
+        mocker.patch.object(mock_batch_endpoint_operations._requests_pipeline, "get", return_value=mockresponse)
 
         mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
-        mock_batch_endpoint_operations._batch_job_endpoint.list.assert_called_once()
+        mock_batch_endpoint_operations._requests_pipeline.get.assert_called_once()
 
     def test_list_deployment_jobs(
         self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
@@ -300,12 +302,14 @@ class TestBatchEndpointOperations:
             return_value="https://some-url.com",
         )
         mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
+        mockresponse.text = Mock(return_value='{"value": [], "nextLink": null}')
         mockresponse.status_code = 200
-        mocker.patch("requests.request", return_value=mockresponse)
+        # list_jobs pages the MFE endpoint via the raw requests pipeline (no arm equivalent for the
+        # v2020_09 dataplane op), so mock that pipeline rather than the old client method.
+        mocker.patch.object(mock_batch_endpoint_operations._requests_pipeline, "get", return_value=mockresponse)
 
         mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
-        mock_batch_endpoint_operations._batch_job_endpoint.list.assert_called_once()
+        mock_batch_endpoint_operations._requests_pipeline.get.assert_called_once()
 
     def test_batch_get(
         self,

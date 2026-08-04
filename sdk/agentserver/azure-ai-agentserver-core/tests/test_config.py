@@ -37,3 +37,26 @@ class TestAgentConfigIsHosted:
         # Changing the env var after creation must not affect the already-created config.
         monkeypatch.delenv("FOUNDRY_HOSTING_ENVIRONMENT")
         assert config.is_hosted is True
+
+
+class TestAgentConfigAgentGuid:
+    """Tests for the FOUNDRY_AGENT_ID (agent_guid) resolution."""
+
+    def test_agent_guid_from_env(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.setenv("FOUNDRY_AGENT_ID", "11111111-2222-3333-4444-555555555555")
+        config = AgentConfig.from_env()
+        assert config.agent_guid == "11111111-2222-3333-4444-555555555555"
+
+    def test_agent_guid_empty_when_absent(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        monkeypatch.delenv("FOUNDRY_AGENT_ID", raising=False)
+        config = AgentConfig.from_env()
+        assert config.agent_guid == ""
+
+    def test_agent_guid_distinct_from_composite_agent_id(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """agent_guid (GUID) is independent of the name:version composite agent_id."""
+        monkeypatch.setenv("FOUNDRY_AGENT_NAME", "weather")
+        monkeypatch.setenv("FOUNDRY_AGENT_VERSION", "1")
+        monkeypatch.setenv("FOUNDRY_AGENT_ID", "guid-abc")
+        config = AgentConfig.from_env()
+        assert config.agent_id == "weather:1"
+        assert config.agent_guid == "guid-abc"

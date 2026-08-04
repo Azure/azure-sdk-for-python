@@ -17,13 +17,13 @@ def mock_datastore_operations(
     mock_workspace_scope: OperationScope,
     mock_operation_config_no_progress: OperationConfig,
     mock_aml_services_2024_01_01_preview: Mock,
-    mock_aml_services_2024_07_01_preview: Mock,
+    mock_aml_services_2024_10_01_preview: Mock,
 ) -> DatastoreOperations:
     yield DatastoreOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config_no_progress,
         serviceclient_2024_01_01_preview=mock_aml_services_2024_01_01_preview,
-        serviceclient_2024_07_01_preview=mock_aml_services_2024_07_01_preview,
+        serviceclient_2024_10_01_preview=mock_aml_services_2024_10_01_preview,
     )
 
 
@@ -265,6 +265,12 @@ class TestStorageUtils:
         ), patch(
             "azure.ai.ml.operations._environment_operations.get_sas_uri_for_registry_asset",
             return_value="mocksasuri",
+        ), patch(
+            "azure.ai.ml.operations._environment_operations.begin_create_or_update_registry_versioned_asset",
+            return_value={
+                "id": "azureml://registries/test_registry_name/environments/name/versions/16",
+                "properties": {},
+            },
         ):
             mock_environment_operation.create_or_update(environment)
             mock_thing.assert_called_once_with(

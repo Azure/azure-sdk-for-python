@@ -1,8 +1,32 @@
 # Release History
 
-## 12.31.0b1 (Unreleased)
+## 12.31.0b1 (2026-08-03)
 
 ### Features Added
+- Added support for service version 2026-10-06.
+- Added support for parsing List Blobs responses in Apache Arrow format by passing
+`response_format="arrow"` keyword to `ContainerClient`'s `list_blobs`, `walk_blobs`, and `list_blob_names` APIs
+(`response_format` defaults to `"auto"`, and `"auto"` currently means `"xml"`).
+The use of `"response_format=arrow"` requires `nanoarrow` to be installed.
+This change also enables the new `end_before` keyword for range-based listing.
+- Added access tier information to the response of `BlobClient`'s `download_blob` API.
+The `blob_tier`, `blob_tier_inferred`, `blob_tier_change_time`, and `smart_access_tier`
+properties are now populated on the downloaded blob's `properties`.
+- The service-calculated CRC64 is now surfaced as `content_crc64` on the response of
+`BlobClient` upload operations (`stage_block`, `stage_block_from_url`, `upload_page`,
+`upload_pages_from_url`, `append_block`, `append_block_from_url`, `upload_blob`, and
+`upload_blob_from_url`) in addition to `content_md5` when a content MD5 is
+provided with the request.
+
+### Other Changes
+- Partitioned upload via `upload_blob` with Block Blobs will now generate random,
+unique block ids for each block rather than using a sequential count.
+The length of the new block ids will be the same as previous versions to ensure backwards compatibility.
+
+## 12.30.0 (2026-06-08)
+
+### Features Added
+- Stable release of features from 12.30.0b1
 
 ## 12.29.0 (2026-05-14)
 
@@ -20,12 +44,12 @@ basis and with retries. Prior to this fix logging may have not behaved as expect
 
 ### Features Added
 - Added support for service version 2026-06-06.
-- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes
 for `BlobServiceClient`, `ContainerClient`, and `BlobClient`.
-- Added support for `create` permission in `BlobSasPermissions` for `stage_block`, 
+- Added support for `create` permission in `BlobSasPermissions` for `stage_block`,
 `stage_block_from_url`, and `commit_block_list`.
-- Added support for a new `Smart` access tier to `StandardBlobTier` used in `BlobClient.set_standard_blob_tier`, 
-which is optimized to automatically determine the most cost-effective access with no performance impact. 
+- Added support for a new `Smart` access tier to `StandardBlobTier` used in `BlobClient.set_standard_blob_tier`,
+which is optimized to automatically determine the most cost-effective access with no performance impact.
 When set, `BlobProperties.smart_access_tier` will reveal the service's current access
 tier choice between `Hot`, `Cool`, and `Archive`.
 - Added support for `is_directory` keyword in `generate_blob_sas` that generates directory-level SAS for blobs.
@@ -37,21 +61,21 @@ tier choice between `Hot`, `Cool`, and `Archive`.
 
 ### Features Added
 - Added support for service version 2026-04-06.
-- Added support for error code `INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED`. 
+- Added support for error code `INCREMENTAL_COPY_OF_EARLIER_SNAPSHOT_NOT_ALLOWED`.
 This replaces `INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED` which has been deprecated.
 - Added support for the keywords `access_tier_if_modified_since` and `access_tier_if_unmodified_since` to
 conditionally perform `BlobClient.delete_blob` operation.
-- Added support for the keyword `source_cpk` for `BlobClient`'s `upload_blob_from_url`, 
+- Added support for the keyword `source_cpk` for `BlobClient`'s `upload_blob_from_url`,
 `stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url` APIs
 to re-encrypt data automatically by the service through a `CustomerProvidedEncryptionKey`.
 - Added support for the keyword `user_delegation_tid` to `BlobServiceClient.get_user_delegation_key` API, which
 can be used in `generate_blob_sas` and `generate_container_sas` to specify the Tenant ID that is authorized
 to use the generated SAS URL. Note that `user_delegation_tid` must be used together with `user_delegation_oid`.
-- Added support for the keyword `request_headers` to `generate_blob_sas` and `generate_container_sas`, 
-which specifies a set of headers and their corresponding values that must be 
+- Added support for the keyword `request_headers` to `generate_blob_sas` and `generate_container_sas`,
+which specifies a set of headers and their corresponding values that must be
 present in the request header when using the generated SAS.
-- Added support for the keyword `request_query_params` to `generate_blob_sas` and `generate_container_sas`, 
-which specifies a set of query parameters and their corresponding values that must be 
+- Added support for the keyword `request_query_params` to `generate_blob_sas` and `generate_container_sas`,
+which specifies a set of query parameters and their corresponding values that must be
 present in the request URL when using the generated SAS.
 
 ### Other Changes
@@ -70,7 +94,7 @@ significantly better throughput on large file downloads for most environments.
 
 ### Features Added
 - Added support for service version 2026-02-06.
-- Added support for the keywords `if_modified_since`, `if_unmodified_since`, `etag`, and `match_condition` to 
+- Added support for the keywords `if_modified_since`, `if_unmodified_since`, `etag`, and `match_condition` to
 conditionally perform `BlobClient`'s `set_blob_tags` and `get_blob_tags` operations.
 - Added support for the keyword `start_from` in `ContainerClient`'s `list_blobs`, `list_blob_names`, and `walk_blobs`
 APIs, which specifies the full path to start listing paths from.
@@ -90,9 +114,9 @@ specifies the Entra ID of the user that is authorized to use the generated SAS U
 - Stable release of features from 12.27.0b1
 
 ### Other Changes
-- Migrated any previously documented `kwarg` arguments to be named keywords. 
+- Migrated any previously documented `kwarg` arguments to be named keywords.
 Some public types may have been adjusted if they were previously erroneous or incomplete.
-- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`, 
+- Removed `__enter__` and `__exit__` attributes for all asynchronous client objects for raising explicit `TypeError`,
 and let the `AttributeError` raise directly.
 
 ## 12.26.0 (2025-07-16)
@@ -115,9 +139,9 @@ This version and all future versions will require Python 3.9+. Python 3.8 is no 
 
 ### Features Added
 - Added support for service version 2025-07-05.
-- Added support for OAuth authentication in `ContainerClient`'s `get_container_access_policy` 
+- Added support for OAuth authentication in `ContainerClient`'s `get_container_access_policy`
 and `set_container_access_policy` APIs.
-- Added support for the keyword `source_token_intent` when copying from file share to blob and 
+- Added support for the keyword `source_token_intent` when copying from file share to blob and
 authenticated via `TokenCredential` for the following `BlobClient` APIs: `upload_blob_from_url`,
 `start_copy_from_url`, `stage_block_from_url`, `upload_pages_from_url`, and `append_block_from_url`.
 - Added support for `query_blob` in the asynchronous `BlobClient`.
