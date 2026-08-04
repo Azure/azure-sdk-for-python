@@ -14,6 +14,8 @@ from typing import Any
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.rest import HttpRequest
 
+from azure.ai.agentserver.core._experimental import experimental
+
 from .._request_context import get_request_context
 from ._client import JSON_CONTENT_TYPE, FoundryStorageClient
 from ._endpoint import FoundryStorageEndpoint
@@ -54,6 +56,7 @@ def _validate_key(key: str) -> None:
         raise ValueError("key must be a non-empty string")
 
 
+@experimental
 class FoundryStateStore(FoundryStorageClient):
     """Developer-facing client for one explicit Foundry state store.
 

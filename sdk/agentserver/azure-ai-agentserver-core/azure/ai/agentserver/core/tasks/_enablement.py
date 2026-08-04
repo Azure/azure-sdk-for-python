@@ -25,9 +25,12 @@ independently at import time, e.g.::
     set_resilient_tasks_enabled(True)
 """
 
+from azure.ai.agentserver.core._experimental import experimental
+
 _RESILIENT_TASKS_ENABLED: bool = False
 
 
+@experimental
 def set_resilient_tasks_enabled(value: bool = True) -> None:
     """Force-enable (or clear) the resilient task recovery scan process-wide.
 
@@ -47,6 +50,7 @@ def set_resilient_tasks_enabled(value: bool = True) -> None:
     _RESILIENT_TASKS_ENABLED = bool(value)
 
 
+@experimental
 def resilient_tasks_enabled() -> bool:
     """Return whether the recovery scan was explicitly force-enabled.
 
