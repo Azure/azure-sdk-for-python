@@ -2030,8 +2030,8 @@ namespace azure.mgmt.search.types
     class azure.mgmt.search.types.AzureActiveDirectoryApplicationCredentials(TypedDict, total=False):
         key "applicationId": str
         key "applicationSecret": str
-        application_id: str
-        application_secret: str
+        applicationId: str
+        applicationSecret: str
 
 
     class azure.mgmt.search.types.CheckNameAvailabilityInput(TypedDict, total=False):
@@ -2043,48 +2043,47 @@ namespace azure.mgmt.search.types
 
     class azure.mgmt.search.types.DataNoneIdentity(TypedDict):
         key "@odata.type": Required[Literal["#DataNoneIdentity"]]
-        odata_type: Literal[#DataNoneIdentity]
+        @odata.type: Literal[#DataNoneIdentity]
 
 
     class azure.mgmt.search.types.DataPlaneAadOrApiKeyAuthOption(TypedDict, total=False):
         key "aadAuthFailureMode": Union[str, AadAuthFailureMode]
-        aad_auth_failure_mode: Union[str, AadAuthFailureMode]
+        aadAuthFailureMode: Union[str, AadAuthFailureMode]
 
 
     class azure.mgmt.search.types.DataPlaneAuthOptions(TypedDict, total=False):
         key "aadOrApiKey": ForwardRef('DataPlaneAadOrApiKeyAuthOption', module='types')
         key "apiKeyOnly": Any
-        aad_or_api_key: DataPlaneAadOrApiKeyAuthOption
-        api_key_only: Any
+        aadOrApiKey: DataPlaneAadOrApiKeyAuthOption
+        apiKeyOnly: Any
 
 
     class azure.mgmt.search.types.DataUserAssignedIdentity(TypedDict):
         key "@odata.type": Required[Literal["#DataUserAssignedIdentity"]]
         key "federatedIdentityClientId": str
         key "userAssignedIdentity": Required[str]
-        federated_identity_client_id: str
-        odata_type: Literal[#DataUserAssignedIdentity]
-        user_assigned_identity: str
+        @odata.type: Literal[#DataUserAssignedIdentity]
+        federatedIdentityClientId: str
+        userAssignedIdentity: str
 
 
     class azure.mgmt.search.types.EncryptionWithCmk(TypedDict, total=False):
         key "encryptionComplianceStatus": Union[str, SearchEncryptionComplianceStatus]
         key "enforcement": Union[str, SearchEncryptionWithCmk]
         key "serviceLevelEncryptionKey": ForwardRef('SearchResourceEncryptionKey', module='types')
-        encryption_compliance_status: Union[str, SearchEncryptionComplianceStatus]
+        encryptionComplianceStatus: Union[str, SearchEncryptionComplianceStatus]
         enforcement: Union[str, SearchEncryptionWithCmk]
-        service_level_encryption_key: SearchResourceEncryptionKey
+        serviceLevelEncryptionKey: SearchResourceEncryptionKey
 
 
     class azure.mgmt.search.types.Identity(TypedDict, total=False):
         key "principalId": str
         key "tenantId": str
         key "type": Required[Union[str, IdentityType]]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, IdentityType]
         userAssignedIdentities: dict[str, UserAssignedIdentity]
-        user_assigned_identities: dict[str, UserAssignedIdentity]
 
 
     class azure.mgmt.search.types.IpRule(TypedDict, total=False):
@@ -2096,7 +2095,6 @@ namespace azure.mgmt.search.types
         key "bypass": Union[str, SearchBypass]
         bypass: Union[str, SearchBypass]
         ipRules: list[IpRule]
-        ip_rules: list[IpRule]
 
 
     class azure.mgmt.search.types.PrivateEndpointConnection(ProxyResource):
@@ -2108,7 +2106,7 @@ namespace azure.mgmt.search.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2117,10 +2115,10 @@ namespace azure.mgmt.search.types
         key "privateEndpoint": ForwardRef('PrivateEndpointConnectionPropertiesPrivateEndpoint', module='types')
         key "privateLinkServiceConnectionState": ForwardRef('PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState', module='types')
         key "provisioningState": Union[str, PrivateLinkServiceConnectionProvisioningState]
-        group_id: str
-        private_endpoint: PrivateEndpointConnectionPropertiesPrivateEndpoint
-        private_link_service_connection_state: PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateLinkServiceConnectionProvisioningState]
+        groupId: str
+        privateEndpoint: PrivateEndpointConnectionPropertiesPrivateEndpoint
+        privateLinkServiceConnectionState: PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateLinkServiceConnectionProvisioningState]
 
 
     class azure.mgmt.search.types.PrivateEndpointConnectionPropertiesPrivateEndpoint(TypedDict, total=False):
@@ -2132,7 +2130,7 @@ namespace azure.mgmt.search.types
         key "actionsRequired": str
         key "description": str
         key "status": Union[str, PrivateLinkServiceConnectionStatus]
-        actions_required: str
+        actionsRequired: str
         description: str
         status: Union[str, PrivateLinkServiceConnectionStatus]
 
@@ -2144,7 +2142,7 @@ namespace azure.mgmt.search.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2155,7 +2153,7 @@ namespace azure.mgmt.search.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2165,11 +2163,11 @@ namespace azure.mgmt.search.types
         key "keyVaultKeyName": str
         key "keyVaultKeyVersion": str
         key "keyVaultUri": str
-        access_credentials: AzureActiveDirectoryApplicationCredentials
+        accessCredentials: AzureActiveDirectoryApplicationCredentials
         identity: DataIdentity
-        key_name: str
-        key_version: str
-        vault_uri: str
+        keyVaultKeyName: str
+        keyVaultKeyVersion: str
+        keyVaultUri: str
 
 
     class azure.mgmt.search.types.SearchService(TrackedResource):
@@ -2187,7 +2185,7 @@ namespace azure.mgmt.search.types
         name: str
         properties: SearchServiceProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2212,31 +2210,28 @@ namespace azure.mgmt.search.types
         key "status": Union[str, SearchServiceStatus]
         key "statusDetails": str
         key "upgradeAvailable": Union[str, UpgradeAvailable]
-        auth_options: DataPlaneAuthOptions
-        auto_generated_domain_name_label_scope: Union[str, AutoGeneratedDomainNameLabelScope]
-        compute_type: Union[str, ComputeType]
+        authOptions: DataPlaneAuthOptions
+        autoGeneratedDomainNameLabelScope: Union[str, AutoGeneratedDomainNameLabelScope]
+        computeType: Union[str, ComputeType]
         dataExfiltrationProtections: list[Union[str, SearchDataExfiltrationProtection]]
-        data_exfiltration_protections: list[Union[str, SearchDataExfiltrationProtection]]
-        disable_local_auth: bool
-        e_tag: str
-        encryption_with_cmk: EncryptionWithCmk
+        disableLocalAuth: bool
+        eTag: str
+        encryptionWithCmk: EncryptionWithCmk
         endpoint: str
-        hosting_mode: Union[str, HostingMode]
-        knowledge_retrieval: Union[str, KnowledgeRetrieval]
-        network_rule_set: NetworkRuleSet
-        partition_count: int
+        hostingMode: Union[str, HostingMode]
+        knowledgeRetrieval: Union[str, KnowledgeRetrieval]
+        networkRuleSet: NetworkRuleSet
+        partitionCount: int
         privateEndpointConnections: list[PrivateEndpointConnection]
-        private_endpoint_connections: list[PrivateEndpointConnection]
-        provisioning_state: Union[str, ProvisioningState]
-        public_network_access: Union[str, PublicNetworkAccess]
-        replica_count: int
-        semantic_search: Union[str, SearchSemanticSearch]
-        service_upgraded_at: str
+        provisioningState: Union[str, ProvisioningState]
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        replicaCount: int
+        semanticSearch: Union[str, SearchSemanticSearch]
+        serviceUpgradedAt: str
         sharedPrivateLinkResources: list[SharedPrivateLinkResource]
-        shared_private_link_resources: list[SharedPrivateLinkResource]
         status: Union[str, SearchServiceStatus]
-        status_details: str
-        upgrade_available: Union[str, UpgradeAvailable]
+        statusDetails: str
+        upgradeAvailable: Union[str, UpgradeAvailable]
 
 
     class azure.mgmt.search.types.SearchServiceUpdate(Resource):
@@ -2254,7 +2249,7 @@ namespace azure.mgmt.search.types
         name: str
         properties: SearchServiceProperties
         sku: Sku
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2268,7 +2263,7 @@ namespace azure.mgmt.search.types
         id: str
         name: str
         properties: SharedPrivateLinkResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -2279,11 +2274,11 @@ namespace azure.mgmt.search.types
         key "requestMessage": str
         key "resourceRegion": str
         key "status": Union[str, SharedPrivateLinkResourceStatus]
-        group_id: str
-        private_link_resource_id: str
-        provisioning_state: Union[str, SharedPrivateLinkResourceProvisioningState]
-        request_message: str
-        resource_region: str
+        groupId: str
+        privateLinkResourceId: str
+        provisioningState: Union[str, SharedPrivateLinkResourceProvisioningState]
+        requestMessage: str
+        resourceRegion: str
         status: Union[str, SharedPrivateLinkResourceStatus]
 
 
@@ -2299,12 +2294,12 @@ namespace azure.mgmt.search.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.search.types.TrackedResource(Resource):
@@ -2316,7 +2311,7 @@ namespace azure.mgmt.search.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -2324,8 +2319,8 @@ namespace azure.mgmt.search.types
     class azure.mgmt.search.types.UserAssignedIdentity(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
 ```

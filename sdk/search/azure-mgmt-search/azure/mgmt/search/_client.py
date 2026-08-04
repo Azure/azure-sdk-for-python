@@ -43,7 +43,9 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class SearchManagementClient(_SearchManagementClientOperationsMixin):  # pylint: disable=too-many-instance-attributes
+class SearchManagementClient(
+    _SearchManagementClientOperationsMixin
+):  # pylint: disable=too-many-instance-attributes,docstring-keyword-should-match-keyword-only
     """SearchManagementClient.
 
     :ivar offerings: OfferingsOperations operations

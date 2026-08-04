@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AccessRule(_Model):
+class AccessRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access rule in a network security perimeter configuration profile.
 
     :ivar name: Name of the access rule.
@@ -51,7 +51,7 @@ class AccessRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRuleProperties(_Model):
+class AccessRuleProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of Access Rule.
 
     :ivar direction: Known values are: "Inbound" and "Outbound".
@@ -123,7 +123,7 @@ class AccessRuleProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessRulePropertiesSubscriptionsItem(_Model):
+class AccessRulePropertiesSubscriptionsItem(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration.
 
     :ivar id: The fully qualified Azure resource ID of the subscription e.g.
@@ -169,7 +169,9 @@ class AdminKeyResult(_Model):
     """The secondary admin API key of the search service."""
 
 
-class AzureActiveDirectoryApplicationCredentials(_Model):  # pylint: disable=name-too-long
+class AzureActiveDirectoryApplicationCredentials(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the Azure Active Directory application credentials required to access an Azure Key
     Vault.
 
@@ -209,7 +211,7 @@ class AzureActiveDirectoryApplicationCredentials(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class CheckNameAvailabilityInput(_Model):
+class CheckNameAvailabilityInput(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Input of check name availability API.
 
     :ivar name: The search service name to validate. Search service names must only contain
@@ -275,7 +277,7 @@ class CheckNameAvailabilityOutput(_Model):
      Available only if 'Invalid' is returned in the 'reason' property."""
 
 
-class CloudError(_Model):
+class CloudError(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about an API error.
 
     :ivar error: Describes a particular API error with an error code and a message.
@@ -310,7 +312,7 @@ class CloudError(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CloudErrorBody(_Model):
+class CloudErrorBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a particular API error with an error code and a message.
 
     :ivar code: An error code that describes the error condition more precisely than an HTTP status
@@ -358,7 +360,7 @@ class CloudErrorBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataIdentity(_Model):
+class DataIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Abstract base type for data identities.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -418,7 +420,7 @@ class DataNoneIdentity(DataIdentity, discriminator="#Microsoft.Azure.Search.Data
         self.odata_type = "#Microsoft.Azure.Search.DataNoneIdentity"  # type: ignore
 
 
-class DataPlaneAadOrApiKeyAuthOption(_Model):
+class DataPlaneAadOrApiKeyAuthOption(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Indicates that either the API key or an access token from a Microsoft Entra ID tenant can be
     used for authentication.
 
@@ -452,7 +454,7 @@ class DataPlaneAadOrApiKeyAuthOption(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataPlaneAuthOptions(_Model):
+class DataPlaneAuthOptions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the options for how the search service authenticates a data plane request. This cannot
     be set if 'disableLocalAuth' is set to true.
 
@@ -492,7 +494,9 @@ class DataPlaneAuthOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DataUserAssignedIdentity(DataIdentity, discriminator="#Microsoft.Azure.Search.DataUserAssignedIdentity"):
+class DataUserAssignedIdentity(
+    DataIdentity, discriminator="#Microsoft.Azure.Search.DataUserAssignedIdentity"
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies the user assigned identity to use.
 
     :ivar odata_type: Required. Default value is
@@ -544,7 +548,7 @@ class DataUserAssignedIdentity(DataIdentity, discriminator="#Microsoft.Azure.Sea
         self.odata_type = "#Microsoft.Azure.Search.DataUserAssignedIdentity"  # type: ignore
 
 
-class EncryptionWithCmk(_Model):
+class EncryptionWithCmk(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a policy that determines how resources within the search service are to be encrypted
     with customer managed keys.
 
@@ -599,7 +603,7 @@ class EncryptionWithCmk(_Model):
         super().__init__(*args, **kwargs)
 
 
-class FeatureOffering(_Model):
+class FeatureOffering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the availability of a specific feature in a region.
 
     :ivar name: The name of the feature offered in this region.
@@ -627,7 +631,7 @@ class FeatureOffering(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Identity(_Model):
+class Identity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the search service identity. A null value indicates that the search service has
     no identity assigned.
 
@@ -681,7 +685,7 @@ class Identity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IpRule(_Model):
+class IpRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IP restriction rule of the Azure AI Search service.
 
     :ivar value: Value corresponding to a single IPv4 address (eg., 123.1.2.3) or an IP range in
@@ -711,7 +715,7 @@ class IpRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkRuleSet(_Model):
+class NetworkRuleSet(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network specific rules that determine how the Azure AI Search service may be reached.
 
     :ivar ip_rules: A list of IP restriction rules that defines the inbound network(s) with
@@ -759,7 +763,7 @@ class NetworkRuleSet(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeter(_Model):
+class NetworkSecurityPerimeter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a network security perimeter (NSP).
 
     :ivar id: Fully qualified Azure resource ID of the NSP resource.
@@ -844,7 +848,9 @@ class ProxyResource(Resource):
     """
 
 
-class NetworkSecurityPerimeterConfiguration(ProxyResource):
+class NetworkSecurityPerimeterConfiguration(
+    ProxyResource
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter (NSP) configuration resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -885,7 +891,9 @@ class NetworkSecurityPerimeterConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Network security configuration properties.
 
     :ivar provisioning_state: Known values are: "Succeeded", "Creating", "Updating", "Deleting",
@@ -941,7 +949,7 @@ class NetworkSecurityPerimeterConfigurationProperties(_Model):  # pylint: disabl
         super().__init__(*args, **kwargs)
 
 
-class NetworkSecurityProfile(_Model):
+class NetworkSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network security perimeter configuration profile.
 
     :ivar name: Name of the profile.
@@ -997,7 +1005,7 @@ class NetworkSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OfferingsByRegion(_Model):
+class OfferingsByRegion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Azure AI Search features and SKUs available in a specific Azure region.
 
     :ivar region_name: The name of the region.
@@ -1055,7 +1063,7 @@ class OfferingsResult(_Model):
     """The list of Azure AI Search offerings by region."""
 
 
-class Operation(_Model):
+class Operation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """REST API Operation.
 
     :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
@@ -1143,7 +1151,7 @@ class OperationDisplay(_Model):
      views."""
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an existing private endpoint connection to the Azure AI Search service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1186,7 +1194,7 @@ class PrivateEndpointConnection(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an existing private endpoint connection to the search service.
 
     :ivar private_endpoint: The private endpoint resource from Microsoft.Network provider.
@@ -1246,7 +1254,9 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionPropertiesPrivateEndpoint(_Model):  # pylint: disable=name-too-long
+class PrivateEndpointConnectionPropertiesPrivateEndpoint(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The private endpoint resource from Microsoft.Network provider.
 
     :ivar id: The resource ID of the private endpoint resource from Microsoft.Network provider.
@@ -1274,7 +1284,9 @@ class PrivateEndpointConnectionPropertiesPrivateEndpoint(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState(_Model):  # pylint: disable=name-too-long
+class PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Describes the current state of an existing Azure Private Link service connection to the private
     endpoint.
 
@@ -1444,7 +1456,7 @@ class QueryKey(_Model):
     """The value of the query API key."""
 
 
-class QuotaUsageResult(_Model):
+class QuotaUsageResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the quota usage for a particular SKU.
 
     :ivar id: The resource ID of the quota usage SKU endpoint for Microsoft.Search provider.
@@ -1493,7 +1505,7 @@ class QuotaUsageResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class QuotaUsageResultName(_Model):
+class QuotaUsageResultName(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU name information, including its identifier and localized display name.
 
     :ivar value: The SKU name supported by Azure AI Search.
@@ -1528,7 +1540,7 @@ class QuotaUsageResultName(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceAssociation(_Model):
+class ResourceAssociation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about resource association.
 
     :ivar name: Name of the resource association.
@@ -1563,7 +1575,7 @@ class ResourceAssociation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchResourceEncryptionKey(_Model):
+class SearchResourceEncryptionKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
@@ -1634,7 +1646,7 @@ class SearchResourceEncryptionKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1678,7 +1690,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class SearchService(TrackedResource):
+class SearchService(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes an Azure AI Search service and its current state.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1780,7 +1792,7 @@ class SearchService(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SearchServiceProperties(_Model):
+class SearchServiceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the search service.
 
     :ivar replica_count: The number of replicas in the dedicated search service. If specified, it
@@ -2043,7 +2055,7 @@ class SearchServiceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SearchServiceUpdate(Resource):
+class SearchServiceUpdate(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The parameters used to update an Azure AI Search service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2201,7 +2213,7 @@ class ShareablePrivateLinkResourceType(_Model):
      supported by Azure AI Search."""
 
 
-class SharedPrivateLinkResource(ProxyResource):
+class SharedPrivateLinkResource(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a shared private link resource managed by the Azure AI Search service.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -2244,7 +2256,7 @@ class SharedPrivateLinkResource(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class SharedPrivateLinkResourceProperties(_Model):
+class SharedPrivateLinkResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of an existing shared private link resource managed by the Azure AI
     Search service.
 
@@ -2322,7 +2334,7 @@ class SharedPrivateLinkResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Sku(_Model):
+class Sku(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines the SKU of a search service, which determines billing rate and capacity limits.
 
     :ivar name: The SKU of the search service. Valid values include: 'free': Shared service.
@@ -2369,7 +2381,7 @@ class Sku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuLimits(_Model):
+class SkuLimits(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the limits associated with a SKU offering.
 
     :ivar indexes: The maximum number of indexes available for this SKU.
@@ -2435,7 +2447,7 @@ class SkuLimits(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SkuOffering(_Model):
+class SkuOffering(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes a SKU offering with its limits in a specific region.
 
     :ivar sku: The SKU definition.
@@ -2468,7 +2480,7 @@ class SkuOffering(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.

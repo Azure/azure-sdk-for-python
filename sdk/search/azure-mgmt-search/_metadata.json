@@ -7,5 +7,5 @@
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/search/resource-manager/Microsoft.Search/Search",
   "emitterVersion": "0.63.3",
-  "httpClientPythonVersion": "^0.34.2"
+  "httpClientPythonVersion": "^0.35.1"
 }

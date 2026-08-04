@@ -76,7 +76,7 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 List = list
 
 
-class OfferingsOperations:
+class OfferingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -162,7 +162,7 @@ class OfferingsOperations:
         return deserialized  # type: ignore
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -272,7 +272,7 @@ class Operations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -758,7 +758,7 @@ class PrivateEndpointConnectionsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class SharedPrivateLinkResourcesOperations:
+class SharedPrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1361,7 +1361,7 @@ class SharedPrivateLinkResourcesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-too-long
+class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=docstring-missing-param,name-too-long
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -1685,7 +1685,7 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
 
-class ServicesOperations:
+class ServicesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2728,7 +2728,7 @@ class ServicesOperations:
         )
 
 
-class UsagesOperations:
+class UsagesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -2842,7 +2842,7 @@ class UsagesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class AdminKeysOperations:
+class AdminKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3013,7 +3013,7 @@ class AdminKeysOperations:
         return deserialized  # type: ignore
 
 
-class QueryKeysOperations:
+class QueryKeysOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -3278,7 +3278,7 @@ class QueryKeysOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

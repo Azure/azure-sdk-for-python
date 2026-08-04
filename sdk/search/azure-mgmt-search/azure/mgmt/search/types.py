@@ -40,11 +40,11 @@ class AzureActiveDirectoryApplicationCredentials(TypedDict, total=False):  # pyl
     """Describes the Azure Active Directory application credentials required to access an Azure Key
     Vault.
 
-    :ivar application_id: The application (client) ID of an App Registration in the tenant.
-    :vartype application_id: str
-    :ivar application_secret: An AAD client secret that was generated for the App Registration used
+    :ivar applicationId: The application (client) ID of an App Registration in the tenant.
+    :vartype applicationId: str
+    :ivar applicationSecret: An AAD client secret that was generated for the App Registration used
      to authenticate with Azure Key Vault.
-    :vartype application_secret: str
+    :vartype applicationSecret: str
     """
 
     applicationId: str
@@ -84,8 +84,8 @@ DataNoneIdentity = TypedDict(
 )
 DataNoneIdentity.__doc__ = """Clears the identity property.
 
-:ivar odata_type: Required. Default value is "#Microsoft.Azure.Search.DataNoneIdentity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
+:ivar @odata.type: Required. Default value is "#Microsoft.Azure.Search.DataNoneIdentity".
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataNoneIdentity"]
 """
 
 
@@ -93,10 +93,10 @@ class DataPlaneAadOrApiKeyAuthOption(TypedDict, total=False):
     """Indicates that either the API key or an access token from a Microsoft Entra ID tenant can be
     used for authentication.
 
-    :ivar aad_auth_failure_mode: Describes what response the data plane API of a search service
-     would send for requests that failed authentication. Known values are: "http403" and
+    :ivar aadAuthFailureMode: Describes what response the data plane API of a search service would
+     send for requests that failed authentication. Known values are: "http403" and
      "http401WithBearerChallenge".
-    :vartype aad_auth_failure_mode: Union[str, "AadAuthFailureMode"]
+    :vartype aadAuthFailureMode: Union[str, "AadAuthFailureMode"]
     """
 
     aadAuthFailureMode: Union[str, "AadAuthFailureMode"]
@@ -108,11 +108,11 @@ class DataPlaneAuthOptions(TypedDict, total=False):
     """Defines the options for how the search service authenticates a data plane request. This cannot
     be set if 'disableLocalAuth' is set to true.
 
-    :ivar api_key_only: Indicates that only the API key can be used for authentication.
-    :vartype api_key_only: Any
-    :ivar aad_or_api_key: Indicates that either the API key or an access token from a Microsoft
-     Entra ID tenant can be used for authentication.
-    :vartype aad_or_api_key: "DataPlaneAadOrApiKeyAuthOption"
+    :ivar apiKeyOnly: Indicates that only the API key can be used for authentication.
+    :vartype apiKeyOnly: Any
+    :ivar aadOrApiKey: Indicates that either the API key or an access token from a Microsoft Entra
+     ID tenant can be used for authentication.
+    :vartype aadOrApiKey: "DataPlaneAadOrApiKeyAuthOption"
     """
 
     apiKeyOnly: Any
@@ -133,18 +133,18 @@ DataUserAssignedIdentity = TypedDict(
 )
 DataUserAssignedIdentity.__doc__ = """Specifies the user assigned identity to use.
 
-:ivar odata_type: Required. Default value is
+:ivar @odata.type: Required. Default value is
  "#Microsoft.Azure.Search.DataUserAssignedIdentity".
-:vartype odata_type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
-:ivar user_assigned_identity: The fully qualified Azure resource Id of a user assigned managed
+:vartype @odata.type: Literal["#Microsoft.Azure.Search.DataUserAssignedIdentity"]
+:ivar userAssignedIdentity: The fully qualified Azure resource Id of a user assigned managed
  identity typically in the form
  "/subscriptions/12345678-1234-1234-1234-1234567890ab/resourceGroups/rg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/myId"
  that should have been assigned to the search service. Required.
-:vartype user_assigned_identity: str
-:ivar federated_identity_client_id: Optional for Multi-tenant User-Assigned Managed Identity
- CMK Support: The client id (as a UUID) of the multi-tenant App Registration that has been
+:vartype userAssignedIdentity: str
+:ivar federatedIdentityClientId: Optional for Multi-tenant User-Assigned Managed Identity CMK
+ Support: The client id (as a UUID) of the multi-tenant App Registration that has been
  configured to federate with the userAssignedIdentity.
-:vartype federated_identity_client_id: str
+:vartype federatedIdentityClientId: str
 """
 
 
@@ -156,14 +156,14 @@ class EncryptionWithCmk(TypedDict, total=False):
      that aren't encrypted with the customer-managed key. Known values are: "Disabled", "Enabled",
      and "Unspecified".
     :vartype enforcement: Union[str, "SearchEncryptionWithCmk"]
-    :ivar encryption_compliance_status: Returns the status of search service compliance with
-     respect to non-CMK-encrypted objects. If a service has more than one unencrypted object, and
+    :ivar encryptionComplianceStatus: Returns the status of search service compliance with respect
+     to non-CMK-encrypted objects. If a service has more than one unencrypted object, and
      enforcement is enabled, the service is marked as noncompliant. Known values are: "Compliant"
      and "NonCompliant".
-    :vartype encryption_compliance_status: Union[str, "SearchEncryptionComplianceStatus"]
-    :ivar service_level_encryption_key: Describes the customer-managed key configuration for
+    :vartype encryptionComplianceStatus: Union[str, "SearchEncryptionComplianceStatus"]
+    :ivar serviceLevelEncryptionKey: Describes the customer-managed key configuration for
      encrypting the search service.
-    :vartype service_level_encryption_key: "SearchResourceEncryptionKey"
+    :vartype serviceLevelEncryptionKey: "SearchResourceEncryptionKey"
     """
 
     enforcement: Union[str, "SearchEncryptionWithCmk"]
@@ -182,19 +182,19 @@ class Identity(TypedDict, total=False):
     """Details about the search service identity. A null value indicates that the search service has
     no identity assigned.
 
-    :ivar principal_id: The principal ID of the system-assigned identity of the search service.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of the system-assigned identity of the search service.
-    :vartype tenant_id: str
+    :ivar principalId: The principal ID of the system-assigned identity of the search service.
+    :vartype principalId: str
+    :ivar tenantId: The tenant ID of the system-assigned identity of the search service.
+    :vartype tenantId: str
     :ivar type: The type of identity used for the resource. The type 'SystemAssigned, UserAssigned'
      includes both an identity created by the system and a set of user assigned identities. The type
      'None' will remove all identities from the service. Required. Known values are: "None",
      "SystemAssigned", "UserAssigned", and "SystemAssigned, UserAssigned".
     :vartype type: Union[str, "IdentityType"]
-    :ivar user_assigned_identities: The list of user identities associated with the resource. The
+    :ivar userAssignedIdentities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource IDs in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str, "UserAssignedIdentity"]
+    :vartype userAssignedIdentities: dict[str, "UserAssignedIdentity"]
     """
 
     principalId: str
@@ -228,13 +228,13 @@ class IpRule(TypedDict, total=False):
 class NetworkRuleSet(TypedDict, total=False):
     """Network specific rules that determine how the Azure AI Search service may be reached.
 
-    :ivar ip_rules: A list of IP restriction rules that defines the inbound network(s) with
-     allowing access to the search service endpoint. At the meantime, all other public IP networks
-     are blocked by the firewall. These restriction rules are applied only when the
+    :ivar ipRules: A list of IP restriction rules that defines the inbound network(s) with allowing
+     access to the search service endpoint. At the meantime, all other public IP networks are
+     blocked by the firewall. These restriction rules are applied only when the
      'publicNetworkAccess' of the search service is 'enabled'; otherwise, traffic over public
      interface is not allowed even with any public IP rules, and private endpoint connections would
      be the exclusive access method.
-    :vartype ip_rules: list["IpRule"]
+    :vartype ipRules: list["IpRule"]
     :ivar bypass: Possible origins of inbound traffic that can bypass the rules defined in the
      'ipRules' section. Known values are: "None", "AzurePortal", and "AzureServices".
     :vartype bypass: Union[str, "SearchBypass"]
@@ -262,9 +262,9 @@ class Resource(TypedDict, total=False):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
     id: str
@@ -290,9 +290,9 @@ class ProxyResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     """
 
 
@@ -307,9 +307,9 @@ class PrivateEndpointConnection(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Describes the properties of an existing private endpoint connection to the
      Azure AI Search service.
     :vartype properties: "PrivateEndpointConnectionProperties"
@@ -323,18 +323,18 @@ class PrivateEndpointConnection(ProxyResource):
 class PrivateEndpointConnectionProperties(TypedDict, total=False):
     """Describes the properties of an existing private endpoint connection to the search service.
 
-    :ivar private_endpoint: The private endpoint resource from Microsoft.Network provider.
-    :vartype private_endpoint: "PrivateEndpointConnectionPropertiesPrivateEndpoint"
-    :ivar private_link_service_connection_state: Describes the current state of an existing Azure
+    :ivar privateEndpoint: The private endpoint resource from Microsoft.Network provider.
+    :vartype privateEndpoint: "PrivateEndpointConnectionPropertiesPrivateEndpoint"
+    :ivar privateLinkServiceConnectionState: Describes the current state of an existing Azure
      Private Link service connection to the private endpoint.
-    :vartype private_link_service_connection_state:
+    :vartype privateLinkServiceConnectionState:
      "PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState"
-    :ivar group_id: The group ID of the Azure resource for which the private link service is for.
-    :vartype group_id: str
-    :ivar provisioning_state: The provisioning state of the private link service connection. Valid
+    :ivar groupId: The group ID of the Azure resource for which the private link service is for.
+    :vartype groupId: str
+    :ivar provisioningState: The provisioning state of the private link service connection. Valid
      values are Updating, Deleting, Failed, Succeeded, Incomplete, or Canceled. Known values are:
      "Updating", "Deleting", "Failed", "Succeeded", "Incomplete", and "Canceled".
-    :vartype provisioning_state: Union[str, "PrivateLinkServiceConnectionProvisioningState"]
+    :vartype provisioningState: Union[str, "PrivateLinkServiceConnectionProvisioningState"]
     """
 
     privateEndpoint: "PrivateEndpointConnectionPropertiesPrivateEndpoint"
@@ -373,8 +373,8 @@ class PrivateEndpointConnectionPropertiesPrivateLinkServiceConnectionState(
     :vartype status: Union[str, "PrivateLinkServiceConnectionStatus"]
     :ivar description: The description for the private link service connection state.
     :vartype description: str
-    :ivar actions_required: A description of any extra actions that may be required.
-    :vartype actions_required: str
+    :ivar actionsRequired: A description of any extra actions that may be required.
+    :vartype actionsRequired: str
     """
 
     status: Union[str, "PrivateLinkServiceConnectionStatus"]
@@ -391,23 +391,24 @@ class SearchResourceEncryptionKey(TypedDict, total=False):
     """A customer-managed encryption key in Azure Key Vault. Keys that you create and manage can be
     used to encrypt or decrypt data-at-rest, such as indexes and synonym maps.
 
-    :ivar key_name: The name of your Azure Key Vault key to be used to encrypt your data at rest.
-    :vartype key_name: str
-    :ivar key_version: The version of your Azure Key Vault key to be used to encrypt your data at
+    :ivar keyVaultKeyName: The name of your Azure Key Vault key to be used to encrypt your data at
      rest.
-    :vartype key_version: str
-    :ivar vault_uri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
+    :vartype keyVaultKeyName: str
+    :ivar keyVaultKeyVersion: The version of your Azure Key Vault key to be used to encrypt your
+     data at rest.
+    :vartype keyVaultKeyVersion: str
+    :ivar keyVaultUri: The URI of your Azure Key Vault, also referred to as DNS name, that contains
      the key to be used to encrypt your data at rest. An example URI might be
      ``https://my-keyvault-name.vault.azure.net``.
-    :vartype vault_uri: str
+    :vartype keyVaultUri: str
     :ivar identity: An explicit managed identity to use for this encryption key. If not specified
      and the access credentials property is null, the system-assigned managed identity is used. On
      update to the resource, if the explicit identity is unspecified, it remains unchanged. If
      "none" is specified, the value of this property is cleared.
     :vartype identity: "DataIdentity"
-    :ivar access_credentials: Optional Azure Active Directory credentials used for accessing your
+    :ivar accessCredentials: Optional Azure Active Directory credentials used for accessing your
      Azure Key Vault. Not required if using managed identity instead.
-    :vartype access_credentials: "AzureActiveDirectoryApplicationCredentials"
+    :vartype accessCredentials: "AzureActiveDirectoryApplicationCredentials"
     """
 
     keyVaultKeyName: str
@@ -439,9 +440,9 @@ class TrackedResource(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -465,9 +466,9 @@ class SearchService(TrackedResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -493,31 +494,31 @@ class SearchService(TrackedResource):
 class SearchServiceProperties(TypedDict, total=False):
     """Properties of the search service.
 
-    :ivar replica_count: The number of replicas in the dedicated search service. If specified, it
+    :ivar replicaCount: The number of replicas in the dedicated search service. If specified, it
      must be a value between 1 and 12 inclusive for standard SKUs or between 1 and 3 inclusive for
      basic SKU.
-    :vartype replica_count: int
-    :ivar partition_count: The number of partitions in the dedicated search service; if specified,
+    :vartype replicaCount: int
+    :ivar partitionCount: The number of partitions in the dedicated search service; if specified,
      it can be 1, 2, 3, 4, 6, or 12. Values greater than 1 are only valid for standard SKUs. For
      'standard3' services with hostingMode set to 'highDensity', the allowed values are between 1
      and 3.
-    :vartype partition_count: int
+    :vartype partitionCount: int
     :ivar endpoint: The endpoint of the Azure AI Search service.
     :vartype endpoint: str
-    :ivar hosting_mode: Applicable only for the standard3 SKU. You can set this property to enable
+    :ivar hostingMode: Applicable only for the standard3 SKU. You can set this property to enable
      up to 3 high density partitions that allow up to 1000 indexes, which is much higher than the
      maximum indexes allowed for any other SKU. For the standard3 SKU, the value is either 'Default'
      or 'HighDensity'. For all other SKUs, this value must be 'Default'. Known values are: "Default"
      and "HighDensity".
-    :vartype hosting_mode: Union[str, "HostingMode"]
-    :ivar compute_type: Configure this property to support the search service using either the
+    :vartype hostingMode: Union[str, "HostingMode"]
+    :ivar computeType: Configure this property to support the search service using either the
      Default Compute or Azure Confidential Compute. Known values are: "Default" and "Confidential".
-    :vartype compute_type: Union[str, "ComputeType"]
-    :ivar public_network_access: This value can be set to 'Enabled' to avoid breaking changes on
+    :vartype computeType: Union[str, "ComputeType"]
+    :ivar publicNetworkAccess: This value can be set to 'Enabled' to avoid breaking changes on
      existing customer resources and templates. If set to 'Disabled', traffic over public interface
      is not allowed, and private endpoint connections would be the exclusive access method. Known
      values are: "Enabled", "Disabled", and "SecuredByPerimeter".
-    :vartype public_network_access: Union[str, "PublicNetworkAccess"]
+    :vartype publicNetworkAccess: Union[str, "PublicNetworkAccess"]
     :ivar status: The status of the search service. Possible values include: 'running': The search
      service is running and no provisioning operations are underway. 'provisioning': The search
      service is being provisioned or scaled up or down. 'deleting': The search service is being
@@ -531,9 +532,9 @@ class SearchServiceProperties(TypedDict, total=False):
      based on the number of search units provisioned. Known values are: "running", "provisioning",
      "deleting", "degraded", "disabled", "error", and "stopped".
     :vartype status: Union[str, "SearchServiceStatus"]
-    :ivar status_details: The details of the search service status.
-    :vartype status_details: str
-    :ivar provisioning_state: The state of the last provisioning operation performed on the search
+    :ivar statusDetails: The details of the search service status.
+    :vartype statusDetails: str
+    :ivar provisioningState: The state of the last provisioning operation performed on the search
      service. Provisioning is an intermediate state that occurs while service capacity is being
      established. After capacity is set up, provisioningState changes to either 'Succeeded' or
      'Failed'. Client applications can poll provisioning status (the recommended polling interval is
@@ -542,53 +543,52 @@ class SearchServiceProperties(TypedDict, total=False):
      'Succeeded' directly in the call to Create search service. This is because the free service
      uses capacity that is already set up. Known values are: "succeeded", "provisioning", and
      "failed".
-    :vartype provisioning_state: Union[str, "ProvisioningState"]
-    :ivar network_rule_set: Network specific rules that determine how the Azure AI Search service
-     may be reached.
-    :vartype network_rule_set: "NetworkRuleSet"
-    :ivar data_exfiltration_protections: A list of data exfiltration scenarios that are explicitly
+    :vartype provisioningState: Union[str, "ProvisioningState"]
+    :ivar networkRuleSet: Network specific rules that determine how the Azure AI Search service may
+     be reached.
+    :vartype networkRuleSet: "NetworkRuleSet"
+    :ivar dataExfiltrationProtections: A list of data exfiltration scenarios that are explicitly
      disallowed for the search service. Currently, the only supported value is 'All' to disable all
      possible data export scenarios with more fine grained controls planned for the future.
-    :vartype data_exfiltration_protections: list[Union[str, "SearchDataExfiltrationProtection"]]
-    :ivar encryption_with_cmk: Specifies any policy regarding encryption of resources (such as
+    :vartype dataExfiltrationProtections: list[Union[str, "SearchDataExfiltrationProtection"]]
+    :ivar encryptionWithCmk: Specifies any policy regarding encryption of resources (such as
      indexes) using customer manager keys within a search service.
-    :vartype encryption_with_cmk: "EncryptionWithCmk"
-    :ivar disable_local_auth: When set to true, calls to the search service will not be permitted
-     to utilize API keys for authentication. This cannot be set to true if 'dataPlaneAuthOptions'
-     are defined.
-    :vartype disable_local_auth: bool
-    :ivar auth_options: Defines the options for how the data plane API of a search service
+    :vartype encryptionWithCmk: "EncryptionWithCmk"
+    :ivar disableLocalAuth: When set to true, calls to the search service will not be permitted to
+     utilize API keys for authentication. This cannot be set to true if 'dataPlaneAuthOptions' are
+     defined.
+    :vartype disableLocalAuth: bool
+    :ivar authOptions: Defines the options for how the data plane API of a search service
      authenticates requests. This cannot be set if 'disableLocalAuth' is set to true.
-    :vartype auth_options: "DataPlaneAuthOptions"
-    :ivar semantic_search: Specifies the availability and billing plan for semantic search on the
+    :vartype authOptions: "DataPlaneAuthOptions"
+    :ivar semanticSearch: Specifies the availability and billing plan for semantic search on the
      Azure AI Search service. This configuration is only available for certain pricing tiers in
      certain regions. Known values are: "disabled", "free", and "standard".
-    :vartype semantic_search: Union[str, "SearchSemanticSearch"]
-    :ivar knowledge_retrieval: Specifies the billing plan for agentic retrieval on the Azure AI
+    :vartype semanticSearch: Union[str, "SearchSemanticSearch"]
+    :ivar knowledgeRetrieval: Specifies the billing plan for agentic retrieval on the Azure AI
      Search service. This configuration is only available for certain pricing tiers in certain
      regions. Known values are: "free" and "standard".
-    :vartype knowledge_retrieval: Union[str, "KnowledgeRetrieval"]
-    :ivar private_endpoint_connections: The list of private endpoint connections to the Azure AI
+    :vartype knowledgeRetrieval: Union[str, "KnowledgeRetrieval"]
+    :ivar privateEndpointConnections: The list of private endpoint connections to the Azure AI
      Search service.
-    :vartype private_endpoint_connections: list["PrivateEndpointConnection"]
-    :ivar auto_generated_domain_name_label_scope: Defines the level of reuse for the auto-generated
+    :vartype privateEndpointConnections: list["PrivateEndpointConnection"]
+    :ivar autoGeneratedDomainNameLabelScope: Defines the level of reuse for the auto-generated
      domain name label for the search service (e.g. myservice-<uniqueId>.search.windows.net). If not
      specified, no auto-generated domain name label is created for the search service. Known values
      are: "TenantReuse", "SubscriptionReuse", and "NoReuse".
-    :vartype auto_generated_domain_name_label_scope: Union[str,
-     "AutoGeneratedDomainNameLabelScope"]
-    :ivar shared_private_link_resources: The list of shared private link resources managed by the
+    :vartype autoGeneratedDomainNameLabelScope: Union[str, "AutoGeneratedDomainNameLabelScope"]
+    :ivar sharedPrivateLinkResources: The list of shared private link resources managed by the
      Azure AI Search service.
-    :vartype shared_private_link_resources: list["SharedPrivateLinkResource"]
-    :ivar e_tag: A system generated property representing the service's etag that can be for
+    :vartype sharedPrivateLinkResources: list["SharedPrivateLinkResource"]
+    :ivar eTag: A system generated property representing the service's etag that can be for
      optimistic concurrency control during updates.
-    :vartype e_tag: str
-    :ivar upgrade_available: Indicates if the search service has an upgrade available. Known values
+    :vartype eTag: str
+    :ivar upgradeAvailable: Indicates if the search service has an upgrade available. Known values
      are: "notAvailable" and "available".
-    :vartype upgrade_available: Union[str, "UpgradeAvailable"]
-    :ivar service_upgraded_at: The date and time the search service was last upgraded. This field
+    :vartype upgradeAvailable: Union[str, "UpgradeAvailable"]
+    :ivar serviceUpgradedAt: The date and time the search service was last upgraded. This field
      will be null until the service gets upgraded for the first time.
-    :vartype service_upgraded_at: str
+    :vartype serviceUpgradedAt: str
     """
 
     replicaCount: int
@@ -692,9 +692,9 @@ class SearchServiceUpdate(Resource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Properties of the search service.
     :vartype properties: "SearchServiceProperties"
     :ivar sku: The SKU of the search service, which determines price tier and capacity limits. This
@@ -738,9 +738,9 @@ class SharedPrivateLinkResource(ProxyResource):
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+    :ivar systemData: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: "SystemData"
+    :vartype systemData: "SystemData"
     :ivar properties: Describes the properties of a shared private link resource managed by the
      Azure AI Search service.
     :vartype properties: "SharedPrivateLinkResourceProperties"
@@ -755,26 +755,26 @@ class SharedPrivateLinkResourceProperties(TypedDict, total=False):
     """Describes the properties of an existing shared private link resource managed by the Azure AI
     Search service.
 
-    :ivar private_link_resource_id: The resource ID of the resource the shared private link
-     resource is for.
-    :vartype private_link_resource_id: str
-    :ivar group_id: The group ID from the provider of resource the shared private link resource is
+    :ivar privateLinkResourceId: The resource ID of the resource the shared private link resource
+     is for.
+    :vartype privateLinkResourceId: str
+    :ivar groupId: The group ID from the provider of resource the shared private link resource is
      for.
-    :vartype group_id: str
-    :ivar request_message: The message for requesting approval of the shared private link resource.
-    :vartype request_message: str
-    :ivar resource_region: Optional. Can be used to specify the Azure Resource Manager location of
+    :vartype groupId: str
+    :ivar requestMessage: The message for requesting approval of the shared private link resource.
+    :vartype requestMessage: str
+    :ivar resourceRegion: Optional. Can be used to specify the Azure Resource Manager location of
      the resource for which a shared private link is being created. This is only required for those
      resources whose DNS configuration are regional (such as Azure Kubernetes Service).
-    :vartype resource_region: str
+    :vartype resourceRegion: str
     :ivar status: Status of the shared private link resource. Valid values are Pending, Approved,
      Rejected or Disconnected. Known values are: "Pending", "Approved", "Rejected", and
      "Disconnected".
     :vartype status: Union[str, "SharedPrivateLinkResourceStatus"]
-    :ivar provisioning_state: The provisioning state of the shared private link resource. Valid
+    :ivar provisioningState: The provisioning state of the shared private link resource. Valid
      values are Updating, Deleting, Failed, Succeeded or Incomplete. Known values are: "Updating",
      "Deleting", "Failed", "Succeeded", and "Incomplete".
-    :vartype provisioning_state: Union[str, "SharedPrivateLinkResourceProvisioningState"]
+    :vartype provisioningState: Union[str, "SharedPrivateLinkResourceProvisioningState"]
     """
 
     privateLinkResourceId: str
@@ -827,20 +827,20 @@ class Sku(TypedDict, total=False):
 class SystemData(TypedDict, total=False):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar created_by: The identity that created the resource.
-    :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", and "Key".
-    :vartype created_by_type: Union[str, "CreatedByType"]
-    :ivar created_at: The timestamp of resource creation (UTC).
-    :vartype created_at: str
-    :ivar last_modified_by: The identity that last modified the resource.
-    :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+    :ivar createdBy: The identity that created the resource.
+    :vartype createdBy: str
+    :ivar createdByType: The type of identity that created the resource. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype createdByType: Union[str, "CreatedByType"]
+    :ivar createdAt: The timestamp of resource creation (UTC).
+    :vartype createdAt: str
+    :ivar lastModifiedBy: The identity that last modified the resource.
+    :vartype lastModifiedBy: str
+    :ivar lastModifiedByType: The type of identity that last modified the resource. Known values
      are: "User", "Application", "ManagedIdentity", and "Key".
-    :vartype last_modified_by_type: Union[str, "CreatedByType"]
-    :ivar last_modified_at: The timestamp of resource last modification (UTC).
-    :vartype last_modified_at: str
+    :vartype lastModifiedByType: Union[str, "CreatedByType"]
+    :ivar lastModifiedAt: The timestamp of resource last modification (UTC).
+    :vartype lastModifiedAt: str
     """
 
     createdBy: str
@@ -862,10 +862,10 @@ class SystemData(TypedDict, total=False):
 class UserAssignedIdentity(TypedDict, total=False):
     """User assigned identity properties.
 
-    :ivar principal_id: The principal ID of the assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of the assigned identity.
-    :vartype client_id: str
+    :ivar principalId: The principal ID of the assigned identity.
+    :vartype principalId: str
+    :ivar clientId: The client ID of the assigned identity.
+    :vartype clientId: str
     """
 
     principalId: str
