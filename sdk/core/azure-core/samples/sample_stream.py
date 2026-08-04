@@ -27,7 +27,7 @@ def sample_stream():
     # [START build_stream]
     from azure.core import PipelineClient
     from azure.core.rest import HttpRequest, HttpResponse
-    from azure.core.streaming import Stream, JSONLDecoder
+    from azure.core.streaming import Stream
 
     client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/stream")
@@ -39,7 +39,6 @@ def sample_stream():
 
     stream = Stream(
         response=response,
-        decoder=JSONLDecoder(),
         deserialization_callback=deserialize,
     )
     with stream:
@@ -52,7 +51,7 @@ async def sample_stream_async():
     # [START build_stream_async]
     from azure.core import AsyncPipelineClient
     from azure.core.rest import HttpRequest, AsyncHttpResponse
-    from azure.core.streaming import AsyncStream, AsyncJSONLDecoder
+    from azure.core.streaming import AsyncStream
 
     client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/stream")
@@ -64,7 +63,6 @@ async def sample_stream_async():
 
     stream = AsyncStream(
         response=response,
-        decoder=AsyncJSONLDecoder(),
         deserialization_callback=deserialize,
     )
     async with stream:
@@ -77,7 +75,7 @@ def sample_stream_sse():
     # [START build_sse_stream]
     from azure.core import PipelineClient
     from azure.core.rest import HttpRequest, HttpResponse
-    from azure.core.streaming import Stream, SSEDecoder, ServerSentEvent
+    from azure.core.streaming import Stream, ServerSentEvent
 
     client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/audio/transcriptions")
@@ -92,7 +90,6 @@ def sample_stream_sse():
 
     stream = Stream(
         response=response,
-        decoder=SSEDecoder(),
         deserialization_callback=deserialize,
     )
     transcript = ""
@@ -110,7 +107,7 @@ async def sample_stream_sse_async():
     # [START build_sse_stream_async]
     from azure.core import AsyncPipelineClient
     from azure.core.rest import HttpRequest, AsyncHttpResponse
-    from azure.core.streaming import AsyncStream, AsyncSSEDecoder, ServerSentEvent
+    from azure.core.streaming import AsyncStream, ServerSentEvent
 
     client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/audio/transcriptions")
@@ -125,7 +122,6 @@ async def sample_stream_sse_async():
 
     stream = AsyncStream(
         response=response,
-        decoder=AsyncSSEDecoder(),
         deserialization_callback=deserialize,
     )
     transcript = ""

@@ -24,7 +24,7 @@ def sample_stream():
     # [START build_stream]
     from corehttp.runtime import PipelineClient
     from corehttp.rest import HttpRequest, HttpResponse
-    from corehttp.streaming import Stream, JSONLDecoder
+    from corehttp.streaming import Stream
 
     client: PipelineClient[HttpRequest, HttpResponse] = PipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/stream")
@@ -36,7 +36,6 @@ def sample_stream():
 
     stream = Stream(
         response=response,
-        decoder=JSONLDecoder(),
         deserialization_callback=deserialize,
     )
     with stream:
@@ -49,7 +48,7 @@ async def sample_stream_async():
     # [START build_stream_async]
     from corehttp.runtime import AsyncPipelineClient
     from corehttp.rest import HttpRequest, AsyncHttpResponse
-    from corehttp.streaming import AsyncStream, AsyncJSONLDecoder
+    from corehttp.streaming import AsyncStream
 
     client: AsyncPipelineClient[HttpRequest, AsyncHttpResponse] = AsyncPipelineClient("https://example.com")
     request = HttpRequest("GET", "https://example.com/stream")
@@ -61,7 +60,6 @@ async def sample_stream_async():
 
     stream = AsyncStream(
         response=response,
-        decoder=AsyncJSONLDecoder(),
         deserialization_callback=deserialize,
     )
     async with stream:

@@ -25,12 +25,14 @@
 # --------------------------------------------------------------------------
 
 from types import TracebackType
-from typing import Iterator, AsyncIterator, TypeVar, Callable, Optional, Type
+from typing import Any, Iterator, AsyncIterator, TypeVar, Callable, Optional, Type
 
 from typing_extensions import Self
 
 from ..rest import HttpResponse, AsyncHttpResponse
 from ._decoders import StreamDecoder, AsyncStreamDecoder
+from ._jsonl import JSONLDecoder, AsyncJSONLDecoder
+from ._sse import SSEDecoder, AsyncSSEDecoder
 
 DecodedType = TypeVar("DecodedType")
 ReturnType_co = TypeVar("ReturnType_co", covariant=True)
@@ -41,7 +43,8 @@ class Stream(Iterator[ReturnType_co]):
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.HttpResponse
-    :keyword decoder: A decoder to use for the stream.
+    :keyword decoder: A decoder to use for the stream. If omitted, the decoder is
+        inferred from the response ``Content-Type`` header.
     :paramtype decoder: ~corehttp.streaming.StreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
@@ -52,11 +55,16 @@ class Stream(Iterator[ReturnType_co]):
         self,
         *,
         response: HttpResponse,
-        decoder: StreamDecoder[DecodedType],
         deserialization_callback: Callable[[HttpResponse, DecodedType], ReturnType_co],
+        decoder: Optional[StreamDecoder[DecodedType]] = None,
     ) -> None:
         self._response = response
-        self._decoder = decoder
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        self._decoder: StreamDecoder[Any] = (
+            decoder
+            if decoder is not None
+            else (SSEDecoder() if content_type == "text/event-stream" else JSONLDecoder())
+        )
         self._deserialization_callback = deserialization_callback
         self._iterator = self._iter_results()
 
@@ -92,7 +100,8 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
 
     :keyword response: The response object.
     :paramtype response: ~corehttp.rest.AsyncHttpResponse
-    :keyword decoder: A decoder to use for the stream.
+    :keyword decoder: A decoder to use for the stream. If omitted, the decoder is
+        inferred from the response ``Content-Type`` header.
     :paramtype decoder: ~corehttp.streaming.AsyncStreamDecoder
     :keyword deserialization_callback: A callback that takes the response and the decoded event and
         returns a deserialized object.
@@ -103,11 +112,16 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         self,
         *,
         response: AsyncHttpResponse,
-        decoder: AsyncStreamDecoder[DecodedType],
         deserialization_callback: Callable[[AsyncHttpResponse, DecodedType], ReturnType_co],
+        decoder: Optional[AsyncStreamDecoder[DecodedType]] = None,
     ) -> None:
         self._response = response
-        self._decoder = decoder
+        content_type = response.headers.get("Content-Type", "").split(";", 1)[0].strip().lower()
+        self._decoder: AsyncStreamDecoder[Any] = (
+            decoder
+            if decoder is not None
+            else (AsyncSSEDecoder() if content_type == "text/event-stream" else AsyncJSONLDecoder())
+        )
         self._deserialization_callback = deserialization_callback
         self._iterator = self._iter_results()
 

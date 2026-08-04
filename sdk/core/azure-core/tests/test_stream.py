@@ -44,7 +44,7 @@ def deserialization_callback():
 def stream(client, deserialization_callback):
     def _callback(request, **kwargs):
         http_response = client.send_request(request=request, stream=True)
-        return Stream(deserialization_callback=deserialization_callback, response=http_response, decoder=JSONLDecoder())
+        return Stream(deserialization_callback=deserialization_callback, response=http_response)
 
     return _callback
 
@@ -53,9 +53,52 @@ def stream(client, deserialization_callback):
 def sse_stream(client, deserialization_callback):
     def _callback(request, **kwargs):
         http_response = client.send_request(request=request, stream=True)
-        return Stream(deserialization_callback=deserialization_callback, response=http_response, decoder=SSEDecoder())
+        return Stream(deserialization_callback=deserialization_callback, response=http_response)
 
     return _callback
+
+
+@pytest.mark.parametrize(
+    "content_type,payload,expected",
+    [
+        ("application/jsonl", b'{"message": "hello"}\n', [{"message": "hello"}]),
+        (
+            "text/event-stream; charset=utf-8",
+            b"data: hello\n\n",
+            [ServerSentEvent(event="message", data="hello")],
+        ),
+    ],
+)
+def test_stream_infers_decoder_from_content_type(content_type, payload, expected):
+    class Response:
+        headers = {"Content-Type": content_type}
+
+        def iter_bytes(self):
+            return iter([payload])
+
+        def close(self):
+            pass
+
+    stream = Stream(response=Response(), deserialization_callback=lambda _response, event: event)
+    assert list(stream) == expected
+
+
+def test_stream_explicit_decoder_overrides_content_type():
+    class Response:
+        headers = {"Content-Type": "text/event-stream"}
+
+        def iter_bytes(self):
+            return iter([b'{"message": "hello"}\n'])
+
+        def close(self):
+            pass
+
+    stream = Stream(
+        response=Response(),
+        decoder=JSONLDecoder(),
+        deserialization_callback=lambda _response, event: event,
+    )
+    assert list(stream) == [{"message": "hello"}]
 
 
 def test_stream_jsonl_basic(stream):

@@ -29,7 +29,7 @@ import json
 import pytest
 
 from corehttp.rest import HttpRequest
-from corehttp.streaming import AsyncStream, AsyncJSONLDecoder, AsyncSSEDecoder, ServerSentEvent
+from corehttp.streaming import AsyncStream, AsyncSSEDecoder, ServerSentEvent
 
 
 @pytest.fixture
@@ -44,9 +44,7 @@ def deserialization_callback():
 def stream(client, deserialization_callback):
     async def _callback(request, **kwargs):
         http_response = await client.send_request(request=request, stream=True)
-        return AsyncStream(
-            deserialization_callback=deserialization_callback, response=http_response, decoder=AsyncJSONLDecoder()
-        )
+        return AsyncStream(deserialization_callback=deserialization_callback, response=http_response)
 
     return _callback
 
@@ -55,11 +53,35 @@ def stream(client, deserialization_callback):
 def sse_stream(client, deserialization_callback):
     async def _callback(request, **kwargs):
         http_response = await client.send_request(request=request, stream=True)
-        return AsyncStream(
-            deserialization_callback=deserialization_callback, response=http_response, decoder=AsyncSSEDecoder()
-        )
+        return AsyncStream(deserialization_callback=deserialization_callback, response=http_response)
 
     return _callback
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "content_type,payload,expected",
+    [
+        ("application/jsonl", b'{"message": "hello"}\n', [{"message": "hello"}]),
+        (
+            "text/event-stream; charset=utf-8",
+            b"data: hello\n\n",
+            [ServerSentEvent(event="message", data="hello")],
+        ),
+    ],
+)
+async def test_stream_infers_decoder_from_content_type(content_type, payload, expected):
+    class Response:
+        headers = {"Content-Type": content_type}
+
+        async def iter_bytes(self):
+            yield payload
+
+        async def close(self):
+            pass
+
+    stream = AsyncStream(response=Response(), deserialization_callback=lambda _response, event: event)
+    assert [event async for event in stream] == expected
 
 
 @pytest.mark.asyncio
