@@ -1,41 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
-# ------------------------------------
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-# ------------------------------------
-
-"""
-DESCRIPTION:
-    This sample demonstrates how to stream hosted agent session logs
-    using `project_client.beta.agents.get_session_log_stream` with the
-    asynchronous AIProjectClient.
-
-    Sessions only work with Hosted Agents.
-
-    Session and log stream operations are currently preview features.
-    In the Python SDK, you access these operations via
-    `project_client.beta.agents`.
-
-USAGE:
-    python sample_session_log_stream_async.py
-
-    Before running the sample:
-
-    pip install "azure-ai-projects>=2.1.0" python-dotenv aiohttp
-
-    Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
-       page of your Microsoft Foundry portal.
-    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
-
-    If you don't have a Hosted Agent, run `sample_create_hosted_agent_async.py` or
-    `sample_create_hosted_agent_from_code_async.py` first to create one as a prerequisite.
-
-    NOTE: This sample assumes the Foundry project and Azure AI account are in the
-    same resource group.
-
-"""
-
 import asyncio
 import os
 
@@ -49,40 +11,11 @@ from azure.ai.projects.models import (
     AgentEndpointProtocol,
     FixedRatioVersionSelectionRule,
     VersionSelector,
+    VersionRefIndicator,
 )
-from azure.ai.projects.models import VersionRefIndicator
 from hosted_agents_util import get_latest_active_agent_version_async
 
 load_dotenv()
-
-
-def _iter_sse_frames(stream, max_log_events: int):
-    event_count = 0
-    buffer = ""
-
-    for chunk in stream:
-        buffer += chunk.decode("utf-8", errors="replace")
-
-        while "\n\n" in buffer:
-            frame, buffer = buffer.split("\n\n", 1)
-            event_name = None
-            data_lines = []
-
-            for line in frame.splitlines():
-                if line.startswith("event: "):
-                    event_name = line[7:]
-                elif line.startswith("data: "):
-                    data_lines.append(line[6:])
-
-            if data_lines or event_name:
-                event_count += 1
-                yield {
-                    "event": event_name,
-                    "data": "\n".join(data_lines),
-                }
-
-                if event_count >= max_log_events:
-                    return
 
 
 async def _iter_sse_frames_async(stream, max_log_events: int):
@@ -127,11 +60,17 @@ async def main():
         ) as project_client,
     ):
         agent = await get_latest_active_agent_version_async(project_client, agent_name)
-        session = await project_client.beta.agents.create_session(
+
+        # Create the agent session using the correct BetaAgentSessionCreateRequest input object
+        session_request = project_client.beta.agents.create_session_request(
             agent_name=agent_name,
             version_indicator=VersionRefIndicator(agent_version=agent.version),
         )
-        print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
+        session = await project_client.beta.agents.begin_create_session(session_request)
+        session_result = await session.result()
+        print(
+            f"Session created (id: {session_result.agent_session_id}, status: {session_result.status})"
+        )
         try:
             endpoint_config = AgentEndpointConfig(
                 version_selector=VersionSelector(
@@ -142,7 +81,7 @@ async def main():
                 protocols=[AgentEndpointProtocol.RESPONSES],
             )
 
-            await project_client.beta.agents.patch_agent_details(
+            await project_client.beta.agents.begin_update_agent_details(
                 agent_name=agent_name,
                 agent_endpoint=endpoint_config,
             )
@@ -154,26 +93,26 @@ async def main():
             response = await openai_client.responses.create(
                 input=input_text,
                 extra_body={
-                    "agent_session_id": session.agent_session_id,
+                    "agent_session_id": session_result.agent_session_id,
                 },
             )
             print(f"Response output: {response.output_text}")
 
             print("Streaming session logs...")
-            raw_stream = await project_client.beta.agents.get_session_log_stream(
+            log_stream = await project_client.beta.agents.get_session_log_stream(
                 agent_name=agent_name,
                 agent_version=agent.version,
-                session_id=session.agent_session_id,
+                session_id=session_result.agent_session_id,
             )
-            async for frame in _iter_sse_frames_async(raw_stream, max_log_events=30):
+            async for frame in _iter_sse_frames_async(log_stream, max_log_events=30):
                 print(f"SSE event: {frame.get('event')}")
                 print(f"SSE data: {frame.get('data')}\n")
         finally:
-            await project_client.beta.agents.delete_session(
+            await project_client.beta.agents.begin_delete_session(
                 agent_name=agent_name,
-                session_id=session.agent_session_id,
+                session_id=session_result.agent_session_id,
             )
-            print(f"Session deleted (id: {session.agent_session_id})")
+            print(f"Session deleted (id: {session_result.agent_session_id})")
 
 
 if __name__ == "__main__":
