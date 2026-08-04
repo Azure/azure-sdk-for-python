@@ -192,8 +192,15 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await file.append_data(
             BytesIO(data2), len(data1), flush=True, validate_content=a, raw_request_hook=assert_method
         )
+        # data3 is 64 MiB (max_single_put_size). A generous server-side timeout avoids
+        # OperationTimedOut on slower upload paths (i.e. Windows, so timeout=300).
         await file.append_data(
-            BytesIO(data3), len(data1) + len(data2), flush=True, validate_content=a, raw_request_hook=assert_method
+            BytesIO(data3),
+            len(data1) + len(data2),
+            flush=True,
+            validate_content=a,
+            raw_request_hook=assert_method,
+            timeout=300,
         )
         await file.flush_data(len(data1) + len(data2) + len(data3))
 
