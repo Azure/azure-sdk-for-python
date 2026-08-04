@@ -49,6 +49,7 @@ Public API::
 
 from ._context import EntryMode, TaskContext
 from ._decorator import MultiTurnTask, Task, multi_turn_task, task
+from ._enablement import resilient_tasks_enabled, set_resilient_tasks_enabled
 from ._exceptions import (
     InputTooLarge,
     LastInputIdPreconditionFailed,
@@ -82,6 +83,9 @@ __all__ = [
     "multi_turn_task",
     "Task",
     "MultiTurnTask",
+    # Enablement switch
+    "set_resilient_tasks_enabled",
+    "resilient_tasks_enabled",
     # Context + metadata
     "TaskContext",
     "TaskMetadata",

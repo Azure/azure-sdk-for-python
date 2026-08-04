@@ -24,10 +24,10 @@
 #
 # --------------------------------------------------------------------------
 
+import pytest
+
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import HttpResponseError
-
-import pytest
 
 
 class TestPaging(object):

@@ -66,6 +66,7 @@ from azure.ai.agentserver.core.streaming import (
     EventStreamNotFoundError,
     streams,
 )
+from azure.ai.agentserver.core.tasks import set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -89,6 +90,12 @@ logger = logging.getLogger(__name__)
 streams.use_in_memory_replay(ttl_seconds=600)
 
 app = InvocationAgentServerHost()
+
+# Opt into resilient-task startup recovery. This sample declares a durable
+# task, so the framework would enable recovery automatically; we set the switch
+# explicitly to make the intent clear and to keep recovery working even if the
+# task is ever registered lazily (after startup).
+set_resilient_tasks_enabled(True)
 
 
 async def _sse_from_stream(

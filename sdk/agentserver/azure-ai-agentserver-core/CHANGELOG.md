@@ -1,5 +1,18 @@
 # Release History
 
+## 2.0.0b10 (2026-07-31)
+
+### Features Added
+
+- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+- Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
+- Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
+
+### Bugs Fixed
+
+- `AgentServerHost` no longer makes a blocking hosted task-store `list()` round-trip (plus credential-token acquisition) at startup unless resilient tasks are actually in use. The `TaskManager` is still constructed so `get_task_manager()` and `.run()` / `.start()` keep working, but its network-backed **startup recovery scan** now runs only when **either** at least one durable task (`@task` / `@multi_turn_task`) has been declared **or** `set_resilient_tasks_enabled(True)` was called. Apps that use tasks keep automatic crash recovery with no code change; plain servers (e.g. invocations-only hosts) no longer pay tens of seconds of startup latency for a scan that has nothing to recover.
+- Cleaned up `AgentServerHost` public signatures so inherited middleware typing does not expose Starlette private type aliases.
+
 ## 2.0.0b9 (2026-07-28)
 
 ### Features Added

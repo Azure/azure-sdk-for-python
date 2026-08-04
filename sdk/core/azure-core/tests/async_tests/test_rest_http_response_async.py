@@ -7,12 +7,13 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
+
 import pytest
-import zlib
+from utils import readonly_checks
+
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
-from utils import readonly_checks
 
 
 @pytest.fixture

@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b9 (Unreleased)
 
 ### Features Added
 
@@ -15,6 +15,16 @@
   cooperative cancellation, content-free protocol metrics, strict protocol
   validation, and per-connection replay-free state.
 
+### Other Changes
+
+- Voice now ships in the Invocations distribution and shares its package version
+  and release artifact; no separate Voice package or server identity is required.
+- Voice follows the existing `invocations_ws` tracing behavior: the transport
+  emits structured close diagnostics but creates no framework-owned connection
+  or turn spans.
+
+## 1.0.0b8 (2026-08-03)
+
 ### Samples
 
 - Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
@@ -27,12 +37,7 @@
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b9`.
-- Voice now ships in the Invocations distribution and shares its package version
-  and release artifact; no separate Voice package or server identity is required.
-- Voice follows the existing `invocations_ws` tracing behavior: the transport
-  emits structured close diagnostics but creates no framework-owned connection
-  or turn spans.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery so invocations-only agents no longer make a blocking task-store call during startup.
 
 ## 1.0.0b7 (2026-07-22)
 

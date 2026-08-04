@@ -36,7 +36,7 @@ from __future__ import annotations
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.core.tasks import TaskConflictError
+from azure.ai.agentserver.core.tasks import TaskConflictError, set_resilient_tasks_enabled
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 try:
@@ -49,6 +49,12 @@ else:
     session_workflow = _package_session_workflow
 
 app = InvocationAgentServerHost()
+
+# Opt into resilient-task startup recovery. This sample declares a durable
+# task, so the framework would enable recovery automatically; we set the switch
+# explicitly to make the intent clear and to keep recovery working even if the
+# task is ever registered lazily (after startup).
+set_resilient_tasks_enabled(True)
 
 
 @app.invoke_handler

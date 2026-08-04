@@ -8,6 +8,8 @@ words:
   - addinivalue
   - addl
   - agentserver
+  - aiso
+  - alnum
   - annot
   - aoutput
   - APIView
@@ -18,31 +20,42 @@ words:
   - asummary
   - atext
   - autouse
+  - azfo
   - AZURESUBSCRIPTION
   - backpressure
   - badid
   - barge
+  - bcso
   - bkey
   - bval
   - BYOK
   - cand
   - caplog
+  - caresp
+  - cchain
   - configurators
   - coreai
   - coro
+  - CRASHME
   - crashy
   - CREAT
   - ctco
+  - dataagent
   - dataclass
   - dedup
   - dedupe
+  - dedups
+  - dones
   - DTMF
   - Dunders
   - elts
   - ename
+  - etype
+  - fdao
   - finalizer
   - foundrysdk
   - frontmatter
+  - fspath
   - fstring
   - funcs
   - genai
@@ -51,8 +64,13 @@ words:
   - globalns
   - hdrs
   - hypercorn
+  - idless
   - impls
+  - injectively
+  - inmemory
   - INPROCESS
+  - inprog
+  - interruptibly
   - invocations
   - isinstance
   - isnotempty
@@ -62,6 +80,7 @@ words:
   - MAIB
   - markexpr
   - mcpa
+  - MCPHTTP
   - mcpl
   - mcpr
   - misrouted
@@ -70,16 +89,20 @@ words:
   - myproj
   - NCUS
   - ncusacr
+  - nonbg
   - nostream
   - nottracing
   - openapi
   - paramtype
   - pathlib
+  - pctx
+  - pointerized
   - precond
   - pstn
   - pytestmark
   - PYTHONIOENCODING
   - RAPI
+  - rchain
   - RDWR
   - retriable
   - rtype
@@ -98,8 +121,10 @@ words:
   - traceparent
   - tracestate
   - transactionality
+  - unacked
   - unimportable
   - unparseable
+  - unstarted
   - unwritable
   - valeriepham
   - Vnext

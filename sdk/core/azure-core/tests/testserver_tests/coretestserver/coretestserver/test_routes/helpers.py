@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+from urllib.parse import urlparse, urlunparse
+import json
+
 from flask import (
     request,
     jsonify as flask_jsonify,
 )
-from urllib.parse import urlparse, urlunparse
 from .structures import CaseInsensitiveDict
-import json
 
 ENV_HEADERS = (
     "X-Varnish",

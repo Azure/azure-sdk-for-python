@@ -4,14 +4,25 @@
 
 from __future__ import annotations
 
-from copy import deepcopy
 from typing import TYPE_CHECKING, Any, Iterator, cast
 
-from ...models import _generated as generated_models
-from ._base import BaseOutputItemBuilder, BuilderLifecycleState
+from ... import models as response_models
+from ._base import BaseOutputItemBuilder, BuilderLifecycleState, _require_wire_dict
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
+
+
+def _with_annotation_type(annotation: dict[str, Any]) -> dict[str, Any]:
+    if "type" in annotation:
+        return annotation
+    if "url" in annotation:
+        return {**annotation, "type": "url_citation"}
+    if "container_id" in annotation:
+        return {**annotation, "type": "container_file_citation"}
+    if "filename" in annotation:
+        return {**annotation, "type": "file_citation"}
+    return {**annotation, "type": "file_path"}
 
 
 class TextContentBuilder:
@@ -61,7 +72,7 @@ class TextContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> generated_models.ResponseContentPartAddedEvent:
+    def emit_added(self) -> response_models.ResponseContentPartAddedEvent:
         """Emit a ``content_part.added`` event for this text content.
 
         :returns: The emitted event dict.
@@ -72,10 +83,10 @@ class TextContentBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            generated_models.ResponseContentPartAddedEvent,
+            response_models.ResponseContentPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "type": "response.content_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -84,15 +95,15 @@ class TextContentBuilder:
             ),
         )
 
-    def emit_delta(self, text: str) -> generated_models.ResponseTextDeltaEvent:
+    def emit_delta(self, text: str) -> response_models.ResponseTextDeltaEvent:
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_delta in '{self._lifecycle_state.value}' state")
         self._delta_fragments.append(text)
         return cast(
-            generated_models.ResponseTextDeltaEvent,
+            response_models.ResponseTextDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DELTA.value,
+                    "type": "response.output_text.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -102,7 +113,7 @@ class TextContentBuilder:
             ),
         )
 
-    def emit_text_done(self, final_text: str | None = None) -> generated_models.ResponseTextDoneEvent:
+    def emit_text_done(self, final_text: str | None = None) -> response_models.ResponseTextDoneEvent:
         """Emit an ``output_text.done`` event with the merged final text.
 
         Call this after all deltas have been emitted. After this, you may
@@ -124,10 +135,10 @@ class TextContentBuilder:
             merged_text = final_text
         self._final_text = merged_text
         return cast(
-            generated_models.ResponseTextDoneEvent,
+            response_models.ResponseTextDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_DONE.value,
+                    "type": "response.output_text.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -137,7 +148,7 @@ class TextContentBuilder:
             ),
         )
 
-    def emit_done(self) -> generated_models.ResponseContentPartDoneEvent:
+    def emit_done(self) -> response_models.ResponseContentPartDoneEvent:
         """Emit a ``content_part.done`` event, closing this content part.
 
         Must be called after ``emit_text_done()``.
@@ -152,10 +163,10 @@ class TextContentBuilder:
             raise ValueError("must call emit_text_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            generated_models.ResponseContentPartDoneEvent,
+            response_models.ResponseContentPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "type": "response.content_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -170,8 +181,8 @@ class TextContentBuilder:
         )
 
     def emit_annotation_added(
-        self, annotation: generated_models.Annotation
-    ) -> generated_models.ResponseOutputTextAnnotationAddedEvent:
+        self, annotation: response_models.Annotation
+    ) -> response_models.ResponseOutputTextAnnotationAddedEvent:
         """Emit a text annotation added event.
 
         :param annotation: The annotation to attach—a typed
@@ -182,12 +193,12 @@ class TextContentBuilder:
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
-        annotation_payload = deepcopy(annotation.as_dict())
+        annotation_payload = _with_annotation_type(_require_wire_dict(annotation, "annotation"))
         return cast(
-            generated_models.ResponseOutputTextAnnotationAddedEvent,
+            response_models.ResponseOutputTextAnnotationAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
+                    "type": "response.output_text.annotation.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -243,7 +254,7 @@ class RefusalContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> generated_models.ResponseContentPartAddedEvent:
+    def emit_added(self) -> response_models.ResponseContentPartAddedEvent:
         """Emit a ``content_part.added`` event for this refusal content.
 
         :returns: The emitted event dict.
@@ -254,10 +265,10 @@ class RefusalContentBuilder:
             raise ValueError(f"cannot call emit_added in '{self._lifecycle_state.value}' state")
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
-            generated_models.ResponseContentPartAddedEvent,
+            response_models.ResponseContentPartAddedEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_ADDED.value,
+                    "type": "response.content_part.added",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -266,7 +277,7 @@ class RefusalContentBuilder:
             ),
         )
 
-    def emit_delta(self, text: str) -> generated_models.ResponseRefusalDeltaEvent:
+    def emit_delta(self, text: str) -> response_models.ResponseRefusalDeltaEvent:
         """Emit a refusal delta event.
 
         :param text: The incremental refusal text fragment.
@@ -275,10 +286,10 @@ class RefusalContentBuilder:
         :rtype: ResponseRefusalDeltaEvent
         """
         return cast(
-            generated_models.ResponseRefusalDeltaEvent,
+            response_models.ResponseRefusalDeltaEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REFUSAL_DELTA.value,
+                    "type": "response.refusal.delta",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -287,7 +298,7 @@ class RefusalContentBuilder:
             ),
         )
 
-    def emit_refusal_done(self, final_refusal: str) -> generated_models.ResponseRefusalDoneEvent:
+    def emit_refusal_done(self, final_refusal: str) -> response_models.ResponseRefusalDoneEvent:
         """Emit a ``refusal.done`` event.
 
         Call this after all deltas have been emitted and before ``emit_done()``.
@@ -305,10 +316,10 @@ class RefusalContentBuilder:
         self._refusal_done = True
         self._final_refusal = final_refusal
         return cast(
-            generated_models.ResponseRefusalDoneEvent,
+            response_models.ResponseRefusalDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_REFUSAL_DONE.value,
+                    "type": "response.refusal.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -317,7 +328,7 @@ class RefusalContentBuilder:
             ),
         )
 
-    def emit_done(self) -> generated_models.ResponseContentPartDoneEvent:
+    def emit_done(self) -> response_models.ResponseContentPartDoneEvent:
         """Emit a ``content_part.done`` event, closing this content part.
 
         Must be called after ``emit_refusal_done()``.
@@ -332,10 +343,10 @@ class RefusalContentBuilder:
             raise ValueError("must call emit_refusal_done() before emit_done()")
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
-            generated_models.ResponseContentPartDoneEvent,
+            response_models.ResponseContentPartDoneEvent,
             self._stream._emit_event(  # pylint: disable=protected-access
                 {
-                    "type": generated_models.ResponseStreamEventType.RESPONSE_CONTENT_PART_DONE.value,
+                    "type": "response.content_part.done",
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "content_index": self._content_index,
@@ -370,7 +381,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         self._content_index = 0
         self._content_builders: list[TextContentBuilder | RefusalContentBuilder] = []
 
-    def emit_added(self) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(self) -> response_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this message item.
 
         :returns: The emitted event dict.
@@ -420,7 +431,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         self._content_builders.append(rc)
         return rc
 
-    def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(self) -> response_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this message item.
 
         Builds the content list from the tracked child content builders.
@@ -461,7 +472,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def text_content(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def text_content(self, text: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text content part.
 
         Creates the sub-builder, emits ``content_part.added``,
@@ -478,7 +489,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_text_done(text)
         yield tc.emit_done()
 
-    def refusal_content(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def refusal_content(self, text: str) -> Iterator[response_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a refusal content part.
 
         Creates the sub-builder, emits ``content_part.added``,
