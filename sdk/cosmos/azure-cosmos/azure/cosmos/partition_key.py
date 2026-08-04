@@ -33,6 +33,12 @@ from ._routing.routing_range import Range as _Range
 
 _MaximumExclusiveEffectivePartitionKey = 0xFF
 _MinimumInclusiveEffectivePartitionKey = 0x00
+# The minimum effective partition key is the empty hex string, and its immediate successor is "00":
+# effective partition keys are compared as hex strings, so nothing sorts between the two. Using the
+# successor as an exclusive upper bound keeps the range normalized, since an inclusive point range at
+# the minimum normalizes to an empty range.
+_MinimumInclusiveEffectivePartitionKeyString = ""
+_MinimumEffectivePartitionKeySuccessorString = "00"
 _MaxStringChars = 100
 _MaxStringBytesToAppend = 100
 _MaxPartitionKeyBinarySize = \
@@ -217,6 +223,15 @@ class PartitionKey(dict):
             self,
             pk_value: PartitionKeyType
     ) -> _Range:
+        # _Empty is the sentinel for a partition key value missing from an item in a system key
+        # (migrated) container. Unlike the other sentinels it does not stand for a partition key
+        # *component*, it stands for an empty list of components -- it is serialized on the wire as
+        # `[]` rather than `[{}]` -- so it has no binary encoding and cannot be hashed. It maps to
+        # the minimum effective partition key, which is what hashing an empty component list yields.
+        if isinstance(pk_value, _Empty):
+            return _Range(_MinimumInclusiveEffectivePartitionKeyString,
+                          _MinimumEffectivePartitionKeySuccessorString, True, False)
+
         if self._is_prefix_partition_key(pk_value):
             return self._get_epk_range_for_prefix_partition_key(
                 cast(_SequentialPartitionKeyType, pk_value))

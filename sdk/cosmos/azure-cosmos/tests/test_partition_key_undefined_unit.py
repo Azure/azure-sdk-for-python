@@ -11,6 +11,10 @@ Regression coverage for https://github.com/Azure/azure-sdk-for-python/issues/484
 ``query_items(query, partition_key={})`` raised
 ``TypeError: Unexpected type for PK component: <class 'dict'>`` on Hash V1 containers, and
 silently resolved to the ``Null`` effective partition key on Hash V2 containers.
+
+``_Empty`` is the equivalent sentinel for system key (migrated) containers. It is serialized
+as ``[]`` rather than ``[{}]`` -- an empty list of partition key components rather than a single
+undefined one -- so it resolves to the minimum effective partition key instead.
 """
 
 import unittest
@@ -20,6 +24,7 @@ import pytest
 from azure.cosmos.partition_key import (
     NonePartitionKeyValue,
     PartitionKey,
+    _Empty,
     _Undefined,
 )
 
@@ -75,6 +80,45 @@ class TestUndefinedPartitionKeyHashingUnitTest(unittest.TestCase):
                 with self.subTest(version=version, pk_value=pk_value):
                     epk = pk_definition._get_epk_range_for_partition_key(pk_value)
                     self.assertIsNotNone(epk.min)
+
+    def test_empty_resolves_to_minimum_epk(self):
+        """``_Empty`` is an empty component list, so it maps to the minimum effective partition key."""
+        for pk_definition in (
+            PartitionKey(path="/pk", kind="Hash", version=1),
+            PartitionKey(path="/pk", kind="Hash", version=2),
+            PartitionKey(path=["/a", "/b"], kind="MultiHash", version=2),
+        ):
+            with self.subTest(kind=pk_definition.kind, version=pk_definition.version):
+                epk = pk_definition._get_epk_range_for_partition_key(_Empty())
+                self.assertEqual(epk.min, "")
+                self.assertEqual(epk.max, "00")
+                self.assertTrue(epk.isMinInclusive)
+                self.assertFalse(epk.isMaxInclusive)
+
+    def test_empty_range_survives_normalization(self):
+        """The range must stay non-empty once normalized, otherwise it matches no feed range.
+
+        An inclusive point range at the minimum effective partition key normalizes to an empty
+        range, which would silently resolve to no partitions at all.
+        """
+        for version in (1, 2):
+            with self.subTest(version=version):
+                epk = PartitionKey(
+                    path="/pk", kind="Hash", version=version
+                )._get_epk_range_for_partition_key(_Empty())
+                normalized = epk.to_normalized_range()
+                self.assertFalse(normalized.isEmpty())
+                self.assertEqual(normalized, epk)
+
+    def test_empty_differs_from_undefined(self):
+        """``_Empty`` and ``_Undefined`` are distinct sentinels with distinct wire forms."""
+        for version in (1, 2):
+            with self.subTest(version=version):
+                pk_definition = PartitionKey(path="/pk", kind="Hash", version=version)
+                self.assertNotEqual(
+                    pk_definition._get_epk_range_for_partition_key(_Empty()).min,
+                    pk_definition._get_epk_range_for_partition_key(_Undefined()).min,
+                )
 
 
 if __name__ == "__main__":
