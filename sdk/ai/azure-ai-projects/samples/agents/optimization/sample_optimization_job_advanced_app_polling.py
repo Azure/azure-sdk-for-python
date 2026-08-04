@@ -7,14 +7,14 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to create an agent
-    optimization job and manually poll it to completion.
+    optimization job and poll its standard LRO to completion.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_basic_polling.py
+    python sample_optimization_job_advanced_app_polling.py
 
     Before running the sample:
 
@@ -40,9 +40,9 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
+    JobStatus,
     OptimizationAgentIdentifier as AgentIdentifier,
     OptimizationEvaluatorRef as EvaluatorRef,
-    JobStatus,
     OptimizationJob,
     OptimizationJobInputs,
     OptimizationOptions,
@@ -60,7 +60,7 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-terminal_statuses = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 with (
     DefaultAzureCredential() as credential,
@@ -73,27 +73,32 @@ with (
     print("Creating optimization job...")
     created_jobs: list[OptimizationJob] = []
 
-    def capture_created_job(response):
+    def raw_response_hook(response):
+        # Since `polling=False` is set below, it is guaranteed that `raw_response_hook` will be
+        # invoked once on the initial "201 Created" response, and `response` is of type `OptimizationJob`.
+        response.http_response.read()
         created_jobs.append(OptimizationJob(response.http_response.json()))
 
+    job = OptimizationJob(
+        inputs=OptimizationJobInputs(
+            agent=AgentIdentifier(agent_name=agent_name),
+            train_dataset=ReferenceDatasetInput(
+                name=dataset_name,
+                version=dataset_version,
+            ),
+            evaluators=[EvaluatorRef(name=evaluator_name)],
+            options=OptimizationOptions(
+                max_candidates=3,
+                eval_model=eval_model,
+                optimization_model=optimization_model,
+            ),
+        )
+    )
+
     project_client.beta.agents.begin_create_optimization_job(
-        job=OptimizationJob(
-            inputs=OptimizationJobInputs(
-                agent=AgentIdentifier(agent_name=agent_name),
-                train_dataset=ReferenceDatasetInput(
-                    name=dataset_name,
-                    version=dataset_version,
-                ),
-                evaluators=[EvaluatorRef(name=evaluator_name)],
-                options=OptimizationOptions(
-                    max_candidates=3,
-                    eval_model=eval_model,
-                    optimization_model=optimization_model,
-                ),
-            )
-        ),
+        job=job,
         polling=False,
-        raw_response_hook=capture_created_job,
+        raw_response_hook=raw_response_hook,
     )
     if not created_jobs:
         raise RuntimeError("The create operation did not return an optimization job.")
@@ -101,12 +106,15 @@ with (
     print(f"Created job: id={job.id}, status={job.status}")
 
     # ------------------------------------------------------------------
-    # 2. Poll the job to completion.
+    # 2. Poll until the job reaches a terminal state.
     # ------------------------------------------------------------------
-    while job.status not in terminal_statuses:
+    print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+    while job.status not in TERMINAL_STATUSES:
         time.sleep(poll_interval)
         job = project_client.beta.agents.get_optimization_job(job_id=job.id)
-        print(f"Job status: {job.status}")
+        print(".", end="", flush=True)
+    print()
+    print(f"Final job status: `{job.status}`.")
 
     if job.warnings:
         for warning in job.warnings:

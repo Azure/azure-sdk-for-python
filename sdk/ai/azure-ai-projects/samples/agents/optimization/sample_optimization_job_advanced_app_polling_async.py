@@ -7,18 +7,18 @@
 """
 DESCRIPTION:
     Given an async AIProjectClient, this sample demonstrates how to create an
-    agent optimization job and manually poll it to completion.
+    agent optimization job and poll it to completion.
 
     Agent optimization automatically improves an agent's system prompt, model
     choice, or tool definitions by running candidate variants against your
     training dataset and scoring them with the evaluators you specify.
 
 USAGE:
-    python sample_optimization_job_basic_polling_async.py
+    python sample_optimization_job_advanced_app_polling_async.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv
+    pip install "azure-ai-projects>=2.4.0" azure-identity python-dotenv aiohttp
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found
@@ -33,19 +33,16 @@ USAGE:
 """
 
 import asyncio
-import json
 import os
 
 from dotenv import load_dotenv
 
-from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.identity.aio import DefaultAzureCredential
 from azure.ai.projects.aio import AIProjectClient
 from azure.ai.projects.models import (
+    JobStatus,
     OptimizationAgentIdentifier as AgentIdentifier,
     OptimizationEvaluatorRef as EvaluatorRef,
-    JobStatus,
     OptimizationJob,
     OptimizationJobInputs,
     OptimizationOptions,
@@ -63,7 +60,7 @@ poll_interval = int(os.environ.get("POLL_INTERVAL_SECONDS", "10"))
 eval_model = os.environ.get("EVAL_MODEL", "gpt-4o")
 optimization_model = os.environ.get("OPTIMIZATION_MODEL", "gpt-5.1")
 
-terminal_statuses = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
+TERMINAL_STATUSES = {JobStatus.SUCCEEDED, JobStatus.FAILED, JobStatus.CANCELLED}
 
 
 async def main() -> None:
@@ -76,44 +73,52 @@ async def main() -> None:
         # 1. Create an optimization job without SDK polling.
         # ------------------------------------------------------------------
         print("Creating optimization job...")
-        initial_responses: list[PipelineResponse[HttpRequest, AsyncHttpResponse]] = []
+        pipeline_responses = []
 
-        def capture_created_job_response(
-            response: PipelineResponse[HttpRequest, AsyncHttpResponse],
-        ) -> None:
-            initial_responses.append(response)
+        def raw_response_hook(response):
+            # The raw_response_hook is called synchronously before the generated LRO method
+            # awaits read() on the initial response.  Capture the pipeline response object here
+            # and parse the body afterwards, when read() has already been awaited.
+            pipeline_responses.append(response)
+
+        job = OptimizationJob(
+            inputs=OptimizationJobInputs(
+                agent=AgentIdentifier(agent_name=agent_name),
+                train_dataset=ReferenceDatasetInput(
+                    name=dataset_name,
+                    version=dataset_version,
+                ),
+                evaluators=[EvaluatorRef(name=evaluator_name)],
+                options=OptimizationOptions(
+                    max_candidates=3,
+                    eval_model=eval_model,
+                    optimization_model=optimization_model,
+                ),
+            )
+        )
 
         await project_client.beta.agents.begin_create_optimization_job(
-            job=OptimizationJob(
-                inputs=OptimizationJobInputs(
-                    agent=AgentIdentifier(agent_name=agent_name),
-                    train_dataset=ReferenceDatasetInput(
-                        name=dataset_name,
-                        version=dataset_version,
-                    ),
-                    evaluators=[EvaluatorRef(name=evaluator_name)],
-                    options=OptimizationOptions(
-                        max_candidates=3,
-                        eval_model=eval_model,
-                        optimization_model=optimization_model,
-                    ),
-                )
-            ),
+            job=job,
             polling=False,
-            raw_response_hook=capture_created_job_response,
+            raw_response_hook=raw_response_hook,
         )
-        if not initial_responses:
+        # Alternatively, have the SDK handle polling by removing `polling=False`, assigning the awaited call
+        # to a poller, and then awaiting `poller.result()`.
+        if not pipeline_responses:
             raise RuntimeError("The create operation did not return an optimization job.")
-        job = OptimizationJob(json.loads(initial_responses[0].http_response.text()))
+        job = OptimizationJob(pipeline_responses[0].http_response.json())
         print(f"Created job: id={job.id}, status={job.status}")
 
         # ------------------------------------------------------------------
-        # 2. Poll the job to completion.
+        # 2. Poll until the job reaches a terminal state.
         # ------------------------------------------------------------------
-        while job.status not in terminal_statuses:
+        print(f"Polling job `{job.id}` to completion...", end="", flush=True)
+        while job.status not in TERMINAL_STATUSES:
             await asyncio.sleep(poll_interval)
             job = await project_client.beta.agents.get_optimization_job(job_id=job.id)
-            print(f"Job status: {job.status}")
+            print(".", end="", flush=True)
+        print()
+        print(f"Final job status: `{job.status}`.")
 
         if job.warnings:
             for warning in job.warnings:

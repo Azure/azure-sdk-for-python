@@ -10,8 +10,8 @@ DESCRIPTION:
     jobs. The sample exercises:
 
       * `begin_create_generation_job` with `operation_id` for idempotent re-submits;
-        returns `LROPoller[EvaluatorVersion]` — the SDK polls automatically and
-        `.result()` blocks until the job reaches a terminal state.
+         returns `LROPoller[EvaluatorVersion]`, whose status is reported until
+         the job reaches a terminal state.
       * `list_generation_jobs` to enumerate recent jobs in the project.
       * `delete_generation_job` to remove a finished job record.
       * `delete_version` to remove the persisted evaluator that the job produced.
@@ -41,6 +41,7 @@ USAGE:
 
 import os
 import itertools
+import time
 import uuid
 from datetime import datetime, timezone
 from typing import cast
@@ -91,32 +92,36 @@ with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
-    # 1. Start the generation job LRO. `operation_id` makes the call idempotent -
-    # re-submitting with the same id returns a poller attached to the existing job.
+    # 1. Create the generation job. `operation_id` makes the call idempotent.
+    print("Begin creating an evaluator generation job.")
     poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
-    )
-    print("Generation job started; LRO polling in progress.")
-
-    # Idempotency: a second call with the same operation_id attaches to the same job.
-    replay_poller = project_client.beta.evaluators.begin_create_generation_job(
-        job=job_body, operation_id=operation_id, polling_interval=poll_interval_seconds
+        job=job_body,
+        operation_id=operation_id,
+        polling_interval=poll_interval_seconds,
     )
 
-    # 2. Block until the LRO finishes. The SDK polls automatically; `.result()` returns
-    # the produced EvaluatorVersion once the job reaches a terminal state.
-    print("Waiting for the generation job to complete (polling is handled by the SDK)...")
+    # Optional: While SDK is polling, periodically print the job status until the job is complete
+    print("Periodically check job status:")
+    while not poller.done():
+        print(f"\tstatus=`{poller.status()}`")
+        time.sleep(poll_interval_seconds)
+
+    # Since done() is true, result() returns the final deserialized job result without
+    # waiting further. It also propagates any LRO polling exception.
     evaluator: EvaluatorVersion = poller.result()
+    print(f"Final LRO status: `{poller.status()}`.")
+    print(f"Evaluator generation result: {evaluator}")
     print(
         f"Generated evaluator `{evaluator.name}` version `{evaluator.version}` "
         f"(job `{evaluator.generation_job_id}`)."
     )
 
-    # Verify the idempotency: the replay poller resolves to the same underlying job.
-    replay_evaluator: EvaluatorVersion = replay_poller.result()
-    assert replay_evaluator.generation_job_id == evaluator.generation_job_id
+    # Retrieve the persisted generation job using the id returned in the LRO result.
+    assert evaluator.generation_job_id is not None, "Expected the generated evaluator to include a generation job id."
+    replay_job = project_client.beta.evaluators.get_generation_job(evaluator.generation_job_id)
+    assert replay_job.id == evaluator.generation_job_id
 
-    # 3. List the 5 most recent generation jobs in this project.
+    # 2. List the 5 most recent generation jobs in this project.
     #    `limit` controls the page size; use `itertools.islice` to cap the total.
     print("Recent generation jobs:")
     for entry in itertools.islice(
@@ -125,15 +130,14 @@ with (
         entry_name = entry.inputs.evaluator_name if entry.inputs is not None else "<unknown>"
         print(f"  - id=`{entry.id}` status=`{cast(JobStatus, entry.status).value}` evaluator_name=`{entry_name}`")
 
-    # 4. Cancel a running job (not exercised here; the job above already completed).
+    # 3. Cancel a running job (not exercised here; the job above already completed).
     # cancelled = project_client.beta.evaluators.cancel_generation_job(some_running_job_id)
 
-    # 5. Clean up. `delete_version` cascades to the generation job record, so
+    # 4. Clean up. `delete_version` cascades to the generation job record, so
     # the explicit delete below may return 404.
     print("Cleaning up.")
     project_client.beta.evaluators.delete_version(name=evaluator.name, version=evaluator.version)
     try:
-        if evaluator.generation_job_id is not None:
-            project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
+        project_client.beta.evaluators.delete_generation_job(evaluator.generation_job_id)
     except ResourceNotFoundError:
         pass  # already removed by the delete_version cascade
