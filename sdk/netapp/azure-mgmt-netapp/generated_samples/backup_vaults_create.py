@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-04-15-preview/BackupVaults_Create.json
+# x-ms-original-file: 2026-05-01/BackupVaults_Create.json
 if __name__ == "__main__":
     main()

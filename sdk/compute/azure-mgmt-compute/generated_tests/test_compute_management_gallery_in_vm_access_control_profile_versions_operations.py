@@ -26,7 +26,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperations(Azu
             gallery_name="str",
             in_vm_access_control_profile_name="str",
             in_vm_access_control_profile_version_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +99,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperations(Azu
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -163,7 +163,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperations(Azu
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -177,7 +177,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperations(Azu
             gallery_name="str",
             in_vm_access_control_profile_name="str",
             in_vm_access_control_profile_version_name="str",
-            api_version="2025-03-03",
+            api_version="2025-12-03",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -193,7 +193,7 @@ class TestComputeManagementGalleryInVMAccessControlProfileVersionsOperations(Azu
                 resource_group_name=resource_group.name,
                 gallery_name="str",
                 in_vm_access_control_profile_name="str",
-                api_version="2025-03-03",
+                api_version="2025-12-03",
             )
         )
         result = [r for r in response]

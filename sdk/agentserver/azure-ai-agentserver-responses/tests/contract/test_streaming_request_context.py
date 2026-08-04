@@ -27,22 +27,19 @@ from azure.ai.agentserver.responses.streaming import ResponseEventStream
 
 
 def _build_capturing_client(captured: dict[str, Any]) -> TestClient:
-    def _capturing_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
-        async def _events():
-            # This runs while Starlette iterates the streaming body, AFTER
-            # handle_create returned and reset its own request context.
-            rc = get_request_context()
-            captured["call_id"] = rc.call_id
-            captured["user_id"] = rc.user_id
-            captured["session_id"] = rc.session_id
+    async def _capturing_handler(request: Any, context: Any, cancellation_signal: Any) -> Any:
+        # An async-generator handler: its body does not execute until Starlette
+        # iterates the streaming response, AFTER handle_create returned and reset
+        # its own request context. The framework re-establishes the platform
+        # context inside the streaming body iterator, so it is visible here.
+        rc = get_request_context()
+        captured["call_id"] = rc.call_id
+        captured["user_id"] = rc.user_id
+        captured["session_id"] = rc.session_id
 
-            stream = ResponseEventStream(
-                response_id=context.response_id, model=getattr(request, "model", None)
-            )
-            yield stream.emit_created()
-            yield stream.emit_completed()
-
-        return _events()
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
+        yield stream.emit_created()
+        yield stream.emit_completed()
 
     app = ResponsesAgentServerHost(store=InMemoryResponseProvider())
     app.response_handler(_capturing_handler)

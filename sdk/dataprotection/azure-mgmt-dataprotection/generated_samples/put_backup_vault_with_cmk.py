@@ -42,7 +42,7 @@ def main():
                     "encryptionSettings": {
                         "infrastructureEncryption": "Enabled",
                         "kekIdentity": {
-                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourcegroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
+                            "identityId": "/subscriptions/85bf5e8c-3084-4f42-add2-746ebb7e97b2/resourceGroups/defaultrg/providers/Microsoft.ManagedIdentity/userAssignedIdentities/examplemsi",
                             "identityType": "UserAssigned",
                         },
                         "keyVaultProperties": {

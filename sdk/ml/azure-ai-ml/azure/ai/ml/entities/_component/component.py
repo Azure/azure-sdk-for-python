@@ -5,11 +5,22 @@ import re
 import uuid
 from os import PathLike
 from pathlib import Path
-from typing import IO, TYPE_CHECKING, Any, AnyStr, Callable, Dict, Iterable, Optional, Tuple, Union
+from typing import (
+    IO,
+    TYPE_CHECKING,
+    Any,
+    AnyStr,
+    Callable,
+    Dict,
+    Iterable,
+    Optional,
+    Tuple,
+    Union,
+)
 
 from marshmallow import INCLUDE
 
-from ..._restclient.v2024_01_01_preview.models import (
+from ..._restclient.arm_ml_service.models import (
     ComponentContainer,
     ComponentContainerProperties,
     ComponentVersion,
@@ -33,7 +44,11 @@ from ...entities._inputs_outputs import Input, Output
 from ...entities._mixins import LocalizableMixin, TelemetryMixin, YamlTranslatableMixin
 from ...entities._system_data import SystemData
 from ...entities._util import find_type_in_override
-from ...entities._validation import MutableValidationResult, PathAwareSchemaValidatableMixin, RemoteValidatableMixin
+from ...entities._validation import (
+    MutableValidationResult,
+    PathAwareSchemaValidatableMixin,
+    RemoteValidatableMixin,
+)
 from ...exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .._inputs_outputs import GroupInput
 
@@ -155,7 +170,9 @@ class Component(
 
     @property
     def _func(self) -> Callable[..., "BaseNode"]:
-        from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
+        from azure.ai.ml.entities._job.pipeline._load_component import (
+            _generate_component_function,
+        )
 
         # validate input/output names before creating component function
         validation_result = self._validate_io_names(self.inputs)
@@ -312,7 +329,8 @@ class Component(
             if lower_key in lower2original_kwargs:
                 msg = "Invalid component input names {!r} and {!r}, which are equal ignore case."
                 validation_result.append_error(
-                    message=msg.format(name, lower2original_kwargs[lower_key]), yaml_path=f"inputs.{name}"
+                    message=msg.format(name, lower2original_kwargs[lower_key]),
+                    yaml_path=f"inputs.{name}",
                 )
             else:
                 lower2original_kwargs[lower_key] = name
@@ -470,7 +488,9 @@ class Component(
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._load_with_schema(
-            rest_component_version.component_spec, context={BASE_PATH_CONTEXT_KEY: Path.cwd()}, unknown=INCLUDE
+            rest_component_version.component_spec,
+            context={BASE_PATH_CONTEXT_KEY: Path.cwd()},
+            unknown=INCLUDE,
         )
         init_kwargs.update(
             {
@@ -570,11 +590,15 @@ class Component(
         if self._intellectual_property:
             # hack while full pass through supported is worked on for IPP fields
             component.pop("intellectual_property")
-            component["intellectualProperty"] = self._intellectual_property._to_rest_object().serialize()
+            component["intellectualProperty"] = self._intellectual_property._to_rest_object()
         properties = ComponentVersionProperties(
             component_spec=component,
             description=self.description,
             is_anonymous=self._is_anonymous,
+            # The v2024_01 msrest model defaulted is_archived to False and always emitted
+            # ``isArchived: false`` on the wire. The shared arm_ml_service model does not default it,
+            # so set it explicitly to keep the serialized body byte-identical to the previous client.
+            is_archived=False,
             properties=dict(self.properties) if self.properties else {},
             tags=self.tags,
         )

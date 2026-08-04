@@ -10,45 +10,45 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2023_04_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.arm_ml_service.models import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageClassification as RestImageClassification,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelSettingsClassification as RestImageModelSettingsClassification,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import (
     ImageObjectDetection as RestImageObjectDetection,
 )
-from azure.ai.ml._restclient.v2023_04_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2024_01_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.arm_ml_service.models import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.arm_ml_service.models import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
     LogVerbosity,
@@ -130,6 +130,9 @@ def expected_image_sweep_settings() -> RestImageSweepSettings:
         early_termination=RestBanditPolicy(
             slack_factor=0.2,
             evaluation_interval=10,
+            # arm_ml_service serializes all set fields; the entity BanditPolicy emits these defaults.
+            slack_amount=0,
+            delay_evaluation=0,
         ),
     )
 
@@ -336,6 +339,7 @@ def _get_rest_automl_job(automl_task, name, compute_id):
         properties={},
         outputs={},
         tags={},
+        is_archived=False,
     )
     result = JobBase(properties=properties)
     result.name = name

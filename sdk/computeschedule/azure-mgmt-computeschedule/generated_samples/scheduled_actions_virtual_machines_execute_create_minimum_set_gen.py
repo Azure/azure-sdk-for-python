@@ -31,80 +31,12 @@ def main():
     )
 
     response = client.scheduled_actions.virtual_machines_execute_create(
-        locationparameter="useast",
-        request_body={
-            "executionParameters": {},
-            "resourceConfigParameters": {
-                "baseProfile": {
-                    "computeApiVersion": "2024-07-01",
-                    "hardwareProfile": {"name": "F1"},
-                    "provisioningState": 0,
-                    "resourcegroupName": "RG5ABF491C-3164-42A6-8CB5-BF3CB53B018B",
-                    "storageProfile": {"osDisk": {"osType": 0}},
-                    "vmExtensions": [
-                        {
-                            "autoUpgradeMinorVersion": True,
-                            "enableAutomaticUpgrade": True,
-                            "protectedSettings": "SomeDecryptedSecretValue",
-                            "provisioningState": 0,
-                            "publisher": "Microsoft.Azure.Monitor",
-                            "type": "AzureMonitorLinuxAgent",
-                            "typeHandlerVersion": "1.0",
-                        },
-                        {"name": "myExtensionName"},
-                    ],
-                },
-                "resourceCount": 2,
-                "resourceOverrides": [
-                    {
-                        "location": "LocalDev",
-                        "name": "myFleet_523",
-                        "properties": {
-                            "hardwareProfile": {"vmSize": "Standard_F1s"},
-                            "osProfile": {
-                                "adminPassword": "SomeDecryptedSecretValue",
-                                "adminUsername": "adminUser",
-                                "computerName": "myFleet000000",
-                                "windowsConfiguration": {
-                                    "additionalUnattendContent": [
-                                        {"content": "", "passName": "someValue"},
-                                        {"content": "SomeDecryptedSecretValue", "passName": "someOtherValue"},
-                                    ]
-                                },
-                            },
-                            "priority": 0,
-                            "provisioningState": 0,
-                        },
-                        "zones": ["1"],
-                    },
-                    {
-                        "location": "LocalDev",
-                        "name": "myFleet_524",
-                        "properties": {
-                            "hardwareProfile": {"vmSize": "Standard_G1s"},
-                            "osProfile": {
-                                "adminPassword": "SomeDecryptedSecretValue",
-                                "adminUsername": "adminUser",
-                                "computerName": "myFleet000000",
-                                "windowsConfiguration": {
-                                    "additionalUnattendContent": [
-                                        {"content": "", "passName": "someValue"},
-                                        {"content": "SomeDecryptedSecretValue", "passName": "someOtherValue"},
-                                    ]
-                                },
-                            },
-                            "priority": 0,
-                            "provisioningState": 0,
-                        },
-                        "zones": ["2"],
-                    },
-                ],
-            },
-        },
+        locationparameter="eastus2",
+        request_body={"executionParameters": {}, "resourceConfigParameters": {"resourceCount": 3}},
     )
     print(response)
 
 
-# x-ms-original-file: 2025-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreate_MinimumSet_Gen.json
+# x-ms-original-file: 2026-04-15-preview/ScheduledActions_VirtualMachinesExecuteCreate_MinimumSet_Gen.json
 if __name__ == "__main__":
     main()

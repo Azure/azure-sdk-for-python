@@ -116,6 +116,13 @@ jobs:
       vmImage: $(MACVMIMAGE)
       os: macOS
 
+    templateContext:
+      sdl:
+        codeql:
+          compiled:
+            enabled: false
+            justificationForDisabling: "Compiled language support is not available on macOS ARM64. See: https://eng.ms/docs/coreai/devdiv/one-engineering-system-1es/1es-docs/codeql/troubleshooting/onboarding/language-compiled#arm64-cpu-on-macos"
+
     steps:
     - template: /eng/pipelines/templates/steps/build-package-artifacts.yml
       parameters:

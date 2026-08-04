@@ -57,7 +57,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         gsi_container, create_properties = self.test_db.create_container(
             id="gsi-container-" + str(uuid.uuid4())[:8],
             partition_key=PartitionKey(path="/id"),
-            global_secondary_index_definition=gsi_definition,
+            global_secondary_index=gsi_definition,
             return_properties=True
         )
 
@@ -99,7 +99,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         gsi_container = self.test_db.create_container(
             id="gsi-dict-" + str(uuid.uuid4())[:8],
             partition_key=PartitionKey(path="/id"),
-            global_secondary_index_definition=gsi_dict
+            global_secondary_index=gsi_dict
         )
 
         # Verify
@@ -128,7 +128,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         gsi_container = self.test_db.create_container_if_not_exists(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
-            global_secondary_index_definition=gsi_definition
+            global_secondary_index=gsi_definition
         )
         self.assertEqual(gsi_container.id, container_id)
 
@@ -136,7 +136,7 @@ class TestGlobalSecondaryIndexLive(unittest.TestCase):
         gsi_container_again = self.test_db.create_container_if_not_exists(
             id=container_id,
             partition_key=PartitionKey(path="/id"),
-            global_secondary_index_definition=gsi_definition
+            global_secondary_index=gsi_definition
         )
         self.assertEqual(gsi_container_again.id, container_id)
 
