@@ -123,13 +123,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
     :keyword Optional[~azure.servicebus.aio.AutoLockRenewer] auto_lock_renewer: An ~azure.servicebus.aio.AutoLockRenewer
      can be provided such that messages are automatically registered on receipt. If the receiver is a session receiver,
      it will apply to the session instead.
-    :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+    :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+     receive call, so that receive calls can be served from the buffer instead of waiting on a
+     service request. This is separate from the `max_message_count` argument to
+     `receive_messages`, which bounds a single call rather than the buffer.
      This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-     performance but increase the chance that messages will expire while they are cached if they're not
+     performance but increase the chance that messages will expire while they are buffered if they're not
      processed fast enough.
-     The default value is 0, meaning messages will be received from the service and processed one at a time.
-     In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-     `max_message_count` (if provided) within its request to the service.
+     The default value is 0, meaning prefetch is turned off.
      WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
      the in-memory prefetch buffer until they're received into the application. If the application ends before
      the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -279,13 +280,14 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
          keys: `'proxy_hostname'` (str value) and `'proxy_port'` (int value).
          Additionally the following keys may also be present: `'username', 'password'`.
         :keyword str user_agent: If specified, this will be added in front of the built-in user agent string.
-        :keyword int prefetch_count: The maximum number of messages to cache with each request to the service.
+        :keyword int prefetch_count: The number of messages the receiver requests ahead of a
+         receive call, so that receive calls can be served from the buffer instead of waiting on a
+         service request. This is separate from the `max_message_count` argument to
+         `receive_messages`, which bounds a single call rather than the buffer.
          This setting is only for advanced performance tuning. Increasing this value will improve message throughput
-         performance but increase the chance that messages will expire while they are cached if they're not
+         performance but increase the chance that messages will expire while they are buffered if they're not
          processed fast enough.
-         The default value is 0, meaning messages will be received from the service and processed one at a time.
-         In the case of prefetch_count being 0, `ServiceBusReceiver.receive_messages` would try to cache
-         `max_message_count` (if provided) within its request to the service.
+         The default value is 0, meaning prefetch is turned off.
          WARNING: If prefetch_count > 0 and RECEIVE_AND_DELETE mode is used, all prefetched messages will stay in
          the in-memory prefetch buffer until they're received into the application. If the application ends before
          the messages are received into the application, those messages will be lost and unable to be recovered.
@@ -599,20 +601,26 @@ class ServiceBusReceiver(AsyncIterator, BaseHandler, ReceiverMixin):
         This approach is optimal if you wish to process multiple messages simultaneously, or
         perform an ad-hoc receive as a single call.
 
-        Note that the number of messages retrieved in a single batch will be dependent on
-        whether `prefetch_count` was set for the receiver. If `prefetch_count` is not set for the receiver,
-        the receiver would try to cache max_message_count (if provided) messages within the request to the service.
+        `max_message_count` bounds what this call returns, while `prefetch_count` governs what the
+        receiver holds ahead of the call, so they are separate settings rather than two names for
+        the same one. When `prefetch_count` is 0, the receiver requests `max_message_count` (if
+        provided) messages from the service on this call. When `prefetch_count` is greater than 0,
+        the call is served first from what the receiver already holds, and if that is fewer than
+        `max_message_count` it continues receiving on the receiver's standing prefetch credit until
+        the count is met or the wait time elapses.
 
         This call will prioritize returning quickly over meeting a specified batch size, and so will
         return as soon as at least one message is received and there is a gap in incoming messages regardless
         of the specified batch size.
 
-        :param Optional[int] max_message_count: Maximum number of messages in the batch. Actual number
-         returned will depend on prefetch_count size and incoming stream rate.
-         Setting to None will fully depend on the prefetch config. The default value is 1.
+        :param Optional[int] max_message_count: Maximum number of messages in the batch. This is an upper
+         bound: the call returns fewer messages when fewer are available, when the wait time elapses, or
+         when a gap in incoming messages ends the batch early. Setting to None falls back to
+         `prefetch_count`, so at the default `prefetch_count` of 0 the call returns an empty list
+         immediately. The default value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
-         If no messages arrive, and no timeout is specified, this call will not return
-         until the connection is closed. If specified, and no messages arrive within the
+         If messages are requested, no messages arrive, and no timeout is specified, this call will not
+         return until the connection is closed. If specified, and no messages arrive within the
          timeout period, an empty list will be returned. NOTE: Setting max_wait_time on receive_messages
          when NEXT_AVAILABLE_SESSION is specified will not impact the timeout for connecting to a session.
          Please use max_wait_time on the constructor to set the timeout for connecting to a session.
