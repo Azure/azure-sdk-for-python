@@ -1,3 +1,5 @@
+<!-- cspell:words issecret pmerge sdkci -->
+
 # Cosmos live-test accounts
 
 The Cosmos live tests bind to **fixed, team-owned Cosmos DB accounts** instead of provisioning a

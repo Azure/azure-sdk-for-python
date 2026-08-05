@@ -1,6 +1,7 @@
 #!/usr/bin/env pwsh
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+# cspell:ignore issecret pscustomobject unscrubbed
 
 <#
 .SYNOPSIS

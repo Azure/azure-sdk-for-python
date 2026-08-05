@@ -92,6 +92,9 @@ QUERY_PK = "query_pk"
 READ_ALL = "read_all"
 CHANGE_FEED = "change_feed"
 
+STEADY_STATE_HEDGING_THRESHOLD_MS = 5000
+FAULT_INJECTION_DELAY_MS = 5000
+
 # Non-transient status codes
 NON_TRANSIENT_STATUS_CODES = [
     (400, None),
@@ -378,10 +381,10 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.asyncio
     @pytest.mark.parametrize("operation", [READ, QUERY, QUERY_PK, READ_ALL, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     @pytest.mark.parametrize("client_availability_strategy, request_availability_strategy", [
-        (None, {'threshold_ms':150, 'threshold_steps_ms':50}),
-        ({'threshold_ms':150, 'threshold_steps_ms':50}, None),
-        ({'threshold_ms':150, 'threshold_steps_ms':50},
-         {'threshold_ms':150, 'threshold_steps_ms':50})
+        (None, {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}),
+        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50}, None),
+        ({'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50},
+         {'threshold_ms':STEADY_STATE_HEDGING_THRESHOLD_MS, 'threshold_steps_ms':50})
     ])
     async def test_availability_strategy_in_steady_state_async(
             self,
@@ -446,7 +449,7 @@ class TestAsyncAvailabilityStrategy:
                                FaultInjectionTransportAsync.predicate_targets_region(r, uri_down))
 
         error_lambda = lambda r: FaultInjectionTransportAsync.error_after_delay(
-            1000,  # Add delay to trigger hedging
+            FAULT_INJECTION_DELAY_MS,
             CosmosHttpResponseError(status_code=400, message="Injected Error")
         )
         custom_transport = self._get_custom_transport_with_fault_injection(predicate, error_lambda)
