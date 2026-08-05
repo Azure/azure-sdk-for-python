@@ -13,7 +13,7 @@ import inspect
 from typing import Any, Callable, List
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATURE_HEADERS, _has_header_case_insensitive
 from ._patch_agents import AgentsOperations
-from ._patch_datasets import DatasetsOperations
+from ._patch_datasets import BetaDatasetsOperations, DatasetsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
@@ -21,7 +21,6 @@ from ._patch_memories import BetaMemoryStoresOperations
 from ._patch_models import BetaModelsOperations
 from ._operations import (
     BetaAgentsOperations,
-    BetaDatasetsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
@@ -129,6 +128,8 @@ class BetaOperations(GeneratedBetaOperations):
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes create (3-step upload helper)
         self.models = BetaModelsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that returns DatasetGenerationLROPoller
+        self.datasets = BetaDatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
         for property_name, foundry_features_value in _BETA_OPERATION_FEATURE_HEADERS.items():
             setattr(

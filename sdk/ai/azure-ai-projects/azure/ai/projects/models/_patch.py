@@ -33,7 +33,7 @@ from ._patch_evaluation_typeddicts import (
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
-from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ..models import DataGenerationJobResult, MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
 
 _FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
@@ -380,7 +380,88 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
         return cls(client, initial_response, deserialization_callback, polling_method)
 
 
+class DatasetGenerationLROPoller(LROPoller[DataGenerationJobResult]):
+    """Custom LROPoller for data generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        self._job_id = self._get_job_id(initial_response)
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+
+    @staticmethod
+    def _get_job_id(initial_response: Any) -> Optional[str]:
+        try:
+            return initial_response.http_response.json().get("id")
+        except (AttributeError, TypeError, ValueError):
+            return None
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the data generation job operation.
+
+        :return: A mapping containing the created data generation job ID.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls, polling_method: PollingMethod[DataGenerationJobResult], continuation_token: str, **kwargs: Any
+    ) -> "DatasetGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.PollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of DatasetGenerationLROPoller.
+        :rtype: DatasetGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
+class AsyncDatasetGenerationLROPoller(AsyncLROPoller[DataGenerationJobResult]):
+    """Custom AsyncLROPoller for data generation job operations."""
+
+    def __init__(self, client: Any, initial_response: Any, deserialization_callback: Any, polling_method: Any) -> None:
+        super().__init__(client, initial_response, deserialization_callback, polling_method)
+        self._job_id = DatasetGenerationLROPoller._get_job_id(initial_response)
+
+    @property
+    def details(self) -> Mapping[str, Any]:
+        """Returns metadata associated with the data generation job operation.
+
+        :return: A mapping containing the created data generation job ID.
+        :rtype: Mapping[str, Any]
+        """
+        return {"job_id": self._job_id}
+
+    @classmethod
+    def from_continuation_token(
+        cls,
+        polling_method: AsyncPollingMethod[DataGenerationJobResult],
+        continuation_token: str,
+        **kwargs: Any,
+    ) -> "AsyncDatasetGenerationLROPoller":
+        """Create a poller from a continuation token.
+
+        :param polling_method: The polling strategy to adopt.
+        :type polling_method: ~azure.core.polling.AsyncPollingMethod
+        :param continuation_token: An opaque continuation token.
+        :type continuation_token: str
+        :return: An instance of AsyncDatasetGenerationLROPoller.
+        :rtype: AsyncDatasetGenerationLROPoller
+        """
+        client, initial_response, deserialization_callback = polling_method.from_continuation_token(
+            continuation_token, **kwargs
+        )
+        return cls(client, initial_response, deserialization_callback, polling_method)
+
+
 __all__: List[str] = [
+    "AsyncDatasetGenerationLROPoller",
     "AsyncUpdateMemoriesLROPoller",
     "AzureAIAgentTargetParam",
     "AzureAIBenchmarkPreviewEvalRunDataSource",
@@ -388,6 +469,7 @@ __all__: List[str] = [
     "AzureAIModelTargetParam",
     "AzureAIResponsesEvalRunDataSource",
     "CustomCredential",
+    "DatasetGenerationLROPoller",
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
     "TestingCriterionAzureAIEvaluator",

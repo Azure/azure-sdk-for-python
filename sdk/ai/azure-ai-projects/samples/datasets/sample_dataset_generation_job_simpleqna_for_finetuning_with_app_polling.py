@@ -175,21 +175,14 @@ with (
     )
 
     print("Create a dataset generation job without SDK polling.")
-    created_jobs: list[DataGenerationJob] = []
-
-    def raw_response_hook(response):
-        # With polling disabled, this hook receives the initial response containing the created job.
-        response.http_response.read()
-        created_jobs.append(DataGenerationJob(response.http_response.json()))
-
-    project_client.beta.datasets.begin_create_generation_job(
+    poller = project_client.beta.datasets.begin_create_generation_job(
         job=job,
         polling=False,
-        raw_response_hook=raw_response_hook,
     )
-    if not created_jobs:
-        raise RuntimeError("The create operation did not return a data generation job.")
-    job = created_jobs[0]
+    job_id = poller.details["job_id"]
+    if not job_id:
+        raise RuntimeError("The create operation did not return a data generation job ID.")
+    job = project_client.beta.datasets.get_generation_job(job_id=job_id)
     print(f"Created job: id={job.id}, status={job.status}")
 
     # ------------------------------------------------------------------
