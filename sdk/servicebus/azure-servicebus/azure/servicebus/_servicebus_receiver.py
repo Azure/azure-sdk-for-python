@@ -628,7 +628,7 @@ class ServiceBusReceiver(BaseHandler, ReceiverMixin): # pylint: disable=too-many
          bound: the call returns fewer messages when fewer are available, when the wait time elapses, or
          when a gap in incoming messages ends the batch early. Setting to None falls back to
          `prefetch_count`, so at the default `prefetch_count` of 0 the call returns an empty list
-         immediately. The default value is 1.
+         without waiting for messages. The default value is 1.
         :param Optional[float] max_wait_time: Maximum time to wait in seconds for the first message to arrive.
          If messages are requested, no messages arrive, and no timeout is specified, this call will not
          return until the connection is closed. If specified, and no messages arrive within the
