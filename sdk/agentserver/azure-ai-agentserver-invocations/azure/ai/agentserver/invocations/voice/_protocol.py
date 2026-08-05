@@ -39,6 +39,7 @@ from ._models import (
 PROTOCOL_VERSION = "1.0"
 MAX_ERROR_MESSAGE_LENGTH = 1024
 MAX_JSON_DEPTH = 128
+MAX_JSON_INTEGER_DIGITS = 128
 _MAX_PROTOCOL_ID_BYTES = 256
 _SAFE_CODE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 _VOICE_TYPE_ALIASES = {"azure-platform": "azure-standard", "custom": "azure-custom"}
@@ -161,7 +162,11 @@ def validate_timestamp(value: object) -> str:
 def decode_frame(frame: str) -> dict[str, Any]:
     """Decode one JSON object and validate its common envelope."""
     try:
-        raw_payload: Any = json.loads(frame, parse_constant=_reject_json_constant)
+        raw_payload: Any = json.loads(
+            frame,
+            parse_constant=_reject_json_constant,
+            parse_int=_parse_json_int,
+        )
     except (json.JSONDecodeError, RecursionError, ValueError) as exc:
         raise VoiceBridgeProtocolError("Bridge frame is not valid JSON") from exc
     if not isinstance(raw_payload, dict):
@@ -176,6 +181,13 @@ def decode_frame(frame: str) -> dict[str, Any]:
 
 def _reject_json_constant(value: str) -> Any:
     raise ValueError(f"Non-standard JSON constant: {value}")
+
+
+def _parse_json_int(value: str) -> int:
+    digits = value[1:] if value.startswith("-") else value
+    if len(digits) > MAX_JSON_INTEGER_DIGITS:
+        raise ValueError("JSON integer exceeds the maximum digit count")
+    return int(value)
 
 
 def _validate_json_tree(value: Any) -> None:

@@ -104,6 +104,12 @@ def test_decode_rejects_non_finite_number_from_valid_json_syntax() -> None:
         decode_frame('{"type":"future","id":"m_1","ts":"2026-07-24T12:34:56.789Z","value":1e400}')
 
 
+def test_decode_rejects_oversized_integer_before_conversion() -> None:
+    integer = "9" * 129
+    with pytest.raises(VoiceBridgeProtocolError, match="not valid JSON"):
+        decode_frame(f'{{"type":"future","id":"m_1","ts":"{_TS}","value":{integer}}}')
+
+
 def test_decode_rejects_unpaired_unicode_surrogate() -> None:
     with pytest.raises(VoiceBridgeProtocolError, match="invalid Unicode"):
         decode_frame(r'{"type":"future","id":"m_1","ts":"2026-07-24T12:34:56.789Z","value":"\ud800"}')

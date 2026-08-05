@@ -12,8 +12,9 @@ import logging
 import sys
 import threading
 import time
+import weakref
 from collections import OrderedDict
-from collections.abc import Awaitable, Callable, Coroutine, Mapping, Sequence
+from collections.abc import Awaitable, Callable, Coroutine, Iterable, Iterator, Mapping, Sequence, Set
 from dataclasses import dataclass
 from dataclasses import fields as dataclass_fields, is_dataclass, replace
 from typing import Any, Optional
@@ -143,6 +144,7 @@ _MAX_CALLBACK_QUEUE = 128
 _MAX_CALLBACK_QUEUE_BYTES = 8 * 1024 * 1024
 _MAX_FRAME_BYTES = 1024 * 1024
 _MAX_SEEN_MESSAGES = 4096
+_MAX_ID_TOMBSTONES = 4096
 _MAX_RECENT_RESPONSES = 64
 _MAX_RESOLVED_PREFIXES = 64
 _MAX_PENDING_PROACTIVE = 16
@@ -228,6 +230,35 @@ def _release_global_callback_queue_bytes(size: int) -> None:
             raise RuntimeError("Voice global callback queue byte accounting underflow")
 
 
+def _reserve_global_output_bytes(size: int) -> bool:
+    """Reserve response text against the process-wide customer-memory budget.
+
+    :param size: Encoded text bytes to reserve.
+    :type size: int
+    :return: Whether the reservation succeeded.
+    :rtype: bool
+    """
+    global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        if _GLOBAL_CUSTOMER_TASK_BYTES + size > _MAX_GLOBAL_CUSTOMER_TASK_BYTES:
+            return False
+        _GLOBAL_CUSTOMER_TASK_BYTES += size
+        return True
+
+
+def _release_global_output_bytes(size: int) -> None:
+    """Release response text from the process-wide customer-memory budget.
+
+    :param size: Previously reserved encoded text bytes.
+    :type size: int
+    """
+    global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        _GLOBAL_CUSTOMER_TASK_BYTES -= size
+        if _GLOBAL_CUSTOMER_TASK_BYTES < 0:
+            raise RuntimeError("Voice global customer byte accounting underflow")
+
+
 def _observe_future_completion(completed: asyncio.Future[Any]) -> None:
     """Retrieve internal Future exceptions even when the public waiter left.
 
@@ -257,6 +288,60 @@ class _PreparedFrame:
     message_type: str
     frame: str
     response_id: str | None
+
+
+@dataclass(frozen=True)
+class _RecentResponse:
+    """Compact late-terminal reconciliation state without retaining output objects."""
+
+    response_id: str
+    item_ids: frozenset[str]
+    response_ref: weakref.ReferenceType[VoiceResponse]
+
+
+@dataclass(frozen=True)
+class _ResolvedPrefix:
+    """Compact response state retained for one late input-prefix timeout."""
+
+    response_id: str
+    opened_response: bool
+    response_ref: weakref.ReferenceType[VoiceResponse]
+
+
+class _BoundedIdSet(Set[str]):
+    """Insertion-ordered set retaining only the latest protocol tombstones."""
+
+    def __init__(self, max_size: int) -> None:
+        self._max_size = max_size
+        self._values: OrderedDict[str, None] = OrderedDict()
+
+    def __contains__(self, value: object) -> bool:
+        return value in self._values
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+    def add(self, value: str) -> None:
+        self._values.pop(value, None)
+        self._values[value] = None
+        while len(self._values) > self._max_size:
+            self._values.popitem(last=False)
+
+    def discard(self, value: str) -> None:
+        self._values.pop(value, None)
+
+    def remove(self, value: str) -> None:
+        del self._values[value]
+
+    def update(self, values: Iterable[str]) -> None:
+        for value in values:
+            self.add(value)
+
+    def clear(self) -> None:
+        self._values.clear()
 
 
 @experimental
@@ -567,14 +652,16 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._session: VoiceSession | None = None
         self._active_response: VoiceResponse | None = None
         self._pending_turns: OrderedDict[str, VoiceResponse] = OrderedDict()
-        self._resolved_input_prefixes: OrderedDict[tuple[str, ...], tuple[VoiceResponse, bool]] = OrderedDict()
-        self._recent_responses: OrderedDict[str, VoiceResponse] = OrderedDict()
-        self._seen_response_ids: set[str] = set()
-        self._terminal_response_ids: set[str] = set()
+        self._resolved_input_prefixes: OrderedDict[tuple[str, ...], _ResolvedPrefix | tuple[VoiceResponse, bool]] = (
+            OrderedDict()
+        )
+        self._recent_responses: OrderedDict[str, _RecentResponse] = OrderedDict()
+        self._seen_response_ids = _BoundedIdSet(_MAX_ID_TOMBSTONES)
+        self._terminal_response_ids = _BoundedIdSet(_MAX_ID_TOMBSTONES)
         self._seen_messages: OrderedDict[str, str] = OrderedDict()
-        self._seen_input_ids: set[str] = set()
-        self._playback_outcomes: set[str] = set()
-        self._abandoned_proactive_cancels: set[str] = set()
+        self._seen_input_ids = _BoundedIdSet(_MAX_ID_TOMBSTONES)
+        self._playback_outcomes = _BoundedIdSet(_MAX_ID_TOMBSTONES)
+        self._abandoned_proactive_cancels = _BoundedIdSet(_MAX_ID_TOMBSTONES)
         self._cancel_waiters: dict[str, asyncio.Future[ResponseCancellationOutcome]] = {}
         self._pending_proactive: OrderedDict[
             str,
@@ -665,6 +752,35 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             raise VoiceBridgeConnectionClosedError("The voice connection is closed")
         prepared = self._prepare_frame(message_type, fields)
         await self._send_prepared(prepared, allow_while_ending=_allow_while_ending, state_committed=False)
+
+    async def send_committed(self, message_type: str, **fields: Any) -> None:
+        """Serialize a frame after irreversible response state was committed.
+
+        :param message_type: Wire message discriminator.
+        :type message_type: str
+        """
+        if self._closed:
+            raise VoiceBridgeConnectionClosedError("The voice connection is closed")
+        prepared = self._prepare_frame(message_type, fields)
+        await self._send_prepared(prepared, state_committed=True)
+
+    def reserve_output_bytes(self, size: int) -> None:
+        """Reserve retained response text against the process-wide byte budget.
+
+        :param size: Encoded text bytes to reserve.
+        :type size: int
+        """
+        if not _reserve_global_output_bytes(size):
+            self._signal_runtime_failure("Voice global customer task byte limit reached")
+            raise RuntimeError("Voice global customer task byte limit reached")
+
+    def release_output_bytes(self, size: int) -> None:
+        """Release retained response text from the process-wide byte budget.
+
+        :param size: Previously reserved encoded text bytes.
+        :type size: int
+        """
+        _release_global_output_bytes(size)
 
     @staticmethod
     def _prepare_frame(message_type: str, fields: dict[str, Any]) -> _PreparedFrame:
@@ -758,7 +874,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             # wire outcome or trigger a duplicate terminal.
             logger.warning("Voice first-output telemetry failed", exc_info=True)
 
-    def _remember_resolved_prefix_locked(self, prefix: tuple[str, ...], value: tuple[VoiceResponse, bool]) -> None:
+    def _remember_resolved_prefix_locked(
+        self,
+        prefix: tuple[str, ...],
+        response: VoiceResponse,
+        opened_response: bool,
+    ) -> None:
         # Bounded LRU: these entries only reconcile a late response.timeout that
         # references a prefix the SDK already resolved before the bridge saw the
         # response.created — a single-round-trip window. Retaining every resolved
@@ -766,7 +887,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         # for the life of the call would grow without bound; cap it and evict the
         # oldest, since a timeout arriving that far out of order is stale.
         self._resolved_input_prefixes.pop(prefix, None)
-        self._resolved_input_prefixes[prefix] = value
+        self._resolved_input_prefixes[prefix] = _ResolvedPrefix(
+            response_id=response.response_id,
+            opened_response=opened_response,
+            response_ref=weakref.ref(response),
+        )
         while len(self._resolved_input_prefixes) > _MAX_RESOLVED_PREFIXES:
             self._resolved_input_prefixes.popitem(last=False)
 
@@ -799,7 +924,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             pending_ids = tuple(self._pending_turns)
             if pending_ids[: len(in_reply_to)] != in_reply_to:
                 raise RuntimeError("in_reply_to must be an ordered prefix of pending inputs")
-            self._remember_resolved_prefix_locked(in_reply_to, (active, True))
+            self._remember_resolved_prefix_locked(in_reply_to, active, True)
             for item_id in in_reply_to:
                 self._pending_turns.pop(item_id, None)
         await self._send_prepared(prepared, state_committed=True)
@@ -832,7 +957,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 raise RuntimeError("in_reply_to must be an ordered prefix of pending inputs")
             if in_reply_to:
                 response_id = self._pending_turns[in_reply_to[0]].response_id
-                self._remember_resolved_prefix_locked(in_reply_to, (self._pending_turns[in_reply_to[0]], False))
+                self._remember_resolved_prefix_locked(in_reply_to, self._pending_turns[in_reply_to[0]], False)
             for item_id in in_reply_to:
                 self._pending_turns.pop(item_id, None)
             # Claim the terminal for this input prefix BEFORE emitting
@@ -1591,6 +1716,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     "A new turn started while another response is still active",
                     close_code=1008,
                 )
+            if active is not None and active is not response:
+                self._remember_response_locked(active)
             self._active_response = response
             self._active_release = release
 
@@ -1681,7 +1808,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     self._remember_response_locked(response)
 
     async def _process_signal_work(self, work: _CallbackWork) -> None:
-        if self._session is None:
+        if self._session is None or self._ending:
             return
         if work.success_type is not None:
             assert work.request_id is not None
@@ -1699,6 +1826,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Voice history callback failed: %s", type(exc).__name__)
                 _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
+                if self._ending:
+                    return
                 await self.send(
                     "conversation.item.failed",
                     request_id=work.request_id,
@@ -1706,6 +1835,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     message="History mutation callback failed",
                 )
             else:
+                if self._ending:
+                    return
                 await self.send(work.success_type, request_id=work.request_id)
             finally:
                 _metric_record(
@@ -1907,7 +2038,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if response_id in self._playback_outcomes:
                 return
             response = self._find_response_locked(response_id)
-            if response is None:
+            recent = self._find_recent_response_locked(response_id)
+            if response is None and recent is None:
                 if response_id in self._pending_proactive:
                     raise VoiceBridgeProtocolError(
                         f"{kind} is invalid before proactive response.accepted",
@@ -1916,7 +2048,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 if response_id in self._seen_response_ids:
                     return
                 raise VoiceBridgeProtocolError("Unknown playback response_id", close_code=1008)
-            if item_id is not None and not response._owns_item_id(item_id):
+            owns_item = (
+                response._owns_item_id(item_id)
+                if response is not None and item_id is not None
+                else recent is not None and item_id in recent.item_ids
+            )
+            if item_id is not None and not owns_item:
                 raise VoiceBridgeProtocolError("Playback item_id does not belong to response_id", close_code=1008)
             self._playback_outcomes.add(response_id)
             waiter = self._cancel_waiters.get(response_id)
@@ -1927,7 +2064,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     "response.cancelled requires a pending response.cancel",
                     close_code=1008,
                 )
-            active = self._active_response is response
+            active = response is not None and self._active_response is response
             # Always wake the active turn coordinator after a bridge terminal.
             # If response.cancel is itself stalled on outbound backpressure, the
             # coordinator's bounded drain path gives that winning write a chance to
@@ -1936,7 +2073,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             release = self._active_release if active else None
             playback_terminal_won = response_id not in self._terminal_response_ids
             self._terminal_response_ids.add(response_id)
-        await response._mark_terminal()
+        if response is not None:
+            await response._mark_terminal()
         owns_waiter = False
         async with self._state_lock:
             if waiter is not None and self._cancel_waiters.get(response_id) is waiter:
@@ -1982,9 +2120,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         async with self._state_lock:
             if event.response_id is not None:
                 response = self._find_response_locked(event.response_id)
+                recent = self._find_recent_response_locked(event.response_id)
                 if event.response_id in self._playback_outcomes:
                     return
-                if response is None:
+                if response is None and recent is None:
                     if event.response_id in self._pending_proactive:
                         raise VoiceBridgeProtocolError(
                             "response.timeout is invalid before proactive response.accepted",
@@ -1993,12 +2132,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     if event.response_id in self._seen_response_ids:
                         return
                     raise VoiceBridgeProtocolError("Unknown response.timeout response_id", close_code=1008)
-                responses.append(response)
+                if response is not None:
+                    responses.append(response)
                 self._playback_outcomes.add(event.response_id)
                 if event.response_id not in self._terminal_response_ids:
                     timeout_metric_winners.add(event.response_id)
                 self._terminal_response_ids.add(event.response_id)
-                if self._active_response is response:
+                if response is not None and self._active_response is response:
                     release = self._active_release
                 cancel_waiter = self._cancel_waiters.get(event.response_id)
                 if cancel_waiter is not None:
@@ -2025,27 +2165,36 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     while remaining:
                         resolved = next(
                             (
-                                (prefix, response, opened_response)
-                                for prefix, (response, opened_response) in self._resolved_input_prefixes.items()
+                                (prefix, resolved_prefix)
+                                for prefix, resolved_prefix in self._resolved_input_prefixes.items()
                                 if remaining[: len(prefix)] == prefix
                             ),
                             None,
                         )
                         if resolved is not None:
-                            prefix, response, opened_response = resolved
+                            prefix, resolved_prefix = resolved
                             self._resolved_input_prefixes.pop(prefix, None)
-                            if response not in responses:
+                            if isinstance(resolved_prefix, tuple):
+                                # Compatibility for internal callers/tests that
+                                # populated the pre-snapshot representation.
+                                response, opened_response = resolved_prefix
+                                response_id = response.response_id
+                            else:
+                                response = resolved_prefix.response_ref()
+                                response_id = resolved_prefix.response_id
+                                opened_response = resolved_prefix.opened_response
+                            if response is not None and response not in responses:
                                 responses.append(response)
-                            if response.response_id not in self._terminal_response_ids:
-                                timeout_metric_winners.add(response.response_id)
-                            self._terminal_response_ids.add(response.response_id)
-                            if self._active_response is response:
+                            if response_id not in self._terminal_response_ids:
+                                timeout_metric_winners.add(response_id)
+                            self._terminal_response_ids.add(response_id)
+                            if response is not None and self._active_response is response:
                                 release = self._active_release
                             if opened_response:
-                                self._playback_outcomes.add(response.response_id)
-                                cancel_waiter = self._cancel_waiters.get(response.response_id)
+                                self._playback_outcomes.add(response_id)
+                                cancel_waiter = self._cancel_waiters.get(response_id)
                                 if cancel_waiter is not None:
-                                    cancel_waiters.append((response.response_id, cancel_waiter))
+                                    cancel_waiters.append((response_id, cancel_waiter))
                             remaining = remaining[len(prefix) :]
                             continue
 
@@ -2085,9 +2234,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     owned_cancel_waiters.append(cancel_waiter)
         if not owns_transition:
             return
-        for response in responses:
-            if response.response_id in timeout_metric_winners:
-                self._record_terminal(response.response_id, "timeout")
+        for response_id in timeout_metric_winners:
+            self._record_terminal(response_id, "timeout")
         for cancel_waiter in owned_cancel_waiters:
             if not cancel_waiter.done():
                 cancel_waiter.set_exception(VoiceBridgeConnectionClosedError("Response terminated by timeout"))
@@ -2122,6 +2270,14 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         owns_future = False
         async with self._state_lock:
             if self._pending_proactive.get(response_id) is pending:
+                active = self._active_response
+                if active is not None and active is not response and not active.is_terminal:
+                    raise VoiceBridgeProtocolError(
+                        "Proactive response accepted while another response is active",
+                        close_code=1008,
+                    )
+                if active is not None and active is not response:
+                    self._remember_response_locked(active)
                 self._pending_proactive.pop(response_id, None)
                 self._active_response = response
                 self._response_start_ns[response_id] = time.monotonic_ns()
@@ -2239,7 +2395,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     raise VoiceBridgeProtocolError("Message id was reused with different content", close_code=1008)
                 continue
             if len(self._seen_messages) >= _MAX_SEEN_MESSAGES:
-                raise VoiceBridgeProtocolError("Message dedupe limit exceeded", close_code=1008)
+                # Dedupe protects only the bounded replay window. A hard lifetime
+                # cap would disconnect every otherwise-valid long-running call
+                # after 4096 frames.
+                self._seen_messages.popitem(last=False)
             self._seen_messages[message_key] = digest
             return payload
 
@@ -2289,6 +2448,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     await asyncio.gather(worker, return_exceptions=True)
                 except asyncio.CancelledError:
                     pass
+            if worker.done() and not worker.cancelled():
+                # Retrieve any failure even when session.end made the main receive
+                # loop stop before normal worker supervision could observe it.
+                worker.exception()
 
         self._discard_callback_queue()
 
@@ -2373,15 +2536,27 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
     def _find_response_locked(self, response_id: str) -> VoiceResponse | None:
         if self._active_response is not None and self._active_response.response_id == response_id:
             return self._active_response
+        recent = self._recent_responses.get(response_id)
+        return recent.response_ref() if recent is not None else None
+
+    def _find_recent_response_locked(self, response_id: str) -> _RecentResponse | None:
         return self._recent_responses.get(response_id)
 
     def _remember_response_locked(self, response: VoiceResponse) -> None:
-        # Retained only for late timeout/barge-in reconciliation, which needs
-        # identity and terminal state, not the emitted text. Free the accumulated
-        # per-item buffers so _MAX_RECENT_RESPONSES entries stay lightweight rather
-        # than pinning up to _MAX_RESPONSE_BYTES of text each.
+        # Late timeout/barge-in reconciliation needs only identity plus the set
+        # of item ids that reached or entered a wire write. Keep a weak reference
+        # so a customer-retained response still receives its cancellation token,
+        # but never let this cache retain the full response/item object graph.
         response._release_output_buffers()
-        self._recent_responses[response.response_id] = response
+        self._recent_responses[response.response_id] = _RecentResponse(
+            response_id=response.response_id,
+            item_ids=frozenset(
+                item.item_id
+                for item in response._items
+                if item._started or item._send_in_flight  # pylint: disable=protected-access
+            ),
+            response_ref=weakref.ref(response),
+        )
         self._recent_responses.move_to_end(response.response_id)
         while len(self._recent_responses) > _MAX_RECENT_RESPONSES:
             self._recent_responses.popitem(last=False)

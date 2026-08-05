@@ -116,6 +116,30 @@ def test_cancellation_after_open_commit_fails_connection_closed() -> None:
     asyncio.run(scenario())
 
 
+def test_cancellation_after_terminal_claim_fails_connection_closed() -> None:
+    async def scenario() -> None:
+        connection = _connection(_RecordingWebSocket())
+        response = _active_response(connection)
+        response._wire_opened = True  # pylint: disable=protected-access
+        await response.send_text("hello")
+        await connection._send_lock.acquire()  # pylint: disable=protected-access
+        done_task = asyncio.create_task(response.done())
+        try:
+            while not response.is_terminal:
+                await asyncio.sleep(0)
+
+            done_task.cancel()
+            with pytest.raises(asyncio.CancelledError):
+                await done_task
+
+            assert connection.ending
+            assert connection._resource_limit_reached.done()  # pylint: disable=protected-access
+        finally:
+            connection._send_lock.release()  # pylint: disable=protected-access
+
+    asyncio.run(scenario())
+
+
 def test_semantic_terminal_revalidation_does_not_fail_connection() -> None:
     async def scenario() -> None:
         connection = _connection(_RecordingWebSocket())
