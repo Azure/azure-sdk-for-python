@@ -6,8 +6,6 @@
 - Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
   ([#47870](https://github.com/Azure/azure-sdk-for-python/pull/47870))
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Propagate main agent attribute to child spans
   ([#47950](https://github.com/Azure/azure-sdk-for-python/pull/47950))
@@ -20,7 +18,6 @@
   ([#48379](https://github.com/Azure/azure-sdk-for-python/pull/48379))
 
 ### Other Changes
-
 - Simplify OneSettings change detection to use ETag-based mechanism instead of change version tracking to reflect spec update
 - Change OneSettings log messages from warning to debug level to reduce noise for users with firewalls
   ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
