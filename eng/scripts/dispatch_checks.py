@@ -8,6 +8,7 @@ import signal
 import shutil
 import subprocess
 import re
+import traceback
 from dataclasses import dataclass
 from typing import IO, List, Optional
 
@@ -22,6 +23,16 @@ from packaging.requirements import Requirement
 
 root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 ISOLATE_DIRS_TO_CLEAN: List[str] = []
+
+# asyncio's StreamReader defaults to a 64 KiB (2**16) per-line limit. Checks such
+# as the storage "samples" runner can legitimately emit a single log line larger
+# than that (e.g. a network-activity sample dumping a near-64 KiB Azure Queue
+# message body). When line reading hits the limit it raises ``LimitOverrunError``,
+# which previously escaped ``run_check`` and got normalized
+# to an opaque ``FAIL(99)`` with no diagnostics. Use a much larger limit so normal
+# oversized lines stream through intact; ``_pump`` suppresses pathological lines
+# beyond even this limit.
+SUBPROCESS_STREAM_LIMIT = 2**26  # 64 MiB
 
 
 @dataclass
@@ -110,7 +121,27 @@ async def _tee_stream(
             return ""
         chunks: List[str] = []
         while True:
-            line_b = await stream.readline()
+            try:
+                line_b = await stream.readuntil()
+            except asyncio.LimitOverrunError as ex:
+                consumed = ex.consumed
+                while True:
+                    if consumed:
+                        await stream.readexactly(consumed)
+                    try:
+                        await stream.readuntil()
+                        break
+                    except asyncio.LimitOverrunError as nested_ex:
+                        consumed = nested_ex.consumed
+                    except asyncio.IncompleteReadError:
+                        break
+                notice = "log line exceeded\n"
+                chunks.append(notice)
+                sink.write(prefix + notice)
+                sink.flush()
+                continue
+            except asyncio.IncompleteReadError as ex:
+                line_b = ex.partial
             if not line_b:
                 break
             line = line_b.decode(errors="replace")
@@ -256,6 +287,7 @@ async def run_check(
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 env=env,
+                limit=SUBPROCESS_STREAM_LIMIT,
             )
         except Exception as ex:  # subprocess failed to launch
             logger.error(f"Failed to start check {check} for {package}: {ex}")
@@ -336,6 +368,13 @@ def summarize(results: List[CheckResult]) -> int:
         )
     worst = max((r.exit_code for r in results), default=0)
     failed = [r for r in results if r.exit_code != 0]
+    # Surface stderr for failed checks so harness-level failures (e.g. a check
+    # coroutine that raised) aren't reduced to an opaque status code with no
+    # explanation in the summary.
+    for r in failed:
+        if r.stderr and r.stderr.strip():
+            print(f"\n--- STDERR: {r.package} :: {r.check} (exit {r.exit_code}) ---")
+            print(r.stderr.rstrip())
     print(
         f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}"
     )
@@ -467,7 +506,23 @@ async def run_all_checks(
         if isinstance(res, CheckResult):
             norm_results.append(res)
         elif isinstance(res, Exception):
-            norm_results.append(CheckResult(package, check, 99, 0.0, "", str(res)))
+            # The check coroutine itself raised (not the child process exiting
+            # non-zero). Surface the exception + traceback instead of letting it
+            # collapse into an opaque FAIL(99) with no diagnostics in the log.
+            tb = "".join(traceback.format_exception(type(res), res, res.__traceback__))
+            logger.error(
+                "Check %s for %s raised %s: %s\n%s",
+                check,
+                package,
+                type(res).__name__,
+                res,
+                tb,
+            )
+            norm_results.append(
+                CheckResult(
+                    package, check, 99, 0.0, "", f"{type(res).__name__}: {res}\n{tb}"
+                )
+            )
         else:
             norm_results.append(
                 CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}")
@@ -511,12 +566,14 @@ def configure_interrupt_handling():
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="""
+    parser = argparse.ArgumentParser(
+        description="""
 This script is the single point for all checks invoked by CI within this repo. It works in two phases.
     1. Identify which packages in the repo are in scope for this script invocation, based on a glob string and a service directory.
     2. Invoke one or multiple `checks` environments for each package identified as in scope.
 In the case of an environment invoking `pytest`, results can be collected in a junit xml file, and test markers can be selected via --mark_arg.
-""")
+"""
+    )
 
     parser.add_argument(
         "glob_string",
