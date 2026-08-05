@@ -169,15 +169,15 @@ class ProductionData(RestTranslatableMixin):
     """Production Data
 
     :keyword input_data: The data for which drift will be calculated
-    :type Input: ~azure.ai.ml.entities._input_outputs
+    :paramtype input_data: ~azure.ai.ml.entities.Input
     :keyword data_context: The context of the input dataset. Possible values
         include: model_inputs, model_outputs, training, test, validation, ground_truth
-    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
+    :paramtype data_context: ~azure.ai.ml.constants.MonitorDatasetContext
     :keyword pre_processing_component: ARM resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
     :keyword data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :paramtype data_window: BaselineDataRange
     :keyword data_column_names: The names of the columns in the dataset. Defaults to None.
     :paramtype data_column_names: Optional[Dict[str, str]]
     """
@@ -261,15 +261,15 @@ class ReferenceData(RestTranslatableMixin):
     """Reference Data
 
     :keyword input_data: The data for which drift will be calculated
-    :type Input: ~azure.ai.ml.entities._input_outputs
+    :paramtype input_data: ~azure.ai.ml.entities.Input
     :keyword data_context: The context of the input dataset. Possible values
         include: model_inputs, model_outputs, training, test, validation, ground_truth
-    :type MonitorDatasetContext: ~azure.ai.ml.constants.MonitorDatasetContext
+    :paramtype data_context: ~azure.ai.ml.constants.MonitorDatasetContext
     :keyword pre_processing_component: ARM resource ID of the component resource used to
         preprocess the data.
     :paramtype pre_processing_component: string
     :keyword data_window: The number of days or a time frame that a single monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :paramtype data_window: BaselineDataRange
     :keyword data_column_names: The names of the columns in the dataset. Defaults to None.
     :paramtype data_column_names: Optional[Dict[str, str]]
     """
@@ -1140,7 +1140,7 @@ class LlmData(RestTranslatableMixin):
     :keyword data_column_names: The names of columns in the input data.
     :paramtype data_column_names: Dict[str, str]
     :keyword data_window: The number of days or a time frame that a singal monitor looks back over the target.
-    :type data_window_size: BaselineDataRange
+    :paramtype data_window: BaselineDataRange
     """
 
     def __init__(

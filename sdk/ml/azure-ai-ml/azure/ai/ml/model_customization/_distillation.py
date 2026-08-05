@@ -47,10 +47,10 @@ def distillation(
     :keyword data_generation_task_type: The type of data to generate
 
         Acceptable values: NLI, NLU_QA, CONVERSATION, MATH, SUMMARIZATION
-    :type: data_generation_task_type: str
+    :paramtype data_generation_task_type: str
     :keyword teacher_model_endpoint_connection: The kind of teacher model connection that includes the name, endpoint
         url, and api_key.
-    :type: teacher_model_endpoint_connection: WorkspaceConnection
+    :paramtype teacher_model_endpoint_connection: WorkspaceConnection
     :keyword student_model: The model to train
     :paramtype student_model: typing.Union[Input, str]
     :keyword training_data: The training data to use. Should contain the questions but not the labels, defaults to None

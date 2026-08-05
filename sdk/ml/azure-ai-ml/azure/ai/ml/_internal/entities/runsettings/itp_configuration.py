@@ -9,7 +9,7 @@ from ....entities._job.job_resource_configuration import BaseProperty
 class ITPResourceConfiguration(BaseProperty):
     """ITP resource configuration.
 
-    :param gpu_count: Gpu count Defines how many gpu cores a single node gpu job will use.
+    :param gpu_count: Defines how many GPU cores a single node GPU job will use.
         Default value is 1.
     :type gpu_count: int
     :param cpu_count: Cpu count defines how many cpu cores that a single node cpu job will use.
@@ -43,7 +43,7 @@ class ITPPriorityConfiguration(BaseProperty):
         Default value is false.
     :type is_preemptible: bool
     :param node_count_set: Node count set determines how compute auto-scale nodes. The value
-        should be a list of integers in ascending order. And Only available when IsPreemptible is true.
+        should be a list of integers in ascending order. Only available when IsPreemptible is true.
     :type node_count_set: List[int]
     :param scale_interval: Scale interval in min.
     :type scale_interval: int
@@ -76,7 +76,7 @@ class ITPInteractiveConfiguration(BaseProperty):
     :type is_i_python_enabled: bool
     :param is_tensor_board_enabled: Whether to enable TensorBoard. Default value is false.
     :type is_tensor_board_enabled: bool
-    :param interactive_port: Allows user to specify a different interactive port. Available
+    :param interactive_port: Allows users to specify a different interactive port. Available
         value from 40000 to 49999.
     :type interactive_port: int
     """

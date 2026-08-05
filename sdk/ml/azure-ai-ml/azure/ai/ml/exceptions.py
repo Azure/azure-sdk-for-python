@@ -529,7 +529,7 @@ class UserErrorException(MlException):
 
 
 class CannotSetAttributeError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs.
+    """Exception raised when a user tries setting attributes of inputs/outputs.
 
     :param object_name: The name of the object whose attribute cannot be set.
     :type object_name: str
@@ -544,7 +544,7 @@ class CannotSetAttributeError(UserErrorException):
 
 
 class UnsupportedParameterKindError(UserErrorException):
-    """Exception raised when a user try setting attributes of inputs/outputs.
+    """Exception raised when a function receives an unsupported parameter kind.
 
     :param func_name: The name of the function that received the unsupported parameter kind.
     :type func_name: str
@@ -623,7 +623,7 @@ class MissingPositionalArgsError(KeywordError):
 
 
 class TooManyPositionalArgsError(KeywordError):
-    """Exception raised when too many positional arguments is provided in dynamic functions.
+    """Exception raised when too many positional arguments are provided in dynamic functions.
 
     :param func_name: The name of the function that received too many positional arguments.
     :type func_name: str
@@ -645,7 +645,7 @@ class TooManyPositionalArgsError(KeywordError):
 
 
 class MultipleValueError(KeywordError):
-    """Exception raised when giving multiple value of a keyword parameter in dynamic functions.
+    """Exception raised when giving multiple values of a keyword parameter in dynamic functions.
 
     :param func_name: The name of the function that received multiple values.
     :type func_name: str
@@ -978,7 +978,7 @@ class PipelineChildJobError(MlException):
 class InvalidVSCodeRequestError(MlException):
     """Exception raised when VS Code Debug is invoked with a remote endpoint.
 
-    VSCode debug is only supported for local endpoints.
+    VS Code debug is only supported for local endpoints.
 
     :param error_category: The error category, defaults to UserError.
     :type error_category: ErrorCategory
@@ -996,9 +996,9 @@ class InvalidVSCodeRequestError(MlException):
 
 
 class VSCodeCommandNotFound(MlException):
-    """Exception raised when VSCode instance cannot be instantiated.
+    """Exception raised when VS Code instance cannot be instantiated.
 
-    :param output: The output of the failed VSCode command, defaults to None.
+    :param output: The output of the failed VS Code command, defaults to None.
     :type output: str
     :param error_category: The error category, defaults to UserError.
     :type error_category: ErrorCategory
@@ -1019,7 +1019,7 @@ class VSCodeCommandNotFound(MlException):
 
 
 class LocalDeploymentGPUNotAvailable(MlException):
-    """Exception raised when local_enable_gpu is set and Nvidia GPU is not available.
+    """Exception raised when local_enable_gpu is set and NVIDIA GPU is not available.
 
     :param error_category: The error category, defaults to UserError.
     :type error_category: ErrorCategory
