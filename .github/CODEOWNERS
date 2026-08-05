@@ -78,7 +78,7 @@
 
 # ServiceLabel: %Cognitive - Content Safety
 # PRLabel: %Cognitive - Content Safety
-/sdk/contentsafety/    @mengaims
+/sdk/contentsafety/    @Azure/azure-sdk-write-contentsafety
 
 # PRLabel: %Cognitive - Content Understanding
 /sdk/contentunderstanding/    @bojunehsu @yungshinlintw

@@ -30,6 +30,7 @@ from ._foundry_serializer import (
     serialize_response,
 )
 from ._foundry_settings import FoundryStorageSettings
+from .._experimental import experimental
 
 if TYPE_CHECKING:
     from .._response_context import PlatformContext
@@ -134,6 +135,7 @@ def _apply_platform_headers(request: HttpRequest, context: PlatformContext | Non
         request.headers[FOUNDRY_CALL_ID] = context.call_id
 
 
+@experimental
 class FoundryStorageProvider:
     """An HTTP-backed response storage provider that persists data via the Foundry storage API.
 

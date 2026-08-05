@@ -18,6 +18,8 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 from typing import Any, Callable, Generic, Literal, TypeVar
 
+from azure.ai.agentserver.core._experimental import experimental
+
 from ._metadata import TaskMetadata
 
 Input = TypeVar("Input")
@@ -64,6 +66,7 @@ class _ExitForRecovery:
     __slots__ = ()
 
 
+@experimental
 class TaskContext(Generic[Input]):  # pylint: disable=too-many-instance-attributes
     """The single parameter to a resilient task function.
 
