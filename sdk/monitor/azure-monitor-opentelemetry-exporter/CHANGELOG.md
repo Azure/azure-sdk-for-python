@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b56 (Unreleased)
+## 1.0.0b56 (2026-08-05)
 
 ### Features Added
 - Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
@@ -26,7 +26,7 @@
   ([#47949](https://github.com/Azure/azure-sdk-for-python/pull/47949))
 - Harden OneSettings configuration manager and worker: handle non-retryable HTTP errors by slow-polling instead of retrying, fix worker holding its lock across network I/O, make shutdown a soft reset that leaves the singleton reusable, and make callback registration thread-safe and initialization-independent
   ([#48027](https://github.com/Azure/azure-sdk-for-python/pull/48027))
-- Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present <!-- cspell:ignore ikey -->
+- Align OneSettings feature-flag evaluation with the control-plane schema: use full-name `os`/`rp`/`attach` values, add `ikey` and `region` conditions, require exact single-value matches (removing list and version-range support), and only honor a `ver` condition when a matching `component` is also present
   ([#48059](https://github.com/Azure/azure-sdk-for-python/pull/48059))
 - Support remote toggling of local (offline) storage via the OneSettings `FEATURE_LOCAL_STORAGE` feature flag: the control plane can disable or re-enable disk-backed retry storage at runtime, but never overrides an explicit `disable_offline_storage=True` user opt-out. Statsbeat storage is decoupled from the user setting (always off), while customer-sdkstats honors the user setting and follows the remote toggle.
   ([#48379](https://github.com/Azure/azure-sdk-for-python/pull/48379))
