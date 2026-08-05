@@ -1,10 +1,23 @@
 # Release History
 
-## 2.0.0b10 (2026-07-31)
+## 2.0.0b11 (2026-08-05)
 
 ### Features Added
 
 - Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+
+### Breaking Changes
+
+- Removed the unused public `AgentServerHost.sse_keepalive_stream` helper.
+
+### Other Changes
+
+- The per-turn task `timeout` hard ceiling was raised from **1 day** to **7 days**. The default when unset is still **1 day**; a supplied value may now raise the per-turn budget up to 7 days. A value greater than 7 days (or a negative value) is still rejected at registration (`ValueError`, fail-fast, not clamped). This remains a per-turn cap only — multi-turn chains still live indefinitely across turns (the budget resets each turn).
+
+## 2.0.0b10 (2026-07-31)
+
+### Features Added
+
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 
