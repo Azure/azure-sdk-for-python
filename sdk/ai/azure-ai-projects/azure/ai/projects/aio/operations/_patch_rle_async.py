@@ -58,9 +58,11 @@ async def _acquire_instance(
 ) -> RLEInstance:
     """Acquire an instance under a group and poll until it reports the ``Running`` status.
 
-    The service may answer the create request with ``202`` (accepted, no warm instance yet) and a
-    ``Retry-After`` hint; in that case the request is re-issued until an instance is provisioned or
-    the timeout elapses. A ``429`` response surfaces as :class:`RLEAtCapacityError`.
+    The service may answer the create request with ``202`` (accepted, still provisioning). The create
+    operation is not idempotent, so the pending instance returned by the ``202`` is polled by its id
+    (honoring any ``Retry-After`` hint on the first wait) until it reports ``Running`` -- the create is
+    never re-issued, which would lease and leak an extra instance for each pending response. A ``429``
+    response surfaces as :class:`RLEAtCapacityError`.
 
     :param instances: Generated async instance operations bound to the project client.
     :type instances: ~azure.ai.projects.aio.operations.RLEInstancesOperations
@@ -80,32 +82,24 @@ async def _acquire_instance(
         captured["response"] = pipeline_response.http_response
         return deserialized
 
-    instance: Optional[RLEInstance] = None
-    while True:
-        try:
-            instance = await instances.create_instance(instance_group_id, cls=_capture)
-        except HttpResponseError as exc:
-            code = getattr(exc.response, "status_code", None)
-            if code == 429:
-                raise RLEAtCapacityError(
-                    f"instance group {instance_group_id} is at capacity",
-                    retry_after=_parse_retry_after(exc.response),
-                ) from exc
-            raise
-        status_code = getattr(captured.get("response"), "status_code", None)
-        if status_code == 202:
-            if time.monotonic() >= deadline:
-                raise RLEError(
-                    f"instance group {instance_group_id} did not provision an instance "
-                    f"within {create_timeout_s:.0f}s"
-                )
-            await asyncio.sleep(_parse_retry_after(captured.get("response")) or poll_interval_s)
-            continue
-        break
+    # Create the instance exactly once. create_instance is not idempotent: a 202 already carries a
+    # pending instance, so it is polled by id below rather than re-POSTed.
+    try:
+        instance = await instances.create_instance(instance_group_id, cls=_capture)
+    except HttpResponseError as exc:
+        if getattr(exc.response, "status_code", None) == 429:
+            raise RLEAtCapacityError(
+                f"instance group {instance_group_id} is at capacity",
+                retry_after=_parse_retry_after(exc.response),
+            ) from exc
+        raise
 
     if instance is None or not instance.instance_id:
         raise RLEError("service did not return an instance id")
     instance_id = instance.instance_id
+
+    # The initial (possibly 202) response may carry a Retry-After hint for the first poll.
+    next_wait = _parse_retry_after(captured.get("response")) or poll_interval_s
     try:
         while not _status_matches(instance.status, RLEInstanceStatus.RUNNING):
             if _status_matches(instance.status, RLEInstanceStatus.FAILED) or _status_matches(
@@ -117,7 +111,8 @@ async def _acquire_instance(
                     f"instance {instance_id} not ready after {create_timeout_s:.0f}s "
                     f"(last status: {instance.status or 'unknown'})"
                 )
-            await asyncio.sleep(poll_interval_s)
+            await asyncio.sleep(next_wait)
+            next_wait = poll_interval_s
             instance = await instances.get_instance(instance_group_id, instance_id)
     except BaseException:
         # The instance was leased but never became usable; release it so it does not leak quota.

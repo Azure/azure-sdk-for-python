@@ -216,6 +216,39 @@ class _FakeInstances:
         return _record_runtime(self.calls, "state", instance_id)
 
 
+class _FakeInstances202:
+    """Instance fake whose create returns ``202`` (pending) and later reports ``Running``.
+
+    Regression fake for the 202 path: ``create_instance`` is non-idempotent, so it must be issued
+    exactly once and the pending instance it returns must be polled by id via ``get_instance``.
+    ``create_count``/``get_count`` record the call counts so a test can prove the create is not
+    re-issued while provisioning.
+    """
+
+    def __init__(self, *, running_after=1):
+        self.create_count = 0
+        self.get_count = 0
+        self.released = []
+        self._running_after = running_after
+
+    def create_instance(self, instance_group_id, *, cls=None):
+        self.create_count += 1
+        instance = _FakeInstance("inst-0", RLEInstanceStatus.CREATING)
+        response = _pipeline_response(202, {"Retry-After": "0"})
+        if cls is not None:
+            return cls(response, instance, {})
+        return instance
+
+    def get_instance(self, instance_group_id, instance_id):
+        self.get_count += 1
+        status = RLEInstanceStatus.RUNNING if self.get_count >= self._running_after else RLEInstanceStatus.CREATING
+        return _FakeInstance(instance_id, status)
+
+    def release_instance(self, instance_group_id, instance_id):
+        self.released.append(instance_id)
+        return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
+
+
 def _make_openenv_client(num_instances=1, *, fail_on=None, groups=None, instances=None, environments=None):
     groups = groups or _FakeInstanceGroups()
     instances = instances or _FakeInstances(fail_on=fail_on)
@@ -274,6 +307,21 @@ def test_openenv_get_instance_releases_failed_instance():
         with pytest.raises(RLEError):
             client.get_instance()
         assert instances.released == ["inst-0"]
+
+
+def test_openenv_get_instance_polls_pending_202_without_recreating():
+    # A 202 already contains a pending instance. create_instance is not idempotent, so it must be
+    # issued exactly once and the pending instance polled by id -- re-POSTing would lease and leak an
+    # extra instance for every pending response.
+    instances = _FakeInstances202(running_after=2)
+    client, _groups, _instances = _make_openenv_client(num_instances=1, instances=instances)
+    with client:
+        with client.get_instance() as instance:
+            assert instance.id == "inst-0"
+            assert instance.instance.status == RLEInstanceStatus.RUNNING
+    assert instances.create_count == 1
+    assert instances.get_count >= 1
+    assert instances.released == ["inst-0"]
 
 
 def test_openenv_ensure_group_maps_quota_exceeded():
@@ -422,6 +470,37 @@ class _AsyncFakeInstances:
         return _record_runtime(self.calls, "state", instance_id)
 
 
+class _AsyncFakeInstances202:
+    """Async instance fake whose create returns ``202`` (pending) and later reports ``Running``.
+
+    Async regression fake for the 202 path: ``create_instance`` is non-idempotent, so it must be
+    issued exactly once and the pending instance polled by id via ``get_instance``.
+    """
+
+    def __init__(self, *, running_after=1):
+        self.create_count = 0
+        self.get_count = 0
+        self.released = []
+        self._running_after = running_after
+
+    async def create_instance(self, instance_group_id, *, cls=None):
+        self.create_count += 1
+        instance = _FakeInstance("inst-0", RLEInstanceStatus.CREATING)
+        response = _pipeline_response(202, {"Retry-After": "0"})
+        if cls is not None:
+            return cls(response, instance, {})
+        return instance
+
+    async def get_instance(self, instance_group_id, instance_id):
+        self.get_count += 1
+        status = RLEInstanceStatus.RUNNING if self.get_count >= self._running_after else RLEInstanceStatus.CREATING
+        return _FakeInstance(instance_id, status)
+
+    async def release_instance(self, instance_group_id, instance_id):
+        self.released.append(instance_id)
+        return _FakeInstance(instance_id, RLEInstanceStatus.RUNNING)
+
+
 def _make_async_openenv_client(num_instances=1, *, fail_on=None, groups=None, instances=None, environments=None):
     groups = groups or _AsyncFakeInstanceGroups()
     instances = instances or _AsyncFakeInstances(fail_on=fail_on)
@@ -495,6 +574,25 @@ def test_async_openenv_get_instance_releases_failed_instance():
             with pytest.raises(RLEError):
                 await client.get_instance()
             assert instances.released == ["inst-0"]
+
+    asyncio.run(run())
+
+
+def test_async_openenv_get_instance_polls_pending_202_without_recreating():
+    async def run():
+        # A 202 already contains a pending instance. create_instance is not idempotent, so it must be
+        # issued exactly once and the pending instance polled by id -- re-POSTing would lease and leak
+        # an extra instance for every pending response.
+        instances = _AsyncFakeInstances202(running_after=2)
+        client, _groups, _instances = _make_async_openenv_client(num_instances=1, instances=instances)
+        async with client:
+            instance = await client.get_instance()
+            async with instance:
+                assert instance.id == "inst-0"
+                assert instance.instance.status == RLEInstanceStatus.RUNNING
+        assert instances.create_count == 1
+        assert instances.get_count >= 1
+        assert instances.released == ["inst-0"]
 
     asyncio.run(run())
 
