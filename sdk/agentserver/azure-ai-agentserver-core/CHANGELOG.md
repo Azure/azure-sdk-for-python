@@ -1,6 +1,14 @@
 # Release History
 
-## 2.0.0b11 (Unreleased)
+## 2.0.0b11 (2026-08-05)
+
+### Features Added
+
+- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+
+### Breaking Changes
+
+- Removed the unused public `AgentServerHost.sse_keepalive_stream` helper.
 
 ### Other Changes
 
@@ -10,7 +18,6 @@
 
 ### Features Added
 
-- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 
