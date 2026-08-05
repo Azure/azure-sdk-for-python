@@ -49,7 +49,7 @@ class TestVectorSimilarityQuery(unittest.TestCase):
 
         # control-plane (create_database / create_container / seeding / delete) on key-auth.
         cls.key_client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
-        cls.test_db = cls.key_client.create_database(str(uuid.uuid4()))
+        cls.test_db = cls.key_client.create_database(test_config.unique_database_id("vector-similarity"))
         cls.created_quantized_cosine_container = cls.test_db.create_container(
             id="quantized" + cls.TEST_CONTAINER_ID,
             partition_key=PartitionKey(path="/pk"),

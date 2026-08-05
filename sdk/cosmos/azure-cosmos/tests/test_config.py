@@ -36,6 +36,39 @@ except:
 SPLIT_TIMEOUT = 60*10  # timeout test at 10 minutes
 SLEEP_TIME = 30  # sleep for 30 seconds
 
+# The live tests run against fixed, long-lived accounts that are shared with other
+# language SDKs and with concurrent runs of this suite. Databases are the only
+# account-scoped namespace we control, so every database this suite creates carries a
+# prefix identifying the run that owns it. That keeps concurrent runs from colliding and
+# lets cleanup delete only what a given run created.
+RESOURCE_PREFIX = "PythonSDKTest"
+
+
+def _build_run_id():
+    # Build.BuildId is shared by every matrix leg of one pipeline run, which is what an
+    # out-of-band janitor matches on; the random suffix keeps parallel legs distinct.
+    build_id = os.getenv('BUILD_BUILDID')
+    suffix = uuid.uuid4().hex[:8]
+    return "{}-{}".format(build_id, suffix) if build_id else suffix
+
+
+RUN_ID = _build_run_id()
+
+
+def unique_database_id(label=""):
+    """Build a database id owned by this test run.
+
+    Format: ``PythonSDKTest-<run id>-<label>-<random>``. Callers that need particular
+    characters in the id (unicode, leading spaces) can embed this in a larger id; only
+    the prefix is required for ownership.
+    """
+    parts = [RESOURCE_PREFIX, RUN_ID]
+    if label:
+        parts.append(label)
+    parts.append(uuid.uuid4().hex)
+    return "-".join(parts)
+
+
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
@@ -175,7 +208,7 @@ class TestConfig(object):
     THROUGHPUT_FOR_2_PARTITIONS = 12000
     THROUGHPUT_FOR_1_PARTITION = 400
 
-    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', "PythonSDKTestDatabase-" + str(uuid.uuid4()))
+    TEST_DATABASE_ID = os.getenv('COSMOS_TEST_DATABASE_ID', unique_database_id("Shared"))
 
     TEST_SINGLE_PARTITION_CONTAINER_ID = "SinglePartitionTestContainer-" + str(uuid.uuid4())
     TEST_MULTI_PARTITION_CONTAINER_ID = "MultiPartitionTestContainer-" + str(uuid.uuid4())

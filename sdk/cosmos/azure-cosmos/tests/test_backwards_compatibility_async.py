@@ -47,9 +47,9 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     async def test_session_token_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `session_token` on irrelevant methods
         # Database
-        database = await self.client.create_database(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database = await self.client.create_database(test_config.unique_database_id("backcompat"), session_token=str(uuid.uuid4()))
         assert database is not None
-        database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), session_token=str(uuid.uuid4()))
+        database2 = await self.client.create_database_if_not_exists(test_config.unique_database_id("backcompat"), session_token=str(uuid.uuid4()))
         assert database2 is not None
         database_list = [db async for db in self.client.list_databases(session_token=str(uuid.uuid4()))]
         database_list2 = [db async for db in self.client.query_databases(query="select * from c", session_token=str(uuid.uuid4()))]
@@ -93,9 +93,9 @@ class TestBackwardsCompatibilityAsync(unittest.IsolatedAsyncioTestCase):
     async def test_etag_match_condition_compatibility_async(self):
         # Verifying that behavior is unaffected across the board for using `etag`/`match_condition` on irrelevant methods
         # Database
-        database = await self.client.create_database(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
+        database = await self.client.create_database(test_config.unique_database_id("backcompat"), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         assert database is not None
-        database2 = await self.client.create_database_if_not_exists(str(uuid.uuid4()), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
+        database2 = await self.client.create_database_if_not_exists(test_config.unique_database_id("backcompat"), etag=str(uuid.uuid4()), match_condition=MatchConditions.IfNotModified)
         assert database2 is not None
         await self.client.delete_database(database2.id, etag=str(uuid.uuid4()), match_condition=MatchConditions.IfModified)
         try:
