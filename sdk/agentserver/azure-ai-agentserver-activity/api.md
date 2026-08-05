@@ -87,9 +87,6 @@ namespace azure.ai.agentserver.activity
 
         def shutdown_handler(self, fn: Callable[[], Awaitable[None]]) -> Callable[[], Awaitable[None]]: ...
 
-        @staticmethod
-        async def sse_keepalive_stream(iterator: AsyncIterable[_Content], interval: int) -> AsyncIterator[_Content]: ...
-
         def url_path_for(
                 self, 
                 name: str, 
