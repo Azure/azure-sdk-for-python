@@ -847,9 +847,11 @@ class TestAsyncAvailabilityStrategy:
     @pytest.mark.parametrize("operation", [READ, QUERY_PK, CHANGE_FEED, CREATE, UPSERT, REPLACE, DELETE, PATCH, BATCH])
     async def test_per_partition_circular_breaker_with_cancelled_first_future_async(self, operation, setup):
         # QUERY, READ_ALL are not included because currently they are not targeting to a specific pkRange
-        os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"] = "True"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"] = "5"
-        os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"] = "5"
+        previous_env = test_config.set_environment_variables(
+            AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER="True",
+            AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE="5",
+            AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ="5",
+        )
 
         try:
             """Test that when per partition circular breaker is enabled and after hitting the threshold, subsequent requests go directly to second region.
@@ -938,9 +940,7 @@ class TestAsyncAvailabilityStrategy:
             await setup_with_fault_injection['client'].close()
             await setup_without_fault['client'].close()
         finally:
-            del os.environ["AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_WRITE"]
-            del os.environ["AZURE_COSMOS_CONSECUTIVE_ERROR_COUNT_TOLERATED_FOR_READ"]
+            test_config.restore_environment_variables(previous_env)
         await self._clean_up_container(setup['client_without_fault'], setup_with_fault_injection['db'].id, setup_with_fault_injection['col'].id)
 
     @pytest.mark.asyncio

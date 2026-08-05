@@ -69,6 +69,31 @@ def unique_database_id(label=""):
     return "-".join(parts)
 
 
+def set_environment_variables(**overrides):
+    """Apply environment variable overrides and return the values they replaced.
+
+    Tests that toggle SDK feature flags must put the process back exactly as they found
+    it, because several of those flags are also set for the whole job by the pipeline.
+    Restoring an assumed default instead of the captured value silently disables the
+    feature under test for everything that runs later in the same process.
+
+    Pass a ``None`` value to unset a variable. Hand the return value to
+    :func:`restore_environment_variables` from a ``finally`` block.
+    """
+    previous = {name: os.environ.get(name) for name in overrides}
+    restore_environment_variables(overrides)
+    return previous
+
+
+def restore_environment_variables(previous):
+    """Reapply the environment variable values captured by :func:`set_environment_variables`."""
+    for name, value in previous.items():
+        if value is None:
+            os.environ.pop(name, None)
+        else:
+            os.environ[name] = value
+
+
 class TestConfig(object):
     local_host = 'https://localhost:8081/'
     # [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Cosmos DB Emulator Key")]
