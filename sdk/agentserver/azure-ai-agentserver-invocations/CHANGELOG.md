@@ -18,11 +18,17 @@
 ### Bugs Fixed
 
 - Preserved an application-selected WebSocket close code in structured close
-  diagnostics instead of recording a normal `1000` after the handler returned.
+  diagnostics when the handler returns or raises after successfully sending the close frame.
+- Propagated `x-platform-server` and incoming W3C trace context through the
+  WebSocket upgrade and connection lifetime.
+- Rejected malformed Voice history insertion predecessors before invoking
+  application mutation callbacks.
 
 ### Other Changes
 
-- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b11`, which provides the shared `experimental` decorator used by the Voice API surface.
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b11`, the
+  first Core package version that exports the shared `experimental` decorator,
+  and added WebSocket platform identity and trace-context propagation.
 - Voice now ships in the Invocations distribution and shares its package version
   and release artifact; no separate Voice package or server identity is required.
 - Voice follows the existing `invocations_ws` tracing behavior: the transport

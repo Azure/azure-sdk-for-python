@@ -314,11 +314,13 @@ app.run()
 
 ### Per-connection tracing
 
-`invocations_ws` does not create a framework-owned connection span. Application
-protocols and handlers own any spans they need, while the transport reports its
-connection outcome through the structured close-event log described above. The
-typed Voice submodule follows this same tracing behavior and does not add
-connection or turn spans.
+`invocations_ws` attaches W3C trace context and baggage from the WebSocket
+upgrade headers for the connection lifetime, so spans created by application
+protocols and handlers inherit the caller's context. It does not create a
+framework-owned connection span; the transport reports its connection outcome
+through the structured close-event log described above. The typed Voice
+submodule follows this same tracing behavior and does not add connection or turn
+spans.
 
 ### Handler signature
 

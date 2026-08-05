@@ -2,14 +2,17 @@
 
 ## 2.0.0b11 (Unreleased)
 
-### Features Added
+### Bugs Fixed
 
-- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
+- Included the shared `experimental` decorator in the package distribution. Although listed in the `2.0.0b10` release notes, it was absent from the published `2.0.0b10` artifacts.
+- Added the combined `x-platform-server` header to WebSocket acceptance responses in addition to HTTP responses.
+- Propagated incoming W3C trace context and baggage for the lifetime of WebSocket connections without creating framework-owned spans.
 
 ## 2.0.0b10 (2026-07-31)
 
 ### Features Added
 
+- Added a shared `experimental` decorator for marking Agent Server preview feature surfaces with docstring notes and one-time runtime warnings. The resilient task primitive and Foundry storage public APIs are now marked experimental.
 - Added public `MiddlewareFactory` and `StreamContent` typing aliases for host middleware and streaming helpers.
 - Added `set_resilient_tasks_enabled` / `resilient_tasks_enabled` to `azure.ai.agentserver.core.tasks` — a process-global switch (default off) that force-enables the resilient `TaskManager`'s startup recovery scan even before any durable task is declared (useful when tasks are registered lazily after startup).
 

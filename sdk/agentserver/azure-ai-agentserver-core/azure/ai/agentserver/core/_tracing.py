@@ -465,10 +465,10 @@ class TraceContextMiddleware:
     """Pure-ASGI middleware that propagates W3C trace context and baggage.
 
     Extracts ``traceparent``, ``tracestate``, and ``baggage`` headers from
-    incoming HTTP requests using the standard W3C propagators and attaches
-    the resulting context for the duration of the request.  This ensures
-    that any spans created downstream (e.g. by agent-framework / MAF) are
-    automatically children of the caller's trace.
+    incoming HTTP requests and WebSocket upgrades using the standard W3C
+    propagators. The resulting context remains attached for the HTTP request
+    or the full WebSocket connection lifetime, ensuring that spans created
+    downstream are automatically children of the caller's trace.
 
     This middleware does **not** create its own span — it only propagates
     the incoming context so that downstream instrumentation inherits it.
@@ -481,26 +481,26 @@ class TraceContextMiddleware:
         self.app = app
 
     async def __call__(self, scope: Any, receive: Any, send: Any) -> None:
-        if scope["type"] != "http":
+        if scope["type"] not in ("http", "websocket"):
             await self.app(scope, receive, send)
             return
 
         # Build a simple dict of headers for the propagators
         raw_headers: list[tuple[bytes, bytes]] = scope.get("headers", [])
-        headers = {
-            k.decode("latin-1"): v.decode("latin-1")
-            for k, v in raw_headers
-        }
+        headers = {k.decode("latin-1"): v.decode("latin-1") for k, v in raw_headers}
 
         # Use the global propagator to extract trace context + baggage
         from opentelemetry.propagate import extract  # pylint: disable=import-outside-toplevel
+
         ctx = extract(carrier=headers)
 
         # Add x-request-id as baggage for downstream propagation
         x_request_id = headers.get("x-request-id")
         if x_request_id:
             ctx = _otel_baggage.set_baggage(
-                "x_request_id", x_request_id, context=ctx,
+                "x_request_id",
+                x_request_id,
+                context=ctx,
             )
 
         token = _otel_context.attach(ctx)

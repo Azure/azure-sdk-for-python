@@ -90,6 +90,20 @@ def _make_streaming_server_with_child_span():
     return app
 
 
+def _make_websocket_server_with_child_span():
+    """Server whose WebSocket handler creates an application-owned span."""
+    app = InvocationAgentServerHost(configure_observability=None)
+    child_tracer = trace.get_tracer("test.websocket.application")
+
+    @app.ws_handler
+    async def handle(websocket) -> None:
+        await websocket.receive_text()
+        with child_tracer.start_as_current_span("websocket_application_span"):
+            await websocket.send_text("ready")
+
+    return app
+
+
 def test_framework_span_parented_under_incoming_traceparent():
     """A span created inside the handler should be parented under the incoming
     traceparent — there is no intermediate invoke_agent span.
@@ -125,6 +139,36 @@ def test_framework_span_parented_under_incoming_traceparent():
     # Framework span should be parented directly under the caller span
     assert fw.parent is not None, "Framework span has no parent"
     assert format(fw.parent.span_id, "016x") == caller_span_id
+
+
+def test_websocket_handler_span_parented_under_upgrade_traceparent():
+    """An application span inherits W3C context from WebSocket upgrade headers."""
+    from opentelemetry.propagate import inject
+
+    server = _make_websocket_server_with_child_span()
+    client = TestClient(server)
+
+    caller_tracer = trace.get_tracer("test.websocket.caller")
+    with caller_tracer.start_as_current_span("WebSocketCaller") as caller_span:
+        caller_trace_id = caller_span.context.trace_id
+        caller_span_id = caller_span.context.span_id
+        headers: dict[str, str] = {}
+        inject(headers)
+
+    # Connect after the caller span leaves the ambient ContextVar. This makes
+    # the upgrade header the only way the server can recover the parent; a
+    # TestClient portal must not make the test pass by copying caller context.
+    with client.websocket_connect("/invocations_ws", headers=headers) as websocket:
+        websocket.send_text("start")
+        assert websocket.receive_text() == "ready"
+
+    spans = _EXPORTER.get_finished_spans()
+    application_spans = [span for span in spans if span.name == "websocket_application_span"]
+    assert len(application_spans) == 1
+    application_span = application_spans[0]
+    assert application_span.context.trace_id == caller_trace_id
+    assert application_span.parent is not None
+    assert application_span.parent.span_id == caller_span_id
 
 
 def test_framework_span_parented_under_incoming_traceparent_streaming():

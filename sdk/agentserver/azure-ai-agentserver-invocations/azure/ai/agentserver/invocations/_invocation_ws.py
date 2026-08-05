@@ -13,7 +13,7 @@ the user handler with:
   on ``AgentConfig.ws_ping_interval``) so idle connections can survive
   upstream proxy / load-balancer idle timeouts;
 * a clean close on handler return (code 1000) or a 1011 close on uncaught
-  handler exceptions;
+    handler exceptions, unless the application already sent a close frame;
 * a structured close-event log line carrying
   ``azure.ai.agentserver.invocations_ws.session_id``,
   ``azure.ai.agentserver.invocations_ws.close_code``, and
@@ -234,9 +234,9 @@ class _WSHandlerMixin(_MixinBase):
         original_send = websocket.send
 
         async def _tracked_send(message: MutableMapping[str, Any]) -> None:
+            await original_send(message)
             if message.get("type") == "websocket.close":
                 websocket.scope[_APPLICATION_CLOSE_CODE] = int(message.get("code", InvocationsWSConstants.CLOSE_NORMAL))
-            await original_send(message)
 
         websocket.send = _tracked_send  # type: ignore[method-assign]
         try:
@@ -247,7 +247,12 @@ class _WSHandlerMixin(_MixinBase):
             # the exception so the ``finally`` block below can record it,
             # then re-raise via ``finally`` so cancellation is never
             # swallowed.
-            close_code = InvocationsWSConstants.CLOSE_INTERNAL_ERROR
+            close_code = int(
+                websocket.scope.get(
+                    _APPLICATION_CLOSE_CODE,
+                    InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                )
+            )
             handler_exc = exc
             raise
         finally:
@@ -317,7 +322,15 @@ class _WSHandlerMixin(_MixinBase):
                 exc,
                 exc_info=True,
             )
-            return InvocationsWSConstants.CLOSE_INTERNAL_ERROR, exc
+            return (
+                int(
+                    websocket.scope.get(
+                        _APPLICATION_CLOSE_CODE,
+                        InvocationsWSConstants.CLOSE_INTERNAL_ERROR,
+                    )
+                ),
+                exc,
+            )
 
     async def _finalize_session(
         self,

@@ -238,6 +238,39 @@ def test_history_create_rejects_privileged_role() -> None:
         )
 
 
+@pytest.mark.parametrize("previous_item_id", ["", "anything", "hi_", "it_", "in_1"])
+def test_history_create_rejects_invalid_previous_item_id(previous_item_id) -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="root or start with hi_ or it_"):
+        parse_conversation_item_create(
+            {
+                "id": "m_history",
+                "item": {
+                    "id": "hi_1",
+                    "role": "user",
+                    "content": [{"type": "input_text", "text": "history"}],
+                },
+                "previous_item_id": previous_item_id,
+            }
+        )
+
+
+@pytest.mark.parametrize("previous_item_id", ["root", "hi_previous", "it_previous"])
+def test_history_create_accepts_valid_previous_item_id(previous_item_id) -> None:
+    event = parse_conversation_item_create(
+        {
+            "id": "m_history",
+            "item": {
+                "id": "hi_1",
+                "role": "user",
+                "content": [{"type": "input_text", "text": "history"}],
+            },
+            "previous_item_id": previous_item_id,
+        }
+    )
+
+    assert event.previous_item_id == previous_item_id
+
+
 def test_history_delete_rejects_non_history_input_id() -> None:
     with pytest.raises(VoiceBridgeProtocolError, match="must start with hi_ or it_"):
         parse_conversation_item_delete({"id": "m_history_delete", "item_id": "in_1"})

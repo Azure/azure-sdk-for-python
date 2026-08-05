@@ -321,14 +321,14 @@ A reattach creates a new runtime, runs activation with `reconnect=True`, and emi
 
 ## 7. SDK observability and privacy
 
-Voice follows the raw `invocations_ws` tracing contract: neither layer creates a framework-owned connection or turn span. Applications and downstream frameworks own any spans they require. The transport emits one structured close-event log, while Voice protocol metrics cover activation, callback duration/error, first output, terminal kind, protocol violations, active connections, and actual close code without payload or ID dimensions.
+Voice follows the raw `invocations_ws` tracing contract: neither layer creates a framework-owned connection or turn span. Incoming W3C context and baggage from the WebSocket upgrade remain attached for the connection lifetime, so application and downstream-framework spans inherit the caller context. The transport emits one structured close-event log, while Voice protocol metrics cover activation, callback duration/error, first output, terminal kind, protocol violations, active connections, and actual close code without payload or ID dimensions.
 
 SDK-owned metrics, structured logs, and wire errors exclude transcripts, generated text, greeting/prompt/`heard_text`, caller metadata, DTMF digits, image/SAS references, tool payloads, credentials, and arbitrary exception messages. GenAI content capture remains governed by the parent host's standard observability configuration.
 
 Voice requires no protocol-specific changes to Core. It reuses existing Invocations support for:
 
 - actual application-selected close reporting;
-- package identity on ordinary HTTP responses;
+- package identity on HTTP responses and WebSocket acceptances;
 - structured WebSocket close diagnostics.
 
 ## 8. Compatibility, validation, and open decisions

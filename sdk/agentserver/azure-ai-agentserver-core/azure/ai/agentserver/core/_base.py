@@ -132,7 +132,7 @@ def _mask_uri(uri: str) -> str:
 
 
 class _PlatformHeaderMiddleware:
-    """Pure-ASGI middleware that adds ``x-platform-server`` header to responses.
+    """Add ``x-platform-server`` to HTTP responses and WebSocket acceptances.
 
     Unlike ``BaseHTTPMiddleware``, this passes the ``receive`` callable
     through to the inner application untouched, which preserves
@@ -144,12 +144,14 @@ class _PlatformHeaderMiddleware:
         self._get_server_version = get_server_version
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        if scope["type"] != "http":
+        if scope["type"] not in ("http", "websocket"):
             await self.app(scope, receive, send)
             return
 
+        header_message_type = "http.response.start" if scope["type"] == "http" else "websocket.accept"
+
         async def _send_with_header(message: MutableMapping[str, Any]) -> None:
-            if message["type"] == "http.response.start":
+            if message["type"] == header_message_type:
                 headers = list(message.get("headers", []))
                 headers.append((b"x-platform-server", self._get_server_version().encode()))
                 message = {**message, "headers": headers}
@@ -438,9 +440,9 @@ class AgentServerHost(Starlette):
             **kwargs,
         )
 
-        # Extract W3C trace context (traceparent/tracestate) and baggage
-        # from incoming HTTP requests so that any spans created downstream
-        # (e.g. by MAF / agent-framework) are children of the caller's trace.
+        # Extract W3C trace context (traceparent/tracestate) and baggage from
+        # incoming HTTP requests and WebSocket upgrades so that any spans
+        # created downstream are children of the caller's trace.
         # We do NOT create a SERVER span ourselves — we only propagate context.
         from azure.ai.agentserver.core._tracing import TraceContextMiddleware  # pylint: disable=import-outside-toplevel
 

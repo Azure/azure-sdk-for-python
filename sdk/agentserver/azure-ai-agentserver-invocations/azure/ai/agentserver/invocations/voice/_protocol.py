@@ -248,8 +248,15 @@ def parse_conversation_item_create(payload: Mapping[str, Any]) -> ConversationIt
         raise VoiceBridgeProtocolError("conversation.item.create role must be user", close_code=1008)
     content = parse_content_parts(raw_item.get("content"), "conversation.item.create")
     previous_item_id = optional_string(payload, "previous_item_id")
-    if previous_item_id == "":
-        raise VoiceBridgeProtocolError("previous_item_id must be non-empty when present")
+    if previous_item_id is not None and not (
+        previous_item_id == "root"
+        or (previous_item_id.startswith("hi_") and len(previous_item_id) > 3)
+        or (previous_item_id.startswith("it_") and len(previous_item_id) > 3)
+    ):
+        raise VoiceBridgeProtocolError(
+            "previous_item_id must be root or start with hi_ or it_",
+            close_code=1008,
+        )
     return ConversationItemCreateEvent(
         request_id=request_id,
         item=ConversationHistoryItem(item_id=item_id, content=content),

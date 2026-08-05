@@ -1714,6 +1714,40 @@ def test_history_mutation_result_precedes_dependent_turn() -> None:
         assert websocket.receive_json()["type"] == "response.done"
 
 
+def test_invalid_history_predecessor_is_rejected_before_callback() -> None:
+    app = _app()
+    callback_called = threading.Event()
+
+    @app.on_conversation_item_create
+    async def on_create(_session, _event) -> None:
+        callback_called.set()
+
+    @app.on_user_message
+    async def on_message(_session, _event, response: VoiceResponse) -> None:
+        await response.decline()
+
+    with pytest.raises(WebSocketDisconnect) as exc_info:
+        with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+            _activate(websocket)
+            websocket.send_json(
+                {
+                    "type": "conversation.item.create",
+                    "id": "m_history",
+                    "ts": _TS,
+                    "previous_item_id": "anything",
+                    "item": {
+                        "id": "hi_1",
+                        "role": "user",
+                        "content": [{"type": "input_text", "text": "order 42"}],
+                    },
+                }
+            )
+            websocket.receive_json()
+
+    assert exc_info.value.code == 1008
+    assert not callback_called.is_set()
+
+
 def test_history_callback_failure_emits_correlated_failure() -> None:
     app = _app()
 

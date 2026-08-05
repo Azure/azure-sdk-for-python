@@ -109,10 +109,34 @@ def test_ws_close_event_records_application_selected_code(caplog):
     assert getattr(matches[-1], "azure.ai.agentserver.invocations_ws.close_code") == 1008
 
 
+def test_ws_close_event_preserves_sent_code_when_handler_then_raises(caplog):
+    """A successful application close remains the wire code after a later error."""
+    app = InvocationAgentServerHost(configure_observability=None)
+
+    @app.ws_handler
+    async def handler(websocket):
+        await websocket.close(code=1008, reason="Policy violation")
+        raise RuntimeError("post-close failure")
+
+    client = TestClient(app)
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        with client.websocket_connect("/invocations_ws") as ws:
+            with pytest.raises(WebSocketDisconnect) as exc_info:
+                ws.receive_text()
+
+    assert exc_info.value.code == 1008
+    matches = _records_with_ws_extras(caplog.records)
+    assert matches
+    record = matches[-1]
+    assert getattr(record, InvocationsWSConstants.ATTR_SPAN_CLOSE_CODE) == 1008
+    assert getattr(record, InvocationsWSConstants.ATTR_SPAN_ERROR_CODE) == "internal_error"
+
+
 # ---------------------------------------------------------------------------
 # Exception details are NOT leaked into the structured payload
 # (parity with test_error_hides_details_by_default)
 # ---------------------------------------------------------------------------
+
 
 def test_ws_close_event_log_does_not_leak_exception_message(caplog):
     """The close-event log line does NOT carry the handler exception text."""

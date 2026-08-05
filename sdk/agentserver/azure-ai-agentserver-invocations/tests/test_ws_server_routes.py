@@ -49,9 +49,24 @@ def test_readiness_still_works_with_ws_registered():
     assert "x-platform-server" in resp.headers
 
 
+def test_ws_upgrade_includes_combined_platform_server_header():
+    """The WebSocket acceptance carries both Core and Invocations identities."""
+    app = _make_echo_ws_app()
+    client = TestClient(app)
+
+    with client.websocket_connect("/invocations_ws") as ws:
+        headers = {key.decode("latin-1").lower(): value.decode("latin-1") for key, value in (ws.extra_headers or [])}
+
+    server_header = headers.get("x-platform-server")
+    assert server_header is not None
+    assert "azure-ai-agentserver-core/" in server_header
+    assert "azure-ai-agentserver-invocations/" in server_header
+
+
 # ---------------------------------------------------------------------------
 # Coexistence with HTTP /invocations
 # ---------------------------------------------------------------------------
+
 
 def test_http_and_ws_share_same_host():
     """Both transports work on the same app — single session, single process."""
