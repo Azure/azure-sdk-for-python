@@ -3262,7 +3262,7 @@ def build_vm_skus_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class AgentPoolsOperations:
+class AgentPoolsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -4932,7 +4932,7 @@ class AgentPoolsOperations:
         return deserialized  # type: ignore
 
 
-class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
+class ManagedClustersOperations:  # pylint: disable=docstring-missing-param,too-many-public-methods
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -8896,7 +8896,7 @@ class ManagedClustersOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
 
-class MaintenanceConfigurationsOperations:
+class MaintenanceConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -9349,7 +9349,7 @@ class MaintenanceConfigurationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MaintenanceWindowsOperations:
+class MaintenanceWindowsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -10246,7 +10246,7 @@ class MaintenanceWindowsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagedNamespacesOperations:
+class ManagedNamespacesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11090,7 +11090,7 @@ class ManagedNamespacesOperations:
         return deserialized  # type: ignore
 
 
-class MachinesOperations:
+class MachinesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -11636,7 +11636,7 @@ class MachinesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class PrivateEndpointConnectionsOperations:
+class PrivateEndpointConnectionsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12125,7 +12125,7 @@ class PrivateEndpointConnectionsOperations:
         return deserialized  # type: ignore
 
 
-class SnapshotsOperations:
+class SnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -12804,7 +12804,7 @@ class SnapshotsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ManagedClusterSnapshotsOperations:
+class ManagedClusterSnapshotsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -13542,7 +13542,7 @@ class ManagedClusterSnapshotsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class TrustedAccessRoleBindingsOperations:
+class TrustedAccessRoleBindingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14126,7 +14126,7 @@ class TrustedAccessRoleBindingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class LoadBalancersOperations:
+class LoadBalancersOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -14694,7 +14694,7 @@ class LoadBalancersOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class IdentityBindingsOperations:
+class IdentityBindingsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15346,7 +15346,7 @@ class IdentityBindingsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class JWTAuthenticatorsOperations:
+class JWTAuthenticatorsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -15999,7 +15999,7 @@ class JWTAuthenticatorsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class MeshMembershipsOperations:
+class MeshMembershipsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16650,7 +16650,7 @@ class MeshMembershipsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class Operations:
+class Operations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -16760,7 +16760,7 @@ class Operations:
         return ItemPaged(get_next, extract_data)
 
 
-class AlertConfigurationsOperations:
+class AlertConfigurationsOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17412,7 +17412,7 @@ class AlertConfigurationsOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class OperationStatusResultOperations:
+class OperationStatusResultOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17721,7 +17721,7 @@ class OperationStatusResultOperations:
         return deserialized  # type: ignore
 
 
-class PrivateLinkResourcesOperations:
+class PrivateLinkResourcesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -17816,7 +17816,7 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
 
-class ResolvePrivateLinkServiceIdOperations:
+class ResolvePrivateLinkServiceIdOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18005,7 +18005,7 @@ class ResolvePrivateLinkServiceIdOperations:
         return deserialized  # type: ignore
 
 
-class TrustedAccessRolesOperations:
+class TrustedAccessRolesOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18119,7 +18119,7 @@ class TrustedAccessRolesOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class ContainerServiceOperations:
+class ContainerServiceOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -18237,7 +18237,7 @@ class ContainerServiceOperations:
         return ItemPaged(get_next, extract_data)
 
 
-class VmSkusOperations:
+class VmSkusOperations:  # pylint: disable=docstring-missing-param
     """
     .. warning::
         **DO NOT** instantiate this class directly.

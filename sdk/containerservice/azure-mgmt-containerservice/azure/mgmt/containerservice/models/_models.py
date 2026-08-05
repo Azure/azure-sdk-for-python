@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AbsoluteMonthlySchedule(_Model):
+class AbsoluteMonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every month on the 15th' or 'recur every 3 months on the 20th'.
 
     :ivar interval_months: Specifies the number of months between each set of occurrences.
@@ -51,7 +51,7 @@ class AbsoluteMonthlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AccessProfile(_Model):
+class AccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for enabling a user to access a managed cluster.
 
     :ivar kube_config: Base64-encoded Kubernetes configuration file.
@@ -81,7 +81,7 @@ class AccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworking(_Model):
+class AdvancedNetworking(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Advanced Networking profile for enabling observability and security feature suite on a cluster.
     For more information see aka.ms/aksadvancednetworking.
 
@@ -139,7 +139,7 @@ class AdvancedNetworking(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingObservability(_Model):
+class AdvancedNetworkingObservability(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Observability profile to enable advanced network metrics and flow logs with historical
     contexts.
 
@@ -169,7 +169,7 @@ class AdvancedNetworkingObservability(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingPerformance(_Model):
+class AdvancedNetworkingPerformance(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile to enable performance-enhancing features on clusters that use Azure CNI powered by
     Cilium.
 
@@ -209,7 +209,7 @@ class AdvancedNetworkingPerformance(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingSecurity(_Model):
+class AdvancedNetworkingSecurity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security profile to enable security features on cilium based cluster.
 
     :ivar enabled: This feature allows user to configure network policy based on DNS (FQDN) names.
@@ -268,7 +268,9 @@ class AdvancedNetworkingSecurity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AdvancedNetworkingSecurityTransitEncryption(_Model):  # pylint: disable=name-too-long
+class AdvancedNetworkingSecurityTransitEncryption(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Encryption configuration for Cilium-based clusters. Once enabled all traffic between Cilium
     managed pods will be encrypted when it leaves the node boundary.
 
@@ -347,7 +349,7 @@ class ProxyResource(Resource):
     """
 
 
-class AgentPool(ProxyResource):
+class AgentPool(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Concrete proxy resource types can be created by aliasing this type using a specific property
     type.
 
@@ -471,7 +473,7 @@ class AgentPool(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AgentPoolArtifactStreamingProfile(_Model):
+class AgentPoolArtifactStreamingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Artifact streaming profile for the agent pool.
 
     :ivar enabled: Artifact streaming speeds up the cold-start of containers on a node through
@@ -503,7 +505,7 @@ class AgentPoolArtifactStreamingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolAvailableVersions(_Model):
+class AgentPoolAvailableVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available versions for an agent pool.
 
     :ivar id: The ID of the agent pool version list.
@@ -565,7 +567,7 @@ class AgentPoolAvailableVersions(_Model):
             super().__setattr__(key, value)
 
 
-class AgentPoolAvailableVersionsProperties(_Model):
+class AgentPoolAvailableVersionsProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available agent pool versions.
 
     :ivar agent_pool_versions: List of versions available for agent pool.
@@ -596,7 +598,9 @@ class AgentPoolAvailableVersionsProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_Model):  # pylint: disable=name-too-long
+class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available version information for an agent pool.
 
     :ivar default: Whether this version is the default agent pool version.
@@ -638,7 +642,7 @@ class AgentPoolAvailableVersionsPropertiesAgentPoolVersionsItem(_Model):  # pyli
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolBlueGreenUpgradeSettings(_Model):
+class AgentPoolBlueGreenUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for blue-green upgrade on an agentpool.
 
     :ivar drain_batch_size: The number or percentage of nodes to drain in batch during blue-green
@@ -715,7 +719,7 @@ class AgentPoolBlueGreenUpgradeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolDeleteMachinesParameter(_Model):
+class AgentPoolDeleteMachinesParameter(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifies a list of machine names from the agent pool to be deleted.
 
     :ivar machine_names: The agent pool machine names. Required.
@@ -745,7 +749,7 @@ class AgentPoolDeleteMachinesParameter(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolGatewayProfile(_Model):
+class AgentPoolGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster gateway agent pool.
 
     :ivar public_ip_prefix_size: The Gateway agent pool associates one public IPPrefix for each
@@ -785,7 +789,9 @@ class AgentPoolGatewayProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disable=name-too-long
+class AgentPoolManagedClusterAgentPoolProfileProperties(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Properties for the container service agent pool profile.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -1413,7 +1419,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolNetworkInterface(_Model):
+class AgentPoolNetworkInterface(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration of a secondary network interface provisioned on each VM instance in the agent
     pool. For more information, see `https://aka.ms/aks/multi-nic <https://aka.ms/aks/multi-nic>`_.
 
@@ -1468,7 +1474,7 @@ class AgentPoolNetworkInterface(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolNetworkProfile(_Model):
+class AgentPoolNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Network settings of an agent pool.
 
     :ivar node_public_ip_tags: IPTags of instance-level public IPs.
@@ -1554,7 +1560,7 @@ class AgentPoolNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolRecentlyUsedVersion(_Model):
+class AgentPoolRecentlyUsedVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A historical version that can be used for rollback operations.
 
     :ivar orchestrator_version: The Kubernetes version (major.minor.patch) available for rollback.
@@ -1598,7 +1604,7 @@ class AgentPoolRecentlyUsedVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolSecurityProfile(_Model):
+class AgentPoolSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security settings of an agent pool.
 
     :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
@@ -1665,7 +1671,7 @@ class AgentPoolStatus(_Model):
      there was no error, this field is omitted."""
 
 
-class AgentPoolUpgradeProfile(ProxyResource):
+class AgentPoolUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrades for an agent pool.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -1733,7 +1739,7 @@ class AgentPoolUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class AgentPoolUpgradeProfileProperties(_Model):
+class AgentPoolUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrade versions.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch). Required.
@@ -1801,7 +1807,9 @@ class AgentPoolUpgradeProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolUpgradeProfilePropertiesUpgradesItem(_Model):  # pylint: disable=name-too-long
+class AgentPoolUpgradeProfilePropertiesUpgradesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available upgrades for an AgentPool.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -1845,7 +1853,7 @@ class AgentPoolUpgradeProfilePropertiesUpgradesItem(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolUpgradeSettings(_Model):
+class AgentPoolUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for upgrading an agentpool.
 
     :ivar max_surge: The maximum number or percentage of nodes that are surged during upgrade. This
@@ -1962,7 +1970,7 @@ class AgentPoolUpgradeSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AgentPoolWindowsProfile(_Model):
+class AgentPoolWindowsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Windows agent pool's specific profile.
 
     :ivar disable_outbound_nat: Whether to disable OutboundNAT in windows nodes. The default value
@@ -1996,7 +2004,7 @@ class AgentPoolWindowsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertConfiguration(ProxyResource):
+class AlertConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Alert configuration for a managed cluster. Allows configuring AKS-managed alerts that notify
     users of important cluster events and conditions.
 
@@ -2038,7 +2046,7 @@ class AlertConfiguration(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class AlertConfigurationProperties(_Model):
+class AlertConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the alert configuration.
 
     :ivar mode: The mode of the alert configuration. Specifies how AKS manages the alerts.
@@ -2084,7 +2092,7 @@ class AlertConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AlertNotification(_Model):
+class AlertNotification(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Notification settings for the alert configuration.
 
     :ivar action_group_id: The resource ID of the Azure Monitor action group to send notifications
@@ -2113,7 +2121,7 @@ class AlertNotification(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AllowedSubject(_Model):
+class AllowedSubject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A subject authorized to use the identity binding for token exchange. The namespace selector is
     required and must be non-empty. The service account selector is optional; when omitted, all
     service accounts in matching namespaces are authorized. Selectors within a single
@@ -2163,7 +2171,7 @@ class AllowedSubject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AutoScaleProfile(_Model):
+class AutoScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on auto-scaling.
 
     :ivar size: VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3',
@@ -2203,7 +2211,7 @@ class AutoScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureKeyVaultKms(_Model):
+class AzureKeyVaultKms(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Key Vault key management service settings for the security profile.
 
     :ivar enabled: Whether to enable Azure Key Vault key management service. The default is false.
@@ -2269,7 +2277,7 @@ class AzureKeyVaultKms(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BastionProfile(_Model):
+class BastionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile to enable managed Azure Bastion or reference to an existing Bastion for the managed
     cluster. See `https://aka.ms/aks/BastionConnect <https://aka.ms/aks/BastionConnect>`_ for more
     details.
@@ -2474,7 +2482,7 @@ class BootstrapTokenInfo(_Model):
     """Short-lived bootstrap token for kubelet. Do not cache or log."""
 
 
-class ClusterUpgradeSettings(_Model):
+class ClusterUpgradeSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for upgrading a cluster.
 
     :ivar override_settings: Settings for overrides.
@@ -2535,7 +2543,7 @@ class CommandResultProperties(_Model):
     """An explanation of why provisioningState is set to failed (if so)."""
 
 
-class CompatibleVersions(_Model):
+class CompatibleVersions(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Version information about a product/service that is compatible with a service mesh revision.
 
     :ivar name: The product/service name.
@@ -2568,7 +2576,7 @@ class CompatibleVersions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Component(_Model):
+class Component(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Component information for a Kubernetes version.
 
     :ivar name: Component name.
@@ -2614,7 +2622,7 @@ class Component(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ComponentsByRelease(_Model):
+class ComponentsByRelease(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """components of given Kubernetes version.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor).
@@ -2651,7 +2659,7 @@ class ComponentsByRelease(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceLinuxProfile(_Model):
+class ContainerServiceLinuxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for Linux VMs in the container service cluster.
 
     :ivar admin_username: The administrator username to use for Linux VMs. Required.
@@ -2686,7 +2694,7 @@ class ContainerServiceLinuxProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfile(_Model):
+class ContainerServiceNetworkProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of network configuration.
 
     :ivar network_plugin: Network plugin used for building the Kubernetes network. Known values
@@ -2923,7 +2931,9 @@ class ContainerServiceNetworkProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfileKubeProxyConfig(_Model):  # pylint: disable=name-too-long
+class ContainerServiceNetworkProfileKubeProxyConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Holds configuration customizations for kube-proxy. Any values not defined will use the
     kube-proxy defaulting behavior. See `https://v
     <https://v>`_<version>.docs.kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/
@@ -2973,7 +2983,9 @@ class ContainerServiceNetworkProfileKubeProxyConfig(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(_Model):  # pylint: disable=name-too-long
+class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Holds configuration customizations for IPVS. May only be specified if 'mode' is set to 'IPVS'.
 
     :ivar scheduler: IPVS scheduler, for more information please see
@@ -3034,7 +3046,7 @@ class ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceSshConfiguration(_Model):
+class ContainerServiceSshConfiguration(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """SSH configuration for Linux-based VMs running on Azure.
 
     :ivar public_keys: The list of SSH public keys used to authenticate with Linux-based VMs. A
@@ -3066,7 +3078,7 @@ class ContainerServiceSshConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ContainerServiceSshPublicKey(_Model):
+class ContainerServiceSshPublicKey(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains information about SSH certificate public key data.
 
     :ivar key_data: Certificate public key used to authenticate with VMs through SSH. The
@@ -3096,7 +3108,7 @@ class ContainerServiceSshPublicKey(_Model):
         super().__init__(*args, **kwargs)
 
 
-class CreationData(_Model):
+class CreationData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Data used when creating a target resource from a source resource.
 
     :ivar source_resource_id: This is the ARM ID of the source object to be used to create the
@@ -3153,7 +3165,7 @@ class CredentialResults(_Model):
     """Base64-encoded Kubernetes configuration file."""
 
 
-class DailySchedule(_Model):
+class DailySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every day' or 'recur every 3 days'.
 
     :ivar interval_days: Specifies the number of days between each set of occurrences. Required.
@@ -3181,7 +3193,7 @@ class DailySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DateSpan(_Model):
+class DateSpan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A date range. For example, between '2022-12-23' and '2023-01-05'.
 
     :ivar start: The start date of the date span. Required.
@@ -3214,7 +3226,7 @@ class DateSpan(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DelegatedResource(_Model):
+class DelegatedResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Delegated resource properties - internal use only.
 
     :ivar resource_id: The ARM resource id of the delegated resource - internal use only.
@@ -3262,7 +3274,7 @@ class DelegatedResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDependency(_Model):
+class EndpointDependency(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A domain name that AKS agent nodes are reaching at.
 
     :ivar domain_name: The domain name of the dependency.
@@ -3299,7 +3311,7 @@ class EndpointDependency(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EndpointDetail(_Model):
+class EndpointDetail(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """connect information from the AKS agent nodes to a single endpoint.
 
     :ivar ip_address: An IP Address that Domain Name currently resolves to.
@@ -3386,7 +3398,7 @@ class ErrorDetail(_Model):
     """The error additional info."""
 
 
-class ErrorResponse(_Model):
+class ErrorResponse(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Error response.
 
     :ivar error: The error object.
@@ -3414,7 +3426,7 @@ class ErrorResponse(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ExtendedLocation(_Model):
+class ExtendedLocation(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The complex type of the extended location.
 
     :ivar name: The name of the extended location.
@@ -3449,7 +3461,7 @@ class ExtendedLocation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GPUProfile(_Model):
+class GPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """GPU settings for the Agent Pool.
 
     :ivar driver: Whether to install GPU drivers. When it's not specified, default is Install.
@@ -3502,7 +3514,7 @@ class GPUProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class GuardrailsAvailableVersion(ProxyResource):
+class GuardrailsAvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available Guardrails Version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3559,7 +3571,7 @@ class GuardrailsAvailableVersionsProperties(_Model):
     """Whether the version is preview or stable. Known values are: \"Preview\" and \"Stable\"."""
 
 
-class HardEvictionThreshold(_Model):
+class HardEvictionThreshold(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hard eviction thresholds for kubelet. These thresholds trigger pod eviction when node resources
     drop below the specified values. Values must be greater than or equal to the documented
     minimums for each signal. Supported formats are Ki, Mi, Gi, or percentages using %.
@@ -3619,7 +3631,7 @@ class HardEvictionThreshold(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IdentityBinding(ProxyResource):
+class IdentityBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The IdentityBinding resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -3670,7 +3682,7 @@ class IdentityBinding(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class IdentityBindingManagedIdentityProfile(_Model):
+class IdentityBindingManagedIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed identity profile for the identity binding.
 
     :ivar resource_id: The resource ID of the managed identity. Required.
@@ -3721,7 +3733,7 @@ class IdentityBindingOidcIssuerProfile(_Model):
     """The OIDC issuer URL of the IdentityBinding."""
 
 
-class IdentityBindingProperties(_Model):
+class IdentityBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """IdentityBinding properties.
 
     :ivar managed_identity: Managed identity profile for the identity binding. Required.
@@ -3782,7 +3794,7 @@ class IdentityBindingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IPTag(_Model):
+class IPTag(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Contains the IPTag associated with the object.
 
     :ivar ip_tag_type: The IP tag type. Example: RoutingPreference.
@@ -3817,7 +3829,7 @@ class IPTag(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioCertificateAuthority(_Model):
+class IstioCertificateAuthority(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio Service Mesh Certificate Authority (CA) configuration. For now, we only support plugin
     certificates as described here `https://aka.ms/asm-plugin-ca <https://aka.ms/asm-plugin-ca>`_.
 
@@ -3848,7 +3860,7 @@ class IstioCertificateAuthority(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioComponents(_Model):
+class IstioComponents(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio components configuration.
 
     :ivar ingress_gateways: Istio ingress gateways.
@@ -3894,7 +3906,7 @@ class IstioComponents(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioEgressGateway(_Model):
+class IstioEgressGateway(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio egress gateway configuration.
 
     :ivar enabled: Whether to enable the egress gateway. Required.
@@ -3945,7 +3957,7 @@ class IstioEgressGateway(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioIngressGateway(_Model):
+class IstioIngressGateway(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio ingress gateway configuration. For now, we support up to one external ingress gateway
     named ``aks-istio-ingressgateway-external`` and one internal ingress gateway named
     ``aks-istio-ingressgateway-internal``.
@@ -3982,7 +3994,7 @@ class IstioIngressGateway(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioPluginCertificateAuthority(_Model):
+class IstioPluginCertificateAuthority(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Plugin certificates information for Service Mesh.
 
     :ivar key_vault_id: The resource ID of the Key Vault.
@@ -4040,7 +4052,7 @@ class IstioPluginCertificateAuthority(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IstioServiceMesh(_Model):
+class IstioServiceMesh(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Istio service mesh configuration.
 
     :ivar components: Istio components configuration.
@@ -4092,7 +4104,7 @@ class IstioServiceMesh(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticator(ProxyResource):
+class JWTAuthenticator(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for JWT authenticator in the managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -4145,7 +4157,7 @@ class JWTAuthenticator(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorClaimMappingExpression(_Model):
+class JWTAuthenticatorClaimMappingExpression(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The claim mapping expression for JWTAuthenticator.
 
     :ivar expression: The CEL expression used to access token claims. Required.
@@ -4173,7 +4185,7 @@ class JWTAuthenticatorClaimMappingExpression(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorClaimMappings(_Model):
+class JWTAuthenticatorClaimMappings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The claim mappings for JWTAuthenticator.
 
     :ivar username: The expression to extract username attribute from the token claims. Required.
@@ -4231,7 +4243,9 @@ class JWTAuthenticatorClaimMappings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorExtraClaimMappingExpression(_Model):  # pylint: disable=name-too-long
+class JWTAuthenticatorExtraClaimMappingExpression(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """The extra claim mapping expression for JWTAuthenticator.
 
     :ivar key: The key of the extra attribute. Required.
@@ -4267,7 +4281,7 @@ class JWTAuthenticatorExtraClaimMappingExpression(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorIssuer(_Model):
+class JWTAuthenticatorIssuer(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The OIDC issuer details for JWTAuthenticator.
 
     :ivar url: The issuer URL. The URL must begin with the scheme https and cannot contain a query
@@ -4307,7 +4321,7 @@ class JWTAuthenticatorIssuer(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorProperties(_Model):
+class JWTAuthenticatorProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of JWTAuthenticator. For details on how to configure the properties of a JWT
     authenticator, please refer to the Kubernetes documentation:
     `https://kubernetes.io/docs/reference/access-authn-authz/authentication/#using-authentication-configuration
@@ -4378,7 +4392,7 @@ class JWTAuthenticatorProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class JWTAuthenticatorValidationRule(_Model):
+class JWTAuthenticatorValidationRule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The validation rule for JWTAuthenticator.
 
     :ivar expression: The CEL expression used to validate the claim or attribute. Required.
@@ -4411,7 +4425,7 @@ class JWTAuthenticatorValidationRule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeletConfig(_Model):
+class KubeletConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubelet configurations of agent nodes. See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
 
@@ -4571,7 +4585,7 @@ class KubeletConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubeReserved(_Model):
+class KubeReserved(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kube-reserved values for kubelet. When a value is not set, the system-computed default based on
     VM size is used. See `AKS node resource reservations <https://aka.ms/aks/nodereservations>`_
     for details on computed defaults. Only applicable for Linux nodepools.
@@ -4612,7 +4626,7 @@ class KubeReserved(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesPatchVersion(_Model):
+class KubernetesPatchVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes patch version profile.
 
     :ivar upgrades: Possible upgrade path for given patch version.
@@ -4640,7 +4654,9 @@ class KubernetesPatchVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name-too-long
+class KubernetesResourceObjectEncryptionProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Encryption at rest of Kubernetes resource objects using service-managed keys. More information
     on this can be found under `https://aka.ms/aks/kubernetesResourceObjectEncryption
     <https://aka.ms/aks/kubernetesResourceObjectEncryption>`_.
@@ -4681,7 +4697,7 @@ class KubernetesResourceObjectEncryptionProfile(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersion(_Model):
+class KubernetesVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Kubernetes version profile for given major.minor release.
 
     :ivar version: major.minor version of Kubernetes release.
@@ -4737,7 +4753,7 @@ class KubernetesVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersionCapabilities(_Model):
+class KubernetesVersionCapabilities(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Capabilities on this Kubernetes version.
 
     :ivar support_plan: Kubernetes support plans available for this version.
@@ -4767,7 +4783,7 @@ class KubernetesVersionCapabilities(_Model):
         super().__init__(*args, **kwargs)
 
 
-class KubernetesVersionListResult(_Model):
+class KubernetesVersionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Hold values properties, which is array of KubernetesVersion.
 
     :ivar values_property: Array of AKS supported Kubernetes versions.
@@ -4797,7 +4813,7 @@ class KubernetesVersionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelector(_Model):
+class LabelSelector(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector is a label query over a set of resources. The result of matchLabels and
     matchExpressions are ANDed. An empty label selector matches all objects. A null label selector
     matches no objects.
@@ -4842,7 +4858,7 @@ class LabelSelector(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LabelSelectorRequirement(_Model):
+class LabelSelectorRequirement(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A label selector requirement is a selector that contains values, a key, and an operator that
     relates the key and values.
 
@@ -4887,7 +4903,7 @@ class LabelSelectorRequirement(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LinuxOSConfig(_Model):
+class LinuxOSConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """OS configurations of Linux agent nodes. See `AKS custom node configuration
     <https://docs.microsoft.com/azure/aks/custom-node-configuration>`_ for more details.
 
@@ -4953,7 +4969,7 @@ class ListBootstrapDataRequest(_Model):
     """Empty request body for listing FlexNode bootstrap data."""
 
 
-class LoadBalancer(ProxyResource):
+class LoadBalancer(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The configurations regarding multiple standard load balancers. If not supplied, single load
     balancer mode will be used. Multiple standard load balancers mode will be used if at lease one
     configuration is supplied. There has to be a configuration named ``kubernetes``. The name field
@@ -5027,7 +5043,7 @@ class LoadBalancer(ProxyResource):
             super().__setattr__(key, value)
 
 
-class LoadBalancerProperties(_Model):
+class LoadBalancerProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a load balancer resource.
 
     :ivar primary_agent_pool_name: Required field. A string value that must specify the ID of an
@@ -5102,7 +5118,7 @@ class LoadBalancerProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalDNSOverride(_Model):
+class LocalDNSOverride(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Overrides for localDNS profile.
 
     :ivar query_logging: Log level for DNS queries in localDNS. Known values are: "Error" and
@@ -5200,7 +5216,7 @@ class LocalDNSOverride(_Model):
         super().__init__(*args, **kwargs)
 
 
-class LocalDNSProfile(_Model):
+class LocalDNSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configures the per-node local DNS, with VnetDNS and KubeDNS overrides. LocalDNS helps improve
     performance and reliability of DNS resolution in an AKS cluster. For more details see
     aka.ms/aks/localdns.
@@ -5256,7 +5272,7 @@ class LocalDNSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Machine(ProxyResource):
+class Machine(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A machine. Contains details about the underlying virtual machine. A machine may be visible here
     but not in kubectl get nodes; if so it may be because the machine has not been registered with
     the Kubernetes API Server yet.
@@ -5304,7 +5320,7 @@ class Machine(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MachineBillingProfile(_Model):
+class MachineBillingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties having to do with machine billing.
 
     :ivar spot_max_price: The max price (in US Dollars) you are willing to pay for spot instances.
@@ -5340,7 +5356,7 @@ class MachineBillingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineHardwareProfile(_Model):
+class MachineHardwareProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The hardware and GPU settings of the machine.
 
     :ivar vm_size: The size of the VM. VM size availability varies by region. If a node contains
@@ -5413,7 +5429,7 @@ class MachineIpAddress(_Model):
     """IPv4 or IPv6 address of the machine."""
 
 
-class MachineKubernetesProfile(_Model):
+class MachineKubernetesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Kubernetes configurations used by the machine.
 
     :ivar node_labels: The node labels on the machine.
@@ -5528,7 +5544,7 @@ class MachineKubernetesProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineNetworkProperties(_Model):
+class MachineNetworkProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """network properties of the machine.
 
     :ivar ip_addresses: IPv4, IPv6 addresses of the machine.
@@ -5611,7 +5627,7 @@ class MachineNetworkProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineOSProfile(_Model):
+class MachineOSProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The operating system and disk used by the machine.
 
     :ivar os_type: The operating system type. The default is Linux. Known values are: "Linux" and
@@ -5705,7 +5721,7 @@ class MachineOSProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineOSProfileLinuxProfile(_Model):
+class MachineOSProfileLinuxProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Linux machine's specific profile.
 
     :ivar linux_os_config: The OS configuration of Linux machine.
@@ -5748,7 +5764,7 @@ class MachineOSProfileLinuxProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineProperties(_Model):
+class MachineProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The properties of the machine.
 
     :ivar network: network properties of the machine.
@@ -5883,7 +5899,7 @@ class MachineProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MachineSecurityProfile(_Model):
+class MachineSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The security settings of the machine.
 
     :ivar enable_vtpm: vTPM is a Trusted Launch feature for configuring a dedicated secure vault
@@ -5989,7 +6005,7 @@ class MachineStatus(_Model):
      values are: \"Running\" and \"Deleted\"."""
 
 
-class MaintenanceConfiguration(ProxyResource):
+class MaintenanceConfiguration(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Planned maintenance configuration, used to configure when updates can be deployed to a Managed
     Cluster. See `planned maintenance <https://docs.microsoft.com/azure/aks/planned-maintenance>`_
     for more information about planned maintenance.
@@ -6052,7 +6068,7 @@ class MaintenanceConfiguration(ProxyResource):
             super().__setattr__(key, value)
 
 
-class MaintenanceConfigurationProperties(_Model):
+class MaintenanceConfigurationProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to configure planned maintenance for a Managed Cluster.
 
     :ivar time_in_week: Time slots during the week when planned maintenance is allowed to proceed.
@@ -6115,7 +6131,7 @@ class MaintenanceConfigurationProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindow(_Model):
+class MaintenanceWindow(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Maintenance window used to configure scheduled auto-upgrade for a Managed Cluster.
 
     :ivar schedule: Recurrence schedule for the maintenance window. Required.
@@ -6187,7 +6203,7 @@ class MaintenanceWindow(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TrackedResource(Resource):
+class TrackedResource(Resource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tracked Resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6231,7 +6247,7 @@ class TrackedResource(Resource):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowResource(TrackedResource):
+class MaintenanceWindowResource(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A maintenance window is a resource-group-scoped resource that defines a reusable maintenance
     schedule which can be linked to maintenance configurations on one or more managed clusters. For
     more information, see `https://aka.ms/aks/maintenance-windows
@@ -6281,7 +6297,7 @@ class MaintenanceWindowResource(TrackedResource):
         super().__init__(*args, **kwargs)
 
 
-class MaintenanceWindowResourceProperties(_Model):
+class MaintenanceWindowResourceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a maintenance window. For more information, see
     `https://aka.ms/aks/maintenance-windows <https://aka.ms/aks/maintenance-windows>`_.
 
@@ -6372,7 +6388,7 @@ class MaintenanceWindowResourceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedCluster(TrackedResource):
+class ManagedCluster(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6528,7 +6544,7 @@ class ManagedCluster(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterAADProfile(_Model):
+class ManagedClusterAADProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """AADProfile specifies attributes for Azure Active Directory integration. For more details see
     `managed AAD on AKS <https://docs.microsoft.com/azure/aks/managed-aad>`_.
 
@@ -6606,7 +6622,7 @@ class ManagedClusterAADProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAccessProfile(TrackedResource):
+class ManagedClusterAccessProfile(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Managed cluster Access Profile.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -6673,7 +6689,7 @@ class ManagedClusterAccessProfile(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterAddonProfile(_Model):
+class ManagedClusterAddonProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A Kubernetes add-on profile for a managed cluster.
 
     :ivar enabled: Whether the add-on is enabled or not. Required.
@@ -6710,7 +6726,7 @@ class ManagedClusterAddonProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class UserAssignedIdentity(_Model):
+class UserAssignedIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about a user assigned identity.
 
     :ivar resource_id: The resource ID of the user assigned identity.
@@ -6750,7 +6766,9 @@ class UserAssignedIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
+class ManagedClusterAddonProfileIdentity(
+    UserAssignedIdentity
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information of user assigned identity used by this add-on.
 
     :ivar resource_id: The resource ID of the user assigned identity.
@@ -6781,7 +6799,7 @@ class ManagedClusterAddonProfileIdentity(UserAssignedIdentity):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAgentPoolProfileProperties(_Model):
+class ManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for the container service agent pool profile.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -7409,7 +7427,9 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
+class ManagedClusterAgentPoolProfile(
+    ManagedClusterAgentPoolProfileProperties
+):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for the container service agent pool.
 
     :ivar e_tag: Unique read-only string used to implement optimistic concurrency. The eTag value
@@ -7728,7 +7748,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAIToolchainOperatorProfile(_Model):
+class ManagedClusterAIToolchainOperatorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """When enabling the operator, a set of AKS managed CRDs and controllers will be installed in the
     cluster. The operator automates the deployment of OSS models for inference and/or training
     purposes. It provides a set of preset models and enables distributed inference against them.
@@ -7760,7 +7780,7 @@ class ManagedClusterAIToolchainOperatorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAPIServerAccessProfile(_Model):
+class ManagedClusterAPIServerAccessProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Access profile for managed cluster API server.
 
     :ivar authorized_ip_ranges: The IP ranges authorized to access the Kubernetes API server. IP
@@ -7854,7 +7874,7 @@ class ManagedClusterAPIServerAccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAppRoutingIstio(_Model):
+class ManagedClusterAppRoutingIstio(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Configuration for using a sidecar-less Istio control plane for managed ingress via the Gateway
     API with App Routing. See `https://aka.ms/gateway-on-istio <https://aka.ms/gateway-on-istio>`_
     for information on using Istio for ingress via the Gateway API.
@@ -7888,7 +7908,7 @@ class ManagedClusterAppRoutingIstio(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAutoUpgradeProfile(_Model):
+class ManagedClusterAutoUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Auto upgrade profile for a managed cluster.
 
     :ivar upgrade_channel: The upgrade channel for auto upgrade. The default is 'none'. For more
@@ -7935,7 +7955,7 @@ class ManagedClusterAutoUpgradeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfile(_Model):
+class ManagedClusterAzureMonitorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Azure Monitor addon profiles for monitoring the managed cluster.
 
     :ivar metrics: Metrics profile for the Azure Monitor managed service for Prometheus addon.
@@ -7995,7 +8015,9 @@ class ManagedClusterAzureMonitorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoring(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring profile for AKS.
 
     :ivar auto_instrumentation: Application Monitoring auto-instrumentation for AKS. Deploys a
@@ -8072,7 +8094,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
     workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
     traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
@@ -8104,7 +8128,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring Open Telemetry Logs and Traces Profile for AKS. Collects OpenTelemetry
     logs and traces of the application using Azure Monitor OpenTelemetry based SDKs. See
     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
@@ -8151,7 +8177,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces(_
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Monitoring Open Telemetry Metrics Profile for AKS. Collects OpenTelemetry metrics
     of the application using Azure Monitor OpenTelemetry based SDKs. See
     `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
@@ -8196,7 +8224,9 @@ class ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(_Model)
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileContainerInsights(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Azure Monitor Container Insights Profile for Kubernetes Events, Inventory and Container stdout
     & stderr logs etc. See aka.ms/AzureMonitorContainerInsights for an overview.
 
@@ -8283,7 +8313,9 @@ class ManagedClusterAzureMonitorProfileContainerInsights(_Model):  # pylint: dis
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileKubeStateMetrics(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileKubeStateMetrics(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Kube State Metrics profile for the Azure Managed Prometheus addon. These optional settings are
     for the kube-state-metrics pod that is deployed with the addon. See
     aka.ms/AzureManagedPrometheus-optional-parameters for details.
@@ -8332,7 +8364,7 @@ class ManagedClusterAzureMonitorProfileKubeStateMetrics(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileMetrics(_Model):
+class ManagedClusterAzureMonitorProfileMetrics(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metrics profile for the Azure Monitor managed service for Prometheus addon. Collect
     out-of-the-box Kubernetes infrastructure metrics to send to an Azure Monitor Workspace and
     configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
@@ -8390,7 +8422,9 @@ class ManagedClusterAzureMonitorProfileMetrics(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterAzureMonitorProfileMetricsControlPlane(_Model):  # pylint: disable=name-too-long
+class ManagedClusterAzureMonitorProfileMetricsControlPlane(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Control plane metrics collection profile for the Azure Managed Prometheus addon. Configures
     collection of operational runtime metrics from managed control plane components
     (kube-apiserver, etcd, etc). See aka.ms/aks/controlplane-metrics for an overview.
@@ -8423,7 +8457,7 @@ class ManagedClusterAzureMonitorProfileMetricsControlPlane(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterBootstrapProfile(_Model):
+class ManagedClusterBootstrapProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The bootstrap profile.
 
     :ivar artifact_source: The artifact source. The source where the artifacts are downloaded from.
@@ -8464,7 +8498,7 @@ class ManagedClusterBootstrapProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterControlPlaneScalingProfile(_Model):
+class ManagedClusterControlPlaneScalingProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for providing scaled and performance guaranteed control plane capacity to deliver
     consistent performance under high workload. Requires Kubernetes version 1.33.0 or later.
 
@@ -8503,7 +8537,7 @@ class ManagedClusterControlPlaneScalingProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterCostAnalysis(_Model):
+class ManagedClusterCostAnalysis(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The cost analysis configuration for the cluster.
 
     :ivar enabled: Whether to enable cost analysis. The Managed Cluster sku.tier must be set to
@@ -8537,7 +8571,7 @@ class ManagedClusterCostAnalysis(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHealthMonitorProfile(_Model):
+class ManagedClusterHealthMonitorProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Health monitor profile for the managed cluster.
 
     :ivar enable_continuous_control_plane_and_addon_monitor: Whether to enable continuous control
@@ -8575,7 +8609,7 @@ class ManagedClusterHealthMonitorProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHostedSystemProfile(_Model):
+class ManagedClusterHostedSystemProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for hosted system addons.
 
     :ivar enabled: Whether to enable hosted system addons for the cluster.
@@ -8633,7 +8667,7 @@ class ManagedClusterHostedSystemProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterHTTPProxyConfig(_Model):
+class ManagedClusterHTTPProxyConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Cluster HTTP proxy configuration.
 
     :ivar http_proxy: The HTTP proxy server endpoint to use.
@@ -8693,7 +8727,7 @@ class ManagedClusterHTTPProxyConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIdentity(_Model):
+class ManagedClusterIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Identity for the managed cluster.
 
     :ivar principal_id: The principal id of the system assigned identity which is used by master
@@ -8764,7 +8798,9 @@ class ManagedClusterIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressDefaultDomainProfile(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressDefaultDomainProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Default domain profile for the managed cluster ingress profile.
 
     :ivar enabled: Whether to enable Default Domain.
@@ -8798,7 +8834,7 @@ class ManagedClusterIngressDefaultDomainProfile(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfile(_Model):
+class ManagedClusterIngressProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Ingress profile for the container service cluster.
 
     :ivar web_app_routing: App Routing settings for the ingress profile. You can find an overview
@@ -8852,7 +8888,9 @@ class ManagedClusterIngressProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileApplicationLoadBalancer(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileApplicationLoadBalancer(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Load Balancer settings for the ingress profile.
 
     :ivar enabled: Whether to enable Application Load Balancer.
@@ -8887,7 +8925,9 @@ class ManagedClusterIngressProfileApplicationLoadBalancer(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileGatewayConfiguration(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configuration for managed Gateway API CRDs. See `https://aka.ms/k8s-gateway-api
     <https://aka.ms/k8s-gateway-api>`_ for more details.
 
@@ -8923,7 +8963,7 @@ class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disab
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileNginx(_Model):
+class ManagedClusterIngressProfileNginx(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Nginx ingress controller configuration for the managed cluster ingress profile.
 
     :ivar default_ingress_controller_type: Ingress type for the default NginxIngressController
@@ -8956,7 +8996,9 @@ class ManagedClusterIngressProfileNginx(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name-too-long
+class ManagedClusterIngressProfileWebAppRouting(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Application Routing add-on settings for the ingress profile.
 
     :ivar enabled: Whether to enable the Application Routing add-on.
@@ -9044,7 +9086,7 @@ class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfile(_Model):
+class ManagedClusterLoadBalancerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster load balancer.
 
     :ivar managed_outbound_i_ps: Desired managed outbound IPs for the cluster load balancer.
@@ -9148,7 +9190,9 @@ class ManagedClusterLoadBalancerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileManagedOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired managed outbound IPs for the cluster load balancer.
 
     :ivar count: The desired number of IPv4 outbound IPs created/managed by Azure for the cluster
@@ -9188,7 +9232,9 @@ class ManagedClusterLoadBalancerProfileManagedOutboundIPs(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired outbound IP Prefix resources for the cluster load balancer.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -9218,7 +9264,9 @@ class ManagedClusterLoadBalancerProfileOutboundIPPrefixes(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterLoadBalancerProfileOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterLoadBalancerProfileOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Desired outbound IP resources for the cluster load balancer.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -9248,7 +9296,7 @@ class ManagedClusterLoadBalancerProfileOutboundIPs(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterManagedOutboundIPProfile(_Model):
+class ManagedClusterManagedOutboundIPProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed outbound IP resources of the managed cluster.
 
     :ivar count: The desired number of outbound IPs created/managed by Azure. Allowed values must
@@ -9287,7 +9335,7 @@ class ManagedClusterManagedOutboundIPProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterMetricsProfile(_Model):
+class ManagedClusterMetricsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The metrics profile for the ManagedCluster.
 
     :ivar cost_analysis: The configuration for detailed per-Kubernetes resource cost analysis.
@@ -9317,7 +9365,7 @@ class ManagedClusterMetricsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfile(_Model):
+class ManagedClusterNATGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile of the managed cluster NAT gateway.
 
     :ivar managed_outbound_ip_profile: Profile of the managed outbound IP resources of the cluster
@@ -9382,7 +9430,9 @@ class ManagedClusterNATGatewayProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfileOutboundIpPrefixes(_Model):  # pylint: disable=name-too-long
+class ManagedClusterNATGatewayProfileOutboundIpPrefixes(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedClusterNATGatewayProfileOutboundIpPrefixes.
 
     :ivar public_ip_prefixes: A list of public IP prefix resources.
@@ -9412,7 +9462,9 @@ class ManagedClusterNATGatewayProfileOutboundIpPrefixes(_Model):  # pylint: disa
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNATGatewayProfileOutboundIPs(_Model):  # pylint: disable=name-too-long
+class ManagedClusterNATGatewayProfileOutboundIPs(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """ManagedClusterNATGatewayProfileOutboundIPs.
 
     :ivar public_i_ps: A list of public IP resources.
@@ -9442,7 +9494,7 @@ class ManagedClusterNATGatewayProfileOutboundIPs(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNodeProvisioningProfile(_Model):
+class ManagedClusterNodeProvisioningProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node provisioning profile for the managed cluster.
 
     :ivar mode: The node provisioning mode. If not specified, the default is Manual. Known values
@@ -9494,7 +9546,7 @@ class ManagedClusterNodeProvisioningProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterNodeResourceGroupProfile(_Model):
+class ManagedClusterNodeResourceGroupProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node resource group lockdown profile for a managed cluster.
 
     :ivar restriction_level: The restriction level applied to the cluster's node resource group. If
@@ -9526,7 +9578,7 @@ class ManagedClusterNodeResourceGroupProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterOIDCIssuerProfile(_Model):
+class ManagedClusterOIDCIssuerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The OIDC issuer profile of the Managed Cluster.
 
     :ivar issuer_url: The OIDC issuer url of the Managed Cluster.
@@ -9558,7 +9610,7 @@ class ManagedClusterOIDCIssuerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentity(_Model):
+class ManagedClusterPodIdentity(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Details about the pod identity assigned to the Managed Cluster.
 
     :ivar name: The name of the pod identity. Required.
@@ -9619,7 +9671,7 @@ class ManagedClusterPodIdentity(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityException(_Model):
+class ManagedClusterPodIdentityException(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A pod identity exception, which allows pods with certain labels to access the Azure Instance
     Metadata Service (IMDS) endpoint without being intercepted by the node-managed identity (NMI)
     server. See `disable AAD Pod Identity for a specific Pod/Application
@@ -9663,7 +9715,7 @@ class ManagedClusterPodIdentityException(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProfile(_Model):
+class ManagedClusterPodIdentityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The pod identity profile of the Managed Cluster. See `use AAD pod identity
     <https://docs.microsoft.com/azure/aks/use-azure-ad-pod-identity>`_ for more details on pod
     identity integration.
@@ -9725,7 +9777,9 @@ class ManagedClusterPodIdentityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningError(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningError(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An error response from the pod identity provisioning.
 
     :ivar error: Details about the error.
@@ -9756,7 +9810,9 @@ class ManagedClusterPodIdentityProvisioningError(_Model):  # pylint: disable=nam
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningErrorBody(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningErrorBody(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """An error response from the pod identity provisioning.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -9806,7 +9862,9 @@ class ManagedClusterPodIdentityProvisioningErrorBody(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPodIdentityProvisioningInfo(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPodIdentityProvisioningInfo(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Pod identity provisioning information.
 
     :ivar error: Pod identity assignment error (if any).
@@ -9836,7 +9894,7 @@ class ManagedClusterPodIdentityProvisioningInfo(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPoolUpgradeProfile(_Model):
+class ManagedClusterPoolUpgradeProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrade versions.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch). Required.
@@ -9895,7 +9953,9 @@ class ManagedClusterPoolUpgradeProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPoolUpgradeProfileUpgradesItem(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPoolUpgradeProfileUpgradesItem(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Available upgrades for an AgentPool.
 
     :ivar kubernetes_version: The Kubernetes version (major.minor.patch).
@@ -9939,7 +9999,7 @@ class ManagedClusterPoolUpgradeProfileUpgradesItem(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterProperties(_Model):
+class ManagedClusterProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of the managed cluster.
 
     :ivar provisioning_state: The current provisioning state.
@@ -10411,7 +10471,9 @@ class ManagedClusterProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterPropertiesAutoScalerProfile(_Model):  # pylint: disable=name-too-long
+class ManagedClusterPropertiesAutoScalerProfile(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Parameters to be applied to the cluster-autoscaler when enabled.
 
     :ivar balance_similar_node_groups: Detects similar node pools and balances the number of nodes
@@ -10675,7 +10737,7 @@ class ManagedClusterPropertiesForSnapshot(_Model):
     """The current network profile."""
 
 
-class ManagedClusterSecurityProfile(_Model):
+class ManagedClusterSecurityProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Security profile for the container service cluster.
 
     :ivar defender: Microsoft Defender settings for the security profile.
@@ -10798,7 +10860,7 @@ class ManagedClusterSecurityProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefender(_Model):
+class ManagedClusterSecurityProfileDefender(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Microsoft Defender settings for the security profile.
 
     :ivar log_analytics_workspace_resource_id: Resource ID of the Log Analytics workspace to be
@@ -10858,7 +10920,9 @@ class ManagedClusterSecurityProfileDefender(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileDefenderSecurityGating(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft Defender settings for security gating. This validates container image eligibility for
     deployment based on Defender for Containers security findings. Using Admission Controller, it
     either audits or prevents deployment of images that do not meet security standards.
@@ -10923,7 +10987,9 @@ class ManagedClusterSecurityProfileDefenderSecurityGating(_Model):  # pylint: di
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Identity mapping used by Defender security gating for registry access.
 
     :ivar azure_container_registry: The container registry for which the identity will be used; the
@@ -10962,7 +11028,9 @@ class ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(_Model):  # py
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileDefenderSecurityMonitoring(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileDefenderSecurityMonitoring(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Microsoft Defender settings for the security profile threat detection.
 
     :ivar enabled: Whether to enable Defender threat detection.
@@ -10990,7 +11058,9 @@ class ManagedClusterSecurityProfileDefenderSecurityMonitoring(_Model):  # pylint
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileImageCleaner(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileImageCleaner(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Image Cleaner removes unused images from nodes, freeing up disk space and helping to reduce
     attack surface area. Here are settings for the security profile.
 
@@ -11026,7 +11096,9 @@ class ManagedClusterSecurityProfileImageCleaner(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileImageIntegrity(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileImageIntegrity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Image integrity related settings for the security profile.
 
     :ivar enabled: Whether to enable image integrity. The default value is false.
@@ -11054,7 +11126,9 @@ class ManagedClusterSecurityProfileImageIntegrity(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileNodeRestriction(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileNodeRestriction(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Node Restriction settings for the security profile.
 
     :ivar enabled: Whether to enable Node Restriction.
@@ -11082,7 +11156,9 @@ class ManagedClusterSecurityProfileNodeRestriction(_Model):  # pylint: disable=n
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSecurityProfileWorkloadIdentity(_Model):  # pylint: disable=name-too-long
+class ManagedClusterSecurityProfileWorkloadIdentity(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Workload identity settings for the security profile.
 
     :ivar enabled: Whether to enable workload identity.
@@ -11110,7 +11186,7 @@ class ManagedClusterSecurityProfileWorkloadIdentity(_Model):  # pylint: disable=
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterServicePrincipalProfile(_Model):
+class ManagedClusterServicePrincipalProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Information about a service principal identity for the cluster to use for manipulating Azure
     APIs.
 
@@ -11144,7 +11220,7 @@ class ManagedClusterServicePrincipalProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSKU(_Model):
+class ManagedClusterSKU(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The SKU of a Managed Cluster.
 
     :ivar name: The name of a managed cluster SKU. Known values are: "Base" and "Automatic".
@@ -11185,7 +11261,7 @@ class ManagedClusterSKU(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterSnapshot(TrackedResource):
+class ManagedClusterSnapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A managed cluster snapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11252,7 +11328,7 @@ class ManagedClusterSnapshot(TrackedResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterSnapshotProperties(_Model):
+class ManagedClusterSnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for a managed cluster snapshot.
 
     :ivar creation_data: CreationData to be used to specify the source resource ID to create this
@@ -11301,7 +11377,7 @@ class ManagedClusterSnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStaticEgressGatewayProfile(_Model):
+class ManagedClusterStaticEgressGatewayProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The Static Egress Gateway addon configuration for the cluster.
 
     :ivar enabled: Enable Static Egress Gateway addon. Indicates if Static Egress Gateway addon is
@@ -11343,7 +11419,7 @@ class ManagedClusterStatus(_Model):
      If there was no error, this field is omitted."""
 
 
-class ManagedClusterStorageProfile(_Model):
+class ManagedClusterStorageProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Storage profile for the container service cluster.
 
     :ivar disk_csi_driver: AzureDisk CSI Driver settings for the storage profile.
@@ -11398,7 +11474,9 @@ class ManagedClusterStorageProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileBlobCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileBlobCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureBlob CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureBlob CSI Driver. The default value is false.
@@ -11426,7 +11504,9 @@ class ManagedClusterStorageProfileBlobCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileDiskCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileDiskCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureDisk CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureDisk CSI Driver. The default value is true.
@@ -11454,7 +11534,9 @@ class ManagedClusterStorageProfileDiskCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileFileCSIDriver(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileFileCSIDriver(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """AzureFile CSI Driver settings for the storage profile.
 
     :ivar enabled: Whether to enable AzureFile CSI Driver. The default value is true.
@@ -11482,7 +11564,9 @@ class ManagedClusterStorageProfileFileCSIDriver(_Model):  # pylint: disable=name
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterStorageProfileSnapshotController(_Model):  # pylint: disable=name-too-long
+class ManagedClusterStorageProfileSnapshotController(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Snapshot Controller settings for the storage profile.
 
     :ivar enabled: Whether to enable Snapshot Controller. The default value is true.
@@ -11510,7 +11594,7 @@ class ManagedClusterStorageProfileSnapshotController(_Model):  # pylint: disable
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterUpgradeProfile(ProxyResource):
+class ManagedClusterUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The list of available upgrades for compute pools.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11571,7 +11655,7 @@ class ManagedClusterUpgradeProfile(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ManagedClusterUpgradeProfileProperties(_Model):
+class ManagedClusterUpgradeProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Control plane and agent pool upgrade profiles.
 
     :ivar control_plane_profile: The list of available upgrade versions for the control plane.
@@ -11611,7 +11695,9 @@ class ManagedClusterUpgradeProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWebAppRoutingGatewayAPIImplementations(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWebAppRoutingGatewayAPIImplementations(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """Configurations for Gateway API providers to be used for managed ingress with App Routing.
 
     :ivar app_routing_istio: Configuration for using a sidecar-less Istio control plane for managed
@@ -11646,7 +11732,7 @@ class ManagedClusterWebAppRoutingGatewayAPIImplementations(_Model):  # pylint: d
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWindowsProfile(_Model):
+class ManagedClusterWindowsProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for Windows VMs in the managed cluster.
 
     :ivar admin_username: Specifies the name of the administrator account. <br><br>
@@ -11729,7 +11815,7 @@ class ManagedClusterWindowsProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfile(_Model):
+class ManagedClusterWorkloadAutoScalerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Workload Auto-scaler profile for the managed cluster.
 
     :ivar keda: KEDA (Kubernetes Event-driven Autoscaling) settings for the workload auto-scaler
@@ -11771,7 +11857,9 @@ class ManagedClusterWorkloadAutoScalerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfileKeda(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWorkloadAutoScalerProfileKeda(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """KEDA (Kubernetes Event-driven Autoscaling) settings for the workload auto-scaler profile.
 
     :ivar enabled: Whether to enable KEDA. Required.
@@ -11799,7 +11887,9 @@ class ManagedClusterWorkloadAutoScalerProfileKeda(_Model):  # pylint: disable=na
         super().__init__(*args, **kwargs)
 
 
-class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):  # pylint: disable=name-too-long
+class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(
+    _Model
+):  # pylint: disable=name-too-long,docstring-keyword-should-match-keyword-only
     """VPA (Vertical Pod Autoscaler) settings for the workload auto-scaler profile.
 
     :ivar enabled: Whether to enable VPA. Default value is false. Required.
@@ -11836,7 +11926,7 @@ class ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(_Model):  # p
         super().__init__(*args, **kwargs)
 
 
-class ManagedNamespace(TrackedResource):
+class ManagedNamespace(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Namespace managed by ARM.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -11908,7 +11998,7 @@ class ManagedServiceIdentityUserAssignedIdentitiesValue(_Model):  # pylint: disa
     """The client id of user assigned identity."""
 
 
-class ManualScaleProfile(_Model):
+class ManualScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on number of machines.
 
     :ivar size: VM size that AKS will use when creating and scaling e.g. 'Standard_E4s_v3',
@@ -11943,7 +12033,7 @@ class ManualScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembership(ProxyResource):
+class MeshMembership(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh membership of a managed cluster.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12005,7 +12095,7 @@ class MeshMembership(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembershipPrivateConnectProfile(_Model):
+class MeshMembershipPrivateConnectProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private connect profile for mesh membership.
 
     :ivar private_ip_address: The private IP address of the member cluster private FQDN. This is a
@@ -12044,7 +12134,7 @@ class MeshMembershipPrivateConnectProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshMembershipProperties(_Model):
+class MeshMembershipProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh membership properties of a managed cluster.
 
     :ivar provisioning_state: The current provisioning state of the Mesh Membership. Known values
@@ -12099,7 +12189,7 @@ class MeshMembershipProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevision(_Model):
+class MeshRevision(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Holds information on upgrades and compatibility for given major.minor mesh release.
 
     :ivar revision: The revision of the mesh release.
@@ -12140,7 +12230,7 @@ class MeshRevision(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevisionProfile(ProxyResource):
+class MeshRevisionProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh revision profile for a mesh.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12181,7 +12271,7 @@ class MeshRevisionProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshRevisionProfileProperties(_Model):
+class MeshRevisionProfileProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh revision profile properties for a mesh.
 
     :ivar mesh_revisions: Available mesh revisions.
@@ -12211,7 +12301,7 @@ class MeshRevisionProfileProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class MeshUpgradeProfile(ProxyResource):
+class MeshUpgradeProfile(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Upgrade profile for given mesh.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -12252,7 +12342,7 @@ class MeshUpgradeProfile(ProxyResource):
         super().__init__(*args, **kwargs)
 
 
-class MeshUpgradeProfileProperties(MeshRevision):
+class MeshUpgradeProfileProperties(MeshRevision):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Mesh upgrade profile properties for a major.minor release.
 
     :ivar revision: The revision of the mesh release.
@@ -12284,7 +12374,7 @@ class MeshUpgradeProfileProperties(MeshRevision):
         super().__init__(*args, **kwargs)
 
 
-class NamespaceProperties(_Model):
+class NamespaceProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a namespace managed by ARM.
 
     :ivar provisioning_state: The current provisioning state of the namespace. Known values are:
@@ -12380,7 +12470,7 @@ class NamespaceProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkPolicies(_Model):
+class NetworkPolicies(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Default network policy of the namespace, specifying ingress and egress rules.
 
     :ivar ingress: Enum representing different network policy rules. Known values are: "DenyAll",
@@ -12421,7 +12511,7 @@ class NetworkPolicies(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NetworkProfileForSnapshot(_Model):
+class NetworkProfileForSnapshot(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """network profile for managed cluster snapshot, these properties are read only.
 
     :ivar network_plugin: networkPlugin for managed cluster snapshot. Known values are: "azure",
@@ -12486,7 +12576,7 @@ class NetworkProfileForSnapshot(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeDisruptionProfile(_Model):
+class NodeDisruptionProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Node disruption profile for a managed cluster.
 
     :ivar node_disruption_policy: The policy configuration for when to allow certain operations
@@ -12529,7 +12619,7 @@ class NodeDisruptionProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NodeImageVersion(_Model):
+class NodeImageVersion(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """node image version profile for given major.minor.patch release.
 
     :ivar os: The operating system of the node image. Example: AKSUbuntu.
@@ -12574,7 +12664,7 @@ class NodeImageVersion(_Model):
         super().__init__(*args, **kwargs)
 
 
-class NvidiaGPUProfile(_Model):
+class NvidiaGPUProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """NVIDIA-specific GPU settings.
 
     :ivar management_mode: The Managed GPU experience installs additional components, such as the
@@ -12620,7 +12710,7 @@ class NvidiaGPUProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationStatusResult(_Model):
+class OperationStatusResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The current status of an async operation.
 
     :ivar id: Fully qualified ID for the async operation.
@@ -12696,7 +12786,7 @@ class OperationStatusResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class OperationValue(_Model):
+class OperationValue(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the properties of a Operation value.
 
     :ivar origin: The origin of the operation.
@@ -12777,7 +12867,7 @@ class OperationValueDisplay(_Model):
     """The resource provider for the operation."""
 
 
-class OutboundEnvironmentEndpoint(_Model):
+class OutboundEnvironmentEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Egress endpoints which AKS agent nodes connect to for common purpose.
 
     :ivar category: The category of endpoints accessed by the AKS agent node, e.g.
@@ -12837,7 +12927,7 @@ class PoolBootstrapData(_Model):
     """Node-level configuration for kubelet, labels, and taints."""
 
 
-class PortRange(_Model):
+class PortRange(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The port range.
 
     :ivar port_start: The minimum port that is included in the range. It should be ranged from 1 to
@@ -12881,7 +12971,7 @@ class PortRange(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PowerState(_Model):
+class PowerState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Describes the Power State of the cluster.
 
     :ivar code: Tells whether the cluster is Running or Stopped. Known values are: "Running" and
@@ -12910,7 +13000,7 @@ class PowerState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PreparedImageSpecificationProfile(_Model):
+class PreparedImageSpecificationProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings to determine the prepared image specification used to provision nodes in a pool.
 
     :ivar prepared_image_specification_id: The resource ID of the prepared image specification
@@ -12943,7 +13033,7 @@ class PreparedImageSpecificationProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpoint(_Model):
+class PrivateEndpoint(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Private endpoint which a connection belongs to.
 
     :ivar id: The resource ID of the private endpoint.
@@ -12971,7 +13061,7 @@ class PrivateEndpoint(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnection(ProxyResource):
+class PrivateEndpointConnection(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private endpoint connection.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13032,7 +13122,7 @@ class PrivateEndpointConnection(ProxyResource):
             super().__setattr__(key, value)
 
 
-class PrivateEndpointConnectionListResult(_Model):
+class PrivateEndpointConnectionListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private endpoint connections.
 
     :ivar value: The collection value.
@@ -13062,7 +13152,7 @@ class PrivateEndpointConnectionListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateEndpointConnectionProperties(_Model):
+class PrivateEndpointConnectionProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties of a private endpoint connection.
 
     :ivar provisioning_state: The current provisioning state. Known values are: "Canceled",
@@ -13111,7 +13201,7 @@ class PrivateEndpointConnectionProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResource(_Model):
+class PrivateLinkResource(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A private link resource.
 
     :ivar id: The ID of the private link resource.
@@ -13168,7 +13258,7 @@ class PrivateLinkResource(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkResourcesListResult(_Model):
+class PrivateLinkResourcesListResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A list of private link resources.
 
     :ivar value: The collection value.
@@ -13198,7 +13288,7 @@ class PrivateLinkResourcesListResult(_Model):
         super().__init__(*args, **kwargs)
 
 
-class PrivateLinkServiceConnectionState(_Model):
+class PrivateLinkServiceConnectionState(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The state of a private link service connection.
 
     :ivar status: The private link service connection status. Known values are: "Pending",
@@ -13235,7 +13325,7 @@ class PrivateLinkServiceConnectionState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RebalanceLoadBalancersRequestBody(_Model):
+class RebalanceLoadBalancersRequestBody(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """The names of the load balancers to rebalance. If set to empty, all load balancers will be
     rebalanced.
 
@@ -13266,7 +13356,7 @@ class RebalanceLoadBalancersRequestBody(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RelativeMonthlySchedule(_Model):
+class RelativeMonthlySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every month on the first Monday' or 'recur every 3 months on last
     Friday'.
 
@@ -13314,7 +13404,7 @@ class RelativeMonthlySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceQuota(_Model):
+class ResourceQuota(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Resource quota for the namespace.
 
     :ivar cpu_request: CPU request of the namespace in one-thousandth CPU form. See `CPU resource
@@ -13384,7 +13474,7 @@ class ResourceQuota(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ResourceReference(_Model):
+class ResourceReference(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A reference to an Azure resource.
 
     :ivar id: The fully qualified Azure resource id.
@@ -13628,7 +13718,7 @@ class ResourceSkuZoneDetails(_Model):
     """A list of capabilities that are available for the SKU in the specified list of zones."""
 
 
-class RunCommandRequest(_Model):
+class RunCommandRequest(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A run command request.
 
     :ivar command: The command to run. Required.
@@ -13668,7 +13758,7 @@ class RunCommandRequest(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RunCommandResult(_Model):
+class RunCommandResult(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """run command result.
 
     :ivar id: The command id.
@@ -13722,7 +13812,7 @@ class RunCommandResult(_Model):
             super().__setattr__(key, value)
 
 
-class SafeguardsAvailableVersion(ProxyResource):
+class SafeguardsAvailableVersion(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Available Safeguards Version.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -13779,7 +13869,7 @@ class SafeguardsAvailableVersionsProperties(_Model):
     """Whether the version is preview or stable. Known values are: \"Preview\" and \"Stable\"."""
 
 
-class ScaleProfile(_Model):
+class ScaleProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on how to scale a VirtualMachines agent pool.
 
     :ivar manual: Specifications on how to scale the VirtualMachines agent pool to a fixed size.
@@ -13822,7 +13912,7 @@ class ScaleProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Schedule(_Model):
+class Schedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """One and only one of the schedule types should be specified. Choose either 'daily', 'weekly',
     'absoluteMonthly' or 'relativeMonthly' for your maintenance schedule.
 
@@ -13873,7 +13963,7 @@ class Schedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerInstanceProfile(_Model):
+class SchedulerInstanceProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile with settings related to a specific instance of an AKS-managed scheduler.
 
     :ivar scheduler_config_mode: The configuration mode to be used by the AKS-managed scheduler.
@@ -13905,7 +13995,7 @@ class SchedulerInstanceProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SchedulerProfile(_Model):
+class SchedulerProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile with scheduler-related settings, like the configuration mode for each scheduler managed
     by AKS. See `https://aka.ms/aks/scheduler-profile <https://aka.ms/aks/scheduler-profile>`_.
 
@@ -13940,7 +14030,7 @@ class SchedulerProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceAccountImagePullProfile(_Model):
+class ServiceAccountImagePullProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Profile for configuring image pull authentication to use service account scoped managed
     identities for authentication instead of node scoped managed identity (kubelet identity) for
     authentication to Azure Container Registry. For more information, refer to
@@ -13991,7 +14081,7 @@ class ServiceAccountImagePullProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceMeshProfile(_Model):
+class ServiceMeshProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Service mesh profile for a managed cluster.
 
     :ivar mode: Mode of the service mesh. Required. Known values are: "Istio" and "Disabled".
@@ -14024,7 +14114,7 @@ class ServiceMeshProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Snapshot(TrackedResource):
+class Snapshot(TrackedResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A node pool snapshot resource.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14100,7 +14190,7 @@ class Snapshot(TrackedResource):
             super().__setattr__(key, value)
 
 
-class SnapshotProperties(_Model):
+class SnapshotProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties used to configure a node pool snapshot.
 
     :ivar creation_data: CreationData to be used to specify the source agent pool resource ID to
@@ -14173,7 +14263,7 @@ class SnapshotProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SysctlConfig(_Model):
+class SysctlConfig(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Sysctl settings for Linux agent nodes.
 
     :ivar net_core_somaxconn: Sysctl setting net.core.somaxconn.
@@ -14390,7 +14480,7 @@ class SysctlConfig(_Model):
         super().__init__(*args, **kwargs)
 
 
-class SystemData(_Model):
+class SystemData(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
@@ -14457,7 +14547,7 @@ class SystemData(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TagsObject(_Model):
+class TagsObject(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Tags object for patch operations.
 
     :ivar tags: Resource tags.
@@ -14485,7 +14575,7 @@ class TagsObject(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeInWeek(_Model):
+class TimeInWeek(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Time in a week.
 
     :ivar day: The day of the week. Known values are: "Sunday", "Monday", "Tuesday", "Wednesday",
@@ -14530,7 +14620,7 @@ class TimeInWeek(_Model):
         super().__init__(*args, **kwargs)
 
 
-class TimeSpan(_Model):
+class TimeSpan(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """A time range. For example, between 2021-05-25T13:00:00Z and 2021-05-25T14:00:00Z.
 
     :ivar start: The start of a time span.
@@ -14589,7 +14679,7 @@ class TrustedAccessRole(_Model):
      <https://kubernetes.io/docs/reference/kubernetes-api/authorization-resources/cluster-role-v1/#ClusterRole>`_."""
 
 
-class TrustedAccessRoleBinding(ProxyResource):
+class TrustedAccessRoleBinding(ProxyResource):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Defines binding between a resource and role.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
@@ -14650,7 +14740,7 @@ class TrustedAccessRoleBinding(ProxyResource):
             super().__setattr__(key, value)
 
 
-class TrustedAccessRoleBindingProperties(_Model):
+class TrustedAccessRoleBindingProperties(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Properties for trusted access role binding.
 
     :ivar provisioning_state: The current provisioning state of trusted access role binding. Known
@@ -14724,7 +14814,7 @@ class TrustedAccessRoleRule(_Model):
     """List of allowed nonResourceURLs."""
 
 
-class UpgradeOverrideSettings(_Model):
+class UpgradeOverrideSettings(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Settings for overrides when upgrading a cluster.
 
     :ivar force_upgrade: Whether to force upgrade the cluster. Note that this option instructs
@@ -14771,7 +14861,7 @@ class UpgradeOverrideSettings(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachineNodes(_Model):
+class VirtualMachineNodes(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Current status on a group of nodes of the same vm size.
 
     :ivar size: The VM size of the agents used to host this group of nodes.
@@ -14804,7 +14894,7 @@ class VirtualMachineNodes(_Model):
         super().__init__(*args, **kwargs)
 
 
-class VirtualMachinesProfile(_Model):
+class VirtualMachinesProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Specifications on VirtualMachines agent pool.
 
     :ivar scale: Specifications on how to scale a VirtualMachines agent pool.
@@ -14832,7 +14922,7 @@ class VirtualMachinesProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WeeklySchedule(_Model):
+class WeeklySchedule(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """For schedules like: 'recur every Monday' or 'recur every 3 weeks on Wednesday'.
 
     :ivar interval_weeks: Specifies the number of weeks between each set of occurrences. Required.
@@ -14869,7 +14959,7 @@ class WeeklySchedule(_Model):
         super().__init__(*args, **kwargs)
 
 
-class WindowsGmsaProfile(_Model):
+class WindowsGmsaProfile(_Model):  # pylint: disable=docstring-keyword-should-match-keyword-only
     """Windows gMSA Profile in the managed cluster.
 
     :ivar enabled: Whether to enable Windows gMSA. Specifies whether to enable Windows gMSA in the

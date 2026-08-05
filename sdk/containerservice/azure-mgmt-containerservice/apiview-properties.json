@@ -596,5 +596,5 @@
         "azure.mgmt.containerservice.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list",
         "azure.mgmt.containerservice.aio.operations.VmSkusOperations.list": "Microsoft.ContainerService.VmSkusOperationGroup.list"
     },
-    "CrossLanguageVersion": "4e367a2af914"
+    "CrossLanguageVersion": "0df61c6eb4d9"
 }

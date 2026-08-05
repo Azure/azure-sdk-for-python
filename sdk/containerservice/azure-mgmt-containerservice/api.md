@@ -9539,8 +9539,8 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.AbsoluteMonthlySchedule(TypedDict, total=False):
         key "dayOfMonth": Required[int]
         key "intervalMonths": Required[int]
-        day_of_month: int
-        interval_months: int
+        dayOfMonth: int
+        intervalMonths: int
 
 
     class azure.mgmt.containerservice.types.AdvancedNetworking(TypedDict, total=False):
@@ -9561,16 +9561,16 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.AdvancedNetworkingPerformance(TypedDict, total=False):
         key "accelerationMode": Union[str, AccelerationMode]
-        acceleration_mode: Union[str, AccelerationMode]
+        accelerationMode: Union[str, AccelerationMode]
 
 
     class azure.mgmt.containerservice.types.AdvancedNetworkingSecurity(TypedDict, total=False):
         key "advancedNetworkPolicies": Union[str, AdvancedNetworkPolicies]
         key "enabled": bool
         key "transitEncryption": ForwardRef('AdvancedNetworkingSecurityTransitEncryption', module='types')
-        advanced_network_policies: Union[str, AdvancedNetworkPolicies]
+        advancedNetworkPolicies: Union[str, AdvancedNetworkPolicies]
         enabled: bool
-        transit_encryption: AdvancedNetworkingSecurityTransitEncryption
+        transitEncryption: AdvancedNetworkingSecurityTransitEncryption
 
 
     class azure.mgmt.containerservice.types.AdvancedNetworkingSecurityTransitEncryption(TypedDict, total=False):
@@ -9587,7 +9587,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: AgentPoolManagedClusterAgentPoolProfileProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -9601,20 +9601,20 @@ namespace azure.mgmt.containerservice.types
         key "drainBatchSize": str
         key "drainTimeoutInMinutes": int
         key "finalSoakDurationInMinutes": int
-        batch_soak_duration_in_minutes: int
-        drain_batch_size: str
-        drain_timeout_in_minutes: int
-        final_soak_duration_in_minutes: int
+        batchSoakDurationInMinutes: int
+        drainBatchSize: str
+        drainTimeoutInMinutes: int
+        finalSoakDurationInMinutes: int
 
 
     class azure.mgmt.containerservice.types.AgentPoolDeleteMachinesParameter(TypedDict, total=False):
         key "machineNames": Required[list[str]]
-        machine_names: list[str]
+        machineNames: list[str]
 
 
     class azure.mgmt.containerservice.types.AgentPoolGatewayProfile(TypedDict, total=False):
         key "publicIPPrefixSize": int
-        public_ip_prefix_size: int
+        publicIPPrefixSize: int
 
 
     class azure.mgmt.containerservice.types.AgentPoolManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
@@ -9672,107 +9672,97 @@ namespace azure.mgmt.containerservice.types
         key "vnetSubnetID": str
         key "windowsProfile": ForwardRef('AgentPoolWindowsProfile', module='types')
         key "workloadRuntime": Union[str, WorkloadRuntime]
-        artifact_streaming_profile: AgentPoolArtifactStreamingProfile
+        artifactStreamingProfile: AgentPoolArtifactStreamingProfile
         availabilityZones: list[str]
-        availability_zones: list[str]
-        capacity_reservation_group_id: str
+        capacityReservationGroupID: str
         count: int
-        creation_data: CreationData
-        current_orchestrator_version: str
-        e_tag: str
-        enable_auto_scaling: bool
-        enable_encryption_at_host: bool
-        enable_fips: bool
-        enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
-        enable_ultra_ssd: bool
-        gateway_profile: AgentPoolGatewayProfile
-        gpu_instance_profile: Union[str, GPUInstanceProfile]
-        gpu_profile: GPUProfile
-        host_group_id: str
-        kubelet_config: KubeletConfig
-        kubelet_disk_type: Union[str, KubeletDiskType]
-        linux_os_config: LinuxOSConfig
-        local_dns_profile: LocalDNSProfile
-        max_count: int
-        max_pods: int
-        message_of_the_day: str
-        min_count: int
+        creationData: CreationData
+        currentOrchestratorVersion: str
+        eTag: str
+        enableAutoScaling: bool
+        enableEncryptionAtHost: bool
+        enableFIPS: bool
+        enableNodePublicIP: bool
+        enableOSDiskFullCaching: bool
+        enableUltraSSD: bool
+        gatewayProfile: AgentPoolGatewayProfile
+        gpuInstanceProfile: Union[str, GPUInstanceProfile]
+        gpuProfile: GPUProfile
+        hostGroupID: str
+        kubeletConfig: KubeletConfig
+        kubeletDiskType: Union[str, KubeletDiskType]
+        linuxOSConfig: LinuxOSConfig
+        localDNSProfile: LocalDNSProfile
+        maxCount: int
+        maxPods: int
+        messageOfTheDay: str
+        minCount: int
         mode: Union[str, AgentPoolMode]
-        network_profile: AgentPoolNetworkProfile
+        networkProfile: AgentPoolNetworkProfile
+        nodeImageVersion: str
         nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
+        nodePublicIPPrefixID: str
         nodeTaints: list[str]
-        node_image_version: str
-        node_initialization_taints: list[str]
-        node_labels: dict[str, str]
-        node_public_ip_prefix_id: str
-        node_taints: list[str]
-        orchestrator_version: str
-        os_disk_size_gb: int
-        os_disk_type: Union[str, OSDiskType]
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
-        pod_subnet_id: str
-        power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
-        provisioning_state: str
-        proximity_placement_group_id: str
-        scale_down_mode: Union[str, ScaleDownMode]
-        scale_set_eviction_policy: Union[str, ScaleSetEvictionPolicy]
-        scale_set_priority: Union[str, ScaleSetPriority]
-        security_profile: AgentPoolSecurityProfile
-        spot_max_price: float
+        orchestratorVersion: str
+        osDiskSizeGB: int
+        osDiskType: Union[str, OSDiskType]
+        osSKU: Union[str, OSSKU]
+        osType: Union[str, OSType]
+        podIPAllocationMode: Union[str, PodIPAllocationMode]
+        podSubnetID: str
+        powerState: PowerState
+        preparedImageSpecificationProfile: PreparedImageSpecificationProfile
+        provisioningState: str
+        proximityPlacementGroupID: str
+        scaleDownMode: Union[str, ScaleDownMode]
+        scaleSetEvictionPolicy: Union[str, ScaleSetEvictionPolicy]
+        scaleSetPriority: Union[str, ScaleSetPriority]
+        securityProfile: AgentPoolSecurityProfile
+        spotMaxPrice: float
         status: AgentPoolStatus
         tags: dict[str, str]
-        type_properties_type: Union[str, AgentPoolType]
-        upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
+        type: Union[str, AgentPoolType]
+        upgradeSettings: AgentPoolUpgradeSettings
+        upgradeSettingsBlueGreen: AgentPoolBlueGreenUpgradeSettings
+        upgradeStrategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
-        virtual_machine_nodes_status: list[VirtualMachineNodes]
-        virtual_machines_profile: VirtualMachinesProfile
-        vm_size: str
-        vnet_subnet_id: str
-        windows_profile: AgentPoolWindowsProfile
-        workload_runtime: Union[str, WorkloadRuntime]
+        virtualMachinesProfile: VirtualMachinesProfile
+        vmSize: str
+        vnetSubnetID: str
+        windowsProfile: AgentPoolWindowsProfile
+        workloadRuntime: Union[str, WorkloadRuntime]
 
 
     class azure.mgmt.containerservice.types.AgentPoolNetworkInterface(TypedDict, total=False):
         key "enableAcceleratedNetworking": bool
         key "type": Union[str, AgentPoolNetworkInterfaceType]
         key "vnetSubnetId": str
-        enable_accelerated_networking: bool
+        enableAcceleratedNetworking: bool
         type: Union[str, AgentPoolNetworkInterfaceType]
-        vnet_subnet_id: str
+        vnetSubnetId: str
 
 
     class azure.mgmt.containerservice.types.AgentPoolNetworkProfile(TypedDict, total=False):
         allowedHostPorts: list[PortRange]
-        allowed_host_ports: list[PortRange]
         applicationSecurityGroups: list[str]
-        application_security_groups: list[str]
         nodePublicIPPrefixIDs: list[str]
         nodePublicIPTags: list[IPTag]
-        node_public_ip_prefix_i_ds: list[str]
-        node_public_ip_tags: list[IPTag]
         secondaryNetworkInterfaces: list[AgentPoolNetworkInterface]
-        secondary_network_interfaces: list[AgentPoolNetworkInterface]
 
 
     class azure.mgmt.containerservice.types.AgentPoolSecurityProfile(TypedDict, total=False):
         key "enableSecureBoot": bool
         key "enableVTPM": bool
         key "sshAccess": Union[str, AgentPoolSSHAccess]
-        enable_secure_boot: bool
-        enable_vtpm: bool
-        ssh_access: Union[str, AgentPoolSSHAccess]
+        enableSecureBoot: bool
+        enableVTPM: bool
+        sshAccess: Union[str, AgentPoolSSHAccess]
 
 
     class azure.mgmt.containerservice.types.AgentPoolStatus(TypedDict, total=False):
         key "provisioningError": ForwardRef('ErrorDetail', module='types')
-        provisioning_error: ErrorDetail
+        provisioningError: ErrorDetail
 
 
     class azure.mgmt.containerservice.types.AgentPoolUpgradeSettings(TypedDict, total=False):
@@ -9782,17 +9772,17 @@ namespace azure.mgmt.containerservice.types
         key "maxUnavailable": str
         key "nodeSoakDurationInMinutes": int
         key "undrainableNodeBehavior": Union[str, UndrainableNodeBehavior]
-        drain_timeout_in_minutes: int
-        max_blocked_nodes: str
-        max_surge: str
-        max_unavailable: str
-        node_soak_duration_in_minutes: int
-        undrainable_node_behavior: Union[str, UndrainableNodeBehavior]
+        drainTimeoutInMinutes: int
+        maxBlockedNodes: str
+        maxSurge: str
+        maxUnavailable: str
+        nodeSoakDurationInMinutes: int
+        undrainableNodeBehavior: Union[str, UndrainableNodeBehavior]
 
 
     class azure.mgmt.containerservice.types.AgentPoolWindowsProfile(TypedDict, total=False):
         key "disableOutboundNat": bool
-        disable_outbound_nat: bool
+        disableOutboundNat: bool
 
 
     class azure.mgmt.containerservice.types.AlertConfiguration(ProxyResource):
@@ -9804,7 +9794,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: AlertConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -9814,27 +9804,27 @@ namespace azure.mgmt.containerservice.types
         key "provisioningState": Union[str, AlertConfigurationProvisioningState]
         mode: Union[str, AlertConfigurationMode]
         notification: AlertNotification
-        provisioning_state: Union[str, AlertConfigurationProvisioningState]
+        provisioningState: Union[str, AlertConfigurationProvisioningState]
 
 
     class azure.mgmt.containerservice.types.AlertNotification(TypedDict, total=False):
         key "actionGroupId": Required[str]
-        action_group_id: str
+        actionGroupId: str
 
 
     class azure.mgmt.containerservice.types.AllowedSubject(TypedDict, total=False):
         key "namespaceSelector": Required[LabelSelector]
         key "serviceAccountSelector": ForwardRef('LabelSelector', module='types')
-        namespace_selector: LabelSelector
-        service_account_selector: LabelSelector
+        namespaceSelector: LabelSelector
+        serviceAccountSelector: LabelSelector
 
 
     class azure.mgmt.containerservice.types.AutoScaleProfile(TypedDict, total=False):
         key "maxCount": int
         key "minCount": int
         key "size": str
-        max_count: int
-        min_count: int
+        maxCount: int
+        minCount: int
         size: str
 
 
@@ -9844,9 +9834,9 @@ namespace azure.mgmt.containerservice.types
         key "keyVaultNetworkAccess": Union[str, KeyVaultNetworkAccessTypes]
         key "keyVaultResourceId": str
         enabled: bool
-        key_id: str
-        key_vault_network_access: Union[str, KeyVaultNetworkAccessTypes]
-        key_vault_resource_id: str
+        keyId: str
+        keyVaultNetworkAccess: Union[str, KeyVaultNetworkAccessTypes]
+        keyVaultResourceId: str
 
 
     class azure.mgmt.containerservice.types.BastionProfile(TypedDict, total=False):
@@ -9855,22 +9845,22 @@ namespace azure.mgmt.containerservice.types
         key "publicIpAddressId": str
         key "scaleUnits": int
         key "sku": Union[str, BastionSku]
-        bastion_id: str
+        bastionId: str
         enabled: bool
-        public_ip_address_id: str
-        scale_units: int
+        publicIpAddressId: str
+        scaleUnits: int
         sku: Union[str, BastionSku]
 
 
     class azure.mgmt.containerservice.types.ClusterUpgradeSettings(TypedDict, total=False):
         key "overrideSettings": ForwardRef('UpgradeOverrideSettings', module='types')
-        override_settings: UpgradeOverrideSettings
+        overrideSettings: UpgradeOverrideSettings
 
 
     class azure.mgmt.containerservice.types.ContainerServiceLinuxProfile(TypedDict, total=False):
         key "adminUsername": Required[str]
         key "ssh": Required[ContainerServiceSshConfiguration]
-        admin_username: str
+        adminUsername: str
         ssh: ContainerServiceSshConfiguration
 
 
@@ -9893,30 +9883,27 @@ namespace azure.mgmt.containerservice.types
         key "podLinkLocalAccess": Union[str, PodLinkLocalAccess]
         key "serviceCidr": str
         key "staticEgressGatewayProfile": ForwardRef('ManagedClusterStaticEgressGatewayProfile', module='types')
-        advanced_networking: AdvancedNetworking
-        bastion_profile: BastionProfile
-        dns_service_ip: str
+        advancedNetworking: AdvancedNetworking
+        bastionProfile: BastionProfile
+        dnsServiceIP: str
         ipFamilies: list[Union[str, IPFamily]]
-        ip_families: list[Union[str, IPFamily]]
-        kube_proxy_config: ContainerServiceNetworkProfileKubeProxyConfig
-        load_balancer_profile: ManagedClusterLoadBalancerProfile
-        load_balancer_sku: Union[str, LoadBalancerSku]
-        nat_gateway_id: str
-        nat_gateway_profile: ManagedClusterNATGatewayProfile
-        network_dataplane: Union[str, NetworkDataplane]
-        network_mode: Union[str, NetworkMode]
-        network_plugin: Union[str, NetworkPlugin]
-        network_plugin_mode: Union[str, NetworkPluginMode]
-        network_policy: Union[str, NetworkPolicy]
-        outbound_type: Union[str, OutboundType]
+        kubeProxyConfig: ContainerServiceNetworkProfileKubeProxyConfig
+        loadBalancerProfile: ManagedClusterLoadBalancerProfile
+        loadBalancerSku: Union[str, LoadBalancerSku]
+        natGatewayId: str
+        natGatewayProfile: ManagedClusterNATGatewayProfile
+        networkDataplane: Union[str, NetworkDataplane]
+        networkMode: Union[str, NetworkMode]
+        networkPlugin: Union[str, NetworkPlugin]
+        networkPluginMode: Union[str, NetworkPluginMode]
+        networkPolicy: Union[str, NetworkPolicy]
+        outboundType: Union[str, OutboundType]
+        podCidr: str
         podCidrs: list[str]
-        pod_cidr: str
-        pod_cidrs: list[str]
-        pod_link_local_access: Union[str, PodLinkLocalAccess]
+        podLinkLocalAccess: Union[str, PodLinkLocalAccess]
+        serviceCidr: str
         serviceCidrs: list[str]
-        service_cidr: str
-        service_cidrs: list[str]
-        static_egress_gateway_profile: ManagedClusterStaticEgressGatewayProfile
+        staticEgressGatewayProfile: ManagedClusterStaticEgressGatewayProfile
 
 
     class azure.mgmt.containerservice.types.ContainerServiceNetworkProfileKubeProxyConfig(TypedDict, total=False):
@@ -9924,7 +9911,7 @@ namespace azure.mgmt.containerservice.types
         key "ipvsConfig": ForwardRef('ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig', module='types')
         key "mode": Union[str, Mode]
         enabled: bool
-        ipvs_config: ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig
+        ipvsConfig: ContainerServiceNetworkProfileKubeProxyConfigIpvsConfig
         mode: Union[str, Mode]
 
 
@@ -9934,29 +9921,29 @@ namespace azure.mgmt.containerservice.types
         key "tcpTimeoutSeconds": int
         key "udpTimeoutSeconds": int
         scheduler: Union[str, IpvsScheduler]
-        tcp_fin_timeout_seconds: int
-        tcp_timeout_seconds: int
-        udp_timeout_seconds: int
+        tcpFinTimeoutSeconds: int
+        tcpTimeoutSeconds: int
+        udpTimeoutSeconds: int
 
 
     class azure.mgmt.containerservice.types.ContainerServiceSshConfiguration(TypedDict, total=False):
         key "publicKeys": Required[list[ContainerServiceSshPublicKey]]
-        public_keys: list[ContainerServiceSshPublicKey]
+        publicKeys: list[ContainerServiceSshPublicKey]
 
 
     class azure.mgmt.containerservice.types.ContainerServiceSshPublicKey(TypedDict, total=False):
         key "keyData": Required[str]
-        key_data: str
+        keyData: str
 
 
     class azure.mgmt.containerservice.types.CreationData(TypedDict, total=False):
         key "sourceResourceId": str
-        source_resource_id: str
+        sourceResourceId: str
 
 
     class azure.mgmt.containerservice.types.DailySchedule(TypedDict, total=False):
         key "intervalDays": Required[int]
-        interval_days: int
+        intervalDays: int
 
 
     class azure.mgmt.containerservice.types.DateSpan(TypedDict, total=False):
@@ -9972,9 +9959,9 @@ namespace azure.mgmt.containerservice.types
         key "resourceId": str
         key "tenantId": str
         location: str
-        referral_resource: str
-        resource_id: str
-        tenant_id: str
+        referralResource: str
+        resourceId: str
+        tenantId: str
 
 
     class azure.mgmt.containerservice.types.ErrorAdditionalInfo(TypedDict, total=False):
@@ -9989,7 +9976,6 @@ namespace azure.mgmt.containerservice.types
         key "message": str
         key "target": str
         additionalInfo: list[ErrorAdditionalInfo]
-        additional_info: list[ErrorAdditionalInfo]
         code: str
         details: list[ErrorDetail]
         message: str
@@ -10008,7 +9994,7 @@ namespace azure.mgmt.containerservice.types
         key "driverType": Union[str, DriverType]
         key "nvidia": ForwardRef('NvidiaGPUProfile', module='types')
         driver: Union[str, GPUDriver]
-        driver_type: Union[str, DriverType]
+        driverType: Union[str, DriverType]
         nvidia: NvidiaGPUProfile
 
 
@@ -10016,15 +10002,15 @@ namespace azure.mgmt.containerservice.types
         key "memoryAvailable": str
         key "nodeFsAvailable": str
         key "nodeFsInodesFree": str
-        memory_available: str
-        node_fs_available: str
-        node_fs_inodes_free: str
+        memoryAvailable: str
+        nodeFsAvailable: str
+        nodeFsInodesFree: str
 
 
     class azure.mgmt.containerservice.types.IPTag(TypedDict, total=False):
         key "ipTagType": str
         key "tag": str
-        ip_tag_type: str
+        ipTagType: str
         tag: str
 
 
@@ -10035,11 +10021,11 @@ namespace azure.mgmt.containerservice.types
         key "properties": ForwardRef('IdentityBindingProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         name: str
         properties: IdentityBindingProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10048,15 +10034,15 @@ namespace azure.mgmt.containerservice.types
         key "objectId": str
         key "resourceId": Required[str]
         key "tenantId": str
-        client_id: str
-        object_id: str
-        resource_id: str
-        tenant_id: str
+        clientId: str
+        objectId: str
+        resourceId: str
+        tenantId: str
 
 
     class azure.mgmt.containerservice.types.IdentityBindingOidcIssuerProfile(TypedDict, total=False):
         key "oidcIssuerUrl": str
-        oidc_issuer_url: str
+        oidcIssuerUrl: str
 
 
     class azure.mgmt.containerservice.types.IdentityBindingProperties(TypedDict, total=False):
@@ -10064,10 +10050,9 @@ namespace azure.mgmt.containerservice.types
         key "oidcIssuer": ForwardRef('IdentityBindingOidcIssuerProfile', module='types')
         key "provisioningState": Union[str, IdentityBindingProvisioningState]
         allowedSubjects: list[AllowedSubject]
-        allowed_subjects: list[AllowedSubject]
-        managed_identity: IdentityBindingManagedIdentityProfile
-        oidc_issuer: IdentityBindingOidcIssuerProfile
-        provisioning_state: Union[str, IdentityBindingProvisioningState]
+        managedIdentity: IdentityBindingManagedIdentityProfile
+        oidcIssuer: IdentityBindingOidcIssuerProfile
+        provisioningState: Union[str, IdentityBindingProvisioningState]
 
 
     class azure.mgmt.containerservice.types.IstioCertificateAuthority(TypedDict, total=False):
@@ -10078,10 +10063,8 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.IstioComponents(TypedDict, total=False):
         key "proxyRedirectionMechanism": Union[str, ProxyRedirectionMechanism]
         egressGateways: list[IstioEgressGateway]
-        egress_gateways: list[IstioEgressGateway]
         ingressGateways: list[IstioIngressGateway]
-        ingress_gateways: list[IstioIngressGateway]
-        proxy_redirection_mechanism: Union[str, ProxyRedirectionMechanism]
+        proxyRedirectionMechanism: Union[str, ProxyRedirectionMechanism]
 
 
     class azure.mgmt.containerservice.types.IstioEgressGateway(TypedDict, total=False):
@@ -10090,7 +10073,7 @@ namespace azure.mgmt.containerservice.types
         key "name": Required[str]
         key "namespace": str
         enabled: bool
-        gateway_configuration_name: str
+        gatewayConfigurationName: str
         name: str
         namespace: str
 
@@ -10108,17 +10091,17 @@ namespace azure.mgmt.containerservice.types
         key "keyObjectName": str
         key "keyVaultId": str
         key "rootCertObjectName": str
-        cert_chain_object_name: str
-        cert_object_name: str
-        key_object_name: str
-        key_vault_id: str
-        root_cert_object_name: str
+        certChainObjectName: str
+        certObjectName: str
+        keyObjectName: str
+        keyVaultId: str
+        rootCertObjectName: str
 
 
     class azure.mgmt.containerservice.types.IstioServiceMesh(TypedDict, total=False):
         key "certificateAuthority": ForwardRef('IstioCertificateAuthority', module='types')
         key "components": ForwardRef('IstioComponents', module='types')
-        certificate_authority: IstioCertificateAuthority
+        certificateAuthority: IstioCertificateAuthority
         components: IstioComponents
         revisions: list[str]
 
@@ -10132,7 +10115,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: JWTAuthenticatorProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10155,7 +10138,7 @@ namespace azure.mgmt.containerservice.types
         key "key": Required[str]
         key "valueExpression": Required[str]
         key: str
-        value_expression: str
+        valueExpression: str
 
 
     class azure.mgmt.containerservice.types.JWTAuthenticatorIssuer(TypedDict, total=False):
@@ -10169,13 +10152,11 @@ namespace azure.mgmt.containerservice.types
         key "claimMappings": Required[JWTAuthenticatorClaimMappings]
         key "issuer": Required[JWTAuthenticatorIssuer]
         key "provisioningState": Union[str, JWTAuthenticatorProvisioningState]
+        claimMappings: JWTAuthenticatorClaimMappings
         claimValidationRules: list[JWTAuthenticatorValidationRule]
-        claim_mappings: JWTAuthenticatorClaimMappings
-        claim_validation_rules: list[JWTAuthenticatorValidationRule]
         issuer: JWTAuthenticatorIssuer
-        provisioning_state: Union[str, JWTAuthenticatorProvisioningState]
+        provisioningState: Union[str, JWTAuthenticatorProvisioningState]
         userValidationRules: list[JWTAuthenticatorValidationRule]
-        user_validation_rules: list[JWTAuthenticatorValidationRule]
 
 
     class azure.mgmt.containerservice.types.JWTAuthenticatorValidationRule(TypedDict, total=False):
@@ -10188,8 +10169,8 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.KubeReserved(TypedDict, total=False):
         key "cpuMillicores": int
         key "memoryMB": int
-        cpu_millicores: int
-        memory_mb: int
+        cpuMillicores: int
+        memoryMB: int
 
 
     class azure.mgmt.containerservice.types.KubeletConfig(TypedDict, total=False):
@@ -10207,32 +10188,29 @@ namespace azure.mgmt.containerservice.types
         key "seccompDefault": Union[str, SeccompDefault]
         key "topologyManagerPolicy": str
         allowedUnsafeSysctls: list[str]
-        allowed_unsafe_sysctls: list[str]
-        container_log_max_files: int
-        container_log_max_size_mb: int
-        cpu_cfs_quota: bool
-        cpu_cfs_quota_period: str
-        cpu_manager_policy: str
-        fail_swap_on: bool
-        hard_eviction_threshold: HardEvictionThreshold
-        image_gc_high_threshold: int
-        image_gc_low_threshold: int
-        kube_reserved: KubeReserved
-        pod_max_pids: int
-        seccomp_default: Union[str, SeccompDefault]
-        topology_manager_policy: str
+        containerLogMaxFiles: int
+        containerLogMaxSizeMB: int
+        cpuCfsQuota: bool
+        cpuCfsQuotaPeriod: str
+        cpuManagerPolicy: str
+        failSwapOn: bool
+        hardEvictionThreshold: HardEvictionThreshold
+        imageGcHighThreshold: int
+        imageGcLowThreshold: int
+        kubeReserved: KubeReserved
+        podMaxPids: int
+        seccompDefault: Union[str, SeccompDefault]
+        topologyManagerPolicy: str
 
 
     class azure.mgmt.containerservice.types.KubernetesResourceObjectEncryptionProfile(TypedDict, total=False):
         key "infrastructureEncryption": Union[str, InfrastructureEncryption]
-        infrastructure_encryption: Union[str, InfrastructureEncryption]
+        infrastructureEncryption: Union[str, InfrastructureEncryption]
 
 
     class azure.mgmt.containerservice.types.LabelSelector(TypedDict, total=False):
         matchExpressions: list[LabelSelectorRequirement]
         matchLabels: list[str]
-        match_expressions: list[LabelSelectorRequirement]
-        match_labels: list[str]
 
 
     class azure.mgmt.containerservice.types.LabelSelectorRequirement(TypedDict, total=False):
@@ -10241,7 +10219,6 @@ namespace azure.mgmt.containerservice.types
         key: str
         operator: Union[str, Operator]
         values: list[str]
-        values_property: list[str]
 
 
     class azure.mgmt.containerservice.types.LinuxOSConfig(TypedDict, total=False):
@@ -10249,10 +10226,10 @@ namespace azure.mgmt.containerservice.types
         key "sysctls": ForwardRef('SysctlConfig', module='types')
         key "transparentHugePageDefrag": str
         key "transparentHugePageEnabled": str
-        swap_file_size_mb: int
+        swapFileSizeMB: int
         sysctls: SysctlConfig
-        transparent_huge_page_defrag: str
-        transparent_huge_page_enabled: str
+        transparentHugePageDefrag: str
+        transparentHugePageEnabled: str
 
 
     class azure.mgmt.containerservice.types.ListBootstrapDataRequest(TypedDict, total=False):
@@ -10267,7 +10244,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: LoadBalancerProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -10278,12 +10255,12 @@ namespace azure.mgmt.containerservice.types
         key "provisioningState": str
         key "serviceLabelSelector": ForwardRef('LabelSelector', module='types')
         key "serviceNamespaceSelector": ForwardRef('LabelSelector', module='types')
-        allow_service_placement: bool
-        node_selector: LabelSelector
-        primary_agent_pool_name: str
-        provisioning_state: str
-        service_label_selector: LabelSelector
-        service_namespace_selector: LabelSelector
+        allowServicePlacement: bool
+        nodeSelector: LabelSelector
+        primaryAgentPoolName: str
+        provisioningState: str
+        serviceLabelSelector: LabelSelector
+        serviceNamespaceSelector: LabelSelector
 
 
     class azure.mgmt.containerservice.types.LocalDNSOverride(TypedDict, total=False):
@@ -10295,25 +10272,23 @@ namespace azure.mgmt.containerservice.types
         key "queryLogging": Union[str, LocalDNSQueryLogging]
         key "serveStale": Union[str, LocalDNSServeStale]
         key "serveStaleDurationInSeconds": int
-        cache_duration_in_seconds: int
-        forward_destination: Union[str, LocalDNSForwardDestination]
-        forward_policy: Union[str, LocalDNSForwardPolicy]
-        max_concurrent: int
+        cacheDurationInSeconds: int
+        forwardDestination: Union[str, LocalDNSForwardDestination]
+        forwardPolicy: Union[str, LocalDNSForwardPolicy]
+        maxConcurrent: int
         protocol: Union[str, LocalDNSProtocol]
-        query_logging: Union[str, LocalDNSQueryLogging]
-        serve_stale: Union[str, LocalDNSServeStale]
-        serve_stale_duration_in_seconds: int
+        queryLogging: Union[str, LocalDNSQueryLogging]
+        serveStale: Union[str, LocalDNSServeStale]
+        serveStaleDurationInSeconds: int
 
 
     class azure.mgmt.containerservice.types.LocalDNSProfile(TypedDict, total=False):
         key "mode": Union[str, LocalDNSMode]
         key "state": Union[str, LocalDNSState]
         kubeDNSOverrides: dict[str, LocalDNSOverride]
-        kube_dns_overrides: dict[str, LocalDNSOverride]
         mode: Union[str, LocalDNSMode]
         state: Union[str, LocalDNSState]
         vnetDNSOverrides: dict[str, LocalDNSOverride]
-        vnet_dns_overrides: dict[str, LocalDNSOverride]
 
 
     class azure.mgmt.containerservice.types.Machine(ProxyResource):
@@ -10325,14 +10300,14 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: MachineProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
         zones: list[str]
 
 
     class azure.mgmt.containerservice.types.MachineBillingProfile(TypedDict, total=False):
         key "spotMaxPrice": float
-        spot_max_price: float
+        spotMaxPrice: float
 
 
     class azure.mgmt.containerservice.types.MachineHardwareProfile(TypedDict, total=False):
@@ -10340,10 +10315,10 @@ namespace azure.mgmt.containerservice.types
         key "gpuProfile": ForwardRef('GPUProfile', module='types')
         key "ultraSsdEnabled": bool
         key "vmSize": str
-        gpu_instance_profile: Union[str, GPUInstanceProfile]
-        gpu_profile: GPUProfile
-        ultra_ssd_enabled: bool
-        vm_size: str
+        gpuInstanceProfile: Union[str, GPUInstanceProfile]
+        gpuProfile: GPUProfile
+        ultraSsdEnabled: bool
+        vmSize: str
 
 
     class azure.mgmt.containerservice.types.MachineIpAddress(TypedDict, total=False):
@@ -10362,20 +10337,17 @@ namespace azure.mgmt.containerservice.types
         key "nodeName": str
         key "orchestratorVersion": str
         key "workloadRuntime": Union[str, WorkloadRuntime]
-        artifact_streaming_profile: AgentPoolArtifactStreamingProfile
-        current_orchestrator_version: str
-        kubelet_config: KubeletConfig
-        kubelet_disk_type: Union[str, KubeletDiskType]
-        max_pods: int
+        artifactStreamingProfile: AgentPoolArtifactStreamingProfile
+        currentOrchestratorVersion: str
+        kubeletConfig: KubeletConfig
+        kubeletDiskType: Union[str, KubeletDiskType]
+        maxPods: int
         nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
+        nodeName: str
         nodeTaints: list[str]
-        node_initialization_taints: list[str]
-        node_labels: dict[str, str]
-        node_name: str
-        node_taints: list[str]
-        orchestrator_version: str
-        workload_runtime: Union[str, WorkloadRuntime]
+        orchestratorVersion: str
+        workloadRuntime: Union[str, WorkloadRuntime]
 
 
     class azure.mgmt.containerservice.types.MachineNetworkProperties(TypedDict, total=False):
@@ -10383,14 +10355,12 @@ namespace azure.mgmt.containerservice.types
         key "nodePublicIPPrefixID": str
         key "podSubnetID": str
         key "vnetSubnetID": str
-        enable_node_public_ip: bool
+        enableNodePublicIP: bool
         ipAddresses: list[MachineIpAddress]
-        ip_addresses: list[MachineIpAddress]
+        nodePublicIPPrefixID: str
         nodePublicIPTags: list[IPTag]
-        node_public_ip_prefix_id: str
-        node_public_ip_tags: list[IPTag]
-        pod_subnet_id: str
-        vnet_subnet_id: str
+        podSubnetID: str
+        vnetSubnetID: str
 
 
     class azure.mgmt.containerservice.types.MachineOSProfile(TypedDict, total=False):
@@ -10401,20 +10371,20 @@ namespace azure.mgmt.containerservice.types
         key "osSKU": Union[str, OSSKU]
         key "osType": Union[str, OSType]
         key "windowsProfile": ForwardRef('AgentPoolWindowsProfile', module='types')
-        enable_fips: bool
-        linux_profile: MachineOSProfileLinuxProfile
-        os_disk_size_gb: int
-        os_disk_type: Union[str, OSDiskType]
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        windows_profile: AgentPoolWindowsProfile
+        enableFIPS: bool
+        linuxProfile: MachineOSProfileLinuxProfile
+        osDiskSizeGB: int
+        osDiskType: Union[str, OSDiskType]
+        osSKU: Union[str, OSSKU]
+        osType: Union[str, OSType]
+        windowsProfile: AgentPoolWindowsProfile
 
 
     class azure.mgmt.containerservice.types.MachineOSProfileLinuxProfile(TypedDict, total=False):
         key "linuxOSConfig": ForwardRef('LinuxOSConfig', module='types')
         key "messageOfTheDay": str
-        linux_os_config: LinuxOSConfig
-        message_of_the_day: str
+        linuxOSConfig: LinuxOSConfig
+        messageOfTheDay: str
 
 
     class azure.mgmt.containerservice.types.MachineProperties(TypedDict, total=False):
@@ -10434,18 +10404,18 @@ namespace azure.mgmt.containerservice.types
         key "security": ForwardRef('MachineSecurityProfile', module='types')
         key "status": ForwardRef('MachineStatus', module='types')
         billing: MachineBillingProfile
-        e_tag: str
-        eviction_policy: Union[str, ScaleSetEvictionPolicy]
+        eTag: str
+        evictionPolicy: Union[str, ScaleSetEvictionPolicy]
         hardware: MachineHardwareProfile
         kubernetes: MachineKubernetesProfile
-        local_dns_profile: LocalDNSProfile
+        localDNSProfile: LocalDNSProfile
         mode: Union[str, AgentPoolMode]
         network: MachineNetworkProperties
-        node_image_version: str
-        operating_system: MachineOSProfile
+        nodeImageVersion: str
+        operatingSystem: MachineOSProfile
         priority: Union[str, ScaleSetPriority]
-        provisioning_state: str
-        resource_id: str
+        provisioningState: str
+        resourceId: str
         security: MachineSecurityProfile
         status: MachineStatus
         tags: dict[str, str]
@@ -10456,10 +10426,10 @@ namespace azure.mgmt.containerservice.types
         key "enableSecureBoot": bool
         key "enableVTPM": bool
         key "sshAccess": Union[str, AgentPoolSSHAccess]
-        enable_encryption_at_host: bool
-        enable_secure_boot: bool
-        enable_vtpm: bool
-        ssh_access: Union[str, AgentPoolSSHAccess]
+        enableEncryptionAtHost: bool
+        enableSecureBoot: bool
+        enableVTPM: bool
+        sshAccess: Union[str, AgentPoolSSHAccess]
 
 
     class azure.mgmt.containerservice.types.MachineStatus(TypedDict, total=False):
@@ -10468,11 +10438,11 @@ namespace azure.mgmt.containerservice.types
         key "driftReason": str
         key "provisioningError": ForwardRef('ErrorDetail', module='types')
         key "vmState": Union[str, VmState]
-        creation_timestamp: str
-        drift_action: Union[str, DriftAction]
-        drift_reason: str
-        provisioning_error: ErrorDetail
-        vm_state: Union[str, VmState]
+        creationTimestamp: str
+        driftAction: Union[str, DriftAction]
+        driftReason: str
+        provisioningError: ErrorDetail
+        vmState: Union[str, VmState]
 
 
     class azure.mgmt.containerservice.types.MaintenanceConfiguration(ProxyResource):
@@ -10484,19 +10454,17 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: MaintenanceConfigurationProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.containerservice.types.MaintenanceConfigurationProperties(TypedDict, total=False):
         key "maintenanceWindow": ForwardRef('MaintenanceWindow', module='types')
         key "maintenanceWindowId": str
-        maintenance_window: MaintenanceWindow
-        maintenance_window_id: str
+        maintenanceWindow: MaintenanceWindow
+        maintenanceWindowId: str
         notAllowedTime: list[TimeSpan]
-        not_allowed_time: list[TimeSpan]
         timeInWeek: list[TimeInWeek]
-        time_in_week: list[TimeInWeek]
 
 
     class azure.mgmt.containerservice.types.MaintenanceWindow(TypedDict, total=False):
@@ -10505,13 +10473,12 @@ namespace azure.mgmt.containerservice.types
         key "startDate": str
         key "startTime": Required[str]
         key "utcOffset": str
-        duration_hours: int
+        durationHours: int
         notAllowedDates: list[DateSpan]
-        not_allowed_dates: list[DateSpan]
         schedule: Schedule
-        start_date: str
-        start_time: str
-        utc_offset: str
+        startDate: str
+        startTime: str
+        utcOffset: str
 
 
     class azure.mgmt.containerservice.types.MaintenanceWindowResource(TrackedResource):
@@ -10525,7 +10492,7 @@ namespace azure.mgmt.containerservice.types
         location: str
         name: str
         properties: MaintenanceWindowResourceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -10537,14 +10504,13 @@ namespace azure.mgmt.containerservice.types
         key "startDate": str
         key "startTime": Required[str]
         key "utcOffset": str
-        duration_hours: int
+        durationHours: int
         notAllowedDates: list[DateSpan]
-        not_allowed_dates: list[DateSpan]
-        provisioning_state: Union[str, ResourceProvisioningState]
+        provisioningState: Union[str, ResourceProvisioningState]
         schedule: Schedule
-        start_date: str
-        start_time: str
-        utc_offset: str
+        startDate: str
+        startTime: str
+        utcOffset: str
 
 
     class azure.mgmt.containerservice.types.ManagedCluster(TrackedResource):
@@ -10559,8 +10525,8 @@ namespace azure.mgmt.containerservice.types
         key "sku": ForwardRef('ManagedClusterSKU', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
-        extended_location: ExtendedLocation
+        eTag: str
+        extendedLocation: ExtendedLocation
         id: str
         identity: ManagedClusterIdentity
         kind: str
@@ -10568,7 +10534,7 @@ namespace azure.mgmt.containerservice.types
         name: str
         properties: ManagedClusterProperties
         sku: ManagedClusterSKU
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -10581,13 +10547,12 @@ namespace azure.mgmt.containerservice.types
         key "serverAppSecret": str
         key "tenantID": str
         adminGroupObjectIDs: list[str]
-        admin_group_object_i_ds: list[str]
-        client_app_id: str
-        enable_azure_rbac: bool
+        clientAppID: str
+        enableAzureRBAC: bool
         managed: bool
-        server_app_id: str
-        server_app_secret: str
-        tenant_id: str
+        serverAppID: str
+        serverAppSecret: str
+        tenantID: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAIToolchainOperatorProfile(TypedDict, total=False):
@@ -10603,13 +10568,12 @@ namespace azure.mgmt.containerservice.types
         key "privateDNSZone": str
         key "subnetId": str
         authorizedIPRanges: list[str]
-        authorized_ip_ranges: list[str]
-        disable_run_command: bool
-        enable_private_cluster: bool
-        enable_private_cluster_public_fqdn: bool
-        enable_vnet_integration: bool
-        private_dns_zone: str
-        subnet_id: str
+        disableRunCommand: bool
+        enablePrivateCluster: bool
+        enablePrivateClusterPublicFQDN: bool
+        enableVnetIntegration: bool
+        privateDNSZone: str
+        subnetId: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAddonProfile(TypedDict, total=False):
@@ -10624,9 +10588,9 @@ namespace azure.mgmt.containerservice.types
         key "clientId": str
         key "objectId": str
         key "resourceId": str
-        client_id: str
-        object_id: str
-        resource_id: str
+        clientId: str
+        objectId: str
+        resourceId: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
@@ -10685,72 +10649,67 @@ namespace azure.mgmt.containerservice.types
         key "vnetSubnetID": str
         key "windowsProfile": ForwardRef('AgentPoolWindowsProfile', module='types')
         key "workloadRuntime": Union[str, WorkloadRuntime]
-        artifact_streaming_profile: AgentPoolArtifactStreamingProfile
+        artifactStreamingProfile: AgentPoolArtifactStreamingProfile
         availabilityZones: list[str]
-        availability_zones: list[str]
-        capacity_reservation_group_id: str
+        capacityReservationGroupID: str
         count: int
-        creation_data: CreationData
-        current_orchestrator_version: str
-        e_tag: str
-        enable_auto_scaling: bool
-        enable_encryption_at_host: bool
-        enable_fips: bool
-        enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
-        enable_ultra_ssd: bool
-        gateway_profile: AgentPoolGatewayProfile
-        gpu_instance_profile: Union[str, GPUInstanceProfile]
-        gpu_profile: GPUProfile
-        host_group_id: str
-        kubelet_config: KubeletConfig
-        kubelet_disk_type: Union[str, KubeletDiskType]
-        linux_os_config: LinuxOSConfig
-        local_dns_profile: LocalDNSProfile
-        max_count: int
-        max_pods: int
-        message_of_the_day: str
-        min_count: int
+        creationData: CreationData
+        currentOrchestratorVersion: str
+        eTag: str
+        enableAutoScaling: bool
+        enableEncryptionAtHost: bool
+        enableFIPS: bool
+        enableNodePublicIP: bool
+        enableOSDiskFullCaching: bool
+        enableUltraSSD: bool
+        gatewayProfile: AgentPoolGatewayProfile
+        gpuInstanceProfile: Union[str, GPUInstanceProfile]
+        gpuProfile: GPUProfile
+        hostGroupID: str
+        kubeletConfig: KubeletConfig
+        kubeletDiskType: Union[str, KubeletDiskType]
+        linuxOSConfig: LinuxOSConfig
+        localDNSProfile: LocalDNSProfile
+        maxCount: int
+        maxPods: int
+        messageOfTheDay: str
+        minCount: int
         mode: Union[str, AgentPoolMode]
         name: str
-        network_profile: AgentPoolNetworkProfile
+        networkProfile: AgentPoolNetworkProfile
+        nodeImageVersion: str
         nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
+        nodePublicIPPrefixID: str
         nodeTaints: list[str]
-        node_image_version: str
-        node_initialization_taints: list[str]
-        node_labels: dict[str, str]
-        node_public_ip_prefix_id: str
-        node_taints: list[str]
-        orchestrator_version: str
-        os_disk_size_gb: int
-        os_disk_type: Union[str, OSDiskType]
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
-        pod_subnet_id: str
-        power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
-        provisioning_state: str
-        proximity_placement_group_id: str
-        scale_down_mode: Union[str, ScaleDownMode]
-        scale_set_eviction_policy: Union[str, ScaleSetEvictionPolicy]
-        scale_set_priority: Union[str, ScaleSetPriority]
-        security_profile: AgentPoolSecurityProfile
-        spot_max_price: float
+        orchestratorVersion: str
+        osDiskSizeGB: int
+        osDiskType: Union[str, OSDiskType]
+        osSKU: Union[str, OSSKU]
+        osType: Union[str, OSType]
+        podIPAllocationMode: Union[str, PodIPAllocationMode]
+        podSubnetID: str
+        powerState: PowerState
+        preparedImageSpecificationProfile: PreparedImageSpecificationProfile
+        provisioningState: str
+        proximityPlacementGroupID: str
+        scaleDownMode: Union[str, ScaleDownMode]
+        scaleSetEvictionPolicy: Union[str, ScaleSetEvictionPolicy]
+        scaleSetPriority: Union[str, ScaleSetPriority]
+        securityProfile: AgentPoolSecurityProfile
+        spotMaxPrice: float
         status: AgentPoolStatus
         tags: dict[str, str]
         type: Union[str, AgentPoolType]
-        upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
+        upgradeSettings: AgentPoolUpgradeSettings
+        upgradeSettingsBlueGreen: AgentPoolBlueGreenUpgradeSettings
+        upgradeStrategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
-        virtual_machine_nodes_status: list[VirtualMachineNodes]
-        virtual_machines_profile: VirtualMachinesProfile
-        vm_size: str
-        vnet_subnet_id: str
-        windows_profile: AgentPoolWindowsProfile
-        workload_runtime: Union[str, WorkloadRuntime]
+        virtualMachinesProfile: VirtualMachinesProfile
+        vmSize: str
+        vnetSubnetID: str
+        windowsProfile: AgentPoolWindowsProfile
+        workloadRuntime: Union[str, WorkloadRuntime]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAgentPoolProfileProperties(TypedDict, total=False):
@@ -10808,71 +10767,66 @@ namespace azure.mgmt.containerservice.types
         key "vnetSubnetID": str
         key "windowsProfile": ForwardRef('AgentPoolWindowsProfile', module='types')
         key "workloadRuntime": Union[str, WorkloadRuntime]
-        artifact_streaming_profile: AgentPoolArtifactStreamingProfile
+        artifactStreamingProfile: AgentPoolArtifactStreamingProfile
         availabilityZones: list[str]
-        availability_zones: list[str]
-        capacity_reservation_group_id: str
+        capacityReservationGroupID: str
         count: int
-        creation_data: CreationData
-        current_orchestrator_version: str
-        e_tag: str
-        enable_auto_scaling: bool
-        enable_encryption_at_host: bool
-        enable_fips: bool
-        enable_node_public_ip: bool
-        enable_os_disk_full_caching: bool
-        enable_ultra_ssd: bool
-        gateway_profile: AgentPoolGatewayProfile
-        gpu_instance_profile: Union[str, GPUInstanceProfile]
-        gpu_profile: GPUProfile
-        host_group_id: str
-        kubelet_config: KubeletConfig
-        kubelet_disk_type: Union[str, KubeletDiskType]
-        linux_os_config: LinuxOSConfig
-        local_dns_profile: LocalDNSProfile
-        max_count: int
-        max_pods: int
-        message_of_the_day: str
-        min_count: int
+        creationData: CreationData
+        currentOrchestratorVersion: str
+        eTag: str
+        enableAutoScaling: bool
+        enableEncryptionAtHost: bool
+        enableFIPS: bool
+        enableNodePublicIP: bool
+        enableOSDiskFullCaching: bool
+        enableUltraSSD: bool
+        gatewayProfile: AgentPoolGatewayProfile
+        gpuInstanceProfile: Union[str, GPUInstanceProfile]
+        gpuProfile: GPUProfile
+        hostGroupID: str
+        kubeletConfig: KubeletConfig
+        kubeletDiskType: Union[str, KubeletDiskType]
+        linuxOSConfig: LinuxOSConfig
+        localDNSProfile: LocalDNSProfile
+        maxCount: int
+        maxPods: int
+        messageOfTheDay: str
+        minCount: int
         mode: Union[str, AgentPoolMode]
-        network_profile: AgentPoolNetworkProfile
+        networkProfile: AgentPoolNetworkProfile
+        nodeImageVersion: str
         nodeInitializationTaints: list[str]
         nodeLabels: dict[str, str]
+        nodePublicIPPrefixID: str
         nodeTaints: list[str]
-        node_image_version: str
-        node_initialization_taints: list[str]
-        node_labels: dict[str, str]
-        node_public_ip_prefix_id: str
-        node_taints: list[str]
-        orchestrator_version: str
-        os_disk_size_gb: int
-        os_disk_type: Union[str, OSDiskType]
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        pod_ip_allocation_mode: Union[str, PodIPAllocationMode]
-        pod_subnet_id: str
-        power_state: PowerState
-        prepared_image_specification_profile: PreparedImageSpecificationProfile
-        provisioning_state: str
-        proximity_placement_group_id: str
-        scale_down_mode: Union[str, ScaleDownMode]
-        scale_set_eviction_policy: Union[str, ScaleSetEvictionPolicy]
-        scale_set_priority: Union[str, ScaleSetPriority]
-        security_profile: AgentPoolSecurityProfile
-        spot_max_price: float
+        orchestratorVersion: str
+        osDiskSizeGB: int
+        osDiskType: Union[str, OSDiskType]
+        osSKU: Union[str, OSSKU]
+        osType: Union[str, OSType]
+        podIPAllocationMode: Union[str, PodIPAllocationMode]
+        podSubnetID: str
+        powerState: PowerState
+        preparedImageSpecificationProfile: PreparedImageSpecificationProfile
+        provisioningState: str
+        proximityPlacementGroupID: str
+        scaleDownMode: Union[str, ScaleDownMode]
+        scaleSetEvictionPolicy: Union[str, ScaleSetEvictionPolicy]
+        scaleSetPriority: Union[str, ScaleSetPriority]
+        securityProfile: AgentPoolSecurityProfile
+        spotMaxPrice: float
         status: AgentPoolStatus
         tags: dict[str, str]
         type: Union[str, AgentPoolType]
-        upgrade_settings: AgentPoolUpgradeSettings
-        upgrade_settings_blue_green: AgentPoolBlueGreenUpgradeSettings
-        upgrade_strategy: Union[str, UpgradeStrategy]
+        upgradeSettings: AgentPoolUpgradeSettings
+        upgradeSettingsBlueGreen: AgentPoolBlueGreenUpgradeSettings
+        upgradeStrategy: Union[str, UpgradeStrategy]
         virtualMachineNodesStatus: list[VirtualMachineNodes]
-        virtual_machine_nodes_status: list[VirtualMachineNodes]
-        virtual_machines_profile: VirtualMachinesProfile
-        vm_size: str
-        vnet_subnet_id: str
-        windows_profile: AgentPoolWindowsProfile
-        workload_runtime: Union[str, WorkloadRuntime]
+        virtualMachinesProfile: VirtualMachinesProfile
+        vmSize: str
+        vnetSubnetID: str
+        windowsProfile: AgentPoolWindowsProfile
+        workloadRuntime: Union[str, WorkloadRuntime]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAppRoutingIstio(TypedDict, total=False):
@@ -10883,16 +10837,16 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterAutoUpgradeProfile(TypedDict, total=False):
         key "nodeOSUpgradeChannel": Union[str, NodeOSUpgradeChannel]
         key "upgradeChannel": Union[str, UpgradeChannel]
-        node_os_upgrade_channel: Union[str, NodeOSUpgradeChannel]
-        upgrade_channel: Union[str, UpgradeChannel]
+        nodeOSUpgradeChannel: Union[str, NodeOSUpgradeChannel]
+        upgradeChannel: Union[str, UpgradeChannel]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfile(TypedDict, total=False):
         key "appMonitoring": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoring', module='types')
         key "containerInsights": ForwardRef('ManagedClusterAzureMonitorProfileContainerInsights', module='types')
         key "metrics": ForwardRef('ManagedClusterAzureMonitorProfileMetrics', module='types')
-        app_monitoring: ManagedClusterAzureMonitorProfileAppMonitoring
-        container_insights: ManagedClusterAzureMonitorProfileContainerInsights
+        appMonitoring: ManagedClusterAzureMonitorProfileAppMonitoring
+        containerInsights: ManagedClusterAzureMonitorProfileContainerInsights
         metrics: ManagedClusterAzureMonitorProfileMetrics
 
 
@@ -10900,9 +10854,9 @@ namespace azure.mgmt.containerservice.types
         key "autoInstrumentation": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation', module='types')
         key "openTelemetryLogsAndTraces": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces', module='types')
         key "openTelemetryMetrics": ForwardRef('ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics', module='types')
-        auto_instrumentation: ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
-        open_telemetry_logs_and_traces: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces
-        open_telemetry_metrics: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics
+        autoInstrumentation: ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
+        openTelemetryLogsAndTraces: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces
+        openTelemetryMetrics: ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(TypedDict, total=False):
@@ -10915,8 +10869,8 @@ namespace azure.mgmt.containerservice.types
         key "grpcPort": int
         key "httpPort": int
         enabled: bool
-        grpc_port: int
-        http_port: int
+        grpcPort: int
+        httpPort: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics(TypedDict, total=False):
@@ -10924,8 +10878,8 @@ namespace azure.mgmt.containerservice.types
         key "grpcPort": int
         key "httpPort": int
         enabled: bool
-        grpc_port: int
-        http_port: int
+        grpcPort: int
+        httpPort: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileContainerInsights(TypedDict, total=False):
@@ -10935,28 +10889,28 @@ namespace azure.mgmt.containerservice.types
         key "enabled": bool
         key "logAnalyticsWorkspaceResourceId": str
         key "syslogPort": int
-        container_network_logs: Union[str, ContainerNetworkLogs]
-        disable_custom_metrics: bool
-        disable_prometheus_metrics_scraping: bool
+        containerNetworkLogs: Union[str, ContainerNetworkLogs]
+        disableCustomMetrics: bool
+        disablePrometheusMetricsScraping: bool
         enabled: bool
-        log_analytics_workspace_resource_id: str
-        syslog_port: int
+        logAnalyticsWorkspaceResourceId: str
+        syslogPort: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileKubeStateMetrics(TypedDict, total=False):
         key "metricAnnotationsAllowList": str
         key "metricLabelsAllowlist": str
-        metric_annotations_allow_list: str
-        metric_labels_allowlist: str
+        metricAnnotationsAllowList: str
+        metricLabelsAllowlist: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileMetrics(TypedDict, total=False):
         key "controlPlane": ForwardRef('ManagedClusterAzureMonitorProfileMetricsControlPlane', module='types')
         key "enabled": Required[bool]
         key "kubeStateMetrics": ForwardRef('ManagedClusterAzureMonitorProfileKubeStateMetrics', module='types')
-        control_plane: ManagedClusterAzureMonitorProfileMetricsControlPlane
+        controlPlane: ManagedClusterAzureMonitorProfileMetricsControlPlane
         enabled: bool
-        kube_state_metrics: ManagedClusterAzureMonitorProfileKubeStateMetrics
+        kubeStateMetrics: ManagedClusterAzureMonitorProfileKubeStateMetrics
 
 
     class azure.mgmt.containerservice.types.ManagedClusterAzureMonitorProfileMetricsControlPlane(TypedDict, total=False):
@@ -10967,13 +10921,13 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterBootstrapProfile(TypedDict, total=False):
         key "artifactSource": Union[str, ArtifactSource]
         key "containerRegistryId": str
-        artifact_source: Union[str, ArtifactSource]
-        container_registry_id: str
+        artifactSource: Union[str, ArtifactSource]
+        containerRegistryId: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterControlPlaneScalingProfile(TypedDict, total=False):
         key "scalingSize": Required[Union[str, ControlPlaneScalingSize]]
-        scaling_size: Union[str, ControlPlaneScalingSize]
+        scalingSize: Union[str, ControlPlaneScalingSize]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterCostAnalysis(TypedDict, total=False):
@@ -10987,20 +10941,18 @@ namespace azure.mgmt.containerservice.types
         key "httpsProxy": str
         key "trustedCa": str
         effectiveNoProxy: list[str]
-        effective_no_proxy: list[str]
         enabled: bool
-        http_proxy: str
-        https_proxy: str
+        httpProxy: str
+        httpsProxy: str
         noProxy: list[str]
-        no_proxy: list[str]
-        trusted_ca: str
+        trustedCa: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterHealthMonitorProfile(TypedDict, total=False):
         key "enableContinuousControlPlaneAndAddonMonitor": bool
         key "enableOnDemandMonitor": bool
-        enable_continuous_control_plane_and_addon_monitor: bool
-        enable_on_demand_monitor: bool
+        enableContinuousControlPlaneAndAddonMonitor: bool
+        enableOnDemandMonitor: bool
 
 
     class azure.mgmt.containerservice.types.ManagedClusterHostedSystemProfile(TypedDict, total=False):
@@ -11008,8 +10960,8 @@ namespace azure.mgmt.containerservice.types
         key "nodeSubnetID": str
         key "systemNodeSubnetID": str
         enabled: bool
-        node_subnet_id: str
-        system_node_subnet_id: str
+        nodeSubnetID: str
+        systemNodeSubnetID: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIdentity(TypedDict, total=False):
@@ -11017,18 +10969,16 @@ namespace azure.mgmt.containerservice.types
         key "tenantId": str
         key "type": Union[str, ResourceIdentityType]
         delegatedResources: dict[str, DelegatedResource]
-        delegated_resources: dict[str, DelegatedResource]
-        principal_id: str
-        tenant_id: str
+        principalId: str
+        tenantId: str
         type: Union[str, ResourceIdentityType]
         userAssignedIdentities: dict[str, ManagedServiceIdentityUserAssignedIdentitiesValue]
-        user_assigned_identities: dict[str, ManagedServiceIdentityUserAssignedIdentitiesValue]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressDefaultDomainProfile(TypedDict, total=False):
         key "domainName": str
         key "enabled": bool
-        domain_name: str
+        domainName: str
         enabled: bool
 
 
@@ -11036,9 +10986,9 @@ namespace azure.mgmt.containerservice.types
         key "applicationLoadBalancer": ForwardRef('ManagedClusterIngressProfileApplicationLoadBalancer', module='types')
         key "gatewayAPI": ForwardRef('ManagedClusterIngressProfileGatewayConfiguration', module='types')
         key "webAppRouting": ForwardRef('ManagedClusterIngressProfileWebAppRouting', module='types')
-        application_load_balancer: ManagedClusterIngressProfileApplicationLoadBalancer
-        gateway_api: ManagedClusterIngressProfileGatewayConfiguration
-        web_app_routing: ManagedClusterIngressProfileWebAppRouting
+        applicationLoadBalancer: ManagedClusterIngressProfileApplicationLoadBalancer
+        gatewayAPI: ManagedClusterIngressProfileGatewayConfiguration
+        webAppRouting: ManagedClusterIngressProfileWebAppRouting
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfileApplicationLoadBalancer(TypedDict, total=False):
@@ -11055,7 +11005,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfileNginx(TypedDict, total=False):
         key "defaultIngressControllerType": Union[str, NginxIngressControllerType]
-        default_ingress_controller_type: Union[str, NginxIngressControllerType]
+        defaultIngressControllerType: Union[str, NginxIngressControllerType]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterIngressProfileWebAppRouting(TypedDict, total=False):
@@ -11064,11 +11014,10 @@ namespace azure.mgmt.containerservice.types
         key "gatewayAPIImplementations": ForwardRef('ManagedClusterWebAppRoutingGatewayAPIImplementations', module='types')
         key "identity": ForwardRef('UserAssignedIdentity', module='types')
         key "nginx": ForwardRef('ManagedClusterIngressProfileNginx', module='types')
-        default_domain: ManagedClusterIngressDefaultDomainProfile
+        defaultDomain: ManagedClusterIngressDefaultDomainProfile
         dnsZoneResourceIds: list[str]
-        dns_zone_resource_ids: list[str]
         enabled: bool
-        gateway_api_implementations: ManagedClusterWebAppRoutingGatewayAPIImplementations
+        gatewayAPIImplementations: ManagedClusterWebAppRoutingGatewayAPIImplementations
         identity: UserAssignedIdentity
         nginx: ManagedClusterIngressProfileNginx
 
@@ -11082,45 +11031,42 @@ namespace azure.mgmt.containerservice.types
         key "managedOutboundIPs": ForwardRef('ManagedClusterLoadBalancerProfileManagedOutboundIPs', module='types')
         key "outboundIPPrefixes": ForwardRef('ManagedClusterLoadBalancerProfileOutboundIPPrefixes', module='types')
         key "outboundIPs": ForwardRef('ManagedClusterLoadBalancerProfileOutboundIPs', module='types')
-        allocated_outbound_ports: int
-        backend_pool_type: Union[str, BackendPoolType]
-        cluster_service_load_balancer_health_probe_mode: Union[str, ClusterServiceLoadBalancerHealthProbeMode]
+        allocatedOutboundPorts: int
+        backendPoolType: Union[str, BackendPoolType]
+        clusterServiceLoadBalancerHealthProbeMode: Union[str, ClusterServiceLoadBalancerHealthProbeMode]
         effectiveOutboundIPs: list[ResourceReference]
-        effective_outbound_i_ps: list[ResourceReference]
-        enable_multiple_standard_load_balancers: bool
-        idle_timeout_in_minutes: int
-        managed_outbound_i_ps: ManagedClusterLoadBalancerProfileManagedOutboundIPs
-        outbound_i_ps: ManagedClusterLoadBalancerProfileOutboundIPs
-        outbound_ip_prefixes: ManagedClusterLoadBalancerProfileOutboundIPPrefixes
+        enableMultipleStandardLoadBalancers: bool
+        idleTimeoutInMinutes: int
+        managedOutboundIPs: ManagedClusterLoadBalancerProfileManagedOutboundIPs
+        outboundIPPrefixes: ManagedClusterLoadBalancerProfileOutboundIPPrefixes
+        outboundIPs: ManagedClusterLoadBalancerProfileOutboundIPs
 
 
     class azure.mgmt.containerservice.types.ManagedClusterLoadBalancerProfileManagedOutboundIPs(TypedDict, total=False):
         key "count": int
         key "countIPv6": int
         count: int
-        count_ipv6: int
+        countIPv6: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterLoadBalancerProfileOutboundIPPrefixes(TypedDict, total=False):
         publicIPPrefixes: list[ResourceReference]
-        public_ip_prefixes: list[ResourceReference]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterLoadBalancerProfileOutboundIPs(TypedDict, total=False):
         publicIPs: list[ResourceReference]
-        public_i_ps: list[ResourceReference]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterManagedOutboundIPProfile(TypedDict, total=False):
         key "count": int
         key "countIPv6": int
         count: int
-        count_i_pv6: int
+        countIPv6: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterMetricsProfile(TypedDict, total=False):
         key "costAnalysis": ForwardRef('ManagedClusterCostAnalysis', module='types')
-        cost_analysis: ManagedClusterCostAnalysis
+        costAnalysis: ManagedClusterCostAnalysis
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfile(TypedDict, total=False):
@@ -11129,40 +11075,37 @@ namespace azure.mgmt.containerservice.types
         key "outboundIPPrefixes": ForwardRef('ManagedClusterNATGatewayProfileOutboundIpPrefixes', module='types')
         key "outboundIPs": ForwardRef('ManagedClusterNATGatewayProfileOutboundIPs', module='types')
         effectiveOutboundIPs: list[ResourceReference]
-        effective_outbound_i_ps: list[ResourceReference]
-        idle_timeout_in_minutes: int
-        managed_outbound_ip_profile: ManagedClusterManagedOutboundIPProfile
-        outbound_i_ps: ManagedClusterNATGatewayProfileOutboundIPs
-        outbound_ip_prefixes: ManagedClusterNATGatewayProfileOutboundIpPrefixes
+        idleTimeoutInMinutes: int
+        managedOutboundIPProfile: ManagedClusterManagedOutboundIPProfile
+        outboundIPPrefixes: ManagedClusterNATGatewayProfileOutboundIpPrefixes
+        outboundIPs: ManagedClusterNATGatewayProfileOutboundIPs
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfileOutboundIPs(TypedDict, total=False):
         publicIPs: list[str]
-        public_i_ps: list[str]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNATGatewayProfileOutboundIpPrefixes(TypedDict, total=False):
         publicIPPrefixes: list[str]
-        public_ip_prefixes: list[str]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNodeProvisioningProfile(TypedDict, total=False):
         key "defaultNodePools": Union[str, NodeProvisioningDefaultNodePools]
         key "mode": Union[str, NodeProvisioningMode]
-        default_node_pools: Union[str, NodeProvisioningDefaultNodePools]
+        defaultNodePools: Union[str, NodeProvisioningDefaultNodePools]
         mode: Union[str, NodeProvisioningMode]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterNodeResourceGroupProfile(TypedDict, total=False):
         key "restrictionLevel": Union[str, RestrictionLevel]
-        restriction_level: Union[str, RestrictionLevel]
+        restrictionLevel: Union[str, RestrictionLevel]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterOIDCIssuerProfile(TypedDict, total=False):
         key "enabled": bool
         key "issuerURL": str
         enabled: bool
-        issuer_url: str
+        issuerURL: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPodIdentity(TypedDict, total=False):
@@ -11172,12 +11115,12 @@ namespace azure.mgmt.containerservice.types
         key "namespace": Required[str]
         key "provisioningInfo": ForwardRef('ManagedClusterPodIdentityProvisioningInfo', module='types')
         key "provisioningState": Union[str, ManagedClusterPodIdentityProvisioningState]
-        binding_selector: str
+        bindingSelector: str
         identity: UserAssignedIdentity
         name: str
         namespace: str
-        provisioning_info: ManagedClusterPodIdentityProvisioningInfo
-        provisioning_state: Union[str, ManagedClusterPodIdentityProvisioningState]
+        provisioningInfo: ManagedClusterPodIdentityProvisioningInfo
+        provisioningState: Union[str, ManagedClusterPodIdentityProvisioningState]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPodIdentityException(TypedDict, total=False):
@@ -11186,18 +11129,16 @@ namespace azure.mgmt.containerservice.types
         key "podLabels": Required[dict[str, str]]
         name: str
         namespace: str
-        pod_labels: dict[str, str]
+        podLabels: dict[str, str]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPodIdentityProfile(TypedDict, total=False):
         key "allowNetworkPluginKubenet": bool
         key "enabled": bool
-        allow_network_plugin_kubenet: bool
+        allowNetworkPluginKubenet: bool
         enabled: bool
         userAssignedIdentities: list[ManagedClusterPodIdentity]
         userAssignedIdentityExceptions: list[ManagedClusterPodIdentityException]
-        user_assigned_identities: list[ManagedClusterPodIdentity]
-        user_assigned_identity_exceptions: list[ManagedClusterPodIdentityException]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPodIdentityProvisioningError(TypedDict, total=False):
@@ -11270,63 +11211,59 @@ namespace azure.mgmt.containerservice.types
         key "upgradeSettings": ForwardRef('ClusterUpgradeSettings', module='types')
         key "windowsProfile": ForwardRef('ManagedClusterWindowsProfile', module='types')
         key "workloadAutoScalerProfile": ForwardRef('ManagedClusterWorkloadAutoScalerProfile', module='types')
-        aad_profile: ManagedClusterAADProfile
+        aadProfile: ManagedClusterAADProfile
         addonProfiles: dict[str, ManagedClusterAddonProfile]
-        addon_profiles: dict[str, ManagedClusterAddonProfile]
         agentPoolProfiles: list[ManagedClusterAgentPoolProfile]
-        agent_pool_profiles: list[ManagedClusterAgentPoolProfile]
-        ai_toolchain_operator_profile: ManagedClusterAIToolchainOperatorProfile
-        api_server_access_profile: ManagedClusterAPIServerAccessProfile
-        auto_scaler_profile: ManagedClusterPropertiesAutoScalerProfile
-        auto_upgrade_profile: ManagedClusterAutoUpgradeProfile
-        azure_monitor_profile: ManagedClusterAzureMonitorProfile
-        azure_portal_fqdn: str
-        bootstrap_profile: ManagedClusterBootstrapProfile
-        control_plane_scaling_profile: ManagedClusterControlPlaneScalingProfile
-        creation_data: CreationData
-        current_kubernetes_version: str
-        disable_local_accounts: bool
-        disk_encryption_set_id: str
-        dns_prefix: str
-        enable_fips: bool
-        enable_namespace_resources: bool
-        enable_rbac: bool
+        aiToolchainOperatorProfile: ManagedClusterAIToolchainOperatorProfile
+        apiServerAccessProfile: ManagedClusterAPIServerAccessProfile
+        autoScalerProfile: ManagedClusterPropertiesAutoScalerProfile
+        autoUpgradeProfile: ManagedClusterAutoUpgradeProfile
+        azureMonitorProfile: ManagedClusterAzureMonitorProfile
+        azurePortalFQDN: str
+        bootstrapProfile: ManagedClusterBootstrapProfile
+        controlPlaneScalingProfile: ManagedClusterControlPlaneScalingProfile
+        creationData: CreationData
+        currentKubernetesVersion: str
+        disableLocalAccounts: bool
+        diskEncryptionSetID: str
+        dnsPrefix: str
+        enableFIPS: bool
+        enableNamespaceResources: bool
+        enableRBAC: bool
         fqdn: str
-        fqdn_subdomain: str
-        health_monitor_profile: ManagedClusterHealthMonitorProfile
-        hosted_system_profile: ManagedClusterHostedSystemProfile
-        http_proxy_config: ManagedClusterHTTPProxyConfig
+        fqdnSubdomain: str
+        healthMonitorProfile: ManagedClusterHealthMonitorProfile
+        hostedSystemProfile: ManagedClusterHostedSystemProfile
+        httpProxyConfig: ManagedClusterHTTPProxyConfig
         identityProfile: dict[str, UserAssignedIdentity]
-        identity_profile: dict[str, UserAssignedIdentity]
-        ingress_profile: ManagedClusterIngressProfile
-        kubernetes_version: str
-        linux_profile: ContainerServiceLinuxProfile
-        max_agent_pools: int
-        metrics_profile: ManagedClusterMetricsProfile
-        network_profile: ContainerServiceNetworkProfile
-        node_disruption_profile: NodeDisruptionProfile
-        node_provisioning_profile: ManagedClusterNodeProvisioningProfile
-        node_resource_group: str
-        node_resource_group_profile: ManagedClusterNodeResourceGroupProfile
-        oidc_issuer_profile: ManagedClusterOIDCIssuerProfile
-        pod_identity_profile: ManagedClusterPodIdentityProfile
-        power_state: PowerState
+        ingressProfile: ManagedClusterIngressProfile
+        kubernetesVersion: str
+        linuxProfile: ContainerServiceLinuxProfile
+        maxAgentPools: int
+        metricsProfile: ManagedClusterMetricsProfile
+        networkProfile: ContainerServiceNetworkProfile
+        nodeDisruptionProfile: NodeDisruptionProfile
+        nodeProvisioningProfile: ManagedClusterNodeProvisioningProfile
+        nodeResourceGroup: str
+        nodeResourceGroupProfile: ManagedClusterNodeResourceGroupProfile
+        oidcIssuerProfile: ManagedClusterOIDCIssuerProfile
+        podIdentityProfile: ManagedClusterPodIdentityProfile
+        powerState: PowerState
+        privateFQDN: str
         privateLinkResources: list[PrivateLinkResource]
-        private_fqdn: str
-        private_link_resources: list[PrivateLinkResource]
-        provisioning_state: str
-        public_network_access: Union[str, PublicNetworkAccess]
-        resource_uid: str
-        scheduler_profile: SchedulerProfile
-        security_profile: ManagedClusterSecurityProfile
-        service_mesh_profile: ServiceMeshProfile
-        service_principal_profile: ManagedClusterServicePrincipalProfile
+        provisioningState: str
+        publicNetworkAccess: Union[str, PublicNetworkAccess]
+        resourceUID: str
+        schedulerProfile: SchedulerProfile
+        securityProfile: ManagedClusterSecurityProfile
+        serviceMeshProfile: ServiceMeshProfile
+        servicePrincipalProfile: ManagedClusterServicePrincipalProfile
         status: ManagedClusterStatus
-        storage_profile: ManagedClusterStorageProfile
-        support_plan: Union[str, KubernetesSupportPlan]
-        upgrade_settings: ClusterUpgradeSettings
-        windows_profile: ManagedClusterWindowsProfile
-        workload_auto_scaler_profile: ManagedClusterWorkloadAutoScalerProfile
+        storageProfile: ManagedClusterStorageProfile
+        supportPlan: Union[str, KubernetesSupportPlan]
+        upgradeSettings: ClusterUpgradeSettings
+        windowsProfile: ManagedClusterWindowsProfile
+        workloadAutoScalerProfile: ManagedClusterWorkloadAutoScalerProfile
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPropertiesAutoScalerProfile(TypedDict):
@@ -11350,26 +11287,26 @@ namespace azure.mgmt.containerservice.types
         key "scan-interval": str
         key "skip-nodes-with-local-storage": str
         key "skip-nodes-with-system-pods": str
-        balance_similar_node_groups: str
-        daemonset_eviction_for_empty_nodes: bool
-        daemonset_eviction_for_occupied_nodes: bool
+        balance-similar-node-groups: str
+        daemonset-eviction-for-empty-nodes: bool
+        daemonset-eviction-for-occupied-nodes: bool
         expander: Union[str, Expander]
-        ignore_daemonsets_utilization: bool
-        max_empty_bulk_delete: str
-        max_graceful_termination_sec: str
-        max_node_provision_time: str
-        max_total_unready_percentage: str
-        new_pod_scale_up_delay: str
-        ok_total_unready_count: str
-        scale_down_delay_after_add: str
-        scale_down_delay_after_delete: str
-        scale_down_delay_after_failure: str
-        scale_down_unneeded_time: str
-        scale_down_unready_time: str
-        scale_down_utilization_threshold: str
-        scan_interval: str
-        skip_nodes_with_local_storage: str
-        skip_nodes_with_system_pods: str
+        ignore-daemonsets-utilization: bool
+        max-empty-bulk-delete: str
+        max-graceful-termination-sec: str
+        max-node-provision-time: str
+        max-total-unready-percentage: str
+        new-pod-scale-up-delay: str
+        ok-total-unready-count: str
+        scale-down-delay-after-add: str
+        scale-down-delay-after-delete: str
+        scale-down-delay-after-failure: str
+        scale-down-unneeded-time: str
+        scale-down-unready-time: str
+        scale-down-utilization-threshold: str
+        scan-interval: str
+        skip-nodes-with-local-storage: str
+        skip-nodes-with-system-pods: str
 
 
     class azure.mgmt.containerservice.types.ManagedClusterPropertiesForSnapshot(TypedDict, total=False):
@@ -11377,9 +11314,9 @@ namespace azure.mgmt.containerservice.types
         key "kubernetesVersion": str
         key "networkProfile": ForwardRef('NetworkProfileForSnapshot', module='types')
         key "sku": ForwardRef('ManagedClusterSKU', module='types')
-        enable_rbac: bool
-        kubernetes_version: str
-        network_profile: NetworkProfileForSnapshot
+        enableRbac: bool
+        kubernetesVersion: str
+        networkProfile: NetworkProfileForSnapshot
         sku: ManagedClusterSKU
 
 
@@ -11399,31 +11336,30 @@ namespace azure.mgmt.containerservice.types
         key "nodeRestriction": ForwardRef('ManagedClusterSecurityProfileNodeRestriction', module='types')
         key "serviceAccountImagePullProfile": ForwardRef('ServiceAccountImagePullProfile', module='types')
         key "workloadIdentity": ForwardRef('ManagedClusterSecurityProfileWorkloadIdentity', module='types')
-        azure_key_vault_kms: AzureKeyVaultKms
+        azureKeyVaultKms: AzureKeyVaultKms
         customCATrustCertificates: list[str]
-        custom_ca_trust_certificates: list[str]
         defender: ManagedClusterSecurityProfileDefender
-        image_cleaner: ManagedClusterSecurityProfileImageCleaner
-        image_integrity: ManagedClusterSecurityProfileImageIntegrity
-        kubernetes_resource_object_encryption_profile: KubernetesResourceObjectEncryptionProfile
-        node_restriction: ManagedClusterSecurityProfileNodeRestriction
-        service_account_image_pull_profile: ServiceAccountImagePullProfile
-        workload_identity: ManagedClusterSecurityProfileWorkloadIdentity
+        imageCleaner: ManagedClusterSecurityProfileImageCleaner
+        imageIntegrity: ManagedClusterSecurityProfileImageIntegrity
+        kubernetesResourceObjectEncryptionProfile: KubernetesResourceObjectEncryptionProfile
+        nodeRestriction: ManagedClusterSecurityProfileNodeRestriction
+        serviceAccountImagePullProfile: ServiceAccountImagePullProfile
+        workloadIdentity: ManagedClusterSecurityProfileWorkloadIdentity
 
 
     class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileDefender(TypedDict, total=False):
         key "logAnalyticsWorkspaceResourceId": str
         key "securityGating": ForwardRef('ManagedClusterSecurityProfileDefenderSecurityGating', module='types')
         key "securityMonitoring": ForwardRef('ManagedClusterSecurityProfileDefenderSecurityMonitoring', module='types')
-        log_analytics_workspace_resource_id: str
-        security_gating: ManagedClusterSecurityProfileDefenderSecurityGating
-        security_monitoring: ManagedClusterSecurityProfileDefenderSecurityMonitoring
+        logAnalyticsWorkspaceResourceId: str
+        securityGating: ManagedClusterSecurityProfileDefenderSecurityGating
+        securityMonitoring: ManagedClusterSecurityProfileDefenderSecurityMonitoring
 
 
     class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileDefenderSecurityGating(TypedDict, total=False):
         key "allowSecretAccess": bool
         key "enabled": bool
-        allow_secret_access: bool
+        allowSecretAccess: bool
         enabled: bool
         identities: list[ManagedClusterSecurityProfileDefenderSecurityGatingIdentity]
 
@@ -11431,7 +11367,7 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileDefenderSecurityGatingIdentity(TypedDict, total=False):
         key "azureContainerRegistry": str
         key "identity": ForwardRef('UserAssignedIdentity', module='types')
-        azure_container_registry: str
+        azureContainerRegistry: str
         identity: UserAssignedIdentity
 
 
@@ -11444,7 +11380,7 @@ namespace azure.mgmt.containerservice.types
         key "enabled": bool
         key "intervalHours": int
         enabled: bool
-        interval_hours: int
+        intervalHours: int
 
 
     class azure.mgmt.containerservice.types.ManagedClusterSecurityProfileImageIntegrity(TypedDict, total=False):
@@ -11465,7 +11401,7 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterServicePrincipalProfile(TypedDict, total=False):
         key "clientId": Required[str]
         key "secret": str
-        client_id: str
+        clientId: str
         secret: str
 
 
@@ -11480,7 +11416,7 @@ namespace azure.mgmt.containerservice.types
         location: str
         name: str
         properties: ManagedClusterSnapshotProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -11489,9 +11425,9 @@ namespace azure.mgmt.containerservice.types
         key "creationData": ForwardRef('CreationData', module='types')
         key "managedClusterPropertiesReadOnly": ForwardRef('ManagedClusterPropertiesForSnapshot', module='types')
         key "snapshotType": Union[str, SnapshotType]
-        creation_data: CreationData
-        managed_cluster_properties_read_only: ManagedClusterPropertiesForSnapshot
-        snapshot_type: Union[str, SnapshotType]
+        creationData: CreationData
+        managedClusterPropertiesReadOnly: ManagedClusterPropertiesForSnapshot
+        snapshotType: Union[str, SnapshotType]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterStaticEgressGatewayProfile(TypedDict, total=False):
@@ -11501,7 +11437,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterStatus(TypedDict, total=False):
         key "provisioningError": ForwardRef('ErrorDetail', module='types')
-        provisioning_error: ErrorDetail
+        provisioningError: ErrorDetail
 
 
     class azure.mgmt.containerservice.types.ManagedClusterStorageProfile(TypedDict, total=False):
@@ -11509,10 +11445,10 @@ namespace azure.mgmt.containerservice.types
         key "diskCSIDriver": ForwardRef('ManagedClusterStorageProfileDiskCSIDriver', module='types')
         key "fileCSIDriver": ForwardRef('ManagedClusterStorageProfileFileCSIDriver', module='types')
         key "snapshotController": ForwardRef('ManagedClusterStorageProfileSnapshotController', module='types')
-        blob_csi_driver: ManagedClusterStorageProfileBlobCSIDriver
-        disk_csi_driver: ManagedClusterStorageProfileDiskCSIDriver
-        file_csi_driver: ManagedClusterStorageProfileFileCSIDriver
-        snapshot_controller: ManagedClusterStorageProfileSnapshotController
+        blobCSIDriver: ManagedClusterStorageProfileBlobCSIDriver
+        diskCSIDriver: ManagedClusterStorageProfileDiskCSIDriver
+        fileCSIDriver: ManagedClusterStorageProfileFileCSIDriver
+        snapshotController: ManagedClusterStorageProfileSnapshotController
 
 
     class azure.mgmt.containerservice.types.ManagedClusterStorageProfileBlobCSIDriver(TypedDict, total=False):
@@ -11537,7 +11473,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.ManagedClusterWebAppRoutingGatewayAPIImplementations(TypedDict, total=False):
         key "appRoutingIstio": ForwardRef('ManagedClusterAppRoutingIstio', module='types')
-        app_routing_istio: ManagedClusterAppRoutingIstio
+        appRoutingIstio: ManagedClusterAppRoutingIstio
 
 
     class azure.mgmt.containerservice.types.ManagedClusterWindowsProfile(TypedDict, total=False):
@@ -11546,18 +11482,18 @@ namespace azure.mgmt.containerservice.types
         key "enableCSIProxy": bool
         key "gmsaProfile": ForwardRef('WindowsGmsaProfile', module='types')
         key "licenseType": Union[str, LicenseType]
-        admin_password: str
-        admin_username: str
-        enable_csi_proxy: bool
-        gmsa_profile: WindowsGmsaProfile
-        license_type: Union[str, LicenseType]
+        adminPassword: str
+        adminUsername: str
+        enableCSIProxy: bool
+        gmsaProfile: WindowsGmsaProfile
+        licenseType: Union[str, LicenseType]
 
 
     class azure.mgmt.containerservice.types.ManagedClusterWorkloadAutoScalerProfile(TypedDict, total=False):
         key "keda": ForwardRef('ManagedClusterWorkloadAutoScalerProfileKeda', module='types')
         key "verticalPodAutoscaler": ForwardRef('ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler', module='types')
         keda: ManagedClusterWorkloadAutoScalerProfileKeda
-        vertical_pod_autoscaler: ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler
+        verticalPodAutoscaler: ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler
 
 
     class azure.mgmt.containerservice.types.ManagedClusterWorkloadAutoScalerProfileKeda(TypedDict, total=False):
@@ -11568,7 +11504,7 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedClusterWorkloadAutoScalerProfileVerticalPodAutoscaler(TypedDict, total=False):
         key "addonAutoscaling": Union[str, AddonAutoscaling]
         key "enabled": Required[bool]
-        addon_autoscaling: Union[str, AddonAutoscaling]
+        addonAutoscaling: Union[str, AddonAutoscaling]
         enabled: bool
 
 
@@ -11580,12 +11516,12 @@ namespace azure.mgmt.containerservice.types
         key "properties": ForwardRef('NamespaceProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
         location: str
         name: str
         properties: NamespaceProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -11593,8 +11529,8 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ManagedServiceIdentityUserAssignedIdentitiesValue(TypedDict, total=False):
         key "clientId": str
         key "principalId": str
-        client_id: str
-        principal_id: str
+        clientId: str
+        principalId: str
 
 
     class azure.mgmt.containerservice.types.ManualScaleProfile(TypedDict, total=False):
@@ -11612,29 +11548,29 @@ namespace azure.mgmt.containerservice.types
         key "properties": ForwardRef('MeshMembershipProperties', module='types')
         key "systemData": ForwardRef('SystemData', module='types')
         key "type": str
-        e_tag: str
+        eTag: str
         id: str
-        managed_by: str
+        managedBy: str
         name: str
         properties: MeshMembershipProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.containerservice.types.MeshMembershipPrivateConnectProfile(TypedDict, total=False):
         key "privateIpAddress": str
         key "subnetResourceId": str
-        private_ip_address: str
-        subnet_resource_id: str
+        privateIpAddress: str
+        subnetResourceId: str
 
 
     class azure.mgmt.containerservice.types.MeshMembershipProperties(TypedDict, total=False):
         key "managedMeshID": Required[str]
         key "privateConnectProfile": ForwardRef('MeshMembershipPrivateConnectProfile', module='types')
         key "provisioningState": Union[str, MeshMembershipProvisioningState]
-        managed_mesh_id: str
-        private_connect_profile: MeshMembershipPrivateConnectProfile
-        provisioning_state: Union[str, MeshMembershipProvisioningState]
+        managedMeshID: str
+        privateConnectProfile: MeshMembershipPrivateConnectProfile
+        provisioningState: Union[str, MeshMembershipProvisioningState]
 
 
     class azure.mgmt.containerservice.types.NamespaceProperties(TypedDict, total=False):
@@ -11644,14 +11580,14 @@ namespace azure.mgmt.containerservice.types
         key "deletePolicy": Union[str, DeletePolicy]
         key "portalFqdn": str
         key "provisioningState": Union[str, NamespaceProvisioningState]
-        adoption_policy: Union[str, AdoptionPolicy]
+        adoptionPolicy: Union[str, AdoptionPolicy]
         annotations: dict[str, str]
-        default_network_policy: NetworkPolicies
-        default_resource_quota: ResourceQuota
-        delete_policy: Union[str, DeletePolicy]
+        defaultNetworkPolicy: NetworkPolicies
+        defaultResourceQuota: ResourceQuota
+        deletePolicy: Union[str, DeletePolicy]
         labels: dict[str, str]
-        portal_fqdn: str
-        provisioning_state: Union[str, NamespaceProvisioningState]
+        portalFqdn: str
+        provisioningState: Union[str, NamespaceProvisioningState]
 
 
     class azure.mgmt.containerservice.types.NetworkPolicies(TypedDict, total=False):
@@ -11667,31 +11603,31 @@ namespace azure.mgmt.containerservice.types
         key "networkPlugin": Union[str, NetworkPlugin]
         key "networkPluginMode": Union[str, NetworkPluginMode]
         key "networkPolicy": Union[str, NetworkPolicy]
-        load_balancer_sku: Union[str, LoadBalancerSku]
-        network_mode: Union[str, NetworkMode]
-        network_plugin: Union[str, NetworkPlugin]
-        network_plugin_mode: Union[str, NetworkPluginMode]
-        network_policy: Union[str, NetworkPolicy]
+        loadBalancerSku: Union[str, LoadBalancerSku]
+        networkMode: Union[str, NetworkMode]
+        networkPlugin: Union[str, NetworkPlugin]
+        networkPluginMode: Union[str, NetworkPluginMode]
+        networkPolicy: Union[str, NetworkPolicy]
 
 
     class azure.mgmt.containerservice.types.NodeDisruptionProfile(TypedDict, total=False):
         key "nodeDisruptionPolicy": Union[str, NodeDisruptionPolicy]
-        node_disruption_policy: Union[str, NodeDisruptionPolicy]
+        nodeDisruptionPolicy: Union[str, NodeDisruptionPolicy]
 
 
     class azure.mgmt.containerservice.types.NvidiaGPUProfile(TypedDict, total=False):
         key "managementMode": Union[str, ManagementMode]
         key "migStrategy": Union[str, MigStrategy]
-        management_mode: Union[str, ManagementMode]
-        mig_strategy: Union[str, MigStrategy]
+        managementMode: Union[str, ManagementMode]
+        migStrategy: Union[str, MigStrategy]
 
 
     class azure.mgmt.containerservice.types.PortRange(TypedDict, total=False):
         key "portEnd": int
         key "portStart": int
         key "protocol": Union[str, Protocol]
-        port_end: int
-        port_start: int
+        portEnd: int
+        portStart: int
         protocol: Union[str, Protocol]
 
 
@@ -11702,7 +11638,7 @@ namespace azure.mgmt.containerservice.types
 
     class azure.mgmt.containerservice.types.PreparedImageSpecificationProfile(TypedDict, total=False):
         key "preparedImageSpecificationId": str
-        prepared_image_specification_id: str
+        preparedImageSpecificationId: str
 
 
     class azure.mgmt.containerservice.types.PrivateEndpoint(TypedDict, total=False):
@@ -11719,7 +11655,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: PrivateEndpointConnectionProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -11727,9 +11663,9 @@ namespace azure.mgmt.containerservice.types
         key "privateEndpoint": ForwardRef('PrivateEndpoint', module='types')
         key "privateLinkServiceConnectionState": Required[PrivateLinkServiceConnectionState]
         key "provisioningState": Union[str, PrivateEndpointConnectionProvisioningState]
-        private_endpoint: PrivateEndpoint
-        private_link_service_connection_state: PrivateLinkServiceConnectionState
-        provisioning_state: Union[str, PrivateEndpointConnectionProvisioningState]
+        privateEndpoint: PrivateEndpoint
+        privateLinkServiceConnectionState: PrivateLinkServiceConnectionState
+        provisioningState: Union[str, PrivateEndpointConnectionProvisioningState]
 
 
     class azure.mgmt.containerservice.types.PrivateLinkResource(TypedDict, total=False):
@@ -11738,12 +11674,11 @@ namespace azure.mgmt.containerservice.types
         key "name": str
         key "privateLinkServiceID": str
         key "type": str
-        group_id: str
+        groupId: str
         id: str
         name: str
-        private_link_service_id: str
+        privateLinkServiceID: str
         requiredMembers: list[str]
-        required_members: list[str]
         type: str
 
 
@@ -11761,22 +11696,21 @@ namespace azure.mgmt.containerservice.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
     class azure.mgmt.containerservice.types.RebalanceLoadBalancersRequestBody(TypedDict, total=False):
         loadBalancerNames: list[str]
-        load_balancer_names: list[str]
 
 
     class azure.mgmt.containerservice.types.RelativeMonthlySchedule(TypedDict, total=False):
         key "dayOfWeek": Required[Union[str, WeekDay]]
         key "intervalMonths": Required[int]
         key "weekIndex": Required[Union[str, Type]]
-        day_of_week: Union[str, WeekDay]
-        interval_months: int
-        week_index: Union[str, Type]
+        dayOfWeek: Union[str, WeekDay]
+        intervalMonths: int
+        weekIndex: Union[str, Type]
 
 
     class azure.mgmt.containerservice.types.Resource(TypedDict, total=False):
@@ -11786,7 +11720,7 @@ namespace azure.mgmt.containerservice.types
         key "type": str
         id: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -11795,10 +11729,10 @@ namespace azure.mgmt.containerservice.types
         key "cpuRequest": str
         key "memoryLimit": str
         key "memoryRequest": str
-        cpu_limit: str
-        cpu_request: str
-        memory_limit: str
-        memory_request: str
+        cpuLimit: str
+        cpuRequest: str
+        memoryLimit: str
+        memoryRequest: str
 
 
     class azure.mgmt.containerservice.types.ResourceReference(TypedDict, total=False):
@@ -11810,7 +11744,7 @@ namespace azure.mgmt.containerservice.types
         key "clusterToken": str
         key "command": Required[str]
         key "context": str
-        cluster_token: str
+        clusterToken: str
         command: str
         context: str
 
@@ -11825,15 +11759,15 @@ namespace azure.mgmt.containerservice.types
         key "daily": ForwardRef('DailySchedule', module='types')
         key "relativeMonthly": ForwardRef('RelativeMonthlySchedule', module='types')
         key "weekly": ForwardRef('WeeklySchedule', module='types')
-        absolute_monthly: AbsoluteMonthlySchedule
+        absoluteMonthly: AbsoluteMonthlySchedule
         daily: DailySchedule
-        relative_monthly: RelativeMonthlySchedule
+        relativeMonthly: RelativeMonthlySchedule
         weekly: WeeklySchedule
 
 
     class azure.mgmt.containerservice.types.SchedulerInstanceProfile(TypedDict, total=False):
         key "schedulerConfigMode": Union[str, SchedulerConfigMode]
-        scheduler_config_mode: Union[str, SchedulerConfigMode]
+        schedulerConfigMode: Union[str, SchedulerConfigMode]
 
 
     class azure.mgmt.containerservice.types.SchedulerProfile(TypedDict, total=False):
@@ -11844,7 +11778,7 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.ServiceAccountImagePullProfile(TypedDict, total=False):
         key "defaultManagedIdentityId": str
         key "enabled": bool
-        default_managed_identity_id: str
+        defaultManagedIdentityId: str
         enabled: bool
 
 
@@ -11866,7 +11800,7 @@ namespace azure.mgmt.containerservice.types
         location: str
         name: str
         properties: SnapshotProperties
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -11880,14 +11814,14 @@ namespace azure.mgmt.containerservice.types
         key "osType": Union[str, OSType]
         key "snapshotType": Union[str, SnapshotType]
         key "vmSize": str
-        creation_data: CreationData
-        enable_fips: bool
-        kubernetes_version: str
-        node_image_version: str
-        os_sku: Union[str, OSSKU]
-        os_type: Union[str, OSType]
-        snapshot_type: Union[str, SnapshotType]
-        vm_size: str
+        creationData: CreationData
+        enableFIPS: bool
+        kubernetesVersion: str
+        nodeImageVersion: str
+        osSku: Union[str, OSSKU]
+        osType: Union[str, OSType]
+        snapshotType: Union[str, SnapshotType]
+        vmSize: str
 
 
     class azure.mgmt.containerservice.types.SysctlConfig(TypedDict, total=False):
@@ -11919,34 +11853,34 @@ namespace azure.mgmt.containerservice.types
         key "vmMaxMapCount": int
         key "vmSwappiness": int
         key "vmVfsCachePressure": int
-        fs_aio_max_nr: int
-        fs_file_max: int
-        fs_inotify_max_user_watches: int
-        fs_nr_open: int
-        kernel_threads_max: int
-        net_core_netdev_max_backlog: int
-        net_core_optmem_max: int
-        net_core_rmem_default: int
-        net_core_rmem_max: int
-        net_core_somaxconn: int
-        net_core_wmem_default: int
-        net_core_wmem_max: int
-        net_ipv4_ip_local_port_range: str
-        net_ipv4_neigh_default_gc_thresh1: int
-        net_ipv4_neigh_default_gc_thresh2: int
-        net_ipv4_neigh_default_gc_thresh3: int
-        net_ipv4_tcp_fin_timeout: int
-        net_ipv4_tcp_keepalive_probes: int
-        net_ipv4_tcp_keepalive_time: int
-        net_ipv4_tcp_max_syn_backlog: int
-        net_ipv4_tcp_max_tw_buckets: int
-        net_ipv4_tcp_tw_reuse: bool
-        net_ipv4_tcpkeepalive_intvl: int
-        net_netfilter_nf_conntrack_buckets: int
-        net_netfilter_nf_conntrack_max: int
-        vm_max_map_count: int
-        vm_swappiness: int
-        vm_vfs_cache_pressure: int
+        fsAioMaxNr: int
+        fsFileMax: int
+        fsInotifyMaxUserWatches: int
+        fsNrOpen: int
+        kernelThreadsMax: int
+        netCoreNetdevMaxBacklog: int
+        netCoreOptmemMax: int
+        netCoreRmemDefault: int
+        netCoreRmemMax: int
+        netCoreSomaxconn: int
+        netCoreWmemDefault: int
+        netCoreWmemMax: int
+        netIpv4IpLocalPortRange: str
+        netIpv4NeighDefaultGcThresh1: int
+        netIpv4NeighDefaultGcThresh2: int
+        netIpv4NeighDefaultGcThresh3: int
+        netIpv4TcpFinTimeout: int
+        netIpv4TcpKeepaliveProbes: int
+        netIpv4TcpKeepaliveTime: int
+        netIpv4TcpMaxSynBacklog: int
+        netIpv4TcpMaxTwBuckets: int
+        netIpv4TcpTwReuse: bool
+        netIpv4TcpkeepaliveIntvl: int
+        netNetfilterNfConntrackBuckets: int
+        netNetfilterNfConntrackMax: int
+        vmMaxMapCount: int
+        vmSwappiness: int
+        vmVfsCachePressure: int
 
 
     class azure.mgmt.containerservice.types.SystemData(TypedDict, total=False):
@@ -11956,12 +11890,12 @@ namespace azure.mgmt.containerservice.types
         key "lastModifiedAt": str
         key "lastModifiedBy": str
         key "lastModifiedByType": Union[str, CreatedByType]
-        created_at: str
-        created_by: str
-        created_by_type: Union[str, CreatedByType]
-        last_modified_at: str
-        last_modified_by: str
-        last_modified_by_type: Union[str, CreatedByType]
+        createdAt: str
+        createdBy: str
+        createdByType: Union[str, CreatedByType]
+        lastModifiedAt: str
+        lastModifiedBy: str
+        lastModifiedByType: Union[str, CreatedByType]
 
 
     class azure.mgmt.containerservice.types.TagsObject(TypedDict, total=False):
@@ -11972,7 +11906,6 @@ namespace azure.mgmt.containerservice.types
         key "day": Union[str, WeekDay]
         day: Union[str, WeekDay]
         hourSlots: list[int]
-        hour_slots: list[int]
 
 
     class azure.mgmt.containerservice.types.TimeSpan(TypedDict, total=False):
@@ -11991,7 +11924,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         location: str
         name: str
-        system_data: SystemData
+        systemData: SystemData
         tags: dict[str, str]
         type: str
 
@@ -12005,7 +11938,7 @@ namespace azure.mgmt.containerservice.types
         id: str
         name: str
         properties: TrustedAccessRoleBindingProperties
-        system_data: SystemData
+        systemData: SystemData
         type: str
 
 
@@ -12013,15 +11946,15 @@ namespace azure.mgmt.containerservice.types
         key "provisioningState": Union[str, TrustedAccessRoleBindingProvisioningState]
         key "roles": Required[list[str]]
         key "sourceResourceId": Required[str]
-        provisioning_state: Union[str, TrustedAccessRoleBindingProvisioningState]
+        provisioningState: Union[str, TrustedAccessRoleBindingProvisioningState]
         roles: list[str]
-        source_resource_id: str
+        sourceResourceId: str
 
 
     class azure.mgmt.containerservice.types.UpgradeOverrideSettings(TypedDict, total=False):
         key "forceUpgrade": bool
         key "until": str
-        force_upgrade: bool
+        forceUpgrade: bool
         until: str
 
 
@@ -12029,9 +11962,9 @@ namespace azure.mgmt.containerservice.types
         key "clientId": str
         key "objectId": str
         key "resourceId": str
-        client_id: str
-        object_id: str
-        resource_id: str
+        clientId: str
+        objectId: str
+        resourceId: str
 
 
     class azure.mgmt.containerservice.types.VirtualMachineNodes(TypedDict, total=False):
@@ -12049,17 +11982,17 @@ namespace azure.mgmt.containerservice.types
     class azure.mgmt.containerservice.types.WeeklySchedule(TypedDict, total=False):
         key "dayOfWeek": Required[Union[str, WeekDay]]
         key "intervalWeeks": Required[int]
-        day_of_week: Union[str, WeekDay]
-        interval_weeks: int
+        dayOfWeek: Union[str, WeekDay]
+        intervalWeeks: int
 
 
     class azure.mgmt.containerservice.types.WindowsGmsaProfile(TypedDict, total=False):
         key "dnsServer": str
         key "enabled": bool
         key "rootDomainName": str
-        dns_server: str
+        dnsServer: str
         enabled: bool
-        root_domain_name: str
+        rootDomainName: str
 
 
 ```
