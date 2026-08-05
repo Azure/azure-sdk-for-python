@@ -139,7 +139,7 @@ async def _tee_stream(
                 # log that it was too long, discard it, and keep going. The
                 # notice is emitted before draining so it appears promptly even
                 # if the oversized line takes a while to terminate.
-                notice = "log line exceeded\n"
+                notice = "streaming log line exceeded buffer limit, the line is dropped (see dispatch_checks.py)\n"
                 chunks.append(notice)
                 sink.write(prefix + notice)
                 sink.flush()
