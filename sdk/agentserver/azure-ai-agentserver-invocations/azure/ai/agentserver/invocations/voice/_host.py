@@ -9,6 +9,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import hashlib
 import inspect
 import logging
+import sys
 import threading
 import time
 from collections import OrderedDict
@@ -151,10 +152,15 @@ _MAX_PENDING_PROACTIVE = 16
 # accumulate such tasks without limit.
 _MAX_RESISTANT_TASKS = 64
 _MAX_GLOBAL_CUSTOMER_TASKS = 1024
+_MAX_GLOBAL_CALLBACK_QUEUE_BYTES = 64 * 1024 * 1024
+_MAX_GLOBAL_CUSTOMER_TASK_BYTES = 64 * 1024 * 1024
 _CLEANUP_TIMEOUT_SECONDS = 5.0
 _GLOBAL_CUSTOMER_TASKS: set[asyncio.Task[None]] = set()
+_GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK: dict[asyncio.Task[None], int] = {}
 _GLOBAL_CUSTOMER_TASKS_LOCK = threading.Lock()
 _GLOBAL_CUSTOMER_TASK_RESERVATIONS = 0
+_GLOBAL_CALLBACK_QUEUE_BYTES = 0
+_GLOBAL_CUSTOMER_TASK_BYTES = 0
 _AGENT_TO_BRIDGE_TYPES = {
     "session.ready",
     "session.rejected",
@@ -182,13 +188,44 @@ def _release_global_customer_task(completed: asyncio.Task[None]) -> None:
     :type completed: asyncio.Task[None]
     """
     global _GLOBAL_CUSTOMER_TASK_RESERVATIONS  # pylint: disable=global-statement
+    global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
     with _GLOBAL_CUSTOMER_TASKS_LOCK:
         if completed not in _GLOBAL_CUSTOMER_TASKS:
             return
         _GLOBAL_CUSTOMER_TASKS.discard(completed)
         _GLOBAL_CUSTOMER_TASK_RESERVATIONS -= 1
+        _GLOBAL_CUSTOMER_TASK_BYTES -= _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK.pop(completed, 0)
     if not completed.cancelled():
         completed.exception()
+
+
+def _reserve_global_callback_queue_bytes(size: int) -> bool:
+    """Reserve process-wide callback-queue memory.
+
+    :param size: Estimated retained bytes.
+    :type size: int
+    :return: Whether the reservation succeeded.
+    :rtype: bool
+    """
+    global _GLOBAL_CALLBACK_QUEUE_BYTES  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        if _GLOBAL_CALLBACK_QUEUE_BYTES + size > _MAX_GLOBAL_CALLBACK_QUEUE_BYTES:
+            return False
+        _GLOBAL_CALLBACK_QUEUE_BYTES += size
+        return True
+
+
+def _release_global_callback_queue_bytes(size: int) -> None:
+    """Release process-wide callback-queue memory.
+
+    :param size: Previously reserved retained bytes.
+    :type size: int
+    """
+    global _GLOBAL_CALLBACK_QUEUE_BYTES  # pylint: disable=global-statement
+    with _GLOBAL_CUSTOMER_TASKS_LOCK:
+        _GLOBAL_CALLBACK_QUEUE_BYTES -= size
+        if _GLOBAL_CALLBACK_QUEUE_BYTES < 0:
+            raise RuntimeError("Voice global callback queue byte accounting underflow")
 
 
 def _observe_future_completion(completed: asyncio.Future[Any]) -> None:
@@ -1240,6 +1277,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             customer_task = self._create_customer_task(
                 _invoke_customer_callback(),
                 name="voice_session_start",
+                retained_bytes=_estimate_retained_bytes((session, event)),
             )
             try:
                 done, _ = await asyncio.wait((customer_task, receive_task), return_when=asyncio.FIRST_COMPLETED)
@@ -1431,7 +1469,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 callback=callback,
                 response=response,
                 item_id=item_id,
-                payload_bytes=_estimate_event_bytes(event),
             )
         )
 
@@ -1484,12 +1521,16 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
 
     def _put_work(self, work: _CallbackWork) -> None:
         if work.payload_bytes == 0:
-            work = replace(work, payload_bytes=_estimate_event_bytes(work.event))
+            work = replace(work, payload_bytes=_estimate_retained_bytes(work))
         if self._callback_queue_bytes + work.payload_bytes > _MAX_CALLBACK_QUEUE_BYTES:
             raise VoiceBridgeProtocolError("Voice callback queue byte limit exceeded", close_code=1008)
+        if not _reserve_global_callback_queue_bytes(work.payload_bytes):
+            self._signal_runtime_failure("Voice global callback queue byte limit reached")
+            raise RuntimeError("Voice global callback queue byte limit reached")
         try:
             self._callback_queue.put_nowait(work)
         except asyncio.QueueFull as exc:
+            _release_global_callback_queue_bytes(work.payload_bytes)
             raise VoiceBridgeProtocolError("Voice callback queue limit exceeded", close_code=1008) from exc
         self._callback_queue_bytes += work.payload_bytes
 
@@ -1502,6 +1543,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 break
             if work is not None:
                 self._callback_queue_bytes -= work.payload_bytes
+                _release_global_callback_queue_bytes(work.payload_bytes)
             self._callback_queue.task_done()
 
     async def _callback_worker_loop(self) -> None:
@@ -1521,6 +1563,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             finally:
                 if work is not None:
                     self._callback_queue_bytes -= work.payload_bytes
+                    _release_global_callback_queue_bytes(work.payload_bytes)
                 self._callback_queue.task_done()
 
     # pylint: disable=too-many-statements,too-many-branches
@@ -1578,6 +1621,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         customer_task = self._create_customer_task(
             _invoke_customer_callback(),
             name=f"voice_{work.kind}",
+            retained_bytes=work.payload_bytes,
         )
         release_task = asyncio.create_task(release.wait(), name="voice_turn_release")
         async with self._state_lock:
@@ -1697,6 +1741,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         customer_task = self._create_customer_task(
             _invoke_customer_callback(),
             name=f"voice_{work.kind}",
+            retained_bytes=work.payload_bytes or _estimate_retained_bytes(work),
         )
         try:
             await asyncio.shield(customer_task)
@@ -1724,19 +1769,24 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         coroutine: Coroutine[Any, Any, None],
         *,
         name: str,
+        retained_bytes: int = 0,
     ) -> asyncio.Task[None]:
         global _GLOBAL_CUSTOMER_TASK_RESERVATIONS  # pylint: disable=global-statement
+        global _GLOBAL_CUSTOMER_TASK_BYTES  # pylint: disable=global-statement
         with _GLOBAL_CUSTOMER_TASKS_LOCK:
             if _GLOBAL_CUSTOMER_TASK_RESERVATIONS >= _MAX_GLOBAL_CUSTOMER_TASKS:
-                at_limit = True
+                limit_error = "Voice global customer task limit reached"
+            elif _GLOBAL_CUSTOMER_TASK_BYTES + retained_bytes > _MAX_GLOBAL_CUSTOMER_TASK_BYTES:
+                limit_error = "Voice global customer task byte limit reached"
             else:
-                at_limit = False
+                limit_error = None
                 _GLOBAL_CUSTOMER_TASK_RESERVATIONS += 1
+                _GLOBAL_CUSTOMER_TASK_BYTES += retained_bytes
 
-        if at_limit:
+        if limit_error is not None:
             coroutine.close()
-            self._signal_runtime_failure("Voice global customer task limit reached")
-            raise RuntimeError("Voice global customer task limit reached")
+            self._signal_runtime_failure(limit_error)
+            raise RuntimeError(limit_error)
 
         try:
             task = asyncio.create_task(coroutine, name=name)
@@ -1744,10 +1794,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             coroutine.close()
             with _GLOBAL_CUSTOMER_TASKS_LOCK:
                 _GLOBAL_CUSTOMER_TASK_RESERVATIONS -= 1
+                _GLOBAL_CUSTOMER_TASK_BYTES -= retained_bytes
             raise
 
         with _GLOBAL_CUSTOMER_TASKS_LOCK:
             _GLOBAL_CUSTOMER_TASKS.add(task)
+            _GLOBAL_CUSTOMER_TASK_BYTES_BY_TASK[task] = retained_bytes
 
         task.add_done_callback(_release_global_customer_task)
         if task.done():
@@ -1876,7 +1928,12 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     close_code=1008,
                 )
             active = self._active_response is response
-            release = self._active_release if active and not response.is_cancel_pending else None
+            # Always wake the active turn coordinator after a bridge terminal.
+            # If response.cancel is itself stalled on outbound backpressure, the
+            # coordinator's bounded drain path gives that winning write a chance to
+            # finish before cancelling the customer task. Suppressing release while
+            # cancel is pending would bypass that bound and wedge the callback worker.
+            release = self._active_release if active else None
             playback_terminal_won = response_id not in self._terminal_response_ids
             self._terminal_response_ids.add(response_id)
         await response._mark_terminal()
@@ -1928,6 +1985,11 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 if event.response_id in self._playback_outcomes:
                     return
                 if response is None:
+                    if event.response_id in self._pending_proactive:
+                        raise VoiceBridgeProtocolError(
+                            "response.timeout is invalid before proactive response.accepted",
+                            close_code=1008,
+                        )
                     if event.response_id in self._seen_response_ids:
                         return
                     raise VoiceBridgeProtocolError("Unknown response.timeout response_id", close_code=1008)
@@ -2395,6 +2457,37 @@ def _estimate_event_bytes(event: Any) -> int:
         if value_id in seen:
             continue
         seen.add(value_id)
+        if is_dataclass(value) and not isinstance(value, type):
+            pending.extend(getattr(value, field.name) for field in dataclass_fields(value))
+        elif isinstance(value, Mapping):
+            pending.extend(value.keys())
+            pending.extend(value.values())
+        elif isinstance(value, Sequence) and not isinstance(value, (str, bytes, bytearray)):
+            pending.extend(value)
+    return total
+
+
+def _estimate_retained_bytes(event: Any) -> int:
+    """Return a container-aware CPython retained-memory estimate for callback data.
+
+    Unlike the encoded-size estimator, this includes container/object overhead so
+    a frame containing many tiny content parts cannot bypass queue memory budgets.
+
+    :param event: Callback work or typed event to measure.
+    :type event: Any
+    :return: Estimated retained bytes.
+    :rtype: int
+    """
+    total = 0
+    pending = [event]
+    seen: set[int] = set()
+    while pending:
+        value = pending.pop()
+        value_id = id(value)
+        if value_id in seen:
+            continue
+        seen.add(value_id)
+        total += sys.getsizeof(value)
         if is_dataclass(value) and not isinstance(value, type):
             pending.extend(getattr(value, field.name) for field in dataclass_fields(value))
         elif isinstance(value, Mapping):

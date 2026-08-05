@@ -26,6 +26,9 @@ from ._protocol import (
 _MAX_OUTPUT_ITEM_BYTES = 900 * 1024
 _MAX_OUTPUT_ITEM_CHUNKS = 4096
 _MAX_RESPONSE_ITEMS = 1024
+# Bound list/object overhead across all items; tiny deltas can consume substantial
+# memory while remaining far below the encoded-text byte budget.
+_MAX_RESPONSE_CHUNKS = 16 * 1024
 # Cumulative encoded-text budget across every item in one response. Each item is
 # already capped at _MAX_OUTPUT_ITEM_BYTES and a response may hold up to
 # _MAX_RESPONSE_ITEMS items, so without this ceiling a single active response
@@ -150,7 +153,7 @@ class VoiceTextItem:
     async def send_text(self, text: str, *, voice: Mapping[str, Any] | None = None) -> None:
         """Send this item as one complete non-streamed message.
 
-        :param text: Complete text to synthesize.
+        :param text: Non-empty complete text to synthesize.
         :type text: str
         :keyword voice: Optional non-empty Voice Live voice patch.
         :paramtype voice: Mapping[str, Any] or None
@@ -161,7 +164,7 @@ class VoiceTextItem:
     async def send_text_delta(self, delta: str, *, voice: Mapping[str, Any] | None = None) -> None:
         """Send one streaming increment for this item.
 
-        :param delta: Next text fragment.
+        :param delta: Next non-empty text fragment.
         :type delta: str
         :keyword voice: Optional non-empty Voice Live voice patch.
         :paramtype voice: Mapping[str, Any] or None
@@ -192,6 +195,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     _cancel_pending: bool
     _items: list[VoiceTextItem]
     _response_bytes: int
+    _response_chunks: int
     _simple_item: VoiceTextItem | None
     _advanced_items: bool
     _cancellation: VoiceCancellationToken
@@ -222,6 +226,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         instance._cancel_pending = False
         instance._items = []
         instance._response_bytes = 0
+        instance._response_chunks = 0
         instance._simple_item = None
         instance._advanced_items = False
         instance._cancellation = VoiceCancellationToken._create()
@@ -314,7 +319,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     async def send_text(self, text: str, *, voice: Mapping[str, Any] | None = None) -> None:
         """Send one complete non-streamed item through the simple helper.
 
-        :param text: Complete text to synthesize.
+        :param text: Non-empty complete text to synthesize.
         :type text: str
         :keyword voice: Optional non-empty Voice Live voice patch.
         :paramtype voice: Mapping[str, Any] or None
@@ -325,7 +330,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
     async def send_text_delta(self, delta: str, *, voice: Mapping[str, Any] | None = None) -> None:
         """Send one streaming increment through the simple helper.
 
-        :param delta: Next text fragment.
+        :param delta: Next non-empty text fragment.
         :type delta: str
         :keyword voice: Optional non-empty Voice Live voice patch.
         :paramtype voice: Mapping[str, Any] or None
@@ -527,6 +532,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         voice: Mapping[str, Any] | None,
     ) -> None:
         text = _require_string(text, "text")
+        if not text:
+            raise ValueError("text must be non-empty")
         text_bytes = _text_size(text)
         voice_payload = normalize_voice(voice)
         async with self._send_lock:
@@ -538,6 +545,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                     raise ValueError("An output item exceeds the maximum encoded text size")
                 if self._response_bytes + text_bytes > _MAX_RESPONSE_BYTES:
                     raise ValueError("A response exceeds the maximum cumulative encoded text size")
+                if self._response_chunks >= _MAX_RESPONSE_CHUNKS:
+                    raise ValueError("A response exceeds the maximum cumulative text chunk count")
             await self._ensure_open()
             fields: dict[str, Any] = {
                 "response_id": self._response_id,
@@ -561,6 +570,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         item._started = True  # pylint: disable=protected-access
                         item._done = True  # pylint: disable=protected-access
                         self._response_bytes += text_bytes
+                        self._response_chunks += 1
                     elif not self._sender.ending:
                         # The sender can prove no ambiguous connection-level
                         # commit remains, so the item may be retried locally.
@@ -574,6 +584,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         voice: Mapping[str, Any] | None,
     ) -> None:
         delta = _require_string(delta, "delta")
+        if not delta:
+            raise ValueError("delta must be non-empty")
         delta_bytes = _text_size(delta)
         voice_payload = normalize_voice(voice)
         async with self._send_lock:
@@ -587,6 +599,8 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                     raise ValueError("An output item exceeds the maximum encoded text size")
                 if self._response_bytes + delta_bytes > _MAX_RESPONSE_BYTES:
                     raise ValueError("A response exceeds the maximum cumulative encoded text size")
+                if self._response_chunks >= _MAX_RESPONSE_CHUNKS:
+                    raise ValueError("A response exceeds the maximum cumulative text chunk count")
             await self._ensure_open()
             fields: dict[str, Any] = {
                 "response_id": self._response_id,
@@ -609,6 +623,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
                         item._text_bytes += delta_bytes  # pylint: disable=protected-access
                         item._started = True  # pylint: disable=protected-access
                         self._response_bytes += delta_bytes
+                        self._response_chunks += 1
                     elif not self._sender.ending:
                         item._send_in_flight = False  # pylint: disable=protected-access
 
@@ -712,6 +727,7 @@ class VoiceResponse:  # pylint: disable=too-many-instance-attributes
         # cannot be awaited from the synchronous _state_lock context of the caller.
         for item in self._items:
             item._chunks = []  # pylint: disable=protected-access
+        self._response_chunks = 0
 
     async def _mark_accepted(self) -> None:
         async with self._lock:
