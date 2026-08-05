@@ -75,10 +75,12 @@ class Stream(Iterator[ReturnType_co]):
         return self
 
     def _iter_results(self) -> Iterator[ReturnType_co]:
-        for event in self._decoder.iter_events(self._response.iter_bytes()):
-
-            result = self._deserialization_callback(self._response, event)
-            yield result
+        try:
+            for event in self._decoder.iter_events(self._response.iter_bytes()):
+                result = self._deserialization_callback(self._response, event)
+                yield result
+        finally:
+            self._response.close()
 
     def __exit__(
         self,
@@ -92,7 +94,10 @@ class Stream(Iterator[ReturnType_co]):
         return self
 
     def close(self) -> None:
-        self._response.close()
+        try:
+            self._iterator.close()
+        finally:
+            self._response.close()
 
 
 class AsyncStream(AsyncIterator[ReturnType_co]):
@@ -132,10 +137,16 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         return self
 
     async def _iter_results(self) -> AsyncIterator[ReturnType_co]:
-        async for event in self._decoder.aiter_events(self._response.iter_bytes()):
-
-            result = self._deserialization_callback(self._response, event)
-            yield result
+        events = self._decoder.aiter_events(self._response.iter_bytes())
+        try:
+            async for event in events:
+                result = self._deserialization_callback(self._response, event)
+                yield result
+        finally:
+            aclose = getattr(events, "aclose", None)
+            if aclose is not None:
+                await aclose()
+            await self._response.close()
 
     async def __aexit__(
         self,
@@ -149,4 +160,7 @@ class AsyncStream(AsyncIterator[ReturnType_co]):
         return self
 
     async def close(self) -> None:
-        await self._response.close()
+        try:
+            await self._iterator.aclose()
+        finally:
+            await self._response.close()

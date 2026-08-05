@@ -25,6 +25,7 @@
 # --------------------------------------------------------------------------
 
 import codecs
+from contextlib import aclosing
 from typing import Iterator, AsyncIterator, List, Optional, Tuple
 
 
@@ -151,11 +152,16 @@ async def _aiter_sse_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[st
     decoder = codecs.getincrementaldecoder("utf-8-sig")(errors="replace")
 
     buf = ""
-    async for chunk in iter_bytes:
-        buf += decoder.decode(chunk)
-        lines, buf = _split_sse_lines(buf)
-        for line in lines:
-            yield line
+    try:
+        async for chunk in iter_bytes:
+            buf += decoder.decode(chunk)
+            lines, buf = _split_sse_lines(buf)
+            for line in lines:
+                yield line
+    finally:
+        aclose = getattr(iter_bytes, "aclose", None)
+        if aclose is not None:
+            await aclose()
 
     buf += decoder.decode(b"", final=True)
     lines, remainder = _split_sse_lines(buf)
@@ -264,7 +270,8 @@ class AsyncSSEDecoder:
         :return: An asynchronous iterator of server-sent events.
         """
         builder = _SSEEventBuilder()
-        async for line in _aiter_sse_lines(iter_bytes):
-            event = builder.add_line(line)
-            if event is not None:
-                yield event
+        async with aclosing(_aiter_sse_lines(iter_bytes)) as lines:
+            async for line in lines:
+                event = builder.add_line(line)
+                if event is not None:
+                    yield event

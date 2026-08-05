@@ -26,6 +26,7 @@
 
 import codecs
 import json
+from contextlib import aclosing
 from typing import Iterator, AsyncIterator, Any, Optional, cast
 
 
@@ -92,13 +93,18 @@ async def aiter_lines(iter_bytes: AsyncIterator[bytes]) -> AsyncIterator[str]:
     # which would also break on other Unicode boundaries (\v, \f, \x1c-\x1e, \x85,
     # \u2028, \u2029) that are valid inside a JSONL record's string value.
     decoded = ""
-    async for chunk in iter_bytes:
-        decoded += decoder.decode(chunk)
-        if decoded:
-            decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
-            for line in decoded_lines[:-1]:
-                yield line
-            decoded = decoded_lines[-1]
+    try:
+        async for chunk in iter_bytes:
+            decoded += decoder.decode(chunk)
+            if decoded:
+                decoded_lines = [line[:-1] if line.endswith("\r") else line for line in decoded.split("\n")]
+                for line in decoded_lines[:-1]:
+                    yield line
+                decoded = decoded_lines[-1]
+    finally:
+        aclose = getattr(iter_bytes, "aclose", None)
+        if aclose is not None:
+            await aclose()
 
     decoded += decoder.decode(b"", final=True)
     if decoded:
@@ -133,5 +139,6 @@ class AsyncJSONLDecoder:
         :return: An asynchronous iterator of JSONL events.
         """
 
-        async for line in aiter_lines(iter_bytes):
-            yield JSONLEvent(data=line)
+        async with aclosing(aiter_lines(iter_bytes)) as lines:
+            async for line in lines:
+                yield JSONLEvent(data=line)

@@ -103,6 +103,30 @@ async def test_jsonl_decoder_returns_event():
 
 
 @pytest.mark.asyncio
+async def test_stream_closes_response_on_error():
+    class Response:
+        headers = {"Content-Type": "application/jsonl"}
+
+        def __init__(self):
+            self.closed = False
+
+        async def iter_bytes(self):
+            yield b'{"ok": 1}\nnot-json\n'
+
+        async def close(self):
+            self.closed = True
+
+    response = Response()
+    stream = AsyncStream(
+        response=response,
+        deserialization_callback=lambda _response, event: event.json(),
+    )
+    with pytest.raises(json.JSONDecodeError):
+        [event async for event in stream]
+    assert response.closed
+
+
+@pytest.mark.asyncio
 async def test_stream_jsonl_basic(stream):
     jsonl_stream = await stream(HttpRequest("GET", "/streams/jsonl_basic"))
     messages = []

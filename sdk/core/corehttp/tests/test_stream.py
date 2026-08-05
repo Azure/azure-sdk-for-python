@@ -114,6 +114,29 @@ def test_jsonl_decoder_returns_event():
     assert event.json() == {"message": "hello"}
 
 
+def test_stream_closes_response_on_error():
+    class Response:
+        headers = {"Content-Type": "application/jsonl"}
+
+        def __init__(self):
+            self.closed = False
+
+        def iter_bytes(self):
+            return iter([b'{"ok": 1}\nnot-json\n'])
+
+        def close(self):
+            self.closed = True
+
+    response = Response()
+    stream = Stream(
+        response=response,
+        deserialization_callback=lambda _response, event: event.json(),
+    )
+    with pytest.raises(json.JSONDecodeError):
+        list(stream)
+    assert response.closed
+
+
 def test_stream_jsonl_basic(stream):
     jsonl_stream = stream(HttpRequest("GET", "/streams/jsonl_basic"))
     messages = []
