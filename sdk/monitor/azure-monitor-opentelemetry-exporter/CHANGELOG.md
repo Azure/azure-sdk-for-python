@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b56 (2026-08-05)
+## 1.0.0b56 (2026-08-06)
 
 ### Features Added
 - Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
