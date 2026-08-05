@@ -577,6 +577,30 @@ class BaseExporter:
                         if self._should_collect_stats():
                             _update_requests_map(_REQ_EXCEPTION_NAME[1], value="Circular Redirect")
                         result = ExportResult.FAILED_NOT_RETRYABLE
+                elif response_error.status_code == 413:
+                    if self._should_collect_stats():
+                        _update_requests_map(_REQ_FAILURE_NAME[1], value=response_error.status_code)
+                    if self.storage and len(envelopes) > 1:
+                        midpoint = len(envelopes) // 2
+                        for half in (envelopes[:midpoint], envelopes[midpoint:]):
+                            envelopes_to_store = [x.as_dict() for x in half]
+                            self.storage.put(envelopes_to_store)
+                            if self._should_collect_customer_sdkstats():
+                                # These halves are persisted for retry at a smaller size.
+                                track_retry_items(half, response_error)
+                    else:
+                        # Single envelope (or storage disabled): cannot split, so drop it.
+                        if not self._is_stats_exporter():
+                            logger.error(
+                                "Payload too large and cannot be split further: %s.",
+                                response_error.message,
+                            )
+                            if self._should_collect_customer_sdkstats() and isinstance(
+                                response_error.status_code, int
+                            ):
+                                track_dropped_items(envelopes, response_error.status_code)
+                    # Mark as not retryable because we already write to storage here
+                    result = ExportResult.FAILED_NOT_RETRYABLE
                 else:
                     # Any other status code counts as failure (non-retryable)
                     # 400 - Invalid - The server cannot or will not process the request due to the invalid telemetry (invalid data, iKey, etc.)
