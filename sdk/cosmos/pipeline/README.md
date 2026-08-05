@@ -35,6 +35,9 @@ it here** — Python consumes the same accounts and the same JSON.
 | `multiregion-tc-session` | 2 regions, Session, **single**-write | `cosmosCircuitBreakerMultiRegion`, `cosmosPerPartitionAutomaticFailover` |
 | `multimaster-multiregion-session` | 2 regions, Session, multi-write | `cosmosMultiRegion` (×3), `cosmosCircuitBreaker` |
 
+That is 12 of the 20 matrix jobs. The other 8 are the 7 `cosmosAAD*` legs (see below) and `cosmosGSI`,
+which already has its own fixed account via `$(gsi-pipeline-uri)`/`$(gsi-pipeline-key)`.
+
 Python needs far fewer accounts than Java's 18 because it does not vary account consistency per leg
 and has no thin-client / HTTP-2 / pmerge / Kafka lanes.
 
@@ -50,14 +53,37 @@ from `client.get_database_account()` at runtime, and no live test pins a region 
 
 ## How a run binds to an account
 
-1. `sdk/cosmos/tests.yml` sets `DisableAzureResourceCreation: true`, so
-   `eng/pipelines/templates/jobs/live.tests.yml` skips both the ARM deployment and its teardown.
-2. Each matrix leg in `live-platform-matrix.json` sets `AccountSelector`.
+Rollout is staged. Today:
+
+1. Each key-auth leg in `live-platform-matrix.json` sets `AccountSelector`. AAD legs deliberately do not.
+2. The pipeline still provisions an account per run, as before.
 3. `resolve-test-account-steps.yml` runs in `BeforeTestSteps`, which
-   `eng/pipelines/templates/steps/build-test.yml` executes in the same job immediately before the
-   pytest task — so pipeline variables it publishes reach the tests as environment variables.
-4. `resolve-cosmos-test-account.ps1` reads the JSON secret, looks up the selector and publishes
-   `ACCOUNT_HOST` / `ACCOUNT_KEY`, which `tests/test_config.py` already consumes. No test-side change.
+   `eng/pipelines/templates/steps/build-test.yml` executes in the same job **after** the ARM deployment
+   and immediately before the pytest task.
+4. `resolve-cosmos-test-account.ps1` reads the JSON secret, looks up the selector and republishes
+   `ACCOUNT_HOST` / `ACCOUNT_KEY`, **overwriting** the values the deployment just set. `tests/test_config.py`
+   already reads exactly those two names, so no test-side change is needed. Legs with no selector skip
+   the step entirely and keep the account they provisioned.
+
+This proves the accounts, the secret and the resolver end to end while leaving the AAD lane untouched.
+It does not yet make the key legs survive a tenant rotation, because the deployment still runs.
+
+Next, once that is green: set `DisableAzureResourceCreation: true` so
+`eng/pipelines/templates/jobs/live.tests.yml` skips both the deployment and its teardown. That is the
+change that actually removes the tenant coupling. It is a stage-level parameter and the AAD legs share
+the stage, so it needs one of:
+
+- **Split the pipeline** — a second `tests-aad.yml` with its own matrix, keeping the AAD legs on
+  provisioning. Fully repo-local; costs one new ADO pipeline registration.
+- **Move AAD onto the fixed accounts** — assign the data-plane role to the current tenant's test
+  principal on the `sdk-ci` accounts as part of the rotation runbook. Keeps one pipeline and makes the
+  AAD lane rotation-proof too, but needs `azure-sdk-tests-cosmos` granted rights to write
+  `sqlRoleAssignments` on the `sdk-ci` resource group.
+- **A per-leg runtime gate** — add a `Condition` parameter to
+  `eng/common/TestResources/{deploy,remove}-test-resources.yml`. Generic and useful to other repos, but
+  it is an azure-sdk-tools change with a sync lag.
+
+`DisableAzureResourceCreation` already exists and defaults to `false`, so the plumbing is in place.
 
 ### Why PowerShell and not Java's bash + jq
 
@@ -90,12 +116,17 @@ this.
 
 The `cosmosAAD*` legs are **not** on fixed accounts. `test-resources.bicep` creates a custom
 `sqlRoleDefinition` plus a `sqlRoleAssignment` for `testApplicationOid`, and that principal is
-tenant-scoped — it changes on every rotation. Moving those legs onto the fixed accounts requires
-granting the test service principal a data-plane role assignment on the `sdk-ci` accounts as part of
-the rotation runbook, which is a separate decision. Until then `test-resources.bicep` must stay.
+tenant-scoped — it changes on every rotation. So `test-resources.bicep` must stay, and those legs set
+no `AccountSelector`, which makes `resolve-test-account-steps.yml` skip itself for them (see its
+`condition`).
 
-Legs without an `AccountSelector` skip the resolver step (see the `condition` in
-`resolve-test-account-steps.yml`).
+Because the resolver only overrides `ACCOUNT_HOST`/`ACCOUNT_KEY` for legs that name a selector, the
+key-auth and AAD lanes coexist in one stage today with no interference.
+
+Note also that `AZURE_COSMOS_ENABLE_CIRCUIT_BREAKER` still arrives as a bicep output while provisioning
+is on. When provisioning is switched off it has to move to a per-leg matrix env var — it is a
+client-side SDK setting (`azure/cosmos/_constants.py`), not an account property, and the bicep only
+echoes the parameter straight back out.
 
 ## Running the tests locally
 
