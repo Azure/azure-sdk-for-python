@@ -52,15 +52,10 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "enableEncryptionAtHost": bool,
                     "enableFIPS": bool,
                     "enableNodePublicIP": bool,
-                    "enableOSDiskFullCaching": bool,
                     "enableUltraSSD": bool,
                     "gatewayProfile": {"publicIPPrefixSize": 0},
                     "gpuInstanceProfile": "str",
-                    "gpuProfile": {
-                        "driver": "str",
-                        "driverType": "str",
-                        "nvidia": {"managementMode": "str", "migStrategy": "str"},
-                    },
+                    "gpuProfile": {"driver": "str"},
                     "hostGroupID": "str",
                     "kubeletConfig": {
                         "allowedUnsafeSysctls": ["str"],
@@ -70,16 +65,9 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                         "cpuCfsQuotaPeriod": "str",
                         "cpuManagerPolicy": "str",
                         "failSwapOn": bool,
-                        "hardEvictionThreshold": {
-                            "memoryAvailable": "str",
-                            "nodeFsAvailable": "str",
-                            "nodeFsInodesFree": "str",
-                        },
                         "imageGcHighThreshold": 0,
                         "imageGcLowThreshold": 0,
-                        "kubeReserved": {"cpuMillicores": 0, "memoryMB": 0},
                         "podMaxPids": 0,
-                        "seccompDefault": "str",
                         "topologyManagerPolicy": "str",
                     },
                     "kubeletDiskType": "str",
@@ -154,14 +142,9 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "networkProfile": {
                         "allowedHostPorts": [{"portEnd": 0, "portStart": 0, "protocol": "str"}],
                         "applicationSecurityGroups": ["str"],
-                        "nodePublicIPPrefixIDs": ["str"],
                         "nodePublicIPTags": [{"ipTagType": "str", "tag": "str"}],
-                        "secondaryNetworkInterfaces": [
-                            {"enableAcceleratedNetworking": bool, "type": "str", "vnetSubnetId": "str"}
-                        ],
                     },
                     "nodeImageVersion": "str",
-                    "nodeInitializationTaints": ["str"],
                     "nodeLabels": {"str": "str"},
                     "nodePublicIPPrefixID": "str",
                     "nodeTaints": ["str"],
@@ -173,7 +156,6 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "podIPAllocationMode": "str",
                     "podSubnetID": "str",
                     "powerState": {"code": "str"},
-                    "preparedImageSpecificationProfile": {"preparedImageSpecificationId": "str"},
                     "provisioningState": "str",
                     "proximityPlacementGroupID": "str",
                     "scaleDownMode": "str",
@@ -194,19 +176,11 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
                     "type": "str",
                     "upgradeSettings": {
                         "drainTimeoutInMinutes": 0,
-                        "maxBlockedNodes": "str",
                         "maxSurge": "str",
                         "maxUnavailable": "str",
                         "nodeSoakDurationInMinutes": 0,
                         "undrainableNodeBehavior": "str",
                     },
-                    "upgradeSettingsBlueGreen": {
-                        "batchSoakDurationInMinutes": 0,
-                        "drainBatchSize": "str",
-                        "drainTimeoutInMinutes": 0,
-                        "finalSoakDurationInMinutes": 0,
-                    },
-                    "upgradeStrategy": "str",
                     "virtualMachineNodesStatus": [{"count": 0, "size": "str"}],
                     "virtualMachinesProfile": {
                         "scale": {
@@ -271,18 +245,6 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_agent_pools_begin_complete_upgrade(self, resource_group):
-        response = self.client.agent_pools.begin_complete_upgrade(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-            agent_pool_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
     def test_agent_pools_begin_delete_machines(self, resource_group):
         response = self.client.agent_pools.begin_delete_machines(
             resource_group_name=resource_group.name,
@@ -302,19 +264,6 @@ class TestContainerServiceAgentPoolsOperations(AzureMgmtRecordedTestCase):
             resource_name="str",
             agent_pool_name="str",
         ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_agent_pools_list_bootstrap_data(self, resource_group):
-        response = self.client.agent_pools.list_bootstrap_data(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-            agent_pool_name="str",
-            body={},
-        )
 
         # please add some check logic here by yourself
         # ...

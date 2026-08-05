@@ -1,7 +1,7 @@
 {
-  "apiVersion": "2026-05-02-preview",
+  "apiVersion": "2026-05-01",
   "apiVersions": {
-    "Microsoft.ContainerService": "2026-05-02-preview"
+    "Microsoft.ContainerService": "2026-05-01"
   },
   "commit": "f6b53f105b95da05276530a0754a1c71b4f16397",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
