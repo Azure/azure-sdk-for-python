@@ -11,15 +11,15 @@ DESCRIPTION:
 
     Sessions only work with Hosted Agents.
 
-    Sessions are currently a preview feature. In the Python SDK, you access
-    these operations via `project_client.beta.agents`.
+    Sessions are no longer a preview feature. In stable releases, Sessions
+    operations are accessed via the `project_client.agents` subclient.
 
 USAGE:
     python sample_sessions_crud.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.1.0" python-dotenv
+    pip install "azure-ai-projects>=2.3.0" python-dotenv
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
@@ -31,10 +31,10 @@ USAGE:
 
 SDK FUNCTIONS:
     - project_client.agents.list_versions: resolves the active version for the existing hosted agent.
-    - project_client.beta.agents.create_session: creates a session for the agent.
-    - project_client.beta.agents.get_session: retrieves a session by ID.
-    - project_client.beta.agents.list_sessions: lists sessions for an agent.
-    - project_client.beta.agents.delete_session: deletes a session by ID.
+    - project_client.agents.create_session: creates a session for the agent.
+    - project_client.agents.get_session: retrieves a session by ID.
+    - project_client.agents.list_sessions: lists sessions for an agent.
+    - project_client.agents.delete_session: deletes a session by ID.
 """
 
 import os
@@ -45,7 +45,6 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import VersionRefIndicator
-from hosted_agents_util import get_latest_active_agent_version
 
 load_dotenv()
 
@@ -57,31 +56,37 @@ with (
     AIProjectClient(
         endpoint=endpoint,
         credential=credential,
-        allow_preview=True,
     ) as project_client,
 ):
-    agent = get_latest_active_agent_version(project_client, agent_name)
-    session = project_client.beta.agents.create_session(
+    # Get the latest active version of the hosted agent
+    agent = next(
+        version
+        for version in project_client.agents.list_versions(agent_name=agent_name, order="desc")
+        if version.status == "active"
+    )
+
+    # Create a session for the hosted agent
+    session = project_client.agents.create_session(
         agent_name=agent_name,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
 
     # Retrieve the session by its ID
-    fetched = project_client.beta.agents.get_session(
+    fetched_session = project_client.agents.get_session(
         agent_name=agent_name,
         session_id=session.agent_session_id,
     )
-    print(f"Retrieved session (id: {fetched.agent_session_id}, status: {fetched.status})")
+    print(f"Retrieved session (id: {fetched_session.agent_session_id}, status: {fetched_session.status})")
 
     # List sessions for the agent
     print("Listing sessions for the agent...")
-    sessions = project_client.beta.agents.list_sessions(agent_name=agent_name)
-    print("Sessions:")
+    sessions = project_client.agents.list_sessions(agent_name=agent_name)
     for item in sessions:
-        print(f"  - {item.agent_session_id} (status: {item.status})")
+        print(f"  - Session ID: {item.agent_session_id}, Status: {item.status}")
 
-    project_client.beta.agents.delete_session(
+    # Delete the session
+    project_client.agents.delete_session(
         agent_name=agent_name,
         session_id=session.agent_session_id,
     )
