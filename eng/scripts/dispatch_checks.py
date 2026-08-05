@@ -110,7 +110,12 @@ async def _tee_stream(
             return ""
         chunks: List[str] = []
         while True:
-            line_b = await stream.readline()
+            try:
+                line_b = await stream.readline()
+            except (ValueError, asyncio.LimitOverrunError):
+                sink.write(prefix + "[suppressed oversized log line]\n")
+                sink.flush()
+                continue
             if not line_b:
                 break
             line = line_b.decode(errors="replace")
