@@ -1,5 +1,137 @@
 # Release History
 
+## 11.0.0 (2026-07-20)
+
+### Features Added
+
+  - Client `ConsumptionManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `ConsumptionManagementClient` added parameter `polling_interval` in method `__init__`
+  - Client `ConsumptionManagementClient` added method `send_request`
+  - Model `Balance` added property `system_data`
+  - Model `Budget` added property `system_data`
+  - Model `ChargeSummary` added property `etag`
+  - Model `ChargeSummary` added property `system_data`
+  - Model `CreditSummary` added property `system_data`
+  - Model `EventSummary` added property `system_data`
+  - Model `LegacyChargeSummary` added property `etag`
+  - Model `LegacyChargeSummary` added property `system_data`
+  - Model `LegacyReservationRecommendation` added property `system_data`
+  - Model `LegacyReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacyReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacySharedScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacySharedScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacySingleScopeReservationRecommendationProperties` added property `last_usage_date`
+  - Model `LegacySingleScopeReservationRecommendationProperties` added property `total_hours`
+  - Model `LegacyUsageDetail` added property `system_data`
+  - Model `LotSummary` added property `system_data`
+  - Model `ManagementGroupAggregatedCostResult` added property `system_data`
+  - Model `Marketplace` added property `system_data`
+  - Model `ModernChargeSummary` added property `etag`
+  - Model `ModernChargeSummary` added property `system_data`
+  - Model `ModernReservationRecommendation` added property `system_data`
+  - Model `ModernReservationTransaction` added property `system_data`
+  - Model `ModernUsageDetail` added property `system_data`
+  - Model `PriceSheetProperties` added property `savings_plan`
+  - Model `PriceSheetResult` added property `system_data`
+  - Model `ProxyResource` added property `system_data`
+  - Model `ReservationDetail` added property `system_data`
+  - Model `ReservationRecommendation` added property `system_data`
+  - Model `ReservationRecommendationDetailsModel` added property `system_data`
+  - Model `ReservationSummary` added property `system_data`
+  - Model `ReservationTransaction` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TagsResult` added property `system_data`
+  - Enum `Term` added member `P1_M`
+  - Model `UsageDetail` added property `system_data`
+  - Added enum `CreatedByType`
+  - Added model `ErrorAdditionalInfo`
+  - Added model `ExtensionResource`
+  - Added model `ModernSharedScopeReservationRecommendationProperties`
+  - Added model `ModernSingleScopeReservationRecommendationProperties`
+  - Added model `OperationStatus`
+  - Added enum `OperationStatusType`
+  - Added enum `OrganizationType`
+  - Added model `PricesheetDownloadProperties`
+  - Added model `SavingsPlan`
+  - Added model `SystemData`
+  - Operation group `BudgetsOperations` added parameter `content_type` in method `create_or_update`
+  - Operation group `PriceSheetOperations` added method `begin_download_by_billing_account_period`
+  - Operation group `ReservationRecommendationDetailsOperations` added parameter `filter` in method `get`
+  - Operation group `ReservationTransactionsOperations` added parameter `preview_markup_percentage` in method `list`
+  - Operation group `ReservationTransactionsOperations` added parameter `use_markup_if_partner` in method `list`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `Balance` moved instance variable `adjustment_details`, `adjustments`, `azure_marketplace_service_charges`, `beginning_balance`, `billing_frequency`, `charges_billed_separately`, `currency`, `ending_balance`, `new_purchases`, `new_purchases_details`, `price_hidden`, `service_overage`, `total_overage`, `total_usage` and `utilized` under property `properties` whose type is `BalanceProperties`
+  - Model `Budget` moved instance variable `amount`, `category`, `current_spend`, `filter`, `forecast_spend`, `notifications`, `time_grain` and `time_period` under property `properties` whose type is `BudgetProperties`
+  - Model `BudgetComparisonExpression` renamed its instance variable `values` to `values_property`
+  - Renamed enum value `BudgetOperatorType.IN_ENUM` to `IN`
+  - Model `CreditSummary` moved instance variable `balance_summary`, `billing_currency`, `credit_currency`, `expired_credit`, `pending_credit_adjustments`, `pending_eligible_charges` and `reseller` under property `properties` whose type is `CreditSummaryProperties`
+  - Model `EventSummary` moved instance variable `adjustments`, `adjustments_in_billing_currency`, `billing_currency`, `billing_profile_display_name`, `billing_profile_id`, `canceled_credit`, `charges`, `charges_in_billing_currency`, `closed_balance`, `closed_balance_in_billing_currency`, `credit_currency`, `credit_expired`, `credit_expired_in_billing_currency`, `description`, `event_type`, `invoice_number`, `lot_id`, `lot_source`, `new_credit`, `new_credit_in_billing_currency`, `reseller` and `transaction_date` under property `properties` whose type is `EventProperties`
+  - Model `LegacyChargeSummary` moved instance variable `azure_charges`, `billing_period_id`, `charges_billed_separately`, `currency`, `usage_end` and `usage_start` under property `properties` whose type is `LegacyChargeSummaryProperties`
+  - Model `LegacyReservationRecommendation` moved instance variable `cost_with_no_reserved_instances`, `first_usage_date`, `instance_flexibility_group`, `instance_flexibility_ratio`, `look_back_period`, `meter_id`, `net_savings`, `normalized_size`, `recommended_quantity`, `recommended_quantity_normalized`, `resource_type`, `scope`, `sku_properties`, `term` and `total_cost_with_reserved_instances` under property `properties` whose type is `LegacyReservationRecommendationProperties`
+  - Model `LegacyUsageDetail` moved instance variable `account_name`, `account_owner_id`, `additional_info`, `benefit_id`, `benefit_name`, `billing_account_id`, `billing_account_name`, `billing_currency`, `billing_period_end_date`, `billing_period_start_date`, `billing_profile_id`, `billing_profile_name`, `charge_type`, `consumed_service`, `cost`, `cost_center`, `date`, `effective_price`, `frequency`, `invoice_section`, `is_azure_credit_eligible`, `meter_details`, `meter_id`, `offer_id`, `part_number`, `pay_g_price`, `plan_name`, `pricing_model`, `product`, `product_order_id`, `product_order_name`, `publisher_name`, `publisher_type`, `quantity`, `reservation_id`, `reservation_name`, `resource_group`, `resource_id`, `resource_location`, `resource_name`, `service_info1`, `service_info2`, `subscription_id`, `subscription_name`, `term` and `unit_price` under property `properties` whose type is `LegacyUsageDetailProperties`
+  - Model `LotSummary` moved instance variable `billing_currency`, `closed_balance`, `closed_balance_in_billing_currency`, `credit_currency`, `expiration_date`, `original_amount`, `original_amount_in_billing_currency`, `po_number`, `purchased_date`, `reseller`, `source`, `start_date` and `status` under property `properties` whose type is `LotProperties`
+  - Model `ManagementGroupAggregatedCostResult` moved instance variable `azure_charges`, `billing_period_id`, `charges_billed_separately`, `children`, `currency`, `excluded_subscriptions`, `included_subscriptions`, `marketplace_charges`, `usage_end` and `usage_start` under property `properties` whose type is `ManagementGroupAggregatedCostProperties`
+  - Model `Marketplace` moved instance variable `account_name`, `additional_info`, `billing_period_id`, `consumed_quantity`, `consumed_service`, `cost_center`, `currency`, `department_name`, `instance_id`, `instance_name`, `is_estimated`, `is_recurring_charge`, `meter_id`, `offer_name`, `order_number`, `plan_name`, `pretax_cost`, `publisher_name`, `resource_group`, `resource_rate`, `subscription_guid`, `subscription_name`, `unit_of_measure`, `usage_end` and `usage_start` under property `properties` whose type is `MarketplaceProperties`
+  - Model `ModernChargeSummary` moved instance variable `azure_charges`, `billing_account_id`, `billing_period_id`, `billing_profile_id`, `charges_billed_separately`, `customer_id`, `invoice_section_id`, `is_invoiced`, `marketplace_charges`, `usage_end` and `usage_start` under property `properties` whose type is `ModernChargeSummaryProperties`
+  - Model `ModernReservationRecommendation` moved instance variable `cost_with_no_reserved_instances`, `first_usage_date`, `instance_flexibility_group`, `instance_flexibility_ratio`, `look_back_period`, `meter_id`, `net_savings`, `normalized_size`, `recommended_quantity`, `recommended_quantity_normalized`, `scope`, `sku_name`, `sku_properties`, `term` and `total_cost_with_reserved_instances` under property `properties` whose type is `ModernReservationRecommendationProperties`
+  - Model `ModernReservationTransaction` moved instance variable `amount`, `arm_sku_name`, `billing_frequency`, `billing_profile_id`, `billing_profile_name`, `currency`, `description`, `event_date`, `event_type`, `invoice`, `invoice_id`, `invoice_section_id`, `invoice_section_name`, `purchasing_subscription_guid`, `purchasing_subscription_name`, `quantity`, `region`, `reservation_order_id`, `reservation_order_name` and `term` under property `properties` whose type is `ModernReservationTransactionProperties`
+  - Model `ModernUsageDetail` moved instance variable `additional_info`, `benefit_id`, `benefit_name`, `billing_account_id`, `billing_account_name`, `billing_currency_code`, `billing_period_end_date`, `billing_period_start_date`, `billing_profile_id`, `billing_profile_name`, `charge_type`, `consumed_service`, `cost_allocation_rule_name`, `cost_center`, `cost_in_billing_currency`, `cost_in_pricing_currency`, `cost_in_usd`, `customer_name`, `customer_tenant_id`, `date`, `effective_price`, `exchange_rate`, `exchange_rate_date`, `exchange_rate_pricing_to_billing`, `frequency`, `instance_name`, `invoice_id`, `invoice_section_id`, `invoice_section_name`, `is_azure_credit_eligible`, `market_price`, `meter_category`, `meter_id`, `meter_name`, `meter_region`, `meter_sub_category`, `partner_earned_credit_applied`, `partner_earned_credit_rate`, `partner_name`, `partner_tenant_id`, `pay_g_price`, `payg_cost_in_billing_currency`, `payg_cost_in_usd`, `previous_invoice_id`, `pricing_currency_code`, `pricing_model`, `product`, `product_identifier`, `product_order_id`, `product_order_name`, `provider`, `publisher_id`, `publisher_name`, `publisher_type`, `quantity`, `reseller_mpn_id`, `reseller_name`, `reservation_id`, `reservation_name`, `resource_group`, `resource_location`, `resource_location_normalized`, `service_family`, `service_info1`, `service_info2`, `service_period_end_date`, `service_period_start_date`, `subscription_guid`, `subscription_name`, `term`, `unit_of_measure` and `unit_price` under property `properties` whose type is `ModernUsageDetailProperties`
+  - Model `PriceSheetResult` moved instance variable `download`, `next_link` and `pricesheets` under property `properties` whose type is `PriceSheetModel`
+  - Model `ReservationDetail` moved instance variable `instance_flexibility_group`, `instance_flexibility_ratio`, `instance_id`, `kind`, `reservation_id`, `reservation_order_id`, `reserved_hours`, `sku_name`, `total_reserved_quantity`, `usage_date` and `used_hours` under property `properties` whose type is `ReservationDetailProperties`
+  - Model `ReservationRecommendationDetailsModel` moved instance variable `currency`, `resource`, `resource_group`, `savings`, `scope` and `usage` under property `properties` whose type is `ReservationRecommendationDetailsProperties`
+  - Model `ReservationSummary` moved instance variable `avg_utilization_percentage`, `kind`, `max_utilization_percentage`, `min_utilization_percentage`, `purchased_quantity`, `remaining_quantity`, `reservation_id`, `reservation_order_id`, `reserved_hours`, `sku_name`, `total_reserved_quantity`, `usage_date`, `used_hours`, `used_quantity` and `utilized_percentage` under property `properties` whose type is `ReservationSummaryProperties`
+  - Model `ReservationTransaction` moved instance variable `account_name`, `account_owner_email`, `amount`, `arm_sku_name`, `billing_frequency`, `billing_month`, `cost_center`, `currency`, `current_enrollment`, `department_name`, `description`, `event_date`, `event_type`, `monetary_commitment`, `overage`, `purchasing_enrollment`, `purchasing_subscription_guid`, `purchasing_subscription_name`, `quantity`, `region`, `reservation_order_id`, `reservation_order_name` and `term` under property `properties` whose type is `LegacyReservationTransactionProperties`
+  - Model `TagsResult` moved instance variable `next_link`, `previous_link` and `tags` under property `properties` whose type is `TagProperties`
+  - Model `Resource` deleted or renamed its instance variable `etag`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `e_tag`
+  - Model `LegacyChargeSummary` deleted or renamed its instance variable `marketplace_charges`
+  - Model `ModernChargeSummary` deleted or renamed its instance variable `e_tag`
+  - Model `ChargeSummary` deleted or renamed its instance variable `e_tag`
+  - Model `ProxyResource` deleted or renamed its instance variable `e_tag`
+  - Model `EventSummary` deleted or renamed its instance variable `e_tag_properties_e_tag`
+  - Model `LotSummary` deleted or renamed its instance variable `e_tag_properties_e_tag`
+  - Model `ModernReservationRecommendation` deleted or renamed its instance variable `location_properties_location`
+  - Renamed model `ErrorDetails` to `ErrorDetail`
+  - Method `ChargesOperations.list` changed its parameter `apply`/`end_date`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `EventsOperations.list_by_billing_profile` changed its parameter `end_date`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `MarketplacesOperations.list` changed its parameter `skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `PriceSheetOperations.get_by_billing_period` changed its parameter `expand`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationRecommendationDetailsOperations.get` changed its parameter `look_back_period`/`product`/`region`/`scope`/`term` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsDetailsOperations.list` changed its parameter `end_date`/`reservation_id`/`reservation_order_id`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list` changed its parameter `end_date`/`grain`/`reservation_id`/`reservation_order_id`/`start_date` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed its parameter `grain` from `positional_or_keyword` to `keyword_only`
+  - Method `UsageDetailsOperations.list` changed its parameter `expand`/`metric`/`skiptoken` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `BudgetsListResult`/`Events`/`Lots`/`MarketplacesListResult`/`ModernReservationTransactionsListResult`/`OperationListResult`/`ReservationDetailsListResult`/`ReservationSummariesListResult`/`ReservationTransactionsListResult`/`UsageDetailsListResult` which actually were not used by SDK users
+  - Deleted model `DownloadProperties`/`LegacyReservationTransaction`/`ReservationRecommendationsListResult`/`ReservationTransactionResource`/`ResourceAttributes` which actually were not used by SDK users
+  - Method `BudgetsOperations.list` changed return type from `Iterable[BudgetsListResult]` to `ItemPaged[Budget]`
+  - Method `EventsOperations.list_by_billing_account` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
+  - Method `EventsOperations.list_by_billing_profile` changed return type from `Iterable[Events]` to `ItemPaged[EventSummary]`
+  - Method `LotsOperations.list_by_billing_account` changed return type from `Iterable[Lots]` to `ItemPaged[LotSummary]`
+  - Method `LotsOperations.list_by_billing_profile` changed return type from `Iterable[Lots]` to `ItemPaged[LotSummary]`
+  - Method `LotsOperations.list_by_customer` changed return type from `Iterable[Lots]` to `ItemPaged[LotSummary]`
+  - Method `MarketplacesOperations.list` changed return type from `Iterable[MarketplacesListResult]` to `ItemPaged[Marketplace]`
+  - Method `Operations.list` changed return type from `Iterable[OperationListResult]` to `ItemPaged[Operation]`
+  - Method `ReservationRecommendationsOperations.list` changed return type from `Iterable[ReservationRecommendationsListResult]` to `ItemPaged[ReservationRecommendation]`
+  - Method `ReservationTransactionsOperations.list` changed return type from `Iterable[ReservationTransactionsListResult]` to `ItemPaged[ReservationTransaction]`
+  - Method `ReservationTransactionsOperations.list_by_billing_profile` changed return type from `Iterable[ModernReservationTransactionsListResult]` to `ItemPaged[ModernReservationTransaction]`
+  - Method `ReservationsDetailsOperations.list` changed return type from `Iterable[ReservationDetailsListResult]` to `ItemPaged[ReservationDetail]`
+  - Method `ReservationsDetailsOperations.list_by_reservation_order` changed return type from `Iterable[ReservationDetailsListResult]` to `ItemPaged[ReservationDetail]`
+  - Method `ReservationsDetailsOperations.list_by_reservation_order_and_reservation` changed return type from `Iterable[ReservationDetailsListResult]` to `ItemPaged[ReservationDetail]`
+  - Method `ReservationsSummariesOperations.list` changed return type from `Iterable[ReservationSummariesListResult]` to `ItemPaged[ReservationSummary]`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order` changed return type from `Iterable[ReservationSummariesListResult]` to `ItemPaged[ReservationSummary]`
+  - Method `ReservationsSummariesOperations.list_by_reservation_order_and_reservation` changed return type from `Iterable[ReservationSummariesListResult]` to `ItemPaged[ReservationSummary]`
+  - Method `UsageDetailsOperations.list` changed return type from `Iterable[UsageDetailsListResult]` to `ItemPaged[UsageDetail]`
+
 ## 11.0.0b2 (2026-05-25)
 
 ### Features Added

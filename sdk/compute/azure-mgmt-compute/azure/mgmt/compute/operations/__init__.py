@@ -51,6 +51,8 @@ from ._operations import SharedGalleryImageVersionsOperations  # type: ignore
 from ._operations import CommunityGalleriesOperations  # type: ignore
 from ._operations import CommunityGalleryImagesOperations  # type: ignore
 from ._operations import CommunityGalleryImageVersionsOperations  # type: ignore
+from ._operations import SharedGalleryInvitesOperations  # type: ignore
+from ._operations import TenantLevelSharedGalleryInvitesOperations  # type: ignore
 from ._operations import ResourceSkusOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetRollingUpgradesOperations  # type: ignore
 from ._operations import VirtualMachineScaleSetVMsOperations  # type: ignore
@@ -108,6 +110,8 @@ __all__ = [
     "CommunityGalleriesOperations",
     "CommunityGalleryImagesOperations",
     "CommunityGalleryImageVersionsOperations",
+    "SharedGalleryInvitesOperations",
+    "TenantLevelSharedGalleryInvitesOperations",
     "ResourceSkusOperations",
     "VirtualMachineScaleSetRollingUpgradesOperations",
     "VirtualMachineScaleSetVMsOperations",

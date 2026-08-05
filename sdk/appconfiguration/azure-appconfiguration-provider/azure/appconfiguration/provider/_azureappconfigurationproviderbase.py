@@ -70,11 +70,13 @@ def is_json_content_type(content_type: str) -> bool:
 
 
 def _build_watched_setting(setting: Union[str, Tuple[str, str]]) -> Tuple[str, str]:
-    try:
-        key, label = setting  # type:ignore
-    except (IndexError, ValueError):
-        key = str(setting)  # Ensure key is a string
-        label = NULL_CHAR
+    if isinstance(setting, str):
+        key, label = setting, NULL_CHAR
+    else:
+        try:
+            key, label = setting
+        except (TypeError, ValueError):
+            key, label = str(setting), NULL_CHAR
     if "*" in key or "*" in label:
         raise ValueError("Wildcard key or label filters are not supported for refresh.")
     return key, label
@@ -179,7 +181,7 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         seed=123abc\ndefault_when_enabled=Control\npercentiles=0,Control,20;20,Test,100\nvariants=Control,standard;Test,special # pylint:disable=line-too-long
 
         :param  Dict[str, JSON] feature_flag_value: The feature to generate an allocation ID for.
-        :rtype: str
+        :rtype: Optional[str]
         :return: The allocation ID.
         """
 
@@ -303,11 +305,11 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         resolved.
 
         :return: A list of values loaded from Azure App Configuration. The values are either Strings or JSON objects,
-         based on there content type.
+         based on their content type.
         :rtype: ValuesView[Union[str, Mapping[str, Any]]]
         """
         with self._update_lock:
-            return (self._dict).values()
+            return self._dict.values()
 
     @overload
     def get(self, key: str, default: None = None) -> Union[str, JSON, None]: ...
@@ -440,7 +442,9 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
 
     def _deduplicate_settings(self, configuration_settings: List[ConfigurationSetting]) -> List[ConfigurationSetting]:
         """
-        Deduplicates configuration settings by key.
+        Deduplicates configuration settings by key, ignoring label. The provider exposes a flat
+        key->value mapping, so when multiple selectors return the same key the last one wins,
+        regardless of label.
 
         :param List[ConfigurationSetting] configuration_settings: The list of configuration settings to deduplicate
         :return: A list of unique configuration settings

@@ -136,6 +136,44 @@ steps:
     displayName: 'Install QEMU Dependencies'
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
+  # Windows: cibuildwheel fetches CPython from api.nuget.org, which is blocked.
+  # Pre-provision the interpreters from the Azure DevOps NuGet feed into the
+  # cibuildwheel cache so it skips the blocked download.
+  - task: NuGetAuthenticate@1
+    displayName: 'Authenticate to NuGet feed'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  - pwsh: |
+      $ErrorActionPreference = 'Stop'
+      $feed = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-net/nuget/v3/index.json"
+      $version = "3.10.11"
+      $cache = Join-Path "$(Agent.TempDirectory)" "cibw-cache"
+      $nugetCpython = Join-Path $cache "nuget-cpython"
+      New-Item -ItemType Directory -Force -Path $nugetCpython | Out-Null
+      $nuget = (Get-Command nuget).Source
+      & $nuget install python -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download python $version"
+        exit 1
+      }
+      & $nuget install pythonarm64 -Version $version -Source $feed -OutputDirectory $nugetCpython
+      if ($LASTEXITCODE) { 
+        Write-Error "Failed to download pythonarm64 $version"
+        exit 1
+      }
+      Write-Host "##vso[task.setvariable variable=CIBW_CACHE_PATH]$cache"
+    displayName: 'Pre-provision CPython for cibuildwheel'
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['ENABLE_EXTENSION_BUILD'], 'true'))
+
+  # Linux: forward PIP_INDEX_URL into the build container so pip fetches build
+  # dependencies from the Azure DevOps feed instead of PyPI. Using
+  # CIBW_ENVIRONMENT_PASS_LINUX (not CIBW_ENVIRONMENT) preserves the package's
+  # own [tool.cibuildwheel].environment (CFLAGS) setting.
+  - pwsh: |
+      Write-Host "##vso[task.setvariable variable=CIBW_ENVIRONMENT_PASS_LINUX]PIP_INDEX_URL"
+    displayName: 'Forward PIP_INDEX_URL to cibuildwheel'
+    condition: and(succeeded(), or(eq(variables['ENABLE_EXTENSION_BUILD'], 'true'), eq('${{ parameters.ArtifactSuffix }}', 'linux')))
+
   - pwsh: |
       which python
       sdk_build -d "$(Build.ArtifactStagingDirectory)" "$(TargetingString)" --inactive --service="${{ parameters.ServiceDirectory }}"
