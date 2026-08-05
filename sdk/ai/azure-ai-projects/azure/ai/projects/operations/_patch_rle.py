@@ -46,8 +46,8 @@ from ._operations import (
     RLEInstancesOperations,
 )
 
-_DEFAULT_CREATE_TIMEOUT_S = 300.0
-_DEFAULT_POLL_INTERVAL_S = 2.0
+_DEFAULT_CREATE_TIMEOUT_S = 900.0
+_DEFAULT_POLL_INTERVAL_S = 5.0
 
 
 class RLEError(RuntimeError):
