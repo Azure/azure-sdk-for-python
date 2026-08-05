@@ -1,5 +1,11 @@
 # Release History
 
+## 2.0.0 (2026-08-05)
+
+### Features Added
+
+- First stable release of the Azure AI Agent Server Responses client library.
+
 ## 2.0.0b1 (2026-08-04)
 
 ### Other Changes
