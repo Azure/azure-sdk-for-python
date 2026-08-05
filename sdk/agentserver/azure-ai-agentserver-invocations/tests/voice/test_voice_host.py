@@ -2695,3 +2695,78 @@ def test_voice_protocol_metrics_are_emitted(monkeypatch) -> None:
     assert active_connections.calls[0][0] == 1
     assert active_connections.calls[-1][0] == -1
     assert close_codes.calls
+
+
+def test_terminal_winning_state_lock_prevents_proactive_registration() -> None:
+    async def scenario() -> None:
+        websocket = _QueueWebSocket()
+        connection = _connection(websocket)
+        connection._ready = True  # pylint: disable=protected-access
+        await connection._state_lock.acquire()  # pylint: disable=protected-access
+        admission = asyncio.create_task(  # pylint: disable=protected-access
+            connection.start_proactive_response(admission_timeout_ms=1000, supersede_key=None)
+        )
+        await asyncio.sleep(0)
+        connection._ending = True  # pylint: disable=protected-access
+        connection._state_lock.release()  # pylint: disable=protected-access
+
+        with pytest.raises(VoiceBridgeConnectionClosedError, match="ending"):
+            await admission
+        assert not connection._pending_proactive  # pylint: disable=protected-access
+        assert not websocket.sent
+
+    asyncio.run(scenario())
+
+
+@pytest.mark.parametrize("terminal_kind", ["end_call", "report_error", "session_end", "shutdown"])
+def test_registered_proactive_is_failed_by_session_terminal(terminal_kind: str) -> None:
+    async def scenario() -> None:
+        websocket = _QueueWebSocket()
+        connection = _connection(websocket)
+        connection._ready = True  # pylint: disable=protected-access
+        admission = asyncio.create_task(  # pylint: disable=protected-access
+            connection.start_proactive_response(admission_timeout_ms=1000, supersede_key=None)
+        )
+        while not websocket.sent:
+            await asyncio.sleep(0)
+        response_id = websocket.sent[0]["response_id"]
+
+        if terminal_kind == "end_call":
+            await connection.end_call("completed", "drain")
+        elif terminal_kind == "report_error":
+            await connection.report_session_error("agent_error", "Agent failed")
+        elif terminal_kind == "session_end":
+            await connection._handle_session_end({"reason": "caller_hangup"})  # pylint: disable=protected-access
+        else:
+            await connection._shutdown_runtime(drain_callbacks=False)  # pylint: disable=protected-access
+
+        with pytest.raises(VoiceBridgeConnectionClosedError):
+            await admission
+        assert not connection._pending_proactive  # pylint: disable=protected-access
+
+        if terminal_kind == "session_end":
+            await connection._handle_response_accepted({"response_id": response_id})  # pylint: disable=protected-access
+            await connection._handle_response_dropped(  # pylint: disable=protected-access
+                {"response_id": response_id, "reason": "session_ended"}
+            )
+
+    asyncio.run(scenario())
+
+
+def test_report_error_from_active_callback_does_not_cancel_itself() -> None:
+    app = _app()
+    callback_returned = threading.Event()
+
+    @app.on_user_message
+    async def on_message(session: VoiceSession, _event, _response) -> None:
+        await session.report_error(code="agent_error", message="Agent failed")
+        callback_returned.set()
+
+    with TestClient(app).websocket_connect("/invocations_ws") as websocket:
+        _activate(websocket)
+        websocket.send_json(_user_message())
+        error = websocket.receive_json()
+        assert callback_returned.wait(timeout=1.0)
+
+    assert error["type"] == "error"
+    assert "response_id" not in error

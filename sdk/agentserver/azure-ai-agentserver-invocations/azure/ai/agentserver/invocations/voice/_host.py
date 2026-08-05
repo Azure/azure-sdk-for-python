@@ -158,6 +158,16 @@ def _release_global_customer_task(completed: asyncio.Task[None]) -> None:
         completed.exception()
 
 
+def _observe_future_completion(completed: asyncio.Future[Any]) -> None:
+    """Retrieve internal Future exceptions even when the public waiter left.
+
+    :param completed: Completed internal correlation Future.
+    :type completed: asyncio.Future[Any]
+    """
+    if not completed.cancelled():
+        completed.exception()
+
+
 @dataclass(frozen=True)
 class _CallbackWork:
     kind: str
@@ -168,6 +178,15 @@ class _CallbackWork:
     request_id: str | None = None
     success_type: str | None = None
     payload_bytes: int = 0
+
+
+@dataclass(frozen=True)
+class _PreparedFrame:
+    """Immutable encoded frame prepared before any protocol state commit."""
+
+    message_type: str
+    frame: str
+    response_id: str | None
 
 
 @experimental
@@ -564,22 +583,82 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             raise RuntimeError("Voice callback coordinator stopped unexpectedly")
         return receive_task.result()
 
-    async def send(self, message_type: str, **fields: Any) -> None:
+    async def send(self, message_type: str, *, _allow_while_ending: bool = False, **fields: Any) -> None:
         """Serialize one SDK-owned application frame.
 
         :param message_type: Wire message discriminator.
         :type message_type: str
+        :keyword _allow_while_ending: Allow one SDK-owned session terminal frame.
+        :paramtype _allow_while_ending: bool
         """
         if self._closed:
             raise VoiceBridgeConnectionClosedError("The voice connection is closed")
-        async with self._send_lock:
+        prepared = self._prepare_frame(message_type, fields)
+        await self._send_prepared(prepared, allow_while_ending=_allow_while_ending, state_committed=False)
+
+    @staticmethod
+    def _prepare_frame(message_type: str, fields: dict[str, Any]) -> _PreparedFrame:
+        """Encode and validate a frame without changing protocol state.
+
+        :param message_type: Wire message discriminator.
+        :type message_type: str
+        :param fields: Outbound message fields.
+        :type fields: dict[str, Any]
+        :return: Immutable transport-ready frame.
+        :rtype: _PreparedFrame
+        """
+        if _estimate_event_bytes(fields) > _MAX_FRAME_BYTES:
+            raise ValueError("Voice bridge fields exceed the maximum encoded size")
+        frame = encode_frame(message_type, **fields)
+        if len(frame.encode("utf-8")) > _MAX_FRAME_BYTES:
+            raise ValueError("Voice bridge frame exceeds the maximum encoded size")
+        response_id = fields.get("response_id")
+        return _PreparedFrame(
+            message_type=message_type,
+            frame=frame,
+            response_id=response_id if isinstance(response_id, str) else None,
+        )
+
+    async def _send_prepared(
+        self,
+        prepared: _PreparedFrame,
+        *,
+        allow_while_ending: bool = False,
+        state_committed: bool,
+    ) -> None:
+        """Send one prepared frame with explicit commit-boundary handling.
+
+        :param prepared: Immutable transport-ready frame.
+        :type prepared: _PreparedFrame
+        :keyword allow_while_ending: Permit the session terminal frame itself.
+        :paramtype allow_while_ending: bool
+        :keyword state_committed: Whether caller state was irreversibly committed.
+        :paramtype state_committed: bool
+        """
+        if self._closed:
+            raise VoiceBridgeConnectionClosedError("The voice connection is closed")
+        try:
+            await self._send_lock.acquire()
+        except BaseException:
+            if state_committed:
+                self._signal_runtime_failure("Voice send cancelled after protocol state commit")
+            raise
+        try:
             if self._closed:
                 raise VoiceBridgeConnectionClosedError("The voice connection is closed")
-            response_id = fields.get("response_id")
-            if isinstance(response_id, str):
-                async with self._state_lock:
-                    if response_id in self._terminal_response_ids:
-                        raise VoiceBridgeConnectionClosedError("The voice response is terminal")
+            try:
+                await self._state_lock.acquire()
+            except BaseException:
+                if state_committed:
+                    self._signal_runtime_failure("Voice send cancelled after protocol state commit")
+                raise
+            try:
+                if self._ending and not allow_while_ending:
+                    raise VoiceBridgeConnectionClosedError("The voice session is ending")
+                if prepared.response_id is not None and prepared.response_id in self._terminal_response_ids:
+                    raise VoiceBridgeConnectionClosedError("The voice response is terminal")
+            finally:
+                self._state_lock.release()
             # Perform the WebSocket write OUTSIDE _state_lock. Holding the state
             # lock across a send that stalls on outbound backpressure would block
             # the receive pump from acquiring _state_lock to process barge_in,
@@ -587,13 +666,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             # cancellation path. _send_lock still serializes writes; the terminal
             # check above rejects the common case, and the bridge drops any single
             # frame that races past a terminal it has already recorded.
-            if _estimate_event_bytes(fields) > _MAX_FRAME_BYTES:
-                raise ValueError("Voice bridge fields exceed the maximum encoded size")
-            frame = encode_frame(message_type, **fields)
-            if len(frame.encode("utf-8")) > _MAX_FRAME_BYTES:
-                raise ValueError("Voice bridge frame exceeds the maximum encoded size")
             try:
-                await self._websocket.send_text(frame)
+                await self._websocket.send_text(prepared.frame)
             except BaseException:
                 # Any transport exception is past an ambiguous commit boundary:
                 # the ASGI server may already have accepted the frame even though
@@ -601,7 +675,18 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 # back and continue using this connection.
                 self._signal_runtime_failure("Voice WebSocket send failed")
                 raise
-            self._record_first_output(message_type, fields)
+        finally:
+            self._send_lock.release()
+        try:
+            self._record_first_output(
+                prepared.message_type,
+                {"response_id": prepared.response_id} if prepared.response_id is not None else {},
+            )
+        except Exception:  # pylint: disable=broad-exception-caught
+            # Instrument callbacks are external code. A frame already reached
+            # the transport successfully, so telemetry must not redefine that
+            # wire outcome or trigger a duplicate terminal.
+            logger.warning("Voice first-output telemetry failed", exc_info=True)
 
     def _remember_resolved_prefix_locked(self, prefix: tuple[str, ...], value: tuple[VoiceResponse, bool]) -> None:
         # Bounded LRU: these entries only reconcile a late response.timeout that
@@ -628,6 +713,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._ensure_ready()
         if not in_reply_to:
             raise RuntimeError("Reply response requires a non-empty in_reply_to prefix")
+        prepared = self._prepare_frame(
+            "response.created",
+            {
+                "response_id": response_id,
+                "in_reply_to": list(in_reply_to),
+            },
+        )
         async with self._state_lock:
             if response_id in self._terminal_response_ids:
                 return False
@@ -640,11 +732,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             self._remember_resolved_prefix_locked(in_reply_to, (active, True))
             for item_id in in_reply_to:
                 self._pending_turns.pop(item_id, None)
-        await self.send(
-            "response.created",
-            response_id=response_id,
-            in_reply_to=list(in_reply_to),
-        )
+        await self._send_prepared(prepared, state_committed=True)
         return True
 
     async def decline_response(self, in_reply_to: tuple[str, ...], reason: str | None) -> None:
@@ -656,6 +744,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :type reason: str or None
         """
         self._ensure_ready()
+        fields: dict[str, Any] = {"in_reply_to": list(in_reply_to)}
+        if reason is not None:
+            fields["reason"] = reason
+        prepared = self._prepare_frame("response.none", fields)
         response_id: str | None = None
         async with self._state_lock:
             active = self._active_response
@@ -673,22 +765,15 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._remember_resolved_prefix_locked(in_reply_to, (self._pending_turns[in_reply_to[0]], False))
             for item_id in in_reply_to:
                 self._pending_turns.pop(item_id, None)
-        # Claim the terminal for this input prefix BEFORE emitting response.none.
-        # response.none carries no response_id on the wire, so send()'s
-        # response-scoped terminal check cannot guard it. Without claiming here, a
-        # response.timeout processed by the receive pump while this send is
-        # suspended (send lock or transport backpressure) would let response.none
-        # reach the wire after the bridge terminal already won. Serializing the
-        # claim with timeout arbitration ensures only the winning terminal is emitted.
-        if response_id is not None:
-            async with self._state_lock:
+            # Claim the terminal for this input prefix BEFORE emitting
+            # response.none. It carries no response_id on the wire, so send-time
+            # response checks cannot guard it. Prefix consumption and this claim
+            # are one atomic state commit; cancellation cannot strand them apart.
+            if response_id is not None:
                 if response_id in self._terminal_response_ids:
                     return
                 self._terminal_response_ids.add(response_id)
-        fields: dict[str, Any] = {"in_reply_to": list(in_reply_to)}
-        if reason is not None:
-            fields["reason"] = reason
-        await self.send("response.none", **fields)
+        await self._send_prepared(prepared, state_committed=True)
         if response_id is not None:
             self._record_first_output_for_response(response_id)
             self._record_terminal(response_id, "none")
@@ -704,6 +789,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :rtype: asyncio.Future[ResponseCancellationOutcome]
         """
         self._ensure_ready()
+        fields: dict[str, Any] = {"response_id": response_id}
+        if reason is not None:
+            fields["reason"] = reason
+        prepared = self._prepare_frame("response.cancel", fields)
         async with self._state_lock:
             response = self._find_response_locked(response_id)
             if response is None or not response.is_wire_opened:
@@ -711,12 +800,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if response_id in self._cancel_waiters:
                 raise RuntimeError("Response cancellation is already pending")
             future: asyncio.Future[ResponseCancellationOutcome] = asyncio.get_running_loop().create_future()
+            future.add_done_callback(_observe_future_completion)
             self._cancel_waiters[response_id] = future
-        fields: dict[str, Any] = {"response_id": response_id}
-        if reason is not None:
-            fields["reason"] = reason
         try:
-            await self.send("response.cancel", **fields)
+            await self._send_prepared(prepared, state_committed=True)
         except BaseException:
             async with self._state_lock:
                 self._cancel_waiters.pop(response_id, None)
@@ -769,13 +856,6 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :paramtype inter_digit_timeout_ms: int
         """
         self._ensure_ready()
-        async with self._state_lock:
-            if self._dtmf_collections:
-                raise RuntimeError("Only one DTMF collection may be pending or active")
-            response = self._find_response_locked(response_id)
-            if response is None or response.is_terminal:
-                raise VoiceBridgeConnectionClosedError("The source response is not open")
-            self._dtmf_collections[collection_id] = response_id
         fields: dict[str, Any] = {
             "response_id": response_id,
             "collection_id": collection_id,
@@ -785,8 +865,16 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         }
         if terminator is not None:
             fields["terminator"] = terminator
+        prepared = self._prepare_frame("dtmf.collect", fields)
+        async with self._state_lock:
+            if self._dtmf_collections:
+                raise RuntimeError("Only one DTMF collection may be pending or active")
+            response = self._find_response_locked(response_id)
+            if response is None or response.is_terminal:
+                raise VoiceBridgeConnectionClosedError("The source response is not open")
+            self._dtmf_collections[collection_id] = response_id
         try:
-            await self.send("dtmf.collect", **fields)
+            await self._send_prepared(prepared, state_committed=True)
         except BaseException:
             async with self._state_lock:
                 self._dtmf_collections.pop(collection_id, None)
@@ -799,6 +887,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :type collection_id: str
         """
         self._ensure_ready()
+        prepared = self._prepare_frame("dtmf.collect.cancel", {"collection_id": collection_id})
         async with self._state_lock:
             if collection_id not in self._dtmf_collections:
                 raise RuntimeError("Unknown or completed DTMF collection_id")
@@ -806,7 +895,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 raise RuntimeError("DTMF collection cancellation is already pending")
             self._dtmf_cancel_pending.add(collection_id)
         try:
-            await self.send("dtmf.collect.cancel", collection_id=collection_id)
+            await self._send_prepared(prepared, state_committed=True)
         except BaseException:
             async with self._state_lock:
                 self._dtmf_cancel_pending.discard(collection_id)
@@ -821,6 +910,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :type mode: str
         """
         self._ensure_ready()
+        prepared = self._prepare_frame("end_call", {"reason": reason, "mode": mode})
         async with self._state_lock:
             if self._ending:
                 return
@@ -830,7 +920,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._terminal_response_ids.add(response.response_id)
             release = self._active_release
             active_task = self._active_customer_task
-        await self.send("end_call", reason=reason, mode=mode)
+            self._fail_pending_proactive_locked("Voice call ended")
+        await self._send_prepared(prepared, allow_while_ending=True, state_committed=True)
         if response is not None:
             await response._mark_terminal()
             self._record_terminal(response.response_id, "end_call")
@@ -861,21 +952,24 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             accepted=False,
         )
         future: asyncio.Future[tuple[bool, str]] = asyncio.get_running_loop().create_future()
-        async with self._state_lock:
-            if len(self._pending_proactive) >= _MAX_PENDING_PROACTIVE:
-                raise RuntimeError("Too many proactive admission outcomes are pending")
-            if response.response_id in self._seen_response_ids:
-                raise RuntimeError("Generated proactive response_id was already used")
-            self._seen_response_ids.add(response.response_id)
-            self._pending_proactive[response.response_id] = (response, future)
+        future.add_done_callback(_observe_future_completion)
         fields: dict[str, Any] = {
             "response_id": response.response_id,
             "admission_timeout_ms": admission_timeout_ms,
         }
         if supersede_key is not None:
             fields["supersede_key"] = supersede_key
+        prepared = self._prepare_frame("response.created", fields)
+        async with self._state_lock:
+            self._ensure_ready()
+            if len(self._pending_proactive) >= _MAX_PENDING_PROACTIVE:
+                raise RuntimeError("Too many proactive admission outcomes are pending")
+            if response.response_id in self._seen_response_ids:
+                raise RuntimeError("Generated proactive response_id was already used")
+            self._seen_response_ids.add(response.response_id)
+            self._pending_proactive[response.response_id] = (response, future)
         try:
-            await self.send("response.created", **fields)
+            await self._send_prepared(prepared, state_committed=True)
         except BaseException:
             async with self._state_lock:
                 if self.ending:
@@ -885,18 +979,23 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     future.cancel()
                 else:
                     self._pending_proactive.pop(response.response_id, None)
+            if future.done() and not future.cancelled():
+                future.exception()
             raise
         try:
             accepted, reason = await future
         except asyncio.CancelledError:
+            cancel_prepared = self._prepare_frame(
+                "response.cancel",
+                {
+                    "response_id": response.response_id,
+                    "reason": "cancelled_by_agent",
+                },
+            )
             async with self._state_lock:
                 self._abandoned_proactive_cancels.add(response.response_id)
             try:
-                await self.send(
-                    "response.cancel",
-                    response_id=response.response_id,
-                    reason="cancelled_by_agent",
-                )
+                await self._send_prepared(cancel_prepared, state_committed=True)
             except VoiceBridgeConnectionClosedError:
                 pass
             raise
@@ -914,6 +1013,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         :type message: str
         """
         self._ensure_ready()
+        prepared = self._prepare_frame("error", {"code": code, "message": message})
         async with self._state_lock:
             if self._ending:
                 return
@@ -922,11 +1022,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if response is not None:
                 self._terminal_response_ids.add(response.response_id)
             release = self._active_release
-        await self.send("error", code=code, message=message)
+            active_task = self._active_customer_task
+            self._fail_pending_proactive_locked("Voice session failed")
+        await self._send_prepared(prepared, allow_while_ending=True, state_committed=True)
         if response is not None:
             await response._mark_terminal()
             self._record_terminal(response.response_id, "session_error")
-        if release is not None:
+        if release is not None and active_task is not asyncio.current_task():
             release.set()
 
     async def _activate(self) -> bool:  # pylint: disable=too-many-return-statements
@@ -954,40 +1056,62 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             return False
         session = VoiceSession._create(self, event)
         self._session = session
-        startup_started_ns = time.monotonic_ns()
+        startup_receive_task: asyncio.Task[dict[str, Any] | None] | None = None
         try:
-            if not await self._run_session_start_callback(session, event):
+            startup_started_ns = time.monotonic_ns()
+            try:
+                startup_succeeded, startup_receive_task = await self._run_session_start_callback(session, event)
+                if not startup_succeeded:
+                    return False
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error("Voice session-start callback failed: %s", type(exc).__name__)
+                _CALLBACK_ERROR_COUNTER.add(1, {"kind": "session.start"})
+                await self._reject("startup_failed", close_code=1011)
                 return False
-        except Exception as exc:  # pylint: disable=broad-exception-caught
-            logger.error("Voice session-start callback failed: %s", type(exc).__name__)
-            _CALLBACK_ERROR_COUNTER.add(1, {"kind": "session.start"})
-            await self._reject("startup_failed", close_code=1011)
-            return False
+            finally:
+                if self._on_session_start is not None:
+                    _CALLBACK_DURATION.record(
+                        (time.monotonic_ns() - startup_started_ns) / 1_000_000,
+                        {"kind": "session.start"},
+                    )
+
+            # Transfer sole ownership of the existing receive operation to the
+            # readiness gate. Replacing it could drop an ASGI event already
+            # delivered to this task but not yet observed by the coroutine.
+            ready_receive_task = startup_receive_task
+            startup_receive_task = None
+            try:
+                if not await self._send_ready_with_receive_gate(ready_receive_task):
+                    return False
+            except VoiceBridgeProtocolError as exc:
+                await self._reject("protocol_mismatch", close_code=exc.close_code)
+                return False
         finally:
-            if self._on_session_start is not None:
-                _CALLBACK_DURATION.record(
-                    (time.monotonic_ns() - startup_started_ns) / 1_000_000,
-                    {"kind": "session.start"},
-                )
-        try:
-            if not await self._send_ready_with_receive_gate():
-                return False
-        except VoiceBridgeProtocolError as exc:
-            await self._reject("protocol_mismatch", close_code=exc.close_code)
-            return False
+            # This stage owns the task only between callback completion and the
+            # explicit handoff above. All other paths clean up in their owner.
+            if startup_receive_task is not None:
+                if not startup_receive_task.done():
+                    startup_receive_task.cancel()
+                await asyncio.gather(startup_receive_task, return_exceptions=True)
         self._record_activation("ready")
         self._ready = True
         self._callback_worker = asyncio.create_task(self._callback_worker_loop(), name="voice_callback_coordinator")
         return True
 
-    async def _send_ready_with_receive_gate(self) -> bool:
+    async def _send_ready_with_receive_gate(  # pylint: disable=too-many-statements
+        self,
+        receive_task: asyncio.Task[dict[str, Any] | None] | None = None,
+    ) -> bool:
         """Send readiness while rejecting only an unambiguously early frame.
 
+        :param receive_task: Sole receive operation transferred from startup.
+        :type receive_task: asyncio.Task[dict[str, Any] | None] or None
         :return: Whether activation may proceed.
         :rtype: bool
         """
         ready_send_started = False
         receive_completed_after_send_started = False
+        transferred_receive = receive_task
 
         async def _send_ready() -> None:
             nonlocal ready_send_started
@@ -997,15 +1121,19 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         async def _receive_during_ready() -> dict[str, Any] | None:
             nonlocal receive_completed_after_send_started
             try:
+                if transferred_receive is not None:
+                    return await transferred_receive
                 return await self._receive_payload()
             finally:
                 # Captured in the receive task itself, before task completion
                 # callbacks or the coordinator can reorder observations.
                 receive_completed_after_send_started = ready_send_started
 
+        active_receive_task = asyncio.create_task(_receive_during_ready(), name="voice_ready_receive")
+
         async def _reject_early_receive() -> bool:
             try:
-                early_payload = receive_task.result()
+                early_payload = active_receive_task.result()
             except VoiceBridgeProtocolError:
                 raise
             except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1019,30 +1147,29 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 await self._reject("protocol_mismatch", close_code=1008)
             return False
 
-        receive_task = asyncio.create_task(_receive_during_ready(), name="voice_ready_receive")
         try:
             # Give the existing receive gate one event-loop turn to consume a
             # frame that was already queued before readiness was attempted.
             await asyncio.sleep(0)
         except BaseException:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
+            active_receive_task.cancel()
+            await asyncio.gather(active_receive_task, return_exceptions=True)
             raise
-        if receive_task.done() and not receive_completed_after_send_started:
+        if active_receive_task.done() and not receive_completed_after_send_started:
             return await _reject_early_receive()
         ready_task = asyncio.create_task(_send_ready(), name="voice_session_ready")
         try:
-            done, _ = await asyncio.wait((ready_task, receive_task), return_when=asyncio.FIRST_COMPLETED)
+            done, _ = await asyncio.wait((ready_task, active_receive_task), return_when=asyncio.FIRST_COMPLETED)
         except BaseException:
             ready_task.cancel()
-            receive_task.cancel()
-            await asyncio.gather(ready_task, receive_task, return_exceptions=True)
+            active_receive_task.cancel()
+            await asyncio.gather(ready_task, active_receive_task, return_exceptions=True)
             raise
 
         # A frame is provably early only when the receive coroutine completed
         # before the ready send attempt began. Once send starts, the peer may
         # receive ready and reply before the sender continuation resumes.
-        if receive_task in done and not receive_completed_after_send_started:
+        if active_receive_task in done and not receive_completed_after_send_started:
             ready_task.cancel()
             await asyncio.gather(ready_task, return_exceptions=True)
             return await _reject_early_receive()
@@ -1050,18 +1177,22 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         try:
             await ready_task
         except BaseException:
-            if not receive_task.done():
-                receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
+            if not active_receive_task.done():
+                active_receive_task.cancel()
+            await asyncio.gather(active_receive_task, return_exceptions=True)
             raise
 
         # Preserve the sole receive operation. Cancelling it here could consume
         # and drop a frame that arrived immediately after ready was committed.
         # The main loop adopts this task under normal worker supervision.
-        self._prefetched_receive_task = receive_task
+        self._prefetched_receive_task = active_receive_task
         return True
 
-    async def _run_session_start_callback(self, session: VoiceSession, event: SessionStartEvent) -> bool:
+    async def _run_session_start_callback(
+        self,
+        session: VoiceSession,
+        event: SessionStartEvent,
+    ) -> tuple[bool, asyncio.Task[dict[str, Any] | None] | None]:
         async def _invoke_customer_callback() -> None:
             if self._on_session_start is not None:
                 await self._on_session_start(session, event)
@@ -1070,52 +1201,51 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             self._receive_payload(),
             name="voice_activation_receive",
         )
+        transfer_receive = False
         try:
             customer_task = self._create_customer_task(
                 _invoke_customer_callback(),
                 name="voice_session_start",
             )
-        except BaseException:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
-            raise
-        try:
-            done, _ = await asyncio.wait((customer_task, receive_task), return_when=asyncio.FIRST_COMPLETED)
-        except BaseException:
-            receive_task.cancel()
-            await asyncio.gather(receive_task, return_exceptions=True)
-            if not customer_task.done():
-                self._schedule_customer_cleanup(customer_task)
-            raise
-
-        if receive_task in done:
-            if not customer_task.done():
-                self._schedule_customer_cleanup(customer_task)
-            else:
-                await asyncio.gather(customer_task, return_exceptions=True)
             try:
-                early_payload = receive_task.result()
-            except VoiceBridgeProtocolError as exc:
-                await self._reject("protocol_mismatch", close_code=exc.close_code)
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                logger.error("Voice activation receive failed: %s", type(exc).__name__)
-                self._record_activation("startup_failed")
-                await self._close(code=1011, reason="Internal server error")
-            else:
-                if early_payload is None:
-                    self._record_activation("closed")
-                else:
-                    await self._reject("protocol_mismatch", close_code=1008)
-            return False
+                done, _ = await asyncio.wait((customer_task, receive_task), return_when=asyncio.FIRST_COMPLETED)
+            except BaseException:
+                if not customer_task.done():
+                    self._schedule_customer_cleanup(customer_task)
+                raise
 
-        receive_task.cancel()
-        await asyncio.gather(receive_task, return_exceptions=True)
-        if customer_task.cancelled():
-            raise RuntimeError("Voice session-start callback was cancelled")
-        error = customer_task.exception()
-        if error is not None:
-            raise error
-        return True
+            if receive_task in done:
+                if not customer_task.done():
+                    self._schedule_customer_cleanup(customer_task)
+                else:
+                    await asyncio.gather(customer_task, return_exceptions=True)
+                try:
+                    early_payload = receive_task.result()
+                except VoiceBridgeProtocolError as exc:
+                    await self._reject("protocol_mismatch", close_code=exc.close_code)
+                except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.error("Voice activation receive failed: %s", type(exc).__name__)
+                    self._record_activation("startup_failed")
+                    await self._close(code=1011, reason="Internal server error")
+                else:
+                    if early_payload is None:
+                        self._record_activation("closed")
+                    else:
+                        await self._reject("protocol_mismatch", close_code=1008)
+                return False, None
+
+            if customer_task.cancelled():
+                raise RuntimeError("Voice session-start callback was cancelled")
+            error = customer_task.exception()
+            if error is not None:
+                raise error
+            transfer_receive = True
+            return True, receive_task
+        finally:
+            if not transfer_receive:
+                if not receive_task.done():
+                    receive_task.cancel()
+                await asyncio.gather(receive_task, return_exceptions=True)
 
     async def _reject(self, code: str, *, close_code: int) -> None:
         if self._closed:
@@ -1126,6 +1256,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         try:
             await self.send(
                 "session.rejected",
+                _allow_while_ending=True,
                 code=safe_code(code, "startup_failed"),
                 retriable=False,
             )
@@ -1699,9 +1830,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if item_id is not None and not response._owns_item_id(item_id):
                 raise VoiceBridgeProtocolError("Playback item_id does not belong to response_id", close_code=1008)
             self._playback_outcomes.add(response_id)
-            waiter = self._cancel_waiters.pop(response_id, None)
+            waiter = self._cancel_waiters.get(response_id)
             abandoned = response_id in self._abandoned_proactive_cancels
-            self._abandoned_proactive_cancels.discard(response_id)
             if kind == "cancelled" and waiter is None and not abandoned:
                 self._playback_outcomes.remove(response_id)
                 raise VoiceBridgeProtocolError(
@@ -1713,13 +1843,23 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             playback_terminal_won = response_id not in self._terminal_response_ids
             self._terminal_response_ids.add(response_id)
         await response._mark_terminal()
+        owns_waiter = False
+        async with self._state_lock:
+            if waiter is not None and self._cancel_waiters.get(response_id) is waiter:
+                self._cancel_waiters.pop(response_id, None)
+                owns_waiter = True
+            owns_transition = not self._ending and not self._closed and (waiter is None or owns_waiter)
+            if owns_transition and abandoned:
+                self._abandoned_proactive_cancels.discard(response_id)
+        if not owns_transition:
+            return
         outcome = ResponseCancellationOutcome(
             response_id=response_id,
             kind="barge_in" if kind == "barge_in" else "cancelled",
             heard_text=heard_text,
             item_id=item_id,
         )
-        if waiter is not None and not waiter.done():
+        if owns_waiter and waiter is not None and not waiter.done():
             waiter.set_result(outcome)
         if playback_terminal_won:
             self._record_terminal(response_id, kind)
@@ -1744,7 +1884,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         responses: list[VoiceResponse] = []
         timeout_metric_winners: set[str] = set()
         release: asyncio.Event | None = None
-        cancel_waiters: list[asyncio.Future[ResponseCancellationOutcome]] = []
+        cancel_waiters: list[tuple[str, asyncio.Future[ResponseCancellationOutcome]]] = []
         async with self._state_lock:
             if event.response_id is not None:
                 response = self._find_response_locked(event.response_id)
@@ -1761,9 +1901,9 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._terminal_response_ids.add(event.response_id)
                 if self._active_response is response:
                     release = self._active_release
-                cancel_waiter = self._cancel_waiters.pop(event.response_id, None)
+                cancel_waiter = self._cancel_waiters.get(event.response_id)
                 if cancel_waiter is not None:
-                    cancel_waiters.append(cancel_waiter)
+                    cancel_waiters.append((event.response_id, cancel_waiter))
             else:
                 assert event.item_ids is not None
                 pending_ids = tuple(self._pending_turns)
@@ -1804,9 +1944,9 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                                 release = self._active_release
                             if opened_response:
                                 self._playback_outcomes.add(response.response_id)
-                                cancel_waiter = self._cancel_waiters.pop(response.response_id, None)
+                                cancel_waiter = self._cancel_waiters.get(response.response_id)
                                 if cancel_waiter is not None:
-                                    cancel_waiters.append(cancel_waiter)
+                                    cancel_waiters.append((response.response_id, cancel_waiter))
                             remaining = remaining[len(prefix) :]
                             continue
 
@@ -1833,9 +1973,23 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                         remaining = ()
         for response in responses:
             await response._mark_terminal()
+        owned_cancel_waiters: list[asyncio.Future[ResponseCancellationOutcome]] = []
+        async with self._state_lock:
+            owns_transition = (
+                not self._ending
+                and not self._closed
+                and all(self._cancel_waiters.get(response_id) is waiter for response_id, waiter in cancel_waiters)
+            )
+            if owns_transition:
+                for response_id, cancel_waiter in cancel_waiters:
+                    self._cancel_waiters.pop(response_id, None)
+                    owned_cancel_waiters.append(cancel_waiter)
+        if not owns_transition:
+            return
+        for response in responses:
             if response.response_id in timeout_metric_winners:
                 self._record_terminal(response.response_id, "timeout")
-        for cancel_waiter in cancel_waiters:
+        for cancel_waiter in owned_cancel_waiters:
             if not cancel_waiter.done():
                 cancel_waiter.set_exception(VoiceBridgeConnectionClosedError("Response terminated by timeout"))
         if release is not None:
@@ -1853,6 +2007,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         response_id = require_prefixed_id(payload, "response_id", "r_")
         async with self._state_lock:
             pending = self._pending_proactive.get(response_id)
+            if self._ending and response_id in self._seen_response_ids:
+                if pending is not None:
+                    self._fail_pending_proactive_locked("Voice session is ending")
+                return
             if pending is None:
                 raise VoiceBridgeProtocolError("Unknown proactive response_id", close_code=1008)
             response, future = pending
@@ -1861,26 +2019,40 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     "Proactive response accepted while another response is active",
                     close_code=1008,
                 )
-            self._pending_proactive.pop(response_id, None)
-            self._active_response = response
-            self._response_start_ns[response_id] = time.monotonic_ns()
         await response._mark_accepted()
-        if not future.done():
+        owns_future = False
+        async with self._state_lock:
+            if self._pending_proactive.get(response_id) is pending:
+                self._pending_proactive.pop(response_id, None)
+                self._active_response = response
+                self._response_start_ns[response_id] = time.monotonic_ns()
+                owns_future = True
+        if owns_future and not future.done():
             future.set_result((True, ""))
 
     async def _handle_response_dropped(self, payload: dict[str, Any]) -> None:
         response_id = require_prefixed_id(payload, "response_id", "r_")
         reason = safe_code(require_string(payload, "reason", non_empty=True), "dropped")
         async with self._state_lock:
-            pending = self._pending_proactive.pop(response_id, None)
+            if self._ending and response_id in self._seen_response_ids:
+                if response_id in self._pending_proactive:
+                    self._fail_pending_proactive_locked("Voice session is ending")
+                return
+            pending = self._pending_proactive.get(response_id)
             if pending is None:
                 raise VoiceBridgeProtocolError("Unknown proactive response_id", close_code=1008)
             response, future = pending
-            self._abandoned_proactive_cancels.discard(response_id)
             self._terminal_response_ids.add(response_id)
         await response._mark_terminal()
-        self._record_terminal(response_id, "dropped")
-        if not future.done():
+        owns_future = False
+        async with self._state_lock:
+            if self._pending_proactive.get(response_id) is pending:
+                self._pending_proactive.pop(response_id, None)
+                self._abandoned_proactive_cancels.discard(response_id)
+                owns_future = True
+        if owns_future:
+            self._record_terminal(response_id, "dropped")
+        if owns_future and not future.done():
             future.set_result((False, reason))
 
     async def _handle_session_end(self, payload: dict[str, Any]) -> None:
@@ -1893,6 +2065,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 responses.append(self._active_response)
             self._terminal_response_ids.update(response.response_id for response in responses)
             release = self._active_release
+            self._fail_pending_proactive_locked("Voice session ended")
         for response in responses:
             was_terminal = response.is_terminal
             await response._mark_terminal()
@@ -1984,6 +2157,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 responses.append(self._active_response)
             self._terminal_response_ids.update(response.response_id for response in responses)
             release = self._active_release
+            self._fail_pending_proactive_locked("Voice connection closed")
         for response in responses:
             was_terminal = response.is_terminal
             await response._mark_terminal()
@@ -2065,6 +2239,22 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         self._callback_worker = None
         self._session_end_task = None
         self._session = None
+
+    def _fail_pending_proactive_locked(self, message: str) -> None:
+        """Fail pending proactive admissions while the caller holds ``_state_lock``.
+
+        :param message: Safe diagnostic used for admission exceptions.
+        :type message: str
+        """
+        for response_id, (_, proactive_future) in self._pending_proactive.items():
+            if proactive_future.done():
+                continue
+            if response_id in self._abandoned_proactive_cancels:
+                proactive_future.cancel()
+            else:
+                proactive_future.set_exception(VoiceBridgeConnectionClosedError(message))
+        self._pending_proactive.clear()
+        self._abandoned_proactive_cancels.clear()
 
     def _fail_helper_waiters(self, message: str) -> None:
         for future in tuple(self._cancel_waiters.values()):
