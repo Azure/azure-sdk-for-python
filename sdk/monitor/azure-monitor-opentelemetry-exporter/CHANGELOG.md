@@ -18,6 +18,9 @@
 ### Features Added
 - Retry payloads for which request is sent successfully but no response is received, per [SPEC.](https://github.com/aep-health-and-standards/Telemetry-Collection-Spec/pull/1018)
   ([#47870](https://github.com/Azure/azure-sdk-for-python/pull/47870))
+- Handle `413 Payload Too Large` responses by splitting the batch and persisting each half to
+  local storage for retry at a smaller size, instead of dropping the entire batch. A single
+  envelope that is too large to split is dropped.
 
 ### Bugs Fixed
 - Propagate main agent attribute to child spans
