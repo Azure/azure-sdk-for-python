@@ -69,6 +69,15 @@ parameters:
   - name: PersistOidcToken
     type: boolean
     default: false
+  # When true, skip the per-run ARM deployment (and its matching teardown) entirely.
+  # Intended for services whose live tests run against fixed, team-owned accounts resolved
+  # in BeforeTestSteps rather than provisioned per run -- see sdk/cosmos/pipeline/README.md.
+  # The azure-sdk live-test tenant is recreated roughly every 90 days, which invalidates the
+  # service principals and RBAC that New-TestResources.ps1 depends on, so per-run provisioning
+  # fails until a human re-onboards the tenant.
+  - name: DisableAzureResourceCreation
+    type: boolean
+    default: false
 
 jobs:
   - job:
@@ -143,29 +152,30 @@ jobs:
         parameters:
           BuildTargetingString: ${{ parameters.BuildTargetingString }}
 
-      - template: /eng/common/TestResources/build-test-resource-config.yml
-        parameters:
-          SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
-          SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
-          ${{ if parameters.UseFederatedAuth }}:
-            SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
-          EnvVars:
-            Pool: $(Pool)
-            ${{ insert }}: ${{ parameters.EnvVars }}
-
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/deploy-test-resources.yml
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - template: /eng/common/TestResources/build-test-resource-config.yml
           parameters:
-            Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            ArmTemplateParameters: $(ArmTemplateParameters)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            PersistOidcToken: ${{ parameters.PersistOidcToken }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+            SubscriptionConfiguration: ${{ parameters.CloudConfig.SubscriptionConfiguration }}
+            SubscriptionConfigurations: ${{ parameters.CloudConfig.SubscriptionConfigurations }}
+            ${{ if parameters.UseFederatedAuth }}:
+              SubscriptionConfigurationFilePaths: ${{ parameters.CloudConfig.SubscriptionConfigurationFilePaths }}
             EnvVars:
               Pool: $(Pool)
               ${{ insert }}: ${{ parameters.EnvVars }}
+
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/deploy-test-resources.yml
+            parameters:
+              Location: ${{ coalesce(parameters.Location, parameters.CloudConfig.Location) }}
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              ArmTemplateParameters: $(ArmTemplateParameters)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              PersistOidcToken: ${{ parameters.PersistOidcToken }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+              EnvVars:
+                Pool: $(Pool)
+                ${{ insert }}: ${{ parameters.EnvVars }}
 
       # This is a heuristic to detect compiled requirements in the service 
       # directory. If compiled requirements are found, install dependencies for
@@ -241,13 +251,20 @@ jobs:
           TestProxy: ${{ parameters.TestProxy }}
           UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
           ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+          # build-test.yml runs these immediately before/after the test task, in the same job,
+          # so a BeforeTestSteps step can publish pipeline variables that the test task then
+          # picks up as environment variables. These were declared here but never forwarded,
+          # which silently dropped anything a service passed in via archetype-sdk-tests.yml.
+          BeforeTestSteps: ${{ parameters.BeforeTestSteps }}
+          AfterTestSteps: ${{ parameters.AfterTestSteps }}
 
-      - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
-        - template: /eng/common/TestResources/remove-test-resources.yml
-          parameters:
-            ServiceDirectory: '${{ directory }}'
-            SubscriptionConfiguration: $(SubscriptionConfiguration)
-            UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
-            ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
+      - ${{ if not(parameters.DisableAzureResourceCreation) }}:
+        - ${{ each directory in coalesce(parameters.TestResourceDirectories, split(parameters.ServiceDirectory, '|')) }}:
+          - template: /eng/common/TestResources/remove-test-resources.yml
+            parameters:
+              ServiceDirectory: '${{ directory }}'
+              SubscriptionConfiguration: $(SubscriptionConfiguration)
+              UseFederatedAuth: ${{ parameters.UseFederatedAuth }}
+              ServiceConnection: ${{ parameters.CloudConfig.ServiceConnection }}
 
       - ${{ parameters.PostSteps }}
