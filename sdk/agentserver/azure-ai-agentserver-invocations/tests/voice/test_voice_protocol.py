@@ -85,8 +85,13 @@ def test_new_timestamp_uses_canonical_utc_milliseconds() -> None:
 
 
 def test_decode_requires_common_envelope() -> None:
-    with pytest.raises(VoiceBridgeProtocolError, match="id must be"):
+    with pytest.raises(VoiceBridgeProtocolError, match="id must start with m_"):
         decode_frame('{"type":"user.message","ts":"2026-07-21T12:00:00Z"}')
+
+
+def test_decode_requires_message_id_namespace() -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="id must start with m_"):
+        decode_frame('{"type":"future","id":"r_1","ts":"2026-07-24T12:34:56.789Z"}')
 
 
 def test_decode_rejects_non_standard_json_numbers() -> None:
@@ -183,6 +188,16 @@ def test_user_message_rejects_no_supported_content() -> None:
                 "ts": _TS,
                 "item_id": "in_1",
                 "content": [{"type": "future_part"}],
+            }
+        )
+
+
+def test_user_message_rejects_oversized_item_id() -> None:
+    with pytest.raises(VoiceBridgeProtocolError, match="maximum encoded identifier size"):
+        parse_user_message(
+            {
+                "item_id": f"in_{'x' * 254}",
+                "content": [{"type": "input_text", "text": "hello"}],
             }
         )
 

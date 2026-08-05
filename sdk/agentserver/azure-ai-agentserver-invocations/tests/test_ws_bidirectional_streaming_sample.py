@@ -8,7 +8,6 @@ per-token sleep down to 0 so the test runs in milliseconds, and drives the
 ``ready`` / ``prompt`` / ``cancel`` / ``bye`` wire protocol over Starlette's
 ``TestClient.websocket_connect``.
 """
-import asyncio
 import importlib.util
 import json
 import pathlib
@@ -127,8 +126,9 @@ def test_ws_bidirectional_invalid_json_emits_error(sample):
 # Cancellation
 # ---------------------------------------------------------------------------
 
-def test_ws_bidirectional_cancel_interrupts_in_flight_prompt(sample):
+def test_ws_bidirectional_cancel_interrupts_in_flight_prompt(sample, monkeypatch):
     """A ``cancel`` frame mid-stream surfaces a ``cancelled`` event."""
+    monkeypatch.setattr(sample, "_TOKEN_DELAY_S", 0.01)
     client = TestClient(sample.app)
     with client.websocket_connect("/invocations_ws") as ws:
         assert ws.receive_json() == {"type": "ready"}
@@ -136,19 +136,17 @@ def test_ws_bidirectional_cancel_interrupts_in_flight_prompt(sample):
         # Cancel before drain — handler should reply with cancelled (and may
         # have emitted a few token frames first).
         ws.send_text(json.dumps({"type": "cancel", "id": "p2"}))
-        # Drain until we see either done or cancelled.
+        # Drain until cancellation is acknowledged.
         terminal: dict | None = None
         while True:
             msg = ws.receive_json()
-            if msg["type"] in ("done", "cancelled") and msg["id"] == "p2":
+            if msg["type"] == "cancelled" and msg["id"] == "p2":
                 terminal = msg
                 break
         ws.send_text(json.dumps({"type": "bye"}))
 
     assert terminal is not None
-    # With _TOKEN_DELAY_S = 0 the stream may finish before the cancel is
-    # observed; both terminal types are acceptable outcomes.
-    assert terminal["type"] in ("cancelled", "done")
+    assert terminal["type"] == "cancelled"
 
 
 def test_ws_bidirectional_cancel_unknown_id_is_noop(sample):
@@ -165,22 +163,28 @@ def test_ws_bidirectional_cancel_unknown_id_is_noop(sample):
         assert terminal == {"type": "done", "id": "p3"}
 
 
-def test_completed_old_prompt_does_not_remove_replacement_task(sample):
-    """A reused prompt ID cannot let the old task unregister its replacement."""
+def test_duplicate_prompt_id_is_rejected(sample):
+    """A prompt ID cannot be reused within one connection."""
+    client = TestClient(sample.app)
+    with client.websocket_connect("/invocations_ws") as ws:
+        assert ws.receive_json() == {"type": "ready"}
+        prompt = {"type": "prompt", "id": "p1", "text": "story"}
+        ws.send_text(json.dumps(prompt))
+        ws.send_text(json.dumps(prompt))
 
-    async def scenario() -> None:
-        old_task = asyncio.create_task(asyncio.sleep(0))
-        replacement_task = asyncio.create_task(asyncio.Event().wait())
-        in_flight = {"p1": replacement_task}
-        await old_task
+        error: dict | None = None
+        terminal: dict | None = None
+        while error is None or terminal is None:
+            message = ws.receive_json()
+            if message["type"] == "error":
+                error = message
+            elif message["type"] == "done" and message["id"] == "p1":
+                terminal = message
 
-        sample._remove_completed_task(in_flight, "p1", old_task)
+        ws.send_text(json.dumps({"type": "bye"}))
 
-        assert in_flight["p1"] is replacement_task
-        replacement_task.cancel()
-        await asyncio.gather(replacement_task, return_exceptions=True)
-
-    asyncio.run(scenario())
+    assert error == {"type": "error", "id": "p1", "message": "prompt id has already been used"}
+    assert terminal == {"type": "done", "id": "p1"}
 
 
 # ---------------------------------------------------------------------------

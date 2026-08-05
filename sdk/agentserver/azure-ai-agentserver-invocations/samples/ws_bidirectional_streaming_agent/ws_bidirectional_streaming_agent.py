@@ -183,6 +183,7 @@ async def _reader(
         honour ``cancel`` messages.
     :type in_flight: dict[str, asyncio.Task[None]]
     """
+    seen_prompt_ids: set[str] = set()
     try:
         async for raw in websocket.iter_text():
             try:
@@ -203,6 +204,12 @@ async def _reader(
                         {"type": "error", "message": "prompt requires 'id'"},
                     )
                     continue
+                if prompt_id in seen_prompt_ids:
+                    await websocket.send_json(
+                        {"type": "error", "id": prompt_id, "message": "prompt id has already been used"},
+                    )
+                    continue
+                seen_prompt_ids.add(prompt_id)
                 # Schedule the generation as an independent task so it
                 # runs in parallel with the reader (and any other
                 # in-flight generations).

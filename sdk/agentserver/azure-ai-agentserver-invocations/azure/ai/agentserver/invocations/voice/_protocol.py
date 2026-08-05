@@ -39,6 +39,7 @@ from ._models import (
 PROTOCOL_VERSION = "1.0"
 MAX_ERROR_MESSAGE_LENGTH = 1024
 MAX_JSON_DEPTH = 128
+_MAX_PROTOCOL_ID_BYTES = 256
 _SAFE_CODE = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
 _VOICE_TYPE_ALIASES = {"azure-platform": "azure-standard", "custom": "azure-custom"}
 _VOICE_TYPES = {
@@ -168,7 +169,7 @@ def decode_frame(frame: str) -> dict[str, Any]:
     _validate_json_tree(raw_payload)
     payload = cast(dict[str, Any], raw_payload)
     require_string(payload, "type", non_empty=True)
-    require_string(payload, "id", non_empty=True)
+    require_prefixed_id(payload, "id", "m_", max_bytes=False)
     validate_timestamp(payload.get("ts"))
     return payload
 
@@ -394,9 +395,7 @@ def parse_response_timeout(payload: Mapping[str, Any]) -> ResponseTimeoutEvent:
         raise VoiceBridgeProtocolError("response.timeout item_ids must be a non-empty array")
     item_ids: list[str] = []
     for value in item_values:
-        if not isinstance(value, str) or not value.startswith("in_") or len(value) <= 3:
-            raise VoiceBridgeProtocolError("response.timeout item_ids must contain in_ identifiers")
-        item_ids.append(value)
+        item_ids.append(_validate_prefixed_id(value, "response.timeout item_ids", "in_"))
     if len(set(item_ids)) != len(item_ids):
         raise VoiceBridgeProtocolError("response.timeout item_ids must not contain duplicates")
     return ResponseTimeoutEvent(stage=stage, item_ids=tuple(item_ids))
@@ -439,11 +438,29 @@ def require_positive_int(payload: Mapping[str, Any], name: str) -> int:
     return value
 
 
-def require_prefixed_id(payload: Mapping[str, Any], name: str, prefix: str) -> str:
-    """Return one required protocol identifier in the expected namespace."""
-    value = payload.get(name)
+def require_prefixed_id(
+    payload: Mapping[str, Any],
+    name: str,
+    prefix: str,
+    *,
+    max_bytes: bool = True,
+) -> str:
+    """Return one required protocol identifier in the expected namespace.
+
+    :keyword max_bytes: Whether to enforce the state-safe identifier byte limit.
+    """
+    return _validate_prefixed_id(payload.get(name), name, prefix, max_bytes=max_bytes)
+
+
+def _validate_prefixed_id(value: object, name: str, prefix: str, *, max_bytes: bool = True) -> str:
+    """Validate one bounded protocol identifier value.
+
+    :keyword max_bytes: Whether to enforce the state-safe identifier byte limit.
+    """
     if not isinstance(value, str) or not value.startswith(prefix) or len(value) <= len(prefix):
         raise VoiceBridgeProtocolError(f"{name} must start with {prefix}")
+    if max_bytes and len(value.encode("utf-8")) > _MAX_PROTOCOL_ID_BYTES:
+        raise VoiceBridgeProtocolError(f"{name} exceeds the maximum encoded identifier size")
     return value
 
 

@@ -86,6 +86,39 @@ _PROTOCOL_VIOLATION_COUNTER = _METER.create_counter("azure.ai.agentserver.invoca
 _ACTIVE_CONNECTIONS = _METER.create_up_down_counter("azure.ai.agentserver.invocations.voice.active_connections")
 _CLOSE_CODE_COUNTER = _METER.create_counter("azure.ai.agentserver.invocations.voice.close_codes")
 
+
+def _metric_add(instrument: Any, value: int, attributes: Mapping[str, Any] | None = None) -> None:
+    """Record one counter value without allowing telemetry to affect protocol control flow.
+
+    :param instrument: Counter-like OpenTelemetry instrument.
+    :type instrument: Any
+    :param value: Counter increment.
+    :type value: int
+    :param attributes: Optional low-cardinality metric attributes.
+    :type attributes: Mapping[str, Any] or None
+    """
+    try:
+        instrument.add(value, attributes)
+    except Exception:  # pylint: disable=broad-exception-caught
+        logger.warning("Voice counter telemetry failed", exc_info=True)
+
+
+def _metric_record(instrument: Any, value: float, attributes: Mapping[str, Any] | None = None) -> None:
+    """Record one histogram value without allowing telemetry to affect protocol control flow.
+
+    :param instrument: Histogram-like OpenTelemetry instrument.
+    :type instrument: Any
+    :param value: Histogram measurement.
+    :type value: float
+    :param attributes: Optional low-cardinality metric attributes.
+    :type attributes: Mapping[str, Any] or None
+    """
+    try:
+        instrument.record(value, attributes)
+    except Exception:  # pylint: disable=broad-exception-caught
+        logger.warning("Voice histogram telemetry failed", exc_info=True)
+
+
 # VoiceResponse and _VoiceConnection are the public/internal halves of one
 # runtime and intentionally drive each other's private terminal hooks.
 # pylint: disable=protected-access
@@ -430,11 +463,11 @@ class VoiceAgentServerHost(InvocationAgentServerHost):  # pylint: disable=too-ma
             on_response_timeout=self._on_response_timeout,
             on_session_end=self._on_session_end,
         )
-        _ACTIVE_CONNECTIONS.add(1)
+        _metric_add(_ACTIVE_CONNECTIONS, 1)
         try:
             await connection.run()
         finally:
-            _ACTIVE_CONNECTIONS.add(-1)
+            _metric_add(_ACTIVE_CONNECTIONS, -1)
 
 
 class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many-public-methods
@@ -540,7 +573,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     graceful_end = True
                     break
         except VoiceBridgeProtocolError as exc:
-            _PROTOCOL_VIOLATION_COUNTER.add(1, {"close_code": exc.close_code})
+            _metric_add(_PROTOCOL_VIOLATION_COUNTER, 1, {"close_code": exc.close_code})
             logger.warning("Voice bridge protocol violation: %s", exc)
             await self._close(code=exc.close_code, reason="Protocol error")
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1065,12 +1098,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     return False
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Voice session-start callback failed: %s", type(exc).__name__)
-                _CALLBACK_ERROR_COUNTER.add(1, {"kind": "session.start"})
+                _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": "session.start"})
                 await self._reject("startup_failed", close_code=1011)
                 return False
             finally:
                 if self._on_session_start is not None:
-                    _CALLBACK_DURATION.record(
+                    _metric_record(
+                        _CALLBACK_DURATION,
                         (time.monotonic_ns() - startup_started_ns) / 1_000_000,
                         {"kind": "session.start"},
                     )
@@ -1252,7 +1286,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             return
         self._record_activation(code)
         if code in ("invalid_session_start", "protocol_mismatch"):
-            _PROTOCOL_VIOLATION_COUNTER.add(1, {"close_code": close_code})
+            _metric_add(_PROTOCOL_VIOLATION_COUNTER, 1, {"close_code": close_code})
         try:
             await self.send(
                 "session.rejected",
@@ -1574,7 +1608,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                     )
                     if not terminal_race:
                         logger.error("Voice callback failed: %s", type(error).__name__)
-                        _CALLBACK_ERROR_COUNTER.add(1, {"kind": work.kind})
+                        _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
                         await self._finalize_turn_response(response, release_task, failed=True)
                 else:
                     await self._finalize_turn_response(response, release_task, failed=False)
@@ -1583,7 +1617,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 self._schedule_customer_cleanup(customer_task)
             raise
         finally:
-            _CALLBACK_DURATION.record(
+            _metric_record(
+                _CALLBACK_DURATION,
                 (time.monotonic_ns() - callback_started_ns) / 1_000_000,
                 {"kind": work.kind},
             )
@@ -1619,7 +1654,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
                 await self._await_signal_callback(work)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Voice history callback failed: %s", type(exc).__name__)
-                _CALLBACK_ERROR_COUNTER.add(1, {"kind": work.kind})
+                _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
                 await self.send(
                     "conversation.item.failed",
                     request_id=work.request_id,
@@ -1629,7 +1664,8 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             else:
                 await self.send(work.success_type, request_id=work.request_id)
             finally:
-                _CALLBACK_DURATION.record(
+                _metric_record(
+                    _CALLBACK_DURATION,
                     (time.monotonic_ns() - callback_started_ns) / 1_000_000,
                     {"kind": work.kind},
                 )
@@ -1641,9 +1677,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await self._await_signal_callback(work)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Voice signal callback failed: %s", type(exc).__name__)
-            _CALLBACK_ERROR_COUNTER.add(1, {"kind": work.kind})
+            _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
         finally:
-            _CALLBACK_DURATION.record(
+            _metric_record(
+                _CALLBACK_DURATION,
                 (time.monotonic_ns() - callback_started_ns) / 1_000_000,
                 {"kind": work.kind},
             )
@@ -2092,9 +2129,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             await self._await_signal_callback(work)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Voice session.end callback failed: %s", type(exc).__name__)
-            _CALLBACK_ERROR_COUNTER.add(1, {"kind": work.kind})
+            _metric_add(_CALLBACK_ERROR_COUNTER, 1, {"kind": work.kind})
         finally:
-            _CALLBACK_DURATION.record(
+            _metric_record(
+                _CALLBACK_DURATION,
                 (time.monotonic_ns() - callback_started_ns) / 1_000_000,
                 {"kind": work.kind},
             )
@@ -2110,7 +2148,7 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             if message_type != "websocket.receive":
                 raise VoiceBridgeProtocolError("Unexpected ASGI WebSocket event")
             if message.get("bytes") is not None:
-                _PROTOCOL_VIOLATION_COUNTER.add(1, {"close_code": 1003})
+                _metric_add(_PROTOCOL_VIOLATION_COUNTER, 1, {"close_code": 1003})
                 await self._close(code=1003, reason="Binary data is unsupported")
                 return None
             frame = message.get("text")
@@ -2301,10 +2339,10 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
             return
         self._first_output_recorded.add(response_id)
         duration_ms = (time.monotonic_ns() - started) / 1_000_000
-        _FIRST_OUTPUT_DURATION.record(duration_ms)
+        _metric_record(_FIRST_OUTPUT_DURATION, duration_ms)
 
     def _record_terminal(self, response_id: str, terminal_kind: str) -> None:
-        _TERMINAL_COUNTER.add(1, {"kind": terminal_kind})
+        _metric_add(_TERMINAL_COUNTER, 1, {"kind": terminal_kind})
         self._response_start_ns.pop(response_id, None)
         self._first_output_recorded.discard(response_id)
 
@@ -2312,13 +2350,13 @@ class _VoiceConnection:  # pylint: disable=too-many-instance-attributes,too-many
         if self._activation_recorded:
             return
         self._activation_recorded = True
-        _ACTIVATION_COUNTER.add(1, {"result": result})
+        _metric_add(_ACTIVATION_COUNTER, 1, {"result": result})
 
     def _record_close(self, code: int) -> None:
         if self._close_recorded:
             return
         self._close_recorded = True
-        _CLOSE_CODE_COUNTER.add(1, {"code": code})
+        _metric_add(_CLOSE_CODE_COUNTER, 1, {"code": code})
 
     def _ensure_ready(self) -> None:
         if not self._ready or self._closed:
