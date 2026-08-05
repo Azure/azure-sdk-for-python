@@ -101,6 +101,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-05-01/FirewallPolicyPut.json
+# x-ms-original-file: 2025-07-01/FirewallPolicyPut.json
 if __name__ == "__main__":
     main()

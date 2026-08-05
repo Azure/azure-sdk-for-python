@@ -8,6 +8,24 @@ from unittest.mock import patch, MagicMock
 
 from azpysdk.apistub import apistub, get_package_wheel_path, get_cross_language_mapping_path
 
+
+def _build_parser():
+    parser = argparse.ArgumentParser(prog="azpysdk")
+    subparsers = parser.add_subparsers(title="commands", dest="command")
+    apistub().register(subparsers)
+    return parser
+
+
+class TestApistubRegistration:
+    def test_generate_from_pypi_flag_sets_version(self):
+        parser = _build_parser()
+
+        args = parser.parse_args(["apistub", "--generate-from-pypi", "1.0.0"])
+
+        assert args.command == "apistub"
+        assert args.generate_from_pypi == "1.0.0"
+
+
 # ── get_package_wheel_path() ─────────────────────────────────────────────
 
 
@@ -79,6 +97,7 @@ class TestRunOutputDirectory:
         isolate=False,
         install_deps=False,
         dest_dir=None,
+        generate_from_pypi=None,
     ):
         return argparse.Namespace(
             target=".",
@@ -88,6 +107,7 @@ class TestRunOutputDirectory:
             token_file=token_file,
             install_deps=install_deps,
             dest_dir=dest_dir,
+            generate_from_pypi=generate_from_pypi,
         )
 
     @patch(
@@ -418,3 +438,70 @@ class TestRunOutputDirectory:
         assert "--skip-pylint" not in captured_cmds[0]
         assert os.path.exists(os.path.join(str(tmp_path), "azure-core_python.json"))
         pwsh_run.assert_not_called()
+
+    @patch(
+        "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+    )
+    @patch("azpysdk.apistub.get_cross_language_mapping_path", return_value=None)
+    @patch("azpysdk.apistub.create_package_and_install")
+    @patch("azpysdk.apistub.install_into_venv")
+    @patch("azpysdk.apistub.set_envvar_defaults")
+    def test_pypi_version_downloads_wheel_instead_of_building(
+        self, _env, _install, create_package_and_install, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When a PyPI version is passed, the wheel is downloaded from PyPI and local build is skipped."""
+        monkeypatch.chdir(os.getcwd())
+        stub = apistub()
+        staging = str(tmp_path / "staging")
+        os.makedirs(staging, exist_ok=True)
+        fake_parsed = MagicMock()
+        fake_parsed.folder = str(tmp_path)
+        fake_parsed.name = "azure-core"
+
+        captured_cmds = []
+
+        def fake_apistub_run(exe, cmds, **kwargs):
+            captured_cmds.append(cmds)
+            out_idx = cmds.index("--out-path")
+            out_dir = cmds[out_idx + 1]
+            open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
+
+        with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
+            stub, "get_executable", return_value=(sys.executable, staging)
+        ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
+            stub, "ensure_apistub_dependencies"
+        ), patch.object(
+            stub, "download_pypi_wheel", return_value="/fake/azure_core-1.0.0-py3-none-any.whl"
+        ) as download_pypi_wheel, patch.object(
+            stub, "run_venv_command", side_effect=fake_apistub_run
+        ):
+            stub.run(self._make_args(token_file=True, generate_from_pypi="1.0.0"))
+
+        download_pypi_wheel.assert_called_once_with(sys.executable, "azure-core", "1.0.0", staging)
+        create_package_and_install.assert_not_called()
+        assert len(captured_cmds) == 1
+        pkg_idx = captured_cmds[0].index("--pkg-path")
+        assert captured_cmds[0][pkg_idx + 1] == os.path.abspath("/fake/azure_core-1.0.0-py3-none-any.whl")
+
+    @patch("azpysdk.apistub.find_whl", return_value="azure_core-1.0.0-py3-none-any.whl")
+    def test_download_pypi_wheel_runs_pip_download(self, _find_whl, tmp_path):
+        """download_pypi_wheel should pip download the wheel and return its path."""
+        stub = apistub()
+        staging = str(tmp_path)
+
+        with patch.object(stub, "run_venv_command") as run_venv_command:
+            result = stub.download_pypi_wheel(sys.executable, "azure-core", "1.0.0", staging)
+
+        run_venv_command.assert_called_once()
+        cmds = run_venv_command.call_args.args[1]
+        assert cmds[0:4] == ["-m", "pip", "download", "azure-core==1.0.0"]
+        assert "--no-deps" in cmds
+        assert result == os.path.join(staging, "azure_core-1.0.0-py3-none-any.whl")
+
+    @patch("azpysdk.apistub.find_whl", return_value=None)
+    def test_download_pypi_wheel_raises_when_no_wheel(self, _find_whl, tmp_path):
+        """download_pypi_wheel should raise FileNotFoundError when no wheel is downloaded."""
+        stub = apistub()
+        with patch.object(stub, "run_venv_command"):
+            with pytest.raises(FileNotFoundError, match="No wheel found"):
+                stub.download_pypi_wheel(sys.executable, "azure-core", "1.0.0", str(tmp_path))

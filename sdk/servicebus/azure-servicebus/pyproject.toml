@@ -12,7 +12,8 @@ keywords = ["azure", "azure sdk"]
 requires-python = ">=3.9"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    # TODO: Flip to "Development Status :: 5 - Production/Stable" when 7.15.0 ships as GA.
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",

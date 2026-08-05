@@ -25,7 +25,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
         response = await self.client.express_route_gateways.get(
             resource_group_name=resource_group.name,
             express_route_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -83,7 +83,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -98,7 +98,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
                 express_route_gateway_parameters={"tags": {"str": "str"}},
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -112,7 +112,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
             await self.client.express_route_gateways.begin_delete(
                 resource_group_name=resource_group.name,
                 express_route_gateway_name="str",
-                api_version="2025-05-01",
+                api_version="2025-07-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -124,7 +124,7 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
     async def test_express_route_gateways_list_by_resource_group(self, resource_group):
         response = await self.client.express_route_gateways.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -134,8 +134,100 @@ class TestNetworkManagementExpressRouteGatewaysOperationsAsync(AzureMgmtRecorded
     @recorded_by_proxy_async
     async def test_express_route_gateways_list_by_subscription(self, resource_group):
         response = await self.client.express_route_gateways.list_by_subscription(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_get_failover_all_tests_details(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_get_failover_all_tests_details(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_get_failover_single_test_details(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_get_failover_single_test_details(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                peering_location="str",
+                failover_test_id="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_start_site_failover_test(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_start_site_failover_test(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                peering_location="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_stop_site_failover_test(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_stop_site_failover_test(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                stop_parameters={
+                    "details": [{"failoverConnectionName": "str", "failoverLocation": "str", "isVerified": bool}],
+                    "peeringLocation": "str",
+                    "wasSimulationSuccessful": bool,
+                },
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_get_routes_information(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_get_routes_information(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_express_route_gateways_begin_get_resiliency_information(self, resource_group):
+        response = await (
+            await self.client.express_route_gateways.begin_get_resiliency_information(
+                resource_group_name=resource_group.name,
+                express_route_gateway_name="str",
+                api_version="2025-07-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

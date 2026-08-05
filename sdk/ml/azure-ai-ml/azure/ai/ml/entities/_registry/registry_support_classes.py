@@ -8,15 +8,13 @@ from functools import reduce
 from typing import List, Optional, Union
 
 from azure.ai.ml._exception_helper import log_and_raise_error
-from azure.ai.ml._restclient.v2022_10_01_preview.models import AcrDetails as RestAcrDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ArmResourceId as RestArmResourceId
-from azure.ai.ml._restclient.v2022_10_01_preview.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import StorageAccountDetails as RestStorageAccountDetails
-from azure.ai.ml._restclient.v2022_10_01_preview.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
-from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+from azure.ai.ml._restclient.arm_ml_service.models import AcrDetails as RestAcrDetails
+from azure.ai.ml._restclient.arm_ml_service.models import RegistryRegionArmDetails as RestRegistryRegionArmDetails
+from azure.ai.ml._restclient.arm_ml_service.models import StorageAccountDetails as RestStorageAccountDetails
+from azure.ai.ml._restclient.arm_ml_service.models import SystemCreatedAcrAccount as RestSystemCreatedAcrAccount
+from azure.ai.ml._restclient.arm_ml_service.models import (
     SystemCreatedStorageAccount as RestSystemCreatedStorageAccount,
 )
-from azure.ai.ml._restclient.v2022_10_01_preview.models import UserCreatedAcrAccount as RestUserCreatedAcrAccount
 from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
@@ -64,9 +62,12 @@ class SystemCreatedAcrAccount:
                 )
             )
         else:
-            return RestAcrDetails(
-                user_created_acr_account=RestUserCreatedAcrAccount(arm_resource_id=RestArmResourceId(resource_id=acr))
-            )
+            # ``UserCreatedAcrAccount`` was @removed from the shared arm_ml_service model
+            # (api-version 2025-12-01); set the wire field directly to preserve the old body:
+            # {"userCreatedAcrAccount": {"armResourceId": {"resourceId": <acr>}}}.
+            rest_acr = RestAcrDetails()
+            rest_acr["userCreatedAcrAccount"] = {"armResourceId": {"resourceId": acr}}
+            return rest_acr
 
     @classmethod
     def _from_rest_object(cls, rest_obj: RestAcrDetails) -> Optional["Union[str, SystemCreatedAcrAccount]"]:
@@ -80,8 +81,9 @@ class SystemCreatedAcrAccount:
                 acr_account_sku=rest_obj.system_created_acr_account.acr_account_sku,
                 arm_resource_id=resource_id,
             )
-        elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
-            res: Optional[str] = rest_obj.user_created_acr_account.arm_resource_id.resource_id
+        elif rest_obj.get("userCreatedAcrAccount") is not None:
+            user_created = rest_obj["userCreatedAcrAccount"]
+            res: Optional[str] = user_created["armResourceId"]["resourceId"]
             return res
         else:
             return None
@@ -258,7 +260,9 @@ class RegistryRegionDetails:
                 replicated_ids=replicated_ids,
             )
         elif system_created_count == 0:
-            return [config.user_created_storage_account.arm_resource_id.resource_id for config in rest_configs]
+            # ``user_created_storage_account`` is not a typed field on the shared arm_ml_service
+            # StorageAccountDetails model (api-version 2025-12-01); read it via its wire key.
+            return [config["userCreatedStorageAccount"]["armResourceId"]["resourceId"] for config in rest_configs]
         else:
             msg = f"""tried reading in a registry whose storage accounts were not
                 mono-managed or user-created. {system_created_count} out of {num_configs} were managed."""

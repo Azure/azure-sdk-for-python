@@ -25,7 +25,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -105,6 +105,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -128,6 +129,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -416,6 +418,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -450,6 +453,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -490,6 +494,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -514,6 +523,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -555,6 +567,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -658,6 +671,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -755,6 +769,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -775,6 +792,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -811,6 +829,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -887,6 +906,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -989,6 +1009,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -1009,6 +1032,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1050,6 +1076,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1256,6 +1283,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -1297,6 +1327,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -1445,6 +1476,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     "type": "str",
                                                 }
                                             ],
+                                            "billingSku": "str",
                                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                             "customNetworkInterfaceName": "str",
                                             "ipConfigurations": [
@@ -1638,6 +1670,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -1674,6 +1707,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -1722,6 +1756,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -1752,6 +1791,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -1793,6 +1835,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -2087,6 +2130,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -2107,6 +2153,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -2148,6 +2197,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -2240,6 +2290,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -2264,6 +2319,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2305,6 +2363,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2515,6 +2574,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -2556,6 +2618,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -2676,6 +2739,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "properties": {
                                         "disableBgpRoutePropagation": bool,
+                                        "disablePeeringRoute": "str",
                                         "provisioningState": "str",
                                         "resourceGuid": "str",
                                         "routes": [
@@ -2687,6 +2751,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     "nextHopType": "str",
                                                     "addressPrefix": "str",
                                                     "hasBgpOverride": bool,
+                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                     "nextHopIpAddress": "str",
                                                     "provisioningState": "str",
                                                 },
@@ -2819,6 +2884,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                 "name": "str",
                                                 "properties": {
                                                     "ddosSettings": {
+                                                        "ddosCustomPolicy": {"id": "str"},
                                                         "ddosProtectionPlan": {"id": "str"},
                                                         "protectionMode": "str",
                                                     },
@@ -2842,6 +2908,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "idleTimeoutInMinutes": 0,
+                                                            "nat64": "str",
                                                             "provisioningState": "str",
                                                             "publicIpAddresses": [{"id": "str"}],
                                                             "publicIpAddressesV6": [{"id": "str"}],
@@ -3130,6 +3197,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"},
                                                                             "ddosProtectionPlan": {"id": "str"},
                                                                             "protectionMode": "str",
                                                                         },
@@ -3164,6 +3232,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                "nat64": "str",
                                                                                 "provisioningState": "str",
                                                                                 "publicIpAddresses": [{"id": "str"}],
                                                                                 "publicIpAddressesV6": [{"id": "str"}],
@@ -3204,6 +3273,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -3228,6 +3302,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -3269,6 +3346,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -3372,6 +3450,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "type": "str",
                                                                 }
                                                             ],
+                                                            "billingSku": "str",
                                                             "customDnsConfigs": [
                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                             ],
@@ -3469,6 +3548,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "id": "str",
                                                                     "name": "str",
                                                                     "properties": {
+                                                                        "ddosSettings": {
+                                                                            "ddosCustomPolicy": {"id": "str"}
+                                                                        },
                                                                         "gatewayLoadBalancer": {"id": "str"},
                                                                         "inboundNatPools": [{"id": "str"}],
                                                                         "inboundNatRules": [{"id": "str"}],
@@ -3489,6 +3571,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -3525,6 +3608,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -3601,6 +3685,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "type": "str",
                                                                                     }
                                                                                 ],
+                                                                                "billingSku": "str",
                                                                                 "customDnsConfigs": [
                                                                                     {
                                                                                         "fqdn": "str",
@@ -3703,6 +3788,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -3723,6 +3811,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -3764,6 +3855,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -3970,6 +4062,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -4011,6 +4106,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -4159,6 +4255,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     "type": "str",
                                                 }
                                             ],
+                                            "billingSku": "str",
                                             "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                             "customNetworkInterfaceName": "str",
                                             "ipConfigurations": [
@@ -4352,6 +4449,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                         "name": "str",
                                                                         "properties": {
                                                                             "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"},
                                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                                 "protectionMode": "str",
                                                                             },
@@ -4388,6 +4486,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                    "nat64": "str",
                                                                                     "provisioningState": "str",
                                                                                     "publicIpAddresses": [
                                                                                         {"id": "str"}
@@ -4436,6 +4535,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -4466,6 +4570,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -4507,6 +4614,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -4801,6 +4909,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -4821,6 +4932,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -4862,6 +4976,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -4954,6 +5069,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -4978,6 +5098,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -5019,6 +5142,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -5229,6 +5353,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -5270,6 +5397,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -5390,6 +5518,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                     "name": "str",
                                     "properties": {
                                         "disableBgpRoutePropagation": bool,
+                                        "disablePeeringRoute": "str",
                                         "provisioningState": "str",
                                         "resourceGuid": "str",
                                         "routes": [
@@ -5401,6 +5530,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                     "nextHopType": "str",
                                                     "addressPrefix": "str",
                                                     "hasBgpOverride": bool,
+                                                    "nextHop": {"nextHopIpAddresses": ["str"]},
                                                     "nextHopIpAddress": "str",
                                                     "provisioningState": "str",
                                                 },
@@ -5596,6 +5726,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                         "name": "str",
                                                         "properties": {
                                                             "ddosSettings": {
+                                                                "ddosCustomPolicy": {"id": "str"},
                                                                 "ddosProtectionPlan": {"id": "str"},
                                                                 "protectionMode": "str",
                                                             },
@@ -5619,6 +5750,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                 "name": "str",
                                                                 "properties": {
                                                                     "idleTimeoutInMinutes": 0,
+                                                                    "nat64": "str",
                                                                     "provisioningState": "str",
                                                                     "publicIpAddresses": [{"id": "str"}],
                                                                     "publicIpAddressesV6": [{"id": "str"}],
@@ -5919,6 +6051,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "name": "str",
                                                                             "properties": {
                                                                                 "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                                     "protectionMode": "str",
                                                                                 },
@@ -5955,6 +6088,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                        "nat64": "str",
                                                                                         "provisioningState": "str",
                                                                                         "publicIpAddresses": [
                                                                                             {"id": "str"}
@@ -6005,6 +6139,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -6035,6 +6174,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -6076,6 +6218,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -6197,6 +6340,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "type": "str",
                                                                         }
                                                                     ],
+                                                                    "billingSku": "str",
                                                                     "customDnsConfigs": [
                                                                         {"fqdn": "str", "ipAddresses": ["str"]}
                                                                     ],
@@ -6294,6 +6438,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                             "id": "str",
                                                                             "name": "str",
                                                                             "properties": {
+                                                                                "ddosSettings": {
+                                                                                    "ddosCustomPolicy": {"id": "str"}
+                                                                                },
                                                                                 "gatewayLoadBalancer": {"id": "str"},
                                                                                 "inboundNatPools": [{"id": "str"}],
                                                                                 "inboundNatRules": [{"id": "str"}],
@@ -6314,6 +6461,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            },
                                                                                             "ddosProtectionPlan": {
                                                                                                 "id": "str"
                                                                                             },
@@ -6355,6 +6505,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                "nat64": "str",
                                                                                                 "provisioningState": "str",
                                                                                                 "publicIpAddresses": [
                                                                                                     {"id": "str"}
@@ -6438,6 +6589,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "type": "str",
                                                                                             }
                                                                                         ],
+                                                                                        "billingSku": "str",
                                                                                         "customDnsConfigs": [
                                                                                             {
                                                                                                 "fqdn": "str",
@@ -6540,6 +6692,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "id": "str",
                                                                                     "name": "str",
                                                                                     "properties": {
+                                                                                        "ddosSettings": {
+                                                                                            "ddosCustomPolicy": {
+                                                                                                "id": "str"
+                                                                                            }
+                                                                                        },
                                                                                         "gatewayLoadBalancer": {
                                                                                             "id": "str"
                                                                                         },
@@ -6570,6 +6727,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -6611,6 +6771,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -6835,6 +6996,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "name": "str",
                                                                                             "properties": {
                                                                                                 "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    },
                                                                                                     "ddosProtectionPlan": {
                                                                                                         "id": "str"
                                                                                                     },
@@ -6876,6 +7040,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                        "nat64": "str",
                                                                                                         "provisioningState": "str",
                                                                                                         "publicIpAddresses": [
                                                                                                             {
@@ -7045,6 +7210,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                             "type": "str",
                                                         }
                                                     ],
+                                                    "billingSku": "str",
                                                     "customDnsConfigs": [{"fqdn": "str", "ipAddresses": ["str"]}],
                                                     "customNetworkInterfaceName": "str",
                                                     "ipConfigurations": [
@@ -7255,6 +7421,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -7296,6 +7465,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -7348,6 +7518,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                             "id": "str",
                                                                                             "name": "str",
                                                                                             "properties": {
+                                                                                                "ddosSettings": {
+                                                                                                    "ddosCustomPolicy": {
+                                                                                                        "id": "str"
+                                                                                                    }
+                                                                                                },
                                                                                                 "gatewayLoadBalancer": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -7378,6 +7553,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -7419,6 +7597,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -7726,6 +7905,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "id": "str",
                                                                                 "name": "str",
                                                                                 "properties": {
+                                                                                    "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        }
+                                                                                    },
                                                                                     "gatewayLoadBalancer": {
                                                                                         "id": "str"
                                                                                     },
@@ -7750,6 +7934,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                },
                                                                                                 "ddosProtectionPlan": {
                                                                                                     "id": "str"
                                                                                                 },
@@ -7791,6 +7978,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                    "nat64": "str",
                                                                                                     "provisioningState": "str",
                                                                                                     "publicIpAddresses": [
                                                                                                         {"id": "str"}
@@ -7890,6 +8078,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "id": "str",
                                                                                         "name": "str",
                                                                                         "properties": {
+                                                                                            "ddosSettings": {
+                                                                                                "ddosCustomPolicy": {
+                                                                                                    "id": "str"
+                                                                                                }
+                                                                                            },
                                                                                             "gatewayLoadBalancer": {
                                                                                                 "id": "str"
                                                                                             },
@@ -7920,6 +8113,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -7961,6 +8157,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -8197,6 +8394,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                 "name": "str",
                                                                                                 "properties": {
                                                                                                     "ddosSettings": {
+                                                                                                        "ddosCustomPolicy": {
+                                                                                                            "id": "str"
+                                                                                                        },
                                                                                                         "ddosProtectionPlan": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -8238,6 +8438,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                            "nat64": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "publicIpAddresses": [
                                                                                                                 {
@@ -8376,6 +8577,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                             "name": "str",
                                             "properties": {
                                                 "disableBgpRoutePropagation": bool,
+                                                "disablePeeringRoute": "str",
                                                 "provisioningState": "str",
                                                 "resourceGuid": "str",
                                                 "routes": [
@@ -8387,6 +8589,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                             "nextHopType": "str",
                                                             "addressPrefix": "str",
                                                             "hasBgpOverride": bool,
+                                                            "nextHop": {"nextHopIpAddresses": ["str"]},
                                                             "nextHopIpAddress": "str",
                                                             "provisioningState": "str",
                                                         },
@@ -8459,6 +8662,16 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                     "type": "str",
                                 }
                             ],
+                            "summarizedGatewayPrefixes": {
+                                "addressPrefixes": ["str"],
+                                "ipamPoolPrefixAllocations": [
+                                    {
+                                        "allocatedAddressPrefixes": ["str"],
+                                        "numberOfIpAddresses": "str",
+                                        "pool": {"id": "str"},
+                                    }
+                                ],
+                            },
                             "virtualNetworkPeerings": [
                                 {
                                     "etag": "str",
@@ -8546,7 +8759,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8559,7 +8772,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             service_gateway_name="str",
             parameters={"tags": {"str": "str"}},
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
 
         # please add some check logic here by yourself
@@ -8571,7 +8784,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.begin_delete(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8582,7 +8795,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
     def test_service_gateways_list(self, resource_group):
         response = self.client.service_gateways.list(
             resource_group_name=resource_group.name,
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8592,7 +8805,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_service_gateways_list_all(self, resource_group):
         response = self.client.service_gateways.list_all(
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -8614,7 +8827,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -8719,6 +8932,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                             "name": "str",
                                                             "properties": {
                                                                 "ddosSettings": {
+                                                                    "ddosCustomPolicy": {"id": "str"},
                                                                     "ddosProtectionPlan": {"id": "str"},
                                                                     "protectionMode": "str",
                                                                 },
@@ -8983,6 +9197,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "type": "str",
                                                                                                                 }
                                                                                                             ],
+                                                                                                            "billingSku": "str",
                                                                                                             "customDnsConfigs": [
                                                                                                                 {
                                                                                                                     "fqdn": "str",
@@ -9102,6 +9317,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "id": "str",
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
+                                                                                                                        "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            }
+                                                                                                                        },
                                                                                                                         "gatewayLoadBalancer": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -9177,6 +9397,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                         "type": "str",
                                                                                                                                     }
                                                                                                                                 ],
+                                                                                                                                "billingSku": "str",
                                                                                                                                 "customDnsConfigs": [
                                                                                                                                     {
                                                                                                                                         "fqdn": "str",
@@ -9295,6 +9516,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "id": "str",
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
+                                                                                                                                "ddosSettings": {
+                                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                                        "id": "str"
+                                                                                                                                    }
+                                                                                                                                },
                                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -9459,6 +9685,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -9786,6 +10013,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "id": "str",
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
+                                                                                                                            "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                }
+                                                                                                                            },
                                                                                                                             "gatewayLoadBalancer": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -9879,6 +10111,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "id": "str",
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
+                                                                                                                                    "ddosSettings": {
+                                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                                            "id": "str"
+                                                                                                                                        }
+                                                                                                                                    },
                                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                                         "id": "str"
                                                                                                                                     },
@@ -9997,6 +10234,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "name": "str",
                                                                                     "properties": {
                                                                                         "disableBgpRoutePropagation": bool,
+                                                                                        "disablePeeringRoute": "str",
                                                                                         "provisioningState": "str",
                                                                                         "resourceGuid": "str",
                                                                                         "routes": [
@@ -10008,6 +10246,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "nextHopType": "str",
                                                                                                     "addressPrefix": "str",
                                                                                                     "hasBgpOverride": bool,
+                                                                                                    "nextHop": {
+                                                                                                        "nextHopIpAddresses": [
+                                                                                                            "str"
+                                                                                                        ]
+                                                                                                    },
                                                                                                     "nextHopIpAddress": "str",
                                                                                                     "provisioningState": "str",
                                                                                                 },
@@ -10097,6 +10340,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "idleTimeoutInMinutes": 0,
+                                                                        "nat64": "str",
                                                                         "provisioningState": "str",
                                                                         "publicIpAddresses": [{"id": "str"}],
                                                                         "publicIpAddressesV6": [{"id": "str"}],
@@ -10190,6 +10434,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -10220,6 +10467,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -10437,6 +10685,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "type": "str",
                                                                                                 }
                                                                                             ],
+                                                                                            "billingSku": "str",
                                                                                             "customDnsConfigs": [
                                                                                                 {
                                                                                                     "fqdn": "str",
@@ -10548,6 +10797,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "id": "str",
                                                                                                     "name": "str",
                                                                                                     "properties": {
+                                                                                                        "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            }
+                                                                                                        },
                                                                                                         "gatewayLoadBalancer": {
                                                                                                             "id": "str"
                                                                                                         },
@@ -10586,6 +10840,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    },
                                                                                                                     "ddosProtectionPlan": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -10627,6 +10884,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "idleTimeoutInMinutes": 0,
+                                                                                                                        "nat64": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                         "publicIpAddresses": [
                                                                                                                             {
@@ -10736,6 +10994,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -10850,6 +11109,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                             "id": "str",
                                                                                                             "name": "str",
                                                                                                             "properties": {
+                                                                                                                "ddosSettings": {
+                                                                                                                    "ddosCustomPolicy": {
+                                                                                                                        "id": "str"
+                                                                                                                    }
+                                                                                                                },
                                                                                                                 "gatewayLoadBalancer": {
                                                                                                                     "id": "str"
                                                                                                                 },
@@ -10888,6 +11152,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                     "name": "str",
                                                                                                                     "properties": {
                                                                                                                         "ddosSettings": {
+                                                                                                                            "ddosCustomPolicy": {
+                                                                                                                                "id": "str"
+                                                                                                                            },
                                                                                                                             "ddosProtectionPlan": {
                                                                                                                                 "id": "str"
                                                                                                                             },
@@ -10929,6 +11196,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                             "name": "str",
                                                                                                                             "properties": {
                                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                                "nat64": "str",
                                                                                                                                 "provisioningState": "str",
                                                                                                                                 "publicIpAddresses": [
                                                                                                                                     {
@@ -11117,6 +11385,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "type": "str",
                                                                                 }
                                                                             ],
+                                                                            "billingSku": "str",
                                                                             "customDnsConfigs": [
                                                                                 {"fqdn": "str", "ipAddresses": ["str"]}
                                                                             ],
@@ -11425,6 +11694,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "id": "str",
                                                                                                         "name": "str",
                                                                                                         "properties": {
+                                                                                                            "ddosSettings": {
+                                                                                                                "ddosCustomPolicy": {
+                                                                                                                    "id": "str"
+                                                                                                                }
+                                                                                                            },
                                                                                                             "gatewayLoadBalancer": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -11463,6 +11737,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
                                                                                                                     "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        },
                                                                                                                         "ddosProtectionPlan": {
                                                                                                                             "id": "str"
                                                                                                                         },
@@ -11504,6 +11781,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                                                            "nat64": "str",
                                                                                                                             "provisioningState": "str",
                                                                                                                             "publicIpAddresses": [
                                                                                                                                 {
@@ -11633,6 +11911,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                 "id": "str",
                                                                                                                 "name": "str",
                                                                                                                 "properties": {
+                                                                                                                    "ddosSettings": {
+                                                                                                                        "ddosCustomPolicy": {
+                                                                                                                            "id": "str"
+                                                                                                                        }
+                                                                                                                    },
                                                                                                                     "gatewayLoadBalancer": {
                                                                                                                         "id": "str"
                                                                                                                     },
@@ -11671,6 +11954,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "name": "str",
                                                                                                                         "properties": {
                                                                                                                             "ddosSettings": {
+                                                                                                                                "ddosCustomPolicy": {
+                                                                                                                                    "id": "str"
+                                                                                                                                },
                                                                                                                                 "ddosProtectionPlan": {
                                                                                                                                     "id": "str"
                                                                                                                                 },
@@ -11712,6 +11998,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                 "name": "str",
                                                                                                                                 "properties": {
                                                                                                                                     "idleTimeoutInMinutes": 0,
+                                                                                                                                    "nat64": "str",
                                                                                                                                     "provisioningState": "str",
                                                                                                                                     "publicIpAddresses": [
                                                                                                                                         {
@@ -11862,6 +12149,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                     "name": "str",
                                                                     "properties": {
                                                                         "disableBgpRoutePropagation": bool,
+                                                                        "disablePeeringRoute": "str",
                                                                         "provisioningState": "str",
                                                                         "resourceGuid": "str",
                                                                         "routes": [
@@ -11873,6 +12161,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                     "nextHopType": "str",
                                                                                     "addressPrefix": "str",
                                                                                     "hasBgpOverride": bool,
+                                                                                    "nextHop": {
+                                                                                        "nextHopIpAddresses": ["str"]
+                                                                                    },
                                                                                     "nextHopIpAddress": "str",
                                                                                     "provisioningState": "str",
                                                                                 },
@@ -11958,6 +12249,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                         "id": "str",
                                                                         "name": "str",
                                                                         "properties": {
+                                                                            "ddosSettings": {
+                                                                                "ddosCustomPolicy": {"id": "str"}
+                                                                            },
                                                                             "gatewayLoadBalancer": {"id": "str"},
                                                                             "inboundNatPools": [{"id": "str"}],
                                                                             "inboundNatRules": [{"id": "str"}],
@@ -11978,6 +12272,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                 "name": "str",
                                                                                 "properties": {
                                                                                     "ddosSettings": {
+                                                                                        "ddosCustomPolicy": {
+                                                                                            "id": "str"
+                                                                                        },
                                                                                         "ddosProtectionPlan": {
                                                                                             "id": "str"
                                                                                         },
@@ -12260,6 +12557,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                         "type": "str",
                                                                                                                                     }
                                                                                                                                 ],
+                                                                                                                                "billingSku": "str",
                                                                                                                                 "customDnsConfigs": [
                                                                                                                                     {
                                                                                                                                         "fqdn": "str",
@@ -12412,6 +12710,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                                             "type": "str",
                                                                                                                                                         }
                                                                                                                                                     ],
+                                                                                                                                                    "billingSku": "str",
                                                                                                                                                     "customDnsConfigs": [
                                                                                                                                                         {
                                                                                                                                                             "fqdn": "str",
@@ -12639,6 +12938,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -13076,6 +13376,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "name": "str",
                                                                                                         "properties": {
                                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                                            "disablePeeringRoute": "str",
                                                                                                             "provisioningState": "str",
                                                                                                             "resourceGuid": "str",
                                                                                                             "routes": [
@@ -13087,6 +13388,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "nextHopType": "str",
                                                                                                                         "addressPrefix": "str",
                                                                                                                         "hasBgpOverride": bool,
+                                                                                                                        "nextHop": {
+                                                                                                                            "nextHopIpAddresses": [
+                                                                                                                                "str"
+                                                                                                                            ]
+                                                                                                                        },
                                                                                                                         "nextHopIpAddress": "str",
                                                                                                                         "provisioningState": "str",
                                                                                                                     },
@@ -13195,6 +13501,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "idleTimeoutInMinutes": 0,
+                                                                                            "nat64": "str",
                                                                                             "provisioningState": "str",
                                                                                             "publicIpAddresses": [
                                                                                                 {"id": "str"}
@@ -13301,6 +13608,9 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                     "name": "str",
                                                                                                     "properties": {
                                                                                                         "ddosSettings": {
+                                                                                                            "ddosCustomPolicy": {
+                                                                                                                "id": "str"
+                                                                                                            },
                                                                                                             "ddosProtectionPlan": {
                                                                                                                 "id": "str"
                                                                                                             },
@@ -13331,6 +13641,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                             "name": "str",
                                                                                                             "properties": {
                                                                                                                 "idleTimeoutInMinutes": 0,
+                                                                                                                "nat64": "str",
                                                                                                                 "provisioningState": "str",
                                                                                                                 "publicIpAddresses": [
                                                                                                                     {
@@ -13597,6 +13908,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                         "type": "str",
                                                                                                                     }
                                                                                                                 ],
+                                                                                                                "billingSku": "str",
                                                                                                                 "customDnsConfigs": [
                                                                                                                     {
                                                                                                                         "fqdn": "str",
@@ -13749,6 +14061,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                                                             "type": "str",
                                                                                                                                         }
                                                                                                                                     ],
+                                                                                                                                    "billingSku": "str",
                                                                                                                                     "customDnsConfigs": [
                                                                                                                                         {
                                                                                                                                             "fqdn": "str",
@@ -13972,6 +14285,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "type": "str",
                                                                                                     }
                                                                                                 ],
+                                                                                                "billingSku": "str",
                                                                                                 "customDnsConfigs": [
                                                                                                     {
                                                                                                         "fqdn": "str",
@@ -14407,6 +14721,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                         "name": "str",
                                                                                         "properties": {
                                                                                             "disableBgpRoutePropagation": bool,
+                                                                                            "disablePeeringRoute": "str",
                                                                                             "provisioningState": "str",
                                                                                             "resourceGuid": "str",
                                                                                             "routes": [
@@ -14418,6 +14733,11 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                                                                                                         "nextHopType": "str",
                                                                                                         "addressPrefix": "str",
                                                                                                         "hasBgpOverride": bool,
+                                                                                                        "nextHop": {
+                                                                                                            "nextHopIpAddresses": [
+                                                                                                                "str"
+                                                                                                            ]
+                                                                                                        },
                                                                                                         "nextHopIpAddress": "str",
                                                                                                         "provisioningState": "str",
                                                                                                     },
@@ -14567,7 +14887,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -14579,7 +14899,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get_address_locations(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -14591,7 +14911,7 @@ class TestNetworkManagementServiceGatewaysOperations(AzureMgmtRecordedTestCase):
         response = self.client.service_gateways.get_services(
             resource_group_name=resource_group.name,
             service_gateway_name="str",
-            api_version="2025-05-01",
+            api_version="2025-07-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

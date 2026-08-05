@@ -1,0 +1,17 @@
+{
+  "properties": {
+    "computeType": "VirtualMachine",
+    "description": "smoke vm compute",
+    "properties": {
+      "administratorAccount": {
+        "password": "smoke-password",
+        "username": "azureuser"
+      },
+      "sshPort": 22
+    },
+    "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/smoke-rg/providers/Microsoft.Compute/virtualMachines/smoke-vm"
+  },
+  "tags": {
+    "tag1": "value1"
+  }
+}

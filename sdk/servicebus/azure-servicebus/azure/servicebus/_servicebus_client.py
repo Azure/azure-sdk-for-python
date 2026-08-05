@@ -4,11 +4,14 @@
 # --------------------------------------------------------------------------------------------
 # pylint: disable=client-method-missing-tracing-decorator
 from typing import Any, Union, Optional, TYPE_CHECKING, Type
+from datetime import datetime
 import logging
 import warnings
 from weakref import WeakSet
 from typing_extensions import Literal
 import certifi
+
+from azure.core.paging import ItemPaged
 
 from ._base_handler import (
     _parse_conn_str,
@@ -17,6 +20,7 @@ from ._base_handler import (
 )
 from ._servicebus_sender import ServiceBusSender
 from ._servicebus_receiver import ServiceBusReceiver
+from ._session_browser import _SessionBrowser
 from ._common.auto_lock_renewer import AutoLockRenewer
 from ._common._configuration import Configuration
 from ._common.utils import (
@@ -138,8 +142,10 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
 
         self._amqp_transport = amqp_transport
 
-        # If the user provided http:// or sb://, let's be polite and strip that.
-        self.fully_qualified_namespace: str = strip_protocol_from_uri(fully_qualified_namespace.strip())
+        # Keep the port for the non-TLS emulator; strip scheme/port/path otherwise.
+        self.fully_qualified_namespace: str = strip_protocol_from_uri(
+            fully_qualified_namespace.strip(), strip_port=kwargs.get("use_tls", True)
+        )
 
         self._credential = credential
         # TODO: can we remove this here? it's recreated in Sender/Receiver
@@ -699,3 +705,99 @@ class ServiceBusClient(object):  # pylint: disable=client-accepts-api-version-ke
             )
         self._handlers.add(handler)
         return handler
+
+    def _create_session_browser(self, entity_name, subscription_name=None, **kwargs):
+        """Create an internal _SessionBrowser for management-only operations.
+
+        :param str entity_name: The queue name (or topic name when ``subscription_name`` is set).
+        :param str subscription_name: The subscription name when listing sessions on a topic.
+        :return: A new internal _SessionBrowser bound to this client.
+        :rtype: ~azure.servicebus._session_browser._SessionBrowser
+        """
+        browser = _SessionBrowser(
+            fully_qualified_namespace=self.fully_qualified_namespace,
+            entity_name=entity_name,
+            credential=self._credential,
+            logging_enable=self._config.logging_enable,
+            transport_type=self._config.transport_type,
+            http_proxy=self._config.http_proxy,
+            connection=self._connection,
+            user_agent=self._config.user_agent,
+            retry_mode=self._config.retry_mode,
+            retry_total=self._config.retry_total,
+            retry_backoff_factor=self._config.retry_backoff_factor,
+            retry_backoff_max=self._config.retry_backoff_max,
+            custom_endpoint_address=self._custom_endpoint_address,
+            connection_verify=self._connection_verify,
+            ssl_context=self._ssl_context,
+            amqp_transport=self._amqp_transport,
+            use_tls=self._config.use_tls,
+            subscription_name=subscription_name,
+            **kwargs,
+        )
+        self._handlers.add(browser)
+        return browser
+
+    def list_queue_sessions(
+        self,
+        queue_name: str,
+        *,
+        state_updated_after: Optional[datetime] = None,
+        timeout: Optional[float] = None,
+    ) -> ItemPaged[str]:
+        """List session IDs with active messages in a session-enabled queue.
+
+        If ``state_updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
+        sessions with active messages in the queue.
+
+        :param str queue_name: The name of the session-enabled queue.
+        :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged iterable of session ID strings.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        """
+        if self._entity_name and queue_name != self._entity_name:
+            raise ValueError(
+                "The queue name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        browser = self._create_session_browser(queue_name)
+        return browser.list_sessions(state_updated_after=state_updated_after, timeout=timeout)
+
+    def list_subscription_sessions(
+        self,
+        topic_name: str,
+        subscription_name: str,
+        *,
+        state_updated_after: Optional[datetime] = None,
+        timeout: Optional[float] = None,
+    ) -> ItemPaged[str]:
+        """List session IDs with active messages in a session-enabled subscription.
+
+        If ``state_updated_after`` is specified, only sessions whose
+        session state was set or updated after that time are returned. If not specified, returns
+        sessions with active messages in the subscription.
+
+        :param str topic_name: The name of the topic.
+        :param str subscription_name: The name of the subscription.
+        :keyword ~datetime.datetime state_updated_after: If specified, only sessions whose
+            session state was set or updated after this time are returned.
+        :keyword float timeout: The total operation timeout in seconds, spent across every page.
+        :returns: A paged iterable of session ID strings.
+        :rtype: ~azure.core.paging.ItemPaged[str]
+        """
+        if self._entity_name and topic_name != self._entity_name:
+            raise ValueError(
+                "The topic name provided does not match the EntityPath in "
+                "the connection string used to construct the ServiceBusClient."
+            )
+        if timeout is not None and timeout <= 0:
+            raise ValueError("The timeout must be greater than 0.")
+
+        browser = self._create_session_browser(topic_name, subscription_name=subscription_name)
+        return browser.list_sessions(state_updated_after=state_updated_after, timeout=timeout)

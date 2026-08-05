@@ -4,9 +4,13 @@
 
 # pylint: disable=protected-access,unused-argument
 
-from typing import Dict, Iterable, Optional, cast
+import json
+from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022
+from azure.ai.ml._restclient.arm_ml_service import MachineLearningServicesMgmtClient as ServiceClient102022
+from azure.ai.ml._restclient.arm_ml_service._utils.model_base import SdkJSONEncoder
+from azure.ai.ml._restclient.arm_ml_service.models import Registry as RestRegistry
+from azure.ai.ml._restclient.arm_ml_service.operations._operations import build_registries_create_or_update_request
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
 from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -141,14 +145,39 @@ class RegistryOperations:
         :rtype: LROPoller
         """
         registry_data = registry._to_rest_object()
-        poller = self._operation.begin_create_or_update(
+        # The shared arm_ml_service ``begin_create_or_update`` was generated against an api-version whose
+        # registry-create swagger declares only 200/201 as terminal initial statuses, so it raises on the
+        # 202 Accepted the service actually returns for this LRO. We send the create request ourselves,
+        # accept 202, and drive our own poller (mirrors how we build the request body as a dict).
+        registries_op = self._operation
+        client = registries_op._client
+        config = registries_op._config
+        content = json.dumps(registry_data, cls=SdkJSONEncoder, exclude_readonly=True)
+        request = build_registries_create_or_update_request(
             resource_group_name=self._resource_group_name,
             registry_name=registry.name,
-            body=registry_data,
-            polling=self._get_polling(str(registry.name)),
-            cls=lambda response, deserialized, headers: Registry._from_rest_object(deserialized),
+            subscription_id=config.subscription_id,
+            content_type="application/json",
+            api_version=config.api_version,
+            content=content,
         )
+        path_format_arguments = {"endpoint": config.base_url}
+        request.url = client.format_url(request.url, **path_format_arguments)
+        initial_response = client._pipeline.run(request, stream=False)
+        status = initial_response.http_response.status_code
+        if status not in (200, 201, 202):
+            initial_response.http_response.raise_for_status()
 
+        def _get_long_running_output(pipeline_response: Any) -> Registry:
+            rest_registry = RestRegistry._deserialize(pipeline_response.http_response.json(), [])
+            return Registry._from_rest_object(rest_registry)  # type: ignore[return-value]
+
+        poller: LROPoller = LROPoller(
+            client,
+            initial_response,
+            _get_long_running_output,
+            self._get_polling(str(registry.name)),
+        )
         return poller
 
     @monitor_with_activity(ops_logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)

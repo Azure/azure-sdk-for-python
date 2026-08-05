@@ -77,7 +77,7 @@ def main():
                     },
                 },
                 "resourceGuardOperationRequests": [
-                    "/subscriptions/38304e13-357e-405e-9e9a-220351dcce8c/resourcegroups/ankurResourceGuard1/providers/Microsoft.DataProtection/resourceGuards/ResourceGuard38-1/dppModifyPolicy/default"
+                    "/subscriptions/38304e13-357e-405e-9e9a-220351dcce8c/resourceGroups/ankurResourceGuard1/providers/Microsoft.DataProtection/resourceGuards/ResourceGuard38-1/dppModifyPolicy/default"
                 ],
                 "validationType": "ShallowValidation",
             }

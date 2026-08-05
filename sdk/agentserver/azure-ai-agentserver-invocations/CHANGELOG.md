@@ -1,5 +1,43 @@
 # Release History
 
+## 1.0.0b8 (2026-08-03)
+
+### Samples
+
+- Added samples showing how to build crash-resilient invocation agents on top of the new core resilient-task primitive: `resilient_multiturn` (suspend/resume conversation), `resilient_langgraph` (real-time streaming LangGraph integration with crash recovery + steering), and `resilient_research` (multi-stage research loop with checkpointing). See the [Resilient Task Developer Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/docs/tasks-guide.md) for the underlying API.
+
+### Bugs Fixed
+
+- The cancel (`POST /invocations/{id}/cancel`) and get (`GET /invocations/{id}`) endpoints now resolve the session id consistently with the invoke endpoint, so custom cancel/get handlers can reliably look up per-session state.
+
+### Other Changes
+
+- Bumped the minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b10`, which adds an opt-in gate for resilient-task startup recovery so invocations-only agents no longer make a blocking task-store call during startup.
+
+## 1.0.0b7 (2026-07-22)
+
+### Features Added
+
+- AsyncAPI docs endpoints — `InvocationAgentServerHost` now accepts optional
+  `asyncapi_spec_json` (dict) and/or `asyncapi_spec_yaml` (raw YAML string)
+  constructor args, served at `GET /invocations/docs/asyncapi.json` and
+  `GET /invocations/docs/asyncapi.yaml` respectively. Either representation
+  returns `404` if not registered. See README for details.
+
+### Other Changes
+
+- Bumped minimum `azure-ai-agentserver-core` dependency to `>=2.0.0b8`.
+
+## 1.0.0b6 (2026-06-28)
+
+### Features Added
+
+- Container protocol version `2.0.0` support: reads `x-agent-user-id` and `x-agent-foundry-call-id` from inbound requests and binds them to the request-scoped platform context so the per-request call ID is forwarded on outbound Foundry 1P calls (`x-agent-user-id` is not forwarded to 1P). The values are also exposed on `request.state.user_id` and `request.state.call_id`.
+
+### Breaking Changes
+
+- Replaced `request.state.user_isolation_key` / `request.state.chat_isolation_key` with `request.state.user_id` / `request.state.call_id` per container protocol version `2.0.0`.
+
 ## 1.0.0b5 (2026-06-12)
 
 ### Bugs Fixed

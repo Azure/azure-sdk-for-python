@@ -132,7 +132,19 @@ class ConfigurationSetting(Model):
 
 
 class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=too-many-instance-attributes
-    """A configuration setting that stores a feature flag value."""
+    """A configuration setting that stores a feature flag value.
+
+    :param feature_id: The identity of the configuration setting.
+    :type feature_id: str
+    :keyword enabled: The value indicating whether the feature flag is enabled.
+        A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+        against its conditions to determine its state. Default value of this property is False.
+    :paramtype enabled: bool
+    :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+        By default (requirement type "Any"), the feature is considered enabled if at least one filter
+        evaluates to true. With requirement type "All", every filter must evaluate to true.
+    :paramtype filters: list[dict[str, Any]] or None
+    """
 
     etag: str
     """A value representing the current state of the resource."""
@@ -142,10 +154,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
     """The key of the configuration setting."""
     enabled: bool
     """The value indicating whether the feature flag is enabled. A feature is OFF if enabled is false.
-        If enabled is true, then the feature is ON if there are no conditions or if all conditions are satisfied."""
+        If enabled is true, then the feature flag is evaluated against its conditions/filters to determine
+        its state."""
     filters: Optional[List[Dict[str, Any]]]
-    """Filters that must run on the client and be evaluated as true for the feature
-        to be considered enabled."""
+    """Filters that run on the client to determine whether the feature is enabled. By default
+        (requirement type "Any"), the feature is considered enabled if at least one filter evaluates
+        to true. With requirement type "All", every filter must evaluate to true."""
     label: str
     """The label used to group this configuration setting with others."""
     display_name: str
@@ -187,11 +201,12 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
         :param feature_id: The identity of the configuration setting.
         :type feature_id: str
         :keyword enabled: The value indicating whether the feature flag is enabled.
-            A feature is OFF if enabled is false. If enabled is true, then the feature is ON
-            if there are no conditions or if all conditions are satisfied. Default value of this property is False.
+            A feature is OFF if enabled is false. If enabled is true, then the feature flag is evaluated
+            against its conditions/filters to determine its state. Default value of this property is False.
         :paramtype enabled: bool
-        :keyword filters: Filters that must run on the client and be evaluated as true for the feature
-            to be considered enabled.
+        :keyword filters: Filters that run on the client to determine whether the feature is enabled.
+            By default (requirement type "Any"), the feature is considered enabled if at least one filter
+            evaluates to true. With requirement type "All", every filter must evaluate to true.
         :paramtype filters: list[dict[str, Any]] or None
         """
         if "value" in kwargs:
@@ -299,7 +314,13 @@ class FeatureFlagConfigurationSetting(ConfigurationSetting):  # pylint: disable=
 
 
 class SecretReferenceConfigurationSetting(ConfigurationSetting):
-    """A configuration value that references a configuration setting secret."""
+    """A configuration value that references a configuration setting secret.
+
+    :param key: The key of the configuration setting.
+    :type key: str
+    :param secret_id: The URI of the secret referenced by this configuration setting.
+    :type secret_id: str
+    """
 
     etag: str
     """A value representing the current state of the resource."""
@@ -948,7 +969,15 @@ class FeatureFlag(Model):  # pylint: disable=too-many-instance-attributes
 
 
 class ConfigurationSettingsFilter:
-    """Enables filtering of configuration settings."""
+    """Enables filtering of configuration settings.
+
+    :keyword key: Filters configuration settings by their key field. Required.
+    :paramtype key: str
+    :keyword label: Filters configuration settings by their label field.
+    :paramtype label: str or None
+    :keyword tags: Filters key-values by their tags field.
+    :paramtype tags: list[str] or None
+    """
 
     key: str
     """Filters configuration settings by their key field. Required."""
@@ -972,7 +1001,25 @@ class ConfigurationSettingsFilter:
 
 
 class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
-    """A point-in-time snapshot of configuration settings."""
+    """A point-in-time snapshot of configuration settings.
+
+    :param filters: A list of filters used to filter the key-values included in the configuration snapshot.
+        Required.
+    :type filters: list[~azure.appconfiguration.ConfigurationSettingsFilter]
+    :keyword composition_type: The composition type describes how the key-values within the configuration
+        snapshot are composed. The 'key' composition type ensures there are no two key-values
+        containing the same key. The 'key_label' composition type ensures there are no two key-values
+        containing the same key and label. Known values are: "key" and "key_label".
+    :paramtype composition_type: str or None
+    :keyword retention_period: The amount of time, in seconds, that a configuration snapshot will remain in the
+        archived state before expiring. This property is only writable during the creation of a configuration
+        snapshot. If not specified, the default lifetime of key-value revisions will be used.
+    :paramtype retention_period: int or None
+    :keyword tags: The tags of the configuration snapshot.
+    :paramtype tags: dict[str, str] or None
+    :keyword description: The description of the configuration snapshot.
+    :paramtype description: str or None
+    """
 
     name: Optional[str]
     """The name of the configuration snapshot."""
@@ -1127,7 +1174,11 @@ class ConfigurationSnapshot:  # pylint: disable=too-many-instance-attributes
 
 
 class ConfigurationSettingLabel:
-    """The label info of a configuration setting."""
+    """The label info of a configuration setting.
+
+    :keyword name: The configuration setting label name.
+    :paramtype name: str or None
+    """
 
     name: Optional[str]
     """The name of the ConfigurationSetting label."""
@@ -1145,7 +1196,11 @@ def _return_deserialized_and_headers(_, deserialized, response_headers):
 
 
 class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instance-attributes
-    """Base class for iterable of ConfigurationSetting properties."""
+    """Base class for iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     etag: str
     """The current etag"""
@@ -1215,7 +1270,11 @@ class ConfigurationSettingPropertiesPagedBase:  # pylint:disable=too-many-instan
 class ConfigurationSettingPropertiesPaged(
     ConfigurationSettingPropertiesPagedBase, PageIterator
 ):  # pylint:disable=too-many-instance-attributes
-    """An iterable of ConfigurationSetting properties."""
+    """An iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     def __init__(self, command: Callable, **kwargs: Any):
         super().__init__(command, **kwargs)
@@ -1276,7 +1335,11 @@ class ConfigurationSettingPropertiesPaged(
 class ConfigurationSettingPropertiesPagedAsync(
     ConfigurationSettingPropertiesPagedBase, AsyncPageIterator
 ):  # pylint:disable=too-many-instance-attributes
-    """An iterable of ConfigurationSetting properties."""
+    """An iterable of ConfigurationSetting properties.
+
+    :param command: The command to execute for pagination.
+    :type command: Callable
+    """
 
     def __init__(self, command: Callable, **kwargs: Any):
         ConfigurationSettingPropertiesPagedBase.__init__(self, command, **kwargs)
